@@ -36,7 +36,7 @@ if (tail.length === 0) {
 }
 
 for (const log of tail) {
-  const grp = log.group ? `${log.group}/` : '';
+  const grp = log.groupPath.length > 0 ? `${log.groupPath.join('/')}/` : '';
   console.log(`# ${grp}${log.name}`);
   console.log(`  status: ${log.status || '—'}    agent: ${log.agent || '—'}    date: ${log.date || '—'}    iteration: ${log.iteration ?? '—'}`);
   if (args.flags.full) {

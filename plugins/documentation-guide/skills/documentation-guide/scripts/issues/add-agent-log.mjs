@@ -3,8 +3,8 @@
  * add-agent-log.mjs — append an agent-log entry for an issue.
  * Auto-increments iteration if not provided.
  *
- * Optional --group <name> places the file under agent-log/<group>/
- * (max nesting depth 1 — matches the loader's expectation).
+ * Optional --group <a>[/<b>] places the file under agent-log/<a>/[<b>/]
+ * — up to 2 levels of subfolders, matching the loader's depth cap.
  */
 
 import fs from 'node:fs';
@@ -20,9 +20,10 @@ const id = args._[0];
 if (args.flags.help || !id || !args.flags.body) {
   printHelp('add-agent-log', [
     '<issue-id> --body <markdown> [--status in-progress|success|failed] [--iteration N]',
-    '[--agent <name>] [--date YYYY-MM-DD] [--slug <short-slug>] [--group <subgroup>] [--tracker <path>]',
+    '[--agent <name>] [--date YYYY-MM-DD] [--slug <short-slug>] [--group <a>[/<b>]] [--tracker <path>]',
     '',
-    'Append an agent-log file under <issue>/agent-log/ (or .../<group>/ with --group).',
+    'Append an agent-log file under <issue>/agent-log/ (or .../<a>/[<b>/] with --group).',
+    '--group accepts up to 2 slash-separated segments (e.g. "exploration" or "exploration/phase-1").',
     'Iteration auto-increments from the highest existing iteration / sequence + 1.',
     'Default status: in-progress.  Default agent: claude.  Default slug: iter-<N>.',
   ]);
@@ -31,7 +32,14 @@ if (args.flags.help || !id || !args.flags.body) {
 
 const tracker = args.flags.tracker || DEFAULT_TRACKER;
 const baseDir = path.join(tracker, id, 'agent-log');
-const dir = args.flags.group ? path.join(baseDir, args.flags.group) : baseDir;
+const groupSegments = args.flags.group
+  ? args.flags.group.split('/').filter(Boolean)
+  : [];
+if (groupSegments.length > 2) {
+  console.error(`--group accepts at most 2 segments (got ${groupSegments.length}: "${args.flags.group}")`);
+  process.exit(1);
+}
+const dir = groupSegments.length > 0 ? path.join(baseDir, ...groupSegments) : baseDir;
 if (!isInsideAllowed(dir)) {
   console.error(`Refusing to write outside the content root: ${dir}`);
   process.exit(1);

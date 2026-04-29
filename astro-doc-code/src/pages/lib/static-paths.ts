@@ -80,15 +80,14 @@ export async function buildStaticPaths(siteConfig: { pages?: Record<string, any>
           });
         }
         for (const n of issue.notes) {
+          const slugPath = [baseUrl, issue.id, 'notes', ...n.groupPath, n.name].filter(Boolean).join('/');
           paths.push({
-            params: { slug: `${baseUrl}/${issue.id}/notes/${n.name}` },
+            params: { slug: slugPath },
             props: { ...common, pageType: 'issues-subdoc', issue, vocabulary, subDoc: { kind: 'note', note: n } },
           });
         }
         for (const log of issue.agentLogs) {
-          const slugPath = log.group
-            ? `${baseUrl}/${issue.id}/agent-log/${log.group}/${log.name}`
-            : `${baseUrl}/${issue.id}/agent-log/${log.name}`;
+          const slugPath = [baseUrl, issue.id, 'agent-log', ...log.groupPath, log.name].filter(Boolean).join('/');
           paths.push({
             params: { slug: slugPath },
             props: { ...common, pageType: 'issues-subdoc', issue, vocabulary, subDoc: { kind: 'log', log } },

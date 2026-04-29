@@ -16,19 +16,33 @@ Every tracker has the same skeleton:
 └── <YYYY-MM-DD-slug>/                           ← one folder per issue
     ├── settings.json                            ← issue metadata
     ├── issue.md                                 ← main body (the goal / context)
-    ├── comments/                                ← chronological discussion
+    ├── comments/                                ← chronological discussion (flat)
     │   └── NNN_<date>_<author>.md
-    ├── subtasks/                                ← atomic units of work
+    ├── subtasks/                                ← atomic units of work (flat)
     │   └── NNN_<slug>.md
-    ├── notes/                                   ← supporting design docs
-    │   └── <slug>.md
-    └── agent-log/                               ← AI iteration audit trail
-        └── NNN_<slug>.md
+    ├── notes/                                   ← supporting design docs (up to 2 subfolder levels)
+    │   ├── <slug>.md                            ← root-level note
+    │   └── <group>/
+    │       ├── <slug>.md                        ← level-1 note
+    │       └── <subgroup>/
+    │           └── <slug>.md                    ← level-2 note (deepest the loader accepts)
+    └── agent-log/                               ← AI iteration audit trail (up to 2 subfolder levels)
+        ├── <slug>.md                            ← root-level entry (NNN_ prefix optional)
+        └── <group>/
+            ├── <slug>.md
+            └── <subgroup>/
+                └── <slug>.md
 ```
 
 **Folder naming regex:** `^\d{4}-\d{2}-\d{2}-[a-z0-9-]+$` (date + kebab-case slug).
 
 **Stray root-level `.md` inside an issue folder is a warning.** Surface it to the user — don't silently include or ignore.
+
+**`notes/` and `agent-log/` subfolder rules:**
+- Up to **2 levels of nesting** (`<group>/<subgroup>/<file>.md`). Anything deeper is logged as a warning by the loader and silently skipped — never relied on.
+- **Files and folders can mix at every level** that allows folders. So `notes/intro.md` can sit beside `notes/design/`, and `notes/design/overview.md` can sit beside `notes/design/phase-1/`. Only the deepest level (level 2) is files-only.
+- **No `NNN_` prefix required.** Filenames are freeform; if an `agent-log` filename happens to start with `NNN_`, the prefix is parsed as the iteration sequence number, otherwise the loader assigns one based on sort order within the leaf folder.
+- `comments/` and `subtasks/` stay flat — no subfolders.
 
 ---
 
@@ -173,11 +187,11 @@ Body — describe the work in enough detail that someone (or an agent) can pick 
 
 `done: true` should be paired with `state: closed` (or `review`). `state` follows the same 4-state vocabulary as issue `status`.
 
-### `notes/<slug>.md`
+### `notes/[<group>/[<subgroup>/]]<slug>.md`
 
-Supporting design docs — research, design decisions, reference material that doesn't belong in `issue.md`. No state, no numbering. Frontmatter is minimal (often just `title`).
+Supporting design docs — research, design decisions, reference material that doesn't belong in `issue.md`. No state, no numbering. Frontmatter is minimal (often just `title`). May live at the root of `notes/`, or one or two folders deeper for grouping (e.g. `notes/design/phase-1/kickoff.md`). Folder names are freeform.
 
-### `agent-log/NNN_<slug>.md` — **read these first when picking up work**
+### `agent-log/[<group>/[<subgroup>/]]<slug>.md` — **read these first when picking up work**
 
 Audit trail of prior AI iterations. **Always read before starting work** — past iterations may have failed approaches you'd otherwise repeat.
 
@@ -198,6 +212,8 @@ Body structure:
 - **Next** — what to try next (if any)
 
 **Failed iterations are kept**, not deleted. One file per *iteration*, not per minute. When closing an issue, the final agent-log entry should reference the shipped commit / PR.
+
+**Subfolders for long-running issues.** Once a flat `agent-log/` outgrows itself (~20+ entries), group iterations into folders by phase or angle: `agent-log/exploration/`, `agent-log/implementation/`, `agent-log/benchmarks/`. A second level is available for deeper splits (`agent-log/implementation/round-2/`) — but use it sparingly; if a sub-subgroup needs a third level, that's a sign to split the issue, not nest deeper. Sequence numbers reset per leaf folder.
 
 ---
 
@@ -432,12 +448,44 @@ Or via the editor API if running locally: `POST /__editor/subtask-toggle`. The s
 2. Write `<issue>/comments/NN_<slug>.md` (or `NN_<date>_<author>.md`)
 3. Frontmatter: `author`, `date` (today, YYYY-MM-DD)
 
+### Add a note
+
+Notes are freeform supporting docs — pick a meaningful filename, no `NNN_` prefix needed, no required frontmatter beyond an optional `title`.
+
+1. Decide where it lives:
+   - Single design doc → `<issue>/notes/<slug>.md`
+   - Part of a themed set → `<issue>/notes/<group>/<slug>.md` (e.g. `notes/design/overview.md`)
+   - Sub-phase of a themed set → `<issue>/notes/<group>/<subgroup>/<slug>.md` (e.g. `notes/design/phase-1/kickoff.md`)
+2. Two levels is the cap. If you find yourself reaching for a third, rethink — usually that's a sign to split into a sibling group or a new issue.
+3. Write the file. Folder names are freeform; the loader creates the tree from whatever it finds.
+
 ### Add an agent-log entry
 
-1. Find the next prefix: `ls <issue>/agent-log/`
-2. Write `<issue>/agent-log/NN_<slug>.md`
-3. Frontmatter: `iteration` (next int), `agent` (model id), `status` (in-progress | success | failed), `date`
-4. Body: Goal → Approach → Result → Next
+Prefer the helper:
+
+```bash
+# Top-level entry
+docs-add-agent-log <issue-id> \
+  --status success --body "Goal: …  Approach: …  Result: …  Next: —"
+
+# Nested under a 1-level subgroup
+docs-add-agent-log <issue-id> --group exploration \
+  --status success --body "..."
+
+# Nested two levels deep (the deepest the loader accepts)
+docs-add-agent-log <issue-id> --group exploration/phase-1 \
+  --status success --body "..."
+```
+
+`--group` accepts up to 2 slash-separated segments (e.g. `--group exploration` or `--group exploration/phase-1`). The script auto-creates the folder, auto-increments iteration / sequence within the leaf folder, and writes valid frontmatter.
+
+Direct file write (when the helper isn't available):
+
+1. Pick the target folder — `<issue>/agent-log/` for a top-level entry, or up to two levels deep (`<issue>/agent-log/<group>/[<subgroup>/]`).
+2. Find the next prefix in that folder: `ls <target-folder>/`. The `NNN_` prefix is **optional** but recommended for sortability and so the iteration counter survives.
+3. Write `<target-folder>/NN_<slug>.md`.
+4. Frontmatter: `iteration` (next int), `agent` (model id), `status` (in-progress | success | failed), `date`.
+5. Body: Goal → Approach → Result → Next.
 
 ### When NOT to edit
 

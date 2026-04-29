@@ -14,9 +14,10 @@
 import type { Issue, IssueSubtask } from '@loaders/issues';
 import { stateIconSvg } from '../../server/state-icon';
 import {
-  pad, TERMINAL, logPanelKey, groupAgentLogs,
-  detailUrl, subtaskUrl, noteUrl, logUrl,
+  pad, TERMINAL, groupByPath,
+  detailUrl, subtaskUrl,
 } from '../../server/helpers';
+import SubdocTree from './SubdocTree.astro';
 
 interface Props {
   baseUrl: string;
@@ -40,13 +41,8 @@ const overviewHref = detailUrl(baseUrl, issue.id);
 const comprehensiveHref = `${overviewHref}#comprehensive`;
 const isOverviewMode = mode === 'overview';
 
-function logLabel(log: { iteration: number | null; name: string }): string {
-  const stem = log.name.replace(/^\d+[_-]/, '').replace(/[-_]/g, ' ');
-  return log.iteration !== null ? `#${log.iteration} ${stem}` : stem;
-}
-
-const { top: topLogs, bySubgroup: logGroups } = groupAgentLogs(issue.agentLogs);
-const logSubgroupNames = Array.from(logGroups.keys()).sort();
+const noteTree = groupByPath(issue.notes);
+const logTree = groupByPath(issue.agentLogs);
 
 const activeNotesGroupOpen = activeKey.startsWith('note-');
 const activeLogGroupOpen = activeKey.startsWith('log-');
@@ -108,28 +104,11 @@ const activeLogGroupOpen = activeKey.startsWith('log-');
         <span>Notes</span>
         {issue.notes.length > 0 && <span class="issue-sidebar__heading-count">{issue.notes.length}</span>}
       </summary>
-      <div class="issue-sidebar__items">
-        {issue.notes.length > 0 ? issue.notes.map((n) => {
-          const key = `note-${n.name}`;
-          const isActive = activeKey === key;
-          return (
-            <a
-              href={noteUrl(baseUrl, issue.id, n)}
-              class={`issue-sidebar__item ${isActive ? 'is-active' : ''}`}
-              aria-current={isActive ? 'page' : undefined}
-            >
-              <span class="issue-sidebar__icon" aria-hidden="true">
-                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-                  <path d="M3 1h7l3 3v11H3V1z"/><path d="M10 1v3h3"/>
-                </svg>
-              </span>
-              <span class="issue-sidebar__label">{n.name}.md</span>
-            </a>
-          );
-        }) : (
-          <div class="issue-sidebar__empty">No notes</div>
-        )}
-      </div>
+      {issue.notes.length === 0 ? (
+        <div class="issue-sidebar__items"><div class="issue-sidebar__empty">No notes</div></div>
+      ) : (
+        <SubdocTree tree={noteTree} kind="note" baseUrl={baseUrl} issueId={issue.id} activeKey={activeKey} />
+      )}
     </details>
 
     <details class="issue-sidebar__section" open>
@@ -174,63 +153,11 @@ const activeLogGroupOpen = activeKey.startsWith('log-');
         <span>Agent log</span>
         {issue.agentLogs.length > 0 && <span class="issue-sidebar__heading-count">{issue.agentLogs.length}</span>}
       </summary>
-      <div class="issue-sidebar__items">
-        {issue.agentLogs.length === 0 && (
-          <div class="issue-sidebar__empty">No agent-log entries</div>
-        )}
-        {topLogs.map((log) => {
-          const key = logPanelKey(log);
-          const isActive = activeKey === key;
-          return (
-            <a
-              href={logUrl(baseUrl, issue.id, log)}
-              class={`issue-sidebar__item ${isActive ? 'is-active' : ''}`}
-              aria-current={isActive ? 'page' : undefined}
-            >
-              <span class="issue-sidebar__icon" aria-hidden="true">
-                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-                  <circle cx="8" cy="8" r="6"/><path d="M8 4v4l3 2"/>
-                </svg>
-              </span>
-              <span class="issue-sidebar__label">{logLabel(log)}</span>
-            </a>
-          );
-        })}
-        {logSubgroupNames.map((group) => {
-          const subgroupHasActive = logGroups.get(group)!.some(
-            (log) => activeKey === logPanelKey(log),
-          );
-          return (
-            <details class="issue-sidebar__subgroup" open={subgroupHasActive ? true : undefined}>
-              <summary class="issue-sidebar__subgroup-heading">
-                <svg class="issue-sidebar__chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
-                <span class="issue-sidebar__subgroup-name">{group}</span>
-                <span class="issue-sidebar__heading-count">{logGroups.get(group)!.length}</span>
-              </summary>
-              <div class="issue-sidebar__items issue-sidebar__items--nested">
-                {logGroups.get(group)!.map((log) => {
-                  const key = logPanelKey(log);
-                  const isActive = activeKey === key;
-                  return (
-                    <a
-                      href={logUrl(baseUrl, issue.id, log)}
-                      class={`issue-sidebar__item ${isActive ? 'is-active' : ''}`}
-                      aria-current={isActive ? 'page' : undefined}
-                    >
-                      <span class="issue-sidebar__icon" aria-hidden="true">
-                        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-                          <circle cx="8" cy="8" r="6"/><path d="M8 4v4l3 2"/>
-                        </svg>
-                      </span>
-                      <span class="issue-sidebar__label">{logLabel(log)}</span>
-                    </a>
-                  );
-                })}
-              </div>
-            </details>
-          );
-        })}
-      </div>
+      {issue.agentLogs.length === 0 ? (
+        <div class="issue-sidebar__items"><div class="issue-sidebar__empty">No agent-log entries</div></div>
+      ) : (
+        <SubdocTree tree={logTree} kind="log" baseUrl={baseUrl} issueId={issue.id} activeKey={activeKey} />
+      )}
     </details>
   </nav>
 </aside>

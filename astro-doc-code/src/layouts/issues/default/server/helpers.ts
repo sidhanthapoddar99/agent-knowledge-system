@@ -2,7 +2,7 @@
  * Small server-side utilities shared across the detail-page components.
  * Kept here so the .astro files stay focused on templating.
  */
-import type { IssueAgentLog, IssueSubtask, SubtaskState } from '@loaders/issues';
+import type { IssueAgentLog, IssueNote, IssueSubtask, SubtaskState } from '@loaders/issues';
 
 export const TERMINAL: SubtaskState[] = ['closed', 'cancelled'];
 
@@ -58,9 +58,18 @@ export function initial(name: string | null | undefined): string {
 
 /** Panel key for an agent-log entry. Used only on the overview detail page
  *  where multiple sub-docs share one DOM. Sub-doc pages (their own URL) use
- *  the URL path instead. Flat files: `log-<name>`; grouped: `log-<group>--<name>`. */
+ *  the URL path instead. Segments are joined with `--`; root-level: `log-<name>`. */
 export function logPanelKey(log: IssueAgentLog): string {
-  return log.group ? `log-${log.group}--${log.name}` : `log-${log.name}`;
+  return log.groupPath.length === 0
+    ? `log-${log.name}`
+    : `log-${[...log.groupPath, log.name].join('--')}`;
+}
+
+/** Panel key for a note entry — same scheme as logPanelKey but `note-` prefix. */
+export function notePanelKey(note: IssueNote): string {
+  return note.groupPath.length === 0
+    ? `note-${note.name}`
+    : `note-${[...note.groupPath, note.name].join('--')}`;
 }
 
 // ===== Sub-doc URL helpers (subtask 17) =====
@@ -81,29 +90,46 @@ export function subtaskUrl(baseUrl: string, issueId: string, subtask: IssueSubta
   return joinPath(baseUrl, issueId, 'subtasks', subtask.slug);
 }
 
-export function noteUrl(baseUrl: string, issueId: string, note: { name: string }): string {
-  return joinPath(baseUrl, issueId, 'notes', note.name);
+export function noteUrl(baseUrl: string, issueId: string, note: IssueNote): string {
+  return joinPath(baseUrl, issueId, 'notes', ...note.groupPath, note.name);
 }
 
 export function logUrl(baseUrl: string, issueId: string, log: IssueAgentLog): string {
-  return log.group
-    ? joinPath(baseUrl, issueId, 'agent-log', log.group, log.name)
-    : joinPath(baseUrl, issueId, 'agent-log', log.name);
+  return joinPath(baseUrl, issueId, 'agent-log', ...log.groupPath, log.name);
 }
 
-/** Group agent logs: { top: flat files, bySubgroup: Map<group, logs[]> } */
-export function groupAgentLogs(logs: IssueAgentLog[]): {
-  top: IssueAgentLog[];
-  bySubgroup: Map<string, IssueAgentLog[]>;
-} {
-  const top: IssueAgentLog[] = [];
-  const bySubgroup = new Map<string, IssueAgentLog[]>();
-  for (const log of logs) {
-    if (!log.group) top.push(log);
-    else {
-      if (!bySubgroup.has(log.group)) bySubgroup.set(log.group, []);
-      bySubgroup.get(log.group)!.push(log);
-    }
+/**
+ * Two-level tree: files at this folder + a map of named subgroups, each of
+ * which is itself a one-level grouping (its own file list + its own
+ * sub-subgroup map). Used by the sidebar to render notes / agent-logs as
+ * collapsible nested sections that mirror the on-disk shape.
+ */
+export interface GroupedTree<T> {
+  files: T[];
+  groups: Map<string, GroupedTree<T>>;
+}
+
+function emptyTree<T>(): GroupedTree<T> {
+  return { files: [], groups: new Map() };
+}
+
+function insertIntoTree<T>(tree: GroupedTree<T>, segments: string[], item: T): void {
+  if (segments.length === 0) {
+    tree.files.push(item);
+    return;
   }
-  return { top, bySubgroup };
+  const [head, ...rest] = segments;
+  let child = tree.groups.get(head);
+  if (!child) {
+    child = emptyTree<T>();
+    tree.groups.set(head, child);
+  }
+  insertIntoTree(child, rest, item);
+}
+
+/** Build a 2-level tree from flat entries that carry a `groupPath` array. */
+export function groupByPath<T extends { groupPath: string[] }>(items: T[]): GroupedTree<T> {
+  const tree = emptyTree<T>();
+  for (const item of items) insertIntoTree(tree, item.groupPath, item);
+  return tree;
 }

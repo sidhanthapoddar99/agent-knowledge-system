@@ -59,31 +59,49 @@ Examples:
 2026-04-19-docs-phase-2/
 ├── settings.json                    ← metadata (required)
 ├── issue.md                         ← body (required)
-├── comments/                        ← thread (optional)
+├── comments/                        ← thread, flat (optional)
 │   ├── 001_2026-04-19_sidhantha.md
 │   └── 002_2026-04-19_claude.md
-├── subtasks/                        ← checklist items (optional)
+├── subtasks/                        ← checklist items, flat (optional)
 │   ├── 01_issues-layout-docs.md
 │   ├── 02_theme-system-docs.md
 │   └── 03_editor-v2-docs.md
-├── notes/                           ← supporting docs (optional)
-│   ├── 01_proposed-file-structure.md
-│   └── 02_design-decisions.md
-└── agent-log/                       ← AI audit trail (optional)
-    ├── 001_initial-triage.md
-    └── exploration/                 ← one-level subgroup allowed
+├── notes/                           ← supporting docs, up to 2 subfolder levels (optional)
+│   ├── 01_proposed-file-structure.md          ← root-level note
+│   ├── design/                                ← level-1 group
+│   │   ├── api-shape.md
+│   │   └── phase-1/                           ← level-2 subgroup
+│   │       └── kickoff.md
+│   └── research/
+│       └── prior-art.md
+└── agent-log/                       ← AI audit trail, up to 2 subfolder levels (optional)
+    ├── 001_initial-triage.md                  ← root-level entry
+    └── exploration/                           ← level-1 subgroup
         ├── 001_approach-a.md
-        └── 002_approach-b.md
+        └── phase-1/                           ← level-2 subgroup
+            ├── 001_kickoff.md
+            └── 002_decisions.md
 ```
 
 | Path | Required | Contents |
 |---|---|---|
 | `settings.json` | ✅ | All metadata — status, priority, labels, dates. See [Per-Issue Settings](./settings/per-issue). |
 | `issue.md` | ✅ | The goal / pitch / context. Pure markdown, no frontmatter. See [issue.md](./sub-docs/issue-md). |
-| `comments/` | — | One file per comment, named `NNN_YYYY-MM-DD_<author>.md`. See [Comments](./sub-docs/comments). |
-| `subtasks/` | — | Atomic units of work with `NN_<slug>.md` naming, frontmatter-driven state. See [Subtasks](./sub-docs/subtasks). |
-| `notes/` | — | Supporting design docs. See [Notes](./sub-docs/notes). |
-| `agent-log/` | — | AI iteration records. Top-level files + up to one level of subgroup folders. See [Agent Log](./sub-docs/agent-log). |
+| `comments/` | — | One file per comment, named `NNN_YYYY-MM-DD_<author>.md`. Flat — no subfolders. See [Comments](./sub-docs/comments). |
+| `subtasks/` | — | Atomic units of work with `NN_<slug>.md` naming, frontmatter-driven state. Flat — no subfolders. See [Subtasks](./sub-docs/subtasks). |
+| `notes/` | — | Supporting design docs. **Up to 2 levels of freeform subfolders.** See [Notes](./sub-docs/notes). |
+| `agent-log/` | — | AI iteration records. **Up to 2 levels of freeform subfolders.** `NNN_` prefix on filenames is optional. See [Agent Log](./sub-docs/agent-log). |
+
+### Subfolder rules (`notes/` and `agent-log/`)
+
+`notes/` and `agent-log/` accept up to **two levels of subfolders** for grouping long-running content by theme or phase. Folder and file names are freeform — no naming convention enforced.
+
+- Mix files and folders freely at the root and at level-1. Level-2 is files-only — folders found at depth 3 are warned and silently skipped.
+- The same filename can appear in different folders (`notes/design/intro.md` and `notes/research/intro.md` coexist with distinct URLs).
+- Subgroups render as collapsible nested sections in the detail-page sidebar; each level shows a count of descendants.
+- If you find yourself reaching for a third level, that's usually a signal to split into a sibling group at level-1, or — if the content has outgrown a single issue — into a separate issue.
+
+`comments/` and `subtasks/` stay flat — they don't accept subfolders.
 
 ### Stray files warned, not crashed
 

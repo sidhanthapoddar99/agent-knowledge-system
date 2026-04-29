@@ -143,18 +143,25 @@ for (const entry of issueFolders) {
     }
   }
 
-  // Agent-log subgroup depth (max 1)
-  const logDir = path.join(folder, 'agent-log');
-  if (fs.existsSync(logDir)) {
-    const logEntries = fs.readdirSync(logDir, { withFileTypes: true });
-    for (const e of logEntries) {
-      if (!e.isDirectory()) continue;
-      const subEntries = fs.readdirSync(path.join(logDir, e.name), { withFileTypes: true });
-      const deeper = subEntries.filter((s) => s.isDirectory());
-      if (deeper.length) {
-        warnings.push(`${id}/agent-log/${e.name}/: nested subdirs ignored by loader (${deeper.map(d => d.name).join(', ')})`);
+  // notes/ + agent-log/ subfolder depth (max 2 levels — anything deeper is
+  // ignored by the loader). Depth 0 = root, depth 1 = group, depth 2 = subgroup.
+  for (const sub of ['notes', 'agent-log']) {
+    const subDir = path.join(folder, sub);
+    if (!fs.existsSync(subDir)) continue;
+    function walkDepth(absDir, segments) {
+      let entries;
+      try { entries = fs.readdirSync(absDir, { withFileTypes: true }); }
+      catch { return; }
+      for (const e of entries) {
+        if (!e.isDirectory()) continue;
+        if (segments.length >= 2) {
+          warnings.push(`${id}/${sub}/${[...segments, e.name].join('/')}/: exceeds 2-level depth cap, ignored by loader`);
+          continue;
+        }
+        walkDepth(path.join(absDir, e.name), [...segments, e.name]);
       }
     }
+    walkDepth(subDir, []);
   }
 }
 

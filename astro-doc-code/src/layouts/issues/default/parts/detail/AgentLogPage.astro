@@ -13,7 +13,7 @@ interface Props {
 }
 
 const { log, standalone = false } = Astro.props;
-const pathDisplay = log.group ? `agent-log/${log.group}/${log.name}.md` : `agent-log/${log.name}.md`;
+const pathDisplay = ['agent-log', ...log.groupPath, `${log.name}.md`].join('/');
 ---
 
 <section

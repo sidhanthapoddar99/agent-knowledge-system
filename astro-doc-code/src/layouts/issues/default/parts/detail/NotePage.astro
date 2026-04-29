@@ -6,6 +6,7 @@
  */
 import type { IssueNote } from '@loaders/issues';
 import type { TocEntry } from '../../server/toc';
+import { notePanelKey } from '../../server/helpers';
 
 interface Props {
   note: IssueNote & { toc?: TocEntry[] };
@@ -13,16 +14,17 @@ interface Props {
 }
 
 const { note: n, standalone = false } = Astro.props;
+const pathDisplay = ['notes', ...n.groupPath, `${n.name}.md`].join('/');
 ---
 
 <section
   class={`issue-panel ${standalone ? 'is-active' : ''}`}
-  data-panel={`note-${n.name}`}
+  data-panel={notePanelKey(n)}
   role="tabpanel"
   hidden={!standalone}
 >
   <div class="issue-doc">
-    <div class="issue-doc__path">notes/{n.name}.md</div>
+    <div class="issue-doc__path">{pathDisplay}</div>
     <div class="issue-doc__body markdown-content">
       <Fragment set:html={n.html} />
     </div>

@@ -63,7 +63,7 @@ for (const c of comments) {
 
 console.log(`\n## Agent logs (${agentLogs.length})`);
 for (const log of agentLogs) {
-  const grp = log.group ? `${log.group}/` : '';
+  const grp = log.groupPath.length > 0 ? `${log.groupPath.join('/')}/` : '';
   const tags = [];
   if (log.status) tags.push(log.status);
   if (log.agent) tags.push(`by ${log.agent}`);
@@ -82,7 +82,7 @@ if (args.flags.full) {
     console.log(fs.readFileSync(c.filePath, 'utf-8'));
   }
   for (const log of agentLogs) {
-    const grp = log.group ? `${log.group}/` : '';
+    const grp = log.groupPath.length > 0 ? `${log.groupPath.join('/')}/` : '';
     console.log(`\n---\n## agent-log/${grp}${log.name}\n`);
     console.log(fs.readFileSync(log.filePath, 'utf-8'));
   }

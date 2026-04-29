@@ -3,12 +3,17 @@
  *
  * Folder-per-issue content loader. Each issue lives at
  *   <dataPath>/YYYY-MM-DD-<slug>/
- *     settings.json          (metadata, required)
- *     issue.md               (body, required)
- *     comments/NNN_*.md      (thread, optional)
- *     subtasks/*.md          (checklist items — frontmatter {title, done}, optional)
- *     notes/*.md             (supporting documents, optional)
- *     agent-log/NNN_*.md    (iterative AI agent notes — frontmatter {iteration, agent, status, date}, optional)
+ *     settings.json                            (metadata, required)
+ *     issue.md                                 (body, required)
+ *     comments/NNN_*.md                        (thread, optional)
+ *     subtasks/*.md                            (checklist items — frontmatter {title, done}, optional)
+ *     notes/[<group>/[<subgroup>/]]*.md        (supporting documents, optional — 2-level tree)
+ *     agent-log/[<group>/[<subgroup>/]]*.md    (iterative AI agent notes, optional — 2-level tree)
+ *
+ * Notes and agent-log both support up to two levels of subfoldering. Folder
+ * and file names are freeform — no `NNN_` prefix is required (when present
+ * on agent-log files, the leading number is still parsed as `sequence`).
+ * Anything nested deeper than two levels is warned and ignored.
  *
  * The root <dataPath>/settings.json defines the tag vocabulary (status, priority,
  * type, component, milestone, labels, authors) — returned as `vocabulary`.
@@ -59,15 +64,19 @@ export interface IssueNote {
   name: string;
   filePath: string;
   relativePath: string;
+  /** Folder segments below `notes/` — 0/1/2 entries.
+   *  `[]` for top-level, `["design"]` for `notes/design/foo.md`,
+   *  `["design", "phase-1"]` for `notes/design/phase-1/foo.md`. */
+  groupPath: string[];
   /** Rendered HTML */
   html: string;
 }
 
 export interface IssueAgentLog {
-  /** Filename without extension, e.g. "001_initial-triage" */
+  /** Filename without extension, e.g. "001_initial-triage" or "triage" */
   name: string;
   /** Numeric prefix if filename starts with "NNN_", else the sort order.
-   *  In a subgroup, sequence resets per subgroup (001, 002, … per folder). */
+   *  Sequence resets per subgroup folder (001, 002, … per leaf folder). */
   sequence: number;
   /** Frontmatter `iteration` field (falls back to sequence) */
   iteration: number | null;
@@ -77,12 +86,11 @@ export interface IssueAgentLog {
   status: string | null;
   /** Frontmatter `date` */
   date: string | null;
-  /** Subgroup folder name (e.g. "exploration"), or null for top-level
-   *  files. Max depth is 1 — anything deeper is warned + ignored. */
-  group: string | null;
+  /** Folder segments below `agent-log/` — 0/1/2 entries. Same shape as
+   *  IssueNote.groupPath. Anything deeper than 2 is warned + ignored. */
+  groupPath: string[];
   filePath: string;
-  /** Path relative to the issue folder — includes the group when grouped
-   *  (e.g. "agent-log/exploration/001_approach-a.md"). */
+  /** Path relative to dataPath — includes the group folders when nested. */
   relativePath: string;
   /** Rendered HTML of the body */
   html: string;
@@ -208,18 +216,30 @@ function computeSignature(dataPath: string): number {
     for (const sub of ['comments', 'subtasks', 'notes', 'agent-log']) {
       const subDir = path.join(folder, sub);
       sig += statMtime(subDir);
+      // notes and agent-log support up to 2 levels of subfolders;
+      // comments and subtasks stay flat.
+      const allowsNesting = sub === 'notes' || sub === 'agent-log';
       try {
         const items = fs.readdirSync(subDir, { withFileTypes: true });
         for (const item of items) {
           const abs = path.join(subDir, item.name);
           if (item.isFile() && item.name.endsWith('.md')) {
             sig += statMtime(abs);
-          } else if (item.isDirectory() && sub === 'agent-log') {
-            // One level of nesting in agent-log for subgroups.
+          } else if (item.isDirectory() && allowsNesting) {
             sig += statMtime(abs);
             try {
-              for (const f of fs.readdirSync(abs)) {
-                if (f.endsWith('.md')) sig += statMtime(path.join(abs, f));
+              for (const inner of fs.readdirSync(abs, { withFileTypes: true })) {
+                const innerAbs = path.join(abs, inner.name);
+                if (inner.isFile() && inner.name.endsWith('.md')) {
+                  sig += statMtime(innerAbs);
+                } else if (inner.isDirectory()) {
+                  sig += statMtime(innerAbs);
+                  try {
+                    for (const f of fs.readdirSync(innerAbs)) {
+                      if (f.endsWith('.md')) sig += statMtime(path.join(innerAbs, f));
+                    }
+                  } catch { /* empty leaf */ }
+                }
               }
             } catch { /* empty group */ }
           }
@@ -332,29 +352,10 @@ async function loadIssueFolder(folderPath: string, dataPath: string): Promise<Is
   // Subtasks: frontmatter-driven files under subtasks/ (body optional)
   const subtasks = await readSubtasks(path.join(folderPath, 'subtasks'), dataPath);
 
-  // Notes: rendered markdown under notes/
-  const notes: IssueNote[] = [];
-  const notesDir = path.join(folderPath, 'notes');
-  if (fs.existsSync(notesDir)) {
-    const noteEntries = fs
-      .readdirSync(notesDir, { withFileTypes: true })
-      .filter((e) => e.isFile() && e.name.endsWith('.md'))
-      .map((e) => e.name)
-      .sort();
-    for (const name of noteEntries) {
-      const abs = path.join(notesDir, name);
-      notes.push({
-        name: name.replace(/\.md$/, ''),
-        filePath: abs,
-        relativePath: path.relative(dataPath, abs),
-        html: await renderMarkdown(abs, dataPath),
-      });
-    }
-  }
+  // Notes: rendered markdown under notes/, up to 2 levels of subfolders
+  const notes = await readNotes(path.join(folderPath, 'notes'), dataPath, id);
 
-  // Agent logs: flat top-level files + one level of subgroup folders.
-  // Each subgroup has its own reset sequence counter. Anything nested
-  // deeper than <group>/<file>.md is warned and ignored.
+  // Agent logs: same 2-level shape as notes; sequence resets per leaf folder
   const agentLogs = await readAgentLogs(path.join(folderPath, 'agent-log'), dataPath, id);
 
   // Warn on stray root-level *.md (users upgrading from the old layout)
@@ -387,14 +388,74 @@ async function loadIssueFolder(folderPath: string, dataPath: string): Promise<Is
   };
 }
 
+/**
+ * Walk a 2-level tree of `*.md` files under `rootDir`. Yields entries in
+ * stable folder-then-name order; sequence counter (assigned by the caller
+ * via `onFile`) resets at each leaf folder. Anything deeper than 2 levels
+ * is logged as a warning and skipped.
+ */
+async function walkTwoLevels<T>(
+  rootDir: string,
+  issueId: string,
+  subName: string,
+  onFile: (abs: string, groupPath: string[], fallbackSeq: number) => Promise<T>,
+): Promise<T[]> {
+  if (!fs.existsSync(rootDir)) return [];
+  const out: T[] = [];
+
+  async function emitFolder(absDir: string, groupPath: string[]): Promise<void> {
+    let entries: fs.Dirent[];
+    try { entries = fs.readdirSync(absDir, { withFileTypes: true }); }
+    catch { return; }
+
+    const files = entries
+      .filter((e) => e.isFile() && e.name.endsWith('.md'))
+      .map((e) => e.name)
+      .sort();
+    let i = 0;
+    for (const name of files) {
+      out.push(await onFile(path.join(absDir, name), groupPath, ++i));
+    }
+
+    const subFolders = entries
+      .filter((e) => e.isDirectory())
+      .map((e) => e.name)
+      .sort();
+    for (const folder of subFolders) {
+      if (groupPath.length >= 2) {
+        console.warn(
+          `[issues] "${issueId}": ${subName}/${[...groupPath, folder].join('/')}/ exceeds the 2-level depth cap — ignored`,
+        );
+        continue;
+      }
+      await emitFolder(path.join(absDir, folder), [...groupPath, folder]);
+    }
+  }
+
+  await emitFolder(rootDir, []);
+  return out;
+}
+
+async function readNotes(
+  notesDir: string,
+  dataPath: string,
+  issueId: string,
+): Promise<IssueNote[]> {
+  return walkTwoLevels(notesDir, issueId, 'notes', async (abs, groupPath) => ({
+    name: path.basename(abs).replace(/\.md$/, ''),
+    filePath: abs,
+    relativePath: path.relative(dataPath, abs),
+    groupPath,
+    html: await renderMarkdown(abs, dataPath),
+  }));
+}
+
 async function readAgentLogs(
   logsDir: string,
   dataPath: string,
   issueId: string,
 ): Promise<IssueAgentLog[]> {
-  if (!fs.existsSync(logsDir)) return [];
-
-  async function makeLog(abs: string, group: string | null, fallbackSeq: number): Promise<IssueAgentLog> {
+  return walkTwoLevels(logsDir, issueId, 'agent-log', async (abs, groupPath, fallbackSeq) => {
     const base = path.basename(abs).replace(/\.md$/, '');
     const prefixMatch = base.match(/^(\d+)[_-]/);
     const sequence = prefixMatch ? parseInt(prefixMatch[1], 10) : fallbackSeq;
@@ -407,57 +468,12 @@ async function readAgentLogs(
       agent: fm.agent || null,
       status: fm.status || null,
       date: fm.date || null,
-      group,
+      groupPath,
       filePath: abs,
       relativePath: path.relative(dataPath, abs),
       html: await renderMarkdown(abs, dataPath),
     };
-  }
-
-  const out: IssueAgentLog[] = [];
-  const entries = fs.readdirSync(logsDir, { withFileTypes: true });
-
-  // 1. Flat top-level files (group: null)
-  const topFiles = entries
-    .filter((e) => e.isFile() && e.name.endsWith('.md'))
-    .map((e) => e.name)
-    .sort();
-  let topI = 0;
-  for (const name of topFiles) {
-    out.push(await makeLog(path.join(logsDir, name), null, ++topI));
-  }
-
-  // 2. One level of subgroup folders — per-subgroup reset sequence
-  const subFolders = entries
-    .filter((e) => e.isDirectory())
-    .map((e) => e.name)
-    .sort();
-  for (const folder of subFolders) {
-    const subDir = path.join(logsDir, folder);
-    let subEntries: fs.Dirent[];
-    try { subEntries = fs.readdirSync(subDir, { withFileTypes: true }); }
-    catch { continue; }
-
-    const subFiles = subEntries
-      .filter((e) => e.isFile() && e.name.endsWith('.md'))
-      .map((e) => e.name)
-      .sort();
-    let subI = 0;
-    for (const name of subFiles) {
-      out.push(await makeLog(path.join(subDir, name), folder, ++subI));
-    }
-
-    // Warn on nesting deeper than 1 — per spec, anything below
-    // agent-log/<group>/<file>.md is ignored (keeps the mental model flat).
-    const deeperDirs = subEntries.filter((e) => e.isDirectory()).map((e) => e.name);
-    if (deeperDirs.length > 0) {
-      console.warn(
-        `[issues] "${issueId}": agent-log/${folder}/ contains nested subdirs (${deeperDirs.join(', ')}); ignored — max depth is 1`,
-      );
-    }
-  }
-
-  return out;
+  });
 }
 
 async function readSubtasks(subtasksDir: string, dataPath: string): Promise<IssueSubtask[]> {

@@ -130,19 +130,18 @@ function resolveSubDoc(issue: any, parts: string[]): RouteProps['subDoc'] | null
     const s = issue.subtasks.find((st: any) => st.slug === rest[0]);
     return s ? { kind: 'subtask', subtask: s } : null;
   }
-  if (kind === 'notes' && rest.length === 1) {
-    const n = issue.notes.find((nt: any) => nt.name === rest[0]);
-    return n ? { kind: 'note', note: n } : null;
-  }
-  if (kind === 'agent-log') {
-    if (rest.length === 1) {
-      const log = issue.agentLogs.find((l: any) => l.group === null && l.name === rest[0]);
-      return log ? { kind: 'log', log } : null;
+  // notes + agent-log: rest = [...groupPath, name], groupPath is 0–2 segments
+  if ((kind === 'notes' || kind === 'agent-log') && rest.length >= 1 && rest.length <= 3) {
+    const groupPath = rest.slice(0, -1);
+    const name = rest[rest.length - 1];
+    const matchPath = (gp: string[]) =>
+      gp.length === groupPath.length && gp.every((g, i) => g === groupPath[i]);
+    if (kind === 'notes') {
+      const n = issue.notes.find((nt: any) => nt.name === name && matchPath(nt.groupPath));
+      return n ? { kind: 'note', note: n } : null;
     }
-    if (rest.length === 2) {
-      const log = issue.agentLogs.find((l: any) => l.group === rest[0] && l.name === rest[1]);
-      return log ? { kind: 'log', log } : null;
-    }
+    const log = issue.agentLogs.find((l: any) => l.name === name && matchPath(l.groupPath));
+    return log ? { kind: 'log', log } : null;
   }
   return null;
 }

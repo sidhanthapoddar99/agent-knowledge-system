@@ -16,34 +16,45 @@ This is one of the two features that make the tracker AI-native. Without it, lon
 agent-log/
 ├── 001_initial-triage.md
 ├── 002_incremental-parse-spike.md
-├── 003_cache-inspector-hookup.md
-└── exploration/                       ← one level of subgroup allowed
+├── triage-followup.md                 ← NNN_ prefix is optional
+└── exploration/                       ← up to 2 levels of subgroup allowed
     ├── 001_approach-a.md
-    └── 002_approach-b.md
+    └── phase-1/
+        ├── 001_spike.md
+        └── 002_polish.md
 ```
 
-- **`NNN`** — sequence number (1-indexed). Zero-padding optional but recommended.
+- **`NNN`** — sequence number (1-indexed). **Optional**. Zero-padding recommended when present.
 - **Separator** — `_` or `-` (both work).
 - **Slug** — kebab-case, human-readable, describes the iteration's focus.
 
-Sequence numbers are **per folder** — inside `agent-log/` top-level they start at 001; inside a subgroup like `exploration/` they restart at 001.
+When the `NNN_` prefix is present the loader parses it as the sequence number; when it's absent the loader assigns one based on sort order within the folder. Iteration counters are tracked separately in frontmatter, so prefix-less files still get correct iteration numbers if `iteration:` is set.
 
-### Subgroups (one level deep)
+Sequence numbers are **per leaf folder** — inside `agent-log/` top-level they start at 001; inside a subgroup like `exploration/` they restart at 001; inside a sub-subgroup like `exploration/phase-1/` they restart again.
 
-An agent exploring multiple approaches can create subgroup folders:
+### Subgroups — up to 2 levels deep
+
+An agent exploring multiple approaches can create subgroup folders. The loader accepts up to **two levels** of subfoldering, with the same shape rules as `notes/`:
 
 ```
 agent-log/
-├── 001_initial-triage.md
-├── exploration/
+├── 001_initial-triage.md              ← root-level
+├── exploration/                       ← level-1 subgroup
 │   ├── 001_approach-a.md
-│   └── 002_approach-b.md
+│   ├── 002_approach-b.md
+│   └── phase-1/                       ← level-2 subgroup
+│       ├── 001_kickoff.md
+│       └── 002_decisions.md
 └── implementation/
     ├── 001_spike.md
     └── 002_final.md
 ```
 
-The loader supports exactly **one level** of subgroup. Anything deeper (`agent-log/a/b/…`) produces a warning and is ignored. Keep the tree shallow.
+Mix files and folders freely at every level that allows folders — `agent-log/001.md` can sit beside `agent-log/exploration/`, and `agent-log/exploration/001.md` can sit beside `agent-log/exploration/phase-1/`. The deepest level (level 2) is files-only.
+
+Anything nested deeper than `agent-log/<group>/<subgroup>/<file>.md` produces a warning and is ignored. If a level-2 subgroup itself outgrows flat, that's a sign to split the issue, not nest deeper.
+
+Folder names are freeform — no naming convention is enforced. Pick names that describe the angle being explored (`exploration`, `implementation`, `benchmarks`, `failed-attempts`).
 
 ## Frontmatter
 

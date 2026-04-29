@@ -1,0 +1,117 @@
+---
+/**
+ * Recursively render a 2-level tree of notes or agent-logs in the sidebar.
+ * Files at this level become <a> rows; subgroups become <details> blocks
+ * that recursively render the same component for their inner tree.
+ *
+ * The depth cap (2) is enforced upstream by the loader, so this component
+ * doesn't need a guard — it stops naturally when `tree.groups` is empty.
+ */
+import type { IssueAgentLog, IssueNote } from '@loaders/issues';
+import {
+  logPanelKey, notePanelKey, noteUrl, logUrl,
+  type GroupedTree,
+} from '../../server/helpers';
+
+type SubdocTree = GroupedTree<IssueNote> | GroupedTree<IssueAgentLog>;
+
+interface Props {
+  tree: SubdocTree;
+  kind: 'note' | 'log';
+  baseUrl: string;
+  issueId: string;
+  activeKey: string;
+  /** Add the `--nested` modifier to the items wrapper (for sub-levels). */
+  nested?: boolean;
+}
+
+const { tree, kind, baseUrl, issueId, activeKey, nested = false } = Astro.props;
+
+function leafLabel(item: IssueNote | IssueAgentLog): string {
+  if (kind === 'log') {
+    const log = item as IssueAgentLog;
+    const stem = log.name.replace(/^\d+[_-]/, '').replace(/[-_]/g, ' ');
+    return log.iteration !== null ? `#${log.iteration} ${stem}` : stem;
+  }
+  return `${item.name}.md`;
+}
+
+function leafKey(item: IssueNote | IssueAgentLog): string {
+  return kind === 'log'
+    ? logPanelKey(item as IssueAgentLog)
+    : notePanelKey(item as IssueNote);
+}
+
+function leafHref(item: IssueNote | IssueAgentLog): string {
+  return kind === 'log'
+    ? logUrl(baseUrl, issueId, item as IssueAgentLog)
+    : noteUrl(baseUrl, issueId, item as IssueNote);
+}
+
+/** Total descendants under a tree node — used for the subgroup count. */
+function descendantCount(t: SubdocTree): number {
+  let n = t.files.length;
+  for (const child of t.groups.values()) n += descendantCount(child);
+  return n;
+}
+
+/** Does any descendant match the active key? Drives auto-expand on load. */
+function containsActive(t: SubdocTree): boolean {
+  if (t.files.some((f) => leafKey(f) === activeKey)) return true;
+  for (const child of t.groups.values()) {
+    if (containsActive(child)) return true;
+  }
+  return false;
+}
+
+const subgroupNames = Array.from(tree.groups.keys()).sort();
+---
+
+<div class={`issue-sidebar__items ${nested ? 'issue-sidebar__items--nested' : ''}`}>
+  {tree.files.map((item) => {
+    const key = leafKey(item);
+    const isActive = activeKey === key;
+    return (
+      <a
+        href={leafHref(item)}
+        class={`issue-sidebar__item ${isActive ? 'is-active' : ''}`}
+        aria-current={isActive ? 'page' : undefined}
+      >
+        <span class="issue-sidebar__icon" aria-hidden="true">
+          {kind === 'note' ? (
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M3 1h7l3 3v11H3V1z"/><path d="M10 1v3h3"/>
+            </svg>
+          ) : (
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="8" cy="8" r="6"/><path d="M8 4v4l3 2"/>
+            </svg>
+          )}
+        </span>
+        <span class="issue-sidebar__label">{leafLabel(item)}</span>
+      </a>
+    );
+  })}
+
+  {subgroupNames.map((groupName) => {
+    const child = tree.groups.get(groupName)!;
+    const open = containsActive(child);
+    return (
+      <details class="issue-sidebar__subgroup" open={open ? true : undefined}>
+        <summary class="issue-sidebar__subgroup-heading">
+          <svg class="issue-sidebar__chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
+          <span class="issue-sidebar__subgroup-name">{groupName}</span>
+          <span class="issue-sidebar__heading-count">{descendantCount(child)}</span>
+        </summary>
+        <Astro.self
+          tree={child}
+          kind={kind}
+          baseUrl={baseUrl}
+          issueId={issueId}
+          activeKey={activeKey}
+          nested={true}
+        />
+      </details>
+    );
+  })}
+</div>

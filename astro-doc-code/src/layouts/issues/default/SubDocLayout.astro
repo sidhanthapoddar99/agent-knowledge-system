@@ -14,7 +14,7 @@ import SubDocMetaSidebar from './parts/detail/SubDocMetaSidebar.astro';
 import MetaPanel from './parts/shared/MetaPanel.astro';
 import { allStateIcons } from './server/state-icon';
 import { extractToc } from './server/toc';
-import { sortSubtasksForSidebar, terminalStartIndex, TERMINAL, logPanelKey } from './server/helpers';
+import { sortSubtasksForSidebar, terminalStartIndex, TERMINAL, logPanelKey, notePanelKey } from './server/helpers';
 import type { Issue, IssuesVocabulary, IssueSubtask, IssueNote, IssueAgentLog } from '@loaders/issues';
 import './styles/detail.css';
 
@@ -43,7 +43,7 @@ if (subDoc.kind === 'subtask') {
   activeKey = `subtask-${subDoc.subtask.slug}`;
   toc = extractToc(subDoc.subtask.html);
 } else if (subDoc.kind === 'note') {
-  activeKey = `note-${subDoc.note.name}`;
+  activeKey = notePanelKey(subDoc.note);
   toc = extractToc(subDoc.note.html);
 } else {
   activeKey = logPanelKey(subDoc.log);

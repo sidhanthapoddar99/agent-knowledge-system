@@ -21,6 +21,32 @@ notes/
 
 Numeric prefixes help order notes in the sidebar; the slug after becomes the default title.
 
+## Subfoldering — up to 2 levels
+
+`notes/` accepts up to **two levels of subfolders** so long-running issues can group related notes by theme or phase. Folder names are freeform — no naming convention required.
+
+```
+notes/
+├── overview.md                     ← root-level, no group
+├── design/                         ← level-1 group
+│   ├── api-shape.md
+│   ├── data-model.md
+│   └── phase-1/                    ← level-2 subgroup
+│       ├── kickoff.md
+│       └── decisions.md
+└── research/
+    └── prior-art.md
+```
+
+Rules:
+
+- Mix files and folders freely at every level that allows folders. `notes/overview.md` can sit beside `notes/design/`, and `notes/design/api-shape.md` can sit beside `notes/design/phase-1/`.
+- The deepest folder (level 2) is **files-only**. Anything nested deeper than `notes/<group>/<subgroup>/<file>.md` is logged as a warning by the loader and silently skipped.
+- Subgroups appear as collapsible nested sections in the sidebar. Each level shows a count of descendant notes.
+- Filenames within a folder must be unique — but the *same* filename can appear in different folders (`notes/design/intro.md` and `notes/research/intro.md` coexist; they have distinct URLs).
+
+If you find yourself wanting a third level, that's usually a signal to split into a sibling group at level 1, or — if the notes have outgrown a single issue — to split into a separate issue.
+
 ## Frontmatter
 
 Notes support standard markdown frontmatter. Only `title` is interpreted by the loader:

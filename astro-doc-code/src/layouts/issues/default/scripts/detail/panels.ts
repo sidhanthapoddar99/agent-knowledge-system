@@ -15,24 +15,22 @@ export function knownPanel(key: string): boolean {
   return !!document.querySelector(`.issue-panel[data-panel="${CSS.escape(key)}"]`);
 }
 
-/** Rewrite old hash-panel URLs (`#subtask-foo`, `#note-bar`, `#log-baz`,
- *  `#log-<group>--<name>`) into the new sub-doc path. Returns the full path
- *  + search string, or null if the hash is not a legacy sub-doc hash. */
+/** Rewrite old hash-panel URLs (`#subtask-foo`, `#note-bar`,
+ *  `#note-<group>--<name>`, `#log-baz`, `#log-<group>--<subgroup>--<name>`)
+ *  into the new sub-doc path. Segments are joined with `--`. Returns the
+ *  full path + search string, or null if the hash is not a sub-doc hash. */
 export function legacyHashRedirect(hash: string): string | null {
   const base = location.pathname.replace(/\/+$/, '');
   if (hash.startsWith('subtask-')) {
     return `${base}/subtasks/${hash.slice('subtask-'.length)}${location.search}`;
   }
   if (hash.startsWith('note-')) {
-    return `${base}/notes/${hash.slice('note-'.length)}${location.search}`;
+    const segments = hash.slice('note-'.length).split('--');
+    return `${base}/notes/${segments.join('/')}${location.search}`;
   }
   if (hash.startsWith('log-')) {
-    const rest = hash.slice('log-'.length);
-    const sep = rest.indexOf('--');
-    if (sep >= 0) {
-      return `${base}/agent-log/${rest.slice(0, sep)}/${rest.slice(sep + 2)}${location.search}`;
-    }
-    return `${base}/agent-log/${rest}${location.search}`;
+    const segments = hash.slice('log-'.length).split('--');
+    return `${base}/agent-log/${segments.join('/')}${location.search}`;
   }
   return null;
 }

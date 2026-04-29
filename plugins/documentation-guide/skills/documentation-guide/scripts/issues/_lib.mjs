@@ -154,7 +154,31 @@ export function readIssueComments(trackerPath, issueId) {
     });
 }
 
-function makeAgentLog(abs, group) {
+/**
+ * Walk a 2-level tree of `*.md` files under `rootDir`. Returns entries in
+ * stable folder-then-name order. Each entry is `{ filePath, groupPath }`
+ * where `groupPath` is 0/1/2 folder segments below `rootDir`. Anything
+ * deeper than 2 levels is silently skipped (the loader is the source of
+ * truth for warnings; CLI tools just read what's there).
+ */
+function walkTwoLevels(rootDir) {
+  if (!fs.existsSync(rootDir)) return [];
+  const out = [];
+  function emit(absDir, groupPath) {
+    let entries;
+    try { entries = fs.readdirSync(absDir, { withFileTypes: true }); }
+    catch { return; }
+    const files = entries.filter((e) => e.isFile() && e.name.endsWith('.md')).map((e) => e.name).sort();
+    for (const name of files) out.push({ filePath: path.join(absDir, name), groupPath });
+    if (groupPath.length >= 2) return;
+    const subDirs = entries.filter((e) => e.isDirectory()).map((e) => e.name).sort();
+    for (const folder of subDirs) emit(path.join(absDir, folder), [...groupPath, folder]);
+  }
+  emit(rootDir, []);
+  return out;
+}
+
+function makeAgentLog(abs, groupPath) {
   const base = path.basename(abs).replace(/\.md$/, '');
   const prefixMatch = base.match(/^(\d+)[_-]/);
   const sequence = prefixMatch ? parseInt(prefixMatch[1], 10) : 0;
@@ -167,41 +191,23 @@ function makeAgentLog(abs, group) {
     agent: fm.agent || null,
     status: fm.status || null,
     date: fm.date || null,
-    group,
+    groupPath,
     filePath: abs,
   };
 }
 
 export function readIssueAgentLogs(trackerPath, issueId) {
   const dir = path.join(trackerPath, issueId, 'agent-log');
-  if (!fs.existsSync(dir)) return [];
-  const out = [];
-  const entries = fs.readdirSync(dir, { withFileTypes: true });
-
-  // 1. Top-level files
-  const topFiles = entries.filter((e) => e.isFile() && e.name.endsWith('.md')).map((e) => e.name).sort();
-  for (const name of topFiles) out.push(makeAgentLog(path.join(dir, name), null));
-
-  // 2. One level of subgroup folders (max depth 1; deeper is ignored)
-  const subDirs = entries.filter((e) => e.isDirectory()).map((e) => e.name).sort();
-  for (const sub of subDirs) {
-    const subDir = path.join(dir, sub);
-    let names = [];
-    try { names = fs.readdirSync(subDir).filter((n) => n.endsWith('.md')).sort(); }
-    catch { continue; }
-    for (const name of names) out.push(makeAgentLog(path.join(subDir, name), sub));
-  }
-
-  return out;
+  return walkTwoLevels(dir).map((e) => makeAgentLog(e.filePath, e.groupPath));
 }
 
 export function readIssueNotes(trackerPath, issueId) {
   const dir = path.join(trackerPath, issueId, 'notes');
-  if (!fs.existsSync(dir)) return [];
-  return fs.readdirSync(dir)
-    .filter((n) => n.endsWith('.md'))
-    .sort()
-    .map((name) => ({ name: name.replace(/\.md$/, ''), filePath: path.join(dir, name) }));
+  return walkTwoLevels(dir).map((e) => ({
+    name: path.basename(e.filePath).replace(/\.md$/, ''),
+    filePath: e.filePath,
+    groupPath: e.groupPath,
+  }));
 }
 
 /**
@@ -231,7 +237,8 @@ export function listSearchableFiles(trackerPath, issueId, fields = null) {
     const p = path.join(issueDir, 'settings.json');
     if (fs.existsSync(p)) files.push(p);
   }
-  for (const sub of ['comments', 'subtasks', 'notes']) {
+  // comments + subtasks stay flat; notes + agent-log allow 2-level subfolders
+  for (const sub of ['comments', 'subtasks']) {
     if (!include(sub)) continue;
     const dir = path.join(issueDir, sub);
     if (!fs.existsSync(dir)) continue;
@@ -239,21 +246,11 @@ export function listSearchableFiles(trackerPath, issueId, fields = null) {
       if (n.endsWith('.md')) files.push(path.join(dir, n));
     }
   }
+  if (include('notes')) {
+    for (const e of walkTwoLevels(path.join(issueDir, 'notes'))) files.push(e.filePath);
+  }
   if (include('agent-log') || include('agent-logs')) {
-    const dir = path.join(issueDir, 'agent-log');
-    if (fs.existsSync(dir)) {
-      const entries = fs.readdirSync(dir, { withFileTypes: true });
-      for (const e of entries.sort((a, b) => a.name.localeCompare(b.name))) {
-        if (e.isFile() && e.name.endsWith('.md')) {
-          files.push(path.join(dir, e.name));
-        } else if (e.isDirectory()) {
-          const subDir = path.join(dir, e.name);
-          for (const n of fs.readdirSync(subDir).sort()) {
-            if (n.endsWith('.md')) files.push(path.join(subDir, n));
-          }
-        }
-      }
-    }
+    for (const e of walkTwoLevels(path.join(issueDir, 'agent-log'))) files.push(e.filePath);
   }
   return files;
 }

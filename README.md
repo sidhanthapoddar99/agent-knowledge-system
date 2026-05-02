@@ -4,19 +4,16 @@ Astro-based documentation framework with modular layouts, YAML configuration, a 
 
 ## Quick start
 
-The fastest path is via the bundled Claude Code plugin — three commands to install, one to scaffold:
+The fastest path is via the Claude Code plugin distributed through [`sids-plugin-marketplace`](https://github.com/sidhanthapoddar99/sids-plugin-marketplace) — three commands to install, one to scaffold:
 
 ```
-/plugin marketplace add https://github.com/sidhanthapoddar99/documentation-template
-/plugin install documentation-guide@documentation-template
+/plugin marketplace add sidhanthapoddar99/sids-plugin-marketplace
+/plugin install documentation-guide@sids-plugin-marketplace
 /reload-plugins
 /docs-init
 ```
 
 `/docs-init` walks you through site name, first section, and patches `CLAUDE.md`. At the end it prints the framework-clone command tailored to your scope choice. Open `http://localhost:4321` and you have a docs site.
-
-> [!note]
-> Local install while iterating? Use a plain absolute path (no `file://` prefix) for the marketplace add: `/plugin marketplace add /absolute/path/to/this/repo`.
 
 ## What's in the plugin
 
@@ -82,12 +79,10 @@ Inside `astro-doc-code/`, the usual `bun run dev` / `bun run build` / `bun run p
 
 ```
 documentation-template/                 ← THIS repo (= framework folder)
-├── .claude-plugin/marketplace.json     ← marketplace manifest (this repo IS a marketplace)
-├── .claude/settings.json               ← dogfood: enables the plugin in this project
 ├── start                               ← bash entrypoint (preflight + dev/build/preview/clean)
 ├── .env, .env.example                  ← bootstrap (CONFIG_DIR points at the active config dir)
 ├── plugins/
-│   └── documentation-guide/            ← plugin source (skill + wrappers + commands + bundled template)
+│   └── documentation-guide/            ← plugin source (skill + wrappers + commands + bundled template) — distributed via sids-plugin-marketplace
 ├── astro-doc-code/                     ← framework code — don't edit unless you're hacking on it
 │   ├── src/                            ← Astro layouts, loaders, parsers
 │   ├── astro.config.mjs
@@ -102,7 +97,7 @@ documentation-template/                 ← THIS repo (= framework folder)
 
 `default-docs/` is the framework's **own** content — its user-guide, its dev-docs, its sample blog/issues, its bundled themes — packaged with the install. **Consumers don't edit it.** When you use the framework via consumer mode (clone as a subfolder), you write your content at YOUR project root (in `config/`, `data/`, `assets/`, `themes/` next to the framework folder), and `default-docs/` stays read-only as a vendored dependency. In dogfood mode (this repo), `default-docs/` doubles as both the framework's own docs and the live testbed for any framework changes.
 
-The repo is **both** the marketplace and the plugin source — a dogfood setup. The same install command above is what every consumer (and every clone of this repo) runs.
+The plugin in `plugins/documentation-guide/` is distributed via [`sids-plugin-marketplace`](https://github.com/sidhanthapoddar99/sids-plugin-marketplace), which fetches it from this repo via a `git-subdir` source.
 
 ## Documentation
 

@@ -11,22 +11,22 @@ This template ships its own **Claude Code plugin** — `documentation-guide` —
 - **11 CLI wrappers** auto-added to `$PATH` for the issue tracker and validators
 - **2 slash commands** for project-level scaffolding (`/docs-init`, `/docs-add-section`)
 
-You install it from a marketplace once and Claude Code picks it up across every project on your machine.
+You install it from a marketplace once and Claude Code picks it up across every project on your machine. The plugin is distributed via [`sids-plugin-marketplace`](https://github.com/sidhanthapoddar99/sids-plugin-marketplace).
 
 ## Install
 
 Three commands. The first two are one-time per marketplace and per project; the third refreshes the cache.
 
 ```
-/plugin marketplace add https://github.com/sidhanthapoddar99/documentation-template
-/plugin install documentation-guide@documentation-template
+/plugin marketplace add sidhanthapoddar99/sids-plugin-marketplace
+/plugin install documentation-guide@sids-plugin-marketplace
 /reload-plugins
 ```
 
 > [!note] Local install while developing
-> If you're iterating on the framework itself (or testing changes before pushing), point at a local path instead of the GitHub URL:
+> If you're iterating on the plugin itself (or testing changes before pushing), point the marketplace at a local clone of `sids-plugin-marketplace` (with your in-progress edits to its `marketplace.json`) instead of the GitHub shorthand:
 > ```
-> /plugin marketplace add /absolute/path/to/documentation-template
+> /plugin marketplace add /absolute/path/to/sids-plugin-marketplace
 > ```
 > Plain absolute or relative path — `file://` URLs are rejected.
 
@@ -64,8 +64,8 @@ Two commands ship inside the plugin for project-level scaffolding:
 Typical first-time flow in a fresh directory:
 
 ```
-/plugin marketplace add https://github.com/sidhanthapoddar99/documentation-template
-/plugin install documentation-guide@documentation-template
+/plugin marketplace add sidhanthapoddar99/sids-plugin-marketplace
+/plugin install documentation-guide@sids-plugin-marketplace
 /reload-plugins
 /docs-init
 ```
@@ -123,7 +123,7 @@ You almost always describe the task in natural language and let the skill route 
 Pull the latest plugin version from the marketplace:
 
 ```
-/plugin update documentation-guide@documentation-template
+/plugin update documentation-guide@sids-plugin-marketplace
 /reload-plugins
 ```
 
@@ -141,7 +141,7 @@ Or update everything you've installed:
 Plugin files are cached **once** at user level, regardless of which scope (user / project / local) enables them:
 
 ```
-~/.claude/plugins/cache/documentation-template/documentation-guide/<version>/
+~/.claude/plugins/cache/sids-plugin-marketplace/documentation-guide/<version>/
 ├── .claude-plugin/plugin.json
 ├── README.md
 ├── bin/                  ← auto-added to $PATH at session start
@@ -158,7 +158,7 @@ What differs across scopes is just a boolean entry in each scope's `settings.jso
 ```json
 {
   "enabledPlugins": {
-    "documentation-guide@documentation-template": true
+    "documentation-guide@sids-plugin-marketplace": true
   }
 }
 ```

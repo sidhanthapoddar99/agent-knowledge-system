@@ -15,10 +15,10 @@ When you install a plugin, the files are downloaded **once** to your user-level 
 ~/.claude/plugins/cache/<marketplace-name>/<plugin-name>/<version>/
 ```
 
-For example, after installing `documentation-guide@documentation-template`, the files land at:
+For example, after installing `documentation-guide@sids-plugin-marketplace`, the files land at:
 
 ```
-~/.claude/plugins/cache/documentation-template/documentation-guide/0.1.1/
+~/.claude/plugins/cache/sids-plugin-marketplace/documentation-guide/0.1.3/
 ├── .claude-plugin/plugin.json
 ├── README.md
 ├── LICENSE
@@ -38,7 +38,7 @@ What actually differs across scopes is a single boolean in each scope's `setting
 ```json
 {
   "enabledPlugins": {
-    "documentation-guide@documentation-template": true
+    "documentation-guide@sids-plugin-marketplace": true
   }
 }
 ```

@@ -4,7 +4,7 @@ Astro-based documentation framework with modular layouts, YAML configuration, an
 
 ## Skills + tooling
 
-This project ships its own Claude Code plugin (`documentation-guide@documentation-template`) — a marketplace lives at the repo root (`.claude-plugin/marketplace.json`) and the project itself dogfoods the install (`.claude/settings.json` enables the plugin). When you clone the repo, run `/plugin marketplace add <this-repo-path>` then `/plugin install documentation-guide@documentation-template` then `/reload-plugins` and the skill + tooling become available. (Use a plain absolute or relative path — `/plugin marketplace add` rejects `file://` URLs.)
+This project ships a Claude Code plugin (`documentation-guide`) — source at `plugins/documentation-guide/`. See the README for install instructions.
 
 **The skill** — `documentation-guide` — triages every docs/issue/blog/config task to one of five reference files (`writing.md`, `docs-layout.md`, `blog-layout.md`, `issue-layout.md`, `settings-layout.md`). Trigger eagerly for anything under `default-docs/`.
 

@@ -65,7 +65,7 @@ echo "Template: $TEMPLATE_DIR"
 test -d "$TEMPLATE_DIR/config" || { echo "ERROR: bundled template not found"; exit 1; }
 ```
 
-If not found, tell the user the plugin install is broken and they should `/plugin update documentation-guide@documentation-template && /reload-plugins`.
+If not found, tell the user the plugin install is broken and they should `/plugin update documentation-guide@sids-plugin-marketplace && /reload-plugins`.
 
 ## Step 3 — Ask: scope
 
@@ -246,8 +246,8 @@ This project uses the `documentation-guide` Claude Code plugin. It ships:
 Install (per workstation, one-time):
 
 ```
-/plugin marketplace add https://github.com/sidhanthapoddar99/documentation-template
-/plugin install documentation-guide@documentation-template
+/plugin marketplace add sidhanthapoddar99/sids-plugin-marketplace
+/plugin install documentation-guide@sids-plugin-marketplace
 /reload-plugins
 ```
 

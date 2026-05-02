@@ -10,9 +10,11 @@ The skill teaches Claude Code how to navigate this Astro-based docs framework: t
 
 ## Install
 
+Distributed via [`sids-plugin-marketplace`](https://github.com/sidhanthapoddar99/sids-plugin-marketplace):
+
 ```
-/plugin marketplace add https://github.com/sidhanthapoddar99/documentation-template
-/plugin install documentation-guide@documentation-template
+/plugin marketplace add sidhanthapoddar99/sids-plugin-marketplace
+/plugin install documentation-guide@sids-plugin-marketplace
 /reload-plugins
 ```
 

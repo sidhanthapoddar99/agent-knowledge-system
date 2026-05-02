@@ -11,7 +11,7 @@ The result is a working five-section site (Home / Docs / Issues / Blog / User Gu
 
 ## What ships in the template
 
-The template lives **inside the plugin** at `<plugin-install>/template/` (where `<plugin-install>` is `~/.claude/plugins/cache/documentation-template/documentation-guide/<version>/`). It does **not** live in the framework's source tree — the plugin is the single distribution point for the starter template, decoupled from any framework clone. The bundle:
+The template lives **inside the plugin** at `<plugin-install>/template/` (where `<plugin-install>` is `~/.claude/plugins/cache/sids-plugin-marketplace/documentation-guide/<version>/`). It does **not** live in the framework's source tree — the plugin is the single distribution point for the starter template, decoupled from any framework clone. The bundle:
 
 ```
 template/
@@ -78,8 +78,8 @@ Then it:
 ```bash
 # 0. One-time per workstation: install the plugin
 #    (from any Claude Code session)
-/plugin marketplace add https://github.com/sidhanthapoddar99/documentation-template
-/plugin install documentation-guide@documentation-template
+/plugin marketplace add sidhanthapoddar99/sids-plugin-marketplace
+/plugin install documentation-guide@sids-plugin-marketplace
 /reload-plugins
 
 # 1. Scaffold your content folders
@@ -106,8 +106,8 @@ If you'd rather not run the slash command — for example, you're scripting the 
 ```bash
 # 0. (One-time) Install the plugin so its files land in the cache.
 #    From a Claude Code session:
-/plugin marketplace add https://github.com/sidhanthapoddar99/documentation-template
-/plugin install documentation-guide@documentation-template
+/plugin marketplace add sidhanthapoddar99/sids-plugin-marketplace
+/plugin install documentation-guide@sids-plugin-marketplace
 /reload-plugins
 
 # 1. Find the bundle on disk.

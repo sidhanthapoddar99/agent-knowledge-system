@@ -60,11 +60,11 @@ bun install     # or: npm install
 
 ### Claude Code Plugin (Recommended)
 
-Install the `documentation-guide` plugin so Claude Code can help you write content, configure the site, and run the issue tracker. Three commands:
+Install the `documentation-guide` plugin (distributed via [`sids-plugin-marketplace`](https://github.com/sidhanthapoddar99/sids-plugin-marketplace)) so Claude Code can help you write content, configure the site, and run the issue tracker. Three commands:
 
 ```
-/plugin marketplace add https://github.com/sidhanthapoddar99/documentation-template
-/plugin install documentation-guide@documentation-template
+/plugin marketplace add sidhanthapoddar99/sids-plugin-marketplace
+/plugin install documentation-guide@sids-plugin-marketplace
 /reload-plugins
 ```
 

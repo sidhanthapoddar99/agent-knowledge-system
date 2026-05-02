@@ -69,13 +69,13 @@ Fields:
 Push the marketplace to GitHub. Consumers add it with the GitHub URL:
 
 ```
-/plugin marketplace add https://github.com/sidhanthapoddar99/documentation-template
+/plugin marketplace add https://github.com/sidhanthapoddar99/sids-plugin-marketplace
 ```
 
 Or the GitHub shorthand:
 
 ```
-/plugin marketplace add sidhanthapoddar99/documentation-template
+/plugin marketplace add sidhanthapoddar99/sids-plugin-marketplace
 ```
 
 Updates flow naturally — `/plugin update` re-fetches from `main` (or whichever branch the marketplace tracks).
@@ -112,25 +112,20 @@ If your marketplace isn't backed by a Git repo (e.g. a static file hosted on a C
 
 Claude Code fetches the manifest and resolves plugin sources from the URLs listed inside. The plugins themselves can still be in any backend the manifest references.
 
-## The dogfood pattern
+## How this plugin is distributed
 
-A framework repo can be **both** a marketplace and the source of its own plugin. The same repo is added as a marketplace and then installs its own plugin. The maintainer is consumer #1, so any breakage shows up in their own development immediately.
+`plugins/documentation-guide/` is published through [`sids-plugin-marketplace`](https://github.com/sidhanthapoddar99/sids-plugin-marketplace) — a standalone marketplace that fetches just this subdirectory via a `git-subdir` source.
+
+While hacking on the plugin in this repo, you don't need to round-trip through the marketplace. Load the on-disk folder directly:
 
 ```
-my-framework/
-├── .claude-plugin/
-│   └── marketplace.json     ← repo IS a marketplace
-├── .claude/
-│   └── settings.json        ← committed; enables the plugin in this project
-├── plugins/
-│   └── my-plugin/           ← repo is also the plugin source
-│       ├── .claude-plugin/plugin.json
-│       ├── bin/
-│       └── skills/
-└── (rest of the framework)
+claude --plugin-dir plugins/documentation-guide
 ```
 
-The `documentation-template` repo (this one) does exactly this — see `.claude-plugin/marketplace.json` at the repo root, and `plugins/documentation-guide/` as the only plugin it ships.
+`--plugin-dir` mounts the plugin for that session only, with no marketplace registration and no cache copy. If you also have it installed normally, the `--plugin-dir` copy shadows the install for the session — see [Testing and Benchmarking](./05_creating-plugins/05_testing-and-benchmarking.md).
+
+> [!note]
+> `sids-plugin-marketplace` also ships [`ai-toolkit-dev`](https://github.com/sidhanthapoddar99/sids-plugin-marketplace/tree/main/plugins/ai-toolkit-dev) — a toolkit for authoring Claude Code plugins, marketplaces, and skills. Useful for plugin development workflow if you're iterating on `documentation-guide` or any other plugin.
 
 ## Listing multiple plugins
 
@@ -175,4 +170,4 @@ Marketplaces themselves only register at **user scope**. There's no per-project 
 
 - **[Storage and Scope](./02_storage-and-scope.md)** — what happens after `/plugin install`
 - **[Plugin Structure](./05_creating-plugins/02_plugin-structure.md)** — what goes inside each plugin folder the marketplace lists
-- **[Versioning and Publishing](./05_creating-plugins/06_versioning-and-publishing.md)** — semver, releases, and the dogfood loop
+- **[Versioning and Publishing](./05_creating-plugins/06_versioning-and-publishing.md)** — semver, releases, and the publish loop

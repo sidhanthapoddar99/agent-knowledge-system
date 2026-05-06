@@ -643,24 +643,22 @@ export function initIssuesIndex() {
   });
 
   // State-tab delegation — handles BOTH the global strip and cloned
-  // per-group strips. Group strips live inside [data-group-value].
+  // per-group strips. Status is a single global value (`state.state`), so
+  // clicks in either place run the SAME update path: persist to the URL
+  // + localStorage, reset every group's page cursor (the visible-row count
+  // just changed), and re-render. After re-render every cloned strip in
+  // every group section reflects the new value.
   document.addEventListener('click', (e) => {
     const btn = (e.target as HTMLElement).closest<HTMLElement>('[data-state-tab]');
     if (!btn) return;
     const tab = btn.dataset.stateTab as StateTab;
-    const groupSection = btn.closest<HTMLElement>('[data-group-value]');
-    if (groupSection) {
-      const sub = getGroupSub(groupSection.dataset.groupValue!);
-      sub.tab = tab;
-      sub.page = 1;
-      apply(_cfg);
-    } else {
-      const state = readState();
-      state.state = tab;
-      state.page = 1;
-      writeState(state);
-      apply(_cfg);
-    }
+    const state = readState();
+    if (state.state === tab) return;
+    state.state = tab;
+    state.page = 1;
+    writeState(state);
+    resetAllGroupPages();
+    apply(_cfg);
   });
 
   // Per-group pagination (prev/next/size) — delegated.

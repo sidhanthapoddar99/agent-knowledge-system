@@ -39,7 +39,11 @@ export interface Config {
   presets: PresetView[];
 }
 
-export type GroupSubState = { tab: StateTab; page: number };
+/** Per-group UI state that's genuinely scoped to a single group section.
+ *  Status is NOT here — it's a single global value (`FilterState.state`)
+ *  shared across all groups so it can persist via the existing localStorage
+ *  cache. See subtask 21 (issues-layout) for the rationale. */
+export type GroupSubState = { page: number };
 
 export const FIELDS = ['priority', 'component', 'milestone', 'labels', 'assignees'] as const;
 /** Fields that hold multiple values per row — encoded in the dataset as

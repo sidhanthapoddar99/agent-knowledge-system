@@ -49,7 +49,7 @@ cd documentation-template/
 ./start
 ```
 
-The wrapper detects `bun` (falling back to `npm` if Bun isn't installed), runs `bun install` if `node_modules/` is missing, runs a build sanity check, then launches the dev server. After the first run you can skip the preflight by passing the script name explicitly (see [Available Commands](#available-commands) below).
+The wrapper checks for upstream updates and offers a fast-forward pull (`Y/n`), detects `bun` (falling back to `npm` if Bun isn't installed), runs `bun install` if `node_modules/` is missing, runs a build sanity check, then launches the dev server. After the first run you can skip the preflight by passing the script name explicitly (see [Available Commands](#available-commands) below). The update check still runs for explicit-script forms; bypass it entirely with `START_SKIP_UPDATE_CHECK=1` (useful in CI).
 
 If you'd rather drive `bun`/`npm` directly, `cd astro-doc-code/` first:
 
@@ -124,7 +124,7 @@ Run from inside `documentation-template/` via the `./start` wrapper:
 
 | Command | Description |
 |---------|-------------|
-| `./start` | Preflight (install + build) then dev — use on a fresh clone |
+| `./start` | Preflight (update check + install + build) then dev — use on a fresh clone |
 | `./start dev` | Start dev server with hot reload (skip preflight) |
 | `./start build` | Build production site to `dist/` (skip preflight) |
 | `./start preview` | Preview production build locally (skip preflight) |

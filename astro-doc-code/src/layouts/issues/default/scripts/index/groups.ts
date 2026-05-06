@@ -1,7 +1,8 @@
 /**
- * Grouped view: each group value becomes an independent mini-board with
- * its own state tabs + table + pagination. Global filters (search + field
- * chips) and sort still apply across all groups.
+ * Grouped view: each group value becomes its own mini-board (table +
+ * pagination). Status filter, search, field chips and sort are GLOBAL —
+ * one value applied uniformly across all groups. Only pagination is
+ * actually per-group (each group has its own page cursor).
  */
 import { needsReview, rowMatchesStateTab, sortValue } from './filters';
 import type { Config, FilterState, GroupSubState, StateTab } from './types';
@@ -20,13 +21,14 @@ export function resetGroupStateIfNeeded(groupField: string | null): void {
 export function getGroupSub(value: string): GroupSubState {
   let s = perGroupState.get(value);
   if (!s) {
-    s = { tab: 'all', page: 1 };
+    s = { page: 1 };
     perGroupState.set(value, s);
   }
   return s;
 }
 
-/** Reset every group's page to 1 — called when page-size changes. */
+/** Reset every group's page to 1 — called when page-size changes or when
+ *  the global status tab changes (since the result set shrinks/grows). */
 export function resetAllGroupPages(): void {
   perGroupState.forEach((s) => (s.page = 1));
 }
@@ -62,7 +64,11 @@ export function buildGroupSection(
     }
   }
 
-  let filtered = groupRows.filter((r) => rowMatchesStateTab(r, sub.tab));
+  // Status filter is GLOBAL — every group section reads the same
+  // `state.state` value. Subtask 21: this used to be `sub.tab`, a per-group
+  // in-memory toggle that didn't persist across refresh and let groups drift
+  // out of sync from each other.
+  let filtered = groupRows.filter((r) => rowMatchesStateTab(r, state.state));
 
   if (state.sort && state.dir) {
     const dirMul = state.dir === 'asc' ? 1 : -1;
@@ -104,7 +110,9 @@ export function buildGroupSection(
     tabsClone.classList.add('issues-state-tabs--compact');
     tabsClone.querySelectorAll<HTMLElement>('[data-state-tab]').forEach((btn) => {
       const tab = btn.dataset.stateTab as StateTab;
-      const active = tab === sub.tab;
+      // All cloned strips reflect the SAME global value — every group section
+      // shows the active tab matching `state.state`.
+      const active = tab === state.state;
       btn.setAttribute('aria-selected', active ? 'true' : 'false');
       const countEl = btn.querySelector<HTMLElement>('[data-state-count]');
       if (countEl) countEl.textContent = String(counts[tab]);

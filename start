@@ -2,12 +2,13 @@
 # Entrypoint for the astro-doc-code framework.
 #
 # Usage:
-#   ./start                preflight (install if needed → build sanity check) → dev server
+#   ./start                preflight (update check → install if needed → build sanity check) → dev server
 #   ./start <script>       skip preflight, just run the named script (dev | build | preview | astro …)
 #   ./start clean          wipe build caches (.astro, dist, node_modules/.vite) and exit
 #   ./start clean <script> wipe caches, then run the script (e.g. './start clean dev')
 #
 # Preflight steps when invoked with no args:
+#   0. Update check — fetch upstream; if behind, prompt Y/n to fast-forward pull.
 #   1. Pick a runner — prefer bun, fall back to npm.
 #   2. Install dependencies if node_modules is missing.
 #   3. Run the production build to catch errors before launching dev.
@@ -16,9 +17,66 @@
 # When to use clean: any time CONFIG_DIR or paths in .env / site.yaml change.
 # Astro caches compiled routes by source path; stale entries cause builds to
 # import non-existent dist modules or load configs from the previous location.
+#
+# Skip the update check by exporting START_SKIP_UPDATE_CHECK=1 (e.g. in CI).
 set -e
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# 0. Update check — if upstream has new commits, offer to fast-forward pull.
+#    Bails silently when: not a git repo, no upstream tracked, working tree
+#    dirty, branch diverged, no TTY, or START_SKIP_UPDATE_CHECK=1.
+update_check() {
+  [ "${START_SKIP_UPDATE_CHECK:-0}" = "1" ] && return 0
+  [ -t 0 ] || return 0
+  command -v git >/dev/null 2>&1 || return 0
+  git -C "$DIR" rev-parse --git-dir >/dev/null 2>&1 || return 0
+
+  local upstream
+  upstream="$(git -C "$DIR" rev-parse --abbrev-ref --symbolic-full-name '@{u}' 2>/dev/null)" || return 0
+
+  if ! git -C "$DIR" diff --quiet || ! git -C "$DIR" diff --cached --quiet; then
+    echo "[start] working tree has uncommitted changes — skipping update check"
+    return 0
+  fi
+
+  echo "[start] checking $upstream for updates..."
+  if ! git -C "$DIR" fetch --quiet 2>/dev/null; then
+    echo "[start] fetch failed (offline?) — skipping update check"
+    return 0
+  fi
+
+  local local_sha upstream_sha base_sha ahead
+  local_sha="$(git -C "$DIR" rev-parse HEAD)"
+  upstream_sha="$(git -C "$DIR" rev-parse '@{u}')"
+  [ "$local_sha" = "$upstream_sha" ] && { echo "[start] up to date"; return 0; }
+
+  base_sha="$(git -C "$DIR" merge-base HEAD '@{u}' 2>/dev/null)" || return 0
+  if [ "$base_sha" != "$local_sha" ]; then
+    echo "[start] local branch has diverged from $upstream — resolve manually before pulling"
+    return 0
+  fi
+
+  ahead="$(git -C "$DIR" rev-list --count HEAD..@{u} 2>/dev/null || echo '?')"
+  echo "[start] $ahead new commit(s) available on $upstream"
+  local reply
+  read -r -p "[start] pull now? [Y/n] " reply
+  case "$reply" in
+    ""|y|Y|yes|YES)
+      if git -C "$DIR" pull --ff-only --quiet; then
+        echo "[start] pulled $ahead commit(s) — continuing"
+      else
+        echo "[start] pull failed — continuing with current version" >&2
+      fi
+      ;;
+    *)
+      echo "[start] skipping pull — continuing with current version"
+      ;;
+  esac
+}
+
+update_check
+
 cd "$DIR/astro-doc-code"
 
 # Optional `clean` first arg — wipe caches, then either exit or continue

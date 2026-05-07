@@ -192,22 +192,44 @@ export function devToolbarIntegration(): AstroIntegration {
                     server.watcher.add(p);
                     console.log('[HMR] Watching git ref:', p);
                   }
+                  // Absolute file paths of the modules we need to invalidate
+                  // in the SSR context. Computed once so we can use the
+                  // moduleGraph API reliably (which keys by absolute id).
+                  const issueDatesModuleId = path.resolve(
+                    path.dirname(new URL(import.meta.url).pathname),
+                    '../loaders/issue-dates.ts',
+                  );
+                  const issuesLoaderModuleId = path.resolve(
+                    path.dirname(new URL(import.meta.url).pathname),
+                    '../loaders/issues.ts',
+                  );
+
                   server.watcher.on('change', async (file) => {
                     if (!watchedGitPaths.has(file)) return;
+                    console.log('[issue-dates] git ref changed:', path.basename(file));
 
-                    // Clear local-context instances.
+                    // 1. Clear local (plugin-context) instances.
                     invalidateIssueDateCache();
                     invalidateIssuesCache();
 
-                    // Also clear the SSR-context instances — Vite 6 module
-                    // isolation means layouts may hold a different instance.
-                    try {
-                      const datesMod: any = await server.ssrLoadModule('/src/loaders/issue-dates');
-                      datesMod?.invalidateIssueDateCache?.();
-                      const issuesMod: any = await server.ssrLoadModule('/src/loaders/issues');
-                      issuesMod?.invalidateIssuesCache?.();
-                    } catch {
-                      // Path resolution / module load can fail transiently; non-fatal.
+                    // 2. Invalidate the SSR-context modules via moduleGraph.
+                    //    Forces Vite to re-instantiate them on the next request,
+                    //    which gives a fresh empty cache and a fresh git walk.
+                    //    Belt-and-suspenders against Vite's plugin/SSR module
+                    //    isolation. See:
+                    //      default-docs/data/todo/2026-05-08-update-date-time-
+                    //        optimization/notes/03_ssr-module-isolation.md
+                    let invalidatedAny = false;
+                    for (const id of [issueDatesModuleId, issuesLoaderModuleId]) {
+                      const mod = server.moduleGraph.getModuleById(id);
+                      if (mod) {
+                        server.moduleGraph.invalidateModule(mod);
+                        invalidatedAny = true;
+                        console.log('[issue-dates] SSR module invalidated:', path.basename(id));
+                      }
+                    }
+                    if (!invalidatedAny) {
+                      console.log('[issue-dates] no SSR modules in graph yet (first-load case)');
                     }
 
                     const desired = new Set(getIssueDateWatchPaths());

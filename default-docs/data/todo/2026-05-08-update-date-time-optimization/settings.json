@@ -1,6 +1,6 @@
 {
-  "title": "Updated-date rendering + cache scaling",
-  "description": "Frontend: relative-time formatting for the issue 'updated' column (sec/min/hours/days, then full date+time at >7 days). Backend: scale the derived-`updated` cache loader so cold rebuild stays imperceptible at 3K+ issues / 10K+ tracker-touching commits.",
+  "title": "Updated-date cache scaling",
+  "description": "Scale the derived-`updated` cache loader so cold rebuild stays imperceptible at 3K+ issues / 10K+ tracker-touching commits. Five ranked optimizations: async background rebuild, pre-warm at server start, incremental refresh, disk persistence, watcher debounce. Frontend relative-time rendering lived briefly here too but moved to subtask 11 of the mental-model-alignment issue.",
   "status": "open",
   "priority": "medium",
   "component": ["layouts-and-themes"],

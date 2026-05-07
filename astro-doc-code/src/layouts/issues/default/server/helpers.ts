@@ -44,11 +44,26 @@ export function terminalStartIndex(sorted: IssueSubtask[]): number {
  * Returns both the relative string and a full-precision form intended for a
  * `title=` attribute (so the tooltip always shows the precise timestamp).
  * Sub-second / negative deltas (clock skew) clamp to "0 sec ago".
+ *
+ * Date-only inputs ("YYYY-MM-DD" — happens when an issue's `updated` falls
+ * back to its folder-slug `created` because no commit touches the folder
+ * yet) are parsed as **local** midnight (not UTC, which would put them in
+ * the future for any reader east of GMT before midnight UTC) and displayed
+ * as a plain date — "0 sec ago" for a date-only source is misleading.
  */
 export function formatRelativeTime(iso: string | null | undefined): { rel: string; full: string } {
   if (!iso) return { rel: '', full: '' };
-  const d = new Date(iso);
+
+  const dateOnly = /^\d{4}-\d{2}-\d{2}$/.test(iso);
+  const d = dateOnly ? new Date(iso + 'T00:00:00') : new Date(iso);
   if (Number.isNaN(d.getTime())) return { rel: '', full: '' };
+
+  // Date-only source has no time precision; show the date literally instead
+  // of a fake-precise "n sec ago".
+  if (dateOnly) {
+    const dateLabel = formatDateOnly(d);
+    return { rel: dateLabel, full: dateLabel };
+  }
 
   const full = formatFullDateTime(d);
   const diffSec = Math.max(0, Math.floor((Date.now() - d.getTime()) / 1000));
@@ -71,6 +86,10 @@ function formatFullDateTime(d: Date): string {
   const hh = String(d.getHours()).padStart(2, '0');
   const mm = String(d.getMinutes()).padStart(2, '0');
   return `${mon} ${day}, ${yyyy} ${hh}:${mm}`;
+}
+
+function formatDateOnly(d: Date): string {
+  return `${MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
 }
 
 /** Word-count cap past which a Comprehensive-panel item collapses. */

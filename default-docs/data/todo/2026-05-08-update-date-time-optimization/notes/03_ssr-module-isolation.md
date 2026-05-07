@@ -36,11 +36,20 @@ When a watcher event fires, our handler calls `invalidateIssueDateCache()` — b
 
 A server restart drops *all* module instances; both contexts re-instantiate empty and align on the next read. That's why restarts "fix" it — until the next commit drifts them apart again.
 
-## The fix
+## The fix — `moduleGraph.invalidateModule`
 
-After invalidating in the plugin context, also force-clear in the SSR context using `server.ssrLoadModule`:
+After invalidating in the plugin context, also invalidate the modules in **Vite's module graph** by their absolute file IDs. This forces Vite to re-instantiate them on the next request, which means a fresh empty `cache: Map<...>` and a fresh git walk:
 
 ```ts
+const issueDatesModuleId = path.resolve(
+  path.dirname(new URL(import.meta.url).pathname),
+  '../loaders/issue-dates.ts',
+);
+const issuesLoaderModuleId = path.resolve(
+  path.dirname(new URL(import.meta.url).pathname),
+  '../loaders/issues.ts',
+);
+
 server.watcher.on('change', async (file) => {
   if (!watchedGitPaths.has(file)) return;
 
@@ -48,22 +57,37 @@ server.watcher.on('change', async (file) => {
   invalidateIssueDateCache();
   invalidateIssuesCache();
 
-  // 2. Clear SSR-context instances — same source file, different
-  //    in-memory state. Without this, layouts render stale data.
-  try {
-    const datesMod: any = await server.ssrLoadModule('/src/loaders/issue-dates');
-    datesMod?.invalidateIssueDateCache?.();
-    const issuesMod: any = await server.ssrLoadModule('/src/loaders/issues');
-    issuesMod?.invalidateIssuesCache?.();
-  } catch {
-    // Path resolution / module load can fail transiently; non-fatal.
+  // 2. Invalidate SSR-context modules via moduleGraph. This forces a
+  //    fresh re-instantiation on next render — guaranteed-clean state.
+  for (const id of [issueDatesModuleId, issuesLoaderModuleId]) {
+    const mod = server.moduleGraph.getModuleById(id);
+    if (mod) server.moduleGraph.invalidateModule(mod);
   }
 
   // ... watch-set reconciliation ...
 });
 ```
 
-Belt-and-suspenders: invalidate locally, then invalidate via `ssrLoadModule` to reach whatever instance the SSR layer happens to be holding.
+### Why moduleGraph rather than ssrLoadModule
+
+An earlier attempt used `server.ssrLoadModule('/src/loaders/issue-dates')` to grab the SSR-context's instance and call its exported invalidate function. That was unreliable because:
+
+1. The URL is project-root-relative; if Vite resolves it to a different canonical key than what the SSR layer used to import the module, you get a fresh instance whose `cache` clear has no effect on the *real* SSR instance.
+2. Failures fall into a `try/catch` and silently drop — the bug looks identical to "no fix at all".
+
+`moduleGraph.invalidateModule` keys by **absolute file ID**, which is unambiguous: there's exactly one module record per absolute path, regardless of how many import URLs resolve to it. Invalidating it forces every consumer in any context to re-import on next access, which is the strongest possible "be fresh" signal we can give Vite.
+
+### Diagnostic logging
+
+The watcher logs three lines so the dev console makes it obvious whether the chain is working end-to-end:
+
+```
+[issue-dates] git ref changed: main
+[issue-dates] SSR module invalidated: issue-dates.ts
+[issue-dates] SSR module invalidated: issues.ts
+```
+
+If you commit and the first line doesn't appear → the watcher isn't firing (chokidar issue, file-system quirk, or the dev server isn't running). If the first appears but the others don't → no SSR module is in Vite's graph yet (first-load case; will work next time). If all three appear and the UI is still stale → there's a different layer caching (browser HTTP cache, Astro page cache, etc.) — hard-refresh.
 
 ## When this pattern is required
 

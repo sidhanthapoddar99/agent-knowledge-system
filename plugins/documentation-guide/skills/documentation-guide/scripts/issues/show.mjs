@@ -2,38 +2,18 @@
 /**
  * show.mjs — print one issue's metadata + subtask state summary +
  * agent-log heads (no full bodies). Use --full for everything.
+ *
+ * `updated` is intentionally not shown here. The dev-server's loader
+ * derives it from git (`loaders/issue-dates.ts`), but mirroring that
+ * derivation in this CLI would mean a per-call git spawn that doesn't
+ * scale. A future plugin variant that talks to the running dev server
+ * will surface `updated` via that channel.
  */
 
-import fs from 'node:fs';
-import path from 'node:path';
-import { spawnSync } from 'node:child_process';
 import {
   DEFAULT_TRACKER, readIssueMeta, readIssueSubtasks, readIssueComments,
   readIssueAgentLogs, parseArgs, printHelp, issueDateFromId,
 } from './_lib.mjs';
-
-/** Derive the most-recent git commit date touching <tracker>/<id>/.
- *  Matches the in-process cache loader (loaders/issue-dates.ts). Returns
- *  null when not a git checkout or no commits touch the folder yet. */
-function deriveUpdatedFromGit(tracker, id) {
-  // Find repo root.
-  let dir = tracker;
-  while (true) {
-    if (fs.existsSync(path.join(dir, '.git'))) break;
-    const parent = path.dirname(dir);
-    if (parent === dir) return null;
-    dir = parent;
-  }
-  const issueRel = path.relative(dir, path.join(tracker, id));
-  const r = spawnSync(
-    'git',
-    ['log', '-1', '--no-merges', '--pretty=format:%aI', '--', issueRel],
-    { cwd: dir, encoding: 'utf-8' },
-  );
-  if (r.status !== 0) return null;
-  const out = (r.stdout || '').trim();
-  return out || null;
-}
 
 const args = parseArgs(process.argv.slice(2));
 const id = args._[0];
@@ -60,10 +40,9 @@ const comments = readIssueComments(tracker, id);
 const agentLogs = readIssueAgentLogs(tracker, id);
 
 const created = issueDateFromId(id);
-const updated = deriveUpdatedFromGit(tracker, id) ?? created;
 
 if (args.flags.json) {
-  console.log(JSON.stringify({ id, created, updated, meta, subtasks, comments, agentLogs }, null, 2));
+  console.log(JSON.stringify({ id, created, meta, subtasks, comments, agentLogs }, null, 2));
   process.exit(0);
 }
 
@@ -72,7 +51,7 @@ console.log(`Id:        ${id}`);
 console.log(`Status:    ${meta.status}    Priority: ${meta.priority}`);
 console.log(`Component: ${(Array.isArray(meta.component) ? meta.component : []).join(', ') || '—'}`);
 console.log(`Labels:    ${(Array.isArray(meta.labels) ? meta.labels : []).join(', ') || '—'}`);
-console.log(`Created:   ${created || '—'}    Updated: ${updated || '—'}`);
+console.log(`Created:   ${created || '—'}`);
 if (meta.description) console.log(`\n${meta.description}`);
 
 console.log(`\n## Subtasks (${subtasks.length})`);

@@ -1,21 +1,37 @@
 ## Goal
 
-Scale the derived-`updated` cache loader (`astro-doc-code/src/loaders/issue-dates.ts`) so the cold rebuild stays imperceptible at 3 K+ issues / 10 K+ tracker-touching commits. At present scale (this repo, 12 tracker-touching commits) the walk is ~11 ms. Projected at 3 K issues, ~500 ms on the request path; at 10 K, ~2.5 s — clearly laggy.
+Scale the derived-`updated` cache loader (`astro-doc-code/src/loaders/issue-dates.ts`) so it stays imperceptible at 3 K+ issues / 10 K+ tracker-touching commits, and across server restarts and branch switches. Today's lazy in-memory cache works fine at this repo's scale (~11 ms full walks), but the cost is paid on the **request path** — at projected scale (~500 ms / ~2.5 s walks) the lag becomes user-visible.
 
-The frontend rendering side of this work (relative-time formatting for the `updated` column — "3 hours ago", "2 days ago", full date+time at >7 days) lives as [subtask 11 of `2026-05-07-tracker-mental-model-alignment`](../2026-05-07-tracker-mental-model-alignment/subtasks/11_relative-time-rendering.md). It made more sense there since it completes the user-facing surface of the manual-`updated` drop. This issue is purely the backend cache-scaling work.
+The frontend rendering side of this work (relative-time formatting in the layouts) already landed as [subtask 11 of `2026-05-07-tracker-mental-model-alignment`](../2026-05-07-tracker-mental-model-alignment/subtasks/11_relative-time-rendering.md). This issue is purely the backend cache-scaling story.
+
+## Design — branch-keyed persistent cache with eager incremental update
+
+Two notes cover the design:
+- [`notes/01_design-and-rationale.md`](./notes/01_design-and-rationale.md) — architecture + current-vs-proposed comparison + edge-case handling.
+- [`notes/02_walkthrough.md`](./notes/02_walkthrough.md) — step-by-step timeline diagrams with concrete timings for every scenario (server start, commits, branch switches, page renders).
+
+Short version:
+
+- **Eager** instead of lazy: the watcher itself does the diff walk and patches the cache, so reads never block on git.
+- **Incremental** instead of full: walk only `<lastHash>..HEAD` (~15 ms typical) instead of all history (~500 ms).
+- **Persistent** to disk under `.cache/<repo>/<branch>.json` so server restarts don't lose state.
+- **Branch-keyed**: one cache file per branch; switching to an already-seen branch becomes a load + diff-walk instead of a full rebuild.
+
+After this lands: ~24 s/day of cumulative request-path blocking → ~0 s.
 
 ## Subtasks at a glance
 
-- **01 — Move cache rebuild off the request path.** Async background rebuild on watcher fire; readers serve stale-or-empty without blocking on `git log`.
-- **02 — Pre-warm cache at server start.** Kick off `walkLog` in `astro:server:setup` so the first issues-page render is already warm.
-- **03 — Re-add incremental refresh.** Use `<syncedAt>..HEAD` walk for linear advance; full rebuild only on branch switch / non-linear move.
-- **04 — Disk-persisted cache.** `.astro/issue-dates.json` survives server restarts; verify against current HEAD on load.
-- **05 — Watcher debounce.** Coalesce rapid git events (e.g. interactive rebase) into a single rebuild.
+- **01 — Eager incremental refresh (in-memory).** Replace `cache.delete()` with stale-flag; watcher handler does sync `<lastHash>..HEAD` walk; `merge-base --is-ancestor` discriminator handles non-linear moves. Validates the diff-walk engine. **Core; lands first.**
+- **02 — Branch-keyed persistent cache + server-start pre-warm.** `.cache/<repo>/<branch>.json` files; atomic writes; load on server start; branch-switch fast path; orphan-branch GC; schema versioning. **Core; depends on 01.**
+- **03 — Watcher debounce + edge polish (optional).** 100 ms debounce for rebase/fixup bursts; single-flight lock; detached-HEAD transitions. Land if scripted-git-ops churn is felt; otherwise skip.
 
 ## Ordering
 
-01 + 02 are complementary and small; land them together — that alone covers the perceived-lag concern up to ~3K issues with heavy churn. 03 is worth adding if commit-during-dev churn becomes the bottleneck. 04 and 05 are nice-to-have; skip until there's a felt need.
+1. Land **01** — diff-walk in-memory, no disk yet.
+2. Land **02** — adds branch-keyed persistence + pre-warm. After this, the unified design is in place.
+3. Optional: land **03** if churn-from-scripted-git events becomes a felt problem.
 
-## Background — full discussion
+## Related
 
-The current cache mechanism (lazy invalidation, watcher push + reader pull) is documented in [`agent-log/001_cache-and-update-mechanism.md`](../2026-05-07-tracker-mental-model-alignment/agent-log/001_cache-and-update-mechanism.md) of the mental-model issue. The detailed scaling analysis and optimization rationale live in this issue's notes — see [`notes/01_scaling-analysis.md`](./notes/01_scaling-analysis.md) and [`notes/02_optimization-options.md`](./notes/02_optimization-options.md).
+- Mechanism today (lazy invalidation, full walk) — [`agent-log/001_cache-and-update-mechanism.md`](../2026-05-07-tracker-mental-model-alignment/agent-log/001_cache-and-update-mechanism.md) of the mental-model issue.
+- Per-commit flow walk-throughs — see this issue's [comment 001 (current)](./comments/001_current-commit-flow.md) and [comment 002 (post-incremental)](./comments/002_post-incremental-flow.md).

@@ -31,6 +31,48 @@ export function terminalStartIndex(sorted: IssueSubtask[]): number {
   return sorted.findIndex((s) => TERMINAL.includes(s.state));
 }
 
+/**
+ * Format an ISO 8601 timestamp as relative time, with a fall-through to a
+ * full date+time string once the gap exceeds a week.
+ *
+ *   < 1 min   → "n sec ago"
+ *   < 1 hour  → "n min ago"
+ *   < 1 day   → "n hour(s) ago"
+ *   < 7 days  → "n day(s) ago"
+ *   ≥ 7 days  → "MMM D, YYYY HH:mm"
+ *
+ * Returns both the relative string and a full-precision form intended for a
+ * `title=` attribute (so the tooltip always shows the precise timestamp).
+ * Sub-second / negative deltas (clock skew) clamp to "0 sec ago".
+ */
+export function formatRelativeTime(iso: string | null | undefined): { rel: string; full: string } {
+  if (!iso) return { rel: '', full: '' };
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return { rel: '', full: '' };
+
+  const full = formatFullDateTime(d);
+  const diffSec = Math.max(0, Math.floor((Date.now() - d.getTime()) / 1000));
+
+  if (diffSec < 60) return { rel: `${diffSec} sec ago`, full };
+  const min = Math.floor(diffSec / 60);
+  if (min < 60) return { rel: `${min} min ago`, full };
+  const hr = Math.floor(min / 60);
+  if (hr < 24) return { rel: `${hr} ${hr === 1 ? 'hour' : 'hours'} ago`, full };
+  const day = Math.floor(hr / 24);
+  if (day < 7) return { rel: `${day} ${day === 1 ? 'day' : 'days'} ago`, full };
+  return { rel: full, full };
+}
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+function formatFullDateTime(d: Date): string {
+  const yyyy = d.getFullYear();
+  const mon = MONTHS[d.getMonth()];
+  const day = d.getDate();
+  const hh = String(d.getHours()).padStart(2, '0');
+  const mm = String(d.getMinutes()).padStart(2, '0');
+  return `${mon} ${day}, ${yyyy} ${hh}:${mm}`;
+}
+
 /** Word-count cap past which a Comprehensive-panel item collapses. */
 export const COMPREHENSIVE_WORD_CAP = 150;
 

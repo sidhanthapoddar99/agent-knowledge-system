@@ -8,6 +8,7 @@
  * layout is needed again later, reintroduce it as a sibling component.
  */
 import StatusBadge from './StatusBadge.astro';
+import { formatRelativeTime } from '../../server/helpers';
 import type { Issue, IssuesVocabulary } from '@loaders/issues';
 
 interface Props {
@@ -24,6 +25,8 @@ function formatDate(value: string | null | undefined): string {
   if (isNaN(d.getTime())) return value;
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
 }
+
+const { rel: updatedRel, full: updatedFull } = formatRelativeTime(issue.updated);
 ---
 
 <aside class="issue-meta-panel">
@@ -52,6 +55,8 @@ function formatDate(value: string | null | undefined): string {
   </div>
   <div class="issue-meta-panel__line">
     <div class="issue-meta-panel__cell"><dt>Created</dt><dd>{formatDate(issue.created)}</dd></div>
-    <div class="issue-meta-panel__cell"><dt>Updated</dt><dd>{formatDate(issue.updated) || <span class="issue-meta-panel__empty">—</span>}</dd></div>
+    <div class="issue-meta-panel__cell"><dt>Updated</dt><dd>{updatedRel
+      ? <time datetime={issue.updated} title={updatedFull}>{updatedRel}</time>
+      : <span class="issue-meta-panel__empty">—</span>}</dd></div>
   </div>
 </aside>

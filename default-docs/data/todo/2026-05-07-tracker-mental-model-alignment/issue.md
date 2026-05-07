@@ -11,7 +11,9 @@ This issue does the cleanup: drops both fields cleanly, surfaces priority in the
 
 ## Scope
 
-Eight original subtasks (01–08), each touching a different surface and mostly independent — see the ordering note below for the one real coupling. Subtask [09](./subtasks/09_document-cleanup-in-dev-docs.md) is a deferred dev-docs writeup; subtask [10](./subtasks/10_issue-dates-watcher-refinements.md) is a post-landing refinement to the derived-`updated`-date watcher from subtask 03.
+Eight original subtasks (01–08), each touching a different surface and mostly independent — see the ordering note below for the one real coupling. Subtask [09](./subtasks/09_document-cleanup-in-dev-docs.md) is a deferred dev-docs writeup; subtask [10](./subtasks/10_issue-dates-watcher-refinements.md) is a post-landing refinement to the derived-`updated`-date watcher from subtask 03; subtask [11](./subtasks/11_relative-time-rendering.md) finishes the user-facing surface of the manual-`updated` drop by rendering relative time in the layouts.
+
+Backend cache-scaling work (async background rebuild, pre-warm, incremental refresh, etc.) lives in its own issue: [`2026-05-08-update-date-time-optimization`](../2026-05-08-update-date-time-optimization/issue.md). It's purely the loader's perf story — independent of the schema cleanup landed here.
 
 ## What "drop" means here
 

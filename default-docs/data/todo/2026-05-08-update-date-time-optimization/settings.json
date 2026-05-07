@@ -1,0 +1,10 @@
+{
+  "title": "Updated-date rendering + cache scaling",
+  "description": "Frontend: relative-time formatting for the issue 'updated' column (sec/min/hours/days, then full date+time at >7 days). Backend: scale the derived-`updated` cache loader so cold rebuild stays imperceptible at 3K+ issues / 10K+ tracker-touching commits.",
+  "status": "open",
+  "priority": "medium",
+  "component": ["layouts-and-themes"],
+  "labels": ["feature", "performance"],
+  "author": "sidhantha",
+  "assignees": []
+}

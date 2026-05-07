@@ -1,5 +1,6 @@
 ---
 import StatusBadge from './StatusBadge.astro';
+import { formatRelativeTime } from '../../server/helpers';
 import type { Issue, IssuesVocabulary } from '@loaders/issues';
 
 interface Props {
@@ -10,6 +11,7 @@ interface Props {
 
 const { issue, href, vocabulary } = Astro.props;
 const { meta } = issue;
+const { rel: updatedRel, full: updatedFull } = formatRelativeTime(issue.updated);
 ---
 
 <article class="issue-card">
@@ -26,7 +28,7 @@ const { meta } = issue;
     </div>
     <div class="issue-card__meta">
       <span class="issue-card__id">{issue.id}</span>
-      <span class="issue-card__updated">updated {issue.updated.slice(0, 10)}</span>
+      {updatedRel && <span class="issue-card__updated">updated <time datetime={issue.updated} title={updatedFull}>{updatedRel}</time></span>}
     </div>
   </a>
 </article>

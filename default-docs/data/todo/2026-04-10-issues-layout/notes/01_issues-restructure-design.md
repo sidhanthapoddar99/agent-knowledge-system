@@ -11,6 +11,8 @@ sidebar_label: Issues Restructure
 **Component:** `src/layouts/issues/` (new first-class layout, on par with `docs/` and `blogs/`) + `src/parsers/content-types/issues.ts` + `dynamic_data/data/issues/`
 **Status:** Design
 
+> **Historical note (2026-05-07):** This design doc is the original tag-based-issues spec from 2026-04-10. Several of the field choices below — `type`, `milestone`, `due`, manually-maintained `updated` — were tried and removed in the 2026-05-07 cleanup. The current schema and rationale live in `02_design-philosophy-and-review-state.md` ("What we removed and why" section) and the user-guide pages under `default-docs/data/user-guide/19_issues/`. This file is preserved as the as-shipped record of the original thinking.
+
 ---
 
 ## Motivation

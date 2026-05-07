@@ -6,7 +6,7 @@ sidebar_position: 2
 
 # Design Philosophy
 
-This isn't a generic project-management tool. It's deliberately narrow — built for a 1–4 person team that uses AI agents heavily and ships continuously. Read this page before deciding whether the tracker fits your workflow, and before complaining that a familiar field is missing.
+This isn't a generic project-management tool. It's deliberately narrow — built for a 1–4 person team that uses AI agents heavily and ships continuously. Read this page before deciding whether the tracker fits your workflow.
 
 ## The team profile
 
@@ -20,25 +20,31 @@ The "one-person unicorn" / micro-company:
 
 For this team, a generic tracker (GitHub Issues, Jira, Linear's full feature set) is wrong on two axes: too much process for the team size, not enough AI-native primitives for the workflow.
 
-## What we deliberately don't have
+## Principles that shape the model
 
-### No sprints, no agile cycles
+### Priority + status are the only ordering signals
 
-Sprints solve coordination problems 1–4 person teams don't have. They assume many people needing a planning ritual, capacity bottlenecked by people-hours over a fixed window, a retro cadence to improve process. In a tiny AI-heavy team:
+The index sorts by `priority desc, updated desc`. That's the whole signal stack. There's no extra release-bucket dimension, no scheduled-date dimension, no per-issue type — those layers either rot under continuous shipping or duplicate what `priority` and `labels` already carry.
 
-- Coordination is one chat message
-- The bottleneck isn't capacity — it's *deciding what's worth doing next*
-- Plans go stale in hours when an agent finishes mid-day
+### Recency is derived, not declared
 
-Sprints would become theatre — plan Monday, AI ships half by Tuesday, re-plan. The artefact rots. The tracker has **`milestone`** instead — a long-horizon north star ("phase-2") that says *we're working toward this big chunk of value*, not *we promised to ship X by Friday*.
+`updated` comes from git — the most recent commit touching any file under the issue folder. Honest signal beats a stale promise; an author-maintained timestamp drifts the moment someone forgets.
 
-### No `type` field
+### `created` is the folder slug
 
-Real work is composite (a perf fix is bug + perf + refactor). Forcing a single primary type was lossy and required a daily decision that didn't pay off — almost every issue ended up `feature` or `task`. Type values moved into multi-select **labels**, where they belong.
+Every issue folder is named `YYYY-MM-DD-<slug>`. The date IS the creation date — no separate `created` field, no possibility of disagreement. One source, parsed at load time.
 
-### No `in-progress`, no `blocked` as primary statuses
+### Transient state is a label, not a status
 
-Transient state ("someone is actively working on this", "this is stuck") is a conversation, not a tracker field. It goes stale instantly. If you need it, it's a **label** (`wip`, `blocked`) that stacks with anything else and doesn't churn the primary status.
+`open / review / closed / cancelled` are the only primary statuses. "Actively working on this" or "this is stuck" are conversations or **labels** (`wip`, `blocked`) — they stack with anything else and don't churn the audit trail.
+
+### Composite work uses multi-select labels
+
+Real work is rarely one type — a perf fix is `bug + performance + refactor`. Multi-select labels handle that without a forced primary. Status answers "where in the lifecycle"; labels answer "what kind of work".
+
+### Cross-issue work uses links, not buckets
+
+When several issues form a bundle, link them in prose. A bundle that earns a structured field today is a bundle that wants to be a single issue with subtasks tomorrow.
 
 ## What we do have
 

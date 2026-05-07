@@ -32,6 +32,8 @@ Validators (exit `0` clean / `1` on errors):
 
 Pass `--help` to any wrapper for full flags. **Do not use `Grep` on the tracker** — `docs-list` understands the schema (vocabulary, subtask states, frontmatter); `Grep` only sees text.
 
+**Tracker mental model.** This tracker is comprehensive memory of thought-work for AI-augmented development. Each issue is a folder capturing one coherent unit of *thinking + execution* (`issue.md` + `notes/` → `subtasks/` → `agent-log/` → `comments/`). Ordering is `priority desc, updated desc`; `updated` is derived from git history (most recent commit touching anything under the folder). `created` comes from the folder slug. Best-practices: one `component` per issue (multi is allowed for genuinely cross-cutting work, hint-warned by validator); AI-handoff-bound issues should declare ≥1 subtask. **Don't add scheduling, release-bucket, or single-type fields without an explicit policy reversal** — they rot under continuous AI-driven shipping. Full framing: `default-docs/data/user-guide/19_issues/01_overview.md` and `02_design-philosophy.md`.
+
 **2 slash commands** for project-level scaffolding:
 
 | Command | Use |
@@ -131,7 +133,7 @@ default-docs/
     ├── blog/             # Blog posts (YYYY-MM-DD-slug.md)
     ├── issues/           # Issue tracker (folder-per-issue, YYYY-MM-DD-<slug>/)
     │                     #   settings.json (metadata), issue.md, comments/NNN_*.md, *.md (supporting docs)
-    │                     #   Root settings.json declares vocabulary (status, priority, type, …)
+    │                     #   Root settings.json declares vocabulary (status, priority, component, labels)
     └── pages/            # Custom page data (YAML)
 ```
 

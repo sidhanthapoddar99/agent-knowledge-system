@@ -1,6 +1,6 @@
 ---
 title: "Notes + agent-log: 2-level subfolder tree, no naming convention"
-state: done
+state: closed
 done: true
 ---
 

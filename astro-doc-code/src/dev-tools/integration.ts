@@ -18,6 +18,8 @@ import yaml from 'js-yaml';
 import cacheManager from '../loaders/cache-manager';
 import { paths, getUserPaths, getPathsByCategory } from '../loaders/paths';
 import { getThemePaths, loadSiteConfig } from '../loaders/config';
+import { invalidateIssueDateCache, getIssueDateWatchPaths } from '../loaders/issue-dates';
+import { invalidateIssuesCache } from '../loaders/issues';
 import { EditorStore } from './server/editor-store';
 import { setupEditorMiddleware } from './server/middleware';
 import { PresenceManager, type PresenceConfig } from './server/presence';
@@ -166,6 +168,35 @@ export function devToolbarIntegration(): AstroIntegration {
                   watchPaths.forEach(watchPath => {
                     server.watcher.add(watchPath);
                     console.log('[HMR] Watching:', watchPath);
+                  });
+
+                  // Watch git refs so the derived issue-date cache invalidates
+                  // on commit / checkout / pull. The cache is in-memory and
+                  // only refreshes when something in the issues loader asks.
+                  // Single listener + a dynamically-reconciled watch set:
+                  // after `.git/HEAD` moves (branch switch), we re-resolve
+                  // the active branch ref and re-point the watcher.
+                  let watchedGitPaths = new Set<string>(getIssueDateWatchPaths());
+                  for (const p of watchedGitPaths) {
+                    server.watcher.add(p);
+                    console.log('[HMR] Watching git ref:', p);
+                  }
+                  server.watcher.on('change', (file) => {
+                    if (!watchedGitPaths.has(file)) return;
+                    invalidateIssueDateCache();
+                    invalidateIssuesCache();
+
+                    const desired = new Set(getIssueDateWatchPaths());
+                    for (const p of watchedGitPaths) {
+                      if (!desired.has(p)) server.watcher.unwatch(p);
+                    }
+                    for (const p of desired) {
+                      if (!watchedGitPaths.has(p)) {
+                        server.watcher.add(p);
+                        console.log('[HMR] Watching git ref:', p);
+                      }
+                    }
+                    watchedGitPaths = desired;
                   });
 
                   // Watch for file additions

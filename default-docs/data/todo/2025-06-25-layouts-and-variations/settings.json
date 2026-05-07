@@ -3,11 +3,13 @@
   "description": "Expand layout coverage: more doc layouts, custom page templates, and navbar/footer variants.",
   "status": "open",
   "priority": "medium",
-  "component": ["layouts-and-themes"],
-  "milestone": "phase-1",
-  "labels": ["wip", "feature"],
+  "component": [
+    "layouts-and-themes"
+  ],
+  "labels": [
+    "wip",
+    "feature"
+  ],
   "author": "sidhantha",
-  "assignees": [],
-  "updated": "2025-06-25",
-  "due": null
+  "assignees": []
 }

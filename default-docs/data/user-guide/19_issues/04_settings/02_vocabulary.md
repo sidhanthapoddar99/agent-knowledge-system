@@ -37,19 +37,15 @@ Per-issue `settings.json` files are validated against this root. Rename a value 
     "component": {
       "values": ["live-editor", "dev-toolbar", "content-pipeline", "layouts-and-themes", "loaders", "components", "ai-skills", "integrations", "infra", "docs"]
     },
-    "milestone": {
-      "values": ["phase-1", "phase-2", "phase-3", "phase-4", "backlog", "unassigned"]
-    },
     "labels": {
       "values": ["wip", "blocked", "bug", "feature", "task", "performance", "refactor", "docs", "idea", "duplicate", "good-first-issue", "discussion", "blocked-external"]
     }
   },
   "authors": ["sidhantha", "claude"],
   "views": [
-    { "name": "Phase 2",      "filters": { "milestone": ["phase-2"] }, "group": "component" },
     { "name": "High priority","filters": { "priority": ["high", "urgent"] } },
     { "name": "Blocked",      "filters": { "labels": ["blocked", "blocked-external"] } },
-    { "name": "By milestone", "group": "milestone" }
+    { "name": "By component", "group": "component" }
   ]
 }
 ```
@@ -66,7 +62,7 @@ Per-issue `settings.json` files are validated against this root. Rename a value 
 
 ## The `fields` object
 
-Each key is a field name (`status`, `priority`, `component`, `milestone`, `labels`). Each value has:
+Each key is a field name (`status`, `priority`, `component`, `labels`). Each value has:
 
 ```ts
 {
@@ -77,17 +73,18 @@ Each key is a field name (`status`, `priority`, `component`, `milestone`, `label
 
 ### Required fields
 
-The loader expects these five fields at minimum. Adding more is possible but the built-in layout won't surface them.
+The loader expects these four fields at minimum. Adding more is possible but the built-in layout won't surface them.
 
 | Field | Multi-select? | Typically used for |
 |---|:---:|---|
 | `status` | — | Lifecycle state (the 4-state review model) |
 | `priority` | — | Urgency (low / medium / high / urgent) |
-| `component` | ✅ | Which part of the codebase / product — issues that span multiple |
-| `milestone` | — | Long-horizon grouping (phase, release, roadmap) |
+| `component` | ✅ | Which part of the codebase / product. Convention is one entry per issue; multi-component is allowed for cross-cutting work |
 | `labels` | ✅ | Everything orthogonal — `wip`, `blocked`, `bug`, `feature`, `docs`, `idea`, … |
 
 The vocabulary shape is the same for single- and multi-select fields — just `values: string[]` (and optional `colors`). Whether issues consume each value singly or as a list is up to per-issue `settings.json`.
+
+`priority` + `status` are the ordering signals — see [Design Philosophy](../design-philosophy) for why no other dimensions are wired in.
 
 ### Status — the 4-state contract
 
@@ -109,7 +106,7 @@ If you need finer-grained intermediate states (`in-progress`, `blocked`, `needs-
 
 #### Why it's a contract, not a vocabulary
 
-`status` looks like every other enum in `fields` — `values` array, optional `colors` map — but it isn't truly vocabulary-driven. The other enums (`priority`, `component`, `milestone`, `labels`) are read at runtime: add a new value to `settings.json` and it shows up in filters, groupings, and chips with no code change. `status` is **special-cased** end-to-end.
+`status` looks like every other enum in `fields` — `values` array, optional `colors` map — but it isn't truly vocabulary-driven. The other enums (`priority`, `component`, `labels`) are read at runtime: add a new value to `settings.json` and it shows up in filters, groupings, and chips with no code change. `status` is **special-cased** end-to-end.
 
 Here's what *is* vs. *isn't* driven by the vocabulary:
 
@@ -122,6 +119,7 @@ Here's what *is* vs. *isn't* driven by the vocabulary:
 | **Subtask** states | Same hardcoded set — issue and subtask share one literal union |
 | Filter / progress-bar segments | Hardcoded (4 segments) |
 | Subtask-debt promotion (open issue → Review tab if any subtask is `review`) | Keyed off the literal string `'review'` |
+| `priority` ordering | ✅ Vocabulary (`fields.priority.values`) — drives default index sort |
 
 **Bottom line:** the colors are tweakable from `settings.json`. The names, the count, and the order are not.
 
@@ -164,8 +162,9 @@ Canned filter + grouping configurations that appear as a strip above the list vi
 
 ```json
 "views": [
-  { "name": "Phase 2", "filters": { "milestone": ["phase-2"] }, "group": "component" },
-  { "name": "Blocked", "filters": { "labels": ["blocked"] } }
+  { "name": "High priority", "filters": { "priority": ["high", "urgent"] } },
+  { "name": "Blocked",       "filters": { "labels": ["blocked"] } },
+  { "name": "By component",  "group": "component" }
 ]
 ```
 
@@ -175,8 +174,8 @@ Per-view fields:
 |---|---|---|
 | `name` | string | Label shown in the preset strip |
 | `filters` | `{ [field]: string[] }` | Field → values to include (OR within, AND across fields) |
-| `group` | string | Field to group the result list by (`component`, `milestone`, `priority`) |
-| `sort` | `"updated" \| "created" \| "priority" \| "due"` | Default sort for this view |
+| `group` | string | Field to group the result list by (`component` or `priority`) |
+| `sort` | `"updated" \| "created" \| "priority"` | Default sort for this view |
 | `dir` | `"asc" \| "desc"` | Sort direction |
 
 All fields except `name` are optional — a preset with just `group` applied to the default filter set is a valid "group by X" shortcut.

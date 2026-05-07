@@ -3,11 +3,12 @@
   "description": "Support multiple named data paths via `@key/...` aliases instead of a single DATA_DIR.",
   "status": "closed",
   "priority": "medium",
-  "component": ["loaders"],
-  "milestone": "phase-1",
-  "labels": ["feature"],
+  "component": [
+    "loaders"
+  ],
+  "labels": [
+    "feature"
+  ],
   "author": "sidhantha",
-  "assignees": [],
-  "updated": "2025-06-25",
-  "due": null
+  "assignees": []
 }

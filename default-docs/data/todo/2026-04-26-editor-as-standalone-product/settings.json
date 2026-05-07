@@ -3,11 +3,17 @@
   "description": "Extract the live editor out of the Astro docs framework into its own product: Rust core (yrs CRDT, file ops), thin headless server binary, Tauri desktop app, and shared web frontend. The docs viewer (Astro) stays focused on rendering; the editor stops being a dev-tool dependency.",
   "status": "open",
   "priority": "low",
-  "component": ["live-editor", "infra", "integrations"],
-  "milestone": "backlog",
-  "labels": ["refactor", "feature", "idea", "discussion"],
+  "component": [
+    "live-editor",
+    "infra",
+    "integrations"
+  ],
+  "labels": [
+    "refactor",
+    "feature",
+    "idea",
+    "discussion"
+  ],
   "author": "sidhantha",
-  "assignees": [],
-  "updated": "2026-04-26",
-  "due": null
+  "assignees": []
 }

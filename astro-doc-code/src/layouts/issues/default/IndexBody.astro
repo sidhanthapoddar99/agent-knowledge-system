@@ -23,7 +23,7 @@ interface Props {
 const { dataPath, baseUrl } = Astro.props;
 const { vocabulary, rootDraft, issues } = await loadIssues(dataPath);
 
-const FILTER_FIELDS = ['priority', 'component', 'milestone', 'labels'] as const;
+const FILTER_FIELDS = ['priority', 'component', 'labels'] as const;
 const filterGroups: Array<{
   key: string;
   label: string;
@@ -60,13 +60,7 @@ function searchBlob(issue: typeof issues[number]): string {
     .toLowerCase();
 }
 
-const TODAY = new Date().toISOString().slice(0, 10);
 const CLOSED_STATUSES = new Set(['closed', 'cancelled']);
-function isOverdue(meta: typeof issues[number]['meta']): boolean {
-  if (!meta.due) return false;
-  if (meta.due >= TODAY) return false;
-  return !CLOSED_STATUSES.has(meta.status);
-}
 
 // Review tab covers two cases:
 //   1. Issue explicitly in status=review
@@ -87,7 +81,7 @@ const cancelledCount = issues.filter((i) => i.meta.status === 'cancelled').lengt
 // Group-by only offers dimensions that actually have a vocabulary —
 // otherwise there's nothing to group under. `status` intentionally
 // excluded (state tabs already group by status).
-const GROUP_CANDIDATES = ['component', 'milestone', 'priority'] as const;
+const GROUP_CANDIDATES = ['component', 'priority'] as const;
 const groupDimensions = GROUP_CANDIDATES.filter(
   (d) => vocabulary.fields?.[d]?.values?.length,
 );
@@ -135,14 +129,12 @@ const clientConfig = {
         vocabulary={vocabulary}
         baseUrl={baseUrl}
         searchBlob={searchBlob}
-        isOverdue={isOverdue}
       />
       <IssuesTable
         issues={issues}
         vocabulary={vocabulary}
         baseUrl={baseUrl}
         searchBlob={searchBlob}
-        isOverdue={isOverdue}
       />
     </>
   ) : (

@@ -3,11 +3,15 @@
   "description": "Refactor so each consumer project becomes a thin shell (dynamic_data/, .env, package.json with one dep) instead of a full clone. One source of truth for the engine; updates flow via `bun update`.",
   "status": "cancelled",
   "priority": "medium",
-  "component": ["infra", "loaders", "integrations"],
-  "milestone": "backlog",
-  "labels": ["refactor", "feature"],
+  "component": [
+    "infra",
+    "loaders",
+    "integrations"
+  ],
+  "labels": [
+    "refactor",
+    "feature"
+  ],
   "author": "sidhantha",
-  "assignees": [],
-  "updated": "2026-04-25",
-  "due": null
+  "assignees": []
 }

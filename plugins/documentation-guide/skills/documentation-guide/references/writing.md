@@ -28,7 +28,14 @@ draft: false
 Per-content-type extras:
 - **docs** — `sidebar_label`, `sidebar_position`
 - **blog** — `date` (YYYY-MM-DD), `author`, `tags`
-- **issues** — see `issue-layout.md` (different schema, lives in `settings.json`)
+- **issues** — see `issue-layout.md` (different schema, lives in `settings.json`). The tracker is comprehensive memory of thought-work for AI-augmented development. `created` is parsed from the folder slug; `updated` is derived from git history (don't write it into `settings.json` — the loader ignores it).
+
+## Issue best practices
+
+When writing or scaffolding issues — yours or via an agent:
+
+- **One component per issue** is the convention. Multiple components is allowed but should be reserved for genuinely cross-cutting work; usually that's a sign to split into two issues. The validator emits a hint when an issue declares more than one.
+- **AI-handoff-bound issues should declare ≥1 subtask.** The subtask is the agent's anchor: an explicit "did this happen yet?" checkbox the next agent (or human reviewer) can resume from. Trivial human-only fixes don't need this.
 
 ## Custom tags
 

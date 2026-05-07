@@ -21,13 +21,12 @@ const { meta } = issue;
         <StatusBadge field="status" value={meta.status} vocabulary={vocabulary.fields} />
         <StatusBadge field="priority" value={meta.priority} vocabulary={vocabulary.fields} />
         {meta.component.map((c) => <StatusBadge field="component" value={c} vocabulary={vocabulary.fields} />)}
-        {meta.milestone && <StatusBadge field="milestone" value={meta.milestone} vocabulary={vocabulary.fields} />}
         {meta.labels.map((l) => <StatusBadge field="labels" value={l} vocabulary={vocabulary.fields} />)}
       </div>
     </div>
     <div class="issue-card__meta">
       <span class="issue-card__id">{issue.id}</span>
-      <span class="issue-card__updated">updated {meta.updated}</span>
+      <span class="issue-card__updated">updated {issue.updated.slice(0, 10)}</span>
     </div>
   </a>
 </article>

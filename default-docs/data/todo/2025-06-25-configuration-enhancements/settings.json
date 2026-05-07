@@ -3,11 +3,14 @@
   "description": "Expand `site.yaml`: SEO meta, analytics, custom head tags, per-page overrides, env-specific configs, validation, migration tool.",
   "status": "open",
   "priority": "medium",
-  "component": ["loaders"],
-  "milestone": "phase-1",
-  "labels": ["feature"],
+  "component": [
+    "loaders"
+  ],
+  "labels": [
+    "feature"
+  ],
   "author": "sidhantha",
-  "assignees": ["sidhantha"],
-  "updated": "2025-06-25",
-  "due": null
+  "assignees": [
+    "sidhantha"
+  ]
 }

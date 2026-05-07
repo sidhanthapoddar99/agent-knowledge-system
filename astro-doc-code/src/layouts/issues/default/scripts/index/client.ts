@@ -300,7 +300,7 @@ function apply(cfg: Config) {
 
   // Hide/show the grouped-on column on the main table.
   if (mainTable) {
-    mainTable.classList.remove('is-hide-col-component', 'is-hide-col-milestone', 'is-hide-col-priority');
+    mainTable.classList.remove('is-hide-col-component', 'is-hide-col-priority');
     if (groupField) mainTable.classList.add(`is-hide-col-${groupField}`);
   }
 
@@ -336,6 +336,20 @@ function apply(cfg: Config) {
         const vb = sortValue(b, state.sort!, cfg);
         if (va < vb) return -1 * dirMul;
         if (va > vb) return 1 * dirMul;
+        return 0;
+      });
+    } else {
+      // Default order: priority desc (urgent first), then updated desc.
+      // priorityOrder is asc-ranked in the vocabulary (low → urgent), so a
+      // lower index means lower priority — sort by descending index.
+      visibleRows.sort((a, b) => {
+        const pa = sortValue(a, 'priority', cfg) as number;
+        const pb = sortValue(b, 'priority', cfg) as number;
+        if (pa !== pb) return pb - pa;
+        const ua = sortValue(a, 'updated', cfg) as string;
+        const ub = sortValue(b, 'updated', cfg) as string;
+        if (ua < ub) return 1;
+        if (ua > ub) return -1;
         return 0;
       });
     }

@@ -1,14 +1,18 @@
 ---
 title: "Best-practice: ≥1 subtask per AI-handoff-bound issue"
-state: open
-done: false
+state: closed
+done: true
 ---
 
-- [ ] Document the convention: any issue intended for AI execution should declare **at least one subtask**. The subtask is the handoff anchor — it gives the agent an explicit "did this happen yet?" checkbox and a place to record progress. Issues a human will resolve in five seconds don't need this.
-- [ ] Phrase the rule as *"every AI-handoff-bound issue has ≥1 subtask"*, not *"every issue must have ≥1 subtask"*. The conditional matters — trivial human-only fixes shouldn't carry bookkeeping overhead.
-- [ ] Document in user-guide (alongside subtask 04's writeup — same target page).
-- [ ] Document in plugin skill `references/issue-layout.md` and `references/writing.md` so AI agents creating issues for themselves know to break the work down.
-- [ ] **Optional soft warning** in `docs-check-section`: if an issue has `assignees` containing an AI agent (e.g. `claude`) and no subtasks, emit a hint ("AI-handoff-bound issue has no subtasks — consider adding one"). Hint only; never an error. Decide during implementation whether the value is worth the validator complexity.
+- [x] Document the convention: any issue intended for AI execution should declare **at least one subtask**. The subtask is the handoff anchor — it gives the agent an explicit "did this happen yet?" checkbox and a place to record progress. Issues a human will resolve in five seconds don't need this.
+- [x] Phrase the rule as *"every AI-handoff-bound issue has ≥1 subtask"*, not *"every issue must have ≥1 subtask"*. The conditional matters — trivial human-only fixes shouldn't carry bookkeeping overhead.
+- [x] Document in user-guide (alongside subtask 04's writeup — same target page).
+- [x] Document in plugin skill `references/issue-layout.md` and `references/writing.md` so AI agents creating issues for themselves know to break the work down.
+- [x] **Optional soft warning** in `docs-check-section`: if an issue has `assignees` containing an AI agent (e.g. `claude`) and no subtasks, emit a hint ("AI-handoff-bound issue has no subtasks — consider adding one"). Hint only; never an error. Decide during implementation whether the value is worth the validator complexity.
+
+## Landed
+
+Documented in user-guide overview, plugin skill `issue-layout.md`, and `writing.md`. The validator (`check.mjs`) emits a hint when an open / review issue lists a known AI agent in `assignees` but has no subtasks; the agent allow-list (`claude`, `gpt`, `gpt-4`, `gpt-5`, `codex`, `cursor`, `aider`) is intentionally narrow and easy to extend.
 
 ## Why this matters
 

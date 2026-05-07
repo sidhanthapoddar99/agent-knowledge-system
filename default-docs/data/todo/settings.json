@@ -22,9 +22,6 @@
     "component": {
       "values": ["live-editor", "dev-toolbar", "content-pipeline", "layouts-and-themes", "loaders", " ", "ai-skills", "integrations", "infra", "docs"]
     },
-    "milestone": {
-      "values": ["phase-1", "phase-2", "phase-3", "phase-4", "backlog", "unassigned"]
-    },
     "labels": {
       "values": ["wip", "blocked", "bug", "feature", "task", "performance", "refactor", "docs", "idea", "duplicate", "good-first-issue", "discussion", "blocked-external"]
     }
@@ -32,9 +29,8 @@
   "authors": ["sidhantha", "claude"],
   "views": [
     { "name": "Assigned", "filters": { "assignees": ["assigned"] } },
-    { "name": "Phase 2", "filters": { "milestone": ["phase-2"] }, "group": "component" },
     { "name": "High priority", "filters": { "priority": ["high", "urgent"] } },
     { "name": "Blocked", "filters": { "labels": ["blocked", "blocked-external"] } },
-    { "name": "By milestone", "group": "milestone" }
+    { "name": "By component", "group": "component" }
   ]
 }

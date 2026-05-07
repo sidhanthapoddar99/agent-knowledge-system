@@ -36,9 +36,6 @@ function formatDate(value: string | null | undefined): string {
   <div class="issue-meta-panel__line">
     <div class="issue-meta-panel__cell"><dt>Status</dt><dd><StatusBadge field="status" value={meta.status} vocabulary={vocabulary.fields} /></dd></div>
     <div class="issue-meta-panel__cell"><dt>Priority</dt><dd><StatusBadge field="priority" value={meta.priority} vocabulary={vocabulary.fields} /></dd></div>
-    <div class="issue-meta-panel__cell"><dt>Milestone</dt><dd>{meta.milestone
-      ? <StatusBadge field="milestone" value={meta.milestone} vocabulary={vocabulary.fields} />
-      : <span class="issue-meta-panel__empty">—</span>}</dd></div>
   </div>
   <div class="issue-meta-panel__line">
     <div class="issue-meta-panel__cell issue-meta-panel__cell--wide"><dt>Labels</dt><dd>
@@ -55,7 +52,6 @@ function formatDate(value: string | null | undefined): string {
   </div>
   <div class="issue-meta-panel__line">
     <div class="issue-meta-panel__cell"><dt>Created</dt><dd>{formatDate(issue.created)}</dd></div>
-    <div class="issue-meta-panel__cell"><dt>Updated</dt><dd>{formatDate(meta.updated) || <span class="issue-meta-panel__empty">—</span>}</dd></div>
-    <div class="issue-meta-panel__cell"><dt>Due</dt><dd>{meta.due ? formatDate(meta.due) : <span class="issue-meta-panel__empty">—</span>}</dd></div>
+    <div class="issue-meta-panel__cell"><dt>Updated</dt><dd>{formatDate(issue.updated) || <span class="issue-meta-panel__empty">—</span>}</dd></div>
   </div>
 </aside>

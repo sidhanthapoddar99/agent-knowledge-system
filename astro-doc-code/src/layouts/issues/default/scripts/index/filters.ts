@@ -104,7 +104,6 @@ export function sortValue(row: HTMLElement, field: string, cfg: Config): number 
     // good enough for column-sort ordering; group-by remains the proper view
     // when an issue spans several components.
     case 'component': return (ds.component || '').split(' ').filter(Boolean)[0] || '';
-    case 'milestone': return ds.milestone || '';
     // Sort by first assignee alphabetically; unassigned issues sink to the
     // bottom in ascending order (and rise to the top in descending) — the
     // "~" suffix exploits ASCII ordering without needing a special-case.
@@ -112,7 +111,6 @@ export function sortValue(row: HTMLElement, field: string, cfg: Config): number 
       const first = (ds.assignees || '').split(' ').filter(Boolean)[0];
       return first ? first.toLowerCase() : '~';
     }
-    case 'due':       return ds.due || '9999-99-99';
     case 'created':   return ds.created || '';
     case 'updated':   return ds.updated || '';
     default:          return '';

@@ -3,13 +3,12 @@
   "description": "Add roadmap and releases as first-class content types alongside docs, blogs, issues, and custom.",
   "status": "open",
   "priority": "medium",
-  "component": ["layouts-and-themes"],
-  "milestone": "phase-3",
+  "component": [
+    "layouts-and-themes"
+  ],
   "labels": [
     "feature"
   ],
   "author": "sidhantha",
-  "assignees": [],
-  "updated": "2026-04-10",
-  "due": "2026-04-19"
+  "assignees": []
 }

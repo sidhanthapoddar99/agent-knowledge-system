@@ -3,14 +3,13 @@
   "description": "Custom-tag transformers (callout / tabs / collapsible) exist in code but are not wired into any parser pipeline, so they render as raw HTML today. This issue tracks wiring, the components showcase, theme-testing, and design for author-defined tags.",
   "status": "open",
   "priority": "medium",
-  "component": ["components"],
-  "milestone": "phase-3",
+  "component": [
+    "components"
+  ],
   "labels": [
     "feature",
     "wip"
   ],
   "author": "sidhantha",
-  "assignees": [],
-  "updated": "2026-04-20",
-  "due": null
+  "assignees": []
 }

@@ -31,15 +31,12 @@ if (args.flags.help || args.flags.h) {
     '  --status open,review,closed,cancelled    default: open,review',
     '  --priority low,medium,high,urgent',
     '  --component <vals>',
-    '  --milestone <vals>',
     '  --label <vals>',
     '  --type <vals>                            (if `type` field present)',
     '  --assignee <names,assigned,unassigned>   per-name match; `assigned`/`unassigned`',
     '                                           are coarse "is anyone on it?" pseudo-values',
     '  --created-after YYYY-MM-DD               from issue folder date prefix',
     '  --created-before YYYY-MM-DD',
-    '  --due-after YYYY-MM-DD                   from `due:` field',
-    '  --due-before YYYY-MM-DD',
     '  --subtasks-min N        --subtasks-max N',
     '  --has-open-subtasks     --has-review-subtasks     --has-closed-subtasks',
     '  --include-cancelled                      shorthand for adding cancelled to default scope',
@@ -67,6 +64,7 @@ if (args.flags.help || args.flags.h) {
     '  list.mjs --search "indexer" --status review',
     '  list.mjs --search "TODO\\\\(.*\\\\)" --search-fields body,subtasks --json',
     '  list.mjs --created-after 2026-04-01 --has-review-subtasks',
+    '  list.mjs --component live-editor --priority high,urgent',
   ]);
   process.exit(args.flags.help || args.flags.h ? 0 : 2);
 }
@@ -77,7 +75,6 @@ const tracker = args.flags.tracker || DEFAULT_TRACKER;
 const filterStatus     = csv(args.flags.status);
 const filterPriority   = csv(args.flags.priority);
 const filterComponent  = csv(args.flags.component);
-const filterMilestone  = csv(args.flags.milestone);
 const filterLabel      = csv(args.flags.label);
 const filterType       = csv(args.flags.type);
 const filterAssignee   = csv(args.flags.assignee);
@@ -88,8 +85,6 @@ const subtasksMin      = numOrNull(args.flags['subtasks-min']);
 const subtasksMax      = numOrNull(args.flags['subtasks-max']);
 const createdAfter     = strOrNull(args.flags['created-after']);
 const createdBefore    = strOrNull(args.flags['created-before']);
-const dueAfter         = strOrNull(args.flags['due-after']);
-const dueBefore        = strOrNull(args.flags['due-before']);
 
 const searchPattern    = strOrNull(args.flags.search);
 const searchFields     = csv(args.flags['search-fields']); // empty = all
@@ -116,7 +111,6 @@ for (const id of listIssueFolders(tracker)) {
 
   if (!scope.includes(meta.status)) continue;
   if (filterPriority.length  && !filterPriority.includes(meta.priority))   continue;
-  if (filterMilestone.length && !filterMilestone.includes(meta.milestone)) continue;
 
   if (filterComponent.length) {
     const comps = arrify(meta.component);
@@ -151,8 +145,6 @@ for (const id of listIssueFolders(tracker)) {
 
   if (createdAfter  && (issueDateFromId(id) ?? '') < createdAfter)  continue;
   if (createdBefore && (issueDateFromId(id) ?? '') > createdBefore) continue;
-  if (dueAfter  && (str(meta.due) === '' || meta.due < dueAfter))  continue;
-  if (dueBefore && (str(meta.due) === '' || meta.due > dueBefore)) continue;
 
   // Subtask-related filters require reading subtasks (slightly more I/O).
   let subs = null;
@@ -169,12 +161,10 @@ for (const id of listIssueFolders(tracker)) {
     id,
     status: meta.status,
     priority: meta.priority,
-    milestone: meta.milestone,
     component: arrify(meta.component),
     labels: Array.isArray(meta.labels) ? meta.labels : [],
     type: arrify(meta.type),
     assignees: arrify(meta.assignee).concat(arrify(meta.assignees)),
-    due: meta.due ?? null,
     title: meta.title,
   });
 }
@@ -262,4 +252,3 @@ function strOrNull(v) {
   const t = v.trim();
   return t || null;
 }
-function str(v) { return v == null ? '' : String(v); }

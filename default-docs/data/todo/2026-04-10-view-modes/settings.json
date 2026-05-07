@@ -3,14 +3,13 @@
   "description": "How the document is rendered to the user: Source (default), Live Preview, Preview (rendered HTML), True WYSIWYG (future), View-only / edit-mode lock.",
   "status": "open",
   "priority": "medium",
-  "component": ["live-editor"],
-  "milestone": "phase-2",
+  "component": [
+    "live-editor"
+  ],
   "labels": [
     "wip",
     "feature"
   ],
   "author": "sidhantha",
-  "assignees": [],
-  "updated": "2026-04-10",
-  "due": "2026-04-19"
+  "assignees": []
 }

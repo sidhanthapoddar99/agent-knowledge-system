@@ -1,6 +1,6 @@
 ---
 title: "Grouped view: unified + persistent status filter"
-state: done
+state: closed
 done: true
 ---
 

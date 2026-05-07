@@ -3,10 +3,16 @@
   "description": "Local dev / preview reuses the same localhost:<port>, so two documentation projects share localStorage. Project B overwrites Project A's editor / filter / sidebar cache. Fix: site-identity hex in site.yaml, browser-side namespacing, archive-on-mismatch with 60-day TTL.",
   "status": "open",
   "priority": "medium",
-  "component": ["layouts-and-themes", "loaders"],
-  "milestone": "phase-2",
-  "labels": ["bug", "feature"],
+  "component": [
+    "layouts-and-themes",
+    "loaders"
+  ],
+  "labels": [
+    "bug",
+    "feature"
+  ],
   "author": "sidhantha",
-  "assignees": ["sidhantha"],
-  "updated": "2026-05-07"
+  "assignees": [
+    "sidhantha"
+  ]
 }

@@ -1,11 +1,11 @@
 ---
 /**
  * IssuesTable - Table view. Sortable column headers, status/id sub-line in
- * the Title cell, a two-line subtasks cell (count on top, progress bar below),
- * and an overdue-highlighted Due cell.
+ * the Title cell, a two-line subtasks cell (count on top, progress bar
+ * below), and a derived "Updated" cell sourced from git history.
  *
- * Labels column was intentionally removed — label filter still works from
- * the filter bar, but the column adds visual noise in dense rows.
+ * Priority is a first-class sortable column. Default sort lives in the
+ * client (priority desc, then updated desc) — see scripts/index/client.ts.
  */
 import StatusBadge from '../shared/StatusBadge.astro';
 import { avatarColor, initial } from '../../server/helpers';
@@ -16,10 +16,9 @@ interface Props {
   vocabulary: IssuesVocabulary;
   baseUrl: string;
   searchBlob: (issue: Issue) => string;
-  isOverdue: (meta: Issue['meta']) => boolean;
 }
 
-const { issues, vocabulary, baseUrl, searchBlob, isOverdue } = Astro.props;
+const { issues, vocabulary, baseUrl, searchBlob } = Astro.props;
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 function formatDate(value: string | null | undefined): string {
@@ -34,11 +33,11 @@ const columns = [
   { key: 'component', label: 'Component', sortable: true },
   { key: 'title', label: 'Title', sortable: true, className: 'issues-table__th-title' },
   { key: 'status', label: 'Status', sortable: true },
-  { key: 'milestone', label: 'Milestone', sortable: true },
+  { key: 'priority', label: 'Priority', sortable: true },
   { key: 'assignees', label: 'Assignees', sortable: true },
   { key: 'subtasks', label: 'Subtasks', sortable: false },
   { key: 'created', label: 'Created', sortable: true },
-  { key: 'due', label: 'Due', sortable: true },
+  { key: 'updated', label: 'Updated', sortable: true },
 ];
 
 const VISIBLE_AVATARS = 3;
@@ -66,19 +65,16 @@ const VISIBLE_AVATARS = 3;
       <tbody id="issues-table-tbody">
         {issues.map((issue) => (
           <tr
-            class={`issues-table__row ${isOverdue(issue.meta) ? 'is-overdue' : ''}`}
+            class="issues-table__row"
             data-issue
             data-status={issue.meta.status}
             data-has-review-subtask={issue.subtasks.some((s) => s.state === 'review') ? '1' : '0'}
             data-priority={issue.meta.priority}
             data-component={issue.meta.component.join(' ')}
-            data-milestone={issue.meta.milestone}
             data-labels={issue.meta.labels.join(' ')}
             data-assignees={issue.meta.assignees.join(' ')}
-            data-updated={issue.meta.updated || ''}
+            data-updated={issue.updated}
             data-created={issue.created}
-            data-due={issue.meta.due || ''}
-            data-overdue={isOverdue(issue.meta) ? '1' : '0'}
             data-title={issue.meta.title}
             data-search={searchBlob(issue)}
             data-href={`${baseUrl}/${issue.id}`}
@@ -91,13 +87,15 @@ const VISIBLE_AVATARS = 3;
             <td class="issues-table__title-cell">
               <a href={`${baseUrl}/${issue.id}`} class="issues-table__title-link">{issue.meta.title}</a>
               <div class="issues-table__sub">
-                <StatusBadge field="priority" value={issue.meta.priority} vocabulary={vocabulary.fields} />
-                <span class="issues-table__sub-sep">·</span>
                 <span class="issues-table__id">{issue.id}</span>
               </div>
             </td>
             <td><StatusBadge field="status" value={issue.meta.status} vocabulary={vocabulary.fields} /></td>
-            <td class="issues-table__muted">{issue.meta.milestone || '—'}</td>
+            <td>
+              {issue.meta.priority
+                ? <StatusBadge field="priority" value={issue.meta.priority} vocabulary={vocabulary.fields} />
+                : <span class="issues-table__muted">—</span>}
+            </td>
             <td class="issues-table__assignees-cell">
               {issue.meta.assignees.length > 0 ? (
                 <div class="issues-table__avatars" title={issue.meta.assignees.join(', ')}>
@@ -139,9 +137,7 @@ const VISIBLE_AVATARS = 3;
               )}
             </td>
             <td class="issues-table__date">{formatDate(issue.created) || <span class="issues-table__muted">—</span>}</td>
-            <td class={`issues-table__date ${isOverdue(issue.meta) ? 'is-overdue-cell' : ''}`}>
-              {formatDate(issue.meta.due) || <span class="issues-table__muted">—</span>}
-            </td>
+            <td class="issues-table__date">{formatDate(issue.updated) || <span class="issues-table__muted">—</span>}</td>
           </tr>
         ))}
       </tbody>
@@ -176,12 +172,10 @@ const VISIBLE_AVATARS = 3;
   /* Group-by: hide the grouped-on column (value is in the section header) */
   .issues-table.is-hide-col-component thead th[data-col='component'],
   .issues-table.is-hide-col-component tbody td:nth-child(1) { display: none; }
-  .issues-table.is-hide-col-milestone thead th[data-col='milestone'],
-  .issues-table.is-hide-col-milestone tbody td:nth-child(4) { display: none; }
+  .issues-table.is-hide-col-priority thead th[data-col='priority'],
+  .issues-table.is-hide-col-priority tbody td:nth-child(4) { display: none; }
   .issues-table.is-hide-col-assignees thead th[data-col='assignees'],
   .issues-table.is-hide-col-assignees tbody td:nth-child(5) { display: none; }
-  .issues-table.is-hide-col-priority thead th[data-col='priority'],
-  .issues-table.is-hide-col-priority tbody td:nth-child(99) { display: none; }
 
   /* Grouped view: each group renders as its own standalone <table>, not a
      row injected into the main table. Styles for the grouped UI live in
@@ -235,18 +229,10 @@ const VISIBLE_AVATARS = 3;
     cursor: pointer;
     transition: background 0.08s ease;
   }
-  /* No row-hover tint. Overdue rows keep their red tint — that's the only
-     row color in the table, and it survives hover so the state is obvious. */
-  .issues-table__row.is-overdue {
-    background: color-mix(in srgb, var(--color-error) 6%, transparent);
-  }
-  .issues-table__row.is-overdue:hover {
-    background: color-mix(in srgb, var(--color-error) 10%, transparent);
-  }
 
   .issues-table__title-cell { line-height: 1.35; }
   .issues-table__title-link {
-    display: block; /* force the sub line (status + id) onto the next line always */
+    display: block; /* force the sub line (id) onto the next line always */
     color: inherit;
     text-decoration: none;
     font-weight: var(--font-weight-normal, 400);
@@ -261,7 +247,6 @@ const VISIBLE_AVATARS = 3;
     color: var(--color-text-muted);
     flex-wrap: wrap;
   }
-  .issues-table__sub-sep { opacity: 0.5; }
   .issues-table__id {
     font-family: var(--font-family-mono);
   }
@@ -280,7 +265,6 @@ const VISIBLE_AVATARS = 3;
     font-size: var(--ui-text-micro);
     white-space: nowrap;
   }
-  .is-overdue-cell { color: var(--color-error) !important; font-weight: 600; }
 
   /* Assignee avatar stack — overlapping circles, deterministic colour from the
      name. Falls back to em-dash when nobody is on the issue. */

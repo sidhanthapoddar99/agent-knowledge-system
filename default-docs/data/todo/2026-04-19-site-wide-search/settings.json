@@ -3,13 +3,13 @@
   "description": "Full-text, fuzzy, scoped search across docs / blog / issues — live-editable in dev and prod (multi-user CMS), with a static-build fallback.",
   "status": "open",
   "priority": "high",
-  "component": ["integrations"],
-  "milestone": "phase-3",
+  "component": [
+    "integrations"
+  ],
   "labels": [
     "feature",
     "discussion"
   ],
   "author": "sidhantha",
-  "assignees": [],
-  "updated": "2026-04-19"
+  "assignees": []
 }

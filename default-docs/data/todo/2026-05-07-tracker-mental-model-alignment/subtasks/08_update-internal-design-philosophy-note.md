@@ -1,14 +1,18 @@
 ---
 title: "Update the internal design-philosophy note (drop milestone endorsement)"
-state: open
-done: false
+state: closed
+done: true
 ---
 
-- [ ] Open `default-docs/data/todo/2026-04-10-issues-layout/notes/02_design-philosophy-and-review-state.md`. The current text endorses milestone as the chosen primitive: *"We have **`milestone`** instead — a long-horizon north star that says 'we're working toward this big chunk of value', not 'we promised to ship X by Friday'."* That contradicts the new direction.
-- [ ] **Replace the milestone endorsement** with text that reflects the post-cleanup state: priority + state are the only ordering signals; release planning is not what this tracker does; cross-issue links handle "this bundle of work is related" without a structured field.
-- [ ] **Add a "What we removed and why" section** documenting both the original removals listed in the note (no sprints, no `type`, no transient statuses) and the new ones from this issue (no milestone, no due date). Keep the same conversational tone the rest of the note uses — this is internal historical memory, not a polished spec.
-- [ ] **Don't delete the original note.** It's a primary source for subtask 06's outward-facing writeup. Edit in place.
-- [ ] **Test**: read the note end-to-end after editing — does the philosophy hold together internally consistent? Does any other note in the parent issue's `notes/` folder also reference milestone in a way that needs updating? (Sweep `notes/01_issues-restructure-design.md` and `notes/design/**` for residual references.)
+- [x] Open `default-docs/data/todo/2026-04-10-issues-layout/notes/02_design-philosophy-and-review-state.md`. The current text endorses milestone as the chosen primitive: *"We have **`milestone`** instead — a long-horizon north star that says 'we're working toward this big chunk of value', not 'we promised to ship X by Friday'."* That contradicts the new direction.
+- [x] **Replace the milestone endorsement** with text that reflects the post-cleanup state: priority + state are the only ordering signals; release planning is not what this tracker does; cross-issue links handle "this bundle of work is related" without a structured field.
+- [x] **Add a "What we removed and why" section** documenting both the original removals listed in the note (no sprints, no `type`, no transient statuses) and the new ones from this issue (no milestone, no due date). Keep the same conversational tone the rest of the note uses — this is internal historical memory, not a polished spec.
+- [x] **Don't delete the original note.** It's a primary source for subtask 06's outward-facing writeup. Edit in place.
+- [x] **Test**: read the note end-to-end after editing — does the philosophy hold together internally consistent? Does any other note in the parent issue's `notes/` folder also reference milestone in a way that needs updating? (Sweep `notes/01_issues-restructure-design.md` and `notes/design/**` for residual references.)
+
+## Landed
+
+`02_design-philosophy-and-review-state.md` rewritten in place: the milestone endorsement paragraph reframed as "tried, reversed", new "What we removed and why" section covers sprints / type / transient statuses (original removals) plus milestone / due / manually-maintained `updated` (the 2026-05-07 cleanup). `01_issues-restructure-design.md` got a header banner pointing at the historical record and forwarding readers to the user-guide for the current schema. `notes/design/**` had no residual references. Closed historical subtasks under `2026-04-10-issues-layout/subtasks/` were left untouched — they're shipped historical work, not current spec.
 
 ## Why this is its own subtask
 

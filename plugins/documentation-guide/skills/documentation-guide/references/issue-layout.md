@@ -6,13 +6,31 @@ How to read, write, and navigate any issue tracker in this project. The default 
 
 ---
 
+## 0. Operating model — what this tracker is
+
+The tracker is **comprehensive memory of thought-work for AI-augmented development**, not a project-management tool. An issue is a folder that captures one coherent unit of *thinking + execution*: planning notes, work breakdown, agent execution log, dialog. The value is the recorded reasoning, not "what's left to do".
+
+The flow inside an issue: **planning** (`issue.md` + `notes/`) → **execution** (`agent-log/`) → **dialog** (`comments/`). Subtasks are the AI-handoff units inside that flow — each subtask is one explicit "did this happen yet?" checkbox the next agent (or human reviewer) can pick up cold.
+
+**Ordering signals are `priority` + `status`. Recency is derived from git** (most recent commit touching any file under the issue folder). `created` comes from the folder slug. Transient state (actively-working-on, stuck) is a **label**, not a status.
+
+**Best-practice rules** (convention, not enforcement):
+- **One component per issue.** Multi-component is allowed for genuinely cross-cutting work but is the exception. When tempted to list two, ask "should this be two issues?" — usually yes.
+- **AI-handoff-bound issues declare ≥1 subtask.** The subtask is the handoff anchor. Issues a human resolves in five seconds don't need this.
+
+**Don't add scheduling, release-bucket, or single-type fields without an explicit policy reversal.** This tracker treats those as project-management primitives that rot under continuous AI-driven shipping. If a future change makes one genuinely useful, that's a deliberate decision, not an oversight.
+
+Cross-references: `@root/default-docs/data/user-guide/19_issues/01_overview.md` (canonical user-facing source), `@root/default-docs/data/user-guide/19_issues/02_design-philosophy.md`.
+
+---
+
 ## 1. Folder & file layout
 
 Every tracker has the same skeleton:
 
 ```
 <tracker-base>/                                  ← e.g. data/todo/
-├── settings.json                                ← TRACKER VOCABULARY (status, priority, component, milestone, labels)
+├── settings.json                                ← TRACKER VOCABULARY (status, priority, component, labels)
 └── <YYYY-MM-DD-slug>/                           ← one folder per issue
     ├── settings.json                            ← issue metadata
     ├── issue.md                                 ← main body (the goal / context)
@@ -54,13 +72,10 @@ Every tracker has the same skeleton:
   "description": "1-3 sentence summary",
   "status": "open",
   "priority": "medium",
-  "component": ["live-editor", "integrations"],
-  "milestone": "phase-2",
+  "component": ["live-editor"],
   "labels": ["feature", "wip"],
   "author": "sidhantha",
-  "assignees": [],
-  "updated": "2026-04-19",
-  "due": "2026-04-25"
+  "assignees": []
 }
 ```
 
@@ -70,16 +85,15 @@ Every tracker has the same skeleton:
 | `description` | string | optional | Short summary; longer detail goes in `issue.md` |
 | `status` | enum | ✅ | One of the 4 lifecycle states (see §4) |
 | `priority` | enum | ✅ | From tracker vocabulary (`fields.priority.values`) |
-| `component` | **string[]** | ✅ | Multi-select; values from `fields.component.values` |
-| `milestone` | enum | ✅ | From `fields.milestone.values` |
+| `component` | **string[]** | ✅ | Multi-select; values from `fields.component.values`. Convention: prefer one |
 | `labels` | string[] | ✅ | Multi-select; values from `fields.labels.values` (often `[]`) |
 | `author` | string | ✅ | Must be in tracker `authors` list |
 | `assignees` | string[] | ✅ | Often `[]`; otherwise members of `authors` |
-| `updated` | YYYY-MM-DD | ✅ | Last meaningful change date |
-| `due` | YYYY-MM-DD or null | optional | Used for overdue-row highlighting |
 | `draft` | boolean | optional | If `true`, hidden from the tracker UI |
 
-**`null` / missing handling:** `due: null` means "no deadline." Missing `labels` / `assignees` → treat as `[]`. Missing `component` → treat as `[]` and surface as a validation issue (it's required).
+**Dates are derived, not stored.** `created` is parsed from the folder slug (`YYYY-MM-DD-<slug>`); `updated` is the most-recent git commit date touching any file under the issue folder. Do **not** write `updated` into `settings.json` — the loader ignores it and the field rots.
+
+**`null` / missing handling:** Missing `labels` / `assignees` → treat as `[]`. Missing `component` → treat as `[]` and surface as a validation issue (it's required).
 
 **Assignees double as the "in-progress" signal.** An issue with `assignees.length > 0` is actively being worked on; `assignees: []` is unassigned and idle. **Do not propose adding a separate `in_progress` boolean** — two sources of truth for the same fact will drift. Anything that needs the in-progress signal should derive it from `assignees`.
 
@@ -103,7 +117,6 @@ Defines the enum values every issue draws from:
     "status":    { "values": ["open", "review", "closed", "cancelled"], "colors": {...} },
     "priority":  { "values": ["low", "medium", "high", "urgent"],       "colors": {...} },
     "component": { "values": ["live-editor", "integrations", ...] },
-    "milestone": { "values": ["phase-1", "phase-2", ...] },
     "labels":    { "values": ["wip", "blocked", "feature", "bug", ...] }
   },
   "authors": ["sidhantha", "claude"],
@@ -328,9 +341,6 @@ docs-list \
 # What is sid working on right now (per-person fine filter)
 docs-list --assignee sid
 
-# Anything overdue this week
-docs-list --due-before 2026-05-02
-
 # Just the matching paths (pipe into Read or another tool)
 docs-list --search "TODO" --paths-only
 
@@ -374,10 +384,10 @@ The check has three modes depending on how the user phrased the request:
    docs-list \
      --search "<root>" --quiet-tips
    ```
-2. **Structural check.** When the user names a milestone, component, or person, also filter on it:
+2. **Structural check.** When the user names a component, priority, or person, also filter on it:
    ```
    docs-list \
-     --component live-editor --milestone phase-2 --quiet-tips
+     --component live-editor --priority high,urgent --quiet-tips
    ```
 3. **Subtask check before adding to a known issue.** When adding into an issue you don't have warm context on:
    ```
@@ -407,7 +417,7 @@ and report whether anything related already exists. ≤4 sentences.
 1. docs-list \
      --search "<keyword-roots>" --quiet-tips
 2. docs-list \
-     --component <c> --milestone <m> --quiet-tips
+     --component <c> --priority <p> --quiet-tips
 3. docs-subtasks \
      <issue-id> --quiet-tips   (if a target issue is named)
 

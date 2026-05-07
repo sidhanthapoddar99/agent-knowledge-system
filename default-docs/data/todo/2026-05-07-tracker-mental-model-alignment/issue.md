@@ -11,7 +11,7 @@ This issue does the cleanup: drops both fields cleanly, surfaces priority in the
 
 ## Scope
 
-Eight subtasks. Each touches a different surface, so most can land independently — see the ordering note below for the one real coupling.
+Eight original subtasks (01–08), each touching a different surface and mostly independent — see the ordering note below for the one real coupling. Subtask [09](./subtasks/09_document-cleanup-in-dev-docs.md) is a deferred dev-docs writeup; subtask [10](./subtasks/10_issue-dates-watcher-refinements.md) is a post-landing refinement to the derived-`updated`-date watcher from subtask 03.
 
 ## What "drop" means here
 

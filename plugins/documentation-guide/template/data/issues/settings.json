@@ -22,9 +22,6 @@
     "component": {
       "values": ["docs", "site", "infra"]
     },
-    "milestone": {
-      "values": ["backlog", "next", "later"]
-    },
     "labels": {
       "values": ["bug", "feature", "task", "docs", "discussion"]
     }
@@ -33,6 +30,6 @@
   "views": [
     { "name": "Open", "filters": { "status": ["open"] } },
     { "name": "In review", "filters": { "status": ["review"] } },
-    { "name": "By milestone", "group": "milestone" }
+    { "name": "By component", "group": "component" }
   ]
 }

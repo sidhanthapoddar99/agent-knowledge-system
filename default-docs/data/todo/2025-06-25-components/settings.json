@@ -3,11 +3,13 @@
   "description": "Rendered-content components (code blocks, diagrams) and the reusable UI components library (cards, badges, tabs, …).",
   "status": "closed",
   "priority": "medium",
-  "component": ["components"],
-  "milestone": "phase-1",
-  "labels": ["wip", "feature"],
+  "component": [
+    "components"
+  ],
+  "labels": [
+    "wip",
+    "feature"
+  ],
   "author": "sidhantha",
-  "assignees": [],
-  "updated": "2025-06-25",
-  "due": null
+  "assignees": []
 }

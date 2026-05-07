@@ -49,7 +49,6 @@ if (!vocab || !vocab.fields) {
 const validStatuses = vocab?.fields?.status?.values || ['open', 'review', 'closed', 'cancelled'];
 const validPriorities = vocab?.fields?.priority?.values || [];
 const validComponents = vocab?.fields?.component?.values || [];
-const validMilestones = vocab?.fields?.milestone?.values || [];
 const validLabels = vocab?.fields?.labels?.values || [];
 
 const FOLDER_PATTERN = /^(\d{4}-\d{2}-\d{2})-([a-z0-9][a-z0-9-]*)$/;
@@ -90,14 +89,17 @@ for (const entry of issueFolders) {
   if (meta.priority && validPriorities.length && !validPriorities.includes(meta.priority)) {
     errors.push(`${id}/settings.json: priority \`${meta.priority}\` not in vocabulary`);
   }
-  if (meta.milestone && validMilestones.length && !validMilestones.includes(meta.milestone)) {
-    warnings.push(`${id}/settings.json: milestone \`${meta.milestone}\` not in vocabulary`);
-  }
   const components = Array.isArray(meta.component)
     ? meta.component
     : (typeof meta.component === 'string' && meta.component ? [meta.component] : []);
   if (components.length === 0 && validComponents.length > 0) {
     warnings.push(`${id}/settings.json: \`component\` is empty`);
+  }
+  // Convention: prefer 1 component per issue. Multi-component is allowed
+  // for genuinely cross-cutting work but should be the exception. Hint
+  // surfaces the decision; never an error.
+  if (components.length > 1) {
+    warnings.push(`${id}/settings.json: declares ${components.length} components — consider whether this should be split into separate issues`);
   }
   for (const c of components) {
     if (validComponents.length && !validComponents.includes(c)) {
@@ -126,8 +128,10 @@ for (const entry of issueFolders) {
 
   // Subtasks
   const subDir = path.join(folder, 'subtasks');
+  let subtaskCount = 0;
   if (fs.existsSync(subDir)) {
     for (const name of fs.readdirSync(subDir).filter((n) => n.endsWith('.md'))) {
+      subtaskCount++;
       const abs = path.join(subDir, name);
       try {
         const fm = matter(fs.readFileSync(abs, 'utf-8')).data || {};
@@ -141,6 +145,16 @@ for (const entry of issueFolders) {
         errors.push(`${id}/subtasks/${name}: malformed frontmatter (${e.message})`);
       }
     }
+  }
+
+  // Convention: AI-handoff-bound issues should declare ≥1 subtask. We
+  // detect AI handoff via an `assignees` entry that names a known agent.
+  // Hint only — humans resolving trivial fixes don't need bookkeeping.
+  const assignees = Array.isArray(meta.assignees) ? meta.assignees : [];
+  const AI_AGENTS = new Set(['claude', 'gpt', 'gpt-4', 'gpt-5', 'codex', 'cursor', 'aider']);
+  const hasAIAssignee = assignees.some((a) => AI_AGENTS.has(String(a).toLowerCase()));
+  if (hasAIAssignee && subtaskCount === 0 && !['closed', 'cancelled'].includes(meta.status)) {
+    warnings.push(`${id}/: AI-handoff-bound issue has no subtasks — consider adding at least one as the agent's handoff anchor`);
   }
 
   // notes/ + agent-log/ subfolder depth (max 2 levels — anything deeper is

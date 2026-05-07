@@ -12,10 +12,9 @@ interface Props {
   vocabulary: IssuesVocabulary;
   baseUrl: string;
   searchBlob: (issue: Issue) => string;
-  isOverdue: (meta: Issue['meta']) => boolean;
 }
 
-const { issues, vocabulary, baseUrl, searchBlob, isOverdue } = Astro.props;
+const { issues, vocabulary, baseUrl, searchBlob } = Astro.props;
 ---
 
 <div class="issues-view issues-view--cards" id="view-cards">
@@ -27,13 +26,10 @@ const { issues, vocabulary, baseUrl, searchBlob, isOverdue } = Astro.props;
       data-has-review-subtask={issue.subtasks.some((s) => s.state === 'review') ? '1' : '0'}
       data-priority={issue.meta.priority}
       data-component={issue.meta.component.join(' ')}
-      data-milestone={issue.meta.milestone}
       data-labels={issue.meta.labels.join(' ')}
       data-assignees={issue.meta.assignees.join(' ')}
-      data-updated={issue.meta.updated || ''}
+      data-updated={issue.updated}
       data-created={issue.created}
-      data-due={issue.meta.due || ''}
-      data-overdue={isOverdue(issue.meta) ? '1' : '0'}
       data-title={issue.meta.title}
       data-search={searchBlob(issue)}
     >

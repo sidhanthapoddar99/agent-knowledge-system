@@ -49,17 +49,16 @@ Minimum required fields:
   "description": "Stuttering past 2000 lines with 3 concurrent Yjs users.",
   "status": "open",
   "priority": "medium",
-  "component": "live-editor",
-  "milestone": "phase-2",
+  "component": ["live-editor"],
   "labels": ["performance"],
   "author": "sidhantha",
-  "assignees": ["sidhantha"],
-  "updated": "2026-04-21",
-  "due": null
+  "assignees": ["sidhantha"]
 }
 ```
 
-Every enum value (`status`, `priority`, `component`, `milestone`, each label) must exist in the tracker's root `settings.json` vocabulary. If you're reaching for a value that isn't in the vocab, **don't invent** — either pick the closest existing value, or edit the root vocabulary to add it (see [Vocabulary](../settings/vocabulary)).
+Every enum value (`status`, `priority`, `component`, each label) must exist in the tracker's root `settings.json` vocabulary. If you're reaching for a value that isn't in the vocab, **don't invent** — either pick the closest existing value, or edit the root vocabulary to add it (see [Vocabulary](../settings/vocabulary)).
+
+The convention is **one component per issue**; multi-component is allowed for genuinely cross-cutting work but should be the exception. `created` is parsed from the folder slug; `updated` is derived from git history at render time — don't write either by hand.
 
 Full schema: [Per-Issue Settings](../settings/per-issue).
 

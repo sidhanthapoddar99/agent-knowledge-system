@@ -34,7 +34,9 @@ In a 1–4 person AI-heavy team:
 - The bottleneck isn't capacity — it's *deciding what's worth doing next*
 - Plans go stale in hours when an agent finishes mid-day
 
-Sprints would become **theatre** — you'd plan Monday, AI ships half by Tuesday, you re-plan. The artefact rots. We have **`milestone`** instead — a long-horizon north star ("phase-2") that says "we're working toward this big chunk of value", not "we promised to ship X by Friday".
+Sprints would become **theatre** — you'd plan Monday, AI ships half by Tuesday, you re-plan. The artefact rots.
+
+The original instinct here was to keep a `milestone` field as a long-horizon north star ("phase-2") that said "we're working toward this big chunk of value", not "we promised to ship X by Friday". After ~50 issues lived in the tracker we reversed: even the long-horizon framing rotted into noise. **Priority + status are the only ordering signals.** Cross-issue links handle "this bundle of work is related" without a structured field. See "What we removed and why" below for the full list.
 
 ### No `type` field
 
@@ -93,6 +95,38 @@ No sprints. No standups. Just a clean queue of "here's what's planned (open) →
 Most trackers are built for the team that *was* — the 10-50 person scrum team where the bottleneck is coordination. The team that's emerging — 1-4 humans plus a fleet of agents — has a totally different bottleneck: **review capacity**. The tracker that wins for that team is the one that makes the review handoff explicit, the audit trail trivial, and everything else as quiet as possible.
 
 That's what this is.
+
+## What we removed and why
+
+This is the historical record of fields the tracker tried and dropped. Each was added with the best of intentions and removed once it was clear the abstraction wasn't earning its keep.
+
+### Sprints / agile cycles — never added
+
+Already covered above. The 1–4 person AI-heavy team has no coordination problem sprints solve.
+
+### `type` field — dropped early
+
+Real work is composite (a perf fix is bug + perf + refactor). Forcing a single primary type was lossy; almost every issue ended up `feature` or `task`. Type values moved into multi-select **labels** where they belong.
+
+### Transient statuses (`in-progress`, `blocked`) — never added
+
+Transient state goes stale instantly. They're labels, not statuses. `assignees.length > 0` doubles as the "in-progress" signal — see the per-issue settings page for the rationale.
+
+### `milestone` — dropped 2026-05-07
+
+Originally framed as a long-horizon north star, not a sprint commitment. After lived experience: even at the long-horizon level, the field rotted. Issues got assigned `phase-2` and stayed there forever; "phases" never resolved cleanly. The team-shape this tracker is built for (1–4 humans + AI agents) doesn't run release planning the way milestones expect. Cross-issue links handle "this bundle of work is related" without a structured field. **Priority + status are the only ordering signals.**
+
+### `due` — dropped 2026-05-07
+
+Author-maintained future date, never enforced. Audit on 2026-05-07: 9 of 10 issues with `due` set were past their date with new subtasks still landing. 90% rot rate. Without a UI badge that nags or CI that alerts, the field has no enforcement, so people stop trusting it. External hard deadlines belong in prose ("Blocks external launch on 2026-06-15"), not a structured field.
+
+### Manually-maintained `updated` — dropped 2026-05-07
+
+Same rot pattern as `due`. Every issue's `updated` field was stuck at its creation date even after multiple subtasks had shipped. Replaced with a value derived from git history — the most recent commit author-date touching any file under the issue folder. Honest signal beats a stale promise. The cache loader (`astro-doc-code/src/loaders/issue-dates.ts`) walks `git log` once on cold start and incrementally on `.git/HEAD` change. Issues never committed yet (or in a non-git checkout) fall back to the folder's `created` date.
+
+### Why we keep this section
+
+The user-guide pages are for new readers — they tell the current story. This note is the *historical* record: what the tracker's design philosophy looked like at each major revision, written conversationally. Future readers diving into this issue's notes need the post-cleanup context to read the rest of the design accurately.
 
 ## Open design questions still being worked
 

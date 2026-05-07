@@ -3,11 +3,13 @@
   "description": "Verify blog index + post layouts, sorting, filtering, authors/tags, and pagination.",
   "status": "open",
   "priority": "medium",
-  "component": ["layouts-and-themes"],
-  "milestone": "phase-1",
-  "labels": ["wip", "task"],
+  "component": [
+    "layouts-and-themes"
+  ],
+  "labels": [
+    "wip",
+    "task"
+  ],
   "author": "sidhantha",
-  "assignees": [],
-  "updated": "2025-06-25",
-  "due": null
+  "assignees": []
 }

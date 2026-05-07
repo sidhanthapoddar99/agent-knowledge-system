@@ -43,9 +43,6 @@ Minimum viable:
     "component": {
       "values": ["frontend", "backend", "infra"]
     },
-    "milestone": {
-      "values": ["current", "backlog"]
-    },
     "labels": {
       "values": ["reproduced", "needs-repro", "regression", "enhancement"]
     }
@@ -71,10 +68,9 @@ Some guidance:
 |---|---|---|
 | `priority` | "How urgent is this?" | `low / medium / high / urgent` — 4 levels is plenty |
 | `component` | "Which part of the system?" | Match your team's mental model — `frontend / backend / infra`, or `auth / payments / profile`, etc. |
-| `milestone` | "What horizon is this on?" | `current / next / backlog`, or `phase-1 / phase-2 / phase-3`, or version-based |
 | `labels` | "Cross-cutting tags" | Status-adjacent flags (`wip`, `blocked`), type tags (`bug`, `feature`), quality (`good-first-issue`) |
 
-**Resist adding a `type` field.** Real work is composite; forcing a single type was lossy in every tracker that tried it. Use labels instead. See [Design Philosophy](./design-philosophy).
+Stick to the four enum fields above. The schema is intentionally narrow — `priority` + `status` are the ordering signals; `labels` carry composite categorical work; `updated` is derived from git. Don't add scheduling or release-bucket fields without an explicit policy reversal — they tend to rot under continuous AI-driven shipping. See [Design Philosophy](./design-philosophy).
 
 ### Preset views
 
@@ -168,13 +164,10 @@ cat > 2026-04-21-test-issue/settings.json <<EOF
   "description": "Validate the tracker is wired correctly",
   "status": "open",
   "priority": "low",
-  "component": "frontend",
-  "milestone": "current",
+  "component": ["frontend"],
   "labels": [],
   "author": "sidhantha",
-  "assignees": [],
-  "updated": "2026-04-21",
-  "due": null
+  "assignees": []
 }
 EOF
 

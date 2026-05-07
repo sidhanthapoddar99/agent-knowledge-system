@@ -3,13 +3,12 @@
   "description": "Restructured theming around a primitive / semantic token split with a contract that every theme (built-in and user) must satisfy. Layouts now consume semantic tokens only.",
   "status": "closed",
   "priority": "medium",
-  "component": ["layouts-and-themes"],
-  "milestone": "phase-2",
+  "component": [
+    "layouts-and-themes"
+  ],
   "labels": [
     "refactor"
   ],
   "author": "sidhantha",
-  "assignees": [],
-  "updated": "2026-04-10",
-  "due": "2026-04-19"
+  "assignees": []
 }

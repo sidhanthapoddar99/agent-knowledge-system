@@ -72,6 +72,14 @@ export {
   getAvailableThemes,
 } from './theme';
 
+// Issue date cache (derived from git history)
+export {
+  getIssueDate,
+  getAllIssueDates,
+  invalidateIssueDateCache,
+  getIssueDateWatchPaths,
+} from './issue-dates';
+
 // Cache manager (unified caching with mtime-based validation)
 export {
   getCached,

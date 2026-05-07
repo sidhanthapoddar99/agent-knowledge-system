@@ -16,7 +16,12 @@
  * Anything nested deeper than two levels is warned and ignored.
  *
  * The root <dataPath>/settings.json defines the tag vocabulary (status, priority,
- * type, component, milestone, labels, authors) — returned as `vocabulary`.
+ * component, labels, authors) — returned as `vocabulary`.
+ *
+ * Issue `updated` is derived from git history (most recent commit touching any
+ * file under the issue folder) via `loaders/issue-dates.ts`. Falls back to
+ * `created` when no git history is available. `created` is parsed from the
+ * folder slug `YYYY-MM-DD-<slug>`.
  *
  * Draft handling matches loadContent(): per-issue `"draft": true` or root-level
  * `"draft": true` both filter out in production (via import.meta.env.PROD).
@@ -26,6 +31,7 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import { createIssuesParser } from '../parsers/content-types/issues';
+import { getIssueDate } from './issue-dates';
 
 export interface IssueMetadata {
   title: string;
@@ -36,12 +42,9 @@ export interface IssueMetadata {
    *  either `"component": "x"` (legacy single) or `"component": ["x", "y"]`
    *  — the loader normalises both shapes. */
   component: string[];
-  milestone: string;
   labels: string[];
   author: string;
   assignees: string[];
-  updated: string;
-  due: string | null;
   draft?: boolean;
 }
 
@@ -120,8 +123,11 @@ export interface IssueSubtask {
 export interface Issue {
   /** Folder name, e.g. "2026-04-17-editor-performance" — the canonical id */
   id: string;
-  /** Creation date from folder prefix */
+  /** Creation date from folder prefix (YYYY-MM-DD) */
   created: string;
+  /** Most recent git commit date touching any file in the issue folder.
+   *  ISO 8601 (author date). Falls back to `created` when no git history. */
+  updated: string;
   /** Slug portion of folder name */
   slug: string;
   /** Absolute path to the issue folder */
@@ -369,9 +375,13 @@ async function loadIssueFolder(folderPath: string, dataPath: string): Promise<Is
     );
   }
 
+  const created = match[1];
+  const updated = getIssueDate(dataPath, id) ?? created;
+
   return {
     id,
-    created: match[1],
+    created,
+    updated,
     slug: match[2],
     folderPath,
     meta: {
@@ -572,11 +582,9 @@ export async function loadIssues(
     issues.push(issue);
   }
 
-  issues.sort((a, b) => {
-    const ua = a.meta.updated || a.created;
-    const ub = b.meta.updated || b.created;
-    return ub.localeCompare(ua);
-  });
+  // Default sort: most-recently-touched first. Layouts override on the
+  // client when the user clicks a sortable column header.
+  issues.sort((a, b) => b.updated.localeCompare(a.updated));
 
   const result: LoadedIssues = { vocabulary, rootDraft, issues };
   cache.set(cacheKey, { signature, data: result });

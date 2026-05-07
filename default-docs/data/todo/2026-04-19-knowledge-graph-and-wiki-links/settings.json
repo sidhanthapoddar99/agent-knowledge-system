@@ -3,13 +3,13 @@
   "description": "Universal relative-link resolution across all content types, `[[wiki-link]]` syntax, and a knowledge-graph indexer (backlinks / orphans / broken). Makes the docs browsable as a graph and queryable by AI agents.",
   "status": "open",
   "priority": "medium",
-  "component": ["content-pipeline"],
-  "milestone": "phase-3",
+  "component": [
+    "content-pipeline"
+  ],
   "labels": [
     "feature",
     "discussion"
   ],
   "author": "sidhantha",
-  "assignees": [],
-  "updated": "2026-04-19"
+  "assignees": []
 }

@@ -64,7 +64,7 @@ When picking up an issue, read in this order. Stop as soon as you have enough:
 
 1. **Never close (`*→closed`) directly in autonomous mode.** Always go through `review`. Closed is human.
 2. **Write an agent-log entry every iteration.** Goal / Approach / Result / Next. Keep failed iterations.
-3. **Bump `updated: YYYY-MM-DD` on any file you change.** Drives sort order.
+3. **Stay inside the existing schema.** The tracker is intentionally narrow — `priority` + `status` order the index, `labels` carry orthogonal categorical signal, `updated` is derived from git. Don't invent scheduling or release-bucket fields without an explicit policy reversal.
 4. **Read before writing.** Don't overwrite; append / edit precisely.
 
 ### 4. State transitions you ARE allowed

@@ -6,10 +6,34 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
+import { spawnSync } from 'node:child_process';
 import {
   DEFAULT_TRACKER, readIssueMeta, readIssueSubtasks, readIssueComments,
-  readIssueAgentLogs, parseArgs, printHelp,
+  readIssueAgentLogs, parseArgs, printHelp, issueDateFromId,
 } from './_lib.mjs';
+
+/** Derive the most-recent git commit date touching <tracker>/<id>/.
+ *  Matches the in-process cache loader (loaders/issue-dates.ts). Returns
+ *  null when not a git checkout or no commits touch the folder yet. */
+function deriveUpdatedFromGit(tracker, id) {
+  // Find repo root.
+  let dir = tracker;
+  while (true) {
+    if (fs.existsSync(path.join(dir, '.git'))) break;
+    const parent = path.dirname(dir);
+    if (parent === dir) return null;
+    dir = parent;
+  }
+  const issueRel = path.relative(dir, path.join(tracker, id));
+  const r = spawnSync(
+    'git',
+    ['log', '-1', '--no-merges', '--pretty=format:%aI', '--', issueRel],
+    { cwd: dir, encoding: 'utf-8' },
+  );
+  if (r.status !== 0) return null;
+  const out = (r.stdout || '').trim();
+  return out || null;
+}
 
 const args = parseArgs(process.argv.slice(2));
 const id = args._[0];
@@ -35,17 +59,20 @@ const subtasks = readIssueSubtasks(tracker, id);
 const comments = readIssueComments(tracker, id);
 const agentLogs = readIssueAgentLogs(tracker, id);
 
+const created = issueDateFromId(id);
+const updated = deriveUpdatedFromGit(tracker, id) ?? created;
+
 if (args.flags.json) {
-  console.log(JSON.stringify({ id, meta, subtasks, comments, agentLogs }, null, 2));
+  console.log(JSON.stringify({ id, created, updated, meta, subtasks, comments, agentLogs }, null, 2));
   process.exit(0);
 }
 
 console.log(`# ${meta.title}`);
 console.log(`Id:        ${id}`);
-console.log(`Status:    ${meta.status}    Priority: ${meta.priority}    Milestone: ${meta.milestone}`);
+console.log(`Status:    ${meta.status}    Priority: ${meta.priority}`);
 console.log(`Component: ${(Array.isArray(meta.component) ? meta.component : []).join(', ') || '—'}`);
 console.log(`Labels:    ${(Array.isArray(meta.labels) ? meta.labels : []).join(', ') || '—'}`);
-console.log(`Updated:   ${meta.updated}    Due: ${meta.due ?? '—'}`);
+console.log(`Created:   ${created || '—'}    Updated: ${updated || '—'}`);
 if (meta.description) console.log(`\n${meta.description}`);
 
 console.log(`\n## Subtasks (${subtasks.length})`);

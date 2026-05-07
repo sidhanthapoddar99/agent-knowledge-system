@@ -1,14 +1,18 @@
 ---
 title: "Outward-facing mental-model writeup (user-guide + plugin skill + CLAUDE.md)"
-state: open
-done: false
+state: closed
+done: true
 ---
 
-- [ ] **User-guide front page for the issues section.** Add (or rewrite) the overview page at `default-docs/data/user-guide/19_issues/01_*.md` so the *first thing* anyone reads is what this tracker is for: structured memory of thought-work for AI-augmented development, not project planning. Spell out the planning → execution flow (issue → notes → subtasks → agent-log → comments) and the deliberate omissions (no sprints, no due dates, no milestones).
-- [ ] **Plugin skill `references/issue-layout.md`.** Add an "Operating model" or "What this tracker is" section near the top so agents pick up the framing before they touch a tracker. Cross-link to the user-guide page.
-- [ ] **`CLAUDE.md`.** One-paragraph addition near the existing tracker section: same framing, telegraphic. Plus one sentence telling future agents not to re-introduce milestone / due / sprint-style fields without an explicit policy reversal.
-- [ ] **Cross-references.** Each of the above three should link to the others, so a reader landing on any one finds the rest. The user-guide page is the canonical source; the others summarise and point.
-- [ ] **Test**: `docs-check-section default-docs/data/user-guide/19_issues` exits 0; render the user-guide page in a browser and read it cold — does it explain the philosophy in under three minutes?
+- [x] **User-guide front page for the issues section.** Add (or rewrite) the overview page at `default-docs/data/user-guide/19_issues/01_*.md` so the *first thing* anyone reads is what this tracker is for: structured memory of thought-work for AI-augmented development, not project planning. Spell out the planning → execution flow (issue → notes → subtasks → agent-log → comments) and the deliberate omissions (no sprints, no due dates, no milestones).
+- [x] **Plugin skill `references/issue-layout.md`.** Add an "Operating model" or "What this tracker is" section near the top so agents pick up the framing before they touch a tracker. Cross-link to the user-guide page.
+- [x] **`CLAUDE.md`.** One-paragraph addition near the existing tracker section: same framing, telegraphic. Plus one sentence telling future agents not to re-introduce milestone / due / sprint-style fields without an explicit policy reversal.
+- [x] **Cross-references.** Each of the above three should link to the others, so a reader landing on any one finds the rest. The user-guide page is the canonical source; the others summarise and point.
+- [x] **Test**: `docs-check-section default-docs/data/user-guide/19_issues` exits 0; render the user-guide page in a browser and read it cold — does it explain the philosophy in under three minutes?
+
+## Landed
+
+`default-docs/data/user-guide/19_issues/01_overview.md` rewritten end-to-end to lead with the mental model. `references/issue-layout.md` gained a `## 0. Operating model` section before the folder layout. `CLAUDE.md` gained a "Tracker mental model" paragraph after the wrapper command list, with the explicit "do not re-introduce milestone / due / sprint-style fields without an explicit policy reversal" line. All three cross-link.
 
 ## What to capture (concrete content)
 

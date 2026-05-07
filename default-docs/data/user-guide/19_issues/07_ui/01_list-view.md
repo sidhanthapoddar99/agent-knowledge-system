@@ -14,11 +14,11 @@ The list view renders at the tracker's base URL (e.g. `/todo`). It's the primary
 ┌──────────────────────────────────────────────────────────────────┐
 │  Todo                                     42 issues              │  ← header
 ├──────────────────────────────────────────────────────────────────┤
-│  Phase 2 │ High priority │ Blocked │ By milestone                │  ← preset strip
+│  High priority │ Blocked │ By component                          │  ← preset strip
 ├──────────────────────────────────────────────────────────────────┤
 │  Open (12)   Review (4)   Closed (24)   Cancelled (2)            │  ← state tabs
 ├──────────────────────────────────────────────────────────────────┤
-│  Search …    Priority ▾   Component ▾   Milestone ▾   Labels ▾   │  ← filter bar
+│  Search …    Priority ▾   Component ▾   Labels ▾   Assignee ▾    │  ← filter bar
 │                                                  Group ▾  Sort ▾ │
 ├──────────────────────────────────────────────────────────────────┤
 │  2026-04-19  Documentation update — phase 2       🔶 review 2/6  │  ← issue rows
@@ -54,17 +54,16 @@ The default is **Open** — the active queue. Bookmark the base URL to land ther
 ## Preset views
 
 ```
-Phase 2 │ High priority │ Blocked │ By milestone
+High priority │ Blocked │ By component
 ```
 
 One-click filter + group configurations, declared in the tracker's root `settings.json`:
 
 ```json
 "views": [
-  { "name": "Phase 2",       "filters": { "milestone": ["phase-2"] }, "group": "component" },
   { "name": "High priority", "filters": { "priority": ["high", "urgent"] } },
   { "name": "Blocked",       "filters": { "labels": ["blocked", "blocked-external"] } },
-  { "name": "By milestone",  "group": "milestone" }
+  { "name": "By component",  "group": "component" }
 ]
 ```
 
@@ -82,12 +81,10 @@ Free-text match against title, description, and issue ID (`2026-04-19-docs-phase
 
 One dropdown per enum field in the tracker vocabulary:
 
-- `priority` — low / medium / high / urgent
+- `priority` — low / medium / high / urgent. **Sortable column** in the table view; default sort is `priority desc, updated desc`.
 - `component` — whichever components are declared
-- `milestone` — phase-1 / phase-2 / …
 - `labels` — any label values
 - `assignee` — coarse pseudo-values (`assigned` / `unassigned`) plus per-person values from the tracker root's `authors[]`
-- `due` — date-range bounds (after / before)
 
 Multi-select per field. Chip colors come from the vocabulary's color declarations.
 
@@ -106,20 +103,20 @@ There's no separate `in_progress` field — `assignees.length > 0` is the in-pro
 
 ### Group-by
 
-Pick one of `component`, `milestone`, `priority` (or *none*). Applies a visual grouping — results split into sections with a header per value. Empty groups are hidden.
+Pick one of `component` or `priority` (or *none*). Applies a visual grouping — results split into sections with a header per value. Empty groups are hidden.
 
 For multi-valued fields (`component`), an issue with multiple values appears under **each** of its groups. Per-group counts reflect membership, so the sum across groups can exceed the unique-issue total — that's intentional ("how many issues touch live-editor?" should include cross-cutting work).
 
 ### Sort
 
-Default is `updated desc` — recently-touched first. Options:
+Default is `priority desc, updated desc` — high-priority recently-touched first. Click any sortable column header to override. Options:
 
 | Option | Meaning |
 |---|---|
-| `updated` | When the issue's `settings.json` or body was last changed |
-| `created` | Folder name's date prefix |
 | `priority` | Enum order (urgent > high > medium > low) |
-| `due` | Due date ascending (null due dates last) |
+| `updated` | Most recent git commit touching any file in the issue folder (derived) |
+| `created` | Folder name's date prefix |
+| `component` / `assignees` / `status` / `title` | Alphabetical / enum order |
 
 Each with `asc` / `desc` toggle.
 
@@ -148,16 +145,14 @@ Each row / card shows:
 
 | Field | Where on the row |
 |---|---|
-| Created date | Leftmost |
-| Title | Prominent |
-| Description | Subtitle |
-| Status badge | Colored chip |
-| Priority badge | Colored chip |
 | Component | Chip group (one chip per value) |
-| Labels | Chip group |
+| Title | Prominent |
+| Status badge | Colored chip |
+| Priority badge | Colored chip — sortable column |
 | Assignees | Avatar circles (initials) — first 3 then `+N`; `—` if unassigned |
-| Updated date | Right side |
-| Subtask summary | Small indicator (e.g. `2/6 review`) |
+| Subtasks | Two-line cell — count on top, progress bar below |
+| Created date | Folder slug `YYYY-MM-DD` |
+| Updated date | Derived from git history (most recent commit touching the folder) |
 
 Clicking anywhere on the row navigates to the detail page — with the current filter state preserved, so the Back button returns to the exact view.
 

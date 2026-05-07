@@ -3,10 +3,14 @@
   "description": "Visiting a section root URL without a slug (e.g. /user-guide) resolves to a deeply-nested stub page instead of the natural first doc. Suspected ordering bug in default-route resolution.",
   "status": "open",
   "priority": "medium",
-  "component": ["layouts-and-themes"],
-  "milestone": "phase-2",
-  "labels": ["bug"],
+  "component": [
+    "layouts-and-themes"
+  ],
+  "labels": [
+    "bug"
+  ],
   "author": "sidhantha",
-  "assignees": ["sidhantha"],
-  "updated": "2026-05-07"
+  "assignees": [
+    "sidhantha"
+  ]
 }

@@ -3,11 +3,12 @@
   "description": "One-command deployment story: static export, Docker, platform guides (Vercel/Netlify/GH Pages/Cloudflare), and CI/CD templates.",
   "status": "cancelled",
   "priority": "medium",
-  "component": ["infra"],
-  "milestone": "phase-1",
-  "labels": ["feature"],
+  "component": [
+    "infra"
+  ],
+  "labels": [
+    "feature"
+  ],
   "author": "sidhantha",
-  "assignees": [],
-  "updated": "2025-06-25",
-  "due": null
+  "assignees": []
 }

@@ -6,7 +6,7 @@ sidebar_position: 1
 
 # Per-Issue Settings
 
-Every issue folder has a `settings.json` at its root. It holds all the metadata — status, priority, labels, dates, authors. The body (`issue.md`) stays pure prose; metadata lives here so the editor UI can render a structured form instead of parsing frontmatter.
+Every issue folder has a `settings.json` at its root. It holds the metadata — status, priority, labels, authors. The body (`issue.md`) stays pure prose; metadata lives here so the editor UI can render a structured form instead of parsing frontmatter.
 
 ## Minimal example
 
@@ -17,12 +17,9 @@ Every issue folder has a `settings.json` at its root. It holds all the metadata 
   "status": "open",
   "priority": "medium",
   "component": ["live-editor"],
-  "milestone": "phase-2",
   "labels": ["performance"],
   "author": "sidhantha",
-  "assignees": ["sidhantha"],
-  "updated": "2026-04-17",
-  "due": null
+  "assignees": ["sidhantha"]
 }
 ```
 
@@ -34,13 +31,10 @@ Every issue folder has a `settings.json` at its root. It holds all the metadata 
 | `description` | string | — | Shown under the title on list + detail |
 | `status` | enum | ✅ | Single value from `fields.status.values` in the tracker root |
 | `priority` | enum | ✅ | Single value from `fields.priority.values` |
-| `component` | string[] | ✅ | Multi-select from `fields.component.values`. A bare string (`"x"`) is accepted and normalised to `["x"]` for backward compatibility |
-| `milestone` | enum | ✅ | Single value from `fields.milestone.values` |
+| `component` | string[] | ✅ | Multi-select from `fields.component.values`. Convention is one entry; multiple is allowed for genuinely cross-cutting work. A bare string (`"x"`) is accepted and normalised to `["x"]` |
 | `labels` | string[] | ✅ | Multi-select from `fields.labels.values` — any subset |
 | `author` | string | ✅ | The person who filed it. From `authors[]` in the tracker root |
 | `assignees` | string[] | ✅ | From `authors[]`. Empty array is fine |
-| `updated` | ISO date | ✅ | `YYYY-MM-DD`. Auto-bumped by the editor on any change |
-| `due` | ISO date \| null | ✅ | `null` if unset. Overdue state is derived at render time |
 | `draft` | bool | — | `true` → issue hidden in prod builds (see [Drafts](/user-guide/writing-content/drafts)) |
 
 All enum fields are validated at load time against the tracker's root `settings.json` vocabulary. An unknown value produces a warning (visible in the error-logger dev-toolbar app); the issue still loads, but the value may not render cleanly.
@@ -51,34 +45,32 @@ All enum fields are validated at load time against the tracker's root `settings.
 |---|---|
 | **`id`** | Derived from the folder name — `YYYY-MM-DD-<slug>`. The filesystem is the source of truth. |
 | **`created`** | The `YYYY-MM-DD` prefix of the folder name. |
-| **Overdue** | Computed at render time: `due < today && status ∈ {open, review}`. |
+| **`updated`** | Most recent git commit date touching any file under the issue folder (author date, ISO 8601). Falls back to `created` when no git history exists. |
 | **Subtask counts** | Read from the `subtasks/` folder on load. |
 
-One source of truth per fact. The folder carries identity and creation date; nothing duplicates them into `settings.json`.
+One source of truth per fact. The folder carries identity and creation date; git carries the recency signal; nothing duplicates them into `settings.json`.
 
 ## Field semantics
 
-### `status` · `priority` · `milestone`
+### `status` · `priority`
 
 Single-select. Each picks exactly one value from the corresponding enum. Colors (optional) come from the tracker root — the UI uses them to render badges.
 
 ### `component`
 
-Multi-select. An issue often touches more than one component (editor work that bleeds into the content pipeline, theme work that needs a layout change). Forcing a single primary value loses information and breaks the "Group by component" view, where the issue would only appear under the first component.
+Multi-select, but the convention is **one component per issue**. Cross-cutting work that genuinely touches several components (a refactor that hits loaders + layouts + plugin scripts) can list more than one. When tempted to list two, ask "should this be two issues instead?" — usually the answer is yes.
 
 ```json
-"component": ["live-editor", "content-pipeline"]
+"component": ["live-editor"]
 ```
 
-Backward-compatible: `"component": "live-editor"` is still accepted and normalised to `["live-editor"]` at load time. Empty array (`[]`) is fine — the issue just won't appear in any component group.
-
-When an issue lists multiple components, it appears under **each** group in "Group by component" — the per-group counts reflect membership, not unique issues.
+Backward-compatible: `"component": "live-editor"` is still accepted and normalised to `["live-editor"]` at load time. Empty array (`[]`) is fine — the issue just won't appear in any component group. The validator emits an info-level hint when an issue declares more than one component, never an error.
 
 ### `labels`
 
 Multi-select. Use labels for anything orthogonal to status — `wip`, `blocked`, `bug`, `feature`, `refactor`, `docs`, `idea`, etc. You can stack any number.
 
-Labels are where `type`-like concepts live. There's deliberately **no `type` field** — real work is composite (a perf fix is bug + perf + refactor). Forcing a single primary type was lossy. See [Design Philosophy](../design-philosophy).
+Labels carry the categorical signal — `bug`, `feature`, `refactor`, `docs`, etc. — alongside the orthogonal flags. Real work is usually composite (a perf fix is `bug + performance + refactor`), so multi-select beats a single primary category. See [Design Philosophy](../design-philosophy).
 
 ### `author` vs `assignees`
 
@@ -96,14 +88,6 @@ The filter bar exposes this as a two-tier picker:
 
 Both modes compose the same way as every other filter — AND across fields, OR within a field. The same model holds at the CLI: `list.mjs --assignee unassigned` is the coarse filter; `list.mjs --assignee sid` is the fine filter; `list.mjs --assignee assigned,sid` ORs them.
 
-### `updated`
-
-The editor auto-bumps `updated` to today's date on any change to either `settings.json` or `issue.md`. Manual edits outside the editor should also update this field — it drives default sort order on the index.
-
-### `due`
-
-Literal deadline. If it's `null`, the issue doesn't surface in due-date sorts or overdue badges. If it's in the past and status is `open` or `review`, the UI renders an "overdue" indicator.
-
 ### `draft`
 
 Same flag used by docs and blogs (see [Drafts](/user-guide/writing-content/drafts)). Per-issue `"draft": true` hides the one issue in production while keeping it visible in dev. To hide a whole tracker, set `"draft": true` in the tracker's **root** `settings.json` (see [Vocabulary](./vocabulary)).
@@ -117,12 +101,9 @@ Same flag used by docs and blogs (see [Drafts](/user-guide/writing-content/draft
   "status": "open",
   "priority": "high",
   "component": ["docs"],
-  "milestone": "phase-2",
   "labels": ["docs", "task", "wip"],
   "author": "sidhantha",
-  "assignees": ["sidhantha", "claude"],
-  "updated": "2026-04-21",
-  "due": "2026-04-30"
+  "assignees": ["sidhantha", "claude"]
 }
 ```
 
@@ -131,8 +112,7 @@ Same flag used by docs and blogs (see [Drafts](/user-guide/writing-content/draft
 Load-time validation covers:
 
 - **Required fields present** — missing `title`, `status`, etc. produces a warning; the issue is skipped (won't appear in the index).
-- **Enum values known** — unknown `status`, `priority`, `component[i]`, `milestone`, or `labels[i]` produces a warning but doesn't block the load.
-- **Date format** — `updated` and `due` must match `YYYY-MM-DD` (or `null` for `due`).
+- **Enum values known** — unknown `status`, `priority`, `component[i]`, or `labels[i]` produces a warning but doesn't block the load.
 - **`authors[]` membership** — `author` and each entry in `assignees` should be in the tracker-root `authors[]`. Extensible — new people can be added to the root list at any time.
 
 Warnings surface in the **error-logger** dev-toolbar app. Builds succeed; the loader errs on the side of not crashing when metadata drift is the only problem.

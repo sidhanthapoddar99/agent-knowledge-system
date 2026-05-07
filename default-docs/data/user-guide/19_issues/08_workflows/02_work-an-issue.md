@@ -137,11 +137,9 @@ To cancel:
 
 Don't delete cancelled issues. `git` + filesystem = audit trail.
 
-## Keeping `updated` current
+## How `updated` is computed
 
-The live editor auto-bumps `updated` on any edit to `settings.json` or `issue.md`. For filesystem-only edits, update it manually — it drives the default sort order on the list view.
-
-Agents writing via scripts should always bump `updated` when they change anything material.
+The list view shows an Updated date for each issue, derived from git history — the most recent commit that touches any file under the issue folder. Nothing to maintain by hand. Issues never committed yet (or in a non-git checkout) fall back to the folder's `created` date.
 
 ## See also
 

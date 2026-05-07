@@ -3,11 +3,18 @@
   "description": "Project-wide rename and repositioning. Shift from 'docs framework' framing to 'knowledge + task system created and fine-tuned for AI.' Locks naming for the CLI binary, plugin, skills, marketplace listing, install URL, and downstream documentation. Prerequisite for any naming-locked subtask (notably the Method 1 CLI in 2026-04-26-framework-as-cli-tool/subtasks/03).",
   "status": "open",
   "priority": "medium",
-  "component": ["docs", "infra", "ai-skills"],
-  "milestone": "backlog",
-  "labels": ["refactor", "discussion", "idea"],
+  "component": [
+    "docs",
+    "infra",
+    "ai-skills"
+  ],
+  "labels": [
+    "refactor",
+    "discussion",
+    "idea"
+  ],
   "author": "sidhantha",
-  "assignees": ["sidhantha"],
-  "updated": "2026-04-26",
-  "due": null
+  "assignees": [
+    "sidhantha"
+  ]
 }

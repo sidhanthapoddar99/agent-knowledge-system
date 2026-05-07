@@ -1,6 +1,6 @@
 ---
 title: "Sidebar: tooltip on hover for truncated sub-doc titles"
-state: done
+state: closed
 done: true
 ---
 

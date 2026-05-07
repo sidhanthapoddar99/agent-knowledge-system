@@ -3,14 +3,13 @@
   "description": "Foundational editing surface for Editor V2: CM6, formatting toolbar, live preview, client-side rendering, auto-save, plus v1 cleanup and v2 docs.",
   "status": "open",
   "priority": "high",
-  "component": ["live-editor"],
-  "milestone": "phase-2",
+  "component": [
+    "live-editor"
+  ],
   "labels": [
     "wip",
     "feature"
   ],
   "author": "sidhantha",
-  "assignees": [],
-  "updated": "2026-04-10",
-  "due": "2026-04-19"
+  "assignees": []
 }

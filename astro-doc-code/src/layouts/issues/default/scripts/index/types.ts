@@ -15,7 +15,7 @@ export type FilterState = {
   dir: 'asc' | 'desc' | null;
   page: number;
   state: StateTab;
-  /** Group-by dimension (component | milestone | priority) or null */
+  /** Group-by dimension (component | priority) or null */
   group: string | null;
 };
 
@@ -45,7 +45,7 @@ export interface Config {
  *  cache. See subtask 21 (issues-layout) for the rationale. */
 export type GroupSubState = { page: number };
 
-export const FIELDS = ['priority', 'component', 'milestone', 'labels', 'assignees'] as const;
+export const FIELDS = ['priority', 'component', 'labels', 'assignees'] as const;
 /** Fields that hold multiple values per row — encoded in the dataset as
  *  space-joined strings and split back to arrays in filter / group code. */
 export const MULTI_FIELDS = new Set<string>(['labels', 'component', 'assignees']);

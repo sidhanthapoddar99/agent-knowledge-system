@@ -3,13 +3,14 @@
   "description": "Two halves: (1) editor-pane preview & inline editing for Mermaid/Graphviz/Excalidraw; (2) .mmd/.dot/.excalidraw files with XX_ prefix render as first-class pages in docs sections, with optional meta.json sidecar for sidebar metadata.",
   "status": "open",
   "priority": "medium",
-  "component": ["live-editor", "integrations", "components"],
-  "milestone": "phase-2",
+  "component": [
+    "live-editor",
+    "integrations",
+    "components"
+  ],
   "labels": [
     "feature"
   ],
   "author": "sidhantha",
-  "assignees": [],
-  "updated": "2026-04-10",
-  "due": "2026-04-19"
+  "assignees": []
 }

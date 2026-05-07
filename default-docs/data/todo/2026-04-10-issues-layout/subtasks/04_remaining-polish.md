@@ -1,6 +1,6 @@
 ---
 title: "Remaining polish"
-done: false
+state: cancelled
 ---
 
 ## Tasks

@@ -1,0 +1,12 @@
+{
+  "title": "Sidebar state persistence: sync to opened page + cache collapse state",
+  "description": "Two related sidebar bugs across docs and issues layouts: (1) sidebar selection doesn't track the currently-open page, and (2) collapse / expand state is lost on every navigation and refresh. Cache should persist across refresh + navigation with a 30-day per-key TTL.",
+  "status": "open",
+  "priority": "medium",
+  "component": ["layouts-and-themes"],
+  "milestone": "phase-2",
+  "labels": ["bug", "feature"],
+  "author": "sidhantha",
+  "assignees": ["sidhantha"],
+  "updated": "2026-05-07"
+}

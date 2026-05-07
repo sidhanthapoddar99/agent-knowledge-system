@@ -176,15 +176,39 @@ export function devToolbarIntegration(): AstroIntegration {
                   // Single listener + a dynamically-reconciled watch set:
                   // after `.git/HEAD` moves (branch switch), we re-resolve
                   // the active branch ref and re-point the watcher.
+                  //
+                  // Note: under Vite 6 SSR, the modules loaded by this plugin
+                  // context and the modules loaded by the SSR context can be
+                  // *separate instances* sharing source but not module-level
+                  // state. Clearing only the local imports leaves the SSR
+                  // copy stale; layouts then render an old `updated`. So
+                  // after invalidating locally we also force-clear via
+                  // `server.ssrLoadModule` to hit the same instance the
+                  // layouts are reading from. See:
+                  //   default-docs/data/todo/2026-05-08-update-date-time-
+                  //     optimization/notes/03_ssr-module-isolation.md
                   let watchedGitPaths = new Set<string>(getIssueDateWatchPaths());
                   for (const p of watchedGitPaths) {
                     server.watcher.add(p);
                     console.log('[HMR] Watching git ref:', p);
                   }
-                  server.watcher.on('change', (file) => {
+                  server.watcher.on('change', async (file) => {
                     if (!watchedGitPaths.has(file)) return;
+
+                    // Clear local-context instances.
                     invalidateIssueDateCache();
                     invalidateIssuesCache();
+
+                    // Also clear the SSR-context instances — Vite 6 module
+                    // isolation means layouts may hold a different instance.
+                    try {
+                      const datesMod: any = await server.ssrLoadModule('/src/loaders/issue-dates');
+                      datesMod?.invalidateIssueDateCache?.();
+                      const issuesMod: any = await server.ssrLoadModule('/src/loaders/issues');
+                      issuesMod?.invalidateIssuesCache?.();
+                    } catch {
+                      // Path resolution / module load can fail transiently; non-fatal.
+                    }
 
                     const desired = new Set(getIssueDateWatchPaths());
                     for (const p of watchedGitPaths) {

@@ -71,11 +71,13 @@ const subgroupNames = Array.from(tree.groups.keys()).sort();
   {tree.files.map((item) => {
     const key = leafKey(item);
     const isActive = activeKey === key;
+    const label = leafLabel(item);
     return (
       <a
         href={leafHref(item)}
         class={`issue-sidebar__item ${isActive ? 'is-active' : ''}`}
         aria-current={isActive ? 'page' : undefined}
+        title={label}
       >
         <span class="issue-sidebar__icon" aria-hidden="true">
           {kind === 'note' ? (
@@ -88,7 +90,7 @@ const subgroupNames = Array.from(tree.groups.keys()).sort();
             </svg>
           )}
         </span>
-        <span class="issue-sidebar__label">{leafLabel(item)}</span>
+        <span class="issue-sidebar__label">{label}</span>
       </a>
     );
   })}
@@ -98,7 +100,7 @@ const subgroupNames = Array.from(tree.groups.keys()).sort();
     const open = containsActive(child);
     return (
       <details class="issue-sidebar__subgroup" open={open ? true : undefined}>
-        <summary class="issue-sidebar__subgroup-heading">
+        <summary class="issue-sidebar__subgroup-heading" title={groupName}>
           <svg class="issue-sidebar__chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
           <span class="issue-sidebar__subgroup-name">{groupName}</span>
           <span class="issue-sidebar__heading-count">{descendantCount(child)}</span>

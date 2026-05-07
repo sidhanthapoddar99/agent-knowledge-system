@@ -133,6 +133,7 @@ const activeLogGroupOpen = activeKey.startsWith('log-');
               data-subtask-slug={s.slug}
               data-state={s.state}
               aria-current={isActive ? 'page' : undefined}
+              title={s.title}
             >
               <span class="issue-sidebar__check" aria-hidden="true" data-state-icon>
                 <Fragment set:html={stateIconSvg(s.state)} />

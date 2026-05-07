@@ -1,13 +1,13 @@
 ---
 title: "Sidebar: tooltip on hover for truncated sub-doc titles"
-state: open
-done: false
+state: done
+done: true
 ---
 
-- [ ] **Show the full untruncated title as a tooltip on hover** for every entry in the sub-doc tree (subtasks, notes, agent-log — they share `SubdocTree.astro`). The sidebar truncates long titles to fit the column; hover should reveal the full string.
-- [ ] **Use the native `title` attribute** (`<a title="…">` / `<span title="…">`). The OS / browser handles the ~1–2 s delay, the rendering, the auto-dismiss — same UX as hovering a long file name in a file manager. No custom tooltip JS, no instant-pop.
-- [ ] **Apply to all three sub-doc types.** Subtasks, notes, agent-log entries all render through the same tree component, so a single change covers everything.
-- [ ] **Test.** Add a fixture entry whose title is long enough to truncate; hover and confirm the tooltip shows the full text after the OS-standard delay.
+- [x] **Show the full untruncated title as a tooltip on hover** for every entry in the sub-doc tree (subtasks, notes, agent-log — they share `SubdocTree.astro`). The sidebar truncates long titles to fit the column; hover should reveal the full string.
+- [x] **Use the native `title` attribute** (`<a title="…">` / `<span title="…">`). The OS / browser handles the ~1–2 s delay, the rendering, the auto-dismiss — same UX as hovering a long file name in a file manager. No custom tooltip JS, no instant-pop.
+- [x] **Apply to all three sub-doc types.** Subtasks, notes, agent-log entries all render through the same tree component, so a single change covers everything.
+- [x] **Test.** Add a fixture entry whose title is long enough to truncate; hover and confirm the tooltip shows the full text after the OS-standard delay.
 
 Docs and plugin-skill updates intentionally skipped: this is a UI-affordance fix, not a new user-facing concept.
 
@@ -32,3 +32,5 @@ The user's stated UX target is "the file-system file-name hover" — that *is* n
 ## Files likely touched
 
 - `astro-doc-code/src/layouts/issues/default/parts/detail/SubdocTree.astro` — add `title={entry.title}` to whichever element the user's pointer lands on (the row anchor or the truncated label span).
+
+Landed: title attribute added to row anchor + subgroup summary in SubdocTree.astro.

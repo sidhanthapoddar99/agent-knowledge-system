@@ -117,6 +117,16 @@ Load-time validation covers:
 
 Warnings surface in the **error-logger** dev-toolbar app. Builds succeed; the loader errs on the side of not crashing when metadata drift is the only problem.
 
+### Schema-drift detection (validator script)
+
+The plugin's tracker validator (`bun plugins/.../scripts/issues/check.mjs <tracker>`) also reports **unknown keys** — anything in a `settings.json` or markdown frontmatter that isn't part of the documented schema. Useful when upgrading the framework, when a recent cleanup may have left stale fields behind, or before merging a downstream consumer's tracker into a newer template.
+
+Three flags shape the output:
+
+- **`--quiet`** / **`--no-warnings`** — suppress all warnings; print only errors. For CI gates that care about hard failures only.
+- **`--verbose`** — for each unknown-key warning, append the canonical key list inline so a reader knows what was expected without grepping.
+- **`--strict`** — promote unknown-key warnings to **errors** (exit 1). Other warnings (component-count hint, AI-handoff hint, vocabulary-mismatch) stay as warnings even under strict — those are conventions, not contract violations. Strict targets schema drift specifically.
+
 ## See also
 
 - [Vocabulary](./vocabulary) — the tracker-root `settings.json` that defines enum values and colors

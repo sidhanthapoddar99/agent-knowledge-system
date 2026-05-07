@@ -24,10 +24,14 @@ import { DEFAULT_TRACKER, listIssueFolders, readVocabulary, parseArgs, printHelp
 const args = parseArgs(process.argv.slice(2));
 if (args.flags.help) {
   printHelp('check', [
-    '[--tracker <path>]',
+    '[--tracker <path>] [--quiet|--no-warnings] [--verbose] [--strict]',
     '',
     'Validate the structure of an issue tracker. Defaults to <content-root>/data/todo (derived from .env CONFIG_DIR).',
-    'Reports errors (will fail loaders) and warnings (lint-only).',
+    'Reports errors (will fail loaders) and warnings (lint-only — including unknown-key drift).',
+    '',
+    '  --quiet, --no-warnings   suppress warnings; only errors print',
+    '  --verbose                for unknown-key warnings, also list the canonical keys',
+    '  --strict                 promote unknown-key warnings to errors (exit 1 on schema drift)',
   ]);
   process.exit(0);
 }
@@ -38,8 +42,43 @@ if (!fs.existsSync(tracker)) {
   process.exit(1);
 }
 
+const QUIET = !!(args.flags.quiet || args.flags['no-warnings']);
+const VERBOSE = !!args.flags.verbose;
+const STRICT = !!args.flags.strict;
+
+// Canonical schema — every key not in these sets is "unknown" (drift). Sourced
+// from the documented schema in `default-docs/data/user-guide/19_issues/04_settings/`
+// plus real-world frontmatter usage. When the schema changes, update here.
+const ISSUE_SETTINGS_KEYS = new Set([
+  'title', 'description', 'status', 'priority', 'component', 'labels',
+  'author', 'assignees', 'draft',
+]);
+const TRACKER_ROOT_KEYS = new Set(['label', 'fields', 'authors', 'views', 'draft']);
+const TRACKER_FIELD_KEYS = new Set(['status', 'priority', 'component', 'labels']);
+const SUBTASK_FM_KEYS = new Set(['title', 'state', 'done', 'sidebar_label']);
+const NOTE_FM_KEYS = new Set([
+  'title', 'description', 'sidebar_label', 'author', 'date', 'created', 'tags',
+]);
+const AGENT_LOG_FM_KEYS = new Set([
+  'title', 'iteration', 'agent', 'status', 'date', 'sidebar_label',
+]);
+const COMMENT_FM_KEYS = new Set(['author', 'date', 'title', 'sidebar_label']);
+
 const errors = [];
 const warnings = [];
+const driftWarnings = []; // tracked separately so --strict can promote only these
+
+function unknownKeys(obj, canonical) {
+  if (!obj || typeof obj !== 'object') return [];
+  return Object.keys(obj).filter((k) => !canonical.has(k));
+}
+
+function reportDrift(file, unknown, canonical) {
+  if (unknown.length === 0) return;
+  let msg = `${file}: unknown key${unknown.length > 1 ? 's' : ''} \`${unknown.join('`, `')}\``;
+  if (VERBOSE) msg += ` — canonical: ${[...canonical].sort().join(', ')}`;
+  driftWarnings.push(msg);
+}
 
 // 1. Tracker root vocabulary
 const vocab = readVocabulary(tracker);
@@ -50,6 +89,10 @@ const validStatuses = vocab?.fields?.status?.values || ['open', 'review', 'close
 const validPriorities = vocab?.fields?.priority?.values || [];
 const validComponents = vocab?.fields?.component?.values || [];
 const validLabels = vocab?.fields?.labels?.values || [];
+
+// Schema-drift on tracker root + its fields block
+reportDrift('<root>/settings.json', unknownKeys(vocab, TRACKER_ROOT_KEYS), TRACKER_ROOT_KEYS);
+reportDrift('<root>/settings.json (fields)', unknownKeys(vocab?.fields, TRACKER_FIELD_KEYS), TRACKER_FIELD_KEYS);
 
 const FOLDER_PATTERN = /^(\d{4}-\d{2}-\d{2})-([a-z0-9][a-z0-9-]*)$/;
 const VALID_SUBTASK_STATES = ['open', 'review', 'closed', 'cancelled'];
@@ -80,6 +123,8 @@ for (const entry of issueFolders) {
     errors.push(`${id}/settings.json: invalid JSON (${e.message})`);
     continue;
   }
+
+  reportDrift(`${id}/settings.json`, unknownKeys(meta, ISSUE_SETTINGS_KEYS), ISSUE_SETTINGS_KEYS);
 
   if (!meta.title) errors.push(`${id}/settings.json: missing \`title\``);
   if (!meta.status) errors.push(`${id}/settings.json: missing \`status\``);
@@ -141,6 +186,7 @@ for (const entry of issueFolders) {
         if (fm.state === undefined && fm.done === undefined) {
           warnings.push(`${id}/subtasks/${name}: no \`state:\` or \`done:\` — defaults to open`);
         }
+        reportDrift(`${id}/subtasks/${name}`, unknownKeys(fm, SUBTASK_FM_KEYS), SUBTASK_FM_KEYS);
       } catch (e) {
         errors.push(`${id}/subtasks/${name}: malformed frontmatter (${e.message})`);
       }
@@ -159,38 +205,64 @@ for (const entry of issueFolders) {
 
   // notes/ + agent-log/ subfolder depth (max 2 levels — anything deeper is
   // ignored by the loader). Depth 0 = root, depth 1 = group, depth 2 = subgroup.
-  for (const sub of ['notes', 'agent-log']) {
+  // Also: schema-drift on every .md frontmatter under each sub-doc folder.
+  const FM_KEYS_BY_TYPE = {
+    notes: NOTE_FM_KEYS,
+    'agent-log': AGENT_LOG_FM_KEYS,
+    comments: COMMENT_FM_KEYS,
+  };
+  for (const sub of ['notes', 'agent-log', 'comments']) {
     const subDir = path.join(folder, sub);
     if (!fs.existsSync(subDir)) continue;
-    function walkDepth(absDir, segments) {
+    function walk(absDir, segments) {
       let entries;
       try { entries = fs.readdirSync(absDir, { withFileTypes: true }); }
       catch { return; }
       for (const e of entries) {
-        if (!e.isDirectory()) continue;
-        if (segments.length >= 2) {
-          warnings.push(`${id}/${sub}/${[...segments, e.name].join('/')}/: exceeds 2-level depth cap, ignored by loader`);
-          continue;
+        if (e.isDirectory()) {
+          if (sub === 'comments') continue; // comments are flat
+          if (segments.length >= 2) {
+            warnings.push(`${id}/${sub}/${[...segments, e.name].join('/')}/: exceeds 2-level depth cap, ignored by loader`);
+            continue;
+          }
+          walk(path.join(absDir, e.name), [...segments, e.name]);
+        } else if (e.isFile() && e.name.endsWith('.md')) {
+          const rel = [...segments, e.name].join('/');
+          try {
+            const fm = matter(fs.readFileSync(path.join(absDir, e.name), 'utf-8')).data || {};
+            reportDrift(`${id}/${sub}/${rel}`, unknownKeys(fm, FM_KEYS_BY_TYPE[sub]), FM_KEYS_BY_TYPE[sub]);
+          } catch (err) {
+            warnings.push(`${id}/${sub}/${rel}: malformed frontmatter (${err.message})`);
+          }
         }
-        walkDepth(path.join(absDir, e.name), [...segments, e.name]);
       }
     }
-    walkDepth(subDir, []);
+    walk(subDir, []);
   }
 }
+
+// Reconcile drift output mode. --strict promotes drift warnings to errors;
+// otherwise they stack with the regular warning list.
+if (STRICT) {
+  for (const w of driftWarnings) errors.push(w);
+} else {
+  for (const w of driftWarnings) warnings.push(w);
+}
+
+const showWarnings = !QUIET;
 
 console.log(`# issues check: ${tracker}`);
 console.log(`(${listIssueFolders(tracker).length} issue folders scanned)`);
 console.log('');
-if (errors.length === 0 && warnings.length === 0) {
-  console.log('✓ all checks passed');
+if (errors.length === 0 && (warnings.length === 0 || !showWarnings)) {
+  console.log(errors.length === 0 && warnings.length === 0 ? '✓ all checks passed' : '✓ no errors');
   process.exit(0);
 }
 if (errors.length) {
   console.log(`## ${errors.length} error(s)`);
   for (const e of errors) console.log(`  ✗ ${e}`);
 }
-if (warnings.length) {
+if (warnings.length && showWarnings) {
   if (errors.length) console.log('');
   console.log(`## ${warnings.length} warning(s)`);
   for (const w of warnings) console.log(`  ⚠ ${w}`);

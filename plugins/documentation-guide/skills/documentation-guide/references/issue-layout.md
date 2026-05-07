@@ -503,6 +503,14 @@ Direct file write (when the helper isn't available):
 - Don't rewrite history in `comments/` or `agent-log/` — append, don't edit prior entries
 - Don't change `author` or `date` on someone else's comment
 
+### Validating after writes
+
+Run `bun plugins/documentation-guide/skills/documentation-guide/scripts/issues/check.mjs <tracker>` after any non-trivial write to confirm the tracker still parses and that no unknown keys crept in. Three optional flags shape the output:
+
+- `--quiet` / `--no-warnings` — suppress all warnings; only errors print. For programmatic uses that care about hard failures only.
+- `--verbose` — for unknown-key warnings, also list the canonical keys (helps when migrating a tracker upgraded from an older framework version).
+- `--strict` — promote unknown-key warnings to errors (exit 1 on schema drift). Use this in CI gates and after a migration sweep.
+
 ---
 
 ## 8. Worked example — picking up an issue

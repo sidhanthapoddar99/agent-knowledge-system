@@ -1,11 +1,15 @@
 /**
  * Issue date cache — derived `updated` dates from git history.
  *
- * Per-tracker in-memory map of `<issue-folder> → ISO author date`. Computed
- * once on cold start by walking `git log --no-merges --name-only -- <tracker>`
- * and taking the most recent commit date that touched any file under each
- * issue folder. Refreshed incrementally on `.git/HEAD` change when the
- * stored sync point is an ancestor of the new HEAD; otherwise full rebuild.
+ * Per-tracker in-memory map of `<issue-folder> → ISO author date`. Built once
+ * on cold start by walking `git log --no-merges --name-only -- <tracker>` and
+ * taking the most recent commit date that touched any file under each issue
+ * folder.
+ *
+ * Lazy invalidation: the watcher in `dev-tools/integration.ts` clears the
+ * cache entry on `.git/HEAD` or active-branch-ref change, and the next
+ * reader rebuilds via the cold path. Reads themselves never spawn git —
+ * a populated cache is trusted until invalidated.
  *
  * No disk persistence. Falls back to null when:
  *   - the project isn't a git checkout (`.git/` absent)
@@ -26,7 +30,9 @@ import { paths } from './paths';
 interface CacheEntry {
   /** Per-issue folder name (e.g. "2026-04-10-issues-layout") → ISO author date */
   issues: Map<string, string>;
-  /** HEAD SHA at the time the cache was last populated. Empty when unset. */
+  /** HEAD SHA at the time the cache was populated. Empty when unset.
+   *  Stored only for diagnostics — the watcher invalidates on git change,
+   *  reads never compare against HEAD. */
   syncedAt: string;
 }
 
@@ -96,71 +102,39 @@ export function getIssueDateWatchPaths(): string[] {
 // ============================================================================
 
 function ensureFresh(trackerRoot: string): void {
+  // Lazy invalidation: trust the cache whenever it's populated. The watcher
+  // (`.git/HEAD` + active branch ref in dev-tools/integration.ts) is the
+  // authoritative invalidation signal — on any git-state change it deletes
+  // the entry, and the next read here lands in the cold path and rebuilds.
+  // Reads never compare against HEAD; that kept this loader's hot path at
+  // a Map.get() instead of a sync `git rev-parse` per call.
+  if (cache.has(trackerRoot)) return;
+
   const repoRoot = findRepoRoot(trackerRoot);
-  if (!repoRoot) {
-    // Not a git checkout. Leave cache empty so callers fall back.
-    cache.delete(trackerRoot);
-    return;
-  }
+  if (!repoRoot) return; // Not a git checkout — leave cache empty so callers fall back.
 
   const headSha = currentHeadSha(repoRoot);
-  if (!headSha) {
-    cache.delete(trackerRoot);
-    return;
-  }
+  if (!headSha) return;
 
-  const entry = cache.get(trackerRoot);
-  if (entry && entry.syncedAt === headSha) return;
-
-  if (entry && entry.syncedAt && isAncestor(repoRoot, entry.syncedAt, headSha)) {
-    // Incremental: walk only the new commits.
-    incrementalRefresh(trackerRoot, repoRoot, entry, headSha);
-    return;
-  }
-
-  // Cold start or non-linear move (rebase, branch switch, checkout backward).
   fullBuild(trackerRoot, repoRoot, headSha);
 }
 
 function fullBuild(trackerRoot: string, repoRoot: string, headSha: string): void {
-  const issues = walkLog(repoRoot, trackerRoot, /* sinceSha */ null);
+  const issues = walkLog(repoRoot, trackerRoot);
   cache.set(trackerRoot, { issues, syncedAt: headSha });
 }
 
-function incrementalRefresh(
-  trackerRoot: string,
-  repoRoot: string,
-  entry: CacheEntry,
-  headSha: string,
-): void {
-  // Patch entries touched in the new range. Because git log is reverse-
-  // chronological, the first hit per path is the most recent commit; that's
-  // strictly newer than anything currently in the cache, so a single
-  // overwrite per touched issue is correct.
-  const touched = walkLog(repoRoot, trackerRoot, entry.syncedAt);
-  for (const [slug, iso] of touched) {
-    entry.issues.set(slug, iso);
-  }
-  entry.syncedAt = headSha;
-}
-
-/**
- * Walk `git log` and return per-issue most-recent-commit-date map.
- * When `sinceSha` is null, walks all history. Otherwise walks
- * `<sinceSha>..HEAD` so only new commits are read.
- */
-function walkLog(
-  repoRoot: string,
-  trackerRoot: string,
-  sinceSha: string | null,
-): Map<string, string> {
+/** Walk `git log` and return per-issue most-recent-commit-date map. */
+function walkLog(repoRoot: string, trackerRoot: string): Map<string, string> {
   const result = new Map<string, string>();
   const trackerRel = path.relative(repoRoot, trackerRoot);
   if (!trackerRel || trackerRel.startsWith('..')) return result;
 
-  const args = ['log', '--no-merges', '--name-only', `--pretty=format:${RECORD_SEP}%aI`];
-  if (sinceSha) args.push(`${sinceSha}..HEAD`);
-  args.push('--', trackerRel);
+  const args = [
+    'log', '--no-merges', '--name-only',
+    `--pretty=format:${RECORD_SEP}%aI`,
+    '--', trackerRel,
+  ];
 
   const child = spawnSync('git', args, {
     cwd: repoRoot,
@@ -227,15 +201,6 @@ function currentHeadSha(repoRoot: string): string | null {
   if (r.status !== 0) return null;
   const sha = (r.stdout || '').trim();
   return sha || null;
-}
-
-function isAncestor(repoRoot: string, ancestor: string, descendant: string): boolean {
-  const r = spawnSync(
-    'git',
-    ['merge-base', '--is-ancestor', ancestor, descendant],
-    { cwd: repoRoot },
-  );
-  return r.status === 0;
 }
 
 function readActiveBranchRef(repoRoot: string): string | null {

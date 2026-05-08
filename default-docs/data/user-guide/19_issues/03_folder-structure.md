@@ -62,9 +62,13 @@ Examples:
 ├── comments/                        ← thread, flat (optional)
 │   ├── 001_2026-04-19_sidhantha.md
 │   └── 002_2026-04-19_claude.md
-├── subtasks/                        ← checklist items, flat (optional)
+├── subtasks/                        ← checklist items, up to 2 subfolder levels (optional)
 │   ├── 01_issues-layout-docs.md
-│   ├── 02_theme-system-docs.md
+│   ├── 02_implementation/                    ← level-1 group (folder = label only)
+│   │   ├── 01_backend.md
+│   │   └── 02_polish/                        ← level-2 group
+│   │       ├── 01_styles.md
+│   │       └── 02_a11y.md
 │   └── 03_editor-v2-docs.md
 ├── notes/                           ← supporting docs, up to 2 subfolder levels (optional)
 │   ├── 01_proposed-file-structure.md          ← root-level note
@@ -88,20 +92,28 @@ Examples:
 | `settings.json` | ✅ | All metadata — status, priority, labels, dates. See [Per-Issue Settings](./settings/per-issue). |
 | `issue.md` | ✅ | The goal / pitch / context. Pure markdown, no frontmatter. See [issue.md](./sub-docs/issue-md). |
 | `comments/` | — | One file per comment, named `NNN_YYYY-MM-DD_<author>.md`. Flat — no subfolders. See [Comments](./sub-docs/comments). |
-| `subtasks/` | — | Atomic units of work with `NN_<slug>.md` naming, frontmatter-driven state. Flat — no subfolders. See [Subtasks](./sub-docs/subtasks). |
+| `subtasks/` | — | Atomic units of work with `NN_<slug>.md` naming, frontmatter-driven state. **Up to 2 levels of grouping subfolders** — folder = label only, leaves are first-class subtasks. See [Subtasks](./sub-docs/subtasks). |
 | `notes/` | — | Supporting design docs. **Up to 2 levels of freeform subfolders.** See [Notes](./sub-docs/notes). |
 | `agent-log/` | — | AI iteration records. **Up to 2 levels of freeform subfolders.** `NNN_` prefix on filenames is optional. See [Agent Log](./sub-docs/agent-log). |
 
-### Subfolder rules (`notes/` and `agent-log/`)
+### Subfolder rules (`subtasks/`, `notes/`, `agent-log/`)
 
-`notes/` and `agent-log/` accept up to **two levels of subfolders** for grouping long-running content by theme or phase. Folder and file names are freeform — no naming convention enforced.
+`subtasks/`, `notes/`, and `agent-log/` accept up to **two levels of subfolders** for grouping. Folder and file names follow each type's existing conventions.
 
 - Mix files and folders freely at the root and at level-1. Level-2 is files-only — folders found at depth 3 are warned and silently skipped.
 - The same filename can appear in different folders (`notes/design/intro.md` and `notes/research/intro.md` coexist with distinct URLs).
 - Subgroups render as collapsible nested sections in the detail-page sidebar; each level shows a count of descendants.
 - If you find yourself reaching for a third level, that's usually a signal to split into a sibling group at level-1, or — if the content has outgrown a single issue — into a separate issue.
 
-`comments/` and `subtasks/` stay flat — they don't accept subfolders.
+**Subtasks specifics:**
+- The folder is a **grouping label only** — no body file. Every `.md` leaf is a first-class subtask with its own state, URL, and count. URL: `/<tracker>/<issue>/subtasks/<group>/<subgroup>/<slug>`.
+- The `NNN_` prefix on the folder name preserves group ordering and is rendered in the sidebar.
+- Folders may ship an optional `settings.json` with at minimum a `title` field — overrides the slug-derived label. Absent file → fall back to slug → human-label.
+
+**Notes / agent-log specifics:**
+- Folder + file names are freeform — no naming convention required.
+
+`comments/` stays flat — it doesn't accept subfolders.
 
 ### Stray files warned, not crashed
 

@@ -105,26 +105,63 @@ export function readIssueMeta(trackerPath, issueId) {
   return readJson(path.join(trackerPath, issueId, 'settings.json'));
 }
 
+function makeSubtask(abs, groupPath) {
+  const name = path.basename(abs);
+  const slug = name.replace(/\.md$/, '');
+  const prefixMatch = slug.match(/^(\d+)[_-]/);
+  const sequence = prefixMatch ? parseInt(prefixMatch[1], 10) : null;
+  let title = slug.replace(/^\d+[-_]?/, '').replace(/[-_]/g, ' ');
+  let state = 'open';
+  try {
+    const fm = matter(fs.readFileSync(abs, 'utf-8')).data;
+    if (fm.title) title = fm.title;
+    if (VALID_STATES.includes(fm.state)) state = fm.state;
+    else if (fm.done === true) state = 'closed';
+  } catch { /* malformed frontmatter — keep defaults */ }
+  const done = state === 'closed' || state === 'cancelled';
+  return { slug, sequence, title, state, done, groupPath, filePath: abs, fileName: name };
+}
+
+/** Subtasks may live under up to 2 levels of grouping folders; the folder
+ *  is a label only, never a body file. Each leaf .md is a first-class
+ *  subtask. Returns a flat list with `groupPath` annotated. */
 export function readIssueSubtasks(trackerPath, issueId) {
   const dir = path.join(trackerPath, issueId, 'subtasks');
+  return walkTwoLevels(dir).map((e) => makeSubtask(e.filePath, e.groupPath));
+}
+
+/** Read group-folder labels under subtasks/. Each entry is `{ groupPath,
+ *  sequence, title }`. Title is from the folder's optional settings.json
+ *  (`title` field) else slug-derived. */
+export function readIssueSubtaskGroups(trackerPath, issueId) {
+  const dir = path.join(trackerPath, issueId, 'subtasks');
   if (!fs.existsSync(dir)) return [];
-  const files = fs.readdirSync(dir).filter((n) => n.endsWith('.md')).sort();
-  return files.map((name) => {
-    const abs = path.join(dir, name);
-    const slug = name.replace(/\.md$/, '');
-    const prefixMatch = slug.match(/^(\d+)[_-]/);
-    const sequence = prefixMatch ? parseInt(prefixMatch[1], 10) : null;
-    let title = slug.replace(/^\d+[-_]?/, '').replace(/[-_]/g, ' ');
-    let state = 'open';
-    try {
-      const fm = matter(fs.readFileSync(abs, 'utf-8')).data;
-      if (fm.title) title = fm.title;
-      if (VALID_STATES.includes(fm.state)) state = fm.state;
-      else if (fm.done === true) state = 'closed';
-    } catch { /* malformed frontmatter — keep defaults */ }
-    const done = state === 'closed' || state === 'cancelled';
-    return { slug, sequence, title, state, done, filePath: abs, fileName: name };
-  });
+  const out = [];
+  function walk(absDir, groupPath) {
+    let entries;
+    try { entries = fs.readdirSync(absDir, { withFileTypes: true }); }
+    catch { return; }
+    if (groupPath.length >= 2) return;
+    const subDirs = entries.filter((e) => e.isDirectory()).map((e) => e.name).sort();
+    for (const folder of subDirs) {
+      const childPath = [...groupPath, folder];
+      const childAbs = path.join(absDir, folder);
+      const prefixMatch = folder.match(/^(\d+)[-_]/);
+      let title = folder.replace(/^\d+[-_]?/, '').replace(/[-_]/g, ' ').trim() || folder;
+      const settings = readJson(path.join(childAbs, 'settings.json'));
+      if (settings && typeof settings.title === 'string' && settings.title.length > 0) {
+        title = settings.title;
+      }
+      out.push({
+        groupPath: childPath,
+        sequence: prefixMatch ? parseInt(prefixMatch[1], 10) : null,
+        title,
+      });
+      walk(childAbs, childPath);
+    }
+  }
+  walk(dir, []);
+  return out;
 }
 
 export function readIssueComments(trackerPath, issueId) {
@@ -237,14 +274,17 @@ export function listSearchableFiles(trackerPath, issueId, fields = null) {
     const p = path.join(issueDir, 'settings.json');
     if (fs.existsSync(p)) files.push(p);
   }
-  // comments + subtasks stay flat; notes + agent-log allow 2-level subfolders
-  for (const sub of ['comments', 'subtasks']) {
-    if (!include(sub)) continue;
-    const dir = path.join(issueDir, sub);
-    if (!fs.existsSync(dir)) continue;
-    for (const n of fs.readdirSync(dir).sort()) {
-      if (n.endsWith('.md')) files.push(path.join(dir, n));
+  // comments stays flat; subtasks + notes + agent-log allow 2-level subfolders
+  if (include('comments')) {
+    const dir = path.join(issueDir, 'comments');
+    if (fs.existsSync(dir)) {
+      for (const n of fs.readdirSync(dir).sort()) {
+        if (n.endsWith('.md')) files.push(path.join(dir, n));
+      }
     }
+  }
+  if (include('subtasks')) {
+    for (const e of walkTwoLevels(path.join(issueDir, 'subtasks'))) files.push(e.filePath);
   }
   if (include('notes')) {
     for (const e of walkTwoLevels(path.join(issueDir, 'notes'))) files.push(e.filePath);

@@ -74,8 +74,9 @@ export async function buildStaticPaths(siteConfig: { pages?: Record<string, any>
           props: { ...common, pageType: 'issues-detail', issue, vocabulary },
         });
         for (const s of issue.subtasks) {
+          const slugPath = [baseUrl, issue.id, 'subtasks', ...s.groupPath, s.slug].filter(Boolean).join('/');
           paths.push({
-            params: { slug: `${baseUrl}/${issue.id}/subtasks/${s.slug}` },
+            params: { slug: slugPath },
             props: { ...common, pageType: 'issues-subdoc', issue, vocabulary, subDoc: { kind: 'subtask', subtask: s } },
           });
         }

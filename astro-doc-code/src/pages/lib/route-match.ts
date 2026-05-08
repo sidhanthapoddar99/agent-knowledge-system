@@ -126,21 +126,25 @@ export async function matchServerRoute(
 
 function resolveSubDoc(issue: any, parts: string[]): RouteProps['subDoc'] | null {
   const [kind, ...rest] = parts;
-  if (kind === 'subtasks' && rest.length === 1) {
-    const s = issue.subtasks.find((st: any) => st.slug === rest[0]);
-    return s ? { kind: 'subtask', subtask: s } : null;
-  }
-  // notes + agent-log: rest = [...groupPath, name], groupPath is 0–2 segments
-  if ((kind === 'notes' || kind === 'agent-log') && rest.length >= 1 && rest.length <= 3) {
+  // subtasks / notes / agent-log: rest = [...groupPath, slug-or-name],
+  // groupPath is 0–2 segments.
+  if (
+    (kind === 'subtasks' || kind === 'notes' || kind === 'agent-log')
+    && rest.length >= 1 && rest.length <= 3
+  ) {
     const groupPath = rest.slice(0, -1);
-    const name = rest[rest.length - 1];
+    const tail = rest[rest.length - 1];
     const matchPath = (gp: string[]) =>
       gp.length === groupPath.length && gp.every((g, i) => g === groupPath[i]);
+    if (kind === 'subtasks') {
+      const s = issue.subtasks.find((st: any) => st.slug === tail && matchPath(st.groupPath));
+      return s ? { kind: 'subtask', subtask: s } : null;
+    }
     if (kind === 'notes') {
-      const n = issue.notes.find((nt: any) => nt.name === name && matchPath(nt.groupPath));
+      const n = issue.notes.find((nt: any) => nt.name === tail && matchPath(nt.groupPath));
       return n ? { kind: 'note', note: n } : null;
     }
-    const log = issue.agentLogs.find((l: any) => l.name === name && matchPath(l.groupPath));
+    const log = issue.agentLogs.find((l: any) => l.name === tail && matchPath(l.groupPath));
     return log ? { kind: 'log', log } : null;
   }
   return null;

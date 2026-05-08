@@ -148,7 +148,15 @@ export function detailUrl(baseUrl: string, issueId: string): string {
 }
 
 export function subtaskUrl(baseUrl: string, issueId: string, subtask: IssueSubtask): string {
-  return joinPath(baseUrl, issueId, 'subtasks', subtask.slug);
+  return joinPath(baseUrl, issueId, 'subtasks', ...subtask.groupPath, subtask.slug);
+}
+
+/** Panel key for a subtask — same scheme as note/log keys. Group path is
+ *  joined with `--` so the key stays unique across folders. */
+export function subtaskPanelKey(subtask: IssueSubtask): string {
+  return subtask.groupPath.length === 0
+    ? `subtask-${subtask.slug}`
+    : `subtask-${[...subtask.groupPath, subtask.slug].join('--')}`;
 }
 
 export function noteUrl(baseUrl: string, issueId: string, note: IssueNote): string {
@@ -193,4 +201,56 @@ export function groupByPath<T extends { groupPath: string[] }>(items: T[]): Grou
   const tree = emptyTree<T>();
   for (const item of items) insertIntoTree(tree, item.groupPath, item);
   return tree;
+}
+
+/**
+ * 2-level tree of subtasks that also carries group-label metadata for each
+ * folder (numeric prefix + display title). Built from the loader's flat
+ * `subtasks` list + parallel `subtaskGroups` list.
+ */
+export interface SubtaskGroupNode {
+  files: IssueSubtask[];
+  groups: Map<string, SubtaskGroupNode>;
+  /** Group metadata — null at the root (the `subtasks/` folder itself has none). */
+  meta: import('@loaders/issues').SubtaskGroupMeta | null;
+}
+
+function emptySubtaskNode(meta: SubtaskGroupNode['meta']): SubtaskGroupNode {
+  return { files: [], groups: new Map(), meta };
+}
+
+export function groupSubtasks(
+  subtasks: IssueSubtask[],
+  groups: import('@loaders/issues').SubtaskGroupMeta[],
+): SubtaskGroupNode {
+  const root = emptySubtaskNode(null);
+  // Pre-create folder nodes so empty groups still render.
+  for (const g of groups) {
+    let cursor = root;
+    for (let i = 0; i < g.groupPath.length; i++) {
+      const seg = g.groupPath[i];
+      let child = cursor.groups.get(seg);
+      if (!child) {
+        const isLeaf = i === g.groupPath.length - 1;
+        child = emptySubtaskNode(isLeaf ? g : null);
+        cursor.groups.set(seg, child);
+      } else if (i === g.groupPath.length - 1) {
+        child.meta = g;
+      }
+      cursor = child;
+    }
+  }
+  for (const s of subtasks) {
+    let cursor = root;
+    for (const seg of s.groupPath) {
+      let child = cursor.groups.get(seg);
+      if (!child) {
+        child = emptySubtaskNode(null);
+        cursor.groups.set(seg, child);
+      }
+      cursor = child;
+    }
+    cursor.files.push(s);
+  }
+  return root;
 }

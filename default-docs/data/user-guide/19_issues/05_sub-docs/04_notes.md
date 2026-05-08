@@ -49,11 +49,12 @@ If you find yourself wanting a third level, that's usually a signal to split int
 
 ## Frontmatter
 
-Notes support standard markdown frontmatter. Only `title` is interpreted by the loader:
+Notes support standard markdown frontmatter. Only `title` and `color` are interpreted by the loader:
 
 ```markdown
 ---
 title: "Proposed file structure"
+color: "#7aa2f7"     # optional — tints only the sidebar icon
 ---
 
 # Proposed file structure
@@ -64,6 +65,10 @@ title: "Proposed file structure"
 If `title` is absent, the loader derives it from the slug (`01_proposed-file-structure` → `proposed file structure`).
 
 No `state` field — notes aren't work items. They're documentation.
+
+### `color` — optional sidebar-icon tint
+
+Any string the browser accepts as a CSS color: named (`red`, `salmon`), hex (`#e06c75`, `#f00`), longer forms. **Only the sidebar icon is tinted** — the label, row background, and borders all stay default. The framework doesn't impose semantics — pick whatever convention fits your workflow (urgency, category, decision-vs-exploration). Same idea as GitHub label colors: you assign the meaning, the framework just paints.
 
 ## When to use a note vs…
 

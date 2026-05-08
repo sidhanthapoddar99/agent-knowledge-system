@@ -7,7 +7,7 @@
 import type { IssueSubtask } from '@loaders/issues';
 import type { TocEntry } from '../../server/toc';
 import { stateIconSvg } from '../../server/state-icon';
-import { pad, wordCount, COMPREHENSIVE_WORD_CAP } from '../../server/helpers';
+import { pad, wordCount, COMPREHENSIVE_WORD_CAP, subtaskPanelKey } from '../../server/helpers';
 
 type SubtaskDoc = IssueSubtask & { toc: TocEntry[] };
 
@@ -49,14 +49,15 @@ if (subtaskTotal === 0) return null as any;
       {sortedSubtaskDocs.map((s) => {
         const words = wordCount(s.html);
         const clippable = words > COMPREHENSIVE_WORD_CAP;
+        const panelKey = subtaskPanelKey(s);
         return (
           <li
             class={`issue-comprehensive__item state-${s.state} ${clippable ? 'is-clipped' : ''}`}
-            data-subtask-slug={s.slug}
+            data-subtask-key={panelKey}
             data-file={s.filePath}
             data-state={s.state}
             data-clippable={clippable ? 'true' : undefined}
-            id={`comprehensive-${s.slug}`}
+            id={`comprehensive-${panelKey}`}
           >
             <div class="issue-comprehensive__item-head">
               <button

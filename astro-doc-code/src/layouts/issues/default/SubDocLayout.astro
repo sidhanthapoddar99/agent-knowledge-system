@@ -14,7 +14,7 @@ import SubDocMetaSidebar from './parts/detail/SubDocMetaSidebar.astro';
 import MetaPanel from './parts/shared/MetaPanel.astro';
 import { allStateIcons } from './server/state-icon';
 import { extractToc } from './server/toc';
-import { sortSubtasksForSidebar, terminalStartIndex, TERMINAL, logPanelKey, notePanelKey } from './server/helpers';
+import { sortSubtasksForSidebar, terminalStartIndex, TERMINAL, logPanelKey, notePanelKey, subtaskPanelKey } from './server/helpers';
 import type { Issue, IssuesVocabulary, IssueSubtask, IssueNote, IssueAgentLog } from '@loaders/issues';
 import './styles/detail.css';
 
@@ -40,7 +40,7 @@ const statusColors = vocabulary.fields?.status?.colors || {};
 let activeKey: string;
 let toc;
 if (subDoc.kind === 'subtask') {
-  activeKey = `subtask-${subDoc.subtask.slug}`;
+  activeKey = subtaskPanelKey(subDoc.subtask);
   toc = extractToc(subDoc.subtask.html);
 } else if (subDoc.kind === 'note') {
   activeKey = notePanelKey(subDoc.note);

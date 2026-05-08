@@ -36,8 +36,13 @@ Every tracker has the same skeleton:
     ├── issue.md                                 ← main body (the goal / context)
     ├── comments/                                ← chronological discussion (flat)
     │   └── NNN_<date>_<author>.md
-    ├── subtasks/                                ← atomic units of work (flat)
-    │   └── NNN_<slug>.md
+    ├── subtasks/                                ← atomic units of work (up to 2 subfolder levels)
+    │   ├── NNN_<slug>.md                        ← root-level leaf
+    │   └── NNN_<group>/                         ← optional grouping folder (label only, no body file)
+    │       ├── settings.json                    ← optional — { "title": "..." } overrides slug-derived label
+    │       ├── NNN_<slug>.md                    ← level-1 leaf
+    │       └── NNN_<subgroup>/
+    │           └── NNN_<slug>.md                ← level-2 leaf (deepest accepted)
     ├── notes/                                   ← supporting design docs (up to 2 subfolder levels)
     │   ├── <slug>.md                            ← root-level note
     │   └── <group>/
@@ -56,11 +61,12 @@ Every tracker has the same skeleton:
 
 **Stray root-level `.md` inside an issue folder is a warning.** Surface it to the user — don't silently include or ignore.
 
-**`notes/` and `agent-log/` subfolder rules:**
+**`subtasks/`, `notes/`, `agent-log/` subfolder rules:**
 - Up to **2 levels of nesting** (`<group>/<subgroup>/<file>.md`). Anything deeper is logged as a warning by the loader and silently skipped — never relied on.
 - **Files and folders can mix at every level** that allows folders. So `notes/intro.md` can sit beside `notes/design/`, and `notes/design/overview.md` can sit beside `notes/design/phase-1/`. Only the deepest level (level 2) is files-only.
-- **No `NNN_` prefix required.** Filenames are freeform; if an `agent-log` filename happens to start with `NNN_`, the prefix is parsed as the iteration sequence number, otherwise the loader assigns one based on sort order within the leaf folder.
-- `comments/` and `subtasks/` stay flat — no subfolders.
+- **`subtasks/` specifics:** the folder is a *grouping label only* — no body file. Every leaf `.md` is a first-class subtask with its own state, URL, and count. Folders use the same `NNN_<slug>` naming as leaves, and may ship an optional `settings.json` with a `title` field overriding the slug-derived label. URL: `/<tracker>/<issue>/subtasks/<group>/<subgroup>/<slug>`.
+- **`notes/` and `agent-log/`:** filenames are freeform — no `NNN_` prefix required; if an `agent-log` filename happens to start with `NNN_`, the prefix is parsed as the iteration sequence number, otherwise the loader assigns one based on sort order within the leaf folder.
+- `comments/` stays flat — no subfolders.
 
 ---
 
@@ -185,9 +191,10 @@ Body...
 
 Naming convention: `NNN_<YYYY-MM-DD>_<author>.md` is the spec, but in practice many comments use `NNN_<short-slug>.md`. Either works; check what the issue already uses and match.
 
-### `subtasks/NNN_<slug>.md`
+### `subtasks/[<group>/[<subgroup>/]]NNN_<slug>.md`
 
-Atomic unit of work. Frontmatter:
+Atomic unit of work. May live at the root of `subtasks/`, or inside one or two levels of grouping folders (`subtasks/02_implementation/01_backend.md`, `subtasks/02_implementation/02_polish/01_styles.md`). The folder is a label only — no folder body file. Each leaf is a first-class subtask: own state, own URL, counted independently.
+
 ```yaml
 ---
 title: "Short imperative title"
@@ -200,9 +207,11 @@ Body — describe the work in enough detail that someone (or an agent) can pick 
 
 `done: true` should be paired with `state: closed` (or `review`). `state` follows the same 4-state vocabulary as issue `status`.
 
+**Optional folder `settings.json`:** a group folder may carry `{ "title": "..." }` to override the slug-derived sidebar label. Skip the file when the slug is already readable.
+
 ### `notes/[<group>/[<subgroup>/]]<slug>.md`
 
-Supporting design docs — research, design decisions, reference material that doesn't belong in `issue.md`. No state, no numbering. Frontmatter is minimal (often just `title`). May live at the root of `notes/`, or one or two folders deeper for grouping (e.g. `notes/design/phase-1/kickoff.md`). Folder names are freeform.
+Supporting design docs — research, design decisions, reference material that doesn't belong in `issue.md`. No state, no numbering. Frontmatter is minimal (often just `title`); an optional `color: <css-color>` tints only the sidebar icon and is user-defined (don't strip / overwrite when editing). May live at the root of `notes/`, or one or two folders deeper for grouping (e.g. `notes/design/phase-1/kickoff.md`). Folder names are freeform.
 
 ### `agent-log/[<group>/[<subgroup>/]]<slug>.md` — **read these first when picking up work**
 
@@ -215,6 +224,7 @@ iteration: 3
 agent: claude-opus-4-7
 status: success      # in-progress | success | failed
 date: 2026-04-24
+color: "#7aa2f7"     # optional — tints only the sidebar icon, user-defined semantics; preserve when editing
 ---
 ```
 
@@ -306,7 +316,7 @@ The plugin ships 8 CLI wrappers (`docs-list`, `docs-show`, `docs-subtasks`, `doc
 |---|---|
 | `list.mjs` | Multi-field filter **+ free-text regex search** over the tracker. Returns file paths + line numbers + excerpts. Drop-in replacement for `grep` / `find` over `data/todo/`. Default scope: open + review. |
 | `show.mjs` | Print one issue's metadata + subtask state summary + comment & agent-log heads. `--full` for bodies. |
-| `subtasks.mjs` | List subtasks for one issue, or across all issues with `--all`. Default state: open + review. |
+| `subtasks.mjs` | List subtasks for one issue, or across all issues with `--all`. Default: grouped output (mirrors the on-disk 2-level folder tree). Pass `--flat` for one-line-per-subtask. Default state: open + review. |
 | `agent-logs.mjs` | Print the last N agent-log entries (default 3) — for catching up before resuming work. |
 | `set-state.mjs` | Update issue status (`settings.json`) or subtask state (frontmatter). Path-allow-listed to the project's content root (resolved from `.env`). Subtask flips also sync `done:`. |
 | `add-comment.mjs` | Append a comment with auto-incremented `NNN_` prefix. |
@@ -344,8 +354,11 @@ docs-list --assignee sid
 # Just the matching paths (pipe into Read or another tool)
 docs-list --search "TODO" --paths-only
 
-# Every review-state subtask across the tracker (cross-issue)
+# Every review-state subtask across the tracker (cross-issue, grouped tree)
 docs-subtasks --all --state review
+
+# Flat one-line-per-subtask (handy for piping)
+docs-subtasks --all --flat
 
 # One issue end-to-end (metadata + subtask state + log heads)
 docs-show 2026-04-19-docs-phase-2
@@ -435,9 +448,15 @@ The verdict drops into the four-branch decision tree above without you ever load
 ### Create a new subtask
 
 1. **If your context on this area is thin, run the duplicate check above.** If the search returns an existing subtask covering the same work, tell the user instead of creating.
-2. Find the next prefix: `ls <issue>/subtasks/` → use `NN+1`
-3. Write `<issue>/subtasks/NN_<slug>.md` with the standard frontmatter (`title`, `done: false`, `state: open`)
-4. Body: enough detail to pick up cold; if a related issue/subtask turned up in the duplicate check, link to it in a "Related:" line
+2. Decide where it lives:
+   - Single leaf → `<issue>/subtasks/NN_<slug>.md`
+   - Inside a themed group → `<issue>/subtasks/NN_<group>/NN_<slug>.md`
+   - Inside a sub-phase → `<issue>/subtasks/NN_<group>/NN_<subgroup>/NN_<slug>.md` (deepest the loader accepts)
+3. Find the next prefix in the target folder: `ls <target-folder>/` → use `NN+1`. Folders and leaves share the numbering at each level (they sort interleaved by `NNN_`).
+4. Write the file with the standard frontmatter (`title`, `done: false`, `state: open`).
+5. Body: enough detail to pick up cold; if a related issue/subtask turned up in the duplicate check, link to it in a "Related:" line.
+
+**Optional group `settings.json`:** when a group folder's slug doesn't read cleanly as a label, drop a `settings.json` next to its leaves: `{ "title": "Implementation" }`. Skip otherwise — slug-derived labels are fine for most cases.
 
 ### Update a subtask state
 

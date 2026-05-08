@@ -72,6 +72,7 @@ const subgroupNames = Array.from(tree.groups.keys()).sort();
     const key = leafKey(item);
     const isActive = activeKey === key;
     const label = leafLabel(item);
+    const color = (item as { color?: string | null }).color ?? null;
     return (
       <a
         href={leafHref(item)}
@@ -79,7 +80,11 @@ const subgroupNames = Array.from(tree.groups.keys()).sort();
         aria-current={isActive ? 'page' : undefined}
         title={label}
       >
-        <span class="issue-sidebar__icon" aria-hidden="true">
+        <span
+          class="issue-sidebar__icon"
+          aria-hidden="true"
+          style={color ? `color: ${color}` : undefined}
+        >
           {kind === 'note' ? (
             <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
               <path d="M3 1h7l3 3v11H3V1z"/><path d="M10 1v3h3"/>

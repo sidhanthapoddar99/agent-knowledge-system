@@ -1,7 +1,7 @@
 ---
 title: "Subtasks: 2-level folder subgrouping (mirror notes / agent-log)"
-state: open
-done: false
+state: closed
+done: true
 ---
 
 - [ ] **Loader: discover folders inside `subtasks/` up to 2 levels deep.** Today `subtasks/` contains flat `NNN_*.md` files. Extend the loader so a `NNN_<group>/` folder is treated as a logical group containing leaf subtasks. Each leaf `NNN_*.md` inside (at any depth ≤ 2) remains a **first-class subtask** — full `state`/`done` frontmatter, its own URL, counted independently in totals, surfaced individually in `docs-list` search. The folder itself has **no body file**; it's a grouping label, not a parent subtask.
@@ -54,3 +54,7 @@ Numbering stays visible at every level. The group folder owns one number; its le
 - `plugins/documentation-guide/scripts/issues/subtasks.mjs`, `_lib.mjs`, `check.mjs`, `set-state.mjs` — handle nested paths; add `--flat`; warn on >2 levels.
 - `default-docs/data/user-guide/19_issues/03_folder-structure.md` and any subtask-related page.
 - `plugins/documentation-guide/skills/documentation-guide/references/issue-layout.md`.
+
+## Done
+
+Loader walks `subtasks/` up to 2 levels, exposing a flat `subtasks` list (each leaf carries `groupPath`) plus a parallel `subtaskGroups` list with optional `settings.json`-derived titles. Routing extended in `route-match.ts` and `static-paths.ts`. New `SubtaskTree.astro` renders grouped subtasks in the sidebar with NNN_ prefixes preserved at every level; `data-subtask-slug` migrated to `data-subtask-key` (panel-key) so cross-DOM state cycling stays unique across folders. CLI: `docs-subtasks` now defaults to a grouped tree, `--flat` flattens, both work with `--all`. Validator warns on >2-level subtask nesting. Test fixture at `default-docs/data/todo/2026-05-08-subtask-grouping-fixture/`. Docs refreshed in `user-guide/19_issues/03_folder-structure.md` + `05_sub-docs/03_subtasks.md`; plugin skill `references/issue-layout.md` updated.

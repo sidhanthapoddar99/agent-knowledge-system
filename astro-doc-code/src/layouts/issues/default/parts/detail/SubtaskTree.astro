@@ -1,0 +1,113 @@
+---
+/**
+ * Recursively render the subtasks tree in the sidebar. Group folders become
+ * <details> blocks labelled with the folder's `NNN_` prefix + title (from
+ * the group's optional settings.json or slug-derived). Leaves render as
+ * subtask rows with the same state-icon + cycle behaviour as the flat layout.
+ *
+ * Sort within a level: groups and leaves are interleaved by their `NNN_`
+ * sequence — disk order is preserved so reordering on disk is the source
+ * of truth. Items without a sequence sort after numbered ones.
+ */
+import type { IssueSubtask } from '@loaders/issues';
+import { stateIconSvg } from '../../server/state-icon';
+import {
+  pad, TERMINAL, subtaskUrl, subtaskPanelKey,
+  type SubtaskGroupNode,
+} from '../../server/helpers';
+
+interface Props {
+  node: SubtaskGroupNode;
+  baseUrl: string;
+  issueId: string;
+  activeKey: string;
+  /** Add the `--nested` modifier to the items wrapper (for sub-levels). */
+  nested?: boolean;
+}
+
+const { node, baseUrl, issueId, activeKey, nested = false } = Astro.props;
+
+interface Entry {
+  kind: 'leaf' | 'group';
+  sequence: number | null;
+  name: string;
+  leaf?: IssueSubtask;
+  group?: SubtaskGroupNode;
+}
+
+const entries: Entry[] = [];
+for (const f of node.files) {
+  entries.push({ kind: 'leaf', sequence: f.sequence, name: f.slug, leaf: f });
+}
+for (const [name, child] of node.groups) {
+  entries.push({ kind: 'group', sequence: child.meta?.sequence ?? null, name, group: child });
+}
+entries.sort((a, b) => {
+  const sa = a.sequence ?? Number.MAX_SAFE_INTEGER;
+  const sb = b.sequence ?? Number.MAX_SAFE_INTEGER;
+  if (sa !== sb) return sa - sb;
+  return a.name.localeCompare(b.name);
+});
+
+function descendantCount(n: SubtaskGroupNode): number {
+  let count = n.files.length;
+  for (const child of n.groups.values()) count += descendantCount(child);
+  return count;
+}
+
+function containsActive(n: SubtaskGroupNode): boolean {
+  if (n.files.some((f) => subtaskPanelKey(f) === activeKey)) return true;
+  for (const child of n.groups.values()) {
+    if (containsActive(child)) return true;
+  }
+  return false;
+}
+---
+
+<div class={`issue-sidebar__items ${nested ? 'issue-sidebar__items--nested' : ''}`}>
+  {entries.map((e) => {
+    if (e.kind === 'leaf') {
+      const s = e.leaf!;
+      const key = subtaskPanelKey(s);
+      const isActive = activeKey === key;
+      return (
+        <a
+          href={subtaskUrl(baseUrl, issueId, s)}
+          class={`issue-sidebar__item is-subtask ${TERMINAL.includes(s.state) ? 'is-done' : ''} ${isActive ? 'is-active' : ''}`}
+          data-subtask-key={key}
+          data-state={s.state}
+          aria-current={isActive ? 'page' : undefined}
+          title={s.title}
+        >
+          <span class="issue-sidebar__check" aria-hidden="true" data-state-icon>
+            <Fragment set:html={stateIconSvg(s.state)} />
+          </span>
+          {s.sequence !== null && <span class="issue-sidebar__num">{pad(s.sequence)}</span>}
+          <span class="issue-sidebar__label">{s.title}</span>
+        </a>
+      );
+    }
+    const child = e.group!;
+    const meta = child.meta;
+    const open = containsActive(child);
+    return (
+      <details class="issue-sidebar__subgroup" open={open ? true : undefined}>
+        <summary class="issue-sidebar__subgroup-heading" title={meta?.title ?? e.name}>
+          <svg class="issue-sidebar__chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
+          {meta?.sequence !== null && meta?.sequence !== undefined && (
+            <span class="issue-sidebar__num">{pad(meta.sequence)}</span>
+          )}
+          <span class="issue-sidebar__subgroup-name">{meta?.title ?? e.name}</span>
+          <span class="issue-sidebar__heading-count">{descendantCount(child)}</span>
+        </summary>
+        <Astro.self
+          node={child}
+          baseUrl={baseUrl}
+          issueId={issueId}
+          activeKey={activeKey}
+          nested={true}
+        />
+      </details>
+    );
+  })}
+</div>

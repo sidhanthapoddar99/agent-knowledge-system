@@ -92,8 +92,13 @@ Comprehensive tab.
 | `agent` | string | Which agent / model wrote this (e.g. `claude-opus-4-6`, `gpt-4`, `human:sidhantha`) |
 | `status` | string | Free-form: `in-progress`, `success`, `failed`, `abandoned`, `handed-off`, … |
 | `date` | ISO date | When this iteration ran |
+| `color` | CSS color | Tints only the sidebar icon (named, hex, or any browser-accepted color) |
 
 All optional. The loader degrades gracefully when fields are missing.
+
+### `color` — optional sidebar-icon tint
+
+Any browser-accepted CSS color (`red`, `#e06c75`, `rgb(...)`). **Only the sidebar icon** picks up the tint — label, row background, borders stay default. User-defined semantics: maybe red marks an iteration that uncovered a problem, green a clean success, gray a routine status update. The framework doesn't assign meaning.
 
 ## Body structure — the 4-section convention
 

@@ -58,9 +58,11 @@ const TRACKER_FIELD_KEYS = new Set(['status', 'priority', 'component', 'labels']
 const SUBTASK_FM_KEYS = new Set(['title', 'state', 'done', 'sidebar_label']);
 const NOTE_FM_KEYS = new Set([
   'title', 'description', 'sidebar_label', 'author', 'date', 'created', 'tags',
+  'color',
 ]);
 const AGENT_LOG_FM_KEYS = new Set([
   'title', 'iteration', 'agent', 'status', 'date', 'sidebar_label',
+  'color',
 ]);
 const COMMENT_FM_KEYS = new Set(['author', 'date', 'title', 'sidebar_label']);
 
@@ -171,26 +173,43 @@ for (const entry of issueFolders) {
     warnings.push(`${id}/: stray .md at folder root (move to notes/?): ${stray.join(', ')}`);
   }
 
-  // Subtasks
+  // Subtasks (recursive — up to 2 levels of grouping folders allowed).
+  // Folder = grouping label only; no folder body file. An optional
+  // settings.json on a group folder may set its display title.
   const subDir = path.join(folder, 'subtasks');
   let subtaskCount = 0;
   if (fs.existsSync(subDir)) {
-    for (const name of fs.readdirSync(subDir).filter((n) => n.endsWith('.md'))) {
-      subtaskCount++;
-      const abs = path.join(subDir, name);
-      try {
-        const fm = matter(fs.readFileSync(abs, 'utf-8')).data || {};
-        if (fm.state !== undefined && !VALID_SUBTASK_STATES.includes(fm.state)) {
-          errors.push(`${id}/subtasks/${name}: invalid state \`${fm.state}\``);
+    function walkSubtasks(absDir, segments) {
+      let entries;
+      try { entries = fs.readdirSync(absDir, { withFileTypes: true }); }
+      catch { return; }
+      for (const e of entries) {
+        if (e.isDirectory()) {
+          if (segments.length >= 2) {
+            warnings.push(`${id}/subtasks/${[...segments, e.name].join('/')}/: exceeds 2-level depth cap, ignored by loader`);
+            continue;
+          }
+          walkSubtasks(path.join(absDir, e.name), [...segments, e.name]);
+        } else if (e.isFile() && e.name.endsWith('.md')) {
+          subtaskCount++;
+          const rel = [...segments, e.name].join('/');
+          const abs = path.join(absDir, e.name);
+          try {
+            const fm = matter(fs.readFileSync(abs, 'utf-8')).data || {};
+            if (fm.state !== undefined && !VALID_SUBTASK_STATES.includes(fm.state)) {
+              errors.push(`${id}/subtasks/${rel}: invalid state \`${fm.state}\``);
+            }
+            if (fm.state === undefined && fm.done === undefined) {
+              warnings.push(`${id}/subtasks/${rel}: no \`state:\` or \`done:\` — defaults to open`);
+            }
+            reportDrift(`${id}/subtasks/${rel}`, unknownKeys(fm, SUBTASK_FM_KEYS), SUBTASK_FM_KEYS);
+          } catch (err) {
+            errors.push(`${id}/subtasks/${rel}: malformed frontmatter (${err.message})`);
+          }
         }
-        if (fm.state === undefined && fm.done === undefined) {
-          warnings.push(`${id}/subtasks/${name}: no \`state:\` or \`done:\` — defaults to open`);
-        }
-        reportDrift(`${id}/subtasks/${name}`, unknownKeys(fm, SUBTASK_FM_KEYS), SUBTASK_FM_KEYS);
-      } catch (e) {
-        errors.push(`${id}/subtasks/${name}: malformed frontmatter (${e.message})`);
       }
     }
+    walkSubtasks(subDir, []);
   }
 
   // Convention: AI-handoff-bound issues should declare ≥1 subtask. We

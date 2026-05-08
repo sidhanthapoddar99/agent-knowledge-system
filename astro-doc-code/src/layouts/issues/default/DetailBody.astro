@@ -17,7 +17,7 @@ import Comprehensive from './parts/detail/Comprehensive.astro';
 import MetaSidebar from './parts/detail/MetaSidebar.astro';
 import { allStateIcons } from './server/state-icon';
 import { extractAndPrefixToc } from './server/toc';
-import { TERMINAL, sortSubtasksForSidebar, terminalStartIndex } from './server/helpers';
+import { TERMINAL, sortSubtasksForSidebar, terminalStartIndex, subtaskPanelKey } from './server/helpers';
 import type { Issue, IssuesVocabulary } from '@loaders/issues';
 import './styles/detail.css';
 
@@ -45,7 +45,7 @@ const statusColors = vocabulary.fields?.status?.colors || {};
 // Comprehensive panel is the one place multiple subtasks share a DOM —
 // prefix heading ids so `#setup` anchors across subtasks don't collide.
 const sortedSubtaskDocs = sortedSubtasks.map((s) => {
-  const { html, toc } = extractAndPrefixToc(s.html, `subtask-${s.slug}`);
+  const { html, toc } = extractAndPrefixToc(s.html, subtaskPanelKey(s));
   return { ...s, html, toc };
 });
 ---

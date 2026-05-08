@@ -2,11 +2,16 @@
 /**
  * subtasks.mjs — list subtasks for one issue, or across all issues.
  *
+ * Default: grouped output that mirrors the on-disk folder grouping (subtasks
+ * may live under up to 2 levels of grouping folders). Pass `--flat` to get a
+ * one-line-per-subtask list instead — handy when you want to pipe into
+ * another tool and don't care about the grouping intent.
+ *
  * Default state filter: open + review (matches the AI default-search rule).
  */
 
 import {
-  DEFAULT_TRACKER, listIssueFolders, readIssueSubtasks,
+  DEFAULT_TRACKER, listIssueFolders, readIssueSubtasks, readIssueSubtaskGroups,
   parseArgs, csv, printHelp, isValidState,
 } from './_lib.mjs';
 
@@ -15,10 +20,13 @@ const positional = args._[0];
 
 if (args.flags.help || (!positional && !args.flags.all)) {
   printHelp('subtasks', [
-    '<issue-id|--all> [--state open,review,closed,cancelled] [--json] [--tracker <path>]',
+    '<issue-id|--all> [--state open,review,closed,cancelled] [--flat] [--json] [--tracker <path>]',
     '',
     'List subtasks for one issue, or across all issues with --all.',
-    'Default state filter: open + review.  Output: issue<TAB>file<TAB>state<TAB>title.',
+    'Default: grouped output (mirrors the subtasks/ folder tree, up to 2 levels).',
+    '--flat   one-line-per-subtask, no grouping (issue<TAB>file<TAB>state<TAB>title).',
+    '--json   machine-readable; carries groupPath per subtask + group metadata.',
+    'Default state filter: open + review.',
   ]);
   process.exit(args.flags.help ? 0 : 1);
 }
@@ -26,22 +34,124 @@ if (args.flags.help || (!positional && !args.flags.all)) {
 const tracker = args.flags.tracker || DEFAULT_TRACKER;
 const stateFilter = csv(args.flags.state).filter(isValidState);
 const scope = stateFilter.length ? stateFilter : ['open', 'review'];
+const isAll = args.flags.all || positional === '--all';
+const flat = !!args.flags.flat;
 
-const issueIds = (args.flags.all || positional === '--all')
-  ? listIssueFolders(tracker)
-  : [positional];
+const issueIds = isAll ? listIssueFolders(tracker) : [positional];
 
 const matches = [];
 for (const id of issueIds) {
   const subs = readIssueSubtasks(tracker, id);
+  const groups = readIssueSubtaskGroups(tracker, id);
   for (const s of subs) {
     if (!scope.includes(s.state)) continue;
-    matches.push({ issue: id, file: s.fileName, state: s.state, title: s.title });
+    matches.push({
+      issue: id,
+      file: [...s.groupPath, s.fileName].join('/'),
+      slug: s.slug,
+      groupPath: s.groupPath,
+      state: s.state,
+      title: s.title,
+      sequence: s.sequence,
+    });
   }
+  // Stash groups on the issue for grouped output. Indexed by joined groupPath.
+  matches._groups = matches._groups || {};
+  matches._groups[id] = groups;
 }
 
 if (args.flags.json) {
-  console.log(JSON.stringify(matches, null, 2));
-} else {
+  const groupMap = matches._groups || {};
+  delete matches._groups;
+  console.log(JSON.stringify({ subtasks: matches, groups: groupMap }, null, 2));
+  process.exit(0);
+}
+
+if (flat) {
   for (const m of matches) console.log(`${m.issue}\t${m.file}\t${m.state}\t${m.title}`);
+  process.exit(0);
+}
+
+// Grouped output. For each issue, render groups as labelled blocks; leaves
+// indented under their group. Groups + leaves are interleaved by NNN_ prefix.
+const groupMap = matches._groups || {};
+delete matches._groups;
+
+function pad(n) { return String(n ?? '').padStart(2, '0').replace(/^0$/, '  '); }
+
+function indentFor(depth) { return '  '.repeat(depth); }
+
+function printIssueTree(issueId) {
+  const issueSubs = matches.filter((m) => m.issue === issueId);
+  if (issueSubs.length === 0) return;
+  const groups = groupMap[issueId] || [];
+
+  // Build a tree: { files: [], groups: Map<name, node> }
+  function emptyNode(meta) { return { files: [], groups: new Map(), meta: meta || null }; }
+  const root = emptyNode(null);
+  for (const g of groups) {
+    let cursor = root;
+    for (let i = 0; i < g.groupPath.length; i++) {
+      const seg = g.groupPath[i];
+      let child = cursor.groups.get(seg);
+      const isLeaf = i === g.groupPath.length - 1;
+      if (!child) {
+        child = emptyNode(isLeaf ? g : null);
+        cursor.groups.set(seg, child);
+      } else if (isLeaf) {
+        child.meta = g;
+      }
+      cursor = child;
+    }
+  }
+  for (const s of issueSubs) {
+    let cursor = root;
+    for (const seg of s.groupPath) {
+      let child = cursor.groups.get(seg);
+      if (!child) { child = emptyNode(null); cursor.groups.set(seg, child); }
+      cursor = child;
+    }
+    cursor.files.push(s);
+  }
+
+  console.log(`# ${issueId}`);
+  function render(node, depth) {
+    const entries = [];
+    for (const f of node.files) entries.push({ kind: 'leaf', sequence: f.sequence, name: f.slug, leaf: f });
+    for (const [name, child] of node.groups) {
+      entries.push({ kind: 'group', sequence: child.meta?.sequence ?? null, name, group: child });
+    }
+    entries.sort((a, b) => {
+      const sa = a.sequence ?? Number.MAX_SAFE_INTEGER;
+      const sb = b.sequence ?? Number.MAX_SAFE_INTEGER;
+      if (sa !== sb) return sa - sb;
+      return a.name.localeCompare(b.name);
+    });
+    for (const e of entries) {
+      if (e.kind === 'leaf') {
+        const { state, title, sequence } = e.leaf;
+        const seq = sequence !== null ? `${pad(sequence)}. ` : '    ';
+        console.log(`${indentFor(depth)}${seq}[${state}] ${title}`);
+      } else {
+        const meta = e.group.meta;
+        const seq = meta?.sequence !== null && meta?.sequence !== undefined ? `${pad(meta.sequence)}. ` : '    ';
+        const label = meta?.title || e.name;
+        console.log(`${indentFor(depth)}${seq}${label}/`);
+        render(e.group, depth + 1);
+      }
+    }
+  }
+  render(root, 1);
+  console.log('');
+}
+
+if (isAll) {
+  const seen = new Set();
+  for (const m of matches) {
+    if (seen.has(m.issue)) continue;
+    seen.add(m.issue);
+    printIssueTree(m.issue);
+  }
+} else {
+  printIssueTree(positional);
 }

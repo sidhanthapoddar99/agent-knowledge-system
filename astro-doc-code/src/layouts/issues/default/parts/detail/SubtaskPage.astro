@@ -10,7 +10,7 @@
  */
 import type { IssueSubtask } from '@loaders/issues';
 import type { TocEntry } from '../../server/toc';
-import { pad } from '../../server/helpers';
+import { pad, subtaskPanelKey } from '../../server/helpers';
 
 interface Props {
   subtask: IssueSubtask & { toc?: TocEntry[] };
@@ -19,17 +19,19 @@ interface Props {
 }
 
 const { subtask: s, statusColors, standalone = false } = Astro.props;
+const panelKey = subtaskPanelKey(s);
+const relPath = ['subtasks', ...s.groupPath, `${s.slug}.md`].join('/');
 ---
 
 <section
   class={`issue-panel ${standalone ? 'is-active' : ''}`}
-  data-panel={`subtask-${s.slug}`}
+  data-panel={panelKey}
   role="tabpanel"
   hidden={!standalone}
 >
   <div class="issue-doc">
-    <div class="issue-doc__path">subtasks/{s.slug}.md</div>
-    <div class="issue-subtask-page" data-subtask-slug={s.slug} data-file={s.filePath} data-state={s.state}>
+    <div class="issue-doc__path">{relPath}</div>
+    <div class="issue-subtask-page" data-subtask-key={panelKey} data-file={s.filePath} data-state={s.state}>
       <div class="issue-subtask-page__header">
         {s.sequence !== null && <span class="issue-subtask-page__num">{pad(s.sequence)}</span>}
         <span class="issue-subtask-page__title">{s.title}</span>

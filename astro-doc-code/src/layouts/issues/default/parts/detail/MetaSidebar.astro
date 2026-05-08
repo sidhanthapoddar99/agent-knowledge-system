@@ -8,7 +8,7 @@
  */
 import type { Issue, IssueSubtask } from '@loaders/issues';
 import { stateIconSvg } from '../../server/state-icon';
-import { pad } from '../../server/helpers';
+import { pad, subtaskPanelKey } from '../../server/helpers';
 
 interface Props {
   issue: Issue;
@@ -45,13 +45,15 @@ const subtaskTotal = sortedSubtasks.length;
       <div class="issue-meta-index">
         <div class="issue-meta-index__heading">Subtasks index</div>
         <ul class="issue-meta-index__list">
-          {sortedSubtasks.map((s) => (
+          {sortedSubtasks.map((s) => {
+            const panelKey = subtaskPanelKey(s);
+            return (
             <li>
               <a
-                href={`#comprehensive-${s.slug}`}
+                href={`#comprehensive-${panelKey}`}
                 class={`issue-meta-index__link state-${s.state}`}
                 data-state={s.state}
-                data-subtask-slug={s.slug}
+                data-subtask-key={panelKey}
               >
                 <span class="issue-meta-index__icon" data-state-icon>
                   <Fragment set:html={stateIconSvg(s.state)} />
@@ -60,7 +62,8 @@ const subtaskTotal = sortedSubtasks.length;
                 <span class="issue-meta-index__label">{s.title}</span>
               </a>
             </li>
-          ))}
+            );
+          })}
         </ul>
       </div>
     </div>

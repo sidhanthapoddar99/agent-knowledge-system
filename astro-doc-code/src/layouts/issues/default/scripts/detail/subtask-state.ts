@@ -24,11 +24,11 @@ function setStateOn(el: HTMLElement | null, state: SubtaskState) {
   el.className = el.className.replace(/\bstate-(open|review|closed|cancelled)\b/g, '').trim() + ` state-${state}`;
 }
 
-function applySubtaskState(slug: string, state: SubtaskState) {
+function applySubtaskState(key: string, state: SubtaskState) {
   const isDone = TERMINAL.includes(state);
 
   const overviewItem = document.querySelector<HTMLElement>(
-    `.issue-overview-subtasks__item[data-subtask-slug="${CSS.escape(slug)}"]`,
+    `.issue-overview-subtasks__item[data-subtask-key="${CSS.escape(key)}"]`,
   );
   setStateOn(overviewItem, state);
   const overviewBtn = overviewItem?.querySelector<HTMLElement>('.issue-overview-subtasks__state');
@@ -38,7 +38,7 @@ function applySubtaskState(slug: string, state: SubtaskState) {
   }
 
   const compItem = document.querySelector<HTMLElement>(
-    `.issue-comprehensive__item[data-subtask-slug="${CSS.escape(slug)}"]`,
+    `.issue-comprehensive__item[data-subtask-key="${CSS.escape(key)}"]`,
   );
   setStateOn(compItem, state);
   const compBtn = compItem?.querySelector<HTMLElement>('.issue-comprehensive__state');
@@ -50,7 +50,7 @@ function applySubtaskState(slug: string, state: SubtaskState) {
   if (compPill) compPill.textContent = state;
 
   const page = document.querySelector<HTMLElement>(
-    `.issue-subtask-page[data-subtask-slug="${CSS.escape(slug)}"]`,
+    `.issue-subtask-page[data-subtask-key="${CSS.escape(key)}"]`,
   );
   if (page) {
     page.dataset.state = state;
@@ -59,7 +59,7 @@ function applySubtaskState(slug: string, state: SubtaskState) {
   }
 
   const sideBtn = document.querySelector<HTMLElement>(
-    `.issue-sidebar__item[data-subtask-slug="${CSS.escape(slug)}"]`,
+    `.issue-sidebar__item[data-subtask-key="${CSS.escape(key)}"]`,
   );
   if (sideBtn) {
     sideBtn.dataset.state = state;
@@ -69,7 +69,7 @@ function applySubtaskState(slug: string, state: SubtaskState) {
   }
 
   const indexLink = document.querySelector<HTMLElement>(
-    `.issue-meta-index__link[data-subtask-slug="${CSS.escape(slug)}"]`,
+    `.issue-meta-index__link[data-subtask-key="${CSS.escape(key)}"]`,
   );
   setStateOn(indexLink, state);
   const indexIcon = indexLink?.querySelector<HTMLElement>('[data-state-icon]');
@@ -141,13 +141,13 @@ function updateSidebarSubtasksCount() {
   }
 }
 
-async function handleStateChange(slug: string, filePath: string, nextState: SubtaskState, prevState: SubtaskState) {
-  applySubtaskState(slug, nextState);
+async function handleStateChange(key: string, filePath: string, nextState: SubtaskState, prevState: SubtaskState) {
+  applySubtaskState(key, nextState);
   try {
     await postState(filePath, nextState);
   } catch (err) {
     console.error('[issues] subtask state change failed', err);
-    applySubtaskState(slug, prevState);
+    applySubtaskState(key, prevState);
   }
 }
 
@@ -160,7 +160,7 @@ export function wireStateButton(selector: string, itemSelector: string) {
       if (!item) return;
       const prev = (btn.dataset.state || 'open') as SubtaskState;
       const next = CYCLE[(CYCLE.indexOf(prev) + 1) % CYCLE.length];
-      handleStateChange(item.dataset.subtaskSlug!, item.dataset.file!, next, prev);
+      handleStateChange(item.dataset.subtaskKey!, item.dataset.file!, next, prev);
     });
   });
 }

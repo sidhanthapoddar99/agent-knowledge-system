@@ -30,6 +30,34 @@ subtasks/
 
 The prefix drives sort order (numeric), the slug becomes the default display title. Files without a numeric prefix sort after numbered ones, alphabetically.
 
+## Subfoldering — up to 2 levels
+
+`subtasks/` accepts up to **two levels of subfolders** for grouping a longer breakdown by phase or theme. The folder is a **grouping label only** — there's no folder body file. Every `.md` leaf is a first-class subtask with its own state, URL, and count.
+
+```
+subtasks/
+├── 01_setup.md                       ← root-level leaf
+├── 02_implementation/                ← level-1 group (folder = label only)
+│   ├── 01_backend.md
+│   └── 02_polish/                    ← level-2 group (deepest the loader accepts)
+│       ├── 01_styles.md
+│       └── 02_a11y.md
+└── 03_docs.md                        ← root-level leaf, sorts after the group by NNN_
+```
+
+Rules:
+
+- The folder is a **label only**. No `subtask.md` / `index.md` body file convention to debate.
+- Each leaf is a regular subtask: own `state` / `done` frontmatter, own URL (`/<tracker>/<issue>/subtasks/<group>/<subgroup>/<slug>`), counted independently in the totals.
+- The `NNN_` prefix on the folder preserves ordering and is rendered as the group's number in the sidebar (e.g. "02. Implementation").
+- Group folders may ship an optional `settings.json` with at minimum a `title` field — overrides the slug-derived label.
+  ```json
+  // subtasks/02_implementation/settings.json
+  { "title": "Implementation" }
+  ```
+- The deepest level (level 2) is **files-only**. Anything nested deeper than `subtasks/<group>/<subgroup>/<file>.md` is warned by the loader and ignored.
+- If you find yourself wanting a third level, the work has probably outgrown a single issue — split it into a sibling issue.
+
 ## Frontmatter
 
 ```markdown
@@ -102,9 +130,13 @@ See [Work an Issue](../workflows/work-an-issue) and [Review and Close](../workfl
 
 ## Sub-doc URL
 
-Currently subtasks render inside the parent issue's detail page (Comprehensive tab + anchor links). Each subtask gets a stable anchor `#subtask-<slug>`.
+Each subtask has its own URL:
 
-Separate per-subtask URLs (`/todo/<id>/subtasks/<slug>`) are planned — tracked in `2026-04-10-issues-layout/subtasks/17_subdoc-separate-urls.md`.
+- Top-level: `/<tracker>/<issue-id>/subtasks/<slug>`
+- Inside a group: `/<tracker>/<issue-id>/subtasks/<group>/<slug>`
+- Inside a subgroup: `/<tracker>/<issue-id>/subtasks/<group>/<subgroup>/<slug>`
+
+The Comprehensive tab on the parent issue concatenates every subtask body with id-prefixed anchors (`#comprehensive-<panel-key>`) so deep links stay stable when the same slug appears in different folders.
 
 ## Tips
 

@@ -7,7 +7,7 @@
  */
 import type { Issue, IssueSubtask } from '@loaders/issues';
 import { stateIconSvg } from '../../server/state-icon';
-import { pad, subtaskUrl } from '../../server/helpers';
+import { pad, subtaskUrl, subtaskPanelKey } from '../../server/helpers';
 
 interface Props {
   sortedSubtasks: IssueSubtask[];
@@ -42,7 +42,7 @@ const pct = (n: number) => (subtaskTotal ? (n / subtaskTotal) * 100 : 0);
     {sortedSubtasks.map((s) => (
       <li
         class={`issue-overview-subtasks__item state-${s.state}`}
-        data-subtask-slug={s.slug}
+        data-subtask-key={subtaskPanelKey(s)}
         data-file={s.filePath}
         data-state={s.state}
       >

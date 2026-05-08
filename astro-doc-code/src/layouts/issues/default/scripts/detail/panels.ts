@@ -22,7 +22,8 @@ export function knownPanel(key: string): boolean {
 export function legacyHashRedirect(hash: string): string | null {
   const base = location.pathname.replace(/\/+$/, '');
   if (hash.startsWith('subtask-')) {
-    return `${base}/subtasks/${hash.slice('subtask-'.length)}${location.search}`;
+    const segments = hash.slice('subtask-'.length).split('--');
+    return `${base}/subtasks/${segments.join('/')}${location.search}`;
   }
   if (hash.startsWith('note-')) {
     const segments = hash.slice('note-'.length).split('--');

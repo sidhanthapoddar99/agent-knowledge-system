@@ -33,6 +33,32 @@ export { clearSettingsCache } from './cache-manager';
 // Sorting
 // ============================================
 
+// Build a per-segment position tuple from an entry's relative path so flat
+// sort respects folder hierarchy. Each folder segment contributes its XX_
+// prefix (or 999 if absent); the file segment uses sidebar_position so a
+// frontmatter override still wins. Without this, two `01_` files in different
+// top-level folders tie and fall back to glob order — which is how the wrong
+// page can win the default-route redirect.
+function pathPositionTuple(item: LoadedContent): number[] {
+  const segments = item.relativePath.replace(/\\/g, '/').split('/').filter(Boolean);
+  if (segments.length === 0) return [item.data.sidebar_position ?? 999];
+  const tuple: number[] = [];
+  for (let i = 0; i < segments.length - 1; i++) {
+    const m = segments[i].match(/^(\d{2})_/);
+    tuple.push(m ? parseInt(m[1], 10) : 999);
+  }
+  tuple.push(item.data.sidebar_position ?? 999);
+  return tuple;
+}
+
+function compareTuples(a: number[], b: number[]): number {
+  const len = Math.min(a.length, b.length);
+  for (let i = 0; i < len; i++) {
+    if (a[i] !== b[i]) return a[i] - b[i];
+  }
+  return a.length - b.length;
+}
+
 function sortContent(
   content: LoadedContent[],
   sort: LoadOptions['sort'],
@@ -43,9 +69,10 @@ function sortContent(
 
     switch (sort) {
       case 'position':
-        const posA = a.data.sidebar_position ?? 999;
-        const posB = b.data.sidebar_position ?? 999;
-        comparison = posA - posB;
+        comparison = compareTuples(pathPositionTuple(a), pathPositionTuple(b));
+        if (comparison === 0) {
+          comparison = a.relativePath.localeCompare(b.relativePath);
+        }
         break;
 
       case 'date':

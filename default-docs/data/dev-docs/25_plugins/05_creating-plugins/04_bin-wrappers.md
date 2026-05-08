@@ -19,7 +19,7 @@ $ echo $PATH | tr ':' '\n' | grep claude
 /home/you/.claude/plugins/cache/claude-plugins-official/pyright-lsp/1.0.0/bin
 /home/you/.claude/plugins/cache/claude-plugins-official/ralph-loop/1.0.0/bin
 /home/you/.claude/plugins/cache/claude-plugins-official/skill-creator/unknown/bin
-/home/you/.claude/plugins/cache/sids-plugin-marketplace/documentation-guide/0.1.3/bin
+/home/you/.claude/plugins/cache/sids-plugin-marketplace/documentation-guide/0.1.4/bin
 …
 ```
 
@@ -29,7 +29,7 @@ That means the model can invoke any wrapper by its bare name — no path knowled
 docs-list --priority high
 ```
 
-resolves to `~/.claude/plugins/cache/sids-plugin-marketplace/documentation-guide/0.1.3/bin/docs-list` automatically.
+resolves to `~/.claude/plugins/cache/sids-plugin-marketplace/documentation-guide/0.1.4/bin/docs-list` automatically.
 
 ## Wrapper template
 

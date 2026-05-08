@@ -18,7 +18,7 @@ When you install a plugin, the files are downloaded **once** to your user-level 
 For example, after installing `documentation-guide@sids-plugin-marketplace`, the files land at:
 
 ```
-~/.claude/plugins/cache/sids-plugin-marketplace/documentation-guide/0.1.3/
+~/.claude/plugins/cache/sids-plugin-marketplace/documentation-guide/0.1.4/
 ├── .claude-plugin/plugin.json
 ├── README.md
 ├── LICENSE

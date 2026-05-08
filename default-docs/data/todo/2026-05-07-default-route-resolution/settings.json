@@ -1,7 +1,7 @@
 {
   "title": "Default route lands on wrong first doc (e.g. /user-guide → to_be_written stub)",
   "description": "Visiting a section root URL without a slug (e.g. /user-guide) resolves to a deeply-nested stub page instead of the natural first doc. Suspected ordering bug in default-route resolution.",
-  "status": "open",
+  "status": "closed",
   "priority": "medium",
   "component": [
     "layouts-and-themes"

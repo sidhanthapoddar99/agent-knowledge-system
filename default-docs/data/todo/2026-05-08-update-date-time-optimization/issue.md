@@ -1,3 +1,8 @@
+> [!note]
+> **Status: deferred until the runtime migration.** See [`notes/04_deferred-until-runtime-migration.md`](./notes/04_deferred-until-runtime-migration.md). The design here is the durable artifact and ports verbatim into Go. Implementing on Astro now would mean redoing the work three months later. At current scale (~12 commits) the existing lazy cache is invisible anyway.
+>
+> Successor context: [`2026-05-08-runtime-stack-migration`](../2026-05-08-runtime-stack-migration/issue.md) — Phase 1 of the migration adopts this design from day one.
+
 ## Goal
 
 Scale the derived-`updated` cache loader (`astro-doc-code/src/loaders/issue-dates.ts`) so it stays imperceptible at 3 K+ issues / 10 K+ tracker-touching commits, and across server restarts and branch switches. Today's lazy in-memory cache works fine at this repo's scale (~11 ms full walks), but the cost is paid on the **request path** — at projected scale (~500 ms / ~2.5 s walks) the lag becomes user-visible.

@@ -4,7 +4,7 @@
   "status": "open",
   "priority": "medium",
   "component": ["layouts-and-themes"],
-  "labels": ["feature", "performance"],
+  "labels": ["feature", "performance", "blocked"],
   "author": "sidhantha",
   "assignees": []
 }

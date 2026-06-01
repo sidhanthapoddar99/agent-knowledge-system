@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT="$DIR/../skills/documentation-guide/scripts/docs/move.mjs"
+if command -v bun >/dev/null 2>&1; then exec bun "$SCRIPT" "$@"; else exec node "$SCRIPT" "$@"; fi

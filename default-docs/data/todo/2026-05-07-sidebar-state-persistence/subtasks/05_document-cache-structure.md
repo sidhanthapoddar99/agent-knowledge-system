@@ -1,14 +1,14 @@
 ---
 title: "Document the sidebar cache structure in dev-docs"
-state: open
-done: false
+state: closed
+done: true
 ---
 
-**Deferred — do this after subtasks 01–04 ship and the cache shapes are settled. Don't write to a moving target.**
+**Done 2026-06-10** — written after subtasks 01–04 shipped and were verified, so the documented shapes are the settled ones.
 
-- [ ] Add a dev-docs page describing the sidebar cache: where it lives in `localStorage`, key shape per layout (docs vs. issues), TTL behaviour, GC trigger, and the sync-wins-for-ancestors rule.
-- [ ] Cross-link from the page to the cache-isolation issue's writeup (when that lands) so the namespacing story is one click away.
-- [ ] Likely target: `default-docs/data/dev-docs/05_architecture/` or `20_development/`.
+- [x] Page: `dev-docs/05_architecture/05_layout-internals/07_sidebar-state-cache.md` — covers storage location + why flat keys, key shape per layout (docs vs. issues), value shape (`{c, ts}` rationale), 30-day TTL + lazy GC, the FOUC-free blocking restore, and the sync-wins-for-ancestors rule.
+- [x] Cross-links the cache-isolation issue (`2026-05-07-cache-isolation-cross-project`) as planned work — that issue hasn't landed yet, so the page marks the namespacing wrapper as pending and to-be-documented there.
+- [x] Also records the known **delete-on-default** improvement (store only deviations from the server-rendered default) discussed during review.
 
 ## What to cover
 

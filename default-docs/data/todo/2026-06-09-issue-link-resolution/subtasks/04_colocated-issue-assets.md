@@ -1,7 +1,7 @@
 ---
 title: "Colocated assets: serve issue-folder files + rewrite relative image srcs"
 done: true
-state: review
+state: closed
 ---
 
 Colocated assets don't work anywhere in issues content: an image at `<issue>/assets/x.svg` referenced as `![](./assets/x.svg)` 404s on every issue route, and `[[path]]` content embeds are silently inert (the preprocessor was never registered for `IssuesParser`). Docs/blog have the embed preprocessor; no content type rewrites `<img src>`.

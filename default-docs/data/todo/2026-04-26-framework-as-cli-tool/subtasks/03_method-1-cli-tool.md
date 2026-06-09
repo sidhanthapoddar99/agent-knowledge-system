@@ -1,6 +1,7 @@
 ---
 title: "Method 1 — CLI tool (Go binary, compose-driven, strict)"
-done: false
+done: true
+state: cancelled
 ---
 
 > **Prerequisite:** [`2026-04-26-project-rebrand`](../../2026-04-26-project-rebrand/issue.md) must lock the project + binary name before this subtask completes. The placeholder `astro-doc` is used throughout this design; substitute the real name at implementation time.

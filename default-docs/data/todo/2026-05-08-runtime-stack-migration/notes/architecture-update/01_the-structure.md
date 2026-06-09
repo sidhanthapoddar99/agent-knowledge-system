@@ -107,10 +107,25 @@ structure = drop in a module. The `/issue` redirect would have lived entirely in
    **root-absolute** links (`/tracker/<id>`), not `../`-relative ones. Relative
    links break whenever the same content is shown at a different URL depth than it
    was authored for (e.g. a sub-doc body embedded in the issues Comprehensive panel
-   — see [2026-06-09-issue-link-resolution/subtasks/03](../../../2026-06-09-issue-link-resolution/subtasks/03_comprehensive-panel-subdoc-links.md)`). 
-   
+   — see [2026-06-09-issue-link-resolution/subtasks/03](../../../2026-06-09-issue-link-resolution/subtasks/03_comprehensive-panel-subdoc-links.md)).
+
    Absolute links are
    position-independent, so this whole bug class disappears by construction.
+
+8. **Per-user UI state rides the request and is rendered server-side;
+   localStorage only for static export.** Today (static output) the browser is
+   the *only* place per-user state can live — hence the localStorage collapse
+   cache, the blocking inline restore script, TTL pruning, and the FOUC
+   trade-off (see `2026-05-07-sidebar-state-persistence`). With the Go runtime
+   serving pages, state travels with the request (session cookie — or, for
+   something this small, the cookie itself / a SQLite-backed pref store): the
+   server renders the correct `open`/`closed` attributes directly into the
+   HTML, so there is no client restore pass and no FOUC **by construction**,
+   and state can roam across devices. Writes stay cheap — fire-and-forget
+   `POST /prefs` (or cookie update) per toggle. Keep the localStorage path as
+   the fallback for static-export mode, and apply **delete-on-default** in both
+   worlds — storing only deviations from the server-rendered default is what
+   keeps state small enough to fit in a cookie.
 
 ## Terminology rename (carry into plugin + docs)
 

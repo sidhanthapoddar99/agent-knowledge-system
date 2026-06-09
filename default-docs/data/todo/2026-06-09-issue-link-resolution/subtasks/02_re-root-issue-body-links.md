@@ -1,7 +1,7 @@
 ---
 title: "Re-root relative links in the root issue.md (issues-only postprocessor)"
 done: true
-state: review
+state: closed
 ---
 
 New `issue-body-links` postprocessor, wired **only** into `IssuesParser`'s pipeline so it can't affect docs/blog. Gated to the root `issue.md` (path `<issue-id>/issue.md`, two segments under the tracker root); re-roots each relative link at the issue folder and emits it relative to the tracker base, so it resolves correctly from the collapsed detail URL.
@@ -12,4 +12,4 @@ New `issue-body-links` postprocessor, wired **only** into `IssuesParser`'s pipel
 
 Cross-issue links land on `/<tracker>/<id>/issue` and ride the redirect from subtask 01.
 
-Artefact: code diff + built HTML. Awaiting human verify → close.
+Artefact: code diff + built HTML. Human-verified 2026-06-10 → closed.

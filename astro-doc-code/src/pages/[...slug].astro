@@ -40,6 +40,12 @@ if (!props.pageType) {
 }
 const routeProps = props as RouteProps;
 
+// Canonical redirects (e.g. `/<issue>/issue` → `/<issue>`). Works in both
+// static and server mode since `redirectTo` is set on props by both builders.
+if (routeProps.redirectTo) {
+  return Astro.redirect(routeProps.redirectTo);
+}
+
 // docs-index: redirect to the first doc (it has no layout of its own).
 if (routeProps.pageType === 'docs-index' && routeProps.allContent?.length) {
   return Astro.redirect(`${routeProps.pageConfig.base_url}/${routeProps.allContent[0].slug}`);

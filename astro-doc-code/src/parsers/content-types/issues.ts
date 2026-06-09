@@ -12,6 +12,7 @@ import type { FileType, FrontmatterSchema } from '../types';
 import { BaseContentParser } from '../core/base-parser';
 import { headingIdsPostprocessor } from '../postprocessors/heading-ids';
 import { internalLinksPostprocessor } from '../postprocessors/internal-links';
+import { issueBodyLinksPostprocessor } from '../postprocessors/issue-body-links';
 import { externalLinksPostprocessor } from '../postprocessors/external-links';
 
 export class IssuesParser extends BaseContentParser {
@@ -21,6 +22,9 @@ export class IssuesParser extends BaseContentParser {
     this.pipeline
       .addPostprocessor(headingIdsPostprocessor)
       .addPostprocessor(internalLinksPostprocessor)
+      // Issues-only: re-root relative links in the root `issue.md` so they
+      // survive the detail-page URL collapse (`<issue-id>/issue.md` → `/<issue-id>`).
+      .addPostprocessor(issueBodyLinksPostprocessor)
       .addPostprocessor(externalLinksPostprocessor);
   }
 

@@ -8,6 +8,8 @@ sidebar_position: 1
 
 The parser system (`src/parsers/`) is a modular architecture for processing markdown content through configurable pipelines.
 
+> **Everything in this pipeline runs on the backend — never in the browser.** All four stages (preprocess → render → postprocess → transform) execute in Node, either at **build time** for production (`output: 'static'`, emitting finished HTML files to disk) or at **SSR request time** in the dev server (`output: 'server'`). The browser only ever receives the already-rendered HTML string. Client-side scripts (diagrams, lightbox, code-copy, sidebar persistence, the live editor) merely *enhance* that delivered markup — they never parse markdown. So `href` rewriting, syntax highlighting, heading IDs, and custom-tag expansion are all settled server-side before a single byte reaches the client.
+
 ## Architecture Overview
 
 ```

@@ -73,6 +73,11 @@ export async function buildStaticPaths(siteConfig: { pages?: Record<string, any>
           params: { slug: `${baseUrl}/${issue.id}` },
           props: { ...common, pageType: 'issues-detail', issue, vocabulary },
         });
+        // Canonical redirect: `/<issue>/issue` → `/<issue>` (issue.md is the body).
+        paths.push({
+          params: { slug: `${baseUrl}/${issue.id}/issue` },
+          props: { ...common, pageType: 'issues-detail', redirectTo: `${pageConfig.base_url}/${issue.id}` },
+        });
         for (const s of issue.subtasks) {
           const slugPath = [baseUrl, issue.id, 'subtasks', ...s.groupPath, s.slug].filter(Boolean).join('/');
           paths.push({

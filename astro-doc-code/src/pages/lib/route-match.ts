@@ -25,6 +25,8 @@ export interface RouteProps {
   dataPath: string;
   layout: string;
   pageType: PageType;
+  /** When set, `[...slug].astro` redirects here instead of rendering a layout. */
+  redirectTo?: string;
   doc?: any;
   post?: any;
   issue?: any;
@@ -113,6 +115,15 @@ export async function matchServerRoute(
 
       if (parts.length === 1) {
         return { kind: 'render', props: { ...common, pageType: 'issues-detail', issue, vocabulary: loaded.vocabulary } };
+      }
+
+      // `issue.md` is rendered at the detail root, so `/<issue>/issue` is a
+      // stale alias — canonicalize it to the detail page.
+      if (parts.length === 2 && parts[1] === 'issue') {
+        return {
+          kind: 'render',
+          props: { ...common, pageType: 'issues-detail', redirectTo: `${pageConfig.base_url}/${issueId}` },
+        };
       }
 
       const subDoc = resolveSubDoc(issue, parts.slice(1));

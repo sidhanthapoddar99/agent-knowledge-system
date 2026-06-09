@@ -2,7 +2,7 @@
 
 Replace the Astro runtime with a **Go HTTP server that embeds a Vite-built frontend bundle**, distributed as a single cross-compiled binary. End-state: `doc-engine serve` (or whatever the rebrand lands on) starts a production-grade server in any folder containing a `default-docs/` tree — no Node, no `node_modules/`, no Vite at runtime.
 
-This issue is the **discussion + design capture**. No subtasks yet — those will be filed once the team commits to the migration.
+This issue is the **discussion + design capture**. Implementation subtasks land once the team commits to the migration — the one exception is the **architecture-update** design work (see `subtasks/01`), which is pure design and can proceed now.
 
 ## Why
 
@@ -12,6 +12,7 @@ Broader motivation: zero runtime dependencies for end users, ~25 MB binary inste
 
 ## Notes
 
+- **`notes/architecture-update/`** — the **structure / layout / theme / shell** separation model (added 2026-06-09). Decouples the overloaded `type` into four orthogonal axes; structures self-register their URL + parsing rules so a per-structure change never touches a central switch. The design work to formalize it is `subtasks/01`. **This is the conceptual backbone the Go rewrite should be built on.**
 - **`notes/discussion/`** — Q&A from the conversation that produced this design.
   - Framework comparison (Astro / Next.js / Go+Vite / 100 % Rust)
   - Architecture survival (site.yaml, themes, layouts, custom pages)

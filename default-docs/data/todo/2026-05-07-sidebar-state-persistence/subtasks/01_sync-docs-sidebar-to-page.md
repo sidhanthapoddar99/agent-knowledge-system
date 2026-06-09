@@ -1,6 +1,6 @@
 ---
 title: "Docs sidebar: sync selection + scroll-into-view to currently opened page"
-state: open
+state: review
 done: false
 ---
 

@@ -1,6 +1,6 @@
 ---
 title: "Docs sidebar: cache collapse / expand state per section (localStorage, 30-day TTL)"
-state: open
+state: review
 done: false
 ---
 

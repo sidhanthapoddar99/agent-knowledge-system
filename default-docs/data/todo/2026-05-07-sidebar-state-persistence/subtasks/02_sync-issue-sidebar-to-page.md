@@ -1,6 +1,6 @@
 ---
 title: "Issues sidebar: sync selection + scroll-into-view to opened sub-doc"
-state: open
+state: review
 done: false
 ---
 

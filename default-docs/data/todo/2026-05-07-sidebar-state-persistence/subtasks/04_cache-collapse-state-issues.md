@@ -1,6 +1,6 @@
 ---
 title: "Issues sidebar: cache collapse / expand state per sub-doc folder (30-day TTL)"
-state: open
+state: review
 done: false
 ---
 

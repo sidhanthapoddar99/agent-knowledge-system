@@ -23,9 +23,11 @@ interface Props {
   activeKey: string;
   /** Add the `--nested` modifier to the items wrapper (for sub-levels). */
   nested?: boolean;
+  /** Folder-path prefix for the collapse-cache key (e.g. `subtasks`, `subtasks/02_impl`). */
+  pathPrefix?: string;
 }
 
-const { node, baseUrl, issueId, activeKey, nested = false } = Astro.props;
+const { node, baseUrl, issueId, activeKey, nested = false, pathPrefix = 'subtasks' } = Astro.props;
 
 interface Entry {
   kind: 'leaf' | 'group';
@@ -90,8 +92,9 @@ function containsActive(n: SubtaskGroupNode): boolean {
     const child = e.group!;
     const meta = child.meta;
     const open = containsActive(child);
+    const childPath = `${pathPrefix}/${e.name}`;
     return (
-      <details class="issue-sidebar__subgroup" open={open ? true : undefined}>
+      <details class="issue-sidebar__subgroup" data-collapse-key={childPath} open={open ? true : undefined}>
         <summary class="issue-sidebar__subgroup-heading" title={meta?.title ?? e.name}>
           <svg class="issue-sidebar__chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
           {meta?.sequence !== null && meta?.sequence !== undefined && (
@@ -106,6 +109,7 @@ function containsActive(n: SubtaskGroupNode): boolean {
           issueId={issueId}
           activeKey={activeKey}
           nested={true}
+          pathPrefix={childPath}
         />
       </details>
     );

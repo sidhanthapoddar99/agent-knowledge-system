@@ -13,6 +13,10 @@ interface Props {
 
 const { nodes, currentPath } = Astro.props;
 
+// Root segment of the URL (e.g. `user-guide`, `dev-docs`) — namespaces the
+// collapse cache per docs section. Stable across renders of the same section.
+const sectionRoot = currentPath.split('/').filter(Boolean)[0] || 'docs';
+
 function isActive(href: string): boolean {
   return currentPath === href;
 }
@@ -36,7 +40,7 @@ function shouldBeExpanded(section: SidebarSection): boolean {
 }
 ---
 
-<aside class="sidebar">
+<aside class="sidebar" data-sidebar-root={sectionRoot}>
   <nav class="sidebar__nav" aria-label="Documentation">
     {nodes.map((node, index) => (
       node.type === 'item' ? (
@@ -53,6 +57,7 @@ function shouldBeExpanded(section: SidebarSection): boolean {
         <div
           class:list={['sidebar__section', { 'sidebar__section--active': isSectionActive(node) }]}
           data-section={index}
+          data-collapse-key={node.slug}
           data-collapsed={!shouldBeExpanded(node)}
         >
           {node.children.length > 0 ? (
@@ -88,6 +93,7 @@ function shouldBeExpanded(section: SidebarSection): boolean {
                     <li class="sidebar__nested">
                       <div
                         class:list={['sidebar__section', 'sidebar__section--nested', { 'sidebar__section--active': isSectionActive(child) }]}
+                        data-collapse-key={child.slug}
                         data-collapsed={!shouldBeExpanded(child)}
                       >
                         {child.collapsible ? (
@@ -142,20 +148,98 @@ function shouldBeExpanded(section: SidebarSection): boolean {
   </nav>
 </aside>
 
-<script>
-  function initSidebar() {
-    document.querySelectorAll('[data-collapse-trigger]').forEach((trigger) => {
-      trigger.addEventListener('click', () => {
-        const section = trigger.closest('[data-collapsed]');
-        if (section) {
-          const isCollapsed = section.getAttribute('data-collapsed') === 'true';
-          section.setAttribute('data-collapsed', String(!isCollapsed));
-          trigger.setAttribute('aria-expanded', String(isCollapsed));
-        }
-      });
-    });
-  }
+<!--
+  Sidebar persistence + sync. Runs inline (synchronous, before paint) so the
+  restored collapse state shows immediately with no flash of default state.
+  - Collapse state cached in localStorage per section, keyed by
+    `sidebar-collapse:<section-root>:<folder-path>`, value `{c:0|1, ts}`,
+    30-day TTL with lazy GC on read.
+  - Sync wins for ancestors of the active page (force-expanded for visibility);
+    the cache owns every other folder. Sync never writes to the cache.
+-->
+<script is:inline>
+  (function () {
+    var TTL = 30 * 24 * 60 * 60 * 1000; // 30 days
+    var PREFIX = 'sidebar-collapse:';
 
-  initSidebar();
-  document.addEventListener('astro:page-load', initSidebar);
+    // Read all our keys, pruning expired ones (lazy GC). Returns map key -> collapsed bool.
+    function readPrune() {
+      var now = Date.now();
+      var map = {};
+      try {
+        for (var i = localStorage.length - 1; i >= 0; i--) {
+          var k = localStorage.key(i);
+          if (!k || k.indexOf(PREFIX) !== 0) continue;
+          var v = null;
+          try { v = JSON.parse(localStorage.getItem(k)); } catch (e) {}
+          if (!v || typeof v.ts !== 'number' || (now - v.ts) > TTL) { localStorage.removeItem(k); continue; }
+          map[k] = !!v.c;
+        }
+      } catch (e) {}
+      return map;
+    }
+
+    function ownTrigger(sec) {
+      var btn = sec.querySelector('[data-collapse-trigger]');
+      return (btn && btn.closest('[data-collapse-key]') === sec) ? btn : null;
+    }
+
+    function init() {
+      var aside = document.querySelector('.sidebar[data-sidebar-root]');
+      if (!aside) return;
+      var root = aside.getAttribute('data-sidebar-root') || 'docs';
+      var keyFor = function (folderPath) { return PREFIX + root + ':' + folderPath; };
+      var cache = readPrune();
+
+      // 1. Restore cached collapse state.
+      aside.querySelectorAll('[data-collapse-key]').forEach(function (sec) {
+        var key = keyFor(sec.getAttribute('data-collapse-key'));
+        if (!(key in cache)) return;
+        var collapsed = cache[key];
+        sec.setAttribute('data-collapsed', String(collapsed));
+        var btn = ownTrigger(sec);
+        if (btn) btn.setAttribute('aria-expanded', String(!collapsed));
+      });
+
+      // 2. Sync wins: force-expand ancestors of the active entry, then scroll it in.
+      var active = aside.querySelector('.sidebar__link--active');
+      if (active) {
+        var el = active.parentElement;
+        while (el && el !== aside) {
+          if (el.matches && el.matches('[data-collapse-key]')) {
+            el.setAttribute('data-collapsed', 'false');
+            var b = ownTrigger(el);
+            if (b) b.setAttribute('aria-expanded', 'true');
+          }
+          el = el.parentElement;
+        }
+        requestAnimationFrame(function () {
+          try { active.scrollIntoView({ block: 'nearest' }); } catch (e) {}
+        });
+      }
+
+      // 3. Bind toggles (after restore, so programmatic changes above don't write).
+      aside.querySelectorAll('[data-collapse-trigger]').forEach(function (trigger) {
+        if (trigger.__sbBound) return;
+        trigger.__sbBound = true;
+        trigger.addEventListener('click', function () {
+          var sec = trigger.closest('[data-collapsed]');
+          if (!sec) return;
+          var next = sec.getAttribute('data-collapsed') !== 'true';
+          sec.setAttribute('data-collapsed', String(next));
+          trigger.setAttribute('aria-expanded', String(!next));
+          var keyEl = trigger.closest('[data-collapse-key]');
+          if (keyEl) {
+            try {
+              localStorage.setItem(keyFor(keyEl.getAttribute('data-collapse-key')),
+                JSON.stringify({ c: next ? 1 : 0, ts: Date.now() }));
+            } catch (e) {}
+          }
+        });
+      });
+    }
+
+    init();
+    document.addEventListener('astro:page-load', init);
+  })();
 </script>

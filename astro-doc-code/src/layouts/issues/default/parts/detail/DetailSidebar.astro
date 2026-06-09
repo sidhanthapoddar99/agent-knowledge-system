@@ -45,16 +45,19 @@ const subtaskTree = groupSubtasks(issue.subtasks, issue.subtaskGroups);
 
 const activeNotesGroupOpen = activeKey.startsWith('note-');
 const activeLogGroupOpen = activeKey.startsWith('log-');
+
+// Tracker slug (e.g. `todo`) — namespaces the collapse cache alongside the issue id.
+const tracker = baseUrl.replace(/^\/+/, '').replace(/\/+$/, '');
 ---
 
-<aside class="issue-sidebar">
+<aside class="issue-sidebar" data-tracker={tracker} data-issue-id={issue.id}>
   <a href={baseUrl} class="issue-sidebar__back">
     <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="10 4 6 8 10 12"/></svg>
     <span>All issues</span>
   </a>
 
   <nav class="issue-sidebar__nav">
-    <details class="issue-sidebar__section" open>
+    <details class="issue-sidebar__section" data-collapse-key="this-issue" open>
       <summary class="issue-sidebar__heading">
         <svg class="issue-sidebar__chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
         <span>This issue</span>
@@ -97,7 +100,7 @@ const activeLogGroupOpen = activeKey.startsWith('log-');
       </div>
     </details>
 
-    <details class="issue-sidebar__section" open={activeNotesGroupOpen ? true : undefined}>
+    <details class="issue-sidebar__section" data-collapse-key="notes" open={activeNotesGroupOpen ? true : undefined}>
       <summary class="issue-sidebar__heading">
         <svg class="issue-sidebar__chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
         <span>Notes</span>
@@ -110,7 +113,7 @@ const activeLogGroupOpen = activeKey.startsWith('log-');
       )}
     </details>
 
-    <details class="issue-sidebar__section" open>
+    <details class="issue-sidebar__section" data-collapse-key="subtasks" open>
       <summary class="issue-sidebar__heading">
         <svg class="issue-sidebar__chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
         <span>Subtasks</span>
@@ -128,7 +131,7 @@ const activeLogGroupOpen = activeKey.startsWith('log-');
       )}
     </details>
 
-    <details class="issue-sidebar__section" open={activeLogGroupOpen ? true : undefined}>
+    <details class="issue-sidebar__section" data-collapse-key="agent-log" open={activeLogGroupOpen ? true : undefined}>
       <summary class="issue-sidebar__heading">
         <svg class="issue-sidebar__chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
         <span>Agent log</span>
@@ -141,4 +144,78 @@ const activeLogGroupOpen = activeKey.startsWith('log-');
       )}
     </details>
   </nav>
+
+  <!--
+    Sidebar persistence + sync (inline → runs before paint, no flash of default state).
+    - Each <details> collapse state cached in localStorage, keyed by
+      `issues-sidebar-collapse:<tracker>:<issue-id>:<folder-path>`, value `{c:0|1, ts}`,
+      30-day TTL with lazy GC on read.
+    - Sync wins for ancestors of the active sub-doc (force-opened for visibility);
+      the cache owns every other folder. Sync never writes to the cache.
+  -->
+  <script is:inline>
+    (function () {
+      var TTL = 30 * 24 * 60 * 60 * 1000; // 30 days
+      var PREFIX = 'issues-sidebar-collapse:';
+
+      function readPrune() {
+        var now = Date.now();
+        var map = {};
+        try {
+          for (var i = localStorage.length - 1; i >= 0; i--) {
+            var k = localStorage.key(i);
+            if (!k || k.indexOf(PREFIX) !== 0) continue;
+            var v = null;
+            try { v = JSON.parse(localStorage.getItem(k)); } catch (e) {}
+            if (!v || typeof v.ts !== 'number' || (now - v.ts) > TTL) { localStorage.removeItem(k); continue; }
+            map[k] = !!v.c;
+          }
+        } catch (e) {}
+        return map;
+      }
+
+      function init() {
+        var aside = document.querySelector('.issue-sidebar[data-issue-id]');
+        if (!aside) return;
+        var base = PREFIX + (aside.getAttribute('data-tracker') || '') + ':' +
+                   (aside.getAttribute('data-issue-id') || '') + ':';
+        var details = aside.querySelectorAll('details[data-collapse-key]');
+        var cache = readPrune();
+
+        // 1. Restore cached open/closed state (cache stores `collapsed`; open = !collapsed).
+        details.forEach(function (d) {
+          var key = base + d.getAttribute('data-collapse-key');
+          if (key in cache) d.open = !cache[key];
+        });
+
+        // 2. Sync wins: open every <details> ancestor of the active entry, then scroll it in.
+        var active = aside.querySelector('.issue-sidebar__item.is-active');
+        if (active) {
+          var el = active.parentElement;
+          while (el && el !== aside) {
+            if (el.tagName === 'DETAILS') el.open = true;
+            el = el.parentElement;
+          }
+          requestAnimationFrame(function () {
+            try { active.scrollIntoView({ block: 'nearest' }); } catch (e) {}
+          });
+        }
+
+        // 3. Persist user toggles (bound after restore so steps 1–2 don't write back).
+        details.forEach(function (d) {
+          if (d.__sbBound) return;
+          d.__sbBound = true;
+          d.addEventListener('toggle', function () {
+            try {
+              localStorage.setItem(base + d.getAttribute('data-collapse-key'),
+                JSON.stringify({ c: d.open ? 0 : 1, ts: Date.now() }));
+            } catch (e) {}
+          });
+        });
+      }
+
+      init();
+      document.addEventListener('astro:page-load', init);
+    })();
+  </script>
 </aside>

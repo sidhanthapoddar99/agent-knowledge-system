@@ -12,7 +12,7 @@ Broader motivation: zero runtime dependencies for end users, ~25 MB binary inste
 
 ## Notes
 
-- **`notes/architecture-update/`** — the **structure / layout / theme / shell** separation model (added 2026-06-09). Decouples the overloaded `type` into four orthogonal axes; structures self-register their URL + parsing rules so a per-structure change never touches a central switch. The design work to formalize it is `subtasks/01`. **This is the conceptual backbone the Go rewrite should be built on.**
+- **`notes/architecture-update/`** — the **structure / layout / theme / shell** separation model (added 2026-06-09). Decouples the overloaded `type` into four orthogonal axes; structures self-register their URL + parsing rules so a per-structure change never touches a central switch. The design work to formalize it is `subtasks/01`. **This is the conceptual backbone the Go rewrite should be built on.** Its companion `02_known-issues-content-pipeline.md` records the known per-parser pipeline divergence (asset embeds / image srcs / custom tags / link gating drift per content type) as an issue the Go pipeline must solve by construction — the full unification is specced in `2026-04-19-knowledge-graph-and-wiki-links` and deliberately *not* built into the Astro code.
 - **`notes/discussion/`** — Q&A from the conversation that produced this design.
   - Framework comparison (Astro / Next.js / Go+Vite / 100 % Rust)
   - Architecture survival (site.yaml, themes, layouts, custom pages)

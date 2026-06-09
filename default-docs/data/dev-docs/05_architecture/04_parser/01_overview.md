@@ -63,7 +63,8 @@ src/parsers/
 ├── content-types/              # Content-specific parsers
 │   ├── index.ts
 │   ├── docs.ts                 # DocsParser (XX_ prefix)
-│   └── blog.ts                 # BlogParser (date prefix)
+│   ├── blog.ts                 # BlogParser (date prefix)
+│   └── issues.ts               # IssuesParser (issue folders; used by loaders/issues.ts)
 │
 ├── preprocessors/              # Before rendering
 │   ├── index.ts
@@ -78,6 +79,8 @@ src/parsers/
 │   ├── index.ts
 │   ├── heading-ids.ts          # Add IDs to headings
 │   ├── internal-links.ts       # Rewrite relative links (strip XX_ prefixes, .md extensions)
+│   ├── issue-body-links.ts     # Issues only: re-root issue.md links for the detail-URL collapse
+│   ├── issue-asset-src.ts      # Issues only: relative <img src> → absolute /issue-assets/… URLs
 │   └── external-links.ts       # Security attrs for external links
 │
 └── transformers/               # Custom tag transformation

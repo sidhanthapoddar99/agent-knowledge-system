@@ -66,9 +66,12 @@ When rendering the **Comprehensive** tab (see [Detail View](../ui/detail-view)),
 
 ## Assets
 
-Image / diagram embedding works exactly like docs and blogs — the `[[path]]` asset-embed syntax resolves paths relative to the issue folder, dropping through `issue.md`'s parser.
+Colocate assets inside the issue folder (conventionally `<issue>/assets/`) and reference them with relative paths from any file in the issue — `issue.md`, subtasks, notes, agent-log entries:
 
-**Status today:** the `[[path]]` preprocessor is registered for docs and blog parsers but **not** the issues parser. Cross-tracker references and asset embedding in `issue.md` are tracked in issue `2026-04-19-knowledge-graph-and-wiki-links`. For now, use direct relative image links (`![](./assets/flow.png)`) — they work via the standard markdown renderer.
+- **Images** — `![Flow](./assets/flow.png)` (from `issue.md`) or `![Flow](../assets/flow.png)` (from a subtask/note). At render time the relative `src` is rewritten to an absolute `/issue-assets/<tracker-relative-path>` URL, so the image works at every depth — the detail page, nested sub-doc pages, and sub-doc bodies embedded in the Comprehensive panel.
+- **Content embeds** — the `[[path]]` syntax inlines a file's raw content, same as docs and blogs. Paths resolve relative to the referencing file; a bare name (`[[flow.svg]]`) resolves to `<file's folder>/assets/<name>`. Escape with `\[[...]]` to render the brackets literally.
+
+Markdown files and `settings.json` are never served raw through `/issue-assets/` — they're pages and internal metadata respectively.
 
 ## What reading `issue.md` tells an agent
 

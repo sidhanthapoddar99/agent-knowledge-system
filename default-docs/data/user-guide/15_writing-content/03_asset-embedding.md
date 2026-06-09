@@ -100,9 +100,9 @@ Resolves to: `data/blog/assets/2024-01-15-hello-world/diagram.png`
 
 ### Issues (Folder-Relative Paths)
 
-> **Not implemented yet.** The issue parser has an asset-path resolver defined but the `[[path]]` preprocessor is not wired into its pipeline today, so embeds in issue markdown currently render as literal `[[...]]`. This is tracked as part of the phase-3 pipeline standardization — see issue `2026-04-19-knowledge-graph-and-wiki-links`, subtask `01_unified-pipeline-and-graph`. Embedding semantics will also be revisited then (the broader model introduces `[[[target]]]` for embeds distinct from `[[target]]` for wiki links).
+> Embedding semantics will be revisited by the pipeline unification specced in issue `2026-04-19-knowledge-graph-and-wiki-links` (its broader model introduces `[[[target]]]` for embeds distinct from `[[target]]` for wiki links). Until then issues use the same `[[path]]` embed syntax as docs and blogs. One side effect: literal `[[...]]` prose in issue markdown (outside code spans) is now treated as an embed — escape it as `\[[...]]`.
 
-The intended behaviour (documented here so the model is clear once wiring lands): paths are relative to the issue folder. Every issue is its own folder, so you can put assets alongside `issue.md`, inside `notes/`, or anywhere within the issue directory:
+Paths resolve relative to the referencing file; a bare name (`[[diagram.png]]`) resolves to `<file's folder>/assets/<name>`. Every issue is its own folder, so you can put assets alongside `issue.md`, inside `notes/`, or anywhere within the issue directory:
 
 ```
 data/issues/

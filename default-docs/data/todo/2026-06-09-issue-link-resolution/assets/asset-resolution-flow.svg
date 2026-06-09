@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="180" viewBox="0 0 640 180" font-family="monospace" font-size="13">
+  <style>
+    .box { fill: none; stroke: #7aa2f7; stroke-width: 1.5; rx: 6; }
+    .label { fill: #c0caf5; }
+    .arrow { stroke: #9ece6a; stroke-width: 1.5; marker-end: url(#a); }
+  </style>
+  <defs>
+    <marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" fill="#9ece6a"/>
+    </marker>
+  </defs>
+  <rect class="box" x="10" y="60" width="180" height="50" rx="6"/>
+  <text class="label" x="22" y="82">![](./assets/x.svg)</text>
+  <text class="label" x="22" y="100">in issue markdown</text>
+  <rect class="box" x="240" y="60" width="180" height="50" rx="6"/>
+  <text class="label" x="252" y="82">issue-asset-src</text>
+  <text class="label" x="252" y="100">postprocessor</text>
+  <rect class="box" x="470" y="60" width="160" height="50" rx="6"/>
+  <text class="label" x="482" y="82">/_issue-assets/</text>
+  <text class="label" x="482" y="100">&lt;tracker-rel&gt;</text>
+  <line class="arrow" x1="190" y1="85" x2="238" y2="85"/>
+  <line class="arrow" x1="420" y1="85" x2="468" y2="85"/>
+  <text class="label" x="10" y="30">Colocated issue assets: render-time absolute URL rewrite + serving endpoint</text>
+</svg>

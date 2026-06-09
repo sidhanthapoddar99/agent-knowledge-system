@@ -9,25 +9,7 @@ import type { APIRoute, GetStaticPaths } from 'astro';
 import fs from 'fs';
 import path from 'path';
 import { getPathsByCategory } from '@loaders/paths';
-
-// MIME type mapping
-const mimeTypes: Record<string, string> = {
-  '.svg': 'image/svg+xml',
-  '.png': 'image/png',
-  '.jpg': 'image/jpeg',
-  '.jpeg': 'image/jpeg',
-  '.gif': 'image/gif',
-  '.webp': 'image/webp',
-  '.ico': 'image/x-icon',
-  '.pdf': 'application/pdf',
-  '.json': 'application/json',
-  '.css': 'text/css',
-  '.js': 'application/javascript',
-  '.woff': 'font/woff',
-  '.woff2': 'font/woff2',
-  '.ttf': 'font/ttf',
-  '.eot': 'application/vnd.ms-fontobject',
-};
+import { mimeTypes } from '../lib/mime';
 
 /**
  * Recursively get all files in a directory
@@ -98,8 +80,11 @@ export const GET: APIRoute = async ({ params, request }) => {
     const candidate = path.join(dir, filePath);
     const normalized = path.normalize(candidate);
 
-    // Security: ensure the path is within the asset directory
-    if (!normalized.startsWith(dir)) {
+    // Security: ensure the path is within the asset directory, at a
+    // path-segment boundary (plain startsWith would let a sibling dir
+    // sharing the prefix match, e.g. /data/assets-private for /data/assets).
+    const rel = path.relative(dir, normalized);
+    if (rel.startsWith('..') || path.isAbsolute(rel)) {
       continue;
     }
 

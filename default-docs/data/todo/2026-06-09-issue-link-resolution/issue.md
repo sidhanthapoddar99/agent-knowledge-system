@@ -10,6 +10,7 @@ Make relative markdown links inside issue content resolve correctly, and canonic
 
 1. **`/issue` → detail-root redirect.** `/<tracker>/<issue>/issue` (previously a 404 — `issue` isn't a sub-doc kind) now canonically redirects to `/<tracker>/<issue>`. Base-agnostic (`pageConfig.base_url`), works in dev SSR (302) and static build (per-issue redirect page). Files: `pages/lib/route-match.ts`, `pages/lib/static-paths.ts`, `pages/[...slug].astro` (a `redirectTo` prop checked early, mirroring the existing `docs-index` redirect).
 2. **`issue-body-links` postprocessor (issues pipeline only).** Re-roots relative links in the root `issue.md` at the issue folder so they survive the URL collapse; gated to `issue.md`, sub-docs untouched. File: `parsers/postprocessors/issue-body-links.ts`, wired only into `IssuesParser` (`parsers/content-types/issues.ts`). Verified in built HTML both directions; `./start build` clean (469 pages).
+3. **Colocated issue assets (subtask 04, in review).** `[[path]]` embeds wired into `IssuesParser` (issue-folder resolver), plus `issue-asset-src` postprocessor rewriting relative `<img src>` to absolute `/issue-assets/<tracker-rel>` URLs served by a new `pages/issue-assets/[...path].ts` endpoint. Absolute srcs are depth-proof, so this also covers images inside Comprehensive-panel embeds — the same render-time-absolute principle subtask 03 applies to links.
 
 ## Known remaining gap → the real fix (subtask 03, open)
 

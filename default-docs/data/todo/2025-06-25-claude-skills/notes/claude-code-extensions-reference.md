@@ -29,7 +29,7 @@ tags: [claude-code, reference, extensions, plugins]
 
 ## The five capability types in detail
 
-### 1. [[Skills]]
+### 1. \[[Skills]]
 
 **Purpose:** Teach the model *how* to do something in your project.
 

@@ -147,9 +147,11 @@ const tracker = baseUrl.replace(/^\/+/, '').replace(/\/+$/, '');
 
   <!--
     Sidebar persistence + sync (inline → runs before paint, no flash of default state).
-    - Each <details> collapse state cached in localStorage, keyed by
-      `issues-sidebar-collapse:<tracker>:<issue-id>:<folder-path>`, value `{c:0|1, ts}`,
-      30-day TTL with lazy GC on read.
+    - Collapse state cached in localStorage as ONE blob per issue, keyed
+      `issues-sidebar-collapse:<tracker>:<issue-id>`, value `{ts, f:{<folder-path>: 0|1}}`.
+      Only deviations from the server-rendered default are stored; an empty blob
+      is removed. Restore reads exactly one key; the GC scan checks one ts per
+      issue (and drops legacy v1 per-folder keys). 30-day TTL.
     - Sync wins for ancestors of the active sub-doc (force-opened for visibility);
       the cache owns every other folder. Sync never writes to the cache.
   -->
@@ -158,34 +160,50 @@ const tracker = baseUrl.replace(/^\/+/, '').replace(/\/+$/, '');
       var TTL = 30 * 24 * 60 * 60 * 1000; // 30 days
       var PREFIX = 'issues-sidebar-collapse:';
 
-      function readPrune() {
+      // Lazy GC: drop expired blobs and legacy v1 per-folder keys (no `.f`).
+      function gc() {
         var now = Date.now();
-        var map = {};
         try {
           for (var i = localStorage.length - 1; i >= 0; i--) {
             var k = localStorage.key(i);
             if (!k || k.indexOf(PREFIX) !== 0) continue;
             var v = null;
             try { v = JSON.parse(localStorage.getItem(k)); } catch (e) {}
-            if (!v || typeof v.ts !== 'number' || (now - v.ts) > TTL) { localStorage.removeItem(k); continue; }
-            map[k] = !!v.c;
+            if (!v || !v.f || typeof v.ts !== 'number' || (now - v.ts) > TTL) localStorage.removeItem(k);
           }
         } catch (e) {}
-        return map;
       }
 
       function init() {
         var aside = document.querySelector('.issue-sidebar[data-issue-id]');
         if (!aside) return;
-        var base = PREFIX + (aside.getAttribute('data-tracker') || '') + ':' +
-                   (aside.getAttribute('data-issue-id') || '') + ':';
-        var details = aside.querySelectorAll('details[data-collapse-key]');
-        var cache = readPrune();
+        gc();
+        var key = PREFIX + (aside.getAttribute('data-tracker') || '') + ':' +
+                  (aside.getAttribute('data-issue-id') || '');
+        var state = {};
+        try {
+          var v = JSON.parse(localStorage.getItem(key));
+          if (v && v.f && typeof v.ts === 'number') state = v.f;
+        } catch (e) {}
 
-        // 1. Restore cached open/closed state (cache stores `collapsed`; open = !collapsed).
+        function save() {
+          try {
+            if (Object.keys(state).length) localStorage.setItem(key, JSON.stringify({ ts: Date.now(), f: state }));
+            else localStorage.removeItem(key);
+          } catch (e) {}
+        }
+
+        // Server-rendered defaults — only deviations from these get stored.
+        var details = aside.querySelectorAll('details[data-collapse-key]');
+        var defaults = {};
         details.forEach(function (d) {
-          var key = base + d.getAttribute('data-collapse-key');
-          if (key in cache) d.open = !cache[key];
+          defaults[d.getAttribute('data-collapse-key')] = d.open;
+        });
+
+        // 1. Restore stored deviations (cache stores `collapsed`; open = !collapsed).
+        details.forEach(function (d) {
+          var p = d.getAttribute('data-collapse-key');
+          if (p in state) d.open = !state[p];
         });
 
         // 2. Sync wins: open every <details> ancestor of the active entry, then scroll it in.
@@ -201,15 +219,21 @@ const tracker = baseUrl.replace(/^\/+/, '').replace(/\/+$/, '');
           });
         }
 
-        // 3. Persist user toggles (bound after restore so steps 1–2 don't write back).
+        // 3. Persist user toggles. `toggle` events fire as queued tasks, so the
+        //    programmatic changes in steps 1–2 would still reach listeners bound
+        //    here — the suppress flag (cleared on a later task) swallows them.
+        //    Delete-on-default: toggling back to the server default removes the entry.
+        var suppress = true;
+        setTimeout(function () { suppress = false; }, 0);
         details.forEach(function (d) {
           if (d.__sbBound) return;
           d.__sbBound = true;
           d.addEventListener('toggle', function () {
-            try {
-              localStorage.setItem(base + d.getAttribute('data-collapse-key'),
-                JSON.stringify({ c: d.open ? 0 : 1, ts: Date.now() }));
-            } catch (e) {}
+            if (suppress) return;
+            var p = d.getAttribute('data-collapse-key');
+            if (d.open === defaults[p]) delete state[p];
+            else state[p] = d.open ? 0 : 1;
+            save();
           });
         });
       }

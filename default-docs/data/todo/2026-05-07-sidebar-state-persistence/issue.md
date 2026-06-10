@@ -20,3 +20,11 @@ Applies to: **docs** sidebar (every docs section) and **issues** sidebar (the su
 - Persisting sidebar scroll position (only the active item needs to be visible, not the exact scroll Y).
 
 See subtasks for the breakdown.
+
+## Post-close follow-up
+
+The **storage format** shipped here (one localStorage key per folder, `{c, ts}`
+value) was restructured in [`2026-06-10-sidebar-cache-v2`](../2026-06-10-sidebar-cache-v2/issue.md)
+after review: one blob per page scope, delete-on-default, plus a Browser Cache
+dev-toolbar app. The behaviour designed here (sync-wins, FOUC-free inline
+restore, 30-day TTL) is unchanged.

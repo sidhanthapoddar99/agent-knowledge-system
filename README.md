@@ -59,6 +59,8 @@ cp .env.example .env               # CONFIG_DIR=./default-docs/config (dogfood d
 
 `./start` is a thin wrapper at the framework folder root: it checks for upstream updates and offers a fast-forward pull (`Y/n`), detects `bun` (falls back to `npm`), installs dependencies on first run, runs a build sanity check, then starts the dev server. Skip the update check with `START_SKIP_UPDATE_CHECK=1`.
 
+On native Windows (cmd / PowerShell), use `.\start.cmd` with the same arguments — it runs `start.ps1`, a full port of the bash wrapper. The leading `.\` matters: bare `start` is a cmd built-in. Git Bash and WSL use `./start` as-is.
+
 For a deeper walkthrough (folder layout, what each path means, when to use which mode), see the user-guide: [Installation](https://github.com/sidhanthapoddar99/documentation-template/blob/main/default-docs/data/user-guide/05_getting-started/02_installation.md), [Environment Variables](https://github.com/sidhanthapoddar99/documentation-template/blob/main/default-docs/data/user-guide/10_configuration/02_env.md), [Init and the Starter Template](https://github.com/sidhanthapoddar99/documentation-template/blob/main/default-docs/data/user-guide/05_getting-started/06_init-and-template.md).
 
 ## Build commands
@@ -72,6 +74,8 @@ From the repo root, use the `./start` wrapper:
 ./start preview  # preview production build locally
 ./start <script> # forward any package.json script
 ```
+
+On native Windows, replace `./start` with `.\start.cmd` in all of the above.
 
 Inside `astro-doc-code/`, the usual `bun run dev` / `bun run build` / `bun run preview` still work directly.
 

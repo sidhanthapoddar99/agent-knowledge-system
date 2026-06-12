@@ -1,2 +1,9 @@
-# Windows cmd shims must stay CRLF (cmd.exe parsing edge cases with LF-only)
+# Bash entrypoints and extensionless bin shims must stay LF even on Windows
+# checkouts (core.autocrlf=true would otherwise break them in Git Bash / WSL)
+start text eol=lf
+*.sh text eol=lf
+plugins/documentation-guide/bin/docs-* text eol=lf
+
+# Windows cmd shims must stay CRLF (cmd.exe parsing edge cases with LF-only).
+# Last match wins, so this overrides the bin/docs-* rule for docs-*.cmd.
 *.cmd text eol=crlf

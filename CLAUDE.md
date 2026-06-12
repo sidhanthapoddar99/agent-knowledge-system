@@ -264,6 +264,8 @@ Use the `./start` wrapper at the repo root.
 
 Preflight (no-arg form) does: update check (fetches upstream and prompts `Y/n` to fast-forward pull when behind — bails silently if no upstream, dirty tree, diverged, offline, or non-interactive), runner detection (bun preferred, npm fallback), `bun install` if `node_modules` is missing, full production build (aborts on failure), then dev. The update check runs for every form (`./start`, `./start dev`, `./start clean dev`); set `START_SKIP_UPDATE_CHECK=1` to bypass (CI, scripted use). Useful for a clean clone or after dependency changes; for the everyday tight loop use `./start dev` to skip the build step.
 
+**Windows (native cmd / PowerShell):** use `.\start.cmd` with the same arguments (`.\start.cmd dev`, `.\start.cmd clean build`, …). It launches `start.ps1`, a full port of the bash script (same preflight, update check, clean, runner fallback). Note the leading `.\` — bare `start` is a cmd built-in / PowerShell alias. Git Bash and WSL use `./start` as on Linux.
+
 If you're inside `astro-doc-code/`, `bun run dev` / `bun run build` / `bun run preview` work directly.
 
 ## Key Rules

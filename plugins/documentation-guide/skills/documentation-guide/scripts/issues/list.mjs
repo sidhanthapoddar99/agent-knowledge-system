@@ -16,7 +16,7 @@
 
 import path from 'node:path';
 import {
-  DEFAULT_TRACKER, listIssueFolders, readIssueMeta, readIssueSubtasks,
+  resolveTracker, listIssueFolders, readIssueMeta, readIssueSubtasks,
   parseArgs, csv, printHelp,
   detectSearchBackend, maybePrintInstallHint, runSearch, listSearchableFiles,
   issueDateFromId,
@@ -71,7 +71,7 @@ if (args.flags.help || args.flags.h) {
 
 // ---------- Resolve options ------------------------------------------------
 
-const tracker = args.flags.tracker || DEFAULT_TRACKER;
+const tracker = resolveTracker(args.flags.tracker);
 const filterStatus     = csv(args.flags.status);
 const filterPriority   = csv(args.flags.priority);
 const filterComponent  = csv(args.flags.component);

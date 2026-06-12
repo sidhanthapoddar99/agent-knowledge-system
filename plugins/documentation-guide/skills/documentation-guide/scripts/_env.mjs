@@ -15,8 +15,12 @@
  *   1. DOCS_PROJECT_ROOT env var (explicit override) — used as-is
  *   2. Walk up from the script (and from cwd) looking for `.env`,
  *      then read CONFIG_DIR from it. content root = parent of resolved CONFIG_DIR.
+ *   3. Downward probe from cwd at the consumer-mode convention spots
+ *      (<cwd>/docs/documentation-template/.env, <cwd>/documentation-template/.env)
+ *      — covers running from a consumer repo root, where the framework folder
+ *      (and its .env) lives *below* cwd and the upward walk can never see it.
  *
- * If neither path produces a usable content root, throw a clear error
+ * If no step produces a usable content root, throw a clear error
  * — no silent fallback to a hardcoded folder name.
  */
 
@@ -30,6 +34,23 @@ export function findEnvFile(startDir) {
     const p = path.join(dir, '.env');
     if (fs.existsSync(p)) return p;
     dir = path.dirname(dir);
+  }
+  return null;
+}
+
+/**
+ * Probe the consumer-mode convention spots *below* cwd for the framework's
+ * `.env`. The upward walk can't find it when the framework is vendored as a
+ * subfolder of the consumer's repo (the default consumer layout).
+ */
+export function findEnvConsumerConvention(cwd) {
+  const spots = [
+    path.join('docs', 'documentation-template'),
+    'documentation-template',
+  ];
+  for (const spot of spots) {
+    const p = path.join(path.resolve(cwd), spot, '.env');
+    if (fs.existsSync(p)) return p;
   }
   return null;
 }
@@ -72,10 +93,15 @@ export function resolveProjectContext(searchStart) {
   }
 
   // 2. Walk up from script dir, then from cwd
-  const envPath = findEnvFile(searchStart) || findEnvFile(process.cwd());
+  // 3. Downward probe at the consumer-mode convention spots under cwd
+  const envPath =
+    findEnvFile(searchStart) ||
+    findEnvFile(process.cwd()) ||
+    findEnvConsumerConvention(process.cwd());
   if (!envPath) {
     throw new Error(
-      'No .env found walking up from script or cwd.\n' +
+      'No .env found walking up from script or cwd, nor at the consumer-mode\n' +
+      '  convention spots (<cwd>/docs/documentation-template/.env, <cwd>/documentation-template/.env).\n' +
       '  Set DOCS_PROJECT_ROOT or pass --tracker / a positional path explicitly.\n' +
       '  Plugin scripts read CONFIG_DIR from the framework\'s .env to derive the content root —\n' +
       '  no hardcoded folder names.'

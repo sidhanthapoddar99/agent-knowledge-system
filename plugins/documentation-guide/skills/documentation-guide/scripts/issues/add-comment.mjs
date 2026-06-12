@@ -9,7 +9,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {
-  DEFAULT_TRACKER, isInsideAllowed, nextNumericPrefix, pad, todayISO,
+  resolveTracker, isInsideAllowed, nextNumericPrefix, pad, todayISO,
   parseArgs, printHelp, relForLog,
 } from './_lib.mjs';
 
@@ -26,10 +26,10 @@ if (args.flags.help || !id || !args.flags.author || !args.flags.body) {
   process.exit(id && args.flags.author && args.flags.body ? 0 : 1);
 }
 
-const tracker = args.flags.tracker || DEFAULT_TRACKER;
+const tracker = resolveTracker(args.flags.tracker);
 const dir = path.join(tracker, id, 'comments');
-if (!isInsideAllowed(dir)) {
-  console.error(`Refusing to write outside the content root: ${dir}`);
+if (!isInsideAllowed(dir, tracker)) {
+  console.error(`Refusing to write outside the tracker: ${dir}`);
   process.exit(1);
 }
 fs.mkdirSync(dir, { recursive: true });

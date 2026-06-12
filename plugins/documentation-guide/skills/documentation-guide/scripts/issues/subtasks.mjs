@@ -11,7 +11,7 @@
  */
 
 import {
-  DEFAULT_TRACKER, listIssueFolders, readIssueSubtasks, readIssueSubtaskGroups,
+  resolveTracker, listIssueFolders, readIssueSubtasks, readIssueSubtaskGroups,
   parseArgs, csv, printHelp, isValidState,
 } from './_lib.mjs';
 
@@ -31,7 +31,7 @@ if (args.flags.help || (!positional && !args.flags.all)) {
   process.exit(args.flags.help ? 0 : 1);
 }
 
-const tracker = args.flags.tracker || DEFAULT_TRACKER;
+const tracker = resolveTracker(args.flags.tracker);
 const stateFilter = csv(args.flags.state).filter(isValidState);
 const scope = stateFilter.length ? stateFilter : ['open', 'review'];
 const isAll = args.flags.all || positional === '--all';

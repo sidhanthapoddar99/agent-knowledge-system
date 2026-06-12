@@ -10,7 +10,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {
-  DEFAULT_TRACKER, isInsideAllowed, nextNumericPrefix, pad, todayISO,
+  resolveTracker, isInsideAllowed, nextNumericPrefix, pad, todayISO,
   readIssueAgentLogs, parseArgs, printHelp, relForLog,
 } from './_lib.mjs';
 
@@ -30,7 +30,7 @@ if (args.flags.help || !id || !args.flags.body) {
   process.exit(id && args.flags.body ? 0 : 1);
 }
 
-const tracker = args.flags.tracker || DEFAULT_TRACKER;
+const tracker = resolveTracker(args.flags.tracker);
 const baseDir = path.join(tracker, id, 'agent-log');
 const groupSegments = args.flags.group
   ? args.flags.group.split('/').filter(Boolean)
@@ -40,8 +40,8 @@ if (groupSegments.length > 2) {
   process.exit(1);
 }
 const dir = groupSegments.length > 0 ? path.join(baseDir, ...groupSegments) : baseDir;
-if (!isInsideAllowed(dir)) {
-  console.error(`Refusing to write outside the content root: ${dir}`);
+if (!isInsideAllowed(dir, tracker)) {
+  console.error(`Refusing to write outside the tracker: ${dir}`);
   process.exit(1);
 }
 fs.mkdirSync(dir, { recursive: true });

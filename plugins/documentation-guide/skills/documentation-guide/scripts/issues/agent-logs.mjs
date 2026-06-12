@@ -5,7 +5,7 @@
  */
 
 import fs from 'node:fs';
-import { DEFAULT_TRACKER, readIssueAgentLogs, parseArgs, printHelp } from './_lib.mjs';
+import { resolveTracker, readIssueAgentLogs, parseArgs, printHelp } from './_lib.mjs';
 
 const args = parseArgs(process.argv.slice(2));
 const id = args._[0];
@@ -20,7 +20,7 @@ if (args.flags.help || !id) {
   process.exit(id ? 0 : 1);
 }
 
-const tracker = args.flags.tracker || DEFAULT_TRACKER;
+const tracker = resolveTracker(args.flags.tracker);
 const lastN = parseInt(args.flags.last || '3', 10);
 const logs = readIssueAgentLogs(tracker, id);
 const tail = lastN > 0 ? logs.slice(-lastN) : logs;

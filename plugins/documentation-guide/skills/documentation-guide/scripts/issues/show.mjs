@@ -11,7 +11,7 @@
  */
 
 import {
-  DEFAULT_TRACKER, readIssueMeta, readIssueSubtasks, readIssueComments,
+  resolveTracker, readIssueMeta, readIssueSubtasks, readIssueComments,
   readIssueAgentLogs, parseArgs, printHelp, issueDateFromId,
 } from './_lib.mjs';
 
@@ -28,7 +28,7 @@ if (args.flags.help || !id) {
   process.exit(id ? 0 : 1);
 }
 
-const tracker = args.flags.tracker || DEFAULT_TRACKER;
+const tracker = resolveTracker(args.flags.tracker);
 const meta = readIssueMeta(tracker, id);
 if (!meta) {
   console.error(`Issue not found: ${id}`);

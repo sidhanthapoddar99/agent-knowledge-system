@@ -8,7 +8,7 @@
 
 import path from 'node:path';
 import {
-  DEFAULT_TRACKER, isValidState, isInsideAllowed,
+  resolveTracker, isValidState, isInsideAllowed,
   setJsonField, setFrontmatterField, parseArgs, printHelp,
 } from './_lib.mjs';
 
@@ -35,14 +35,14 @@ if (!isValidState(state)) {
   process.exit(1);
 }
 
-const tracker = args.flags.tracker || DEFAULT_TRACKER;
+const tracker = resolveTracker(args.flags.tracker);
 
 let result;
 if (target.endsWith('.md') || target.includes('/')) {
   // Subtask path
   const abs = path.isAbsolute(target) ? target : path.resolve(tracker, target);
-  if (!isInsideAllowed(abs)) {
-    console.error(`Refusing to write outside the content root: ${abs}`);
+  if (!isInsideAllowed(abs, tracker)) {
+    console.error(`Refusing to write outside the tracker: ${abs}`);
     process.exit(1);
   }
   result = setFrontmatterField(abs, 'state', state);
@@ -52,8 +52,8 @@ if (target.endsWith('.md') || target.includes('/')) {
 } else {
   // Issue id — mutate top-level settings.json
   const settingsPath = path.join(tracker, target, 'settings.json');
-  if (!isInsideAllowed(settingsPath)) {
-    console.error(`Refusing to write outside the content root: ${settingsPath}`);
+  if (!isInsideAllowed(settingsPath, tracker)) {
+    console.error(`Refusing to write outside the tracker: ${settingsPath}`);
     process.exit(1);
   }
   result = setJsonField(settingsPath, 'status', state);

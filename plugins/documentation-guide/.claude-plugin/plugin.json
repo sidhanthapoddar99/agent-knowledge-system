@@ -1,7 +1,7 @@
 {
   "name": "documentation-guide",
   "description": "Operating manual for the documentation-template framework — writing markdown, configuring site.yaml/navbar.yaml/footer.yaml, working with the issue tracker, blog posts, themes, and anything under the project's data/ folder. Triages tasks to domain-specific reference files (writing, docs-layout, blog-layout, issue-layout, settings-layout). Ships 12 CLI wrappers (docs-list/show/subtasks/agent-logs/set-state/add-comment/add-agent-log/review-queue for the issue tracker; docs-check-blog/config/section validators; docs-move for link-aware moves) and 2 slash commands (/docs-init to bootstrap a new docs project, /docs-add-section to scaffold a new top-level section). Cross-platform CLI: bash + .cmd shims for Linux/macOS/WSL and native Windows.",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "author": {
     "name": "Sidhantha"
   },

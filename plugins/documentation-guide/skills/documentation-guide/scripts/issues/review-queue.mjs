@@ -7,7 +7,7 @@
  */
 
 import {
-  DEFAULT_TRACKER, listIssueFolders, readIssueMeta, readIssueSubtasks,
+  resolveTracker, listIssueFolders, readIssueMeta, readIssueSubtasks,
   parseArgs, printHelp,
 } from './_lib.mjs';
 
@@ -23,7 +23,7 @@ if (args.flags.help) {
   process.exit(0);
 }
 
-const tracker = args.flags.tracker || DEFAULT_TRACKER;
+const tracker = resolveTracker(args.flags.tracker);
 const matches = [];
 
 for (const id of listIssueFolders(tracker)) {

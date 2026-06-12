@@ -19,17 +19,39 @@ import { resolveProjectContext } from '../_env.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 
-// Resolve the project context from the framework's .env (the same one
-// astro.config.mjs reads). No hardcoded content-folder names — see _env.mjs
-// for the full resolution policy. Errors at module-load if .env or CONFIG_DIR
-// is missing, which is the right time to fail loud.
-const ctx = resolveProjectContext(SCRIPT_DIR);
+// Project context from the framework's .env (the same one astro.config.mjs
+// reads). No hardcoded content-folder names — see _env.mjs for the full
+// resolution policy. Resolved LAZILY: an explicit --tracker must be
+// self-sufficient, so the env hunt only fires when a script actually needs
+// the default location.
+let _ctx = null;
+function ctx() {
+  if (!_ctx) _ctx = resolveProjectContext(SCRIPT_DIR);
+  return _ctx;
+}
 
 /** Absolute path to the user's content root (parent of CONFIG_DIR by convention). */
-export const CONTENT_ROOT = ctx.contentRoot;
+export function getContentRoot() {
+  return ctx().contentRoot;
+}
 
-/** Default tracker path: <content-root>/data/todo. Override per-call with --tracker. */
-export const DEFAULT_TRACKER = path.join(CONTENT_ROOT, 'data', 'todo');
+/**
+ * Resolve the tracker path for a script invocation. An explicit --tracker
+ * value is resolved against cwd and used as-is — no .env required.
+ * Without it, fall back to <content-root>/data/todo via the env hunt.
+ */
+export function resolveTracker(flagValue) {
+  if (flagValue && flagValue !== true) {
+    return path.resolve(process.cwd(), String(flagValue));
+  }
+  return path.join(getContentRoot(), 'data', 'todo');
+}
+
+/** Display helper — relative to content root when resolved, else cwd. */
+function relForDisplay(filePath) {
+  const base = _ctx ? _ctx.contentRoot : process.cwd();
+  return path.relative(base, filePath) || filePath;
+}
 
 const FOLDER_PATTERN = /^(\d{4}-\d{2}-\d{2})-([a-z0-9][a-z0-9-]*)$/;
 const COMMENT_PATTERN = /^(\d+)_(\d{4}-\d{2}-\d{2})_([a-z0-9-]+)\.md$/i;
@@ -39,10 +61,15 @@ export function isValidState(s) {
   return VALID_STATES.includes(s);
 }
 
-/** Allow-list: refuse to write anywhere outside the resolved content root. */
-export function isInsideAllowed(filePath) {
+/**
+ * Allow-list: refuse to write anywhere outside `root`. Writer scripts pass
+ * their tracker root (all writes land inside it), so an explicit --tracker
+ * stays env-free; with no root given, falls back to the resolved content root.
+ */
+export function isInsideAllowed(filePath, root = getContentRoot()) {
   const abs = path.resolve(filePath);
-  return abs === CONTENT_ROOT || abs.startsWith(CONTENT_ROOT + path.sep);
+  const base = path.resolve(root);
+  return abs === base || abs.startsWith(base + path.sep);
 }
 
 // ---------- Args parsing ----------------------------------------------------
@@ -489,7 +516,7 @@ export function setFrontmatterField(filePath, field, value) {
     : `${fmBlock}\n${newLine}`;
   const replaced = original.replace(fmMatch[0], `${openDelim}${newFmBlock}${closeDelim}`);
   fs.writeFileSync(filePath, replaced);
-  return { ok: true, message: `Set ${field}: ${value} in ${path.relative(CONTENT_ROOT, filePath)}` };
+  return { ok: true, message: `Set ${field}: ${value} in ${relForDisplay(filePath)}` };
 }
 
 function formatYamlScalar(v) {
@@ -516,7 +543,7 @@ export function setJsonField(filePath, field, value) {
   }
   const replaced = original.replace(re, `$1${formatted}`);
   fs.writeFileSync(filePath, replaced);
-  return { ok: true, message: `Set ${field}: ${value} in ${path.relative(CONTENT_ROOT, filePath)}` };
+  return { ok: true, message: `Set ${field}: ${value} in ${relForDisplay(filePath)}` };
 }
 
 function formatJsonScalar(v) {

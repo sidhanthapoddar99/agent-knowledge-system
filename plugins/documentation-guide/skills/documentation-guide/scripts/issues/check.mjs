@@ -19,7 +19,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
-import { DEFAULT_TRACKER, listIssueFolders, readVocabulary, parseArgs, printHelp } from './_lib.mjs';
+import { resolveTracker, listIssueFolders, readVocabulary, parseArgs, printHelp } from './_lib.mjs';
 
 const args = parseArgs(process.argv.slice(2));
 if (args.flags.help) {
@@ -36,7 +36,7 @@ if (args.flags.help) {
   process.exit(0);
 }
 
-const tracker = args.flags.tracker || DEFAULT_TRACKER;
+const tracker = resolveTracker(args.flags.tracker);
 if (!fs.existsSync(tracker)) {
   console.error(`Not found: ${tracker}`);
   process.exit(1);

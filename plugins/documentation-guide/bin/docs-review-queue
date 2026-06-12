@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+# Generic shim — routes via its own filename through the shared cli.mjs
+# dispatcher (command → script map lives there). Bun preferred, node fallback.
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SCRIPT="$DIR/../skills/documentation-guide/scripts/issues/review-queue.mjs"
-if command -v bun >/dev/null 2>&1; then exec bun "$SCRIPT" "$@"; else exec node "$SCRIPT" "$@"; fi
+CLI="$DIR/../skills/documentation-guide/scripts/cli.mjs"
+if command -v bun >/dev/null 2>&1; then
+  exec bun "$CLI" "$(basename "$0")" "$@"
+else
+  exec node "$CLI" "$(basename "$0")" "$@"
+fi

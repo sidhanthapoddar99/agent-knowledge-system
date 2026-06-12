@@ -1,0 +1,2 @@
+# Windows cmd shims must stay CRLF (cmd.exe parsing edge cases with LF-only)
+*.cmd text eol=crlf

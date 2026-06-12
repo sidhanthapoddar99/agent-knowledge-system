@@ -3,7 +3,7 @@
 Claude Code plugin for the [documentation-template](https://github.com/sidhanthapoddar99/documentation-template) framework. Ships:
 
 - **1 skill** — `documentation-guide` — operating manual that triages docs/issue/blog/config tasks to domain-specific reference files
-- **11 CLI wrappers** — 8 for the issue tracker (`docs-list`, `docs-show`, `docs-subtasks`, `docs-agent-logs`, `docs-set-state`, `docs-add-comment`, `docs-add-agent-log`, `docs-review-queue`) plus 3 validators (`docs-check-blog`, `docs-check-config`, `docs-check-section`)
+- **12 CLI wrappers** — 8 for the issue tracker (`docs-list`, `docs-show`, `docs-subtasks`, `docs-agent-logs`, `docs-set-state`, `docs-add-comment`, `docs-add-agent-log`, `docs-review-queue`), 3 validators (`docs-check-blog`, `docs-check-config`, `docs-check-section`), and `docs-move` (move/rename doc pages with link rewriting)
 - **2 slash commands** — `/docs-init` (bootstrap a new docs project from zero) and `/docs-add-section` (scaffold a new top-level section)
 
 The skill teaches Claude Code how to navigate this Astro-based docs framework: the project's `data/` content layout, frontmatter conventions, the folder-per-issue tracker, `site.yaml` configuration, custom themes, and more. Triages every task to a domain-specific reference file rather than dumping everything into one long prompt.
@@ -18,7 +18,7 @@ Distributed via [`sids-plugin-marketplace`](https://github.com/sidhanthapoddar99
 /reload-plugins
 ```
 
-After install, the 11 CLI wrappers are on your `PATH` automatically (Claude Code adds the plugin's `bin/` to PATH at session start). Try one:
+After install, the 12 CLI wrappers are on your `PATH` automatically (Claude Code adds the plugin's `bin/` to PATH at session start). Each command ships as an extensionless bash shim (Linux / macOS / WSL / Git Bash) plus a `.cmd` shim (native Windows cmd / PowerShell) — your shell picks the right one. Try one:
 
 ```
 docs-list --priority high
@@ -53,9 +53,10 @@ Computes the next `XX_` prefix, scaffolds `settings.json` + `01_overview.md`, an
 | Capability | Where |
 |---|---|
 | Skill | `skills/documentation-guide/SKILL.md` (+ 5 reference files in `references/`) |
-| 11 CLI wrappers | `bin/docs-*` |
+| 12 CLI wrappers | `bin/docs-*` (bash) + `bin/docs-*.cmd` (Windows) — identical self-routing shims |
+| CLI dispatcher | `skills/documentation-guide/scripts/cli.mjs` — the command → script map; every shim routes through it by its own filename |
 | 2 slash commands | `commands/docs-init.md`, `commands/docs-add-section.md` |
-| Helper scripts | `skills/documentation-guide/scripts/{issues,blog,config,docs}/*.mjs` (the wrappers shell out to these) |
+| Helper scripts | `skills/documentation-guide/scripts/{issues,blog,config,docs}/*.mjs` (the dispatcher routes to these) |
 
 ## Requirements
 

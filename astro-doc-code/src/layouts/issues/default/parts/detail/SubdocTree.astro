@@ -66,44 +66,61 @@ function containsActive(t: SubdocTree): boolean {
   return false;
 }
 
-const subgroupNames = Array.from(tree.groups.keys()).sort();
+/** A renderable entry at this tree level — a leaf file or a subgroup folder.
+ *  Files and folders are interleaved and sorted lexicographically by raw
+ *  on-disk name (including any `NNN_` prefix), so a numbered folder slots in
+ *  among numbered files instead of being dumped at the bottom. */
+interface SubdocEntry {
+  kind: 'leaf' | 'group';
+  sortName: string;
+  item?: IssueNote | IssueAgentLog;
+  groupName?: string;
+  child?: SubdocTree;
+}
+
+const entries: SubdocEntry[] = [
+  ...tree.files.map((item): SubdocEntry => ({ kind: 'leaf', sortName: item.name, item })),
+  ...Array.from(tree.groups, ([groupName, child]): SubdocEntry => ({ kind: 'group', sortName: groupName, groupName, child })),
+];
+entries.sort((a, b) => a.sortName.localeCompare(b.sortName));
 ---
 
 <div class={`issue-sidebar__items ${nested ? 'issue-sidebar__items--nested' : ''}`}>
-  {tree.files.map((item) => {
-    const key = leafKey(item);
-    const isActive = activeKey === key;
-    const label = leafLabel(item);
-    const color = (item as { color?: string | null }).color ?? null;
-    return (
-      <a
-        href={leafHref(item)}
-        class={`issue-sidebar__item ${isActive ? 'is-active' : ''}`}
-        aria-current={isActive ? 'page' : undefined}
-        title={label}
-      >
-        <span
-          class="issue-sidebar__icon"
-          aria-hidden="true"
-          style={color ? `color: ${color}` : undefined}
+  {entries.map((entry) => {
+    if (entry.kind === 'leaf') {
+      const item = entry.item!;
+      const key = leafKey(item);
+      const isActive = activeKey === key;
+      const label = leafLabel(item);
+      const color = (item as { color?: string | null }).color ?? null;
+      return (
+        <a
+          href={leafHref(item)}
+          class={`issue-sidebar__item ${isActive ? 'is-active' : ''}`}
+          aria-current={isActive ? 'page' : undefined}
+          title={label}
         >
-          {kind === 'note' ? (
-            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M3 1h7l3 3v11H3V1z"/><path d="M10 1v3h3"/>
-            </svg>
-          ) : (
-            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-              <circle cx="8" cy="8" r="6"/><path d="M8 4v4l3 2"/>
-            </svg>
-          )}
-        </span>
-        <span class="issue-sidebar__label">{label}</span>
-      </a>
-    );
-  })}
-
-  {subgroupNames.map((groupName) => {
-    const child = tree.groups.get(groupName)!;
+          <span
+            class="issue-sidebar__icon"
+            aria-hidden="true"
+            style={color ? `color: ${color}` : undefined}
+          >
+            {kind === 'note' ? (
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M3 1h7l3 3v11H3V1z"/><path d="M10 1v3h3"/>
+              </svg>
+            ) : (
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="8" cy="8" r="6"/><path d="M8 4v4l3 2"/>
+              </svg>
+            )}
+          </span>
+          <span class="issue-sidebar__label">{label}</span>
+        </a>
+      );
+    }
+    const groupName = entry.groupName!;
+    const child = entry.child!;
     const open = containsActive(child);
     const childPath = `${pathPrefix}/${groupName}`;
     return (

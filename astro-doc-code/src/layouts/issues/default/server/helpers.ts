@@ -12,10 +12,13 @@ export function pad(n: number | null): string {
   return String(n).padStart(2, '0');
 }
 
-/** Sidebar subtask sort: active group (open | review) first, terminal group
- *  (closed | cancelled) after; within each group, ascending by sequence. */
+/** State-grouped subtask sort: active group (open | review) first, terminal
+ *  group (closed | cancelled) after; within each group, ascending by sequence.
+ *  Drives the Overview panel, MetaSidebar, the active/terminal divider, and
+ *  Comprehensive-doc order. NOT the detail sidebar tree — that sorts by
+ *  sequence only (see SubtaskTree.astro). */
 const STATE_GROUP: Record<SubtaskState, number> = { open: 0, review: 0, closed: 1, cancelled: 1 };
-export function sortSubtasksForSidebar(subtasks: IssueSubtask[]): IssueSubtask[] {
+export function sortSubtasksByState(subtasks: IssueSubtask[]): IssueSubtask[] {
   return [...subtasks].sort((a, b) => {
     const g = STATE_GROUP[a.state] - STATE_GROUP[b.state];
     if (g !== 0) return g;

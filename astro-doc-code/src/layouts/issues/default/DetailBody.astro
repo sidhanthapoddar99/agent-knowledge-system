@@ -17,7 +17,7 @@ import Comprehensive from './parts/detail/Comprehensive.astro';
 import MetaSidebar from './parts/detail/MetaSidebar.astro';
 import { allStateIcons } from './server/state-icon';
 import { extractAndPrefixToc } from './server/toc';
-import { TERMINAL, sortSubtasksForSidebar, terminalStartIndex, subtaskPanelKey } from './server/helpers';
+import { TERMINAL, sortSubtasksByState, terminalStartIndex, subtaskPanelKey } from './server/helpers';
 import type { Issue, IssuesVocabulary } from '@loaders/issues';
 import './styles/detail.css';
 
@@ -37,7 +37,7 @@ const openCount = issue.subtasks.filter((s) => s.state === 'open').length;
 const closedCount = issue.subtasks.filter((s) => s.state === 'closed').length;
 const cancelledCount = issue.subtasks.filter((s) => s.state === 'cancelled').length;
 
-const sortedSubtasks = sortSubtasksForSidebar(issue.subtasks);
+const sortedSubtasks = sortSubtasksByState(issue.subtasks);
 const terminalStartIdx = terminalStartIndex(sortedSubtasks);
 
 const statusColors = vocabulary.fields?.status?.colors || {};

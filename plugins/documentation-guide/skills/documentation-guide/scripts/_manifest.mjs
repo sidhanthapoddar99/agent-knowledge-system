@@ -113,9 +113,9 @@ export const MANIFEST = [
   },
   {
     bin: 'docs-add-agent-log', group: 'issue', verb: 'add-agent-log', category: 3, script: 'issues/add-agent-log.mjs', runtime: 'mjs',
-    summary: 'Append an agent-log entry with auto-incremented iteration',
+    summary: 'Append a ONE-LINE agent-log entry (flattens multi-line; write milestone logs as files)',
     flags: [
-      { name: 'body', value: 'md', desc: 'entry body (required)' },
+      { name: 'body', value: 'md', desc: 'entry body — single line only (written verbatim; multi-line collapses to one paragraph)' },
       { name: 'status', value: 'state', desc: 'in-progress|success|failed' },
       { name: 'iteration', value: 'N', desc: 'override iteration number' },
       { name: 'agent', value: 'name', desc: 'agent name (default claude)' },

@@ -31,19 +31,56 @@ agent-log/
 │       ├── 002_task-list.md         ← live checklist / status (update as you go)
 │       ├── 003_summary.md           ← post-run summary: what landed, written when it wraps
 │       ├── 004_attention-needed.md  ← (optional) pointers / mid-run issues a human must weigh in on
-│       └── 101_…, 102_…             ← one file per iteration (keep failed ones — they're signal)
+│       └── 101_…, 102_…             ← one file per MILESTONE (keep failed ones — they're signal)
 ├── 300_audits/            ← same goal → task-list → summary → iterations shape
 └── 400_refactors/         ← …and extensible: 500_migrations/ drops in the same way
 ```
 
 Ordering is purely by the **leading numeric prefix** (same index grammar as the rest of the tracker): `0xx` meta sorts ahead of `1xx` iterations, no special frontmatter needed. Create categories **on demand** — never scaffold empty ones. For a quick one-off fix, skip the activity shape and drop a single flat `101_fix.md` in `agent-log/`.
 
-Per-iteration file body: **Goal → Approach → Result (with evidence) → Next.** Prefer the helper when it's on PATH (works for any category — swap the `--group`):
+## Writing a log entry — write the file directly
 
-```bash
-docs-add-agent-log <issue-id> --group 300_audits/010_<name> \
-  --status success --body "Goal: …  Approach: …  Result: …  Next: —"
+**Default: write the agent-log file yourself with the Write tool, as real markdown.** You're already doing the thinking and making a tool call either way — so produce a structured file, not a flat string. Do **not** funnel the body through `docs-guide issue add-agent-log --body "…"`: that value is written verbatim with no template, so it collapses into one run-on paragraph — which is exactly what makes loop logs unreadable.
+
+1. Find the next prefix: `ls <issue>/agent-log/<group>/` → next `1NN_`.
+2. Write `<issue>/agent-log/<group>/1NN_<slug>.md` in this shape:
+
+````markdown
+---
+iteration: 1
+agent: claude-opus-4-8
+status: success        # in-progress | success | failed
+date: 2026-06-23
+---
+
+# <short milestone title>
+
+## Goal
+What this chunk set out to do.
+
+## Approach
+- Key decisions / steps — bullets, not prose.
+
+## Result
+- What landed, **with evidence**: commits, test counts, file paths.
+- Reach for a diagram when it clarifies (both Mermaid and ASCII render):
+
+```mermaid
+flowchart LR
+  manifest --> dispatcher --> command
 ```
+
+## Next
+What's next — or `—` if this chunk is closed.
+````
+
+Keep `## Goal / ## Approach / ## Result / ## Next` as real headings on their own lines, with bullets for evidence. Add a **Mermaid or ASCII diagram** whenever it aids visibility (architecture, flow, before/after). Failed milestones are kept — they're signal.
+
+**`docs-guide issue add-agent-log` is an optional convenience for a one-LINE entry only** (e.g. "rebased onto main, harness green"). It auto-increments the prefix and writes valid frontmatter, but **flattens any multi-line `--body` into a single paragraph** — never use it for a real milestone log; write the file.
+
+## Log milestones, not steps
+
+One entry per **substantial, noticeable chunk** of completed work — a feature landing, a phase finishing, a hard bug fixed — **not one per subtask or per step**. *You* decide when enough has accumulated to be worth a durable record. A typical loop produces **~3–6 entries total**, regardless of how many subtasks it has — logs are **not** synced to the subtask count. Over-logging (an entry per tiny step) buries the signal; that's the failure mode to avoid. Each entry should read like a milestone summary a human can skim, not a keystroke diary.
 
 ## Agent memory — always on
 

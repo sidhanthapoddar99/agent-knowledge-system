@@ -39,7 +39,7 @@ iterate → agent-log entry → (comment if a human decision is needed) → re-i
 ```
 
 1. **Start a loop folder** under `200_loops/` with a `001_loop-goal.md` and a `002_task-list.md`.
-2. **Each iteration** is one numbered file (`101_`, `102_`, …) with Goal / Approach / Result / Next. The iteration counter and the per-leaf-folder sequence both advance.
+2. **Each milestone** is one numbered file (`101_`, `102_`, …) — **written directly with the Write tool** as sectioned markdown (`## Goal / ## Approach / ## Result / ## Next`, bullets + a Mermaid/ASCII diagram where it helps). Log at **substantial chunks**, not every subtask: a dense run lands ~3–6 entries, not one-per-step (see "Log milestones, not steps" in [24_agent-logs.md](24_agent-logs.md)). Don't funnel the body through `docs-guide issue add-agent-log --body "…"` — it flattens multi-line text into a run-on paragraph.
 3. **Failed iterations are kept** — `102_timeout-fixes.md` failing is the exact signal the next iteration (or the next agent) needs to not repeat it.
 4. **Update `002_task-list.md` as you go** — it's the resumable live status; an agent picking up mid-stream reads the goal + task-list and continues.
 5. **When the run wraps, write `003_summary.md`** (what landed, final state) and — if anything came up that a human needs to weigh in on (open pointers, issues found along the way) — `004_attention-needed.md`. Skip `004_` when there's nothing to raise.

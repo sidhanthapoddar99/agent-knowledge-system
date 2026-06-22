@@ -107,7 +107,7 @@ For a worked example of a long autonomous run that uses this structure, see [63_
 Three pieces of this workspace resemble things the tracker already has. Hold these lines or the model collapses:
 
 - **Loop `002_task-list.md` vs issue `subtasks/`** — `subtasks/` is the issue's durable *plan / decomposition* (first-class, stateful, counted). A loop's task-list is the agent's *working checklist for one run* (ephemeral, scoped to that loop). **Plan vs execution.**
-- **`100_discussion/` vs `comments/`** — `comments/` is the durable issue-level thread (decisions, hand-offs). `discussion/` is working dialogue *during* execution. (See [21_comments.md](21_comments.md).)
+- **`100_discussion/` vs `comments/`** — `comments/` is the durable issue-level thread (decisions, hand-offs). `discussion/` is working dialogue *during* execution. (See [21_comments.md](21_comments.md).) **Save discussion only when the user explicitly asks** — it's case-specific and noisy by default, so never persist it on your own initiative. When a discussion turns dense, information-rich, or decision-bearing, you *may* **offer** to save it (or its key points) to the issue, then wait for the yes.
 - **`000_agent-memory/` vs the global `~/.claude` memory** — issue-scoped working memory that *complements* global memory, never replaces it.
 
 ### The genuine tension

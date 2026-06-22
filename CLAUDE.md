@@ -6,7 +6,7 @@ Astro-based documentation framework with modular layouts, YAML configuration, an
 
 This project ships a Claude Code plugin (`documentation-guide`) — source at `plugins/documentation-guide/`. See the README for install instructions.
 
-**The skill** — `documentation-guide` — triages every docs/issue/blog/config task to one of six reference targets (`writing.md`, `docs-layout.md`, `blog-layout.md`, `layouts/issues/` (split, entry `00_overview.md`), `settings-layout.md`, `images.md`). Trigger eagerly for anything under `default-docs/`.
+**Skills (2).** `documentation-guide` triages every docs/issue/blog/config task to one of six reference targets (`writing.md`, `docs-layout.md`, `blog-layout.md`, `layouts/issues/` (split, entry `00_overview.md`), `settings-layout.md`, `images.md`) — trigger eagerly for anything under `default-docs/`. `doc-agent` is a thin execution-time companion (different trigger surface) covering **how to use an issue's `agent-log/`** — fires on the execution verbs (audit / refactor / loop), keeps always-on agent-memory, and treats discussion as explicit-save-only (offer when dense, never auto-save); it carries the activity structure inline and defers depth to `documentation-guide`.
 
 **13 CLI wrappers on PATH** (Claude Code adds the plugin's `bin/` to PATH automatically; each ships as a bash shim + `.cmd` shim for native Windows, both routing through `scripts/cli.mjs`):
 

@@ -1,7 +1,7 @@
 ---
 title: Issues agent-logs structure standardization
 done: true
-state: review
+state: closed
 ---
 
 Agent-log was created for **observability into dense agent execution** — the running

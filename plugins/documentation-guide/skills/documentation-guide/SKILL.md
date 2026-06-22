@@ -9,6 +9,8 @@ Operating manual for working in an Astro-based documentation-template project. T
 
 > **Two modes.** *Consumer mode* (the default) — the framework is a subfolder of the user's project (`<project>/documentation-template/`) and the user's content lives at the project root (`config/`, `data/`, `assets/`, `themes/` next to the framework folder). *Dogfood mode* — the framework repo *is* the project; content lives under `default-docs/`. The scripts derive the actual location from `.env` (`CONFIG_DIR`), so this skill describes paths relative to **the user's content folders** and the underlying scripts handle both modes. Where this skill says `data/`, the script resolves to `<project>/data/` (consumer) or `<framework>/default-docs/data/` (dogfood).
 
+> **Companion skill — `doc-agent`.** This plugin also ships a thin `doc-agent` skill with a *different trigger surface*: it covers **how to use an issue's `agent-log/`** and fires on the execution verbs — **audit / refactor / loop** (or any autonomous run), plus **agent-memory** (always) and **discussion** (explicit-save-only). This skill (`documentation-guide`) is the broad author/maintain manual; `doc-agent` is the narrow execution-time nudge that points back here. If you're running/recording work in `agent-log/`, that's `doc-agent`'s job; depth still lives in `references/layouts/issues/24_agent-logs.md`.
+
 ## Triage — which reference file to read
 
 Pick the reference file that matches the task. Read **only the one(s) you need** — they're independent and self-contained.

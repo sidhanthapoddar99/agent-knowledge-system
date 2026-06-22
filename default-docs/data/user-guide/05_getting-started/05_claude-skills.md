@@ -7,7 +7,7 @@ description: AI-powered skill, CLI wrappers, and slash commands for working with
 
 This template ships its own **Claude Code plugin** — `documentation-guide` — that teaches Claude how to work inside this project without you having to explain the conventions every time. It bundles:
 
-- **1 skill** that triages every docs/issue/blog/config task to a domain-specific reference
+- **2 skills** — `documentation-guide` (triages every docs/issue/blog/config task to a domain-specific reference) and `doc-agent` (a thin execution-time skill for recording an agent's run in the tracker)
 - **11 CLI wrappers** auto-added to `$PATH` for the issue tracker and validators
 - **2 slash commands** for project-level scaffolding (`/docs-init`, `/docs-add-section`)
 
@@ -51,6 +51,12 @@ The skill triages every docs task to one of five domain references. The model lo
 | `references/settings-layout.md` | `site.yaml`, `navbar.yaml`, `footer.yaml`, `.env`, path aliases, themes |
 
 The skill triggers automatically whenever you work on docs in a project that uses this framework (i.e. one where the `documentation-template/` folder is present, or you're inside it). You don't have to invoke it explicitly.
+
+## Skill — `doc-agent`
+
+A second, deliberately thin skill with a **different trigger surface**, covering **how to use a tracked issue's `agent-log/`**. `documentation-guide` fires on "I'm authoring docs"; `doc-agent` fires on the execution verbs themselves — **audit this**, **refactor this**, run a **loop** / ultracode / autonomous iteration, or **"let's discuss this point"** — plus maintaining issue-scoped **agent memory**. That's exactly the moment the broad skill won't trigger on its own, which is why the agent-log workspace (its whole point being resumability) would otherwise go unused when it matters most.
+
+It carries the common case inline (the trigger verbs, the `agent-log/` activity structure across loops/audits/refactors, agent-memory as always-on, and the rule that **discussion is saved only when the user explicitly asks** — the skill may *offer* to save a dense discussion but never auto-saves) and defers depth to `documentation-guide`'s `references/layouts/issues/24_agent-logs.md`. Audiences and triggers differ — doc author vs autonomous executor — so the two skills don't double-fire confusingly.
 
 ## Slash commands
 

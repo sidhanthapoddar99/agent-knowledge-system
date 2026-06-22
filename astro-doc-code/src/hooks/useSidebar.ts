@@ -13,6 +13,7 @@ import fs from 'fs';
 import path from 'path';
 import type { LoadedContent } from '@loaders/data';
 import cacheManager from '@loaders/cache-manager';
+import { parseOrderPrefix } from '../parsers/core/order-prefix';
 
 // Re-export for backward compatibility
 export { invalidateSidebarCache } from '@loaders/cache-manager';
@@ -57,14 +58,8 @@ export interface FolderSettings {
  * Extract position from XX_ prefix (works for files and folders)
  */
 function extractPosition(name: string): { position: number; cleanName: string } {
-  const match = name.match(/^(\d{2})_(.+)$/);
-  if (match) {
-    return {
-      position: parseInt(match[1], 10),
-      cleanName: match[2],
-    };
-  }
-  return { position: 999, cleanName: name };
+  const { position, cleanName } = parseOrderPrefix(name);
+  return { position: position ?? 999, cleanName };
 }
 
 /**

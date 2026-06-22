@@ -9,12 +9,13 @@
  */
 
 import type { Processor, ProcessContext } from '../types';
+import { stripOrderPrefix } from '../core/order-prefix';
 
 /**
- * Strip XX_ prefix from a single path segment
+ * Strip the NN_ ordering prefix (2–5 digits) from a single path segment
  */
 function stripPrefix(segment: string): string {
-  return segment.replace(/^\d{2}_/, '');
+  return stripOrderPrefix(segment);
 }
 
 /**

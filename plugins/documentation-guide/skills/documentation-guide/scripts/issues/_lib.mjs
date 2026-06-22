@@ -14,6 +14,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import matter from 'gray-matter';
 import { resolveProjectContext } from '../_env.mjs';
+import { parseOrderPrefixLoose } from '../_order-prefix.mjs';
 
 // ---------- Paths & validation ----------------------------------------------
 
@@ -135,9 +136,8 @@ export function readIssueMeta(trackerPath, issueId) {
 function makeSubtask(abs, groupPath) {
   const name = path.basename(abs);
   const slug = name.replace(/\.md$/, '');
-  const prefixMatch = slug.match(/^(\d+)[_-]/);
-  const sequence = prefixMatch ? parseInt(prefixMatch[1], 10) : null;
-  let title = slug.replace(/^\d+[-_]?/, '').replace(/[-_]/g, ' ');
+  const { position: sequence, cleanName } = parseOrderPrefixLoose(slug);
+  let title = cleanName.replace(/[-_]/g, ' ');
   let state = 'open';
   try {
     const fm = matter(fs.readFileSync(abs, 'utf-8')).data;
@@ -173,15 +173,15 @@ export function readIssueSubtaskGroups(trackerPath, issueId) {
     for (const folder of subDirs) {
       const childPath = [...groupPath, folder];
       const childAbs = path.join(absDir, folder);
-      const prefixMatch = folder.match(/^(\d+)[-_]/);
-      let title = folder.replace(/^\d+[-_]?/, '').replace(/[-_]/g, ' ').trim() || folder;
+      const { position, cleanName } = parseOrderPrefixLoose(folder);
+      let title = cleanName.replace(/[-_]/g, ' ').trim() || folder;
       const settings = readJson(path.join(childAbs, 'settings.json'));
       if (settings && typeof settings.title === 'string' && settings.title.length > 0) {
         title = settings.title;
       }
       out.push({
         groupPath: childPath,
-        sequence: prefixMatch ? parseInt(prefixMatch[1], 10) : null,
+        sequence: position,
         title,
       });
       walk(childAbs, childPath);
@@ -244,8 +244,7 @@ function walkTwoLevels(rootDir) {
 
 function makeAgentLog(abs, groupPath) {
   const base = path.basename(abs).replace(/\.md$/, '');
-  const prefixMatch = base.match(/^(\d+)[_-]/);
-  const sequence = prefixMatch ? parseInt(prefixMatch[1], 10) : 0;
+  const sequence = parseOrderPrefixLoose(base).position ?? 0;
   let fm = {};
   try { fm = matter(fs.readFileSync(abs, 'utf-8')).data; } catch {}
   return {

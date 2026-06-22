@@ -271,7 +271,7 @@ If you're inside `astro-doc-code/`, `bun run dev` / `bun run build` / `bun run p
 
 ## Key Rules
 
-1. **`XX_` prefix required** for all doc files/folders (01-99)
+1. **`NN_` prefix required** for all doc files/folders — numeric, **2–5 digits** (2 is the common case), sorted by value (widths coexist; gap-space to leave insert room)
 2. **`settings.json` required** in every doc folder
 3. **`title` frontmatter required** in every doc file
 4. **`theme` field required** in `site.yaml` (throws if missing)

@@ -65,7 +65,8 @@ Every tracker has the same skeleton:
 - Up to **2 levels of nesting** (`<group>/<subgroup>/<file>.md`). Anything deeper is logged as a warning by the loader and silently skipped — never relied on.
 - **Files and folders can mix at every level** that allows folders. So `notes/intro.md` can sit beside `notes/design/`, and `notes/design/overview.md` can sit beside `notes/design/phase-1/`. Only the deepest level (level 2) is files-only.
 - **`subtasks/` specifics:** the folder is a *grouping label only* — no body file. Every leaf `.md` is a first-class subtask with its own state, URL, and count. Folders use the same `NNN_<slug>` naming as leaves, and may ship an optional `settings.json` with a `title` field overriding the slug-derived label. URL: `/<tracker>/<issue>/subtasks/<group>/<subgroup>/<slug>`.
-- **`notes/` and `agent-log/`:** filenames are freeform — no `NNN_` prefix required; if an `agent-log` filename happens to start with `NNN_`, the prefix is parsed as the iteration sequence number, otherwise the loader assigns one based on sort order within the leaf folder.
+- **Subtask numbering — `NNN_` (3-digit), gap-spaced.** Subtasks use the **same shared ordering-prefix grammar as docs** — a **2–5 digit** prefix, ordered by *numeric value*, so widths coexist (`01_` and `010_` sort as 1 and 10 — see `references/docs-layout.md`). The **convention is 3-digit `NNN_`** (`010_`, `020_`, …). **Gap-number them** when laying out an issue — space the prefixes (step 10, or step 5 for denser sets) so a new subtask slots *between* two existing ones without renumbering the rest: drop `015_` between `010_` and `020_`. **Separator:** `_` is canonical; the issue tracker's loader also tolerates a legacy `-` separator (`00-foo`) in existing folders, so older hyphen-named groups keep parsing — prefer `_` for anything new. (Comments and agent-logs are auto-numbered sequentially by the CLI — also 3-digit — so you never hand-number them and gaps don't apply there.)
+- **`notes/` and `agent-log/`:** filenames are freeform — a numeric prefix is **optional**. When present it uses the *same* shared grammar (2–5 digits, ordered by value, `_` canonical / legacy `-` tolerated) and sets order, so you may gap-number `notes/` when a fixed reading order matters (e.g. `010_context.md`, `020_design.md`); leave them unprefixed when order doesn't matter. `agent-log/` files that start with a number have it parsed as the iteration sequence; otherwise the loader assigns one by sort order within the leaf folder (the CLI writes 3-digit `NNN_`).
 - `comments/` stays flat — no subfolders.
 
 ---
@@ -193,7 +194,7 @@ Naming convention: `NNN_<YYYY-MM-DD>_<author>.md` is the spec, but in practice m
 
 ### `subtasks/[<group>/[<subgroup>/]]NNN_<slug>.md`
 
-Atomic unit of work. May live at the root of `subtasks/`, or inside one or two levels of grouping folders (`subtasks/02_implementation/01_backend.md`, `subtasks/02_implementation/02_polish/01_styles.md`). The folder is a label only — no folder body file. Each leaf is a first-class subtask: own state, own URL, counted independently.
+Atomic unit of work. May live at the root of `subtasks/`, or inside one or two levels of grouping folders (`subtasks/020_implementation/010_backend.md`, `subtasks/020_implementation/020_polish/010_styles.md`). Prefixes are 3-digit `NNN_`, gap-spaced so you can insert without renumbering (see the numbering note under "subfolder rules" above). The folder is a label only — no folder body file. Each leaf is a first-class subtask: own state, own URL, counted independently.
 
 ```yaml
 ---
@@ -211,7 +212,7 @@ Body — describe the work in enough detail that someone (or an agent) can pick 
 
 ### `notes/[<group>/[<subgroup>/]]<slug>.md`
 
-Supporting design docs — research, design decisions, reference material that doesn't belong in `issue.md`. No state, no numbering. Frontmatter is minimal (often just `title`); an optional `color: <css-color>` tints only the sidebar icon and is user-defined (don't strip / overwrite when editing). May live at the root of `notes/`, or one or two folders deeper for grouping (e.g. `notes/design/phase-1/kickoff.md`). Folder names are freeform.
+Supporting design docs — research, design decisions, reference material that doesn't belong in `issue.md`. No state; numbering is **optional** (prefix with a gap-spaced `NN_` when reading order matters — same shared grammar — else leave unprefixed). Frontmatter is minimal (often just `title`); an optional `color: <css-color>` tints only the sidebar icon and is user-defined (don't strip / overwrite when editing). May live at the root of `notes/`, or one or two folders deeper for grouping (e.g. `notes/design/phase-1/kickoff.md`). Folder names are freeform.
 
 ### `agent-log/[<group>/[<subgroup>/]]<slug>.md` — **read these first when picking up work**
 

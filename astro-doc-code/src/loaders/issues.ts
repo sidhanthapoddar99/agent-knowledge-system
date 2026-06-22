@@ -36,6 +36,7 @@ import path from 'path';
 import matter from 'gray-matter';
 import { createIssuesParser } from '../parsers/content-types/issues';
 import { getIssueDate } from './issue-dates';
+import { parseOrderPrefixLoose } from '../parsers/core/order-prefix';
 
 export interface IssueMetadata {
   title: string;
@@ -509,8 +510,7 @@ async function readAgentLogs(
 ): Promise<IssueAgentLog[]> {
   return walkTwoLevels(logsDir, issueId, 'agent-log', async (abs, groupPath, fallbackSeq) => {
     const base = path.basename(abs).replace(/\.md$/, '');
-    const prefixMatch = base.match(/^(\d+)[_-]/);
-    const sequence = prefixMatch ? parseInt(prefixMatch[1], 10) : fallbackSeq;
+    const sequence = parseOrderPrefixLoose(base).position ?? fallbackSeq;
     let fm: { iteration?: number; agent?: string; status?: string; date?: string; color?: string } = {};
     try { fm = matter(fs.readFileSync(abs, 'utf-8')).data as typeof fm; } catch {}
     return {
@@ -531,7 +531,7 @@ async function readAgentLogs(
 
 /** Convert a folder slug ("02_impl-and-polish") into a human label ("impl and polish"). */
 function slugToLabel(slug: string): string {
-  return slug.replace(/^\d+[-_]?/, '').replace(/[-_]/g, ' ').trim() || slug;
+  return parseOrderPrefixLoose(slug).cleanName.replace(/[-_]/g, ' ').trim() || slug;
 }
 
 /** Read an optional folder-level `settings.json` for a subtask group. Only `title`
@@ -551,8 +551,7 @@ async function readSubtaskFile(
 ): Promise<IssueSubtask> {
   const name = path.basename(abs);
   const slug = name.replace(/\.md$/, '');
-  const prefixMatch = slug.match(/^(\d+)[-_]/);
-  const sequence = prefixMatch ? parseInt(prefixMatch[1], 10) : null;
+  const sequence = parseOrderPrefixLoose(slug).position;
   let title = slugToLabel(slug);
   let state: SubtaskState = 'open';
   try {
@@ -617,10 +616,9 @@ async function readSubtasks(
       }
       const childAbs = path.join(absDir, folder);
       const childPath = [...groupPath, folder];
-      const prefixMatch = folder.match(/^(\d+)[-_]/);
       subtaskGroups.push({
         groupPath: childPath,
-        sequence: prefixMatch ? parseInt(prefixMatch[1], 10) : null,
+        sequence: parseOrderPrefixLoose(folder).position,
         title: readGroupTitle(childAbs, folder),
       });
       await emitFolder(childAbs, childPath);

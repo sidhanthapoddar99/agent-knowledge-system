@@ -10,6 +10,7 @@ import fs from 'fs';
 import path from 'path';
 import { glob } from 'glob';
 import { getParser } from '../parsers';
+import { parseOrderPrefix } from '../parsers/core/order-prefix';
 import {
   ParserError,
   type ContentType,
@@ -44,8 +45,7 @@ function pathPositionTuple(item: LoadedContent): number[] {
   if (segments.length === 0) return [item.data.sidebar_position ?? 999];
   const tuple: number[] = [];
   for (let i = 0; i < segments.length - 1; i++) {
-    const m = segments[i].match(/^(\d{2})_/);
-    tuple.push(m ? parseInt(m[1], 10) : 999);
+    tuple.push(parseOrderPrefix(segments[i]).position ?? 999);
   }
   tuple.push(item.data.sidebar_position ?? 999);
   return tuple;

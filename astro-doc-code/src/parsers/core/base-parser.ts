@@ -20,6 +20,7 @@ import type {
   Heading,
 } from '../types';
 import { ParserError } from '../types';
+import { hasOrderPrefix } from './order-prefix';
 import { ProcessingPipeline } from './pipeline';
 import { createMarkdownRendererAsync } from '../renderers/marked';
 
@@ -272,7 +273,7 @@ export abstract class BaseContentParser {
    * Check if file has required position prefix
    */
   hasPositionPrefix(filename: string): boolean {
-    return /^\d{2}_/.test(filename);
+    return hasOrderPrefix(filename);
   }
 
   /**

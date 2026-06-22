@@ -10,7 +10,7 @@ How to add, organise, and configure pages in a docs section (e.g. `user-guide/`,
 
 ## Folder structure
 
-A docs section is a folder under the project's `data/<section>/` (e.g. `data/user-guide/`, `data/dev-docs/`). Both files and subfolders use a 2-digit `XX_` prefix for ordering:
+A docs section is a folder under the project's `data/<section>/` (e.g. `data/user-guide/`, `data/dev-docs/`). Both files and subfolders use a numeric `NN_` prefix for ordering (2 digits is the common case; see the width rules below):
 
 ```
 user-guide/
@@ -29,7 +29,21 @@ user-guide/
 └── ...
 ```
 
-**Prefixes are 01-99.** They control sidebar order. Re-prefix to insert (e.g. squeeze `06_foo.md` between `05_x.md` and `10_y.md`).
+**Prefix width is 2–5 digits**, ordered by **numeric value** (the validator rejects 1-digit and 6+; `_` separator required). Width and numeric-value sort come from **one shared parser** (`parsers/core/order-prefix.ts`, mirrored in the plugin's `scripts/_order-prefix.mjs`), used by both the docs loader and the issue tracker. Docs use the strict `_` separator; the issue tracker also tolerates a legacy `-` (one grammar — the separator is the only knob). Because order is by value, widths coexist: `05_` (=5), `010_` (=10), `110_` (=110) all sort correctly, so you can widen a single folder without touching its siblings. Use 2 digits for the common case, 3 when a folder needs the headroom (or grouping, below), 4–5 only for rare exceptions.
+
+### Gap numbering — leave room to insert
+
+When you first lay out a folder, **don't number siblings 01, 02, 03…** — space them so a new doc can slot *between* two existing ones without renumbering the rest (renumbering churns URLs and forces a `docs-move` to fix links).
+
+- **Default: step 5** → `05_`, `10_`, `15_`, `20_`, … Four free slots between neighbours; ~19 fit in the 01–99 range. This is the house default and what the top-level section folders already use.
+- **Denser: step 3** (`03_`, `06_`, `09_`, … ~33 slots) or **step 2** (`02_`, `04_`, … ~49 slots) — use when you expect many siblings in one folder. Smaller gaps, more total capacity.
+- Pick the step from how many siblings the folder will realistically hold: a handful of top sections → step 5; a long flat list → step 2–3.
+
+When two neighbours have no gap left between them (e.g. you must insert between `05_` and `06_`), re-prefix with **`docs-move`** rather than `mv` — it re-points every link as it renumbers. Squeezing `06_foo.md` between `05_x.md` and `10_y.md` needs no move at all; that's the whole point of the gaps.
+
+Order can also be overridden without renumbering at all via `settings.json` `position` (folders) or frontmatter `sidebar_position` (pages) — but the prefix is the primary, at-a-glance signal, so prefer gap-spaced prefixes and reserve `position` for exceptions.
+
+**Grouping with a wider prefix (optional).** With 3 digits the leading digit can annotate a *group* inside a single flat folder: `110_`, `120_`, `130_` = group 1; `210_`, `220_` = group 2. You get hierarchical grouping without subfolders (the classic line-number trick). Reach for this only when a flat folder genuinely has clusters; otherwise plain 2-digit gap-numbering is simpler.
 
 ## Per-folder `settings.json`
 
@@ -69,7 +83,7 @@ URL = section base + nested path (without prefixes):
 - `data/user-guide/05_getting-started/02_installation.md`
 - → `/user-guide/getting-started/installation`
 
-The `XX_` prefixes are stripped when building URLs.
+The `NN_` prefixes are stripped when building URLs (any width, 2–5 digits).
 
 ## Outline (right rail)
 
@@ -95,10 +109,10 @@ docs-check-section ./data/dev-docs
 ```
 
 What it checks:
-- `XX_` numeric prefix on every folder (except `assets/`) and `.md` file (except `README.md`)
+- `NN_` numeric prefix (2–5 digits) on every folder (except `assets/`) and `.md` file (except `README.md`)
 - `settings.json` present in every folder
 - Frontmatter `title:` present on every `.md` file
-- No `XX_` prefix collisions within a folder (e.g. two `05_` siblings)
+- No prefix collisions within a folder — compared by **numeric value**, so `02_` and `002_` (both = 2) clash; 1-digit and 6+-digit prefixes are rejected
 
 Exit code `0` = clean, `1` = errors found. Run after restructuring a section or before committing a batch of new pages.
 

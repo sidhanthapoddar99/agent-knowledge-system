@@ -12,6 +12,7 @@
 import path from 'path';
 import type { FileType, FrontmatterSchema, ParsedDocsFilename } from '../types';
 import { BaseContentParser } from '../core/base-parser';
+import { parseOrderPrefix } from '../core/order-prefix';
 import { assetEmbedPreprocessor } from '../preprocessors/asset-embed';
 import { headingIdsPostprocessor } from '../postprocessors/heading-ids';
 import { internalLinksPostprocessor } from '../postprocessors/internal-links';
@@ -30,21 +31,12 @@ export class DocsParser extends BaseContentParser {
   }
 
   /**
-   * Parse filename to extract position from XX_ prefix
+   * Parse filename to extract position from the NN_ prefix (2–5 digits).
    * e.g., "01_getting-started" → { position: 1, cleanName: "getting-started" }
+   * Defers to the shared order-prefix grammar.
    */
   parseFilename(filename: string): ParsedDocsFilename {
-    const match = filename.match(/^(\d{2})_(.+)$/);
-    if (match) {
-      return {
-        position: parseInt(match[1], 10),
-        cleanName: match[2],
-      };
-    }
-    return {
-      position: null,
-      cleanName: filename,
-    };
+    return parseOrderPrefix(filename);
   }
 
   /**

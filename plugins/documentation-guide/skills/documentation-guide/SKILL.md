@@ -62,7 +62,7 @@ If `data/README.md` doesn't exist, **create one** before doing the requested tas
 
 These apply across all domains. Reference files don't repeat them — they assume you know.
 
-- **`XX_` prefix** — folders and files inside `data/<docs-section>/` use a 2-digit numeric prefix (`01_`, `05_`, `10_`, …) for ordering. Issues and blog posts do **not** use this prefix.
+- **`NN_` prefix** — folders and files inside `data/<docs-section>/` use a numeric prefix (2–5 digits, 2 is the common case) for ordering, sorted by value so widths coexist (`05_`, `010_`, `110_`). Gap-space them to leave room to insert. Issue subtasks/agent-logs use the same grammar; blog posts and `notes/` don't require it. Full rules: `references/docs-layout.md`.
 - **`settings.json`** — every docs folder has one (sidebar label, position). Issue trackers have a root `settings.json` declaring vocabulary. Issues have a per-issue `settings.json` for metadata.
 - **Frontmatter `title`** — required on every markdown file. Astro builds will fail without it.
 - **Theme variables only** — when editing CSS in layouts, consume declared theme variables (see `astro-doc-code/src/styles/theme.yaml → required_variables`). Never hardcode colours, fonts, or invent variable names.

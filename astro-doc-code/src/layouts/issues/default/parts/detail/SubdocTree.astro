@@ -12,6 +12,7 @@ import {
   logPanelKey, notePanelKey, noteUrl, logUrl,
   type GroupedTree,
 } from '../../server/helpers';
+import { stripOrderPrefixLoose } from '@parsers/core/order-prefix';
 
 type SubdocTree = GroupedTree<IssueNote> | GroupedTree<IssueAgentLog>;
 
@@ -32,7 +33,7 @@ const { tree, kind, baseUrl, issueId, activeKey, nested = false, pathPrefix = (k
 function leafLabel(item: IssueNote | IssueAgentLog): string {
   if (kind === 'log') {
     const log = item as IssueAgentLog;
-    const stem = log.name.replace(/^\d+[_-]/, '').replace(/[-_]/g, ' ');
+    const stem = stripOrderPrefixLoose(log.name).replace(/[-_]/g, ' ');
     return log.iteration !== null ? `#${log.iteration} ${stem}` : stem;
   }
   return `${item.name}.md`;

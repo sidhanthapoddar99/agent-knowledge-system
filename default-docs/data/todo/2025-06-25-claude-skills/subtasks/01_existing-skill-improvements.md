@@ -1,6 +1,5 @@
 ---
 title: "Improve existing skills + add common-workflow skills"
-done: true
 state: closed
 ---
 

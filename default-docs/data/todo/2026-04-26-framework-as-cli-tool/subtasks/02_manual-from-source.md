@@ -1,6 +1,5 @@
 ---
 title: "Method 2 — manual / from-source usage (clone + run)"
-done: true
 state: cancelled
 ---
 

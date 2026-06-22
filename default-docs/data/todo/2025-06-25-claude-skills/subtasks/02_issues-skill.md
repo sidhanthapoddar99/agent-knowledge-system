@@ -1,6 +1,5 @@
 ---
 title: "`docs:issues_layout` Author the `issues` Claude skill (+ helper Node scripts)"
-done: true
 state: closed
 ---
 

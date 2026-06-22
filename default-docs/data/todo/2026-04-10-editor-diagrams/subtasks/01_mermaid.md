@@ -1,6 +1,6 @@
 ---
 title: "Mermaid diagram preview"
-done: false
+state: open
 ---
 
 ## Tasks

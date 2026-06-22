@@ -1,6 +1,6 @@
 ---
 title: "Custom page templates"
-done: false
+state: open
 ---
 
 ## Tasks

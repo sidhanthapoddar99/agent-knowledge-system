@@ -1,6 +1,6 @@
 ---
 title: "Spell check"
-done: false
+state: open
 ---
 
 ## Tasks

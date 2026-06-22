@@ -1,6 +1,5 @@
 ---
 title: "Canonical redirect: /<tracker>/<issue>/issue → /<tracker>/<issue>"
-done: true
 state: closed
 ---
 

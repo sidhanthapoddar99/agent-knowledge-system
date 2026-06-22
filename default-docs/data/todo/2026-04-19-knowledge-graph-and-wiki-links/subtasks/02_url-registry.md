@@ -1,6 +1,5 @@
 ---
 title: "URL registry — every file and asset"
-done: false
 state: open
 ---
 

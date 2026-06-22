@@ -2,8 +2,6 @@
 /**
  * set-state.mjs — update an issue's status (top-level settings.json) or
  * a subtask's state (frontmatter). Path is allow-listed to the content root.
- *
- * Subtask flips also keep `done:` in sync (true for closed/cancelled).
  */
 
 import path from 'node:path';
@@ -24,7 +22,6 @@ if (args.flags.help || !target || !state) {
     '  Subtask:  bun scripts/issues/set-state.mjs 2026-04-19-foo/subtasks/02_bar.md closed',
     '',
     'state must be one of: open | review | closed | cancelled.',
-    'Subtask writes also update done:true|false to match.',
     'Refuses to write outside the content root.',
   ]);
   process.exit(target && state ? 0 : 1);
@@ -46,9 +43,6 @@ if (target.endsWith('.md') || target.includes('/')) {
     process.exit(1);
   }
   result = setFrontmatterField(abs, 'state', state);
-  if (result.ok) {
-    setFrontmatterField(abs, 'done', state === 'closed' || state === 'cancelled');
-  }
 } else {
   // Issue id — mutate top-level settings.json
   const settingsPath = path.join(tracker, target, 'settings.json');

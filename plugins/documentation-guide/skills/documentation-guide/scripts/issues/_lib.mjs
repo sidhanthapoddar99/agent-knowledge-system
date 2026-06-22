@@ -143,10 +143,8 @@ function makeSubtask(abs, groupPath) {
     const fm = matter(fs.readFileSync(abs, 'utf-8')).data;
     if (fm.title) title = fm.title;
     if (VALID_STATES.includes(fm.state)) state = fm.state;
-    else if (fm.done === true) state = 'closed';
   } catch { /* malformed frontmatter — keep defaults */ }
-  const done = state === 'closed' || state === 'cancelled';
-  return { slug, sequence, title, state, done, groupPath, filePath: abs, fileName: name };
+  return { slug, sequence, title, state, groupPath, filePath: abs, fileName: name };
 }
 
 /** Subtasks may live under up to 2 levels of grouping folders; the folder

@@ -22,7 +22,7 @@ This routing rule applies to every natural-language phrase the user might use. R
 
 ## Helper scripts — use these, they're the fastest path
 
-The plugin ships 8 issue-tracker CLI wrappers (`docs-list`, `docs-show`, `docs-subtasks`, `docs-agent-logs`, `docs-set-state`, `docs-add-comment`, `docs-add-agent-log`, `docs-review-queue`) on your `PATH`. **Prefer them over hand-rolled grep** — they understand the schema (state vs legacy `done`, component-as-array, agent-log subgroups) and emit terse output by default. Each wrapper internally uses `bun` (preferred) with `node` as fallback.
+The plugin ships 8 issue-tracker CLI wrappers (`docs-list`, `docs-show`, `docs-subtasks`, `docs-agent-logs`, `docs-set-state`, `docs-add-comment`, `docs-add-agent-log`, `docs-review-queue`) on your `PATH`. **Prefer them over hand-rolled grep** — they understand the schema (subtask `state`, component-as-array, agent-log subgroups) and emit terse output by default. Each wrapper internally uses `bun` (preferred) with `node` as fallback.
 
 | Command (script) | What it does |
 |---|---|
@@ -30,7 +30,7 @@ The plugin ships 8 issue-tracker CLI wrappers (`docs-list`, `docs-show`, `docs-s
 | `docs-show` (`show.mjs`) | Print one issue's metadata + subtask state summary + comment & agent-log heads. `--full` for bodies. |
 | `docs-subtasks` (`subtasks.mjs`) | List subtasks for one issue, or across all with `--all`. Default: grouped tree (mirrors the 2-level folders). `--flat` for one-line-per-subtask. Default state: open + review. |
 | `docs-agent-logs` (`agent-logs.mjs`) | Print the last N agent-log entries (default 3) — catch up before resuming work. |
-| `docs-set-state` (`set-state.mjs`) | Update issue status (`settings.json`) or subtask state (frontmatter). Path-allow-listed to the content root. Subtask flips also sync `done:`. |
+| `docs-set-state` (`set-state.mjs`) | Update issue status (`settings.json`) or subtask state (frontmatter). Path-allow-listed to the content root. |
 | `docs-add-comment` (`add-comment.mjs`) | Append a comment with auto-incremented `NNN_` prefix. |
 | `docs-add-agent-log` (`add-agent-log.mjs`) | Append an agent-log entry with auto-incremented iteration. Supports `--group` for subgroups. |
 | `docs-review-queue` (`review-queue.mjs`) | List items needing review — `status: review` issues + `open` issues with `review` subtasks. |

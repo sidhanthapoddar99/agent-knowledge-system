@@ -1,6 +1,6 @@
 ---
 title: "Formatting toolbar (source + live preview)"
-done: false
+state: open
 ---
 
 ## Tasks

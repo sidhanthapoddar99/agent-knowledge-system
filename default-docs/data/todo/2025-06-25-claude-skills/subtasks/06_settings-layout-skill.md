@@ -1,6 +1,5 @@
 ---
 title: "`docs:settings_layout` skill"
-done: true
 state: closed
 ---
 

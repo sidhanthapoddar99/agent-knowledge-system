@@ -1,6 +1,6 @@
 ---
 title: "Implementation — data, loader, routing, API"
-done: true
+state: closed
 ---
 
 The non-visual half of the issues layout — folder model, loader, routing, content-type registration, and the subtask-toggle API.

@@ -1,6 +1,5 @@
 ---
 title: "Define & discuss the structure / layout / theme / shell separation"
-done: false
 state: open
 ---
 

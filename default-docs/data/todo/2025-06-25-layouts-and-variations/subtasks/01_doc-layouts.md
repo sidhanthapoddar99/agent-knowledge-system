@@ -1,6 +1,6 @@
 ---
 title: "Additional doc layouts"
-done: false
+state: open
 ---
 
 ## Tasks

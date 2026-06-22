@@ -1,6 +1,5 @@
 ---
 title: "Colocated assets: serve issue-folder files + rewrite relative image srcs"
-done: true
 state: closed
 ---
 

@@ -1,6 +1,6 @@
 ---
 title: "Menubar & view modes"
-done: true
+state: closed
 ---
 
 ## Tasks

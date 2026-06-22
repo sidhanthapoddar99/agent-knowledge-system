@@ -1,6 +1,5 @@
 ---
 title: "Issues layout — docs"
-done: false
 state: open
 ---
 

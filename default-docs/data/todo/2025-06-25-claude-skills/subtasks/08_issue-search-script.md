@@ -1,6 +1,5 @@
 ---
 title: "Issue search script — regex + filters, drop-in replacement for grep/find"
-done: true
 state: closed
 ---
 

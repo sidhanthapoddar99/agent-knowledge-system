@@ -1,6 +1,5 @@
 ---
 title: "Build + publish pipeline — npm publishing, dist shape, semver policy"
-done: false
 state: open
 ---
 

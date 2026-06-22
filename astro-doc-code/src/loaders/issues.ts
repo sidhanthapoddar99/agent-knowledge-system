@@ -119,10 +119,8 @@ export interface IssueSubtask {
   sequence: number | null;
   /** Display title (from frontmatter `title`, or derived from slug) */
   title: string;
-  /** Canonical 4-state status. Reads `state` first, falls back to `done`. */
+  /** Canonical 4-state status. Defaults to `open` when absent/invalid. */
   state: SubtaskState;
-  /** Legacy boolean alias — true for terminal states (closed | cancelled). */
-  done: boolean;
   /** Folder segments below `subtasks/` — 0/1/2 entries.
    *  `[]` for top-level, `["02_impl"]` for `subtasks/02_impl/01_foo.md`,
    *  `["02_impl", "03_polish"]` for `subtasks/02_impl/03_polish/01_foo.md`. */
@@ -556,24 +554,20 @@ async function readSubtaskFile(
   let state: SubtaskState = 'open';
   try {
     const parsed = matter(fs.readFileSync(abs, 'utf-8'));
-    const fm = parsed.data as { title?: string; done?: boolean; state?: string };
+    const fm = parsed.data as { title?: string; state?: string };
     if (fm.title) title = fm.title;
     if (fm.state === 'open' || fm.state === 'review' || fm.state === 'closed' || fm.state === 'cancelled') {
       state = fm.state;
-    } else if (fm.done === true) {
-      state = 'closed';
     }
   } catch {
     // malformed frontmatter — fall back to defaults
   }
-  const done = state === 'closed' || state === 'cancelled';
   const html = await renderMarkdown(abs, dataPath);
   return {
     slug,
     sequence,
     title,
     state,
-    done,
     groupPath,
     filePath: abs,
     relativePath: path.relative(dataPath, abs),

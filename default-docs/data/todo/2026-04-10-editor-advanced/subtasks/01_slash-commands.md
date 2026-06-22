@@ -1,6 +1,6 @@
 ---
 title: "Slash commands"
-done: false
+state: open
 ---
 
 ## Tasks

@@ -1,7 +1,6 @@
 ---
 title: "Schema-drift detection in `check.mjs` — unknown-key warnings + flag controls"
 state: closed
-done: true
 ---
 
 The existing validator catches *missing* required fields and *invalid* enum values, but tolerates **unknown keys** silently. So a stale `"milestone": "phase-2"` left behind by an incomplete migration would slip through. Add unknown-key detection across every settings + frontmatter surface, with flag controls so the noise is opt-out.

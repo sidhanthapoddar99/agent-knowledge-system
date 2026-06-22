@@ -1,6 +1,5 @@
 ---
 title: Restructuring layout skills
-done: true
 state: closed
 ---
 

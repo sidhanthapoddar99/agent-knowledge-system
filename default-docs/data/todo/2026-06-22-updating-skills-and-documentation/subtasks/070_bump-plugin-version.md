@@ -1,6 +1,5 @@
 ---
 title: Bump the plugin version number
-done: true
 state: closed
 ---
 

@@ -1,6 +1,5 @@
 ---
 title: Build + render-test 3-digit and grouped pages
-done: true
 state: closed
 ---
 

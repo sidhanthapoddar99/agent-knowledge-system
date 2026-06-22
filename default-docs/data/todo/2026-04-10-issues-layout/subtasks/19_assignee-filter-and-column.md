@@ -1,6 +1,5 @@
 ---
 title: "Assignee filter · assignee column · in-progress semantics"
-done: true
 state: closed
 ---
 

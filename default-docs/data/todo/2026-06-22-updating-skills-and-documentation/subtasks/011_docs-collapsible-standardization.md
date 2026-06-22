@@ -1,6 +1,5 @@
 ---
 title: Docs collapsible standardization
-done: true
 state: closed
 ---
 

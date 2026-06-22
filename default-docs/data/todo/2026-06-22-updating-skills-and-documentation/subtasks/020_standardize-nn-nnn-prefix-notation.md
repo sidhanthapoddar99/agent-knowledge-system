@@ -1,6 +1,5 @@
 ---
 title: Standardize NN_ / NNN_ notation (from XX_) + digit-width convention
-done: true
 state: closed
 ---
 

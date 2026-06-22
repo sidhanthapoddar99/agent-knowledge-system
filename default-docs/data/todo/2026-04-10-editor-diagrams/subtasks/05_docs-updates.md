@@ -1,6 +1,6 @@
 ---
 title: "Document first-class diagram pages"
-done: false
+state: open
 ---
 
 Once subtask 04 lands, the user-guide needs updates in a few places so authors know diagrams can be pages *or* embeds and which to pick when.

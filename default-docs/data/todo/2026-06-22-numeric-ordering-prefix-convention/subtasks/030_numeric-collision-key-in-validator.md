@@ -1,6 +1,5 @@
 ---
 title: Validator — 2–5 digit rule + numeric-value collision key
-done: true
 state: closed
 ---
 

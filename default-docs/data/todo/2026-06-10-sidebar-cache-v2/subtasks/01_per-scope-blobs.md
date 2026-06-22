@@ -1,6 +1,5 @@
 ---
 title: "Per-scope blob format + delete-on-default (docs + issues sidebars)"
-done: true
 state: closed
 ---
 

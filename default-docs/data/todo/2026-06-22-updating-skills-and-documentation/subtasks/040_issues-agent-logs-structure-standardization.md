@@ -1,6 +1,5 @@
 ---
 title: Issues agent-logs structure standardization
-done: true
 state: closed
 ---
 

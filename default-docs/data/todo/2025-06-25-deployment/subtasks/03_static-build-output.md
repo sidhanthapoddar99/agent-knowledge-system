@@ -1,6 +1,6 @@
 ---
 title: "Static build output for docs"
-done: false
+state: open
 ---
 
 ## Tasks

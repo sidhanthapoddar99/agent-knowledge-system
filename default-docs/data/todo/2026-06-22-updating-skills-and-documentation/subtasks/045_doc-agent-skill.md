@@ -1,6 +1,5 @@
 ---
 title: Add the `doc-agent` thin operating skill
-done: true
 state: closed
 ---
 

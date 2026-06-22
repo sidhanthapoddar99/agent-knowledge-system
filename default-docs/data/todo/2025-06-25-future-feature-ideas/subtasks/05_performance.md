@@ -1,6 +1,6 @@
 ---
 title: "Performance"
-done: false
+state: open
 ---
 
 ## Offline support

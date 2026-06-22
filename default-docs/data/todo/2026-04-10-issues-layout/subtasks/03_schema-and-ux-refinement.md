@@ -1,6 +1,6 @@
 ---
 title: "Schema & UX refinement (post-migration tuning)"
-done: true
+state: closed
 ---
 
 After the initial implementation landed and we started actually using the tracker, several fields and UI decisions felt heavier than the workflow needed. This pass tightened both the data model and the index UI to match how a small AI-augmented team (2–3 people) actually moves.

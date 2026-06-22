@@ -1,6 +1,6 @@
 ---
 title: "Drag-and-drop file upload"
-done: false
+state: open
 ---
 
 ## Tasks

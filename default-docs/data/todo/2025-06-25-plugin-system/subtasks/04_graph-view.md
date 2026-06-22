@@ -1,6 +1,6 @@
 ---
 title: "Graph view (Obsidian-style)"
-done: false
+state: open
 ---
 
 ## Tasks

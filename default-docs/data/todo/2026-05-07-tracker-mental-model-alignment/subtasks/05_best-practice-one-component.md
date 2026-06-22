@@ -1,7 +1,6 @@
 ---
 title: "Best-practice: 1 component per issue (multiple = exception)"
 state: closed
-done: true
 ---
 
 - [x] Document the convention in the user-guide: an issue should declare a **single primary component**. Multiple components is allowed but should be reserved for genuinely cross-cutting concerns (e.g. a refactor that touches loaders + layouts + plugin scripts simultaneously). When tempted to list two, ask "should this be two issues instead?" — the answer is usually yes.

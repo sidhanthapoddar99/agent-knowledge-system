@@ -1,6 +1,5 @@
 ---
 title: "Astro integration entry point — `documentation-template/integration`"
-done: false
 state: open
 ---
 

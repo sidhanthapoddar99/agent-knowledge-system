@@ -1,6 +1,5 @@
 ---
 title: Unify the issue-tracker side onto the shared parser
-done: true
 state: closed
 ---
 

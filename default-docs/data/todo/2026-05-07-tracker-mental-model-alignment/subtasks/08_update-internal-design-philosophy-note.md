@@ -1,7 +1,6 @@
 ---
 title: "Update the internal design-philosophy note (drop milestone endorsement)"
 state: closed
-done: true
 ---
 
 - [x] Open `default-docs/data/todo/2026-04-10-issues-layout/notes/02_design-philosophy-and-review-state.md`. The current text endorses milestone as the chosen primitive: *"We have **`milestone`** instead — a long-horizon north star that says 'we're working toward this big chunk of value', not 'we promised to ship X by Friday'."* That contradicts the new direction.

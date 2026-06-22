@@ -1,6 +1,5 @@
 ---
 title: "Unified parser pipeline + graph indexer + queries"
-done: false
 state: open
 ---
 

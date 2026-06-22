@@ -1,6 +1,6 @@
 ---
 title: "Mobile compatibility & responsive design"
-done: false
+state: open
 ---
 
 ## Tasks

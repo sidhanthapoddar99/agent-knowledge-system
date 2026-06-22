@@ -1,6 +1,6 @@
 ---
 title: "True WYSIWYG (future)"
-done: false
+state: open
 ---
 
 Real WYSIWYG editing — no markdown syntax visible, formatting feels like Notion / Google Docs. Currently greyed out in the View menu as "Coming Soon".

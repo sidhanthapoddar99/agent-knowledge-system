@@ -1,6 +1,6 @@
 ---
 title: "Plugin architecture"
-done: false
+state: open
 ---
 
 ## Goal

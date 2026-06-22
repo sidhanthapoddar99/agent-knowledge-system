@@ -1,7 +1,6 @@
 ---
 title: "Drop manual `updated` field; derive it from git history (cache loader + UI integration)"
 state: closed
-done: true
 ---
 
 The third field-drop in this issue. Pairs with subtasks 01 (`milestone`) and 02 (`due`) — same "no reference means no reference" cleanup. Difference: the manual `updated` field gets *replaced* with a server-side derivation, not just deleted, so the index can still show meaningful "last touched" dates.

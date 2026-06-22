@@ -7,14 +7,13 @@ The atomic unit of work and the **AI-handoff anchor**. Each leaf `.md` is a firs
 ```yaml
 ---
 title: "Short imperative title"
-done: false
 state: open
 ---
 
 Body — describe the work in enough detail that someone (or an agent) can pick it up cold.
 ```
 
-`done: true` should be paired with `state: closed` (or `review`). `state` follows the same 4-state vocabulary as issue `status` (see [03_vocabulary.md](03_vocabulary.md)), tracked independently per subtask.
+`state` follows the same 4-state vocabulary as issue `status` (see [03_vocabulary.md](03_vocabulary.md)), tracked independently per subtask.
 
 A subtask may live at the root of `subtasks/`, or inside one or two levels of grouping folders (`subtasks/020_implementation/010_backend.md`, `subtasks/020_implementation/020_polish/010_styles.md`). **The folder is a label only** — no folder body file. Folders use the same numbering as leaves and sort interleaved with them.
 
@@ -44,12 +43,12 @@ Unlike docs — where 2-digit is the near-universal default — **the issue trac
    - Inside a themed group → `<issue>/subtasks/NN_<group>/NN_<slug>.md`
    - Inside a sub-phase → `<issue>/subtasks/NN_<group>/NN_<subgroup>/NN_<slug>.md` (deepest the loader accepts)
 3. Find the next prefix in the target folder: `ls <target-folder>/` → use the next gap-spaced value. Folders and leaves share the numbering at each level (they sort interleaved).
-4. Write the file with the standard frontmatter (`title`, `done: false`, `state: open`).
+4. Write the file with the standard frontmatter (`title`, `state: open`).
 5. Body: enough detail to pick up cold; if a related issue/subtask turned up in the duplicate check, link to it in a "Related:" line.
 
 ## Update a subtask state
 
-Prefer the helper (it flips `state` *and* syncs `done:`):
+Prefer the helper (it flips `state`):
 
 ```bash
 docs-set-state <issue>/subtasks/NN_<slug>.md review
@@ -60,7 +59,6 @@ Direct file write:
 ```yaml
 ---
 title: "..."
-done: true
 state: review
 ---
 ```

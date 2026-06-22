@@ -1,6 +1,6 @@
 ---
 title: "Obsidian-style [[ ]] wiki links"
-done: false
+state: open
 ---
 
 ## Tasks

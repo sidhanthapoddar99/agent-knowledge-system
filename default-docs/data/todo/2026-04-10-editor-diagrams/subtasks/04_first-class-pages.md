@@ -1,6 +1,6 @@
 ---
 title: "First-class diagram pages (mermaid / graphviz / excalidraw)"
-done: false
+state: open
 ---
 
 Treat `.mmd` / `.dot` / `.excalidraw` files under a docs tree as **first-class pages** — same `XX_` prefix convention as markdown, same sidebar, same routing. Enabled by default; any section can opt out at the `settings.json` level if desired (docs vs notes use case).

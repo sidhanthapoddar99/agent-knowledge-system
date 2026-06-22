@@ -1,6 +1,6 @@
 ---
 title: "Sizing consistency"
-done: false
+state: open
 ---
 
 ## Tasks

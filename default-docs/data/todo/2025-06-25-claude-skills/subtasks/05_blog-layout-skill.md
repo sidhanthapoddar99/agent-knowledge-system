@@ -1,6 +1,5 @@
 ---
 title: "`docs:blog_layout` skill"
-done: true
 state: closed
 ---
 

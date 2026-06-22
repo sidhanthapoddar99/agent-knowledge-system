@@ -1,6 +1,5 @@
 ---
 title: "Update dev-docs — engine + architecture"
-done: false
 state: open
 ---
 

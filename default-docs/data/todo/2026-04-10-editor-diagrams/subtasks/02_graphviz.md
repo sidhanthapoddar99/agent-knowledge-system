@@ -1,6 +1,6 @@
 ---
 title: "Graphviz / DOT rendering"
-done: false
+state: open
 ---
 
 ## Tasks

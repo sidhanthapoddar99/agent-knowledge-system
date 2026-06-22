@@ -1,6 +1,5 @@
 ---
 title: "Autoconvert shorthand → URLs; autorewrite on rename"
-done: false
 state: open
 ---
 

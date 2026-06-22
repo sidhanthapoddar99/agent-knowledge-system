@@ -1,6 +1,5 @@
 ---
 title: "Externalise paths.ts / alias.ts / config.ts so the engine takes project root as input"
-done: false
 state: open
 ---
 

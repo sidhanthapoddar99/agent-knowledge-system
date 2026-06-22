@@ -1,6 +1,5 @@
 ---
 title: "Re-root relative links in the root issue.md (issues-only postprocessor)"
-done: true
 state: closed
 ---
 

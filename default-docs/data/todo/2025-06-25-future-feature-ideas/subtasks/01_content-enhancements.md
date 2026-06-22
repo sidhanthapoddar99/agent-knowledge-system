@@ -1,6 +1,6 @@
 ---
 title: "Content enhancements"
-done: false
+state: open
 ---
 
 ## Interactive code blocks

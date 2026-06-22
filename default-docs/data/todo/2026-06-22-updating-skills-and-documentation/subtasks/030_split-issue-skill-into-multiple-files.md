@@ -1,6 +1,5 @@
 ---
 title: Split the issue skill reference into multiple files
-done: true
 state: closed
 ---
 

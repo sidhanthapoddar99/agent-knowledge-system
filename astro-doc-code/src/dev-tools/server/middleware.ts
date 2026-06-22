@@ -7,7 +7,7 @@
  * - POST /__editor/open      — Open document + create Yjs room
  * - POST /__editor/save      — Save document to disk
  * - POST /__editor/close     — Close document, destroy Yjs room
- * - POST /__editor/subtask-toggle — Flip `done` in a subtask's frontmatter
+ * - POST /__editor/subtask-toggle — Set a subtask's `state` in its frontmatter
  * - POST /__editor/presence  — Presence actions (join/leave/page/cursor-clear)
  * - WS   /__editor/yjs       — Yjs CRDT sync + cursors, ping, config, render (handled by YjsSync)
  *
@@ -376,7 +376,7 @@ export function setupEditorMiddleware(
         }
 
         case '/__editor/subtask-toggle': {
-          const { filePath, done, state } = body;
+          const { filePath, state } = body;
           if (!filePath || typeof filePath !== 'string') {
             return sendJson(res, 400, { error: 'filePath is required' });
           }
@@ -391,27 +391,16 @@ export function setupEditorMiddleware(
           if (allowed && !allowed.some((wp) => resolved.startsWith(path.resolve(wp)))) {
             return sendJson(res, 403, { error: 'Path not allowed' });
           }
-          // Resolve the target 4-state value. Prefer explicit `state`; else
-          // translate legacy boolean `done` (true → closed, false → open).
+          // `state` is the sole source of truth — one of the 4 canonical values.
           const VALID = new Set(['open', 'review', 'closed', 'cancelled']);
-          let nextState: string;
-          if (typeof state === 'string' && VALID.has(state)) {
-            nextState = state;
-          } else if (typeof done === 'boolean') {
-            nextState = done ? 'closed' : 'open';
-          } else {
-            return sendJson(res, 400, { error: 'state or done is required' });
+          if (typeof state !== 'string' || !VALID.has(state)) {
+            return sendJson(res, 400, { error: 'state is required (open|review|closed|cancelled)' });
           }
           const raw = fs.readFileSync(resolved, 'utf-8');
           const parsed = matter(raw);
-          const data = { ...parsed.data, state: nextState };
-          delete (data as any).done; // legacy field — canonicalize to `state`
+          const data = { ...parsed.data, state };
           fs.writeFileSync(resolved, matter.stringify(parsed.content, data));
-          return sendJson(res, 200, {
-            ok: true,
-            state: nextState,
-            done: nextState === 'closed' || nextState === 'cancelled',
-          });
+          return sendJson(res, 200, { ok: true, state });
         }
 
         case '/__editor/delete': {

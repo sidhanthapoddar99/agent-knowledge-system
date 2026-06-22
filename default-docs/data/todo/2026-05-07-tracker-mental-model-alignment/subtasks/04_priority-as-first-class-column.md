@@ -1,7 +1,6 @@
 ---
 title: "Make `priority` a first-class index column (sortable, filterable, prominent)"
 state: closed
-done: true
 ---
 
 - [x] Add a dedicated **Priority** column to `IssuesTable.astro` and `IssuesCards.astro` (whatever shape fits cards — a small chip, probably). Today priority is encoded as a coloured dot or small chip alongside other metadata; once milestone goes, it should be its own visual column / row item.

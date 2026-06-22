@@ -1,6 +1,5 @@
 ---
 title: "`docs:writing` skill"
-done: true
 state: closed
 ---
 

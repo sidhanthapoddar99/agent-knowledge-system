@@ -1,6 +1,6 @@
 ---
 title: "Split-screen / diff layouts (multiple docs at once)"
-done: false
+state: open
 ---
 
 ## Tasks

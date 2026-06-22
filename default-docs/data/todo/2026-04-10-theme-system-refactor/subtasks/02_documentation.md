@@ -1,6 +1,5 @@
 ---
 title: "Documentation for the refactored theme system"
-done: false
 state: closed
 ---
 

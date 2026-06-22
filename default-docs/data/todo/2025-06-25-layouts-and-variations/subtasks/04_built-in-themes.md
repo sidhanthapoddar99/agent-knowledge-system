@@ -1,6 +1,6 @@
 ---
 title: "Built-in themes"
-done: false
+state: open
 ---
 
 ## Tasks

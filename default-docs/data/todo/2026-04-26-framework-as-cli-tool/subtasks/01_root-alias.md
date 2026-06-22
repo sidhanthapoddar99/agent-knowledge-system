@@ -1,6 +1,5 @@
 ---
 title: "@root alias + supporting scaffold (defaults rename, template, init)"
-done: true
 state: closed
 ---
 

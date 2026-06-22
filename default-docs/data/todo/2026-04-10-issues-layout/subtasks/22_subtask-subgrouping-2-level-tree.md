@@ -1,7 +1,6 @@
 ---
 title: "Subtasks: 2-level folder subgrouping (mirror notes / agent-log)"
 state: closed
-done: true
 ---
 
 - [ ] **Loader: discover folders inside `subtasks/` up to 2 levels deep.** Today `subtasks/` contains flat `NNN_*.md` files. Extend the loader so a `NNN_<group>/` folder is treated as a logical group containing leaf subtasks. Each leaf `NNN_*.md` inside (at any depth ≤ 2) remains a **first-class subtask** — full `state`/`done` frontmatter, its own URL, counted independently in totals, surfaced individually in `docs-list` search. The folder itself has **no body file**; it's a grouping label, not a parent subtask.

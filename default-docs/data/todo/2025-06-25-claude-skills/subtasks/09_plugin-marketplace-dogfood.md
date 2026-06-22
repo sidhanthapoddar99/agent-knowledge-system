@@ -1,6 +1,5 @@
 ---
 title: "Plugin marketplace · dogfood install · init slash commands · retire download-script"
-done: true
 state: closed
 ---
 

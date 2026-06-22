@@ -1,6 +1,5 @@
 ---
 title: "Method 3 — Docker (Claude skill generates Dockerfile + docker-compose + nginx)"
-done: true
 state: cancelled
 ---
 

@@ -1,6 +1,6 @@
 ---
 title: "Developer tools"
-done: false
+state: open
 ---
 
 ## Hot reload enhancements

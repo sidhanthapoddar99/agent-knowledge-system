@@ -1,6 +1,5 @@
 ---
 title: "Make component a multi-select field (list)"
-done: true
 state: closed
 ---
 

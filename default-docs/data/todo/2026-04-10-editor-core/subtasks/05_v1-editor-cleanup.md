@@ -1,6 +1,6 @@
 ---
 title: "V1 editor cleanup"
-done: true
+state: closed
 ---
 
 V1 editor code was removed; `src/dev-toolbar/editor/` now contains only the shared v2 backend.

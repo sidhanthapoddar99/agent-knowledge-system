@@ -26,6 +26,8 @@ Pick the reference file that matches the task. Read **only the one(s) you need**
 
 Cross-cutting tasks read multiple references. Example: *"add a new docs section and write its first page"* → read `settings-layout.md` (registering the section) **and** `writing.md` (writing the page).
 
+**Format migrations / legacy content** → see `references/doc-migration.md`. Reach for it when any of these surface: the user **explicitly asks to migrate / convert / upgrade** content to a new format; a **build error or validator warning points at a legacy, deprecated, old-format, or unknown frontmatter field** (e.g. a removed field still present in `.md` files); or the user asks to **"check legacy" / "does X need migrating?" / "is this the old format?"**. Keywords: *migrate, migration, legacy, deprecated, old format, convert content, upgrade format, backfill field, bulk frontmatter rewrite*. Migrations rewrite content in place — **always run the detect pass and confirm with the user before applying** (except when they explicitly asked to run it).
+
 ## Project orientation
 
 **Consumer mode** (default) — the user's project root, with the framework as a subfolder:

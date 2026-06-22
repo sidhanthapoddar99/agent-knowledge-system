@@ -1,6 +1,6 @@
 ---
 title: "Theme creation process — docs"
-done: false
+state: open
 ---
 
 Absorbed from `2025-06-25-layouts-and-variations/subtasks/04_built-in-themes.md` — specifically the *"Document theme creation process"* checkbox. The rest of that subtask (adding Corporate / Playful / Terminal built-in themes) stays in its source issue.

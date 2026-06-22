@@ -1,7 +1,6 @@
 ---
 title: "Notes + agent-log: optional `color` frontmatter that tints the sidebar icon"
 state: closed
-done: true
 ---
 
 - [x] **Parse `color` frontmatter.** Extend the notes and agent-log frontmatter schema with an optional `color: <css-color>` field. Accept any string the browser accepts as a CSS color — named colors (`red`, `salmon`), hex (`#e06c75`, `#f00`), or longer forms. No vocabulary token system, no theme-alias mapping. The user picks; the framework doesn't impose semantics.

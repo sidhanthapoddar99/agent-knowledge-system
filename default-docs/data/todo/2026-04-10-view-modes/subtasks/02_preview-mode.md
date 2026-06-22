@@ -1,6 +1,6 @@
 ---
 title: "Preview mode (rendered HTML)"
-done: false
+state: open
 ---
 
 The pure render mode — no editor surface, just the rendered HTML output of the document.

@@ -1,6 +1,6 @@
 ---
 title: "Client-side markdown rendering"
-done: false
+state: open
 ---
 
 Move markdown → HTML rendering from server to browser so preview is instant.

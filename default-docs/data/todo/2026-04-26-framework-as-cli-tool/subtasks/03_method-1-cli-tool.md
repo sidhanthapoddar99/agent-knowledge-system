@@ -1,6 +1,5 @@
 ---
 title: "Method 1 — CLI tool (Go binary, compose-driven, strict)"
-done: true
 state: cancelled
 ---
 

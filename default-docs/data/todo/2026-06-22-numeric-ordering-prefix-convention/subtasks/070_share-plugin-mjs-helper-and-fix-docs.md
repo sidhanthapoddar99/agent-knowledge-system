@@ -1,6 +1,5 @@
 ---
 title: Share the grammar in the plugin (mjs) and reconcile the reference docs
-done: true
 state: closed
 ---
 

@@ -1,6 +1,5 @@
 ---
 title: "Surfaces — backlinks cards + graph dev-tools app"
-done: false
 state: open
 ---
 

@@ -1,6 +1,6 @@
 ---
 title: "Yjs CRDT via WebSocket"
-done: true
+state: closed
 ---
 
 ## Tasks

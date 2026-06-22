@@ -1,6 +1,5 @@
 ---
 title: "Dev-tools split — does the live editor / Yjs / cache inspector ship in the package?"
-done: false
 state: open
 ---
 

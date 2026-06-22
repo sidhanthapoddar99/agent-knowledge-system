@@ -1,6 +1,6 @@
 ---
 title: "Mermaid & GraphViz support"
-done: true
+state: closed
 ---
 
 ## Tasks

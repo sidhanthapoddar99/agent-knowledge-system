@@ -1,6 +1,6 @@
 ---
 title: "Auth and access control"
-done: false
+state: open
 ---
 
 Absorbed from the original `2025-06-25-editor-security` top-level issue (now deleted) — folded in here because authentication and access control only become meaningful once the editor is its own deployable product. In the current TS-in-Astro setup, the editor is dev-only and gating it would be premature.

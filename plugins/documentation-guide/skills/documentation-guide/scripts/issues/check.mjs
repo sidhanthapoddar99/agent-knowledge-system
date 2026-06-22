@@ -9,7 +9,7 @@
  *   • Every issue folder matches YYYY-MM-DD-<slug>/
  *   • Every issue has settings.json + issue.md
  *   • Issue settings.json carries required fields and uses vocabulary values
- *   • Subtasks have valid `state` (open|review|closed|cancelled), or legacy `done: true`
+ *   • Subtasks have valid `state` (open|review|closed|cancelled)
  *   • Comments / agent-logs follow naming conventions (warned, not errored)
  *   • Stray .md at folder root (other than issue.md) → warning
  *
@@ -56,7 +56,7 @@ const ISSUE_SETTINGS_KEYS = new Set([
 ]);
 const TRACKER_ROOT_KEYS = new Set(['label', 'fields', 'authors', 'views', 'draft']);
 const TRACKER_FIELD_KEYS = new Set(['status', 'priority', 'component', 'labels']);
-const SUBTASK_FM_KEYS = new Set(['title', 'state', 'done', 'sidebar_label']);
+const SUBTASK_FM_KEYS = new Set(['title', 'state', 'sidebar_label']);
 const NOTE_FM_KEYS = new Set([
   'title', 'description', 'sidebar_label', 'author', 'date', 'created', 'tags',
   'color',
@@ -195,8 +195,8 @@ for (const entry of issueFolders) {
             if (fm.state !== undefined && !VALID_SUBTASK_STATES.includes(fm.state)) {
               errors.push(`${id}/subtasks/${rel}: invalid state \`${fm.state}\``);
             }
-            if (fm.state === undefined && fm.done === undefined) {
-              warnings.push(`${id}/subtasks/${rel}: no \`state:\` or \`done:\` — defaults to open`);
+            if (fm.state === undefined) {
+              warnings.push(`${id}/subtasks/${rel}: no \`state:\` — defaults to open`);
             }
             reportDrift(`${id}/subtasks/${rel}`, unknownKeys(fm, SUBTASK_FM_KEYS), SUBTASK_FM_KEYS);
           } catch (err) {

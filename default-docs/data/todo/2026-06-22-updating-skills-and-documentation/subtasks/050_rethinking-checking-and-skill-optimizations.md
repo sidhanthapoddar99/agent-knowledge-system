@@ -1,6 +1,5 @@
 ---
 title: Rethinking checking & skill optimizations
-done: true
 state: closed
 ---
 

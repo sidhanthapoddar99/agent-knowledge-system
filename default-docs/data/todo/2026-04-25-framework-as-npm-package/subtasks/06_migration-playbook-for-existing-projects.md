@@ -1,6 +1,5 @@
 ---
 title: "Migration playbook — moving the 30 existing projects from full-clone to thin-shell"
-done: false
 state: open
 ---
 

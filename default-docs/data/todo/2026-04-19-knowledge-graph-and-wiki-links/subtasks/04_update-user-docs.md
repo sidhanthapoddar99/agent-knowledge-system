@@ -1,6 +1,5 @@
 ---
 title: "Update user-guide + migration note"
-done: false
 state: open
 ---
 

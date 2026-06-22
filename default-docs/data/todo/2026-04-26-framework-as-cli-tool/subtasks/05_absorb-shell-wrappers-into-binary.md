@@ -1,6 +1,5 @@
 ---
 title: "Absorb the 11 shell wrappers into the CLI binary"
-done: true
 state: cancelled
 ---
 

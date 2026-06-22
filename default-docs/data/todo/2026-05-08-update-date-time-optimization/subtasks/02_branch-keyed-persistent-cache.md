@@ -1,7 +1,6 @@
 ---
 title: "Branch-keyed persistent cache + server-start pre-warm"
 state: open
-done: false
 ---
 
 Builds on subtask 01. Adds disk persistence with **one cache file per branch**, plus a server-start hook that loads the active branch's file (or builds fresh) before the first request lands. After this lands, three classes of cost go to near-zero: server-restart cold start, branch switches between known branches, and any subsequent reads.

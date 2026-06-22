@@ -1,6 +1,5 @@
 ---
 title: "Package boundary design — what's in the package vs in the consumer"
-done: false
 state: open
 ---
 

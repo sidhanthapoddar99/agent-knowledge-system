@@ -1,6 +1,6 @@
 ---
 title: "Canvas rendering research"
-done: true
+state: closed
 ---
 
 Researched — no production-ready solution exists. Sticking with CM6 (DOM-based) for now.

@@ -1,6 +1,5 @@
 ---
 title: "Update Claude skills — authoring + graph queries"
-done: false
 state: open
 ---
 

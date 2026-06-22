@@ -1,6 +1,5 @@
 ---
 title: "Browser Cache dev-toolbar app (list + clear localStorage state)"
-done: true
 state: closed
 ---
 

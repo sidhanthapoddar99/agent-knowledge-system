@@ -1,6 +1,6 @@
 ---
 title: "File explorer"
-done: false
+state: open
 ---
 
 The default secondary-sidebar panel — full file tree CRUD with form editors for `settings.json` and frontmatter.

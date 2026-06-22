@@ -1,6 +1,6 @@
 ---
 title: "Analytics & insights"
-done: false
+state: open
 ---
 
 ## Content analytics

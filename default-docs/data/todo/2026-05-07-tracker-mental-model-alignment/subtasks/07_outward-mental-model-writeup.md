@@ -1,7 +1,6 @@
 ---
 title: "Outward-facing mental-model writeup (user-guide + plugin skill + CLAUDE.md)"
 state: closed
-done: true
 ---
 
 - [x] **User-guide front page for the issues section.** Add (or rewrite) the overview page at `default-docs/data/user-guide/19_issues/01_*.md` so the *first thing* anyone reads is what this tracker is for: structured memory of thought-work for AI-augmented development, not project planning. Spell out the planning → execution flow (issue → notes → subtasks → agent-log → comments) and the deliberate omissions (no sprints, no due dates, no milestones).

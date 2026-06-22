@@ -1,6 +1,6 @@
 ---
 title: "TOC view"
-done: false
+state: open
 ---
 
 ## Tasks

@@ -1,6 +1,6 @@
 ---
 title: "Resolved historical bugs"
-done: true
+state: closed
 ---
 
 Fixed bugs from the Editor V2 development loop — kept here for the audit trail.

@@ -1,7 +1,6 @@
 ---
 title: "Eager incremental refresh (in-memory)"
 state: open
-done: false
 ---
 
 Replace lazy invalidation with eager incremental update inside the watcher handler. The cache stops being deleted on git events; instead the listener walks `<lastHash>..HEAD` and patches entries in place. Reads stop touching git entirely.

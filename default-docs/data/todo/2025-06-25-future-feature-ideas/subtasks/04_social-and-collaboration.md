@@ -1,6 +1,6 @@
 ---
 title: "Social & collaboration"
-done: false
+state: open
 ---
 
 ## Comments

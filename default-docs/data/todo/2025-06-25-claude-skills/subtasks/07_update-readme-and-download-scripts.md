@@ -1,6 +1,5 @@
 ---
 title: "Update user-guide skill catalogue + download-skills.{mjs,sh}"
-done: true
 state: cancelled
 ---
 

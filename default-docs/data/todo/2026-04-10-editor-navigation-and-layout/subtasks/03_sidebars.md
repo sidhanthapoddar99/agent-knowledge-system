@@ -1,6 +1,6 @@
 ---
 title: "Primary & secondary sidebars (VSCode-style)"
-done: false
+state: open
 ---
 
 ## Model

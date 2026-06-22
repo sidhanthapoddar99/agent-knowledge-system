@@ -1,6 +1,5 @@
 ---
 title: "Editor v2 documentation"
-done: false
 state: review
 ---
 

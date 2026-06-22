@@ -1,6 +1,5 @@
 ---
 title: "Documentation & skills (split & moved)"
-done: true
 state: closed
 ---
 

@@ -1,7 +1,6 @@
 ---
 title: "Issues sidebar: sync selection + scroll-into-view to opened sub-doc"
 state: closed
-done: true
 ---
 
 - [ ] On every navigation (initial load + client-side route changes), find the sub-doc tree entry matching the current URL — issue body, subtask, comment, note, or agent-log entry — and mark it active.

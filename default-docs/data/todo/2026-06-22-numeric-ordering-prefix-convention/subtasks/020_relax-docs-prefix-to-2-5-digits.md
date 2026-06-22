@@ -1,6 +1,5 @@
 ---
 title: Relax docs prefix to 2–5 digits across the 5 hard-coded spots
-done: true
 state: closed
 ---
 

@@ -1,6 +1,6 @@
 ---
 title: "Search"
-done: false
+state: open
 ---
 
 ## Goal

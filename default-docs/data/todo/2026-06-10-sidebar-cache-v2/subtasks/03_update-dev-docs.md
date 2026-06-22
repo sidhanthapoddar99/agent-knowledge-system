@@ -1,6 +1,5 @@
 ---
 title: "Update the sidebar-state-cache dev-docs page to the v2 format"
-done: true
 state: closed
 ---
 

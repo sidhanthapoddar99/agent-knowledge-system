@@ -1,6 +1,5 @@
 ---
 title: Update docs-layout / issue-layout references for 2–5 digit + grouping
-done: true
 state: closed
 ---
 

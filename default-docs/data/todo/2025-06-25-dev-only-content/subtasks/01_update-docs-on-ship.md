@@ -1,6 +1,5 @@
 ---
 title: "Update docs when feature ships"
-done: false
 state: open
 ---
 

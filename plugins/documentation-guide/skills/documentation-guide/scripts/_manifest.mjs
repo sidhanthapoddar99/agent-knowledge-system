@@ -203,6 +203,40 @@ export const MANIFEST = [
     ],
   },
 
+  // ---- git metadata (group: git, category 1) -------------------------------
+  {
+    bin: 'docs-git-updated', group: 'git', verb: 'updated', category: 1, script: 'git/updated.mjs', runtime: 'mjs',
+    summary: 'Last-commit date/author/subject for any issue/doc/post path',
+    flags: [{ name: 'json', desc: 'structured JSON output' }],
+  },
+  {
+    bin: 'docs-git-changed', group: 'git', verb: 'changed', category: 1, script: 'git/changed.mjs', runtime: 'mjs',
+    summary: 'Content changed under data/ since a ref (review sweeps)',
+    flags: [
+      { name: 'since', value: 'ref', desc: 'git ref to diff against (required)' },
+      { name: 'type', value: 'list', desc: 'restrict scope: docs,blog,issues' },
+      { name: 'json', desc: 'structured JSON output' },
+    ],
+  },
+  {
+    bin: 'docs-git-log', group: 'git', verb: 'log', category: 1, script: 'git/log.mjs', runtime: 'mjs',
+    summary: 'Commit history of one issue/doc/post folder or file',
+    flags: [
+      { name: 'limit', value: 'N', desc: 'max commits (default 20)' },
+      { name: 'json', desc: 'structured JSON output' },
+    ],
+  },
+  {
+    bin: 'docs-git-commit', group: 'git', verb: 'commit', category: 1, script: 'git/commit.mjs', runtime: 'mjs',
+    summary: 'GUARDED: stage + commit ONLY one content path (never pushes)',
+    flags: [
+      { name: 'scope', value: 'path', desc: 'the only path to stage + commit (required)' },
+      { name: 'message', alias: 'm', value: 'msg', desc: 'commit message (required)' },
+      { name: 'dry-run', desc: 'show what would be committed, do nothing' },
+      { name: 'json', desc: 'structured JSON output' },
+    ],
+  },
+
   // ---- cross-content (top-level, category 1) -------------------------------
   {
     bin: 'docs-find', group: null, verb: 'find', category: 1, script: 'find.mjs', runtime: 'mjs',

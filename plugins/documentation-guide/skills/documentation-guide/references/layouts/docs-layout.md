@@ -53,16 +53,31 @@ Required in every docs folder. Minimal shape:
 {
   "label": "Getting Started",
   "position": 5,
+  "collapsible": false,
   "collapsed": false
 }
 ```
+
+(A level-1 group — always-open header. See the depth-based defaults below.)
 
 | Field | Type | Default | Notes |
 |---|---|---|---|
 | `label` | string | folder name | Sidebar label |
 | `position` | number | from prefix | Override prefix-based order |
-| `collapsed` | boolean | `false` | Initial sidebar state |
+| `collapsible` | boolean | `true` | Whether the sidebar group can be collapsed at all. `false` = a permanently-open section header (no toggle) |
+| `collapsed` | boolean | `false` | Initial sidebar state — `true` starts collapsed (only applies when `collapsible` is `true`) |
 | `nav_hide` | boolean | `false` | Hide from sidebar (page still accessible by URL) |
+
+### Recommended collapse defaults (depth-based)
+
+The framework's built-in fallback is `collapsible: true` / `collapsed: false` at every depth. Override per folder to this house convention unless the user asks otherwise:
+
+| Folder depth (within a section) | `collapsible` | `collapsed` | Effect |
+|---|---|---|---|
+| **Level 1** — top-level groups (the major sidebar headings) | `false` | `false` | Always-open section headers — no toggle, content always visible |
+| **Level 2+** — nested subfolders | `true` | `true` | Collapsible and **start collapsed**, so the sidebar opens tidy and the reader expands what they need |
+
+Rationale: the top-level groups are the map of the section and should always be readable; deeper nesting is detail that should fold away by default so the sidebar doesn't overwhelm. Set both fields explicitly in each folder's `settings.json` (don't rely on the framework fallback, which differs). Deviate freely when a section is shallow or a specific group should stay open — this is a sensible default, not a rule.
 
 ## Page frontmatter
 

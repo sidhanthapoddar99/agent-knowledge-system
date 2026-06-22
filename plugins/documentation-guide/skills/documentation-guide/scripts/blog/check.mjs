@@ -27,9 +27,12 @@ if (process.argv[2] === '--help' || process.argv[2] === '-h') {
   process.exit(0);
 }
 
+const JSON_OUT = process.argv.includes('--json');
+const POSITIONAL = process.argv.slice(2).find((a) => !a.startsWith('-'));
+
 let ROOT;
-if (process.argv[2]) {
-  ROOT = process.argv[2];
+if (POSITIONAL) {
+  ROOT = POSITIONAL;
 } else {
   // Derive from .env — no hardcoded folder name
   const ctx = resolveProjectContext(SCRIPT_DIR);
@@ -73,4 +76,4 @@ for (const entry of entries) {
   }
 }
 
-reportAndExit({ kind: 'blog', root: ROOT, errors, warnings });
+reportAndExit({ kind: 'blog', root: ROOT, errors, warnings, json: JSON_OUT });

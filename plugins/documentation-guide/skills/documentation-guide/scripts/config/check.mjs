@@ -31,9 +31,12 @@ if (process.argv[2] === '--help' || process.argv[2] === '-h') {
   process.exit(0);
 }
 
+const JSON_OUT = process.argv.includes('--json');
+const POSITIONAL = process.argv.slice(2).find((a) => !a.startsWith('-'));
+
 let ROOT;
-if (process.argv[2]) {
-  ROOT = process.argv[2];
+if (POSITIONAL) {
+  ROOT = POSITIONAL;
 } else {
   // Derive from .env — config dir is exactly CONFIG_DIR
   const ctx = resolveProjectContext(SCRIPT_DIR);
@@ -49,7 +52,7 @@ const warnings = [];
 
 if (!fs.existsSync(SITE)) {
   errors.push(`Missing required: ${SITE}`);
-  reportAndExit({ kind: 'config', root: ROOT, errors, warnings });
+  reportAndExit({ kind: 'config', root: ROOT, errors, warnings, json: JSON_OUT });
 }
 if (!fs.existsSync(NAVBAR)) warnings.push(`Missing: ${NAVBAR}`);
 if (!fs.existsSync(FOOTER)) warnings.push(`Missing: ${FOOTER}`);
@@ -109,7 +112,7 @@ if (fs.existsSync(FOOTER)) {
   }
 }
 
-reportAndExit({ kind: 'config', root: ROOT, errors, warnings });
+reportAndExit({ kind: 'config', root: ROOT, errors, warnings, json: JSON_OUT });
 
 // ---------- helpers ----------------------------------------------------------
 

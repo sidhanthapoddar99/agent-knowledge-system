@@ -12,7 +12,7 @@ Live execution checklist (mirrors the subtask plan; update status as the run pro
 - [x] 02 — `_cli.mjs` shared contract (parser/help/output/error) → lifted, no regression
 - [x] 03 — command manifest (`_manifest.mjs`; routing + harness manifest-driven; subcommand form live)
 - [x] 04 — `help`/discovery command + `help --json` → `help.mjs`, harness 35/59
-- [ ] 05 — roll uniform contract to every command (`-h`, stdout help, `--json`, exit codes)
+- [x] 05 — roll uniform contract to every command → global --help/-h interceptor + validator --json; **harness 59/59 GREEN**
 
 ## Correctness & cleanup
 - [ ] 06 — wire orphans (`docs-check-issues`, resolve `check-skill-links`)

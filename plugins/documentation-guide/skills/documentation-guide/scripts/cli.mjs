@@ -14,6 +14,7 @@
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { MANIFEST, resolveCommand } from './_manifest.mjs';
+import { renderCommandDetail } from './_help-render.mjs';
 
 const tokens = process.argv.slice(2);
 const match = resolveCommand(tokens);
@@ -30,6 +31,16 @@ if (!match) {
 }
 
 const { entry, rest } = match;
+
+// Category-0 contract (subtask 05): a global --help/-h interceptor. Because every
+// command routes through here, handling help centrally gives EVERY command a
+// uniform `--help`/`-h` → stdout, exit 0 — generated from the manifest — without
+// touching each script. The `help` command itself renders the full listing, so
+// let it through to its own handler.
+if (entry.bin !== 'docs-help' && rest.some((a) => a === '--help' || a === '-h')) {
+  process.stdout.write(renderCommandDetail(entry) + '\n');
+  process.exit(0);
+}
 
 // Future polyglot (subtask 13): non-mjs runtimes route to their interpreter.
 if (entry.runtime && entry.runtime !== 'mjs') {

@@ -1,10 +1,34 @@
 ---
-title: "050 — skill review & optimization (ideation, not yet scoped for build)"
+title: "050 — skill review & optimization (scoped; building)"
 ---
 
-# Rethinking checking & skill optimizations — ideation
+# Rethinking checking & skill optimizations
 
-Scoping pass for [subtask 050](../subtasks/050_rethinking-checking-and-skill-optimizations.md), reviewed through the `skill-creator` lens (progressive disclosure, lean bodies, scripts-for-repeated-work, description-triggering) plus a correctness/redundancy pass over the four validators. **Nothing here is implemented** — it's the menu to discuss before building.
+Scoping pass for [subtask 050](../subtasks/050_rethinking-checking-and-skill-optimizations.md), reviewed through the `skill-creator` lens (progressive disclosure, lean bodies, scripts-for-repeated-work, description-triggering) plus a correctness/redundancy pass over the four validators.
+
+## Agreed direction (decided 2026-06-22)
+
+Discussed in simple terms and settled on: **the skill *text* is already optimized** (lean bodies, good progressive disclosure post-030) — the real refactor is in the **validator scripts**, which is maintainability, not hot-path token cost. Plan, in order:
+
+1. **DO — validator de-dup (A1 + A2).** Route `issues/check.mjs` through the shared `_order-prefix.mjs` (kill the drifting private copy of the numbering rule), and extract a shared `scripts/_check-lib.mjs` so the four validators stop each re-writing read-file / parse-frontmatter / read-settings / assert-`title:`. Highest value, low risk, behaviour-preserving.
+2. **DO — correctness audit (B)** while in the code: settings-parses-not-just-exists, legacy `-` separator accepted, agent-log structure stays advisory (no hard errors), `--strict` parity.
+3. **DO — hygiene (C3 + C4):** TOC on `settings-layout.md` (429 lines); a small skill-internal link checker.
+4. **LATER — description optimizer (C5):** separate eval session (needs `claude -p` runs), done last so it tests the final descriptions.
+5. **SKIP (D):** no `docs-dupe-check` wrapper; don't move the CLI table out of the body; don't merge the two skills; don't restructure the skill text.
+
+The detail behind each item is below.
+
+## Outcome (built 2026-06-22)
+
+Done and verified:
+
+- **A2 — shared `scripts/_check-lib.mjs`** (new): `FRONTMATTER_TITLE_RE` / `hasFrontmatterTitle`, `readText`, `readJsonChecked`, and `reportAndExit` (the report/exit block all four validators duplicated). Refactored `docs/`, `blog/`, `config/`, `issues/` `check.mjs` onto it. Verified **behaviour-preserving**: captured each validator's output before + after across 7 invocations (incl. `--quiet` / `--strict`) — all 7 byte-identical, exit codes unchanged.
+- **A1 — turned out to be a non-issue (correction).** The original claim that `issues/check.mjs` keeps a *drifting private copy* of the prefix grammar was **wrong**: `issues/_lib.mjs` already imports `parseOrderPrefixLoose` from the shared `_order-prefix.mjs`, and `check.mjs` goes through `_lib`. The grep that showed "0 refs" only meant `check.mjs` imports indirectly. No private copy exists; nothing to fix. (The read-through in B is exactly what caught this.)
+- **B — correctness:** added a **settings.json *parse* check** to `docs/check.mjs` (presence ≠ valid JSON; now errors on malformed JSON — probe-tested). Confirmed the other audit items are already fine: legacy `-` separator is accepted (via `_lib`), the agent-log typed-workspace numbering is advisory-only (no hard errors / no false warnings on flat logs), and `--strict` parity is a non-goal (only `issues` has an unknown-key schema).
+- **C3 — TOC** added to `settings-layout.md` (429 lines).
+- **C4 — `scripts/check-skill-links.mjs`** (new): walks every skill `.md`, verifies relative `*.md` links resolve (strips `#anchors`, external/alias/absolute, and links inside inline code spans so `docs-move` examples don't false-positive). Clean on the current skill; negative-tested against a planted broken link. Run via `bun …/scripts/check-skill-links.mjs` — it's a skill-maintenance tool, not an end-user wrapper, so no `docs-*` PATH shim.
+
+Deferred / skipped as agreed: **C5** (description optimizer — separate eval session) and all **D** items.
 
 ## Snapshot (measured 2026-06-22)
 
@@ -27,7 +51,7 @@ Verdict on token-efficiency: **the skill is in good shape post-030.** Bodies are
 
 ### A. Validators — kill duplication & drift risk *(highest value)*
 
-1. **Route `issues/check.mjs` through `_order-prefix.mjs`.** That file is the canonical grammar (an intentional mirror of `src/parsers/core/order-prefix.ts`), but the issues validator reimplements prefix parsing inline. Two copies of the same grammar in one plugin = drift risk; the issues validator is exactly where the `NN_`/`NNN_` + legacy-`-` (`*Loose`) rules matter most. Make it import the shared helper.
+1. ~~**Route `issues/check.mjs` through `_order-prefix.mjs`.**~~ **WITHDRAWN — non-issue (see Outcome above).** On read-through, `issues/_lib.mjs` already imports `parseOrderPrefixLoose` from the shared `_order-prefix.mjs`; `check.mjs` consumes `_lib`. There is no drifting private copy. The "0 refs" grep just meant the import is indirect.
 2. **Extract a tiny shared `scripts/_check-lib.mjs`.** All four validators independently `readFileSync` + parse frontmatter + read `settings.json` + assert `title:`. `issues/_lib.mjs` already has `readJson` and a frontmatter parser, but it's issues-only and not imported cross-domain. Pull the 3–4 truly common primitives (`readJson`, `hasFrontmatterTitle`, `validateOrderPrefix`, settings-presence) into one `_check-lib.mjs`; each `check.mjs` keeps only its domain-specific rules. Shrinks all four and removes the "fix the title check in 4 places" tax.
 
 ### B. Validator correctness gaps to audit *(needs a read-through, not yet confirmed)*

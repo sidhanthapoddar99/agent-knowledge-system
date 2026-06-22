@@ -1,7 +1,7 @@
 {
   "title": "Updating skills & documentation",
-  "description": "Batch of documentation-guide skill + framework-docs maintenance as conventions evolve. Two items done (layout-reference restructure, NN_/NNN_ notation + digit-width standard); three queued for discussion (split the large issue reference, agent-log structure standard, validator/skill optimization).",
-  "status": "open",
+  "description": "Batch of documentation-guide skill + framework-docs maintenance as conventions evolve. Delivered: layout-reference restructure, NN_/NNN_ notation + digit-width standard, the large issue-reference split into references/layouts/issues/, the agent-log typed-workspace standard, the new doc-agent skill, validator de-duplication onto a shared _check-lib.mjs, and the plugin version bump to 0.2.0. The NN_-in-URL exploration was decided against (stripped URLs stay canonical).",
+  "status": "closed",
   "priority": "medium",
   "component": [
     "ai-skills",

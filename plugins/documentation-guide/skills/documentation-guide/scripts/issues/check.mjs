@@ -20,6 +20,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
 import { resolveTracker, listIssueFolders, readVocabulary, parseArgs, printHelp } from './_lib.mjs';
+import { readJsonChecked, reportAndExit } from '../_check-lib.mjs';
 
 const args = parseArgs(process.argv.slice(2));
 if (args.flags.help) {
@@ -118,13 +119,8 @@ for (const entry of issueFolders) {
     continue;
   }
 
-  let meta;
-  try {
-    meta = JSON.parse(fs.readFileSync(settingsPath, 'utf-8'));
-  } catch (e) {
-    errors.push(`${id}/settings.json: invalid JSON (${e.message})`);
-    continue;
-  }
+  const meta = readJsonChecked(settingsPath, `${id}/settings.json`, errors);
+  if (!meta) continue;
 
   reportDrift(`${id}/settings.json`, unknownKeys(meta, ISSUE_SETTINGS_KEYS), ISSUE_SETTINGS_KEYS);
 
@@ -268,22 +264,11 @@ if (STRICT) {
   for (const w of driftWarnings) warnings.push(w);
 }
 
-const showWarnings = !QUIET;
-
-console.log(`# issues check: ${tracker}`);
-console.log(`(${listIssueFolders(tracker).length} issue folders scanned)`);
-console.log('');
-if (errors.length === 0 && (warnings.length === 0 || !showWarnings)) {
-  console.log(errors.length === 0 && warnings.length === 0 ? '✓ all checks passed' : '✓ no errors');
-  process.exit(0);
-}
-if (errors.length) {
-  console.log(`## ${errors.length} error(s)`);
-  for (const e of errors) console.log(`  ✗ ${e}`);
-}
-if (warnings.length && showWarnings) {
-  if (errors.length) console.log('');
-  console.log(`## ${warnings.length} warning(s)`);
-  for (const w of warnings) console.log(`  ⚠ ${w}`);
-}
-process.exit(errors.length ? 1 : 0);
+reportAndExit({
+  kind: 'issues',
+  root: tracker,
+  subtitle: `(${listIssueFolders(tracker).length} issue folders scanned)`,
+  errors,
+  warnings,
+  quiet: QUIET,
+});

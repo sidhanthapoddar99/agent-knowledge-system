@@ -1,7 +1,7 @@
 ---
 title: Explore including the NN_ prefix in docs URLs (backward compatible?)
-done: false
-state: open
+done: true
+state: closed
 ---
 
 Today the `NN_` ordering prefix is **stripped** from docs URLs:
@@ -50,3 +50,30 @@ Two distinct concerns to weigh:
 Feasible, but the renumbering-stability loss (2) is a strong argument against making it the
 default. If pursued at all, do it as an **opt-in flag** with stripped URLs remaining the
 default and canonical form. Decide here before touching code.
+
+## Decision
+
+**Keep stripped URLs as the permanent default and canonical form.** The standardization does
+not pay off on net: the only upside is cosmetic (URL mirrors sidebar order), and the sidebar
+already shows order. Against that, including the prefix (a) breaks every existing docs URL at
+once and (b) — the decisive point — surrenders URL stability under renumbering, which is the
+entire reason gap-numbering exists. We'd be re-introducing the fragility the convention was
+designed to remove, permanently and on every reorder.
+
+**Confirmed blast radius** (grounded in the code): stripping happens in exactly two places
+that must stay in lock-step — `docs.ts → generateSlug()` (URL build) and
+`internal-links.ts → rewriteHref()` (relative-link rewrite). Everything else that reads
+`order-prefix.ts` only uses `position` (the sidebar sort key) and is unaffected. So a flag
+*could* be added cheaply, but the recommendation stands regardless.
+
+**If ever revisited**, the only acceptable shapes are: an **off-by-default flag** (stripped
+stays canonical), or — better — keep clean URLs canonical and **301-redirect** any numbered
+URL to the clean one (gives "numbered paths work if typed" without churn). Document the
+renumbering-churn tradeoff loudly either way.
+
+**Cross-content back-links (issue → docs) note.** A tangential finding from the link-resolution
+review: including prefixes in docs URLs would *incidentally* make some issue→docs relative
+links resolve better (the issues pipeline keeps `NN_` prefixes; docs strip them — see
+`24_agent-logs.md`/link-resolution discussion). This is **not** a reason to adopt it — the
+robust fix for cross-root back-links is to use **absolute `/user-guide/...` URLs** (the
+postprocessors deliberately leave `/`-rooted hrefs untouched), not to reshape every docs URL.

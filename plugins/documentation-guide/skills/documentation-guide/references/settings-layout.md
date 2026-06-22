@@ -4,6 +4,10 @@ Site chrome, routing, theming, aliases. Everything *above* the per-content-type 
 
 **Canonical source of truth:** the framework's bundled `@root/default-docs/data/user-guide/05_getting-started/`, `10_configuration/`, `16_layout-system/`, `20_custom-pages/`, `25_themes/` — read those when this reference is unclear or when you need depth this file doesn't cover.
 
+**Contents** (this file is long — jump to the section you need):
+
+1. [Project structure](#1-project-structure) · 2. [`.env` — bootstrap layer](#2-env--the-bootstrap-layer) · 3. [`site.yaml`](#3-siteyaml--the-main-config-file) · 4. [`pages:` routing](#4-pages--routing--content-type-binding) · 5. [`navbar.yaml`](#5-navbaryaml--top-level-navigation) · 6. [`footer.yaml`](#6-footeryaml--site-footer) · 7. [Path aliases](#7-path-aliases--built-in-vs-user-defined) · 8. [Themes](#8-themes) · 9. [Worked example](#9-worked-example--adding-a-new-section) · 10. [Common patterns](#10-common-patterns) · 11. [Validate](#11-validate) · 12. [Cross-references](#12-cross-references)
+
 ---
 
 ## 1. Project structure

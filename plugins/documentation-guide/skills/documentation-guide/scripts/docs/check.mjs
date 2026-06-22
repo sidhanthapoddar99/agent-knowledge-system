@@ -16,6 +16,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { ORDER_PREFIX_FULL_RE, ANY_DIGIT_PREFIX_RE } from '../_order-prefix.mjs';
+import { hasFrontmatterTitle, readText, readJsonChecked, reportAndExit } from '../_check-lib.mjs';
 
 const ROOT = process.argv[2];
 
@@ -39,7 +40,7 @@ const errors = [];
 const warnings = [];
 // Ordering-prefix grammar comes from the shared `_order-prefix.mjs` (docs use
 // the strict `_` separator). ORDER_PREFIX_FULL_RE = /^(\d{2,5})_(.+)$/.
-const FRONTMATTER_TITLE_RE = /^---\r?\n[\s\S]*?^title:\s*\S+/m;
+// Frontmatter `title:` test + read/report helpers come from `_check-lib.mjs`.
 
 /**
  * Classify a folder/file name's ordering prefix.
@@ -68,9 +69,14 @@ function walk(dir) {
   const prefixes = new Map();        // for collision detection within this folder
   const rel = path.relative(ROOT, dir) || '.';
 
-  // Section root: must have a settings.json (sidebar label)
-  if (dir !== ROOT && !fs.existsSync(path.join(dir, 'settings.json'))) {
+  // Every folder must have a settings.json (sidebar label) — and where one
+  // exists, it must parse (presence ≠ valid JSON; a malformed one breaks the loader).
+  const settingsPath = path.join(dir, 'settings.json');
+  const hasSettings = fs.existsSync(settingsPath);
+  if (dir !== ROOT && !hasSettings) {
     errors.push(`${rel}/settings.json: missing`);
+  } else if (hasSettings) {
+    readJsonChecked(settingsPath, `${rel === '.' ? 'settings.json' : `${rel}/settings.json`}`, errors);
   }
 
   for (const entry of entries) {
@@ -112,13 +118,9 @@ function walk(dir) {
         errors.push(`${relPath}: file missing NN_ prefix (2–5 digits)`);
       }
 
-      try {
-        const content = fs.readFileSync(abs, 'utf-8');
-        if (!FRONTMATTER_TITLE_RE.test(content)) {
-          errors.push(`${relPath}: missing frontmatter \`title:\``);
-        }
-      } catch (e) {
-        errors.push(`${relPath}: read error — ${e.message}`);
+      const content = readText(abs, relPath, errors);
+      if (content !== null && !hasFrontmatterTitle(content)) {
+        errors.push(`${relPath}: missing frontmatter \`title:\``);
       }
     }
   }
@@ -126,19 +128,4 @@ function walk(dir) {
 
 walk(ROOT);
 
-console.log(`# docs check: ${ROOT}`);
-console.log('');
-if (errors.length === 0 && warnings.length === 0) {
-  console.log('✓ all checks passed');
-  process.exit(0);
-}
-if (errors.length) {
-  console.log(`## ${errors.length} error(s)`);
-  for (const e of errors) console.log(`  ✗ ${e}`);
-}
-if (warnings.length) {
-  if (errors.length) console.log('');
-  console.log(`## ${warnings.length} warning(s)`);
-  for (const w of warnings) console.log(`  ⚠ ${w}`);
-}
-process.exit(errors.length ? 1 : 0);
+reportAndExit({ kind: 'docs', root: ROOT, errors, warnings });

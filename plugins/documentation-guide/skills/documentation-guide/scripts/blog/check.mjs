@@ -16,6 +16,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { resolveProjectContext } from '../_env.mjs';
+import { hasFrontmatterTitle, readText, reportAndExit } from '../_check-lib.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 
@@ -43,7 +44,6 @@ if (!fs.existsSync(ROOT)) {
 const errors = [];
 const warnings = [];
 const BLOG_RE = /^\d{4}-\d{2}-\d{2}-[a-z0-9]+(-[a-z0-9]+)*\.md$/;
-const FRONTMATTER_TITLE_RE = /^---\r?\n[\s\S]*?^title:\s*\S+/m;
 
 const entries = fs.readdirSync(ROOT, { withFileTypes: true });
 for (const entry of entries) {
@@ -67,29 +67,10 @@ for (const entry of entries) {
     continue;
   }
 
-  try {
-    const content = fs.readFileSync(path.join(ROOT, entry.name), 'utf-8');
-    if (!FRONTMATTER_TITLE_RE.test(content)) {
-      errors.push(`${rel}: missing frontmatter \`title:\``);
-    }
-  } catch (e) {
-    errors.push(`${rel}: read error — ${e.message}`);
+  const content = readText(path.join(ROOT, entry.name), rel, errors);
+  if (content !== null && !hasFrontmatterTitle(content)) {
+    errors.push(`${rel}: missing frontmatter \`title:\``);
   }
 }
 
-console.log(`# blog check: ${ROOT}`);
-console.log('');
-if (errors.length === 0 && warnings.length === 0) {
-  console.log('✓ all checks passed');
-  process.exit(0);
-}
-if (errors.length) {
-  console.log(`## ${errors.length} error(s)`);
-  for (const e of errors) console.log(`  ✗ ${e}`);
-}
-if (warnings.length) {
-  if (errors.length) console.log('');
-  console.log(`## ${warnings.length} warning(s)`);
-  for (const w of warnings) console.log(`  ⚠ ${w}`);
-}
-process.exit(errors.length ? 1 : 0);
+reportAndExit({ kind: 'blog', root: ROOT, errors, warnings });

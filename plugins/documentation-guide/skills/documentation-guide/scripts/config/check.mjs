@@ -20,6 +20,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { resolveProjectContext } from '../_env.mjs';
+import { reportAndExit } from '../_check-lib.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 
@@ -48,7 +49,7 @@ const warnings = [];
 
 if (!fs.existsSync(SITE)) {
   errors.push(`Missing required: ${SITE}`);
-  printAndExit();
+  reportAndExit({ kind: 'config', root: ROOT, errors, warnings });
 }
 if (!fs.existsSync(NAVBAR)) warnings.push(`Missing: ${NAVBAR}`);
 if (!fs.existsSync(FOOTER)) warnings.push(`Missing: ${FOOTER}`);
@@ -108,28 +109,9 @@ if (fs.existsSync(FOOTER)) {
   }
 }
 
-printAndExit();
+reportAndExit({ kind: 'config', root: ROOT, errors, warnings });
 
 // ---------- helpers ----------------------------------------------------------
-
-function printAndExit() {
-  console.log(`# config check: ${ROOT}`);
-  console.log('');
-  if (errors.length === 0 && warnings.length === 0) {
-    console.log('✓ all checks passed');
-    process.exit(0);
-  }
-  if (errors.length) {
-    console.log(`## ${errors.length} error(s)`);
-    for (const e of errors) console.log(`  ✗ ${e}`);
-  }
-  if (warnings.length) {
-    if (errors.length) console.log('');
-    console.log(`## ${warnings.length} warning(s)`);
-    for (const w of warnings) console.log(`  ⚠ ${w}`);
-  }
-  process.exit(errors.length ? 1 : 0);
-}
 
 /**
  * Extract a top-level YAML block by key. Returns the body text *after*

@@ -1,7 +1,7 @@
 ---
 title: Add the `doc-agent` thin operating skill
 done: true
-state: review
+state: closed
 ---
 
 `documentation-guide` triggers on "I'm doing docs/tracker work." It will **not** fire when

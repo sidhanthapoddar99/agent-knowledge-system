@@ -1,6 +1,6 @@
 ---
 title: "Update skills, preferences, and CLAUDE.md"
-state: review
+state: closed
 ---
 
 Second-to-last execution step. Once the command surface is final, sync the agent-facing instruction layer so the new commands, `help` discovery, and contract are documented where agents read them.

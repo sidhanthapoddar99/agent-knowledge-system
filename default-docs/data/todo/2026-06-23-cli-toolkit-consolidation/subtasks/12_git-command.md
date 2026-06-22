@@ -1,6 +1,6 @@
 ---
 title: "Add the `git` content helper (Category 1)"
-state: review
+state: closed
 ---
 
 Surface the git-derived metadata the framework already computes (the tracker derives `updated` from git history). Schema-agnostic, runs over any content path.

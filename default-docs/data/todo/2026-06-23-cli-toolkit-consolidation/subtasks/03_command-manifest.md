@@ -1,6 +1,6 @@
 ---
 title: "Turn the COMMANDS map into a rich command manifest"
-state: review
+state: closed
 ---
 
 Today `cli.mjs` holds `name → scriptpath`. Make it `name → { script, category, summary, flags[] }` — one registry as the single source of truth for **routing + help + discovery**. Unblocks 04 (discovery) and 05 (generated help).

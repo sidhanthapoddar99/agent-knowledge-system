@@ -1,6 +1,6 @@
 ---
 title: "Version upgrade — bump the plugin version"
-state: review
+state: closed
 ---
 
 The consolidation is a substantial feature release; bump the `documentation-guide` plugin version so installs pick it up (current: 0.2.1).

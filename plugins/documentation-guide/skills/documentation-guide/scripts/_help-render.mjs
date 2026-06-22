@@ -65,7 +65,7 @@ export function resolveEntry(tokenA, tokenB) {
 export function renderList() {
   const out = [];
   out.push('docs-guide — documentation-template toolkit\n');
-  out.push(`Usage: ${DISPATCH} <group> <verb> [flags]   (or the flat \`docs-*\` alias)\n`);
+  out.push(`Usage: ${DISPATCH} <group> <verb> [flags]\n`);
 
   const GROUP_ORDER = [null, 'issue', 'check'];
   const GROUP_LABEL = { null: 'GENERAL', issue: 'ISSUE', check: 'CHECK' };
@@ -79,7 +79,7 @@ export function renderList() {
     if (!cmds.length) continue;
     out.push(GROUP_LABEL[String(g)] ?? String(g).toUpperCase());
     const width = Math.max(...cmds.map((c) => usageLine(c).length));
-    for (const c of cmds) out.push(`  ${usageLine(c).padEnd(width)}  (${c.bin})  ${c.summary}`);
+    for (const c of cmds) out.push(`  ${usageLine(c).padEnd(width)}  ${c.summary}`);
     out.push('');
   }
   out.push(`Run \`${DISPATCH} help <command>\` for flags, or \`<command> --help\`.`);

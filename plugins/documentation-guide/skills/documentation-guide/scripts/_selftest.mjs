@@ -89,7 +89,7 @@ for (const cmd of COMMANDS) {
 const help = run(['docs-help', '--json']);
 if (help.status !== 2) { // 2 == unknown command (not built yet)
   let names = [];
-  try { const m = JSON.parse(help.stdout); names = (m.commands ?? m).map?.(c => c.name ?? c) ?? []; } catch { /* */ }
+  try { const m = JSON.parse(help.stdout); names = (m.commands ?? m).map?.(c => c.bin ?? c.name ?? c) ?? []; } catch { /* */ }
   const everyListed = COMMANDS.every(c => names.includes(c.name));
   record('docs-help', 'lists every command', everyListed, `listed=${names.length}`);
 }

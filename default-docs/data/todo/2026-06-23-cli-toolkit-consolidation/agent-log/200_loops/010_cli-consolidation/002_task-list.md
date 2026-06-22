@@ -11,7 +11,7 @@ Live execution checklist (mirrors the subtask plan; update status as the run pro
 - [x] 14 — stand up the self-test harness early → `scripts/_selftest.mjs`, **true baseline 30/54 (bun)**
 - [x] 02 — `_cli.mjs` shared contract (parser/help/output/error) → lifted, no regression
 - [x] 03 — command manifest (`_manifest.mjs`; routing + harness manifest-driven; subcommand form live)
-- [ ] 04 — `help`/discovery command + `help --json`
+- [x] 04 — `help`/discovery command + `help --json` → `help.mjs`, harness 35/59
 - [ ] 05 — roll uniform contract to every command (`-h`, stdout help, `--json`, exit codes)
 
 ## Correctness & cleanup

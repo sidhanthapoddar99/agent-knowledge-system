@@ -30,6 +30,13 @@ export const CONTRACT_FLAGS = [
 ];
 
 export const MANIFEST = [
+  // ---- meta (Category 0b) ---------------------------------------------------
+  {
+    bin: 'docs-help', group: null, verb: 'help', category: 0, script: 'help.mjs', runtime: 'mjs',
+    summary: 'List commands, show one command’s flags, or dump the manifest (--json)',
+    flags: [{ name: 'json', desc: 'machine-readable manifest dump' }],
+  },
+
   // ---- issues (group: issue) ------------------------------------------------
   {
     bin: 'docs-list', group: 'issue', verb: 'list', category: 2, script: 'issues/list.mjs', runtime: 'mjs',

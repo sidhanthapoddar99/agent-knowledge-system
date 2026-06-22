@@ -149,7 +149,7 @@ The file-level structure *inside* each content type is specific to its layout fa
 
 | Default folder | URL base | Naming pattern | Layout family | Authoring guide |
 |---|---|---|---|---|
-| `data/docs/` | `/docs` | `XX_folder/XX_file.md` | `@docs/*` | [Docs section](/user-guide/docs/overview) |
+| `data/docs/` | `/docs` | `NN_folder/NN_file.md` | `@docs/*` | [Docs section](/user-guide/docs/overview) |
 | `data/blog/` | `/blog` | `YYYY-MM-DD-slug.md` | `@blog/*` | [Blogs section](/user-guide/blogs/overview) |
 | `data/issues/` | `/issues` | `YYYY-MM-DD-slug/` (folder) | `@issues/*` | [Issues section](/user-guide/issues/overview) |
 | `data/pages/` | (per page) | Any `.yaml` / `.md` | `@custom/*` | [Custom Pages section](/user-guide/custom-pages/overview) |

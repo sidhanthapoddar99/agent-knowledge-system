@@ -71,7 +71,7 @@ const customHeadingIds = createHeadingIdsPostprocessor({
 
 ### Internal Links
 
-Rewrites relative markdown links to match the generated URL slugs by stripping `XX_` position prefixes and `.md`/`.mdx` file extensions:
+Rewrites relative markdown links to match the generated URL slugs by stripping `NN_` position prefixes and `.md`/`.mdx` file extensions:
 
 ```html
 <!-- Input -->
@@ -88,15 +88,15 @@ Rewrites relative markdown links to match the generated URL slugs by stripping `
 | Transform | Before | After |
 |-----------|--------|-------|
 | Strip `.md`/`.mdx` extension | `./guide.md` | `./guide` |
-| Strip `XX_` prefix | `./02_getting-started` | `./getting-started` |
+| Strip `NN_` prefix | `./02_getting-started` | `./getting-started` |
 | Strip `/index` suffix | `./section/index` | `./section` |
 | Preserve fragments | `./02_guide.md#setup` | `./guide#setup` |
 | Skip absolute URLs | `https://example.com` | *(unchanged)* |
 | Skip root-relative | `/docs/guide` | *(unchanged)* |
 
 **Content-type behavior:**
-- **Docs:** Strips both `XX_` prefixes and extensions
-- **Blog:** Only strips `.md`/`.mdx` extensions (no `XX_` prefixes)
+- **Docs:** Strips both `NN_` prefixes and extensions
+- **Blog:** Only strips `.md`/`.mdx` extensions (no `NN_` prefixes)
 
 **Usage:**
 
@@ -205,11 +205,11 @@ Order matters when processors depend on each other's output.
 ### Missing Position Prefix
 
 ```
-[DOCS ERROR] Files missing required XX_ position prefix:
+[DOCS ERROR] Files missing required NN_ position prefix:
   - overview.md
   - installation.md
 
-Docs files must be named with a position prefix (01-99).
+Docs files must be named with a 2–5 digit position prefix.
 Examples:
   01_getting-started.md
   02_installation.md

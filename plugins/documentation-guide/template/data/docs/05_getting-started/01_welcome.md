@@ -23,5 +23,5 @@ file in when you ran `init`; replace it with whatever you want.
 - Customise the home page via `data/pages/home.yaml`
 - Swap the placeholder logo in `assets/` for your own
 
-The `XX_` prefix on filenames and folders controls ordering; URLs strip it
+The `NN_` prefix on filenames and folders controls ordering; URLs strip it
 (`05_getting-started/01_welcome.md` → `/docs/getting-started/welcome`).

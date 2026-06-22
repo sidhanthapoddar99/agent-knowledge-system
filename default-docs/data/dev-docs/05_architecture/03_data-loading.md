@@ -27,7 +27,7 @@ Every parsed file becomes a `LoadedContent` object:
 ```typescript
 interface LoadedContent {
   id: string;           // Unique ID derived from slug
-  slug: string;         // URL-friendly path (XX_ prefix stripped)
+  slug: string;         // URL-friendly path (NN_ prefix stripped)
   content: string;      // Rendered HTML — ready for set:html
   headings: Heading[];  // Extracted TOC headings
   data: ContentData;    // Frontmatter fields
@@ -51,7 +51,7 @@ The `data` field contains parsed frontmatter. Common fields used across content 
 interface ContentData {
   title: string;             // Required in all doc files
   description?: string;      // Shown below title, used for SEO
-  sidebar_position?: number; // Extracted from XX_ prefix; used for ordering
+  sidebar_position?: number; // Extracted from NN_ prefix; used for ordering
   sidebar_label?: string;    // Overrides title in the sidebar
   date?: string;             // Blog: extracted from YYYY-MM-DD filename prefix
   author?: string;           // Blog: post author
@@ -93,7 +93,7 @@ interface LoadOptions {
   filter?: (c: LoadedContent) => boolean; // Custom filter
   includeDrafts?: boolean;    // Default: true in dev, false in prod
   maxDepth?: number;          // Limit directory traversal depth
-  requirePositionPrefix?: boolean; // Throw if XX_ prefix missing
+  requirePositionPrefix?: boolean; // Throw if NN_ prefix missing
 }
 ```
 
@@ -101,7 +101,7 @@ interface LoadOptions {
 
 | Sort | Source | Example |
 |------|--------|---------|
-| `position` | `sidebar_position` from `XX_` prefix | `01_overview.md` → position 1 |
+| `position` | `sidebar_position` from `NN_` prefix | `01_overview.md` → position 1 |
 | `date` | `data.date` (ISO string) | `2024-01-15` → sorted by time |
 | `title` | `data.title` (localeCompare) | Alphabetical by title |
 | `alphabetical` | Same as `title` | Alias for `title` |
@@ -133,7 +133,7 @@ const settings = loadSettings('/abs/path/to/data/docs');
   sidebar: {
     collapsed: false,     // All sections start open
     collapsible: true,    // Sections can be toggled
-    sort: 'position',     // Order by XX_ prefix
+    sort: 'position',     // Order by NN_ prefix
     depth: 3,             // Show up to 3 levels of nesting
   },
   outline: {
@@ -210,7 +210,7 @@ data/docs/
 **Slug mapping:**
 
 ```
-File path (relative)              →  URL slug (XX_ stripped)
+File path (relative)              →  URL slug (NN_ stripped)
 ──────────────────────────────────────────────────────────────
 01_getting-started/01_overview.md →  getting-started/overview
 01_getting-started/02_install.md  →  getting-started/install
@@ -219,7 +219,7 @@ File path (relative)              →  URL slug (XX_ stripped)
 
 **Sidebar section label** comes from (in order of precedence):
 1. `"label"` in the folder's `settings.json`
-2. Folder name with `XX_` stripped and kebab-case converted to title case
+2. Folder name with `NN_` stripped and kebab-case converted to title case
 
 ## How the Route Handler Uses Loaded Data
 
@@ -263,6 +263,6 @@ See [Unified Cache System](/docs/architecture/optimizations/unified-cache-system
 |------------|-------|--------|
 | `DIR_NOT_FOUND` | `dataPath` doesn't exist | Throws, page fails to render |
 | `FILE_NOT_FOUND` | Single file missing | Throws |
-| `MISSING_POSITION_PREFIX` | `XX_` prefix absent when `requirePositionPrefix: true` | Throws with file list |
+| `MISSING_POSITION_PREFIX` | `NN_` prefix absent when `requirePositionPrefix: true` | Throws with file list |
 | `UNSUPPORTED_FILE_TYPE` | Parser returns null | Throws |
 | Parse errors | Malformed frontmatter or markdown | Logged, file skipped |

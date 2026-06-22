@@ -195,7 +195,7 @@ description: Optional   # Recommended for SEO
 ### 3. Invalid Position Prefix
 
 ```
-❌ File missing XX_ position prefix
+❌ File missing NN_ position prefix
 ```
 
 **Cause:** Doc files must start with a number prefix for ordering.

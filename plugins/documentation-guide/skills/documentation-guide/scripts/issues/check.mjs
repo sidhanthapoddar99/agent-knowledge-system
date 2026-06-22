@@ -3,7 +3,7 @@
  * issues/check.mjs — validate the structure of an issue tracker.
  *
  * Joins the existing 8 read/write helpers with a domain validator. Checks
- * everything documented in `references/issue-layout.md`:
+ * everything documented in `references/layouts/issue-layout.md`:
  *
  *   • Tracker root has settings.json with a `fields:` block (vocabulary)
  *   • Every issue folder matches YYYY-MM-DD-<slug>/

@@ -16,9 +16,9 @@ Pick the reference file that matches the task. Read **only the one(s) you need**
 | If the task involves… | Domain | Read |
 |---|---|---|
 | Writing markdown, frontmatter, custom tags, asset embedding (across any content type) | writing | `references/writing.md` |
-| Files under `data/<sidebar-driven-section>/` (e.g. `user-guide/`, `dev-docs/`) | docs-layout | `references/docs-layout.md` |
-| Files under `data/blog/` (flat `YYYY-MM-DD-<slug>.md`) | blog-layout | `references/blog-layout.md` |
-| Files under `data/todo/` or any issue tracker (folder-per-item, `settings.json`, subtasks, comments, agent-logs) | issue-layout | `references/issue-layout.md` |
+| Files under `data/<sidebar-driven-section>/` (e.g. `user-guide/`, `dev-docs/`) | docs-layout | `references/layouts/docs-layout.md` |
+| Files under `data/blog/` (flat `YYYY-MM-DD-<slug>.md`) | blog-layout | `references/layouts/blog-layout.md` |
+| Files under `data/todo/` or any issue tracker (folder-per-item, `settings.json`, subtasks, comments, agent-logs) | issue-layout | `references/layouts/issue-layout.md` |
 | `site.yaml` / `navbar.yaml` / `footer.yaml` / `.env` / paths / themes / project setup | settings-layout | `references/settings-layout.md` |
 | Optimizing / shrinking images or screenshots before committing (resize, grayscale, webp/avif, strip) | images | `references/images.md` |
 
@@ -62,7 +62,7 @@ If `data/README.md` doesn't exist, **create one** before doing the requested tas
 
 These apply across all domains. Reference files don't repeat them — they assume you know.
 
-- **`NN_` prefix** — folders and files inside `data/<docs-section>/` use a numeric prefix (2–5 digits, 2 is the common case) for ordering, sorted by value so widths coexist (`05_`, `010_`, `110_`). Gap-space them to leave room to insert. Issue subtasks/agent-logs use the same grammar; blog posts and `notes/` don't require it. Full rules: `references/docs-layout.md`.
+- **`NN_` prefix** — folders and files inside `data/<docs-section>/` use a numeric prefix for ordering, sorted by value so widths coexist (`05_`, `010_`, `110_`). Width is 2–5 digits, used as a tier: **`NN_` is the convention** (use it almost always); **`NNN_` only when there's a special requirement** — a section with many entries that needs the headroom, or grouping via the leading digit; **`NNNN_`/`NNNNN_` are very rare** — reach for them only when the user explicitly demands it or a case is genuinely exceptional. Never 1 digit or 6+. Gap-space them to leave room to insert. The **issue tracker** uses the same grammar but treats **both `NN_` and `NNN_` as conventional** — subtasks (files *and* grouping folders) reach for 3-digit freely (grouping via the leading digit, or many items), and `NN_`/`NNN_` are good *optional* conventions for `agent-log/` (CLI writes `NNN_`) and `notes/`; blog posts use no prefix. Full rules: `references/layouts/docs-layout.md` (docs) and `references/layouts/issue-layout.md` (tracker).
 - **`settings.json`** — every docs folder has one (sidebar label, position). Issue trackers have a root `settings.json` declaring vocabulary. Issues have a per-issue `settings.json` for metadata.
 - **Frontmatter `title`** — required on every markdown file. Astro builds will fail without it.
 - **Theme variables only** — when editing CSS in layouts, consume declared theme variables (see `astro-doc-code/src/styles/theme.yaml → required_variables`). Never hardcode colours, fonts, or invent variable names.
@@ -91,15 +91,15 @@ This plugin ships 13 CLI wrappers in its `bin/` folder, which Claude Code adds t
 
 | Command | What it does |
 |---|---|
-| `docs-check-blog` | Validate the blog folder — `YYYY-MM-DD-<slug>.md` naming, frontmatter `title:`, no nested folders. Resolves the blog path from `.env` (`<content-root>/blog/`); pass an explicit folder to override. See `references/blog-layout.md`. |
+| `docs-check-blog` | Validate the blog folder — `YYYY-MM-DD-<slug>.md` naming, frontmatter `title:`, no nested folders. Resolves the blog path from `.env` (`<content-root>/blog/`); pass an explicit folder to override. See `references/layouts/blog-layout.md`. |
 | `docs-check-config` | Validate `site.yaml` / `navbar.yaml` / `footer.yaml` — required keys, `pages:` structure, `data:` path resolution, footer `page:` references. Resolves the config dir from `.env`; pass an explicit folder to override. See `references/settings-layout.md`. |
-| `docs-check-section` | Validate a docs section — `XX_` prefix discipline, `settings.json` presence, frontmatter `title:`, prefix collisions. Required arg: section folder (e.g. `data/user-guide`). See `references/docs-layout.md`. |
+| `docs-check-section` | Validate a docs section — `NN_` prefix discipline, `settings.json` presence, frontmatter `title:`, prefix collisions. Required arg: section folder (e.g. `data/user-guide`). See `references/layouts/docs-layout.md`. |
 
 **Content ops (1):**
 
 | Command | What it does |
 |---|---|
-| `docs-move` | Move / rename a docs `.md` file or folder **link-aware** — rewrites every Markdown link that pointed at the moved path (inbound) and every relative link inside the moved files that pointed elsewhere (outbound) — including link **text** that mirrors the path — so nothing breaks or goes stale. Whenever you move or rename anything under `data/`, reach for `docs-move <from> <to>` instead of `mv` / `git mv` — a plain move silently breaks all those relative links. `--dry-run` previews every edit; uses `git mv` inside a work tree to preserve history. See `references/docs-layout.md`. |
+| `docs-move` | Move / rename a docs `.md` file or folder **link-aware** — rewrites every Markdown link that pointed at the moved path (inbound) and every relative link inside the moved files that pointed elsewhere (outbound) — including link **text** that mirrors the path — so nothing breaks or goes stale. Whenever you move or rename anything under `data/`, reach for `docs-move <from> <to>` instead of `mv` / `git mv` — a plain move silently breaks all those relative links. `--dry-run` previews every edit; uses `git mv` inside a work tree to preserve history. See `references/layouts/docs-layout.md`. |
 
 **Images (1):**
 
@@ -109,7 +109,7 @@ This plugin ships 13 CLI wrappers in its `bin/` folder, which Claude Code adds t
 
 Each wrapper internally uses `bun` if available, falls back to `node`. Pass `--help` to any of them for the full flag list. Validators exit `0` on clean, `1` on errors found — useful in pre-commit / CI.
 
-**Searching the tracker — use `docs-list --search`, not the `Grep` tool.** Any "find / locate / grep / search" verb against `data/todo/` (or any tracker folder) should route to `docs-list`, which understands the schema (vocabulary, subtask states, frontmatter), composes structural filters with regex search in one call, and returns exact paths + line numbers. `Grep` only sees text. See `references/issue-layout.md` for the synonym list and examples.
+**Searching the tracker — use `docs-list --search`, not the `Grep` tool.** Any "find / locate / grep / search" verb against `data/todo/` (or any tracker folder) should route to `docs-list`, which understands the schema (vocabulary, subtask states, frontmatter), composes structural filters with regex search in one call, and returns exact paths + line numbers. `Grep` only sees text. See `references/layouts/issue-layout.md` for the synonym list and examples.
 
 ## Slash commands — bootstrap & section scaffolding
 
@@ -118,7 +118,7 @@ The plugin ships two slash commands for project-level scaffolding:
 | Command | What it does |
 |---|---|
 | `/docs-init` | Bootstrap a new documentation-template project from zero — interactive: scope (whole repo vs subfolder) → site name/title/description → first section name → writes `config/`, `data/`, starter page, README, patches `CLAUDE.md` at the repo root. Prints the framework-clone command at the end. |
-| `/docs-add-section [name]` | Add a new top-level docs section under `data/`. Auto-computes next `XX_` prefix, creates `settings.json` + `01_overview.md`, optionally registers in `config/site.yaml`'s `pages:` block. |
+| `/docs-add-section [name]` | Add a new top-level docs section under `data/`. Auto-computes next `NN_` prefix, creates `settings.json` + `01_overview.md`, optionally registers in `config/site.yaml`'s `pages:` block. |
 
 When the user says "set up a new docs project", "scaffold a new site", "add a new section / area / handbook", route to these commands rather than hand-authoring.
 

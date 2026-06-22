@@ -139,7 +139,7 @@ This is the heart of `site.yaml`. **`pages` is an object, not an array** — eac
 
 ```yaml
 pages:
-  # Docs section — sidebar-driven, uses XX_ prefix folders
+  # Docs section — sidebar-driven, uses NN_ prefix folders
   user-guide:
     base_url: "/user-guide"
     type: docs
@@ -378,7 +378,7 @@ items:
 
 ```markdown
 <!-- 5. Update data/README.md so future agents see the new folder -->
-| `tutorials/` | Hands-on workflow walkthroughs | XX_ docs | `/tutorials/…` | `@docs/default` |
+| `tutorials/` | Hands-on workflow walkthroughs | NN_ docs | `/tutorials/…` | `@docs/default` |
 ```
 
 Restart the dev server (`./start dev` from the framework folder, or `bun run dev` inside `astro-doc-code/`) — the new route is live.
@@ -426,4 +426,4 @@ Uses regex over the YAML text — no YAML library dependency. Catches the common
 - `@root/default-docs/data/user-guide/20_custom-pages/` — custom page definitions + creating custom layouts
 - `@root/default-docs/data/user-guide/25_themes/` — theme contract + creation walkthroughs
 - `references/writing.md` — markdown content authoring (per-content-type concerns are NOT in this file)
-- `references/docs-layout.md` / `blog-layout.md` / `issue-layout.md` — per-content-type structure
+- `references/layouts/docs-layout.md` / `blog-layout.md` / `issue-layout.md` — per-content-type structure

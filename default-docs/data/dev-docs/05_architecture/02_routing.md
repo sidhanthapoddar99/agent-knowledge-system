@@ -46,7 +46,7 @@ All routes flow through `src/pages/[...slug].astro`:
 ┌──────────────────────────────────────────────────────────────┐
 │  Step 3: Resolve Content Path                                │
 │  ────────────────────────────                                │
-│  data/docs/getting-started/XX_overview.md                    │
+│  data/docs/getting-started/NN_overview.md                    │
 └──────────────────────────────────────────────────────────────┘
                               │
                               ▼

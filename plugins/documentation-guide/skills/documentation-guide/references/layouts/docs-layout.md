@@ -29,7 +29,15 @@ user-guide/
 └── ...
 ```
 
-**Prefix width is 2–5 digits**, ordered by **numeric value** (the validator rejects 1-digit and 6+; `_` separator required). Width and numeric-value sort come from **one shared parser** (`parsers/core/order-prefix.ts`, mirrored in the plugin's `scripts/_order-prefix.mjs`), used by both the docs loader and the issue tracker. Docs use the strict `_` separator; the issue tracker also tolerates a legacy `-` (one grammar — the separator is the only knob). Because order is by value, widths coexist: `05_` (=5), `010_` (=10), `110_` (=110) all sort correctly, so you can widen a single folder without touching its siblings. Use 2 digits for the common case, 3 when a folder needs the headroom (or grouping, below), 4–5 only for rare exceptions.
+**Prefix width is 2–5 digits**, ordered by **numeric value** (the validator rejects 1-digit and 6+; `_` separator required). Width and numeric-value sort come from **one shared parser** (`parsers/core/order-prefix.ts`, mirrored in the plugin's `scripts/_order-prefix.mjs`), used by both the docs loader and the issue tracker. Docs use the strict `_` separator; the issue tracker also tolerates a legacy `-` (one grammar — the separator is the only knob). Because order is by value, widths coexist: `05_` (=5), `010_` (=10), `110_` (=110) all sort correctly, so you can widen a single folder without touching its siblings.
+
+**Width is a tier, not a free choice:**
+
+| Width | When |
+|---|---|
+| `NN_` (2-digit) | **The convention.** Use it almost always. |
+| `NNN_` (3-digit) | Only on a **special requirement** — a folder with many entries that needs the headroom, or grouping via the leading digit (below). |
+| `NNNN_` / `NNNNN_` (4–5) | **Very rare.** Only when the user explicitly demands it, or a case is genuinely exceptional. |
 
 ### Gap numbering — leave room to insert
 

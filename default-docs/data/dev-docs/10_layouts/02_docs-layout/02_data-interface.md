@@ -191,7 +191,7 @@ Used to:
 
 ## Folder Structure → Sidebar Mapping
 
-The sidebar tree is built from the docs folder structure. The `XX_` position prefix controls ordering; it is stripped from URLs and sidebar labels.
+The sidebar tree is built from the docs folder structure. The `NN_` position prefix controls ordering; it is stripped from URLs and sidebar labels.
 
 ```
 data/docs/
@@ -204,7 +204,7 @@ data/docs/
     └── 01_basics.md           →   • Basics        (position 1)
 ```
 
-**Slug generation (XX_ prefix stripped):**
+**Slug generation (NN_ prefix stripped):**
 
 ```
 01_getting-started/01_overview.md  →  getting-started/overview
@@ -214,7 +214,7 @@ data/docs/
 
 **Section label** resolves in this order:
 1. `"label"` field in the folder's `settings.json`
-2. Folder name with `XX_` stripped and kebab-case converted to title case
+2. Folder name with `NN_` stripped and kebab-case converted to title case
 
 ## Folder settings.json
 
@@ -246,7 +246,7 @@ All fields are optional. Missing fields fall back to these defaults:
 |-------|---------|--------|
 | `sidebar.collapsed` | `false` | Sections start open |
 | `sidebar.collapsible` | `true` | Users can toggle sections |
-| `sidebar.sort` | `'position'` | Order by `XX_` prefix number |
+| `sidebar.sort` | `'position'` | Order by `NN_` prefix number |
 | `sidebar.depth` | `3` | Show up to 3 nesting levels |
 | `outline.enabled` | `true` | Show outline panel |
 | `outline.levels` | `[2, 3]` | Include h2 and h3 headings |

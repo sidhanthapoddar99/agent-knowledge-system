@@ -45,9 +45,9 @@ The skill triages every docs task to one of five domain references. The model lo
 | Reference | Covers |
 |---|---|
 | `references/writing.md` | Markdown basics, frontmatter, custom tags, asset embedding |
-| `references/docs-layout.md` | Docs folder structure, `XX_` prefixes, per-folder `settings.json`, sidebar generation |
-| `references/blog-layout.md` | Blog file naming (`YYYY-MM-DD-<slug>.md`), tags, index behaviour |
-| `references/issue-layout.md` | Issue tracker — folder-per-item, vocabulary, 4-state lifecycle, AI rules |
+| `references/layouts/docs-layout.md` | Docs folder structure, `NN_` prefixes, per-folder `settings.json`, sidebar generation |
+| `references/layouts/blog-layout.md` | Blog file naming (`YYYY-MM-DD-<slug>.md`), tags, index behaviour |
+| `references/layouts/issue-layout.md` | Issue tracker — folder-per-item, vocabulary, 4-state lifecycle, AI rules |
 | `references/settings-layout.md` | `site.yaml`, `navbar.yaml`, `footer.yaml`, `.env`, path aliases, themes |
 
 The skill triggers automatically whenever you work on docs in a project that uses this framework (i.e. one where the `documentation-template/` folder is present, or you're inside it). You don't have to invoke it explicitly.
@@ -97,7 +97,7 @@ Exit `0` clean / `1` on errors found — handy in pre-commit / CI.
 |---|---|
 | `docs-check-blog` | Validate the blog folder — `YYYY-MM-DD-<slug>.md` naming, frontmatter `title:`, no nested folders |
 | `docs-check-config` | Validate `site.yaml` / `navbar.yaml` / `footer.yaml` — required keys, page structure, alias resolution |
-| `docs-check-section <folder>` | Validate any docs section — `XX_` prefix discipline, `settings.json` presence, frontmatter `title:`, prefix collisions |
+| `docs-check-section <folder>` | Validate any docs section — `NN_` prefix discipline, `settings.json` presence, frontmatter `title:`, prefix collisions |
 
 Pass `--help` to any wrapper for the full flag list.
 

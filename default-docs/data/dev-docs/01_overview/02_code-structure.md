@@ -138,7 +138,7 @@ Loads markdown content using the parser system:
 ```typescript
 import { loadContent, loadContentWithSettings } from '@loaders/data';
 
-// Load docs (requires XX_ prefix)
+// Load docs (requires NN_ prefix)
 const docs = await loadContent(dataPath, 'docs', {
   pattern: '**/*.{md,mdx}',
   sort: 'position',
@@ -230,7 +230,7 @@ const sections = buildSidebarTree(content, '/docs', dataPath);
 const { prev, next } = getPrevNext(sections, currentPath);
 ```
 
-**Sorting**: Uses `XX_` prefix from folder/file names as the sole ordering mechanism.
+**Sorting**: Uses `NN_` prefix from folder/file names as the sole ordering mechanism.
 
 ## Pages
 
@@ -260,6 +260,6 @@ Serves static files from all asset-category directories (configured via `paths:`
 | `loaders/config.ts` | YAML config loading, validation |
 | `loaders/data.ts` | Content loading with parser |
 | `loaders/alias.ts` | `@` prefix path resolution |
-| `parsers/content-types/docs.ts` | Docs parsing (XX_ prefix) |
+| `parsers/content-types/docs.ts` | Docs parsing (NN_ prefix) |
 | `parsers/content-types/blog.ts` | Blog parsing (date prefix) |
 | `hooks/useSidebar.ts` | Sidebar tree, pagination |

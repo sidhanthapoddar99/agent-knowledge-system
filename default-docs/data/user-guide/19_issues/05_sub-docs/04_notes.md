@@ -19,7 +19,7 @@ notes/
 └── review-traces.md               ← un-numbered is fine
 ```
 
-Numeric prefixes help order notes in the sidebar; the slug after becomes the default title.
+A numeric prefix is **optional** for notes (folders and files) — but when you want a fixed reading order, `NN_` and `NNN_` are both good conventions, using the same 2–5 digit, sort-by-value grammar as the rest of the tracker. The prefix orders the note in the sidebar; the slug after it becomes the default title.
 
 ## Subfoldering — up to 2 levels
 

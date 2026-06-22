@@ -92,7 +92,7 @@ Examples:
 | `settings.json` | ✅ | All metadata — status, priority, labels, dates. See [Per-Issue Settings](./settings/per-issue). |
 | `issue.md` | ✅ | The goal / pitch / context. Pure markdown, no frontmatter. See [issue.md](./sub-docs/issue-md). |
 | `comments/` | — | One file per comment, named `NNN_YYYY-MM-DD_<author>.md`. Flat — no subfolders. See [Comments](./sub-docs/comments). |
-| `subtasks/` | — | Atomic units of work with `NN_<slug>.md` naming, frontmatter-driven state. **Up to 2 levels of grouping subfolders** — folder = label only, leaves are first-class subtasks. See [Subtasks](./sub-docs/subtasks). |
+| `subtasks/` | — | Atomic units of work with `NN_<slug>.md` / `NNN_<slug>.md` naming (2- or 3-digit, both conventional), frontmatter-driven state. **Up to 2 levels of grouping subfolders** — folder = label only, leaves are first-class subtasks. See [Subtasks](./sub-docs/subtasks). |
 | `notes/` | — | Supporting design docs. **Up to 2 levels of freeform subfolders.** See [Notes](./sub-docs/notes). |
 | `agent-log/` | — | AI iteration records. **Up to 2 levels of freeform subfolders.** `NNN_` prefix on filenames is optional. See [Agent Log](./sub-docs/agent-log). |
 

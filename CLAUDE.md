@@ -28,7 +28,7 @@ Validators (exit `0` clean / `1` on errors):
 |---|---|
 | `docs-check-blog` | Validate `default-docs/data/blog/` — filename pattern, frontmatter, no nesting |
 | `docs-check-config` | Validate `default-docs/config/` — required keys, page structure, alias resolution |
-| `docs-check-section <folder>` | Validate any docs section — `XX_` prefixes, `settings.json`, frontmatter |
+| `docs-check-section <folder>` | Validate any docs section — `NN_` prefixes, `settings.json`, frontmatter |
 
 Docs maintenance:
 
@@ -46,7 +46,7 @@ Pass `--help` to any wrapper for full flags. **Do not use `Grep` on the tracker*
 | Command | Use |
 |---|---|
 | `/docs-init` | Bootstrap a new documentation-template project from zero — interactive: scope (whole repo vs subfolder) → site name → first section → writes `config/`, `data/`, starter page, patches `CLAUDE.md`. Prints framework-clone command at the end. |
-| `/docs-add-section [name]` | Scaffold a new top-level section under `data/` — auto-computes next `XX_` prefix, creates `settings.json` + starter page, optionally registers in `site.yaml`. |
+| `/docs-add-section [name]` | Scaffold a new top-level section under `data/` — auto-computes next `NN_` prefix, creates `settings.json` + starter page, optionally registers in `site.yaml`. |
 
 ## Repository Layout
 

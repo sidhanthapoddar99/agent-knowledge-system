@@ -46,7 +46,7 @@ To add another top-level section to an existing project:
 /docs-add-section [name]
 ```
 
-Computes the next `XX_` prefix, scaffolds `settings.json` + `01_overview.md`, and (optionally) registers the section in `config/site.yaml`.
+Computes the next `NN_` prefix, scaffolds `settings.json` + `01_overview.md`, and (optionally) registers the section in `config/site.yaml`.
 
 ## What's inside
 

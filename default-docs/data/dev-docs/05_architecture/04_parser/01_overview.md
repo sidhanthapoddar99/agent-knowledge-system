@@ -62,7 +62,7 @@ src/parsers/
 │
 ├── content-types/              # Content-specific parsers
 │   ├── index.ts
-│   ├── docs.ts                 # DocsParser (XX_ prefix)
+│   ├── docs.ts                 # DocsParser (NN_ prefix)
 │   ├── blog.ts                 # BlogParser (date prefix)
 │   └── issues.ts               # IssuesParser (issue folders; used by loaders/issues.ts)
 │
@@ -78,7 +78,7 @@ src/parsers/
 ├── postprocessors/             # After rendering
 │   ├── index.ts
 │   ├── heading-ids.ts          # Add IDs to headings
-│   ├── internal-links.ts       # Rewrite relative links (strip XX_ prefixes, .md extensions)
+│   ├── internal-links.ts       # Rewrite relative links (strip NN_ prefixes, .md extensions)
 │   ├── issue-body-links.ts     # Issues only: re-root issue.md links for the detail-URL collapse
 │   ├── issue-asset-src.ts      # Issues only: relative <img src> → absolute /issue-assets/… URLs
 │   └── external-links.ts       # Security attrs for external links
@@ -148,7 +148,7 @@ const posts = await loadContent('blog', 'blog', {
 | `sort` | `'position' \| 'date' \| 'title'` | Sort method |
 | `order` | `'asc' \| 'desc'` | Sort direction |
 | `includeDrafts` | `boolean` | Include draft content |
-| `requirePositionPrefix` | `boolean` | Enforce `XX_` prefix (docs) |
+| `requirePositionPrefix` | `boolean` | Enforce `NN_` prefix (docs) |
 
 ### Return Type
 

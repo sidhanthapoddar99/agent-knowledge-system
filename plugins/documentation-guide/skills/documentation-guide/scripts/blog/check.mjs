@@ -3,7 +3,7 @@
  * blog/check.mjs — validate blog folder structure.
  *
  * Checks every .md file in the blog folder follows the project conventions
- * documented in `references/blog-layout.md`:
+ * documented in `references/layouts/blog-layout.md`:
  *
  *   • Filename matches YYYY-MM-DD-<kebab-case-slug>.md
  *   • Frontmatter `title:` present

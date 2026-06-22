@@ -84,7 +84,7 @@ parser.getAssetPath('/blog/2024-01-15-hello-world.md', 'cover.jpg');
 
 | Feature | DocsParser | BlogParser |
 |---------|------------|------------|
-| Naming | `XX_name.md` (position prefix) | `YYYY-MM-DD-slug.md` (date prefix) |
+| Naming | `NN_name.md` (position prefix) | `YYYY-MM-DD-slug.md` (date prefix) |
 | Ordering | By position number | By date |
 | Assets | Relative to file | Central `assets/<slug>/` folder |
 | Structure | Nested directories | Flat structure |
@@ -98,7 +98,7 @@ parser.getAssetPath('/blog/2024-01-15-hello-world.md', 'cover.jpg');
 title: Page Title           # Required
 description: SEO description
 sidebar_label: Sidebar Text  # Override sidebar display
-sidebar_position: 1         # Override XX_ position
+sidebar_position: 1         # Override NN_ position
 draft: false                # Hide in production
 tags: [guide, tutorial]
 ---

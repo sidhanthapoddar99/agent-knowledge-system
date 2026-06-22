@@ -11,7 +11,7 @@ A documentation framework built for **the new world of software** — where one 
 
 This is two things stitched together, intentionally:
 
-1. **A memory system for AI.** The whole framework is shaped so Claude — or any coding agent — can read, write, and navigate your docs as its long-term memory of the project. Conventions, decisions, architecture, past bugs. Predictable folder layout, `XX_` numeric ordering, machine-readable frontmatter, and a built-in live editor mean an agent can pick up context on a cold start and keep adding to it as the work moves.
+1. **A memory system for AI.** The whole framework is shaped so Claude — or any coding agent — can read, write, and navigate your docs as its long-term memory of the project. Conventions, decisions, architecture, past bugs. Predictable folder layout, `NN_` numeric ordering, machine-readable frontmatter, and a built-in live editor mean an agent can pick up context on a cold start and keep adding to it as the work moves.
 2. **An issues tracker designed for 1-person unicorns and 1–5-person teams.** No sprints, no planning poker, no ceremony. Each issue is a folder in your repo with subtasks, notes, and an agent-log — all markdown, all human-readable, all AI-writable. The tracker *is* the workflow.
 
 Together they support the working model that's actually emerging: **AI + small team development.** One person (or a small group) with an agent replaces what used to need a full team. Docs that the agent reads, issues that the agent writes to — no overhead, full context every turn.
@@ -73,7 +73,7 @@ The framework code is identical in both modes; only `CONFIG_DIR` and where the a
 | **Live Editor** | In-browser multi-user editing over Yjs CRDT, real-time preview |
 | **Modular Layouts** | Pick a style per content type; override with your own |
 | **Theme System** | YAML token contract — primitive + semantic tiers, no invented names |
-| **Auto Sidebar** | Generated from file positions via `XX_` prefixes |
+| **Auto Sidebar** | Generated from file positions via `NN_` prefixes |
 
 ## How It Works
 

@@ -3,7 +3,7 @@
  * docs/check.mjs — validate a docs section.
  *
  * Checks every folder + .md file inside a docs section follows the project
- * conventions documented in `references/docs-layout.md`:
+ * conventions documented in `references/layouts/docs-layout.md`:
  *
  *   • NN_ ordering prefix (2–5 digits) on folders (except `assets/`) and .md files (except README.md)
  *   • settings.json present in every folder

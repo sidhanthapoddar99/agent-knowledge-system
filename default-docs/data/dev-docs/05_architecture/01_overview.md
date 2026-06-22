@@ -219,7 +219,7 @@ Each layer has a single responsibility:
 ### 2. Convention Over Configuration
 
 File structure determines behavior:
-- `XX_name.md` → Position-based ordering
+- `NN_name.md` → Position-based ordering
 - `YYYY-MM-DD-slug.md` → Date-based ordering
 - `settings.json` → Folder configuration
 

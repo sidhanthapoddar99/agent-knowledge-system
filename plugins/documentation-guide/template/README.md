@@ -23,7 +23,7 @@ documentation site with five top-level sections: **Home**, **Docs**, **Issues**,
 │   ├── navbar.yaml
 │   └── footer.yaml
 ├── data/
-│   ├── docs/            # the user's "Docs" section (XX_-prefixed)
+│   ├── docs/            # the user's "Docs" section (NN_-prefixed)
 │   ├── blog/            # YYYY-MM-DD-slug.md
 │   ├── issues/          # folder-per-issue tracker (vocabulary in root settings.json)
 │   └── pages/           # custom-page data (home.yaml, etc.)

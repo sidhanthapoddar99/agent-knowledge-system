@@ -15,7 +15,7 @@ features:
     icon: "📝"
 
   - title: "Auto sidebar"
-    description: "Sidebar generated from your folder structure — XX_ prefixes control order."
+    description: "Sidebar generated from your folder structure — NN_ prefixes control order."
     icon: "📁"
 
   - title: "Built-in tracker"

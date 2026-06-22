@@ -228,7 +228,7 @@ This keeps the focus on content consumption rather than navigation.
 |---------|------|------|
 | Layout files | 1 (`Layout.astro`) | 2 (`Index` + `Post`) |
 | Navigation | Sidebar tree | Card grid |
-| Ordering | `XX_` prefix (position) | Date prefix (chronological) |
+| Ordering | `NN_` prefix (position) | Date prefix (chronological) |
 | URL structure | Hierarchical | Flat |
 | Content focus | Reference | Narrative |
 | TOC/Outline | Yes | No |

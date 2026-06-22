@@ -63,7 +63,7 @@ docs:
   data: "@data/docs/final_docs"
 ```
 
-- Uses `XX_` prefix for ordering
+- Uses `NN_` prefix for ordering
 - Generates sidebar from folder structure
 - Supports nested folders
 

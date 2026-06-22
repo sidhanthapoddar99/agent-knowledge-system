@@ -10,7 +10,7 @@ How to add and configure blog posts.
 
 ## File naming
 
-Blog posts are **flat files** (no folders, no `XX_` prefix) under the project's `data/blog/`:
+Blog posts are **flat files** (no folders, no `NN_` prefix) under the project's `data/blog/`:
 
 ```
 blog/

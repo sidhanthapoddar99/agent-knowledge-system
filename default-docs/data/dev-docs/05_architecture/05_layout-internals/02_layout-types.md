@@ -280,7 +280,7 @@ Layout references work the same whether the layout is built-in or external. When
 | Feature | Docs | Blog | Custom |
 |---------|------|------|--------|
 | **Content Source** | Markdown files | Markdown files | YAML/Markdown |
-| **Ordering** | `XX_` prefix | Date prefix | Manual |
+| **Ordering** | `NN_` prefix | Date prefix | Manual |
 | **Sidebar** | Yes (optional) | No | No |
 | **Outline/TOC** | Yes | No | No |
 | **Pagination** | Prev/Next | No | No |

@@ -18,7 +18,7 @@ The template ships **5 sections wired up**: Home (`/`), Docs (`/docs`), Issues (
 <chosen_root>/                     ← user's project root
 ├── config/                        ← site.yaml, navbar.yaml, footer.yaml
 ├── data/                          ← all editable content
-│   ├── docs/                      ← user's docs section (XX_-prefixed)
+│   ├── docs/                      ← user's docs section (NN_-prefixed)
 │   ├── blog/                      ← YYYY-MM-DD-slug.md
 │   ├── issues/                    ← folder-per-issue tracker
 │   └── pages/                     ← custom-page YAML (home.yaml)
@@ -253,7 +253,7 @@ Install (per workstation, one-time):
 
 ### Adding content
 
-- **New page in existing section** — create `data/<section>/<XX>_<slug>.md` with `title:` frontmatter. `XX_` is the next 2-digit prefix in the section.
+- **New page in existing section** — create `data/<section>/<NN>_<slug>.md` with `title:` frontmatter. `NN_` is the next numeric prefix in the section (2–5 digits, sorted by value — generally 2-digit and gap-spaced).
 - **New top-level section** — run `/docs-add-section` (creates `data/<name>/`, `settings.json`, starter page; optionally registers in `site.yaml`)
 - **Validate before commit** — `docs-check-config` and `docs-check-section <chosen_root>/data/<section>` flag missing `settings.json`, missing frontmatter, prefix collisions
 ````

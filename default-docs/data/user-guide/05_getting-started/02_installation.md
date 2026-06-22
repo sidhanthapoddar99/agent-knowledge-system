@@ -160,7 +160,7 @@ Astro caches compiled routes by source path; when `CONFIG_DIR` or content paths 
 ### Build Fails
 
 Common causes:
-1. Missing `XX_` prefix on doc files (required)
+1. Missing `NN_` prefix on doc files (required)
 2. Invalid YAML frontmatter
 3. Missing `settings.json` in a doc folder
 

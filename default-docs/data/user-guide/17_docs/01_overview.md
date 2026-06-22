@@ -14,14 +14,14 @@ Sibling content types: [Blogs](/user-guide/blogs/overview) for date-ordered post
 
 | Topic | Description |
 |-------|-------------|
-| [Structure](./structure) | Naming conventions with `XX_` prefix |
+| [Structure](./structure) | Naming conventions with `NN_` prefix (2–5 digits) |
 | [Folder Settings](./folder-settings) | Configure `settings.json` for each folder |
 | [Frontmatter](./frontmatter) | Required and optional metadata fields |
 | [Asset Embedding](./asset-embedding) | Detailed asset management for docs |
 
 ## Key Rules Summary
 
-1. **All files and folders must have `XX_` prefix** (01-99)
+1. **All files and folders must have an `NN_` prefix** (2–5 digits, sorted by numeric value)
 2. **Every folder needs `settings.json`** (except root doc folder)
 3. **Every file needs frontmatter** with at least `title`
 4. **Assets folder is excluded** from sidebar indexing
@@ -51,6 +51,6 @@ data/docs/
 
 Docs are processed using the `DocsParser` which:
 
-- Parses `XX_` prefix for ordering
+- Parses `NN_` prefix (2–5 digits) for ordering
 - Resolves assets relative to the file
 - Generates clean URLs (prefix stripped)

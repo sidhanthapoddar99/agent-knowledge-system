@@ -85,11 +85,11 @@ For long blocks, the `collapsible` custom tag wraps the block.
 
 - **Drafts** — `draft: true` works on every type
 - **Dev-only content** — see `@root/default-docs/data/user-guide/10_configuration/06_dev-mode.md`
-- **`XX_` prefix** — used in docs/dev-docs folders (NOT in blog, NOT in issues)
+- **`NN_` prefix** — used in docs/dev-docs folders (NOT in blog, NOT in issues)
 
 ## Cross-references
 
 - `@root/default-docs/data/user-guide/15_writing-content/` (the framework's bundled user-guide) — full section
-- `references/docs-layout.md` — docs-specific structure / settings
-- `references/blog-layout.md` — blog-specific naming / frontmatter
-- `references/issue-layout.md` — issue-specific structure
+- `references/layouts/docs-layout.md` — docs-specific structure / settings
+- `references/layouts/blog-layout.md` — blog-specific naming / frontmatter
+- `references/layouts/issue-layout.md` — issue-specific structure

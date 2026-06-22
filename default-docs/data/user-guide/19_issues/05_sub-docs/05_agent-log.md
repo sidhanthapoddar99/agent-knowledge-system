@@ -24,8 +24,8 @@ agent-log/
         └── 002_polish.md
 ```
 
-- **`NNN`** — sequence number (1-indexed). **Optional**. Zero-padding recommended when present.
-- **Separator** — `_` or `-` (both work).
+- **`NNN`** — sequence number (1-indexed). **Optional**. Follows the same shared ordering-prefix grammar as the rest of the tracker — **2 to 5 digits**, sorted by numeric value. The CLI writes 3-digit `NNN_` by default (`001_`, `002_`, …); a 2-digit `NN_` works just as well, while a single digit is not treated as a prefix. Zero-padding recommended when present.
+- **Separator** — `_` (canonical) or a legacy `-` (both work).
 - **Slug** — kebab-case, human-readable, describes the iteration's focus.
 
 When the `NNN_` prefix is present the loader parses it as the sequence number; when it's absent the loader assigns one based on sort order within the folder. Iteration counters are tracked separately in frontmatter, so prefix-less files still get correct iteration numbers if `iteration:` is set.

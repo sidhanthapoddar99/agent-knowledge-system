@@ -30,7 +30,7 @@ pages:
     data: "@data/handbook"
 ```
 
-**Naming convention:** the top-level section folder uses **plain kebab-case — no `XX_` prefix**. The numeric prefix only applies to files inside the section (`01_overview.md`, `05_setup.md`) and to subsection folders if the section grows them. Confirm this if the user asks.
+**Naming convention:** the top-level section folder uses **plain kebab-case — no `NN_` prefix**. The numeric prefix only applies to files inside the section (`01_overview.md`, `05_setup.md`) and to subsection folders if the section grows them. Confirm this if the user asks.
 
 # Workflow
 
@@ -140,7 +140,7 @@ Welcome to the <Title> section. Edit `data/<name>/01_overview.md` to replace thi
 
 ## Adding pages
 
-Create files in this folder with the `XX_` prefix to control sidebar order:
+Create files in this folder with the `NN_` prefix to control sidebar order:
 
 - `02_<slug>.md` — second page
 - `05_<slug>.md` — leave gaps so future inserts don't require renumbering
@@ -177,7 +177,7 @@ Created section <name> at <data_root>/<name>/.
 
 Next steps:
   - Edit data/<name>/01_overview.md to write the section's intro.
-  - Add more pages: 02_*.md, 05_*.md, etc. (XX_ prefix controls sidebar order)
+  - Add more pages: 02_*.md, 05_*.md, etc. (NN_ prefix controls sidebar order)
   - Restart the dev server to pick up the new route at /<name>.
   - Optionally add a navbar link in config/navbar.yaml.
 ```
@@ -188,4 +188,4 @@ Next steps:
 
 - Validate the section name *before* asking other questions — bail early on collisions.
 - Never overwrite an existing `settings.json` or `site.yaml` block. If you'd be writing over something, stop and ask.
-- The top-level section folder does NOT get an `XX_` prefix — explain this to the user if they ask why their section isn't `05_handbook` or similar. The prefix is for files inside (and subsection folders), not for the section itself.
+- The top-level section folder does NOT get an `NN_` prefix — explain this to the user if they ask why their section isn't `05_handbook` or similar. The prefix is for files inside (and subsection folders), not for the section itself.

@@ -11,11 +11,11 @@ Subtasks break an issue into atomic, trackable units of work. Each one is a mark
 ## File naming
 
 ```
-NN_<slug>.md
+NN_<slug>.md      # or NNN_<slug>.md
 ```
 
-- **`NN`** — numeric prefix (any digits) for ordering in the sidebar. Typically `01`, `02`, `03`, … but `1`, `10`, `001` are all valid.
-- **Separator** — either `_` or `-` after the number (`01_foo.md` and `01-foo.md` both work).
+- **`NN` / `NNN`** — numeric ordering prefix, sorted by numeric value (so widths coexist — `010_` sorts after `02_`). For subtasks (leaf files **and** grouping folders), **both 2- and 3-digit are conventional**: `NN_` is the simple baseline, and `NNN_` is used freely — when a folder holds a complex, flat-but-grouped set (the leading digit annotates a group: `110_`/`120_` = group 1, `210_` = group 2) or simply has many subtasks. 3-digit is *not* an exception here, just more common than in docs. **4–5 digits are very rare** — only when explicitly required or genuinely exceptional. A single digit (`1_`) is **not** treated as a prefix. Gap-number either width so you can slot work in between without renumbering.
+- **Separator** — either `_` (canonical) or a legacy `-` after the number (`010_foo.md` and `010-foo.md` both work).
 - **`<slug>`** — lowercase kebab-case or snake_case, human-readable.
 
 Example:

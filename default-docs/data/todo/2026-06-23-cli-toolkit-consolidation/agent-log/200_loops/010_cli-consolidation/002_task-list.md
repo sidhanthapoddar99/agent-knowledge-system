@@ -21,7 +21,7 @@ Live execution checklist (mirrors the subtask plan; update status as the run pro
 
 ## Feature fills
 - [x] 09 — search-scoping flags `--path` / `--meta` / `--count` → `--path astro` solves the original failure
-- [ ] 10 — docs + blog `list`/`show`/`search` (after 01)
+- [x] 10 — docs + blog `list`/`show`/`search` → `_content.mjs` + 6 cmds; `docs` dispatcher shim added; harness 93/93
 - [ ] 11 — unified cross-content `find` (+ stretch `link-check`)
 - [ ] 12 — `git` content helper (guarded commit)
 

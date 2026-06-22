@@ -161,6 +161,48 @@ export const MANIFEST = [
     flags: [{ name: 'json', desc: 'structured findings' }],
   },
 
+  // ---- docs content (group: doc) -------------------------------------------
+  {
+    bin: 'docs-doc-list', group: 'doc', verb: 'list', category: 2, script: 'docs/list.mjs', runtime: 'mjs',
+    summary: 'List doc pages (rel · section · title); optional [section] filter',
+    flags: [{ name: 'json', desc: 'structured JSON output' }],
+  },
+  {
+    bin: 'docs-doc-show', group: 'doc', verb: 'show', category: 2, script: 'docs/show.mjs', runtime: 'mjs',
+    summary: "One doc page's metadata + frontmatter (by path/name)",
+    flags: [{ name: 'json', desc: 'structured JSON output' }],
+  },
+  {
+    bin: 'docs-doc-search', group: 'doc', verb: 'search', category: 2, script: 'docs/search.mjs', runtime: 'mjs',
+    summary: 'Free-text regex search over doc pages; optional [section]',
+    flags: [
+      { name: 'count', desc: 'match count only' },
+      { name: 'case-sensitive', desc: 'default: case-insensitive' },
+      { name: 'json', desc: 'structured JSON output' },
+    ],
+  },
+
+  // ---- blog content (group: blog) ------------------------------------------
+  {
+    bin: 'docs-blog-list', group: 'blog', verb: 'list', category: 2, script: 'blog/list.mjs', runtime: 'mjs',
+    summary: 'List blog posts (date · slug · title), newest first',
+    flags: [{ name: 'json', desc: 'structured JSON output' }],
+  },
+  {
+    bin: 'docs-blog-show', group: 'blog', verb: 'show', category: 2, script: 'blog/show.mjs', runtime: 'mjs',
+    summary: "One post's metadata + frontmatter (by slug/date)",
+    flags: [{ name: 'json', desc: 'structured JSON output' }],
+  },
+  {
+    bin: 'docs-blog-search', group: 'blog', verb: 'search', category: 2, script: 'blog/search.mjs', runtime: 'mjs',
+    summary: 'Free-text regex search over blog posts',
+    flags: [
+      { name: 'count', desc: 'match count only' },
+      { name: 'case-sensitive', desc: 'default: case-insensitive' },
+      { name: 'json', desc: 'structured JSON output' },
+    ],
+  },
+
   // ---- cross-content (top-level, category 1) -------------------------------
   {
     bin: 'docs-move', group: null, verb: 'move', category: 1, script: 'docs/move.mjs', runtime: 'mjs',

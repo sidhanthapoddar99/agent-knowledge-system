@@ -36,6 +36,11 @@ export const MANIFEST = [
     summary: 'List commands, show one command’s flags, or dump the manifest (--json)',
     flags: [{ name: 'json', desc: 'machine-readable manifest dump' }],
   },
+  {
+    bin: 'docs-resolve-context', group: null, verb: 'resolve-context', category: 0, script: 'resolve-context.mjs', runtime: 'mjs',
+    summary: 'Emit the .env-derived content root / config / data dir (for non-JS scripts)',
+    flags: [{ name: 'json', desc: 'structured JSON instead of KEY=value lines' }],
+  },
 
   // ---- issues (group: issue) ------------------------------------------------
   {

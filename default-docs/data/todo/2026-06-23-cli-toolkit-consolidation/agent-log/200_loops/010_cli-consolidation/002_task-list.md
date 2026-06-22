@@ -26,7 +26,7 @@ Live execution checklist (mirrors the subtask plan; update status as the run pro
 - [x] 12 — `git` content helper → `_git.mjs` + 4 verbs (updated/changed/log/commit, guarded); harness 113/113
 
 ## Forward-enable
-- [ ] 13 — polyglot/Python readiness (route non-`.mjs`, interpreter detect, `resolve-context`, spec)
+- [x] 13 — polyglot/Python readiness → `_runtime.mjs` (interpreter detect) + cli.mjs runtime routing + `resolve-context` + `CONTRACT.md`; proven with throwaway .py; harness 117/117
 
 ## Close-out (in order)
 - [ ] 15 — update skills + preferences + CLAUDE.md

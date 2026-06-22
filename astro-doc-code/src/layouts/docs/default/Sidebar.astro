@@ -183,6 +183,23 @@ function shouldBeExpanded(section: SidebarSection): boolean {
       return (btn && btn.closest('[data-collapse-key]') === sec) ? btn : null;
     }
 
+    // Is `el` fully within the visible viewport of scroll-container `container`?
+    function fullyVisible(el, container) {
+      var er = el.getBoundingClientRect();
+      var cr = container.getBoundingClientRect();
+      return er.top >= cr.top && er.bottom <= cr.bottom;
+    }
+
+    // Center `el` vertically within `container`. scrollTop self-clamps to
+    // [0, scrollHeight - clientHeight], so a near-edge / last item lands as
+    // close to centre as the remaining room allows (the accepted exception).
+    function centerInSidebar(el, container) {
+      var er = el.getBoundingClientRect();
+      var cr = container.getBoundingClientRect();
+      var top = (er.top - cr.top) + container.scrollTop;
+      container.scrollTop = top - (container.clientHeight / 2) + (el.offsetHeight / 2);
+    }
+
     function init() {
       var aside = document.querySelector('.sidebar[data-sidebar-root]');
       if (!aside) return;
@@ -218,7 +235,7 @@ function shouldBeExpanded(section: SidebarSection): boolean {
         if (btn) btn.setAttribute('aria-expanded', String(!collapsed));
       });
 
-      // 2. Sync wins: force-expand ancestors of the active entry, then scroll it in.
+      // 2. Sync wins: force-expand ancestors of the active entry, then position it.
       var active = aside.querySelector('.sidebar__link--active');
       if (active) {
         var el = active.parentElement;
@@ -230,8 +247,33 @@ function shouldBeExpanded(section: SidebarSection): boolean {
           }
           el = el.parentElement;
         }
+
+        // Two positioning cases (no view transitions here — every nav is a full
+        // reload, so a fresh document's sidebar always starts at scrollTop 0):
+        //   - Cold load / reload / direct open / non-sidebar nav: centre the
+        //     active item so it lands mid-sidebar where there's room.
+        //   - Click on a sidebar link: keep the sidebar visually still. We stash
+        //     the pre-nav scrollTop on click (step 4) and restore it here, only
+        //     re-centring if the active item ends up off-screen. This avoids the
+        //     jump-on-every-click friction while browsing.
+        var fromClick = false, savedScroll = null;
+        try {
+          fromClick = sessionStorage.getItem('sidebar:fromClick') === '1';
+          var s = sessionStorage.getItem('sidebar:scroll');
+          if (s !== null) savedScroll = parseInt(s, 10);
+          sessionStorage.removeItem('sidebar:fromClick');
+          sessionStorage.removeItem('sidebar:scroll');
+        } catch (e) {}
+
         requestAnimationFrame(function () {
-          try { active.scrollIntoView({ block: 'nearest' }); } catch (e) {}
+          try {
+            if (fromClick && savedScroll !== null) {
+              aside.scrollTop = savedScroll;
+              if (!fullyVisible(active, aside)) centerInSidebar(active, aside);
+            } else {
+              centerInSidebar(active, aside);
+            }
+          } catch (e) {}
         });
       }
 
@@ -253,6 +295,19 @@ function shouldBeExpanded(section: SidebarSection): boolean {
             else state[p] = next ? 1 : 0;
             save();
           }
+        });
+      });
+
+      // 4. On sidebar-link navigation, stash the current scroll so the next
+      //    (full-reload) page can restore it instead of jumping (see step 2).
+      aside.querySelectorAll('.sidebar__link').forEach(function (link) {
+        if (link.__sbNavBound) return;
+        link.__sbNavBound = true;
+        link.addEventListener('click', function () {
+          try {
+            sessionStorage.setItem('sidebar:scroll', String(aside.scrollTop));
+            sessionStorage.setItem('sidebar:fromClick', '1');
+          } catch (e) {}
         });
       });
     }

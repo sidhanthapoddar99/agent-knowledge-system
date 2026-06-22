@@ -160,6 +160,23 @@ const tracker = baseUrl.replace(/^\/+/, '').replace(/\/+$/, '');
       var TTL = 30 * 24 * 60 * 60 * 1000; // 30 days
       var PREFIX = 'issues-sidebar-collapse:';
 
+      // Is `el` fully within the visible viewport of scroll-container `container`?
+      function fullyVisible(el, container) {
+        var er = el.getBoundingClientRect();
+        var cr = container.getBoundingClientRect();
+        return er.top >= cr.top && er.bottom <= cr.bottom;
+      }
+
+      // Center `el` vertically within `container`. scrollTop self-clamps to
+      // [0, scrollHeight - clientHeight], so a near-edge / last item lands as
+      // close to centre as the remaining room allows (the accepted exception).
+      function centerInSidebar(el, container) {
+        var er = el.getBoundingClientRect();
+        var cr = container.getBoundingClientRect();
+        var top = (er.top - cr.top) + container.scrollTop;
+        container.scrollTop = top - (container.clientHeight / 2) + (el.offsetHeight / 2);
+      }
+
       // Lazy GC: drop expired blobs and legacy v1 per-folder keys (no `.f`).
       function gc() {
         var now = Date.now();
@@ -206,7 +223,7 @@ const tracker = baseUrl.replace(/^\/+/, '').replace(/\/+$/, '');
           if (p in state) d.open = !state[p];
         });
 
-        // 2. Sync wins: open every <details> ancestor of the active entry, then scroll it in.
+        // 2. Sync wins: open every <details> ancestor of the active entry, then position it.
         var active = aside.querySelector('.issue-sidebar__item.is-active');
         if (active) {
           var el = active.parentElement;
@@ -214,8 +231,33 @@ const tracker = baseUrl.replace(/^\/+/, '').replace(/\/+$/, '');
             if (el.tagName === 'DETAILS') el.open = true;
             el = el.parentElement;
           }
+
+          // Two positioning cases (sub-doc nav is a full reload, so a fresh
+          // document's sidebar always starts at scrollTop 0):
+          //   - Cold load / reload / direct open: centre the active item.
+          //   - Click on a sub-doc link: keep the sidebar visually still by
+          //     restoring the pre-nav scrollTop stashed on click (step 4), only
+          //     re-centring if the active item ends up off-screen. Avoids the
+          //     jump-on-every-click friction while browsing.
+          // (Overview/Comprehensive are panel-swap buttons — no reload, not stashed.)
+          var fromClick = false, savedScroll = null;
+          try {
+            fromClick = sessionStorage.getItem('issues-sidebar:fromClick') === '1';
+            var s = sessionStorage.getItem('issues-sidebar:scroll');
+            if (s !== null) savedScroll = parseInt(s, 10);
+            sessionStorage.removeItem('issues-sidebar:fromClick');
+            sessionStorage.removeItem('issues-sidebar:scroll');
+          } catch (e) {}
+
           requestAnimationFrame(function () {
-            try { active.scrollIntoView({ block: 'nearest' }); } catch (e) {}
+            try {
+              if (fromClick && savedScroll !== null) {
+                aside.scrollTop = savedScroll;
+                if (!fullyVisible(active, aside)) centerInSidebar(active, aside);
+              } else {
+                centerInSidebar(active, aside);
+              }
+            } catch (e) {}
           });
         }
 
@@ -234,6 +276,20 @@ const tracker = baseUrl.replace(/^\/+/, '').replace(/\/+$/, '');
             if (d.open === defaults[p]) delete state[p];
             else state[p] = d.open ? 0 : 1;
             save();
+          });
+        });
+
+        // 4. On sub-doc navigation (anchors only — panel-swap buttons don't
+        //    reload), stash the current scroll so the next page can restore it
+        //    instead of jumping (see step 2).
+        aside.querySelectorAll('a.issue-sidebar__item').forEach(function (link) {
+          if (link.__sbNavBound) return;
+          link.__sbNavBound = true;
+          link.addEventListener('click', function () {
+            try {
+              sessionStorage.setItem('issues-sidebar:scroll', String(aside.scrollTop));
+              sessionStorage.setItem('issues-sidebar:fromClick', '1');
+            } catch (e) {}
           });
         });
       }

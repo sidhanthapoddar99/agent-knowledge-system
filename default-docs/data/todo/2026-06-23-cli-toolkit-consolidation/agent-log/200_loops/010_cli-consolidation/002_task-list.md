@@ -35,6 +35,11 @@ Live execution checklist (mirrors the subtask plan; update status as the run pro
 - [x] 18 — recreate POST-EDIT feature matrix + delta (FINAL) → notes/05 re-scored vs frozen baseline; deferred items filed as issue comment
 
 ## Gate check before declaring done
-- [x] self-test harness green → **117/117 (bun)**
+- [x] self-test harness green → **117/117 (bun)** (now 91/91 after the single-entrypoint refactor below)
 - [x] `docs help --json` matches the manifest → **28/28, no missing/extra**
 - [x] all subtasks at `review`/`closed` → **18/18 review**
+
+## Post-loop refinements (review feedback)
+Beyond the original 18 subtasks — substantial follow-on work, logged as milestones:
+- [x] **Milestone 5** — single `docs-guide` entrypoint: renamed `docs`→`docs-guide` (collision-safe), removed all 28 flat shims, swept docs (→ `105_single-entrypoint.md`)
+- [x] **Milestone 6** — agent-log overhaul: direct-write default + "log milestones, not steps"; demoted `add-agent-log`; consolidated this loop's 18 logs → 6 (→ `106_agent-log-overhaul.md`)

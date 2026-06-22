@@ -1,0 +1,18 @@
+{
+  "title": "Updating skills & documentation",
+  "description": "Batch of documentation-guide skill + framework-docs maintenance as conventions evolve. Two items done (layout-reference restructure, NN_/NNN_ notation + digit-width standard); three queued for discussion (split the large issue reference, agent-log structure standard, validator/skill optimization).",
+  "status": "open",
+  "priority": "medium",
+  "component": [
+    "ai-skills",
+    "docs"
+  ],
+  "labels": [
+    "refactor",
+    "task"
+  ],
+  "author": "sidhantha",
+  "assignees": [
+    "claude"
+  ]
+}

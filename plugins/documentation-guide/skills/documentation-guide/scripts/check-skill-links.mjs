@@ -23,13 +23,9 @@ import { fileURLToPath } from 'node:url';
 import { reportAndExit } from './_check-lib.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
-const SKILL_ROOT = process.argv[2] || path.dirname(SCRIPT_DIR); // scripts/ → skill root
-
-if (process.argv[2] === '--help' || process.argv[2] === '-h') {
-  console.error('Usage: check-skill-links [skill-dir]\n');
-  console.error('  Verifies relative *.md links between skill files resolve. Defaults to the skill root.');
-  process.exit(0);
-}
+const JSON_OUT = process.argv.includes('--json');
+const POSITIONAL = process.argv.slice(2).find((a) => !a.startsWith('-'));
+const SKILL_ROOT = POSITIONAL || path.dirname(SCRIPT_DIR); // scripts/ → skill root
 
 const errors = [];
 const warnings = [];
@@ -72,4 +68,4 @@ for (const file of listMarkdown(SKILL_ROOT)) {
   });
 }
 
-reportAndExit({ kind: 'skill-links', root: SKILL_ROOT, errors, warnings });
+reportAndExit({ kind: 'skill-links', root: SKILL_ROOT, errors, warnings, json: JSON_OUT });

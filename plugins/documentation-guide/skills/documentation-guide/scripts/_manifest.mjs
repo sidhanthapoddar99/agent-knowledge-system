@@ -142,6 +142,21 @@ export const MANIFEST = [
     summary: 'Validate a docs section (NN_ prefixes, settings.json, title)',
     flags: [{ name: 'json', desc: 'structured findings' }],
   },
+  {
+    bin: 'docs-check-issues', group: 'check', verb: 'issues', category: 2, script: 'issues/check.mjs', runtime: 'mjs',
+    summary: 'Validate the issue tracker (schema, vocabulary, subtask states)',
+    flags: [
+      { name: 'json', desc: 'structured findings' },
+      { name: 'quiet', desc: 'suppress warnings' },
+      { name: 'strict', desc: 'treat warnings as errors' },
+      { name: 'tracker', value: 'path', desc: 'non-default tracker' },
+    ],
+  },
+  {
+    bin: 'docs-check-skill-links', group: 'check', verb: 'skill-links', category: 0, script: 'check-skill-links.mjs', runtime: 'mjs',
+    summary: 'Maintainer tool: verify relative links between skill .md files resolve',
+    flags: [{ name: 'json', desc: 'structured findings' }],
+  },
 
   // ---- cross-content (top-level, category 1) -------------------------------
   {

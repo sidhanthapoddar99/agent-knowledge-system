@@ -10,6 +10,8 @@
  * will surface `updated` via that channel.
  */
 
+import fs from 'node:fs';
+import path from 'node:path';
 import {
   resolveTracker, readIssueMeta, readIssueSubtasks, readIssueComments,
   readIssueAgentLogs, parseArgs, printHelp, issueDateFromId,

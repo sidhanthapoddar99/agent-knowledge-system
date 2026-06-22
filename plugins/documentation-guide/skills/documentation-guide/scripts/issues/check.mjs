@@ -271,4 +271,5 @@ reportAndExit({
   errors,
   warnings,
   quiet: QUIET,
+  json: !!args.flags.json,
 });

@@ -15,8 +15,8 @@ Live execution checklist (mirrors the subtask plan; update status as the run pro
 - [x] 05 — roll uniform contract to every command → global --help/-h interceptor + validator --json; **harness 59/59 GREEN**
 
 ## Correctness & cleanup
-- [ ] 06 — wire orphans (`docs-check-issues`, resolve `check-skill-links`)
-- [ ] 07 — fix latent bugs (`show --full`, `review-queue` exit)
+- [x] 06 — wire orphans → `docs-check-issues` (tracker passes: 0 err/15 warn), `docs-check-skill-links`
+- [x] 07 — fix latent bugs → `show --full` imports fixed; review-queue exit reviewed-OK
 - [ ] 08 — dedup (links, walkers, tool-detection, constants)
 
 ## Feature fills

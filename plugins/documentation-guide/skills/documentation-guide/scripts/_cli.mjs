@@ -18,7 +18,18 @@
  * everywhere, exit codes) is rolled out in subtask 05, consuming these helpers.
  */
 
+import fs from 'node:fs';
 import { reportAndExit } from './_check-lib.mjs';
+
+/**
+ * Write to stdout SYNCHRONOUSLY. process.stdout.write() is async on a pipe, so a
+ * large write followed by process.exit() truncates — silently corrupting JSON an
+ * agent is parsing. fs.writeSync(1, …) blocks until flushed, so the subsequent
+ * process.exit() is safe. Use this for any bulk/structured output.
+ */
+export function writeStdout(str) {
+  fs.writeSync(1, str);
+}
 
 /**
  * Parse argv into `{ _: positionals, flags: {} }`.
@@ -63,9 +74,10 @@ export function printHelp(name, lines) {
   for (const line of lines.slice(1)) console.error('  ' + line);
 }
 
-/** Uniform `--json` output: pretty JSON + trailing newline to stdout. */
+/** Uniform `--json` output: pretty JSON + trailing newline to stdout (sync, so a
+ *  large payload isn't truncated by a following process.exit()). */
 export function emitJson(value) {
-  process.stdout.write(JSON.stringify(value, null, 2) + '\n');
+  writeStdout(JSON.stringify(value, null, 2) + '\n');
 }
 
 /** Exit with an error message (stderr) and code. Default 1 (error/no-match). */

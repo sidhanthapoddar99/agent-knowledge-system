@@ -12,7 +12,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { resolveProjectContext } from './_env.mjs';
-import { parseArgs, emitJson } from './_cli.mjs';
+import { parseArgs, emitJson, writeStdout } from './_cli.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 
@@ -93,7 +93,7 @@ function items(kind, section) {
   return kind === 'docs' ? listDocsPages(section) : listBlogPosts();
 }
 
-function searchInFiles(files, pattern, caseSensitive) {
+export function searchInFiles(files, pattern, caseSensitive) {
   const re = new RegExp(pattern, caseSensitive ? '' : 'i');
   const hits = [];
   for (const f of files) {
@@ -104,17 +104,83 @@ function searchInFiles(files, pattern, caseSensitive) {
   return hits;
 }
 
+// ---- cross-content collection + metadata search (for `find`, subtask 11) ----
+
+const TEXT_EXT = new Set(['.md', '.json', '.yaml', '.yml']);
+
+function walkText(dir, out) {
+  let entries;
+  try { entries = fs.readdirSync(dir, { withFileTypes: true }); } catch { return; }
+  for (const e of entries) {
+    if (e.name.startsWith('.') || e.name === 'node_modules' || e.name === 'assets') continue;
+    const abs = path.join(dir, e.name);
+    if (e.isDirectory()) walkText(abs, out);
+    else if (e.isFile() && TEXT_EXT.has(path.extname(e.name))) out.push(abs);
+  }
+}
+
+/** Classify a file into a content type for --type filtering. */
+export function classifyType(file) {
+  const ctx = resolveProjectContext(SCRIPT_DIR);
+  if (file === ctx.configDir || file.startsWith(ctx.configDir + path.sep)) return 'config';
+  const data = path.join(ctx.contentRoot, 'data');
+  const top = path.relative(data, file).split(path.sep)[0];
+  if (top === 'blog') return 'blog';
+  if (top === 'todo') return 'issues';
+  return 'docs';
+}
+
+/** All text content files across data/ + config/, optionally filtered by type. */
+export function collectContentFiles(types) {
+  const ctx = resolveProjectContext(SCRIPT_DIR);
+  const files = [];
+  walkText(path.join(ctx.contentRoot, 'data'), files);
+  walkText(ctx.configDir, files);
+  let unique = [...new Set(files)];
+  if (types && types.length) {
+    const want = new Set(types);
+    unique = unique.filter((f) => want.has(classifyType(f)));
+  }
+  return unique.sort();
+}
+
+/** The metadata region(s) of a file: .json/.yaml whole, .md frontmatter only. */
+function metaRegions(file) {
+  let c;
+  try { c = fs.readFileSync(file, 'utf-8'); } catch { return []; }
+  if (/\.(json|ya?ml)$/.test(file)) return [{ startLine: 1, text: c }];
+  if (file.endsWith('.md')) {
+    const m = /^---\r?\n([\s\S]*?)\r?\n---/.exec(c);
+    return m ? [{ startLine: 2, text: m[1] }] : [];
+  }
+  return [];
+}
+
+export function metaSearchInFiles(files, pattern, caseSensitive) {
+  const re = new RegExp(pattern, caseSensitive ? '' : 'i');
+  const hits = [];
+  for (const f of files) {
+    for (const r of metaRegions(f)) {
+      r.text.split('\n').forEach((ln, i) => { if (re.test(ln)) hits.push({ path: f, line: r.startLine + i, snippet: ln.trim() }); });
+    }
+  }
+  return hits;
+}
+
+export function contentRootDir() {
+  return resolveProjectContext(SCRIPT_DIR).contentRoot;
+}
+
 // ---- commands ---------------------------------------------------------------
 
 export function cmdList(kind, argv) {
   const args = parseArgs(argv);
   const list = items(kind, args._[0]);
   if (args.flags.json) { emitJson(list.map(({ path: _p, ...r }) => r)); process.exit(list.length ? 0 : 1); }
-  for (const it of list) {
-    console.log(kind === 'docs'
-      ? `${it.rel}\t${it.section}\t${it.title}`
-      : `${it.date}\t${it.slug}\t${it.title}`);
-  }
+  const lines = list.map((it) => kind === 'docs'
+    ? `${it.rel}\t${it.section}\t${it.title}`
+    : `${it.date}\t${it.slug}\t${it.title}`);
+  if (lines.length) writeStdout(lines.join('\n') + '\n');
   process.exit(list.length ? 0 : 1);
 }
 
@@ -151,6 +217,7 @@ export function cmdSearch(kind, argv) {
     console.log(`${hits.length} match(es) in ${new Set(hits.map((h) => h.path)).size} file(s)`);
     process.exit(hits.length ? 0 : 1);
   }
-  for (const h of hits) console.log(`${path.relative(process.cwd(), h.path)}:${h.line}\t${h.snippet}`);
+  const lines = hits.map((h) => `${path.relative(process.cwd(), h.path)}:${h.line}\t${h.snippet}`);
+  if (lines.length) writeStdout(lines.join('\n') + '\n');
   process.exit(hits.length ? 0 : 1);
 }

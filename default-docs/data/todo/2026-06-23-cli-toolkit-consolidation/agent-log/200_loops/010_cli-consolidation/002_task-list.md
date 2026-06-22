@@ -22,7 +22,7 @@ Live execution checklist (mirrors the subtask plan; update status as the run pro
 ## Feature fills
 - [x] 09 — search-scoping flags `--path` / `--meta` / `--count` → `--path astro` solves the original failure
 - [x] 10 — docs + blog `list`/`show`/`search` → `_content.mjs` + 6 cmds; `docs` dispatcher shim added; harness 93/93
-- [ ] 11 — unified cross-content `find` (+ stretch `link-check`)
+- [x] 11 — unified cross-content `find` → `find.mjs` + `_content.mjs` collectors; **fixed stdout-truncation bug** (sync `writeStdout`); harness 97/97
 - [ ] 12 — `git` content helper (guarded commit)
 
 ## Forward-enable

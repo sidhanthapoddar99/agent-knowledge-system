@@ -205,6 +205,19 @@ export const MANIFEST = [
 
   // ---- cross-content (top-level, category 1) -------------------------------
   {
+    bin: 'docs-find', group: null, verb: 'find', category: 1, script: 'find.mjs', runtime: 'mjs',
+    summary: 'Schema-agnostic search across ALL content (docs+blog+issues+config)',
+    flags: [
+      { name: 'meta', desc: 'match only the structured layer (frontmatter + JSON/YAML)' },
+      { name: 'path', desc: 'match the file/folder path text instead of content' },
+      { name: 'type', value: 'list', desc: 'restrict scope: docs,blog,issues,config' },
+      { name: 'count', desc: 'match count only' },
+      { name: 'paths-only', desc: 'bare list of unique match paths' },
+      { name: 'case-sensitive', desc: 'default: case-insensitive' },
+      { name: 'json', desc: 'structured JSON output' },
+    ],
+  },
+  {
     bin: 'docs-move', group: null, verb: 'move', category: 1, script: 'docs/move.mjs', runtime: 'mjs',
     summary: 'Link-aware move/rename of docs files or folders',
     flags: [

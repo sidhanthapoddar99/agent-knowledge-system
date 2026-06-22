@@ -22,6 +22,7 @@ import {
   detectSearchBackend, maybePrintInstallHint, runSearch, listSearchableFiles,
   issueDateFromId,
 } from './_lib.mjs';
+import { writeStdout } from '../_cli.mjs';
 
 const args = parseArgs(process.argv.slice(2));
 if (args.flags.help || args.flags.h) {
@@ -247,11 +248,13 @@ if (limit != null) results = results.slice(0, limit);
 
 if (wantPathsOnly) {
   const seen = new Set();
+  const lines = [];
   for (const issue of results) {
     for (const m of issue.matches) {
-      if (!seen.has(m.path)) { seen.add(m.path); console.log(m.path); }
+      if (!seen.has(m.path)) { seen.add(m.path); lines.push(m.path); }
     }
   }
+  if (lines.length) writeStdout(lines.join('\n') + '\n');
   process.exit(seen.size === 0 ? 1 : 0);
 }
 
@@ -260,37 +263,41 @@ const hasLineMatches = !!(searchPattern || metaPattern);
 if (wantJson) {
   // Strip empty `matches` arrays when there's nothing match-bearing.
   const out = results.map((r) => hasLineMatches ? r : (({ matches, ...rest }) => rest)(r));
-  console.log(JSON.stringify(out, null, 2));
+  writeStdout(JSON.stringify(out, null, 2) + '\n');
   process.exit(out.length === 0 ? 1 : 0);
 }
 
 // --count: matches + titles only, no per-line excerpt dump.
 if (wantCount) {
   let total = 0;
+  const lines = [];
   for (const issue of results) {
     total += issue.matches.length;
-    console.log(hasLineMatches
+    lines.push(hasLineMatches
       ? `${issue.id}\t${issue.status}\t${issue.title}\t${issue.matches.length} match${issue.matches.length === 1 ? '' : 'es'}`
       : `${issue.id}\t${issue.status}\t${issue.title}`);
   }
-  console.log(`# ${results.length} issue(s)${hasLineMatches ? `, ${total} match(es)` : ''}`);
+  lines.push(`# ${results.length} issue(s)${hasLineMatches ? `, ${total} match(es)` : ''}`);
+  writeStdout(lines.join('\n') + '\n');
   process.exit(results.length === 0 ? 1 : 0);
 }
 
 // Default tabular output.
 let printedAny = false;
+const lines = [];
 for (const issue of results) {
   if (hasLineMatches) {
     for (const m of issue.matches) {
       const rel = path.relative(process.cwd(), m.path);
-      console.log(`${issue.id}\t${issue.status}\t${issue.title}\t${rel}:${m.line}\t${m.snippet}`);
+      lines.push(`${issue.id}\t${issue.status}\t${issue.title}\t${rel}:${m.line}\t${m.snippet}`);
       printedAny = true;
     }
   } else {
-    console.log(`${issue.id}\t${issue.status}\t${issue.title}`);
+    lines.push(`${issue.id}\t${issue.status}\t${issue.title}`);
     printedAny = true;
   }
 }
+if (lines.length) writeStdout(lines.join('\n') + '\n');
 process.exit(printedAny ? 0 : 1);
 
 // ---------- Tiny helpers ---------------------------------------------------

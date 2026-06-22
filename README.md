@@ -24,7 +24,7 @@ The fastest path is via the Claude Code plugin distributed through [`sids-plugin
 | **CLI wrappers (8)** for the issue tracker | `docs-list`, `docs-show`, `docs-subtasks`, `docs-agent-logs`, `docs-set-state`, `docs-add-comment`, `docs-add-agent-log`, `docs-review-queue` |
 | **Validators (3)** — exit `0` clean / `1` on errors | `docs-check-blog`, `docs-check-config`, `docs-check-section <folder>` |
 
-All 11 wrappers land on your `$PATH` automatically after install — no path configuration. Pass `--help` to any of them for the full flag list.
+All 13 wrappers land on your `$PATH` automatically after install — no path configuration. Pass `--help` to any of them for the full flag list.
 
 ## Manual setup (without `/docs-init`)
 

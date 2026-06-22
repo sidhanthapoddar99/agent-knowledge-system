@@ -26,6 +26,7 @@ const COMMANDS = {
   'docs-check-config':  'config/check.mjs',
   'docs-check-section': 'docs/check.mjs',
   'docs-move':          'docs/move.mjs',
+  'docs-img':           'images/optimize.mjs',
 };
 
 const name = process.argv[2];

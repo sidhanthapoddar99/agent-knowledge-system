@@ -6,9 +6,9 @@ Astro-based documentation framework with modular layouts, YAML configuration, an
 
 This project ships a Claude Code plugin (`documentation-guide`) — source at `plugins/documentation-guide/`. See the README for install instructions.
 
-**The skill** — `documentation-guide` — triages every docs/issue/blog/config task to one of five reference files (`writing.md`, `docs-layout.md`, `blog-layout.md`, `issue-layout.md`, `settings-layout.md`). Trigger eagerly for anything under `default-docs/`.
+**The skill** — `documentation-guide` — triages every docs/issue/blog/config task to one of six reference files (`writing.md`, `docs-layout.md`, `blog-layout.md`, `issue-layout.md`, `settings-layout.md`, `images.md`). Trigger eagerly for anything under `default-docs/`.
 
-**12 CLI wrappers on PATH** (Claude Code adds the plugin's `bin/` to PATH automatically; each ships as a bash shim + `.cmd` shim for native Windows, both routing through `scripts/cli.mjs`):
+**13 CLI wrappers on PATH** (Claude Code adds the plugin's `bin/` to PATH automatically; each ships as a bash shim + `.cmd` shim for native Windows, both routing through `scripts/cli.mjs`):
 
 Issue tracker:
 
@@ -35,6 +35,7 @@ Docs maintenance:
 | Command | Use |
 |---|---|
 | `docs-move` | Move/rename doc pages with link rewriting |
+| `docs-img` | Optimize images/screenshots (resize, `--dpr`, grayscale, webp/avif, `--strip`, `--target-size`) so git stays small; `--rewrite-links` fixes `![](…)` on extension change. Needs ImageMagick; optimizes only, never captures. |
 
 Pass `--help` to any wrapper for full flags. **Do not use `Grep` on the tracker** — `docs-list` understands the schema (vocabulary, subtask states, frontmatter); `Grep` only sees text.
 

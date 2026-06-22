@@ -1,6 +1,6 @@
 ---
 title: "Decide naming model: flat docs-* vs `docs <group> <verb>` subcommands"
-state: open
+state: review
 ---
 
 **Gating decision** — settle the command surface before adding the per-type list/show/search trio, to avoid the `docs-docs-*` stutter and renaming twice. Blocks subtasks 10 and 11.

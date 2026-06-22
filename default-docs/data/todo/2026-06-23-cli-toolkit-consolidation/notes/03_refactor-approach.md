@@ -24,6 +24,18 @@ Two viable shapes; this is the main thing to settle before building:
 
 **Lean:** B, once Category 2 is filled — three `list`s and three `show`s *want* a namespace. But A is fine if the set stays small. **Decision pending.**
 
+### DECISION (subtask 01, 2026-06-23) — **B + flat aliases**
+
+Adopt **`docs <group> <verb>` subcommands as the primary surface, keeping every flat `docs-*` name as a thin alias.** Rationale:
+
+- The set is no longer small — it grows to ~20 (list/show/search × {issues, docs, blog} + check × 4 + `find` + `git` + `help` + the 5 issue-specific). A namespace is warranted.
+- `docs help` can group by `docs <group>`, which is the discoverability win this whole issue is about.
+- Collapses to one primary binary (`docs`) → smaller PATH-collision surface; the `docs-` prefix's anti-collision role is preserved by the alias shims.
+- **Zero breakage:** all existing `docs-list`, `docs-show`, … keep working as aliases, so CLAUDE.md / skill references / muscle memory need no flag-day change (they're updated for *preference* in subtasks 15/16, not necessity).
+- Cheap: the dispatcher already reads `argv[2]` as the command; it parses `argv[2]=group, argv[3]=verb`, and aliases map `docs-list → list` (or `issues list`).
+
+**Implementation note:** the manifest (subtask 03) keys on the canonical subcommand path; aliases are a separate `name → canonical` map. The dispatcher tries alias resolution first, then group/verb parsing.
+
 ## Cross-content `find` vs issues-only `search`
 
 - `search` (Category 2) is **schema-aware** per type — issue filters (`status`/`priority`/`component`), blog frontmatter (tags/date), docs section/frontmatter. Different engine per type.

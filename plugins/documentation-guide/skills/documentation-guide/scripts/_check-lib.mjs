@@ -65,7 +65,20 @@ export function readJsonChecked(abs, relPath, errors) {
  * Exit 1 if any errors, else 0. `quiet` suppresses the warning section (only
  * the issues validator uses it today, via --quiet/--no-warnings).
  */
-export function reportAndExit({ kind, root, errors, warnings = [], quiet = false, subtitle = null }) {
+export function reportAndExit({ kind, root, errors, warnings = [], quiet = false, subtitle = null, json = false }) {
+  // Category-0 contract: machine-readable findings on --json.
+  if (json) {
+    process.stdout.write(JSON.stringify({
+      kind,
+      root,
+      ok: errors.length === 0,
+      errorCount: errors.length,
+      warningCount: quiet ? 0 : warnings.length,
+      errors,
+      warnings: quiet ? [] : warnings,
+    }, null, 2) + '\n');
+    process.exit(errors.length ? 1 : 0);
+  }
   const showWarnings = !quiet;
   console.log(`# ${kind} check: ${root}`);
   if (subtitle) console.log(subtitle);

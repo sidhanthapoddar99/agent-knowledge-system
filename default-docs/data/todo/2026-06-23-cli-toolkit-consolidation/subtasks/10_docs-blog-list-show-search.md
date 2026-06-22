@@ -1,6 +1,6 @@
 ---
 title: "Add list / show / search for docs and blog (Category 2 fill)"
-state: open
+state: review
 ---
 
 The core Category-2 gap: listing, showing, and searching content exist only for issues. Add type-specific implementations for docs and blog, backed by a shared core. Depends on the naming decision (subtask 01).

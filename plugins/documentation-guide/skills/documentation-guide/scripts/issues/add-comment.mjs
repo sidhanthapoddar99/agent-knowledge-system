@@ -17,7 +17,7 @@ const args = parseArgs(process.argv.slice(2));
 const id = args._[0];
 
 if (args.flags.help || !id || !args.flags.author || !args.flags.body) {
-  printHelp('add-comment', [
+  printHelp('issue add-comment', [
     '<issue-id> --author <name> --body <markdown> [--date YYYY-MM-DD] [--slug <short-slug>] [--tracker <path>]',
     '',
     'Append a comment file under <issue>/comments/. Auto-increments NNN prefix.',

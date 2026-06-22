@@ -2,14 +2,14 @@
 
 How to rename / move items and reshape issues without breaking links or losing history.
 
-## `docs-move` — link-aware moves on the tracker
+## `docs-guide move` — link-aware moves on the tracker
 
 Issues, subtasks, notes, and comments cross-link each other with **relative** paths. A plain `mv` / `git mv` moves the file but leaves every relative link pointing at the old location — inbound links from sibling files break, and relative links *inside* the moved file now resolve from the wrong directory. Nothing warns you; the build still passes.
 
-Use **`docs-move`** (on your `PATH` after install) instead — a link-aware move, the same move-and-update-links behaviour an editor like Obsidian does. It operates on the whole content root, so it works on tracker paths just like docs paths.
+Use **`docs-guide move`** (on your `PATH` after install) instead — a link-aware move, the same move-and-update-links behaviour an editor like Obsidian does. It operates on the whole content root, so it works on tracker paths just like docs paths.
 
 ```bash
-docs-move <from> <to> [--dry-run] [--no-git] [--root <dir>]
+docs-guide move <from> <to> [--dry-run] [--no-git] [--root <dir>]
 ```
 
 - `<from>` may be a single `.md` file **or** a folder (moved recursively, all depths).
@@ -20,16 +20,16 @@ docs-move <from> <to> [--dry-run] [--no-git] [--root <dir>]
 
 ```bash
 # rename a subtask (preview first)
-docs-move 2026-04-19-foo/subtasks/02_bar.md 2026-04-19-foo/subtasks/02_baz.md --dry-run
+docs-guide move 2026-04-19-foo/subtasks/02_bar.md 2026-04-19-foo/subtasks/02_baz.md --dry-run
 
 # regroup: move a flat subtask into a grouping folder, fixing links on both sides
-docs-move 2026-04-19-foo/subtasks/05_styles.md \
+docs-guide move 2026-04-19-foo/subtasks/05_styles.md \
           2026-04-19-foo/subtasks/020_polish/010_styles.md
 ```
 
 It prints `moved <N> file(s); rewrote <M> link(s) across <K> file(s)` on success.
 
-> **Renumbering:** when two neighbours have no gap left (you must insert between `010_` and `011_`), re-prefix with `docs-move` rather than `mv` — it re-points links as it renumbers. If a gap exists, just use the in-between number; no move needed (that's the whole point of gap-spacing — see [23_subtasks.md](23_subtasks.md)).
+> **Renumbering:** when two neighbours have no gap left (you must insert between `010_` and `011_`), re-prefix with `docs-guide move` rather than `mv` — it re-points links as it renumbers. If a gap exists, just use the in-between number; no move needed (that's the whole point of gap-spacing — see [23_subtasks.md](23_subtasks.md)).
 
 ## Restructuring patterns
 
@@ -39,18 +39,18 @@ The core move of the **phase/index pattern** ([64_phase-index.md](64_phase-index
 
 1. Create the new issue folder (`<YYYY-MM-DD>-<slug>/`) with its own `settings.json` + `issue.md` (see [42_updating.md](42_updating.md)). Carry the subtask's framing into `issue.md`.
 2. **Leave the original subtask in place** as the index entry, but update it to point at the new issue (`Promoted to <new-issue-id>`) and flip its state to `review`/`closed` as appropriate — the index issue stays the roadmap.
-3. Use `docs-move` for any notes that should travel from the parent into the new issue so their links survive.
+3. Use `docs-guide move` for any notes that should travel from the parent into the new issue so their links survive.
 
 ### Split an issue
 
-When an issue has grown two distinct responsibilities: create the second issue, `docs-move` the relevant `notes/` and `subtasks/` into it, and add a comment in each pointing at the other. Don't silently delete content — the recorded reasoning is the value.
+When an issue has grown two distinct responsibilities: create the second issue, `docs-guide move` the relevant `notes/` and `subtasks/` into it, and add a comment in each pointing at the other. Don't silently delete content — the recorded reasoning is the value.
 
 ### Merge issues
 
-When two issues turn out to be the same work (often caught by the duplicate check too late): pick the canonical one, `docs-move` the other's `notes/`/`subtasks/` into it, add a comment summarising the merge, and `cancelled`-with-a-comment the now-empty duplicate (never just delete it — see [21_comments.md](21_comments.md)).
+When two issues turn out to be the same work (often caught by the duplicate check too late): pick the canonical one, `docs-guide move` the other's `notes/`/`subtasks/` into it, add a comment summarising the merge, and `cancelled`-with-a-comment the now-empty duplicate (never just delete it — see [21_comments.md](21_comments.md)).
 
 ### Regroup subtasks
 
-Wrapping a flat list into grouping folders (or the reverse): `docs-move` each leaf into/out of the `NN_<group>/` folder. Add an optional folder `settings.json` (`{ "title": "..." }`) if the group slug doesn't read cleanly as a label.
+Wrapping a flat list into grouping folders (or the reverse): `docs-guide move` each leaf into/out of the `NN_<group>/` folder. Add an optional folder `settings.json` (`{ "title": "..." }`) if the group slug doesn't read cleanly as a label.
 
 > **Don't rewrite history.** `comments/` and `agent-log/` are append-only. Restructuring moves *plan* and *reference* material (issues, subtasks, notes); it never edits a past comment or iteration in place.

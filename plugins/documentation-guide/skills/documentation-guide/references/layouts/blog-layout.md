@@ -55,14 +55,14 @@ Same as other content — assets live in `assets/blog/<post-slug>/` and are refe
 
 ## Validate
 
-The plugin ships **`docs-check-blog`** (on your `PATH` after install) — runs structural checks against the blog folder so you don't have to eyeball it.
+The plugin ships **`docs-guide check blog`** (on your `PATH` after install) — runs structural checks against the blog folder so you don't have to eyeball it.
 
 ```bash
 # Default: resolves the blog path from .env (`<content-root>/blog/`)
-docs-check-blog
+docs-guide check blog
 
 # Or point at any folder explicitly
-docs-check-blog ./data/blog
+docs-guide check blog ./data/blog
 ```
 
 What it checks:

@@ -73,7 +73,7 @@ Read **only the file(s) you need** — each is self-contained.
 | **Part 3 — Tools / activity** | |
 | [41_searching.md](41_searching.md) | search scope, the no-`Grep` rule + synonyms, Haiku subagent patterns, the 8-CLI table |
 | [42_updating.md](42_updating.md) | cross-cutting write flow: duplicate-check, creating an issue, validating, when *not* to edit |
-| [43_moving-restructuring.md](43_moving-restructuring.md) | `docs-move` on the tracker (link-aware) + promoting/splitting/merging issues |
+| [43_moving-restructuring.md](43_moving-restructuring.md) | `docs-guide move` on the tracker (link-aware) + promoting/splitting/merging issues |
 | **Part 4 — Examples** | |
 | [61_multiple-subtasks.md](61_multiple-subtasks.md) | a standard implementation issue with several subtasks |
 | [62_research-focused.md](62_research-focused.md) | a research/design issue — heavy `notes/`, few code subtasks |

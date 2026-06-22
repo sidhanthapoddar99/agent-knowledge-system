@@ -400,14 +400,14 @@ Restart the dev server (`./start dev` from the framework folder, or `bun run dev
 
 ## 11. Validate
 
-The plugin ships **`docs-check-config`** (on your `PATH` after install) — runs presence + structural checks against `site.yaml` / `navbar.yaml` / `footer.yaml` so you don't have to eyeball each.
+The plugin ships **`docs-guide check config`** (on your `PATH` after install) — runs presence + structural checks against `site.yaml` / `navbar.yaml` / `footer.yaml` so you don't have to eyeball each.
 
 ```bash
 # Default: resolves the config dir from .env
-docs-check-config
+docs-guide check config
 
 # Or point at any config dir explicitly
-docs-check-config ./config
+docs-guide check config ./config
 ```
 
 What it checks:

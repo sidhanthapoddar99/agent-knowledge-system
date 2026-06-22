@@ -8,36 +8,7 @@ This project ships a Claude Code plugin (`documentation-guide`) — source at `p
 
 **Skills (2).** `documentation-guide` triages every docs/issue/blog/config task to one of six reference targets (`writing.md`, `docs-layout.md`, `blog-layout.md`, `layouts/issues/` (split, entry `00_overview.md`), `settings-layout.md`, `images.md`) — trigger eagerly for anything under `default-docs/`. `doc-agent` is a thin execution-time companion (different trigger surface) covering **how to use an issue's `agent-log/`** — fires on the execution verbs (audit / refactor / loop), keeps always-on agent-memory, and treats discussion as explicit-save-only (offer when dense, never auto-save); it carries the activity structure inline and defers depth to `documentation-guide`.
 
-**13 CLI wrappers on PATH** (Claude Code adds the plugin's `bin/` to PATH automatically; each ships as a bash shim + `.cmd` shim for native Windows, both routing through `scripts/cli.mjs`):
-
-Issue tracker:
-
-| Command | Use |
-|---|---|
-| `docs-list` | Multi-field filter + free-text regex search over the tracker — drop-in replacement for `grep`/`find` on `default-docs/data/todo/` |
-| `docs-show` | One issue's metadata + subtask + log heads |
-| `docs-subtasks` | List subtasks (`--all` for cross-issue) |
-| `docs-agent-logs` | Last N agent-log entries |
-| `docs-set-state` | Update issue or subtask state |
-| `docs-add-comment` / `docs-add-agent-log` | Append with auto-incremented prefix |
-| `docs-review-queue` | Items awaiting review |
-
-Validators (exit `0` clean / `1` on errors):
-
-| Command | Use |
-|---|---|
-| `docs-check-blog` | Validate `default-docs/data/blog/` — filename pattern, frontmatter, no nesting |
-| `docs-check-config` | Validate `default-docs/config/` — required keys, page structure, alias resolution |
-| `docs-check-section <folder>` | Validate any docs section — `NN_` prefixes, `settings.json`, frontmatter |
-
-Docs maintenance:
-
-| Command | Use |
-|---|---|
-| `docs-move` | Move/rename doc pages with link rewriting |
-| `docs-img` | Optimize images/screenshots (resize, `--dpr`, grayscale, webp/avif, `--strip`, `--target-size`) so git stays small; `--rewrite-links` fixes `![](…)` on extension change. Needs ImageMagick; optimizes only, never captures. |
-
-Pass `--help` to any wrapper for full flags. **Do not use `Grep` on the tracker** — `docs-list` understands the schema (vocabulary, subtask states, frontmatter); `Grep` only sees text.
+The plugin's `documentation-guide` skill carries the full operating manual, including the `docs-guide` CLI — defer to it for command usage rather than duplicating the toolkit here. It triggers automatically on docs/issue/blog/config work.
 
 **Tracker mental model.** This tracker is comprehensive memory of thought-work for AI-augmented development. Each issue is a folder capturing one coherent unit of *thinking + execution* (`issue.md` + `notes/` → `subtasks/` → `agent-log/` → `comments/`). Ordering is `priority desc, updated desc`; `updated` is derived from git history (most recent commit touching anything under the folder). `created` comes from the folder slug. Best-practices: one `component` per issue (multi is allowed for genuinely cross-cutting work, hint-warned by validator); AI-handoff-bound issues should declare ≥1 subtask. **Don't add scheduling, release-bucket, or single-type fields without an explicit policy reversal** — they rot under continuous AI-driven shipping. Full framing: `default-docs/data/user-guide/19_issues/01_overview.md` and `02_design-philosophy.md`.
 

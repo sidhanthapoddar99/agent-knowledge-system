@@ -25,15 +25,18 @@ import { reportAndExit } from '../_check-lib.mjs';
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 
 if (process.argv[2] === '--help' || process.argv[2] === '-h') {
-  console.error('Usage: docs-check-config [config-dir]\n');
+  console.error('Usage: docs-guide check config [config-dir]\n');
   console.error('  When [config-dir] is omitted, uses CONFIG_DIR from the framework\'s .env (resolved absolute).\n');
   console.error('  Validates: required keys · pages structure · data: path resolution · footer page: refs');
   process.exit(0);
 }
 
+const JSON_OUT = process.argv.includes('--json');
+const POSITIONAL = process.argv.slice(2).find((a) => !a.startsWith('-'));
+
 let ROOT;
-if (process.argv[2]) {
-  ROOT = process.argv[2];
+if (POSITIONAL) {
+  ROOT = POSITIONAL;
 } else {
   // Derive from .env — config dir is exactly CONFIG_DIR
   const ctx = resolveProjectContext(SCRIPT_DIR);
@@ -49,7 +52,7 @@ const warnings = [];
 
 if (!fs.existsSync(SITE)) {
   errors.push(`Missing required: ${SITE}`);
-  reportAndExit({ kind: 'config', root: ROOT, errors, warnings });
+  reportAndExit({ kind: 'config', root: ROOT, errors, warnings, json: JSON_OUT });
 }
 if (!fs.existsSync(NAVBAR)) warnings.push(`Missing: ${NAVBAR}`);
 if (!fs.existsSync(FOOTER)) warnings.push(`Missing: ${FOOTER}`);
@@ -109,7 +112,7 @@ if (fs.existsSync(FOOTER)) {
   }
 }
 
-reportAndExit({ kind: 'config', root: ROOT, errors, warnings });
+reportAndExit({ kind: 'config', root: ROOT, errors, warnings, json: JSON_OUT });
 
 // ---------- helpers ----------------------------------------------------------
 

@@ -1,6 +1,6 @@
 ---
 title: "Recreate the POST-EDIT feature matrix (final deliverable)"
-state: open
+state: review
 ---
 
 **The final subtask.** Recreate all four category tables (Category 0, 1, 2, 3) with their *updated* values reflecting what actually shipped, into `notes/05_post-edit-feature-matrix.md`, and write the delta vs the frozen pre-edit baseline.

@@ -1,6 +1,6 @@
 ---
 title: "Dedup repeated logic into shared libs"
-state: open
+state: review
 ---
 
 The audit found the same logic implemented multiple times. Consolidate now that `_cli.mjs` + shared libs give it a home (do after subtask 02).

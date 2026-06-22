@@ -71,7 +71,7 @@ Install the `documentation-guide` plugin (distributed via [`sids-plugin-marketpl
 This installs:
 
 - A skill that triggers automatically on docs work
-- 11 CLI wrappers on `$PATH` (`docs-list`, `docs-show`, `docs-check-section`, …)
+- A single `docs-guide` CLI on `$PATH` — every operation is a `docs-guide <group> <verb>` subcommand (run `docs-guide help` to list them all)
 - 2 slash commands — `/docs-init` to bootstrap a new project from zero, `/docs-add-section` to add a top-level section to an existing one
 
 For a fresh project that hasn't been scaffolded yet, the easiest entry point is to run `/docs-init` after installing — it walks you through site name + first section and writes everything for you. Skip the rest of this Installation page if you go that route.

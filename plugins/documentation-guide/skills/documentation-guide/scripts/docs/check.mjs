@@ -18,13 +18,15 @@ import path from 'node:path';
 import { ORDER_PREFIX_FULL_RE, ANY_DIGIT_PREFIX_RE } from '../_order-prefix.mjs';
 import { hasFrontmatterTitle, readText, readJsonChecked, reportAndExit } from '../_check-lib.mjs';
 
-const ROOT = process.argv[2];
+const JSON_OUT = process.argv.includes('--json');
+const ROOT = process.argv.slice(2).find((a) => !a.startsWith('-'));
 
-if (!ROOT || ROOT === '--help' || ROOT === '-h') {
-  console.error('Usage: docs-check-section <section-folder>\n');
-  console.error('  Example: docs-check-section ./data/user-guide  (or any docs section folder)\n');
+if (!ROOT) {
+  // --help/-h are intercepted by cli.mjs; reaching here means no section arg.
+  console.error('Usage: docs-guide check section <section-folder>\n');
+  console.error('  Example: docs-guide check section ./data/user-guide  (or any docs section folder)\n');
   console.error('  Validates: NN_ prefix (2–5 digits) · settings.json presence · frontmatter title · prefix collisions');
-  process.exit(ROOT ? 0 : 1);
+  process.exit(1);
 }
 
 if (!fs.existsSync(ROOT)) {
@@ -128,4 +130,4 @@ function walk(dir) {
 
 walk(ROOT);
 
-reportAndExit({ kind: 'docs', root: ROOT, errors, warnings });
+reportAndExit({ kind: 'docs', root: ROOT, errors, warnings, json: JSON_OUT });

@@ -1,5 +1,5 @@
 /**
- * Shared helpers for docs-img — image optimization for documentation.
+ * Shared helpers for docs-guide img — image optimization for documentation.
  *
  * Engine: the ImageMagick CLI (`magick`, or legacy `convert`). Chosen over an
  * npm image lib (e.g. sharp) so the plugin stays dependency-free `.mjs` with no
@@ -25,7 +25,7 @@ export function findEngine() {
   }
   throw new Error(
     'ImageMagick not found (looked for `magick` and `convert`).\n' +
-    '  docs-img needs ImageMagick (with webp/avif delegates). Install it:\n' +
+    '  docs-guide img needs ImageMagick (with webp/avif delegates). Install it:\n' +
     '    • Debian/Ubuntu: sudo apt install imagemagick\n' +
     '    • macOS:         brew install imagemagick\n' +
     '    • Windows:       winget install ImageMagick.ImageMagick'

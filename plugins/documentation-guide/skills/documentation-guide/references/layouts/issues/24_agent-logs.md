@@ -16,13 +16,28 @@ color: "#7aa2f7"     # optional — tints only the sidebar icon, user-defined; p
 ---
 ```
 
-Body structure:
-- **Goal** — what was being attempted
-- **Approach** — the plan
-- **Result** — what actually happened, with evidence
-- **Next** — what to try next (if any)
+Body structure — **real markdown with headings on their own lines**, never a single inline paragraph:
 
-**Failed iterations are kept**, not deleted — they're signal. One file per *iteration*, not per minute. When closing an issue, the final agent-log entry should reference the shipped commit / PR.
+```markdown
+# <short milestone title>
+
+## Goal
+What was being attempted.
+
+## Approach
+- The plan / key decisions (bullets).
+
+## Result
+- What actually happened, **with evidence** — commits, test counts, file paths.
+- A **Mermaid or ASCII diagram** when it aids visibility (architecture, flow, before/after).
+
+## Next
+What to try next — or `—` if closed.
+```
+
+**Failed iterations are kept**, not deleted — they're signal. **One file per *milestone*, not per step** (see "Log milestones, not steps" below). When closing an issue, the final agent-log entry should reference the shipped commit / PR.
+
+> **Readability is the point.** These logs exist for a human to skim later. Crammed run-on prose (`Goal: … Approach: … Result: …` on one line) defeats that — use the sectioned shape above. The most common way logs get flattened is funnelling them through a `--body "…"` CLI string; **write the file directly instead** (see "Add an agent-log entry").
 
 ## Numbering
 
@@ -116,29 +131,56 @@ A "loop" (goal + task-list + iterations) is **almost a mini-issue**. The line th
 
 ---
 
-## Add an agent-log entry
+## Log milestones, not steps
 
-Prefer the helper:
+An agent-log is **not a keystroke diary**. Write one entry per **substantial, noticeable chunk** of completed work — a feature landing, a phase finishing, a hard bug fixed — and let *the agent decide* when enough has accumulated to be worth a durable record.
 
-```bash
-# Top-level entry
-docs-add-agent-log <issue-id> \
-  --status success --body "Goal: …  Approach: …  Result: …  Next: —"
+- A typical loop / audit / refactor produces **~3–6 entries total**, *regardless of how many subtasks it has*. Logs are **not** synced to the subtask count.
+- Anti-pattern: one entry per subtask or per minor step (e.g. 18 subtasks → 18 logs). That buries the signal under noise and reads as a dump.
+- Right pattern: group the run into a handful of milestones (e.g. *foundation → correctness → feature build-out → docs & close-out*) and write one rich, skimmable entry per milestone as it completes.
+- Each entry should stand on its own as a summary a human can skim months later.
 
-# Nested under a 1-level subgroup (e.g. a loop folder)
-docs-add-agent-log <issue-id> --group 200_loops/010_refresh-sweep \
-  --status success --body "..."
-```
+## Add an agent-log entry — write the file directly
 
-`--group` accepts up to 2 slash-separated segments. The script auto-creates the folder, auto-increments iteration / sequence within the leaf folder, and writes valid frontmatter.
-
-Direct file write (when the helper isn't available):
+**Default: write the file yourself with the Write tool**, as proper markdown. This is what produces readable, structured logs. Do **not** funnel the body through `docs-guide issue add-agent-log`: its `--body` is written verbatim with no template, so a multi-line entry collapses into one run-on paragraph — the single most common cause of unreadable logs.
 
 1. Pick the target folder — `<issue>/agent-log/` for a top-level entry, or up to two levels deep (`<issue>/agent-log/<group>/[<subgroup>/]`).
-2. Find the next prefix in that folder: `ls <target-folder>/`. The `NNN_` prefix is **optional** but recommended for sortability and so the iteration counter survives.
-3. Write `<target-folder>/NNN_<slug>.md`.
-4. Frontmatter: `iteration` (next int), `agent` (model id), `status` (in-progress | success | failed), `date`.
-5. Body: Goal → Approach → Result → Next.
+2. Find the next prefix: `ls <target-folder>/` → next `NNN_` (optional but recommended, so the iteration counter survives).
+3. Write `<target-folder>/NNN_<slug>.md` — frontmatter + a **sectioned** body:
+
+````markdown
+---
+iteration: 4
+agent: claude-opus-4-8
+status: success
+date: 2026-06-23
+---
+
+# Feature build-out — search scoping, content commands, find, git
+
+## Goal
+Add the cross-content capabilities on top of the foundation.
+
+## Approach
+- `--path`/`--meta`/`--count` scoping; `_content.mjs` for docs/blog; unified `find`; `git` helper.
+
+## Result
+- Shipped 13 commands; harness `91/91` (bun). Fixed a stdout-truncation bug on large `--json`.
+
+```mermaid
+flowchart LR
+  manifest --> dispatcher --> command --> contract[--help / --json / exit codes]
+```
+
+## Next
+Docs + version bump + close-out.
+````
+
+Use real `##` headings and bullets — never one inline paragraph. Add a **Mermaid or ASCII diagram** whenever it improves visibility. Failed milestones are kept.
+
+### Optional one-liner convenience
+
+`docs-guide issue add-agent-log <issue-id> [--group 200_loops/010_<name>] --status … --body "…"` exists for a **single-line** entry only (e.g. "rebased onto main, harness green"). `--group` takes up to 2 slash-separated segments; it auto-creates the folder, auto-increments the iteration, and writes valid frontmatter — but **flattens any multi-line `--body` into one paragraph**, so use it *only* for a quick one-liner, never a structured milestone log.
 
 ## When NOT to edit
 

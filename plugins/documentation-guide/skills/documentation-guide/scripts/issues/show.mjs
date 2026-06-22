@@ -10,6 +10,8 @@
  * will surface `updated` via that channel.
  */
 
+import fs from 'node:fs';
+import path from 'node:path';
 import {
   resolveTracker, readIssueMeta, readIssueSubtasks, readIssueComments,
   readIssueAgentLogs, parseArgs, printHelp, issueDateFromId,
@@ -19,7 +21,7 @@ const args = parseArgs(process.argv.slice(2));
 const id = args._[0];
 
 if (args.flags.help || !id) {
-  printHelp('show', [
+  printHelp('issue show', [
     '<issue-id> [--full] [--json] [--tracker <path>]',
     '',
     'Print metadata + subtask state summary + comment heads + agent-log heads.',

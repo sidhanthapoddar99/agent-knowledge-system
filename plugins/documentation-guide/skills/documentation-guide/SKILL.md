@@ -72,48 +72,20 @@ These apply across all domains. Reference files don't repeat them — they assum
 - **Theme variables only** — when editing CSS in layouts, consume declared theme variables (see `astro-doc-code/src/styles/theme.yaml → required_variables`). Never hardcode colours, fonts, or invent variable names.
 - **Edit, don't rewrite** — prefer `Edit` over `Write` for existing files. Surgical regex replaces preserve formatting and key order in JSON.
 - **`./start` is the entrypoint** — from the repo root, `./start` (preflight: detect bun/npm → install if needed → sanity build → dev), or `./start dev | build | preview` to skip preflight and forward to that script. Inside `astro-doc-code/`, `bun run dev` / `bun run build` / `bun run preview` still work directly. For helper scripts and any Node CLI tool, prefer `bun` if available, fall back to `npm` / `node`.
-- **Never commit raw screenshots** — images bloat git history, which caps repo size (~1–2 GB *with* every version kept). Run `docs-img` on any image you add under `data/` (undo capture-DPR, grayscale, re-encode to webp, strip metadata) so figures stay ≈ 60–100 KB instead of MBs. See `references/images.md`.
+- **Never commit raw screenshots** — images bloat git history, which caps repo size (~1–2 GB *with* every version kept). Run `docs-guide img` on any image you add under `data/` (undo capture-DPR, grayscale, re-encode to webp, strip metadata) so figures stay ≈ 60–100 KB instead of MBs. See `references/images.md`.
 
-## Helper scripts — 13 CLI wrappers on PATH
+## Helper CLI — use `docs-guide`
 
-This plugin ships 13 CLI wrappers in its `bin/` folder, which Claude Code adds to `PATH` automatically when the plugin is installed. Just type the command — no path needed.
+> [!IMPORTANT]
+> This plugin ships a single command-line entrypoint, **`docs-guide`**, on `PATH` (added automatically on install). Every operation is a subcommand: **`docs-guide <group> <verb> [flags]`** — e.g. `docs-guide issue list`, `docs-guide find <regex>`, `docs-guide check issues`, `docs-guide git updated <path>`.
+>
+> - **Discover, don't guess:** `docs-guide help` lists everything grouped · `docs-guide help <group> <verb>` shows one command's flags · `docs-guide help --json` dumps the manifest.
+> - **Uniform contract:** every command takes `--help`/`-h` (→ stdout, exit 0) and `--json` where it returns data; exit codes `0` ok · `1` no-result/handled-error · `2` usage.
+> - **Full command + option reference:** [`references/cli-toolkit.md`](references/cli-toolkit.md) — every group, command, and flag.
+>
+> **Legacy `docs-<name>` scripts are retired.** Earlier versions exposed flat binaries (`docs-list`, `docs-check-blog`, …); everything is now `docs-guide <group> <verb>`. If you encounter old `docs-<name>` invocations in a project's `CLAUDE.md`, agent memory, or scripts, **update them to the `docs-guide` form (and remove the stale references)** as you go.
 
-**Issue tracker (8):**
-
-| Command | What it does |
-|---|---|
-| `docs-list` | Multi-field filter + free-text regex search over the tracker |
-| `docs-show` | One issue's metadata + subtask summary + comment & agent-log heads |
-| `docs-subtasks` | List subtasks for one issue, or across all (`--all`) |
-| `docs-agent-logs` | Last N agent-log entries for an issue |
-| `docs-set-state` | Update issue or subtask state |
-| `docs-add-comment` | Append a comment with auto-incremented prefix |
-| `docs-add-agent-log` | Append an agent-log entry with auto-incremented iteration |
-| `docs-review-queue` | Items awaiting review (status=review issues + open issues with review subtasks) |
-
-**Validators (3):**
-
-| Command | What it does |
-|---|---|
-| `docs-check-blog` | Validate the blog folder — `YYYY-MM-DD-<slug>.md` naming, frontmatter `title:`, no nested folders. Resolves the blog path from `.env` (`<content-root>/blog/`); pass an explicit folder to override. See `references/layouts/blog-layout.md`. |
-| `docs-check-config` | Validate `site.yaml` / `navbar.yaml` / `footer.yaml` — required keys, `pages:` structure, `data:` path resolution, footer `page:` references. Resolves the config dir from `.env`; pass an explicit folder to override. See `references/settings-layout.md`. |
-| `docs-check-section` | Validate a docs section — `NN_` prefix discipline, `settings.json` presence, frontmatter `title:`, prefix collisions. Required arg: section folder (e.g. `data/user-guide`). See `references/layouts/docs-layout.md`. |
-
-**Content ops (1):**
-
-| Command | What it does |
-|---|---|
-| `docs-move` | Move / rename a docs `.md` file or folder **link-aware** — rewrites every Markdown link that pointed at the moved path (inbound) and every relative link inside the moved files that pointed elsewhere (outbound) — including link **text** that mirrors the path — so nothing breaks or goes stale. Whenever you move or rename anything under `data/`, reach for `docs-move <from> <to>` instead of `mv` / `git mv` — a plain move silently breaks all those relative links. `--dry-run` previews every edit; uses `git mv` inside a work tree to preserve history. See `references/layouts/docs-layout.md`. |
-
-**Images (1):**
-
-| Command | What it does |
-|---|---|
-| `docs-img` | Optimize images/screenshots so git stays small — `--dpr N` (undo retina capture, the biggest free win), `--scale`/`--max-dim`/`--trim`, `--gray`, re-encode `--format webp\|avif\|png\|jpg` at `--quality`, `--strip`, and `--target-size 100KB` (steps quality until each file fits). In-place with an automatic backup (or `--out DIR`); `--rewrite-links` fixes `![](…)` when the extension changes; `--report` prints before/after sizes. Run on any image added under `data/` before committing. Needs ImageMagick installed; it **only optimizes, never captures** (pair with Playwright to grab web screenshots, or just paste one). `--dry-run` previews. See `references/images.md`. |
-
-Each wrapper internally uses `bun` if available, falls back to `node`. Pass `--help` to any of them for the full flag list. Validators exit `0` on clean, `1` on errors found — useful in pre-commit / CI.
-
-**Searching the tracker — use `docs-list --search`, not the `Grep` tool.** Any "find / locate / grep / search" verb against `data/todo/` (or any tracker folder) should route to `docs-list`, which understands the schema (vocabulary, subtask states, frontmatter), composes structural filters with regex search in one call, and returns exact paths + line numbers. `Grep` only sees text. See `references/layouts/issues/41_searching.md` for the synonym list and examples.
+**Searching the tracker — use `docs-guide issue list` (or `docs-guide find`), not the `Grep` tool.** Any "find / locate / grep / search" verb against `data/todo/` routes to `docs-guide issue list`, which understands the schema (vocabulary, subtask states, frontmatter) and composes structural filters with regex search in one call. For a string anywhere across **all** content types at once, use `docs-guide find`. `Grep` only sees text. See `references/layouts/issues/41_searching.md` and the full toolkit reference above.
 
 ## Slash commands — bootstrap & section scaffolding
 

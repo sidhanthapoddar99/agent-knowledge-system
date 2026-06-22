@@ -19,7 +19,7 @@ const args = parseArgs(process.argv.slice(2));
 const positional = args._[0];
 
 if (args.flags.help || (!positional && !args.flags.all)) {
-  printHelp('subtasks', [
+  printHelp('issue subtasks', [
     '<issue-id|--all> [--state open,review,closed,cancelled] [--flat] [--json] [--tracker <path>]',
     '',
     'List subtasks for one issue, or across all issues with --all.',

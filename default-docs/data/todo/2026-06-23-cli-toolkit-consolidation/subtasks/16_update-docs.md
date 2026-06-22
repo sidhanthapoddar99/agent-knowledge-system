@@ -1,6 +1,6 @@
 ---
 title: "Update the docs (user-guide / dev-docs)"
-state: open
+state: review
 ---
 
 Last documentation step (after skills/CLAUDE.md). Update the framework's bundled human-facing docs to match the consolidated toolkit.

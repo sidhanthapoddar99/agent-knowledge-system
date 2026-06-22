@@ -21,7 +21,7 @@
  * filesystem path before deciding to rewrite — external (http/mailto),
  * site-absolute (`/...`) and pure-anchor (`#...`) links are left untouched.
  *
- *   docs-move <from> <to> [--dry-run] [--no-git] [--root <dir>] [--help]
+ *   docs-guide move <from> <to> [--dry-run] [--no-git] [--root <dir>] [--help]
  *
  * Exit code 0 = success (or dry-run), 1 = error.
  */
@@ -31,6 +31,7 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { resolveProjectContext } from '../_env.mjs';
+import { MD_LINK_RE, isIgnorableTarget, splitAnchor, collectMarkdownFiles } from '../_links.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 
@@ -59,7 +60,7 @@ if (positional.length !== 2) {
 
 function usage(code) {
   const out = code === 0 ? console.log : console.error;
-  out('Usage: docs-move <from> <to> [--dry-run] [--no-git] [--root <dir>] [--help]\n');
+  out('Usage: docs-guide move <from> <to> [--dry-run] [--no-git] [--root <dir>] [--help]\n');
   out('  Link-aware move / rename for docs files and folders (Obsidian-style).');
   out('  Moves <from> to <to> and rewrites Markdown links so nothing breaks:');
   out('    • inbound  — links elsewhere that pointed at <from> are repointed');
@@ -124,17 +125,7 @@ if (!isInside(scanRoot, toPath)) {
 
 // ── helpers ──────────────────────────────────────────────────────────────
 
-/** Recursively collect all .md files under a directory (absolute paths). */
-function collectMarkdown(dir) {
-  const out = [];
-  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (entry.name.startsWith('.')) continue;
-    const abs = path.join(dir, entry.name);
-    if (entry.isDirectory()) out.push(...collectMarkdown(abs));
-    else if (entry.isFile() && entry.name.endsWith('.md')) out.push(abs);
-  }
-  return out;
-}
+// collectMarkdownFiles() + MD_LINK_RE + isIgnorableTarget come from ../_links.mjs.
 
 /** Recursively collect every file (any extension) under a directory. */
 function collectAllFiles(dir) {
@@ -164,25 +155,7 @@ function didMove(abs) {
   return movedFilesAbs.has(abs);
 }
 
-// Markdown link / image regex. Captures: leading `!` (optional), text, target.
-// We then split the target into url + optional #anchor and skip non-relative.
-const LINK_RE = /(!?)\[([^\]]*)\]\(([^)\s]+)\)/g;
-
-function isIgnorableTarget(url) {
-  if (!url) return true;
-  if (/^[a-z][a-z0-9+.-]*:/i.test(url)) return true; // scheme: http:, https:, mailto:, etc.
-  if (url.startsWith('//')) return true;             // protocol-relative
-  if (url.startsWith('/')) return true;              // site-absolute (incl. /assets/)
-  if (url.startsWith('#')) return true;              // pure anchor
-  return false;
-}
-
-/** Split a link target into { rel, anchor } where anchor includes the leading '#'. */
-function splitAnchor(url) {
-  const h = url.indexOf('#');
-  if (h === -1) return { rel: url, anchor: '' };
-  return { rel: url.slice(0, h), anchor: url.slice(h) };
-}
+const LINK_RE = MD_LINK_RE; // shared regex from ../_links.mjs (also used by docs-guide img)
 
 /**
  * Build a POSIX-style relative link from fileDir to targetAbs.
@@ -229,8 +202,8 @@ function addEdit(finalAbs, line, oldFull, newFull) {
 
 // Files to scan for links: every .md in scope, plus moved .md files (which may
 // live outside scanRoot if --root is narrow — but normally they're inside).
-const scanFiles = new Set(collectMarkdown(scanRoot));
-if (fromIsDir) for (const f of collectMarkdown(fromPath)) scanFiles.add(f);
+const scanFiles = new Set(collectMarkdownFiles(scanRoot));
+if (fromIsDir) for (const f of collectMarkdownFiles(fromPath)) scanFiles.add(f);
 else if (fromPath.endsWith('.md')) scanFiles.add(fromPath);
 
 for (const file of scanFiles) {
@@ -279,12 +252,12 @@ for (const file of scanFiles) {
 }
 
 // ── plan summary (dry-run) or execute ──────────────────────────────────────
-const movedFileCount = fromIsDir ? collectMarkdown(fromPath).length || movedFilesAbs.size : 1;
+const movedFileCount = fromIsDir ? collectMarkdownFiles(fromPath).length || movedFilesAbs.size : 1;
 const totalEdits = [...editsByFile.values()].reduce((n, arr) => n + arr.length, 0);
 const filesTouched = [...editsByFile.keys()].filter(f => editsByFile.get(f).length).length;
 
 if (dryRun) {
-  console.log(`# docs-move (dry-run)\n`);
+  console.log(`# docs-guide move (dry-run)\n`);
   console.log(`move:  ${fromPath}`);
   console.log(`   →   ${toPath}`);
   console.log(`mode:  ${noGit ? 'fs (forced --no-git)' : (inGitTree(fromPath) ? 'git mv' : 'fs (not a git work tree)')}\n`);

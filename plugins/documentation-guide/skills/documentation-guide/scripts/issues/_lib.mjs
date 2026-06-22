@@ -15,6 +15,11 @@ import { fileURLToPath } from 'node:url';
 import matter from 'gray-matter';
 import { resolveProjectContext } from '../_env.mjs';
 import { parseOrderPrefixLoose } from '../_order-prefix.mjs';
+import { parseArgs, printHelp } from '../_cli.mjs';
+
+// parseArgs/printHelp now live canonically in _cli.mjs (lifted in subtask 02);
+// re-exported here so issues/* import sites are unchanged.
+export { parseArgs, printHelp };
 
 // ---------- Paths & validation ----------------------------------------------
 
@@ -79,31 +84,6 @@ export function isInsideAllowed(filePath, root = getContentRoot()) {
  * Tiny CLI parser. Supports `--key value`, `--key=value`, bare flags, and
  * positional args (collected in `_`). No external dep.
  */
-export function parseArgs(argv) {
-  const args = { _: [], flags: {} };
-  for (let i = 0; i < argv.length; i++) {
-    const a = argv[i];
-    if (a.startsWith('--')) {
-      const eq = a.indexOf('=');
-      if (eq !== -1) {
-        args.flags[a.slice(2, eq)] = a.slice(eq + 1);
-      } else {
-        const key = a.slice(2);
-        const next = argv[i + 1];
-        if (next === undefined || next.startsWith('--')) {
-          args.flags[key] = true;
-        } else {
-          args.flags[key] = next;
-          i++;
-        }
-      }
-    } else {
-      args._.push(a);
-    }
-  }
-  return args;
-}
-
 export function csv(s) {
   if (typeof s !== 'string') return [];
   return s.split(',').map((x) => x.trim()).filter(Boolean);
@@ -551,11 +531,6 @@ function formatJsonScalar(v) {
 }
 
 // ---------- CLI helpers ----------------------------------------------------
-
-export function printHelp(name, lines) {
-  console.error(`Usage: docs-${name} ${lines[0]}\n`);
-  for (const line of lines.slice(1)) console.error('  ' + line);
-}
 
 export function relForLog(p) {
   return path.relative(process.cwd(), p);

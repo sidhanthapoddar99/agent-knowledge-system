@@ -22,7 +22,7 @@ Naming convention: `NNN_<YYYY-MM-DD>_<author>.md` is the spec, but in practice m
 Prefer the helper:
 
 ```bash
-docs-add-comment <issue-id> --author claude --body "..."
+docs-guide issue add-comment <issue-id> --author claude --body "..."
 ```
 
 It finds the next `NNN_` prefix and writes valid frontmatter.

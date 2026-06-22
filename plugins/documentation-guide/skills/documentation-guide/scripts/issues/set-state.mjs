@@ -15,7 +15,7 @@ const target = args._[0];
 const state = args._[1];
 
 if (args.flags.help || !target || !state) {
-  printHelp('set-state', [
+  printHelp('issue set-state', [
     '<issue-id-or-subtask-path> <state> [--tracker <path>]',
     '',
     '  Issue:    bun scripts/issues/set-state.mjs 2026-04-19-foo review',

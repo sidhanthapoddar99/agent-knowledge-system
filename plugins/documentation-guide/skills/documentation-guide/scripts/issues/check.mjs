@@ -24,7 +24,7 @@ import { readJsonChecked, reportAndExit } from '../_check-lib.mjs';
 
 const args = parseArgs(process.argv.slice(2));
 if (args.flags.help) {
-  printHelp('check', [
+  printHelp('check issues', [
     '[--tracker <path>] [--quiet|--no-warnings] [--verbose] [--strict]',
     '',
     'Validate the structure of an issue tracker. Defaults to <content-root>/data/todo (derived from .env CONFIG_DIR).',
@@ -271,4 +271,5 @@ reportAndExit({
   errors,
   warnings,
   quiet: QUIET,
+  json: !!args.flags.json,
 });

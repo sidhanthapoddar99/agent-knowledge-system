@@ -20,7 +20,7 @@ Live execution checklist (mirrors the subtask plan; update status as the run pro
 - [x] 08 — dedup → `_links.mjs` (MD_LINK_RE + helpers; move+img wired); tool-detection/walker merges declined w/ rationale
 
 ## Feature fills
-- [ ] 09 — search-scoping flags `--path` / `--meta` / `--count`
+- [x] 09 — search-scoping flags `--path` / `--meta` / `--count` → `--path astro` solves the original failure
 - [ ] 10 — docs + blog `list`/`show`/`search` (after 01)
 - [ ] 11 — unified cross-content `find` (+ stretch `link-check`)
 - [ ] 12 — `git` content helper (guarded commit)

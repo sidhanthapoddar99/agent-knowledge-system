@@ -1,6 +1,6 @@
 ---
 title: "Add search-scoping flags: --path, --meta, --count"
-state: open
+state: review
 ---
 
 The flags that fix the original failure (a broad full-text query flooding output and missing the target). Land on the issue search engine (`docs-list` / future `search`).

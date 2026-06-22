@@ -14,6 +14,7 @@
  * See _lib.mjs detectSearchBackend() / runSearch().
  */
 
+import fs from 'node:fs';
 import path from 'node:path';
 import {
   resolveTracker, listIssueFolders, readIssueMeta, readIssueSubtasks,
@@ -48,8 +49,11 @@ if (args.flags.help || args.flags.h) {
     '  --case-sensitive                         default: case-insensitive',
     '  --invert-match                           include lines that do NOT match',
     '  --scope <subpath>                        restrict to a subfolder of the tracker',
+    '  --path <regex>                           match issues by file/folder PATH text',
+    '  --meta <regex>                           match only frontmatter + JSON (the structured layer)',
     '',
     'Output:',
+    '  --count                                  matches + titles only (no per-line excerpts)',
     '  default                                  id<TAB>status<TAB>title  (no --search)',
     '                                           id<TAB>status<TAB>title<TAB>path:line<TAB>excerpt  (with --search)',
     '  --json                                   structured records, with `matches: [...]` if --search',
@@ -91,10 +95,15 @@ const searchFields     = csv(args.flags['search-fields']); // empty = all
 const caseSensitive    = !!args.flags['case-sensitive'];
 const invertMatch      = !!args.flags['invert-match'];
 const scopeSub         = strOrNull(args.flags.scope); // subpath restriction
+const pathPattern      = strOrNull(args.flags.path);  // match against file/folder paths
+const metaPattern      = strOrNull(args.flags.meta);  // match frontmatter + JSON only
+const wantCount        = !!args.flags.count;
 const limit            = numOrNull(args.flags.limit);
 const wantJson         = !!args.flags.json;
 const wantPathsOnly    = !!args.flags['paths-only'];
 const quietTips        = !!args.flags['quiet-tips'];
+
+const reFlags = caseSensitive ? '' : 'i';
 
 const scope = filterStatus.length
   ? filterStatus
@@ -198,6 +207,40 @@ if (searchPattern) {
   results = filtered;
 }
 
+// ---------- Phase 2b: --meta (frontmatter + JSON only) ---------------------
+// A *vertical* cut across files — the structured layer — distinct from
+// --search-fields (which picks a file category). Implemented in JS (the
+// rg/grep backend can't restrict to a file's frontmatter region).
+if (metaPattern) {
+  const re = new RegExp(metaPattern, reFlags);
+  const filtered = [];
+  for (const issue of results) {
+    const metaHits = [];
+    for (const f of listSearchableFiles(tracker, issue.id, null)) {
+      for (const region of extractMetaRegions(f)) {
+        region.text.split('\n').forEach((ln, i) => {
+          if (re.test(ln)) {
+            metaHits.push({ path: f, line: region.startLine + i, snippet: ln.trim() });
+          }
+        });
+      }
+    }
+    if (metaHits.length) filtered.push({ ...issue, matches: [...issue.matches, ...metaHits] });
+  }
+  results = filtered;
+}
+
+// ---------- Phase 2c: --path (match against file/folder path text) ---------
+// Pure filter: keep an issue if its id (folder slug) or any of its file paths
+// match the regex. Descriptive paths are often the fastest way to an issue.
+if (pathPattern) {
+  const re = new RegExp(pathPattern, reFlags);
+  results = results.filter((issue) =>
+    re.test(issue.id) ||
+    listSearchableFiles(tracker, issue.id, null).some((f) => re.test(path.relative(tracker, f))),
+  );
+}
+
 if (limit != null) results = results.slice(0, limit);
 
 // ---------- Output ---------------------------------------------------------
@@ -212,17 +255,32 @@ if (wantPathsOnly) {
   process.exit(seen.size === 0 ? 1 : 0);
 }
 
+const hasLineMatches = !!(searchPattern || metaPattern);
+
 if (wantJson) {
-  // Strip empty `matches` arrays when there's no search to keep output clean.
-  const out = results.map((r) => searchPattern ? r : (({ matches, ...rest }) => rest)(r));
+  // Strip empty `matches` arrays when there's nothing match-bearing.
+  const out = results.map((r) => hasLineMatches ? r : (({ matches, ...rest }) => rest)(r));
   console.log(JSON.stringify(out, null, 2));
   process.exit(out.length === 0 ? 1 : 0);
+}
+
+// --count: matches + titles only, no per-line excerpt dump.
+if (wantCount) {
+  let total = 0;
+  for (const issue of results) {
+    total += issue.matches.length;
+    console.log(hasLineMatches
+      ? `${issue.id}\t${issue.status}\t${issue.title}\t${issue.matches.length} match${issue.matches.length === 1 ? '' : 'es'}`
+      : `${issue.id}\t${issue.status}\t${issue.title}`);
+  }
+  console.log(`# ${results.length} issue(s)${hasLineMatches ? `, ${total} match(es)` : ''}`);
+  process.exit(results.length === 0 ? 1 : 0);
 }
 
 // Default tabular output.
 let printedAny = false;
 for (const issue of results) {
-  if (searchPattern) {
+  if (hasLineMatches) {
     for (const m of issue.matches) {
       const rel = path.relative(process.cwd(), m.path);
       console.log(`${issue.id}\t${issue.status}\t${issue.title}\t${rel}:${m.line}\t${m.snippet}`);
@@ -251,4 +309,22 @@ function strOrNull(v) {
   if (typeof v !== 'string') return null;
   const t = v.trim();
   return t || null;
+}
+
+/**
+ * The metadata region(s) of a file, for --meta:
+ *   • .json  → the whole file (it IS structured metadata)
+ *   • .md    → only the leading `--- … ---` frontmatter block
+ *   • other  → none
+ * Returns [{ startLine, text }] (1-based startLine for line reporting).
+ */
+function extractMetaRegions(absFile) {
+  let content;
+  try { content = fs.readFileSync(absFile, 'utf-8'); } catch { return []; }
+  if (absFile.endsWith('.json')) return [{ startLine: 1, text: content }];
+  if (absFile.endsWith('.md')) {
+    const m = /^---\r?\n([\s\S]*?)\r?\n---/.exec(content);
+    return m ? [{ startLine: 2, text: m[1] }] : []; // frontmatter inner starts at line 2
+  }
+  return [];
 }

@@ -4,6 +4,17 @@
 
 Per AI rule #2 (see [00_overview.md](00_overview.md)): search `open` + `review` only unless told otherwise.
 
+> [!WARNING]
+> **The default scope silently hides `closed` and `cancelled`.** Every `docs-guide issue list` query — structural filter, `--search`, `--path`, `--meta` — runs against `open,review` only. So a query can come back empty (or look complete) while a matching issue sits in `closed`/`cancelled`. **"Not found" in the default scope is not "doesn't exist."** This is the single most common way a tracker lookup goes wrong — e.g. hunting a *cancelled* upgrade issue by slug and concluding it was never filed.
+>
+> `docs-guide issue list` guards against this for you: when a query matches issues that the default scope hid, it prints a one-line **tip to stderr** with the count and breakdown, e.g.
+>
+> ```
+> tip: showing open,review only — 1 more issue(s) match in 1 cancelled. Add --status all (or --include-cancelled) to include them.
+> ```
+>
+> When you see that tip — or any time the answer hinges on "does this issue exist at all" — **re-run with `--status all`** (every state) or `--include-cancelled` (default scope + cancelled). `docs-guide find` is status-agnostic and never hides anything, so it's the other safe fallback. Suppress the tip with `--quiet-tips` only when you've deliberately scoped the search.
+
 ## Do not use `Grep` or `find` on the tracker — use `docs-guide issue list`
 
 `docs-guide issue list` (the `list.mjs` wrapper) is the tuned drop-in replacement. It understands the schema (vocabulary, subtask states, frontmatter, agent-log subgroups), combines structural filters with free-text regex search **in one call**, and returns exact file paths + line numbers + excerpts so you can `Read` precisely. `Grep` only sees text; `docs-guide issue list` sees the schema.
@@ -87,7 +98,7 @@ Each script supports `--help` (full options), `--json` (machine-readable), and `
 
 `docs-guide issue list` (and the cross-content `docs-guide find`) take three flags that restrict *where* a regex matches, so a broad query doesn't flood output:
 
-- `--path <regex>` — match the file/folder **path text** only (no content scan). The fast way to locate an issue by slug — e.g. `docs-guide issue list --path astro` finds the astro-upgrade issue in one call.
+- `--path <regex>` — match the file/folder **path text** only (no content scan). The fast way to locate an issue by slug — e.g. `docs-guide issue list --path astro --status all` finds the astro-upgrade issue in one call (note `--status all`: that issue is *cancelled*, so the default `open,review` scope would hide it — see the scope warning above).
 - `--meta <regex>` — match only the **structured layer**: frontmatter on `.md` files + whole `.json`/`.yaml` files. Use when you want a field value (`priority: high`, a label, a component) and not prose mentions.
 - `--count` — print match counts + titles only, suppressing the per-line excerpt dump. Pairs well with a broad `--search` to gauge breadth before drilling in.
 

@@ -22,8 +22,8 @@ const tokens = process.argv.slice(2);
 
 // Bare dispatcher invocation, or a top-level help request with no command, shows
 // the grouped listing — `docs-guide`, `docs-guide --help`, and `docs-guide -h`
-// all behave like `docs-guide help`. (Flat `docs-*` aliases always pass their own
-// name as tokens[0], so this only ever catches the bare dispatcher.)
+// all behave like `docs-guide help`. (A real command always supplies a group or
+// verb as tokens[0], so this only ever catches the bare dispatcher.)
 if (tokens.length === 0 || tokens.every((t) => t === '--help' || t === '-h')) {
   process.stdout.write(renderList() + '\n');
   process.exit(0);
@@ -80,8 +80,8 @@ if (entry.runtime && entry.runtime !== 'mjs') {
 }
 
 // Rebuild argv so the target script sees its own args at process.argv.slice(2),
-// exactly as when invoked directly — whether reached via flat alias (drop 1
-// token) or subcommand form (drop 2).
+// exactly as when invoked directly — whether reached via the internal-id form
+// (drop 1 token) or the `<group> <verb>` subcommand form (drop 2).
 process.argv = [process.argv[0], process.argv[1], ...rest];
 
 await import(pathToFileURL(scriptPath).href);

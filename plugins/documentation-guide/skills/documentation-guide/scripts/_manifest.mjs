@@ -6,12 +6,15 @@
  * self-test harness. Help text is GENERATED from this — never hand-written per
  * script — so docs and reality cannot drift.
  *
- * Naming model (subtask 01 decision: B + flat aliases):
- *   • `bin`   — the flat `docs-*` name the shims call (also the back-compat alias).
- *   • `group`/`verb` — the `docs <group> <verb>` subcommand form. `group: null`
- *                       means a top-level verb (`docs <verb>`).
- *   • routing keys on `bin`; the subcommand dispatcher (rollout) maps
- *     `<group> <verb>` and the `docs-*` alias to the same entry.
+ * Naming model (single entrypoint — flat shims retired):
+ *   • `bin`   — internal id (the old `docs-*` name). NOT a PATH binary anymore:
+ *               it keys this manifest, the harness, and `docs-guide help <id>`,
+ *               and still resolves as a hidden convenience form.
+ *   • `group`/`verb` — the documented `docs-guide <group> <verb>` subcommand
+ *                       form. `group: null` means a top-level verb
+ *                       (`docs-guide <verb>`).
+ *   • the dispatcher (cli.mjs) maps both `<group> <verb>` and the bare `bin`
+ *     id to the same entry; the single PATH entrypoint is `docs-guide`.
  *
  * `runtime` is for future polyglot (subtask 13): 'mjs' today; a Python command
  * would set 'py' and cli.mjs would route it to a Python interpreter.
@@ -299,7 +302,9 @@ export const bySubcommand = Object.fromEntries(
 export function resolveCommand(tokens) {
   if (tokens.length === 0) return null;
   const [first, second] = tokens;
-  // 1) flat alias: docs-list …
+  // 1) internal id form: `docs-guide docs-list …` — the retired flat names
+  //    still resolve as a hidden convenience (muscle memory / `help <id>`),
+  //    but the documented surface is the `<group> <verb>` form below.
   if (byBin[first]) return { entry: byBin[first], rest: tokens.slice(1) };
   // 2) two-token subcommand: <group> <verb> …
   if (second && bySubcommand[`${first} ${second}`]) {

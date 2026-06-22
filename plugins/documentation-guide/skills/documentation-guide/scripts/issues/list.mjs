@@ -112,15 +112,22 @@ const scope = filterStatus.length
   : (args.flags['include-cancelled']
       ? ALL_STATUSES
       : ['open', 'review']);
+// Whether the *default* narrow scope is in effect (no explicit --status, no
+// --include-cancelled). Drives the discoverability tip near the output stage:
+// when a query matches issues we hid because they're closed/cancelled, say so.
+const defaultScope = !filterStatus.length && !args.flags['include-cancelled'];
 
 // ---------- Phase 1: structural filter -------------------------------------
+// NOTE: we deliberately do NOT drop out-of-scope statuses here. Every other
+// filter (and the search/meta/path phases) runs across all four states; the
+// active `scope` is applied last, at the output stage, so we can count the
+// matches that fell outside it and surface them as a tip.
 
 const structural = [];
 for (const id of listIssueFolders(tracker)) {
   const meta = readIssueMeta(tracker, id);
   if (!meta) continue;
 
-  if (!scope.includes(meta.status)) continue;
   if (filterPriority.length  && !filterPriority.includes(meta.priority))   continue;
 
   if (filterComponent.length) {
@@ -243,7 +250,32 @@ if (pathPattern) {
   );
 }
 
+// ---------- Apply the status scope (last) ----------------------------------
+// Everything above ran across all four states. Split by the active scope now:
+// what's in-scope is the real result; what's out-of-scope (only possible under
+// the default open,review scope) powers the discoverability tip below.
+const hiddenByScope = results.filter((r) => !scope.includes(r.status));
+results = results.filter((r) => scope.includes(r.status));
+
 if (limit != null) results = results.slice(0, limit);
+
+// Discoverability tip: the default scope silently hides closed/cancelled. When
+// a query would have matched some of those, the user can wrongly conclude
+// "not found" / "that's all of them". Nudge them toward `--status all`. To
+// stderr (never pollutes stdout/--json), and suppressible with --quiet-tips.
+if (defaultScope && hiddenByScope.length && !quietTips) {
+  const n = hiddenByScope.length;
+  const byState = {};
+  for (const r of hiddenByScope) byState[r.status] = (byState[r.status] ?? 0) + 1;
+  const breakdown = ALL_STATUSES
+    .filter((s) => byState[s])
+    .map((s) => `${byState[s]} ${s}`)
+    .join(', ');
+  console.error(
+    `tip: showing open,review only — ${n} more issue(s) match in ${breakdown}. ` +
+    `Add --status all (or --include-cancelled) to include them.`,
+  );
+}
 
 // ---------- Output ---------------------------------------------------------
 

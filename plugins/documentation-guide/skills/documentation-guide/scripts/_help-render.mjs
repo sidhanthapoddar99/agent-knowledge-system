@@ -8,8 +8,9 @@
 
 import { MANIFEST, CONTRACT_FLAGS, byBin, bySubcommand } from './_manifest.mjs';
 
-// The collision-safe dispatcher binary name. The subcommand form is
-// `docs-guide <group> <verb>`; flat `docs-*` aliases remain the short equivalents.
+// The collision-safe dispatcher binary name — the single entrypoint on PATH.
+// Commands are invoked as `docs-guide <group> <verb>`; the flat `docs-*` names
+// are retired to internal manifest ids (the `bin` field), not PATH binaries.
 export const DISPATCH = 'docs-guide';
 
 const CATEGORY_LABEL = {
@@ -43,7 +44,7 @@ export function renderCommandDetail(entry) {
   const flags = [...entry.flags, ...CONTRACT_FLAGS];
   const out = [];
   out.push(`${usageLine(entry)}  —  ${entry.summary}`);
-  out.push(`  alias: ${entry.bin}   ·   category ${entry.category} (${CATEGORY_LABEL[entry.category]})`);
+  out.push(`  id: ${entry.bin}   ·   category ${entry.category} (${CATEGORY_LABEL[entry.category]})`);
   out.push('');
   out.push('  Flags:');
   const width = Math.max(...flags.map((f) => (f.value ? `--${f.name} <${f.value}>` : `--${f.name}`).length));

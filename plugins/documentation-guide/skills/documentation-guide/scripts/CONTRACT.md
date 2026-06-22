@@ -1,4 +1,4 @@
-# The `docs-*` command contract
+# The `docs-guide` command contract
 
 Every command in this toolkit — whatever language it is written in — conforms to
 one contract. The contract lives in **two places only**: the manifest
@@ -14,10 +14,10 @@ rules below.
 ## 1. Invocation & routing
 
 - A command is one manifest entry: `{ bin, group, verb, category, script, runtime, summary, flags }`.
-- It is reachable three ways, all routing to the same entry:
-  - flat alias — `docs-list …` (the `bin`, collision-safe prefix, back-compat)
+- There is **one entrypoint on PATH**: the `docs-guide` dispatcher. A command is invoked as:
   - subcommand — `docs-guide <group> <verb> …` (e.g. `docs-guide issue list`)
-  - top-level verb — `docs <verb> …` when `group` is null (e.g. `docs-guide find`)
+  - top-level verb — `docs-guide <verb> …` when `group` is null (e.g. `docs-guide find`)
+- The `bin` field (e.g. `docs-list`) is now an **internal identifier**, not a PATH binary — it keys the manifest, the harness, and `docs-guide help <bin>`. Earlier versions shipped a flat `docs-*` shim per command; those were retired in favour of the single dispatcher (a bare `docs` collides with other tools, e.g. CUDA; `docs-guide` is prefix-namespaced and safe).
 - `runtime` selects the launcher: `mjs` is imported in-process; any other
   registered runtime (e.g. `py`) is spawned through a detected interpreter with
   `stdio: 'inherit'`, and its exit code is propagated. The script receives its
@@ -70,8 +70,8 @@ Validators follow the same scheme: `0` clean, `1` problems found (CI-friendly).
 A command must NOT re-implement `.env` discovery. Call:
 
 ```
-docs-resolve-context           # KEY=value lines (shell-sourceable)
-docs-resolve-context --json    # { contentRoot, configDir, dataDir, envPath, envDir }
+docs-guide resolve-context           # KEY=value lines (shell-sourceable)
+docs-guide resolve-context --json    # { contentRoot, configDir, dataDir, envPath, envDir }
 ```
 
 and read `CONTENT_ROOT` / `DATA_DIR` / `CONFIG_DIR` from it. This is the single
@@ -81,8 +81,8 @@ source of truth for where content lives, in both consumer and dogfood modes.
 
 1. Add one entry to `MANIFEST` in `_manifest.mjs` (set `runtime`).
 2. Put the script at `scripts/<entry.script>`.
-3. Copy a `bin/<bin>` + `bin/<bin>.cmd` shim pair (generic — they pass their own
-   filename through `cli.mjs`), or rely on the `docs-guide <group> <verb>` form.
+3. That's it for the surface — **no new shim**. The single `docs-guide` dispatcher
+   resolves the new `<group> <verb>` from the manifest automatically.
 4. The self-test harness (`_selftest.mjs`) picks it up automatically from the
    manifest — it checks `--help`/`-h`/exit-0 and `--json` where applicable.
 

@@ -8,7 +8,7 @@ description: AI-powered skill, CLI wrappers, and slash commands for working with
 This template ships its own **Claude Code plugin** — `documentation-guide` — that teaches Claude how to work inside this project without you having to explain the conventions every time. It bundles:
 
 - **2 skills** — `documentation-guide` (triages every docs/issue/blog/config task to a domain-specific reference) and `doc-agent` (a thin execution-time skill for recording an agent's run in the tracker)
-- **28 CLI commands** auto-added to `$PATH` — issue tracker, validators, docs/blog content, git metadata, and cross-content search (each works as `docs-guide <group> <verb>` or a flat `docs-*` alias)
+- **28 CLI commands** auto-added to `$PATH` — issue tracker, validators, docs/blog content, git metadata, and cross-content search (one `docs-guide` entrypoint; every operation is a `docs-guide <group> <verb>` subcommand)
 - **2 slash commands** for project-level scaffolding (`/docs-init`, `/docs-add-section`)
 
 You install it from a marketplace once and Claude Code picks it up across every project on your machine. The plugin is distributed via [`sids-plugin-marketplace`](https://github.com/sidhanthapoddar99/sids-plugin-marketplace).
@@ -33,10 +33,10 @@ Three commands. The first two are one-time per marketplace and per project; the 
 After install, verify by running one of the wrappers:
 
 ```
-docs-list --priority high
+docs-guide issue list --priority high
 ```
 
-You should see issues from your tracker. If the command isn't found, run `/reload-plugins` and check `which docs-list`.
+You should see issues from your tracker. If the command isn't found, run `/reload-plugins` and check `which docs-guide`.
 
 ## Skill — `documentation-guide`
 
@@ -78,36 +78,34 @@ Typical first-time flow in a fresh directory:
 
 Then follow the printed instructions to clone the framework engine and run `./start` from the repo root.
 
-## CLI commands — 28 on `$PATH`
+## CLI commands — one `docs-guide` entrypoint
 
-Claude Code adds the plugin's `bin/` folder to your `$PATH` automatically. Each command can be typed bare — no path knowledge required.
-
-**Two equivalent forms.** Every command works as a `docs-guide <group> <verb>` subcommand *and* as a flat `docs-*` alias (the alias prefix avoids colliding with other plugins). `docs-guide issue list` ≡ `docs-list`; `docs-guide git updated` ≡ `docs-git-updated`.
+Claude Code adds the plugin's `bin/` folder to your `$PATH` automatically. There's a single command — **`docs-guide`** — and every operation is a subcommand: **`docs-guide <group> <verb> [flags]`** (e.g. `docs-guide issue list`, `docs-guide find <regex>`). The name is prefix-namespaced so it never collides with other tools on `PATH`.
 
 **Discover with `docs-guide help`.** Rather than memorising names: `docs-guide help` lists everything grouped, `docs-guide help <command>` shows one command's flags, `docs-guide help --json` dumps the manifest. The contract is uniform — every command supports `--help`/`-h` (→ stdout, exit 0) and `--json` wherever it returns data; exit codes are `0` ok / `1` no-result-or-handled-error / `2` usage.
 
 ### General / cross-content (5)
 
-| Command (alias) | What it does |
+| Command | What it does |
 |---|---|
-| `docs-guide help` (`docs-help`) | List commands, show flags, or dump the manifest (`--json`) |
-| `docs-guide find` (`docs-find`) | Schema-agnostic regex search across **all** content at once (docs+blog+issues+config); `--meta` / `--path` / `--type` / `--count` |
-| `docs-guide move` (`docs-move`) | Link-aware move / rename of doc pages or folders |
-| `docs-guide img` (`docs-img`) | Optimize images / screenshots so git stays small |
-| `docs-guide resolve-context` (`docs-resolve-context`) | Emit the `.env`-derived content/config/data dirs (for non-JS scripts) |
+| `docs-guide help` | List commands, show flags, or dump the manifest (`--json`) |
+| `docs-guide find` | Schema-agnostic regex search across **all** content at once (docs+blog+issues+config); `--meta` / `--path` / `--type` / `--count` |
+| `docs-guide move` | Link-aware move / rename of doc pages or folders |
+| `docs-guide img` | Optimize images / screenshots so git stays small |
+| `docs-guide resolve-context` | Emit the `.env`-derived content/config/data dirs (for non-JS scripts) |
 
 ### Issue tracker (8) — `docs-guide issue …`
 
 | Command | What it does |
 |---|---|
-| `docs-list` | Multi-field filter + free-text regex search over the tracker — drop-in replacement for `grep`/`find` on `data/todo/`. Scope with `--path` / `--meta` / `--count` |
-| `docs-show <issue-id>` | One issue's metadata + subtask summary + comment & agent-log heads |
-| `docs-subtasks <issue-id>` | List subtasks for one issue (or `--all` for cross-issue) |
-| `docs-agent-logs <issue-id>` | Last N agent-log entries for an issue |
-| `docs-set-state` | Update issue or subtask state |
-| `docs-add-comment` | Append a comment with auto-incremented prefix |
-| `docs-add-agent-log` | Append an agent-log entry with auto-incremented iteration |
-| `docs-review-queue` | Items awaiting review (status=review issues + open issues with review subtasks) |
+| `docs-guide issue list` | Multi-field filter + free-text regex search over the tracker — drop-in replacement for `grep`/`find` on `data/todo/`. Scope with `--path` / `--meta` / `--count` |
+| `docs-guide issue show <issue-id>` | One issue's metadata + subtask summary + comment & agent-log heads |
+| `docs-guide issue subtasks <issue-id>` | List subtasks for one issue (or `--all` for cross-issue) |
+| `docs-guide issue agent-logs <issue-id>` | Last N agent-log entries for an issue |
+| `docs-guide issue set-state` | Update issue or subtask state |
+| `docs-guide issue add-comment` | Append a comment with auto-incremented prefix |
+| `docs-guide issue add-agent-log` | Append an agent-log entry with auto-incremented iteration |
+| `docs-guide issue review-queue` | Items awaiting review (status=review issues + open issues with review subtasks) |
 
 ### Validators (5) — `docs-guide check …`
 
@@ -115,27 +113,27 @@ Exit `0` clean / `1` on errors found — handy in pre-commit / CI. All support `
 
 | Command | What it does |
 |---|---|
-| `docs-check-blog` | Validate the blog folder — `YYYY-MM-DD-<slug>.md` naming, frontmatter `title:`, no nested folders |
-| `docs-check-config` | Validate `site.yaml` / `navbar.yaml` / `footer.yaml` — required keys, page structure, alias resolution |
-| `docs-check-section <folder>` | Validate any docs section — `NN_` prefix discipline, `settings.json` presence, frontmatter `title:`, prefix collisions |
-| `docs-check-issues` | Validate the issue tracker — schema, vocabulary, subtask states (use this on `data/todo/`, not `docs-check-section`) |
-| `docs-check-skill-links` | Maintainer tool: verify relative links between the skill's `.md` files resolve |
+| `docs-guide check blog` | Validate the blog folder — `YYYY-MM-DD-<slug>.md` naming, frontmatter `title:`, no nested folders |
+| `docs-guide check config` | Validate `site.yaml` / `navbar.yaml` / `footer.yaml` — required keys, page structure, alias resolution |
+| `docs-guide check section <folder>` | Validate any docs section — `NN_` prefix discipline, `settings.json` presence, frontmatter `title:`, prefix collisions |
+| `docs-guide check issues` | Validate the issue tracker — schema, vocabulary, subtask states (use this on `data/todo/`, not `docs-guide check section`) |
+| `docs-guide check skill-links` | Maintainer tool: verify relative links between the skill's `.md` files resolve |
 
 ### Docs + blog content (6) — `docs-guide doc …` / `docs-guide blog …`
 
 | Command | What it does |
 |---|---|
-| `docs-doc-list` / `docs-doc-show` / `docs-doc-search` | List / inspect / regex-search sidebar doc pages (optional `[section]`) |
-| `docs-blog-list` / `docs-blog-show` / `docs-blog-search` | List / inspect / regex-search blog posts (newest first) |
+| `docs-guide doc list` / `docs-guide doc show` / `docs-guide doc search` | List / inspect / regex-search sidebar doc pages (optional `[section]`) |
+| `docs-guide blog list` / `docs-guide blog show` / `docs-guide blog search` | List / inspect / regex-search blog posts (newest first) |
 
 ### Git-derived content metadata (4) — `docs-guide git …`
 
 | Command | What it does |
 |---|---|
-| `docs-git-updated <path>` | Last-commit date/author/subject for any issue/doc/post |
-| `docs-git-changed --since <ref>` | Content changed under `data/` since a ref (review sweeps) |
-| `docs-git-log <path>` | Commit history of one content folder/file |
-| `docs-git-commit --scope <path> --message <msg>` | **Guarded** stage + commit of only that path; never pushes (`--dry-run` previews) |
+| `docs-guide git updated <path>` | Last-commit date/author/subject for any issue/doc/post |
+| `docs-guide git changed --since <ref>` | Content changed under `data/` since a ref (review sweeps) |
+| `docs-guide git log <path>` | Commit history of one content folder/file |
+| `docs-guide git commit --scope <path> --message <msg>` | **Guarded** stage + commit of only that path; never pushes (`--dry-run` previews) |
 
 Pass `--help` to any command for the full flag list, or run `docs-guide help`.
 
@@ -150,15 +148,15 @@ You almost always describe the task in natural language and let the skill route 
 | Bootstrap a new docs project | `/docs-init` |
 | Add a new top-level section | `/docs-add-section` |
 | Discover what commands/flags exist | `docs-guide help` (`docs-guide help <cmd>`, `docs-guide help --json`) |
-| Find issues by priority / status / search | `docs-list` |
+| Find issues by priority / status / search | `docs-guide issue list` |
 | Find a string across **all** content types | `docs-guide find` |
-| Inspect one issue | `docs-show` |
-| Update an issue or subtask state | `docs-set-state` |
-| Add a comment to an issue | `docs-add-comment` |
-| Validate site config before commit | `docs-check-config` |
-| Validate a docs section before commit | `docs-check-section <folder>` |
-| Validate the issue tracker before commit | `docs-check-issues` |
-| When was this issue/doc last touched | `docs-git-updated <path>` |
+| Inspect one issue | `docs-guide issue show` |
+| Update an issue or subtask state | `docs-guide issue set-state` |
+| Add a comment to an issue | `docs-guide issue add-comment` |
+| Validate site config before commit | `docs-guide check config` |
+| Validate a docs section before commit | `docs-guide check section <folder>` |
+| Validate the issue tracker before commit | `docs-guide check issues` |
+| When was this issue/doc last touched | `docs-guide git updated <path>` |
 
 ## Updates
 

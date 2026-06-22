@@ -65,13 +65,15 @@ Three things going on:
 - **`scripts/cli.mjs`** — the dispatcher. It resolves the incoming tokens against the manifest, intercepts `--help`/`-h` centrally (rendered *from* the manifest, so help can't drift from reality), routes to the entry's `script` according to its `runtime`, and rebuilds `argv` so the target script sees its own args.
 - **`scripts/_cli.mjs`** — the shared contract helpers (`parseArgs`, `emitJson`, `writeStdout`, exit-code helpers) every command imports, so arg parsing, `--json`, and exit codes are uniform. The contract is written down in `scripts/CONTRACT.md`.
 
-Because routing keys on a manifest entry, each command is reachable two ways: as the flat `docs-list` alias *and* as a `docs-guide <group> <verb>` subcommand (`docs-guide issue list`). One generic `docs` shim forwards `"$@"` verbatim to the dispatcher for the subcommand form.
+There is a **single shim on PATH** — `docs-guide` (plus its `.cmd` twin) — which forwards `"$@"` verbatim to the dispatcher. Every command is invoked as `docs-guide <group> <verb>` (e.g. `docs-guide issue list`). The manifest `bin` field (`docs-list`) survives only as an internal identifier — it keys the manifest, the harness, and `docs-guide help docs-list`, but is **not** a binary on PATH.
+
+> An earlier iteration shipped a flat `docs-*` shim per command (28 of them) *plus* the dispatcher — two ways to call everything. That was collapsed to the single `docs-guide` entrypoint: the per-command shims were pure clutter once the dispatcher existed, and a bare `docs` dispatcher collides (see Naming hygiene). One prefixed dispatcher is the whole surface.
 
 ### Adding a command
 
 1. Add **one** entry to `MANIFEST` in `_manifest.mjs` (set `runtime: 'mjs'`, or another language — see below).
 2. Put the implementation at `scripts/<entry.script>`, importing the shared contract from `_cli.mjs`.
-3. Copy a `bin/<bin>` + `bin/<bin>.cmd` shim pair (they're generic — no edits beyond the filename), or rely on the `docs-guide <group> <verb>` form.
+3. **No new shim** — the single `docs-guide` dispatcher resolves the new `<group> <verb>` from the manifest automatically.
 4. The self-test harness reads the manifest, so it picks up the new command automatically (`--help`/`-h`/exit-0, and `--json` where applicable).
 
 ## Why bin beats the alternatives
@@ -113,7 +115,7 @@ Rules of thumb:
 - Don't shadow common system commands (`ls`, `cd`, `git`, `npm`)
 - Don't shadow common dev tools (`jq`, `yq`, `rg`)
 
-> **Caveat — the bare `docs` dispatcher can collide.** The `docs-guide <group> <verb>` subcommand form needs a wrapper literally named `docs`, and `docs` is *not* prefix-namespaced — other tools ship a `docs` binary too (e.g. NVIDIA CUDA puts one at `…/CUDA/vX.Y/docs` on PATH). Whichever loads first on PATH wins, so the bare `docs` entrypoint is best-effort. The flat `docs-*` aliases are collision-safe by construction — **prefer them in scripts, docs, and anywhere correctness matters**; treat `docs-guide <group> <verb>` as the ergonomic interactive form.
+> **Worked example — why the dispatcher is named `docs-guide`, not `docs`.** A subcommand toolkit wants a single short entrypoint, and bare `docs` is the obvious pick — but `docs` is *not* prefix-namespaced, and other tools ship one (e.g. NVIDIA CUDA puts a `docs` on PATH; in WSL the Windows paths often sort *ahead* of the plugin's bin dir, so CUDA's wins and the toolkit becomes unreachable by name). The fix is to keep the dispatcher name prefixed too: `documentation-guide` ships **`docs-guide`**, which is collision-safe by the same rule as `docs-list` was. Lesson: the namespace prefix applies to the dispatcher, not just the per-command wrappers.
 
 ## What goes in the wrapper
 

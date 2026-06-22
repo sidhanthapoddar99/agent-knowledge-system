@@ -1,7 +1,7 @@
 {
   "title": "Unify numeric ordering-prefix convention (2–5 digit) across docs & issues",
   "description": "Relax the docs ordering prefix from fixed 2-digit to a shared variable-width (min 2, max 5) numeric convention, behind one parser, consistent with the issue tracker. Backward compatible. Enables in-folder grouping via the leading digit.",
-  "status": "review",
+  "status": "closed",
   "priority": "medium",
   "component": [
     "content-pipeline"

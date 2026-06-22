@@ -7,8 +7,8 @@ title: "Task list — CLI consolidation loop"
 Live execution checklist (mirrors the subtask plan; update status as the run progresses). Subtask = the plan; this = the working tracker for the run.
 
 ## Foundation
-- [ ] 01 — decide naming model (GATE for 10/11)
-- [ ] 14 — stand up the self-test harness early (run it every iteration after this)
+- [x] 01 — decide naming model (GATE for 10/11) → **B + flat aliases** (notes/03)
+- [x] 14 — stand up the self-test harness early → `scripts/_selftest.mjs`, **baseline 22/54**
 - [ ] 02 — `_cli.mjs` shared contract (parser/help/output/error)
 - [ ] 03 — command manifest (`name → {script, category, summary, flags}`)
 - [ ] 04 — `help`/discovery command + `help --json`

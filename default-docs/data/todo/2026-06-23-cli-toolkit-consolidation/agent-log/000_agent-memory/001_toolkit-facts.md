@@ -25,6 +25,10 @@ Issue-scoped facts learned mapping the toolkit. Maintain continuously; the next 
 
 - Pre-edit feature matrix (`notes/01`) is **frozen** — never edit during the loop. Post-edit goes in `notes/05`.
 - **Loop VC policy (confirmed):** branch `cli-consolidation`, **commit per subtask**, **never push** (human merges/pushes). Separately, the `git` *command* being built (subtask 12) must never auto-commit — its commit verb stays guarded/explicit.
-- **Naming (subtask 01):** the loop decides A (flat) vs B (subcommands) in-run; record rationale in `notes/03`.
+- **Naming (subtask 01) — DECIDED: B + flat aliases.** `docs <group> <verb>` primary, all `docs-*` kept as aliases (zero breakage). Manifest keys on canonical subcommand path; separate `alias → canonical` map. Rationale in `notes/03`.
+- **⚠️ TESTING: edit the REPO source, but on-PATH `docs-*` bins run the CACHED install** (`~/.claude/plugins/cache/sids-plugin-marketplace/documentation-guide/0.2.1/`). Repo edits are NOT reflected by `docs-list` etc. until the plugin is reloaded/republished. **Always test via `node plugins/documentation-guide/skills/documentation-guide/scripts/cli.mjs <cmd>` (repo source), never the PATH bins.** The self-test harness targets the repo `cli.mjs`.
+- **Repo source path:** `plugins/documentation-guide/skills/documentation-guide/scripts/`. Repo `.env` has `CONFIG_DIR=./default-docs/config` (dogfood), so commands resolve content when run from repo root.
+- **`docs-add-agent-log` gotcha:** iteration numbering auto-increments from the highest *sequence* in the leaf folder — it does NOT reserve the `1xx` range for iterations, so in an activity folder with `001_goal`/`002_task-list` it writes `003_`, `004_` (colliding with the `0xx` meta range). Had to manually rename to `101_`/`102_` + fix `iteration:` frontmatter. Also wrote `date: 2026-06-22` (off by one). Candidate fix: make the helper activity-aware (write `1xx` when `0xx` meta exists). For now: rename after creating.
+- **Baseline self-test: 22/54** (pre-refactor). Target: 54/54 (+ checks added as commands land).
 - **Scope:** all 18 subtasks, including 13 (polyglot enablement only).
 - Manifest + written spec (not JS helpers) is what makes Python polyglot possible without forking the contract.

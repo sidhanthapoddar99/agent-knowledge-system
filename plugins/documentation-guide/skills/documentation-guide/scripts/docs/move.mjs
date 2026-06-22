@@ -31,6 +31,7 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { resolveProjectContext } from '../_env.mjs';
+import { MD_LINK_RE, isIgnorableTarget, splitAnchor, collectMarkdownFiles } from '../_links.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 
@@ -124,17 +125,7 @@ if (!isInside(scanRoot, toPath)) {
 
 // ── helpers ──────────────────────────────────────────────────────────────
 
-/** Recursively collect all .md files under a directory (absolute paths). */
-function collectMarkdown(dir) {
-  const out = [];
-  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (entry.name.startsWith('.')) continue;
-    const abs = path.join(dir, entry.name);
-    if (entry.isDirectory()) out.push(...collectMarkdown(abs));
-    else if (entry.isFile() && entry.name.endsWith('.md')) out.push(abs);
-  }
-  return out;
-}
+// collectMarkdownFiles() + MD_LINK_RE + isIgnorableTarget come from ../_links.mjs.
 
 /** Recursively collect every file (any extension) under a directory. */
 function collectAllFiles(dir) {
@@ -164,25 +155,7 @@ function didMove(abs) {
   return movedFilesAbs.has(abs);
 }
 
-// Markdown link / image regex. Captures: leading `!` (optional), text, target.
-// We then split the target into url + optional #anchor and skip non-relative.
-const LINK_RE = /(!?)\[([^\]]*)\]\(([^)\s]+)\)/g;
-
-function isIgnorableTarget(url) {
-  if (!url) return true;
-  if (/^[a-z][a-z0-9+.-]*:/i.test(url)) return true; // scheme: http:, https:, mailto:, etc.
-  if (url.startsWith('//')) return true;             // protocol-relative
-  if (url.startsWith('/')) return true;              // site-absolute (incl. /assets/)
-  if (url.startsWith('#')) return true;              // pure anchor
-  return false;
-}
-
-/** Split a link target into { rel, anchor } where anchor includes the leading '#'. */
-function splitAnchor(url) {
-  const h = url.indexOf('#');
-  if (h === -1) return { rel: url, anchor: '' };
-  return { rel: url.slice(0, h), anchor: url.slice(h) };
-}
+const LINK_RE = MD_LINK_RE; // shared regex from ../_links.mjs (also used by docs-img)
 
 /**
  * Build a POSIX-style relative link from fileDir to targetAbs.
@@ -229,8 +202,8 @@ function addEdit(finalAbs, line, oldFull, newFull) {
 
 // Files to scan for links: every .md in scope, plus moved .md files (which may
 // live outside scanRoot if --root is narrow — but normally they're inside).
-const scanFiles = new Set(collectMarkdown(scanRoot));
-if (fromIsDir) for (const f of collectMarkdown(fromPath)) scanFiles.add(f);
+const scanFiles = new Set(collectMarkdownFiles(scanRoot));
+if (fromIsDir) for (const f of collectMarkdownFiles(fromPath)) scanFiles.add(f);
 else if (fromPath.endsWith('.md')) scanFiles.add(fromPath);
 
 for (const file of scanFiles) {
@@ -279,7 +252,7 @@ for (const file of scanFiles) {
 }
 
 // ── plan summary (dry-run) or execute ──────────────────────────────────────
-const movedFileCount = fromIsDir ? collectMarkdown(fromPath).length || movedFilesAbs.size : 1;
+const movedFileCount = fromIsDir ? collectMarkdownFiles(fromPath).length || movedFilesAbs.size : 1;
 const totalEdits = [...editsByFile.values()].reduce((n, arr) => n + arr.length, 0);
 const filesTouched = [...editsByFile.keys()].filter(f => editsByFile.get(f).length).length;
 

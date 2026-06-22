@@ -23,6 +23,7 @@ import {
   IMAGE_EXTS, findEngine, parseSize, humanBytes, fileSize,
   runEngine, isLossy,
 } from './_lib.mjs';
+import { MD_LINK_RE } from '../_links.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 
@@ -219,7 +220,7 @@ if (o.rewriteLinks && renames.length && !o.out) {
   const byOld = new Map(renames.map((r) => [r.oldAbs, r.newAbs]));
   let root = o.linksRoot ? path.resolve(o.linksRoot) : null;
   if (!root) { try { root = resolveProjectContext(SCRIPT_DIR).contentRoot; } catch { root = process.cwd(); } }
-  const LINK_RE = /(!?)\[([^\]]*)\]\(([^)\s]+)\)/g;
+  const LINK_RE = MD_LINK_RE; // shared regex from ../_links.mjs (also used by docs-move)
   const mds = collectMd(root);
   for (const md of mds) {
     let txt; try { txt = fs.readFileSync(md, 'utf-8'); } catch { continue; }

@@ -17,7 +17,7 @@ Live execution checklist (mirrors the subtask plan; update status as the run pro
 ## Correctness & cleanup
 - [x] 06 — wire orphans → `docs-check-issues` (tracker passes: 0 err/15 warn), `docs-check-skill-links`
 - [x] 07 — fix latent bugs → `show --full` imports fixed; review-queue exit reviewed-OK
-- [ ] 08 — dedup (links, walkers, tool-detection, constants)
+- [x] 08 — dedup → `_links.mjs` (MD_LINK_RE + helpers; move+img wired); tool-detection/walker merges declined w/ rationale
 
 ## Feature fills
 - [ ] 09 — search-scoping flags `--path` / `--meta` / `--count`

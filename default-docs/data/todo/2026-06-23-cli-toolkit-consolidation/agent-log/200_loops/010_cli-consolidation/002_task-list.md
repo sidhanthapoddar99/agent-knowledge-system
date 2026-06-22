@@ -32,9 +32,9 @@ Live execution checklist (mirrors the subtask plan; update status as the run pro
 - [x] 15 — update skills + preferences + CLAUDE.md → CLAUDE.md, documentation-guide SKILL.md, 41_searching.md, claude-skills.md, project memory; skill-links GREEN
 - [x] 16 — update docs (user-guide / dev-docs) → bin-wrappers dispatcher/manifest architecture + `docs` collision caveat + polyglot; installation count; sections validate
 - [x] 17 — version bump (plugin.json) → 0.2.1 → **0.3.0**; description refreshed to 28-command surface; harness 117/117
-- [ ] 18 — recreate POST-EDIT feature matrix + delta (FINAL)
+- [x] 18 — recreate POST-EDIT feature matrix + delta (FINAL) → notes/05 re-scored vs frozen baseline; deferred items filed as issue comment
 
 ## Gate check before declaring done
-- [ ] self-test harness green
-- [ ] `docs help --json` matches the manifest
-- [ ] all subtasks at `review`/`closed`
+- [x] self-test harness green → **117/117 (bun)**
+- [x] `docs help --json` matches the manifest → **28/28, no missing/extra**
+- [x] all subtasks at `review`/`closed` → **18/18 review**

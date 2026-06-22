@@ -30,7 +30,7 @@ if (args.flags.help || args.flags.h) {
     '[filters] [--search <regex>] [output] [--quiet-tips]',
     '',
     'Filters (AND across fields, OR within):',
-    '  --status open,review,closed,cancelled    default: open,review',
+    '  --status open,review,closed,cancelled    default: open,review (use `all` for every state)',
     '  --priority low,medium,high,urgent',
     '  --component <vals>',
     '  --label <vals>',
@@ -106,10 +106,11 @@ const quietTips        = !!args.flags['quiet-tips'];
 
 const reFlags = caseSensitive ? '' : 'i';
 
+const ALL_STATUSES = ['open', 'review', 'closed', 'cancelled'];
 const scope = filterStatus.length
-  ? filterStatus
+  ? (filterStatus.includes('all') ? ALL_STATUSES : filterStatus)
   : (args.flags['include-cancelled']
-      ? ['open', 'review', 'closed', 'cancelled']
+      ? ALL_STATUSES
       : ['open', 'review']);
 
 // ---------- Phase 1: structural filter -------------------------------------

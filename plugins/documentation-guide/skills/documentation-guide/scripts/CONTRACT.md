@@ -16,8 +16,8 @@ rules below.
 - A command is one manifest entry: `{ bin, group, verb, category, script, runtime, summary, flags }`.
 - It is reachable three ways, all routing to the same entry:
   - flat alias — `docs-list …` (the `bin`, collision-safe prefix, back-compat)
-  - subcommand — `docs <group> <verb> …` (e.g. `docs issue list`)
-  - top-level verb — `docs <verb> …` when `group` is null (e.g. `docs find`)
+  - subcommand — `docs-guide <group> <verb> …` (e.g. `docs-guide issue list`)
+  - top-level verb — `docs <verb> …` when `group` is null (e.g. `docs-guide find`)
 - `runtime` selects the launcher: `mjs` is imported in-process; any other
   registered runtime (e.g. `py`) is spawned through a detected interpreter with
   `stdio: 'inherit'`, and its exit code is propagated. The script receives its
@@ -82,7 +82,7 @@ source of truth for where content lives, in both consumer and dogfood modes.
 1. Add one entry to `MANIFEST` in `_manifest.mjs` (set `runtime`).
 2. Put the script at `scripts/<entry.script>`.
 3. Copy a `bin/<bin>` + `bin/<bin>.cmd` shim pair (generic — they pass their own
-   filename through `cli.mjs`), or rely on the `docs <group> <verb>` form.
+   filename through `cli.mjs`), or rely on the `docs-guide <group> <verb>` form.
 4. The self-test harness (`_selftest.mjs`) picks it up automatically from the
    manifest — it checks `--help`/`-h`/exit-0 and `--json` where applicable.
 

@@ -8,61 +8,7 @@ This project ships a Claude Code plugin (`documentation-guide`) — source at `p
 
 **Skills (2).** `documentation-guide` triages every docs/issue/blog/config task to one of six reference targets (`writing.md`, `docs-layout.md`, `blog-layout.md`, `layouts/issues/` (split, entry `00_overview.md`), `settings-layout.md`, `images.md`) — trigger eagerly for anything under `default-docs/`. `doc-agent` is a thin execution-time companion (different trigger surface) covering **how to use an issue's `agent-log/`** — fires on the execution verbs (audit / refactor / loop), keeps always-on agent-memory, and treats discussion as explicit-save-only (offer when dense, never auto-save); it carries the activity structure inline and defers depth to `documentation-guide`.
 
-**28 CLI commands on PATH** (Claude Code adds the plugin's `bin/` to PATH automatically; each ships as a bash shim + `.cmd` shim for native Windows, both routing through one dispatcher, `scripts/cli.mjs`, driven by a single command manifest `scripts/_manifest.mjs`).
-
-**Two equivalent forms.** Every command is reachable as a `docs <group> <verb>` subcommand *and* as a flat `docs-*` alias (the alias prefix avoids collisions with other plugins' binaries). `docs issue list` ≡ `docs-list`, `docs check blog` ≡ `docs-check-blog`, `docs git updated` ≡ `docs-git-updated`. Top-level verbs (`docs find`, `docs move`, `docs img`) have no group.
-
-**Discovery first — `docs help`.** Don't guess command names or flags. `docs help` lists everything grouped; `docs help <command>` shows one command's flags; `docs help --json` dumps the whole manifest for machine consumption. The contract is uniform: **every** command supports `--help`/`-h` (→ stdout, exit 0) and, where it returns data, `--json`. Exit codes: `0` ok · `1` no-result/handled-error · `2` usage. Full spec: `plugins/documentation-guide/skills/documentation-guide/scripts/CONTRACT.md`.
-
-General / cross-content:
-
-| Command (alias) | Use |
-|---|---|
-| `docs help` (`docs-help`) | List commands, show one command's flags, or dump the manifest (`--json`) |
-| `docs find` (`docs-find`) | Schema-agnostic regex search across **all** content (docs+blog+issues+config) in one call — `--meta` (structured layer only), `--path`, `--type`, `--count`, `--paths-only` |
-| `docs move` (`docs-move`) | Link-aware move/rename of doc pages or folders (rewrites inbound + outbound links) |
-| `docs img` (`docs-img`) | Optimize images/screenshots (resize, `--dpr`, grayscale, webp/avif, `--strip`, `--target-size`) so git stays small; `--rewrite-links` fixes `![](…)` on extension change. Needs ImageMagick; optimizes only, never captures. |
-| `docs resolve-context` (`docs-resolve-context`) | Emit the `.env`-derived content/config/data dirs (`KEY=value` or `--json`) — for non-JS scripts |
-
-Issue tracker (`docs issue …` / `docs-…`):
-
-| Command | Use |
-|---|---|
-| `docs-list` | Multi-field filter + free-text regex search over the tracker — drop-in replacement for `grep`/`find` on `default-docs/data/todo/`. Scope with `--path` / `--meta` / `--count` |
-| `docs-show` | One issue's metadata + subtask + log heads (`--full` for bodies) |
-| `docs-subtasks` | List subtasks (`--all` for cross-issue) |
-| `docs-agent-logs` | Last N agent-log entries |
-| `docs-set-state` | Update issue or subtask state |
-| `docs-add-comment` / `docs-add-agent-log` | Append with auto-incremented prefix |
-| `docs-review-queue` | Items awaiting review |
-
-Validators (`docs check …`; exit `0` clean / `1` on errors; all support `--json`):
-
-| Command | Use |
-|---|---|
-| `docs-check-blog` | Validate `default-docs/data/blog/` — filename pattern, frontmatter, no nesting |
-| `docs-check-config` | Validate `default-docs/config/` — required keys, page structure, alias resolution |
-| `docs-check-section <folder>` | Validate any docs section — `NN_` prefixes, `settings.json`, frontmatter |
-| `docs-check-issues` | Validate the issue tracker — schema, vocabulary, subtask states (use this, not `docs-check-section`, on `data/todo/`) |
-| `docs-check-skill-links` | Maintainer tool: verify relative links between skill `.md` files resolve |
-
-Docs + blog content (`docs doc …` / `docs blog …`):
-
-| Command | Use |
-|---|---|
-| `docs-doc-list` / `docs-doc-show` / `docs-doc-search` | List / inspect / regex-search sidebar doc pages (optional `[section]`) |
-| `docs-blog-list` / `docs-blog-show` / `docs-blog-search` | List / inspect / regex-search blog posts |
-
-Git-derived content metadata (`docs git …`):
-
-| Command | Use |
-|---|---|
-| `docs-git-updated` | Last-commit date/author/subject for any issue/doc/post path |
-| `docs-git-changed --since <ref>` | Content changed under `data/` since a ref (review sweeps) |
-| `docs-git-log` | Commit history of one content folder/file |
-| `docs-git-commit --scope <path> --message <msg>` | **Guarded**: stage + commit **only** that path; never pushes, commit stays explicit (`--dry-run` previews) |
-
-**Do not use `Grep` on the tracker** — `docs-list` (and `docs find`) understand the schema (vocabulary, subtask states, frontmatter); `Grep` only sees text.
+The plugin's `documentation-guide` skill carries the full operating manual, including the `docs-guide` CLI — defer to it for command usage rather than duplicating the toolkit here. It triggers automatically on docs/issue/blog/config work.
 
 **Tracker mental model.** This tracker is comprehensive memory of thought-work for AI-augmented development. Each issue is a folder capturing one coherent unit of *thinking + execution* (`issue.md` + `notes/` → `subtasks/` → `agent-log/` → `comments/`). Ordering is `priority desc, updated desc`; `updated` is derived from git history (most recent commit touching anything under the folder). `created` comes from the folder slug. Best-practices: one `component` per issue (multi is allowed for genuinely cross-cutting work, hint-warned by validator); AI-handoff-bound issues should declare ≥1 subtask. **Don't add scheduling, release-bucket, or single-type fields without an explicit policy reversal** — they rot under continuous AI-driven shipping. Full framing: `default-docs/data/user-guide/19_issues/01_overview.md` and `02_design-philosophy.md`.
 

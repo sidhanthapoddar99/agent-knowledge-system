@@ -10,8 +10,8 @@
  *   • `--help`  → exit 0, non-empty STDOUT
  *   • `--json`  → valid JSON on STDOUT (commands that take no required arg)
  *   • exit codes follow 0 ok / 1 err·no-match / 2 usage
- * Plus: every command has a `bin/<name>.cmd` Windows twin; once `help` exists,
- * `help --json` lists every command.
+ * Plus: the single `docs-guide` dispatcher + its `.cmd` twin exist; once `help`
+ * exists, `help --json` lists every command.
  *
  * Baseline (pre-refactor) is EXPECTED to fail many checks — that is the point;
  * it measures the gap. As the contract subtasks land, checks turn green.
@@ -79,10 +79,13 @@ for (const cmd of COMMANDS) {
     try { JSON.parse(j.stdout); parsed = true; } catch { /* fail */ }
     record(cmd.name, '--json parses', parsed, `exit=${j.status}`);
   }
+}
 
-  // Windows twin present
-  const twin = path.join(BIN_DIR, `${cmd.name}.cmd`);
-  record(cmd.name, '.cmd twin exists', fs.existsSync(twin), twin);
+// Single-entrypoint shim: the toolkit ships ONE dispatcher (`docs-guide`) plus its
+// Windows twin — every command is reached as `docs-guide <group> <verb>`. (The flat
+// `docs-*` names remain internal manifest ids / help lookups, not on-PATH shims.)
+for (const shim of ['docs-guide', 'docs-guide.cmd']) {
+  record('dispatcher', `${shim} exists`, fs.existsSync(path.join(BIN_DIR, shim)), path.join(BIN_DIR, shim));
 }
 
 // Discovery check (only meaningful once a help command exists)

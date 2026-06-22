@@ -85,15 +85,15 @@ Each script supports `--help` (full options), `--json` (machine-readable), and `
 
 ### Search-scoping flags — depth, not just text
 
-`docs-list` (and the cross-content `docs find`) take three flags that restrict *where* a regex matches, so a broad query doesn't flood output:
+`docs-list` (and the cross-content `docs-guide find`) take three flags that restrict *where* a regex matches, so a broad query doesn't flood output:
 
 - `--path <regex>` — match the file/folder **path text** only (no content scan). The fast way to locate an issue by slug — e.g. `docs-list --path astro` finds the astro-upgrade issue in one call.
 - `--meta <regex>` — match only the **structured layer**: frontmatter on `.md` files + whole `.json`/`.yaml` files. Use when you want a field value (`priority: high`, a label, a component) and not prose mentions.
 - `--count` — print match counts + titles only, suppressing the per-line excerpt dump. Pairs well with a broad `--search` to gauge breadth before drilling in.
 
-### Searching across ALL content types — `docs find`
+### Searching across ALL content types — `docs-guide find`
 
-`docs-list` is tracker-scoped and schema-aware. When you need a string **anywhere across every content type at once** (docs + blog + issues + config), use `docs find <regex>` — one schema-agnostic engine over all of `data/` + `config/`. It honors the same scoping flags (`--path`, `--meta`, `--count`, `--paths-only`) plus `--type docs,blog,issues,config` to narrow scope. The per-type schema-aware peers (`docs-doc-search`, `docs-blog-search`) answer "find the page/post about X"; `docs find` answers "where is this string, anywhere".
+`docs-list` is tracker-scoped and schema-aware. When you need a string **anywhere across every content type at once** (docs + blog + issues + config), use `docs-guide find <regex>` — one schema-agnostic engine over all of `data/` + `config/`. It honors the same scoping flags (`--path`, `--meta`, `--count`, `--paths-only`) plus `--type docs,blog,issues,config` to narrow scope. The per-type schema-aware peers (`docs-doc-search`, `docs-blog-search`) answer "find the page/post about X"; `docs-guide find` answers "where is this string, anywhere".
 
 ## When to spawn a Haiku subagent
 

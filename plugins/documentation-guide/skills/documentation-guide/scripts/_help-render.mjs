@@ -8,6 +8,10 @@
 
 import { MANIFEST, CONTRACT_FLAGS, byBin, bySubcommand } from './_manifest.mjs';
 
+// The collision-safe dispatcher binary name. The subcommand form is
+// `docs-guide <group> <verb>`; flat `docs-*` aliases remain the short equivalents.
+export const DISPATCH = 'docs-guide';
+
 const CATEGORY_LABEL = {
   0: 'shared contract / meta',
   1: 'common code (cross-content)',
@@ -16,7 +20,7 @@ const CATEGORY_LABEL = {
 };
 
 export function usageLine(c) {
-  return c.group ? `docs ${c.group} ${c.verb}` : `docs ${c.verb}`;
+  return c.group ? `${DISPATCH} ${c.group} ${c.verb}` : `${DISPATCH} ${c.verb}`;
 }
 
 /** Full manifest as a plain object for `--json`. */
@@ -60,8 +64,8 @@ export function resolveEntry(tokenA, tokenB) {
 /** Grouped listing for bare `docs help`. Returns a string. */
 export function renderList() {
   const out = [];
-  out.push('docs — documentation-template toolkit\n');
-  out.push('Usage: docs <group> <verb> [flags]   (or the flat `docs-*` alias)\n');
+  out.push('docs-guide — documentation-template toolkit\n');
+  out.push(`Usage: ${DISPATCH} <group> <verb> [flags]   (or the flat \`docs-*\` alias)\n`);
 
   const GROUP_ORDER = [null, 'issue', 'check'];
   const GROUP_LABEL = { null: 'GENERAL', issue: 'ISSUE', check: 'CHECK' };
@@ -78,7 +82,7 @@ export function renderList() {
     for (const c of cmds) out.push(`  ${usageLine(c).padEnd(width)}  (${c.bin})  ${c.summary}`);
     out.push('');
   }
-  out.push('Run `docs help <command>` for flags, or `<command> --help`.');
-  out.push('Add `--json` to any data command — or to `docs help` — for machine output.');
+  out.push(`Run \`${DISPATCH} help <command>\` for flags, or \`<command> --help\`.`);
+  out.push(`Add \`--json\` to any data command — or to \`${DISPATCH} help\` — for machine output.`);
   return out.join('\n');
 }

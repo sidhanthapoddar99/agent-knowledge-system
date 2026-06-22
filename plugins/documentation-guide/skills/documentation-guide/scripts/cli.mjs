@@ -15,10 +15,20 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { MANIFEST, resolveCommand } from './_manifest.mjs';
-import { renderCommandDetail } from './_help-render.mjs';
+import { renderCommandDetail, renderList } from './_help-render.mjs';
 import { findInterpreter, isKnownRuntime } from './_runtime.mjs';
 
 const tokens = process.argv.slice(2);
+
+// Bare dispatcher invocation, or a top-level help request with no command, shows
+// the grouped listing — `docs-guide`, `docs-guide --help`, and `docs-guide -h`
+// all behave like `docs-guide help`. (Flat `docs-*` aliases always pass their own
+// name as tokens[0], so this only ever catches the bare dispatcher.)
+if (tokens.length === 0 || tokens.every((t) => t === '--help' || t === '-h')) {
+  process.stdout.write(renderList() + '\n');
+  process.exit(0);
+}
+
 const match = resolveCommand(tokens);
 
 if (!match) {
@@ -27,7 +37,7 @@ if (!match) {
   console.error('known commands:');
   for (const c of MANIFEST) {
     const sub = c.group ? `${c.group} ${c.verb}` : c.verb;
-    console.error(`  ${c.bin}  (docs ${sub})`);
+    console.error(`  ${c.bin}  (docs-guide ${sub})`);
   }
   process.exit(2);
 }

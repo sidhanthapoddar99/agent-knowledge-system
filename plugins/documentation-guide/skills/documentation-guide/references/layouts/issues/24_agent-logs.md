@@ -122,11 +122,11 @@ Prefer the helper:
 
 ```bash
 # Top-level entry
-docs-add-agent-log <issue-id> \
+docs-guide issue add-agent-log <issue-id> \
   --status success --body "Goal: …  Approach: …  Result: …  Next: —"
 
 # Nested under a 1-level subgroup (e.g. a loop folder)
-docs-add-agent-log <issue-id> --group 200_loops/010_refresh-sweep \
+docs-guide issue add-agent-log <issue-id> --group 200_loops/010_refresh-sweep \
   --status success --body "..."
 ```
 

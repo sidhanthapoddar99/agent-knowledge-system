@@ -1,7 +1,7 @@
 /**
  * _links.mjs — shared Markdown-link primitives.
  *
- * `docs-move` and `docs-img --rewrite-links` independently defined the SAME
+ * `docs-guide move` and `docs-guide img --rewrite-links` independently defined the SAME
  * link regex; this is the one home for it, plus the link-target classification
  * and a recursive `.md` collector that move uses.
  *

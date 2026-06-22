@@ -25,7 +25,7 @@ import { reportAndExit } from '../_check-lib.mjs';
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 
 if (process.argv[2] === '--help' || process.argv[2] === '-h') {
-  console.error('Usage: docs-check-config [config-dir]\n');
+  console.error('Usage: docs-guide check config [config-dir]\n');
   console.error('  When [config-dir] is omitted, uses CONFIG_DIR from the framework\'s .env (resolved absolute).\n');
   console.error('  Validates: required keys · pages structure · data: path resolution · footer page: refs');
   process.exit(0);

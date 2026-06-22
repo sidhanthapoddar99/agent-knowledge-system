@@ -23,8 +23,8 @@ const ROOT = process.argv.slice(2).find((a) => !a.startsWith('-'));
 
 if (!ROOT) {
   // --help/-h are intercepted by cli.mjs; reaching here means no section arg.
-  console.error('Usage: docs-check-section <section-folder>\n');
-  console.error('  Example: docs-check-section ./data/user-guide  (or any docs section folder)\n');
+  console.error('Usage: docs-guide check section <section-folder>\n');
+  console.error('  Example: docs-guide check section ./data/user-guide  (or any docs section folder)\n');
   console.error('  Validates: NN_ prefix (2–5 digits) · settings.json presence · frontmatter title · prefix collisions');
   process.exit(1);
 }

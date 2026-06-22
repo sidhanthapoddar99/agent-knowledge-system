@@ -51,7 +51,7 @@ Unlike docs — where 2-digit is the near-universal default — **the issue trac
 Prefer the helper (it flips `state`):
 
 ```bash
-docs-set-state <issue>/subtasks/NN_<slug>.md review
+docs-guide issue set-state <issue>/subtasks/NN_<slug>.md review
 ```
 
 Direct file write:

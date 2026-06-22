@@ -25,10 +25,10 @@ Gap-number the subtasks so you can slot work in later without renumbering (see [
 1. Agent gets a prompt: "work on issue 2026-04-19-docs-phase-2"
 
 2. Read the issue end-to-end:
-   - docs-show 2026-04-19-docs-phase-2        ← metadata + subtask states + log heads
+   - docs-guide issue show 2026-04-19-docs-phase-2        ← metadata + subtask states + log heads
    - Read issue.md                            ← goal / context
-   - docs-subtasks 2026-04-19-docs-phase-2    ← the work items
-   - docs-agent-logs 2026-04-19-docs-phase-2  ← prior iterations (read FIRST)
+   - docs-guide issue subtasks 2026-04-19-docs-phase-2    ← the work items
+   - docs-guide issue agent-logs 2026-04-19-docs-phase-2  ← prior iterations (read FIRST)
 
 3. Read agent-log entries (cheap with a Haiku subagent if many — Pattern B/C):
    - What did past iterations try? What failed? Where did the last one leave off?
@@ -37,13 +37,13 @@ Gap-number the subtasks so you can slot work in later without renumbering (see [
    the user named. Read it.
 
 5. Do the work. As each subtask completes, mark it review:
-   docs-set-state .../subtasks/010_loader-refactor.md review
+   docs-guide issue set-state .../subtasks/010_loader-refactor.md review
 
 6. After working: append an agent-log entry summarising
    Goal / Approach / Result / Next.
 
 7. If ALL subtasks are now review or closed:
-   docs-set-state 2026-04-19-docs-phase-2 review     ← hand off to human
+   docs-guide issue set-state 2026-04-19-docs-phase-2 review     ← hand off to human
 
 8. Human flips status: review → closed.
    Next pickup writes a closing agent-log entry referencing the shipped state.

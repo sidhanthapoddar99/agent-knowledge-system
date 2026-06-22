@@ -4,21 +4,21 @@ This file covers the flow that spans sub-doc types: checking for duplicates, cre
 
 ## Before creating any new issue or subtask — check for duplicates when context is thin
 
-Judgment call up front: **if you have warm context on the area, skip the check; if you don't, run it.** When you've been working in `2026-04-19-docs-phase-2` for several turns and the user asks for "a subtask to fix the X bug," you already know nothing else covers it — creating without a search is fine. Fresh conversation, an unfamiliar component, or a topic that's plausibly been touched before — run the check. The cost of a duplicate is high (split comments, split agent-logs, the next agent picks up the wrong folder); the cost of a `docs-list --search` is one tool call. When uncertain, default to checking.
+Judgment call up front: **if you have warm context on the area, skip the check; if you don't, run it.** When you've been working in `2026-04-19-docs-phase-2` for several turns and the user asks for "a subtask to fix the X bug," you already know nothing else covers it — creating without a search is fine. Fresh conversation, an unfamiliar component, or a topic that's plausibly been touched before — run the check. The cost of a duplicate is high (split comments, split agent-logs, the next agent picks up the wrong folder); the cost of a `docs-guide issue list --search` is one tool call. When uncertain, default to checking.
 
 The check has three modes depending on how the user phrased the request:
 
 1. **Search by topic / keyword.** Pull two or three salient terms — feature names, identifiers, file paths, jargon. Stem to the regex root (e.g. `index|indexer|indexing`).
    ```
-   docs-list --search "<root>" --quiet-tips
+   docs-guide issue list --search "<root>" --quiet-tips
    ```
 2. **Structural check.** When the user names a component, priority, or person, also filter on it:
    ```
-   docs-list --component live-editor --priority high,urgent --quiet-tips
+   docs-guide issue list --component live-editor --priority high,urgent --quiet-tips
    ```
 3. **Subtask check before adding to a known issue:**
    ```
-   docs-subtasks <issue-id> --quiet-tips
+   docs-guide issue subtasks <issue-id> --quiet-tips
    ```
    Skim titles + states. If the work overlaps an existing subtask, surface that instead of duplicating.
 
@@ -31,15 +31,15 @@ The check has three modes depending on how the user phrased the request:
 
 ### Run the check itself via Pattern C
 
-When the duplicate-check fires, don't burn main-context tokens reading raw script output. Stage the `docs-list` (and `docs-subtasks` if relevant) commands plus the user's request, hand the bundle to a Haiku subagent (Pattern C in [41_searching.md](41_searching.md)), and let it return a 2–4 sentence verdict.
+When the duplicate-check fires, don't burn main-context tokens reading raw script output. Stage the `docs-guide issue list` (and `docs-guide issue subtasks` if relevant) commands plus the user's request, hand the bundle to a Haiku subagent (Pattern C in [41_searching.md](41_searching.md)), and let it return a 2–4 sentence verdict.
 
 ```
 The user wants to create a subtask: "<one-line summary>". Run these checks
 and report whether anything related already exists. ≤4 sentences.
 
-1. docs-list --search "<keyword-roots>" --quiet-tips
-2. docs-list --component <c> --priority <p> --quiet-tips
-3. docs-subtasks <issue-id> --quiet-tips   (if a target issue is named)
+1. docs-guide issue list --search "<keyword-roots>" --quiet-tips
+2. docs-guide issue list --component <c> --priority <p> --quiet-tips
+3. docs-guide issue subtasks <issue-id> --quiet-tips   (if a target issue is named)
 
 For any related hit, read the file and quote the most relevant 2-3 lines.
 Report shape:
@@ -65,7 +65,7 @@ The verdict drops into the four-branch decision tree above without you ever load
 Run the validator after any non-trivial write to confirm the tracker still parses and no unknown keys crept in:
 
 ```bash
-docs-check-section <tracker>      # or: bun plugins/.../scripts/issues/check.mjs <tracker>
+docs-guide check section <tracker>      # or: bun plugins/.../scripts/issues/check.mjs <tracker>
 ```
 
 Three optional flags shape the output:

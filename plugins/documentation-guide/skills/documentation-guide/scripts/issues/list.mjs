@@ -26,7 +26,7 @@ import { writeStdout } from '../_cli.mjs';
 
 const args = parseArgs(process.argv.slice(2));
 if (args.flags.help || args.flags.h) {
-  printHelp('list', [
+  printHelp('issue list', [
     '[filters] [--search <regex>] [output] [--quiet-tips]',
     '',
     'Filters (AND across fields, OR within):',

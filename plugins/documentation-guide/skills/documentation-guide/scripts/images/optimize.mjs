@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 /**
- * docs-img — optimize images for documentation so the repo stays small.
+ * docs-guide img — optimize images for documentation so the repo stays small.
  *
  * Screenshots/exports added under data/ bloat git history fast (repos cap
  * ~1–2GB *with* versioning). This shrinks them — resize, grayscale, re-encode
@@ -9,7 +9,7 @@
  * is installed you can auto-grab web screenshots, but that's a separate step;
  * manually pasted screenshots work just the same).
  *
- *   docs-img <inputs...> [flags]
+ *   docs-guide img <inputs...> [flags]
  *
  * Engine: the ImageMagick CLI (see _lib.mjs). Exit 0 = ok, 1 = error.
  */
@@ -84,7 +84,7 @@ if (o.format === 'jpeg') o.format = 'jpg';
 
 function usage(code) {
   const out = code === 0 ? console.log : console.error;
-  out('Usage: docs-img <inputs...> [flags]\n');
+  out('Usage: docs-guide img <inputs...> [flags]\n');
   out('  Optimize images for docs (shrink → keep git small). In-place by default,');
   out('  with an automatic backup; never captures, only optimizes.\n');
   out('  Inputs: files, directories (add -r to recurse), or *.png-style globs.\n');
@@ -105,7 +105,7 @@ function usage(code) {
   out('    --rewrite-links rewrite ![](…) when the extension changes   --links-root DIR  where to scan md');
   out('    --target-size S shrink lossy quality until each file ≤ S (e.g. 100KB)');
   out('  Misc: -r/--recursive  --dry-run  --quiet  -h/--help\n');
-  out('  Tip: Playwright (if installed) can capture web screenshots; docs-img then shrinks them.');
+  out('  Tip: Playwright (if installed) can capture web screenshots; docs-guide img then shrinks them.');
   process.exit(code);
 }
 
@@ -160,7 +160,7 @@ function destFor(src) {
 }
 
 if (o.dryRun) {
-  console.log('# docs-img (dry-run)\n');
+  console.log('# docs-guide img (dry-run)\n');
   console.log('recipe:', summarize(o));
   console.log(`engine: ${engine.bin}   files: ${files.length}   ${o.out ? 'out: ' + o.out : 'in-place' + (backupDir ? ` (backup: ${backupDir})` : ' (no backup)')}\n`);
   for (const src of files) console.log(`  ${rel(src)}  →  ${rel(destFor(src))}`);
@@ -220,7 +220,7 @@ if (o.rewriteLinks && renames.length && !o.out) {
   const byOld = new Map(renames.map((r) => [r.oldAbs, r.newAbs]));
   let root = o.linksRoot ? path.resolve(o.linksRoot) : null;
   if (!root) { try { root = resolveProjectContext(SCRIPT_DIR).contentRoot; } catch { root = process.cwd(); } }
-  const LINK_RE = MD_LINK_RE; // shared regex from ../_links.mjs (also used by docs-move)
+  const LINK_RE = MD_LINK_RE; // shared regex from ../_links.mjs (also used by docs-guide move)
   const mds = collectMd(root);
   for (const md of mds) {
     let txt; try { txt = fs.readFileSync(md, 'utf-8'); } catch { continue; }
@@ -250,7 +250,7 @@ if (o.rewriteLinks && renames.length && !o.out) {
 if (!o.quiet) {
   let totOld = 0, totNew = 0;
   const w = Math.max(4, ...rows.map((r) => r.name.length));
-  console.log(`\n# docs-img — ${rows.length} image(s)${o.out ? ` → ${o.out}` : ' (in-place)'}\n`);
+  console.log(`\n# docs-guide img — ${rows.length} image(s)${o.out ? ` → ${o.out}` : ' (in-place)'}\n`);
   for (const r of rows) {
     totOld += r.oldSize; totNew += r.newSize;
     const pctSaved = r.oldSize ? Math.round((1 - r.newSize / r.oldSize) * 100) : 0;

@@ -26,10 +26,10 @@ $ echo $PATH | tr ':' '\n' | grep claude
 That means the model can invoke any wrapper by its bare name — no path knowledge required:
 
 ```bash
-docs-list --priority high
+docs-guide issue list --priority high
 ```
 
-resolves to `~/.claude/plugins/cache/sids-plugin-marketplace/documentation-guide/0.1.4/bin/docs-list` automatically.
+resolves to `~/.claude/plugins/cache/sids-plugin-marketplace/documentation-guide/0.3.0/bin/docs-guide` automatically.
 
 ## Wrapper template
 
@@ -97,7 +97,7 @@ Slash commands are a great UX for templated *prompts* — they expand into instr
 | Use case | Use |
 |---|---|
 | "Bootstrap a new project" (interactive Q&A) | Slash command |
-| "Run `docs-list` and filter by priority" (one shell call) | Bin wrapper |
+| "Run `docs-guide issue list` and filter by priority" (one shell call) | Bin wrapper |
 | "Validate the docs config" (binary pass/fail) | Bin wrapper |
 
 ### vs hand-authored wrappers in user scope
@@ -144,16 +144,16 @@ if (entry.runtime && entry.runtime !== 'mjs') {
 
 Interpreter detection mirrors the bun→node fallback: try ordered candidates, probe `--version`, use the first that works. Python is **not** guaranteed on Windows (bun/node is), so a registered-but-missing interpreter should fail with a clear message (exit `127`), never a cryptic crash. Don't try to bootstrap installations from inside the wrapper.
 
-This keeps the toolkit polyglot-ready: a Python command drops in by adding a manifest entry with `runtime: 'py'` and a `.py` script that honours the same contract (`scripts/CONTRACT.md`) — no dispatcher changes. Non-JS scripts get the project's content root via `docs-resolve-context` (`--json`) instead of re-implementing `.env` discovery.
+This keeps the toolkit polyglot-ready: a Python command drops in by adding a manifest entry with `runtime: 'py'` and a `.py` script that honours the same contract (`scripts/CONTRACT.md`) — no dispatcher changes. Non-JS scripts get the project's content root via `docs-guide resolve-context` (`--json`) instead of re-implementing `.env` discovery.
 
 ## Verifying after install
 
 ```bash
 # Should resolve to your plugin's cache bin folder
-which docs-list
+which docs-guide
 
 # Should run and return output
-docs-list --help
+docs-guide --help
 ```
 
 If the wrapper isn't on PATH after `/reload-plugins`:

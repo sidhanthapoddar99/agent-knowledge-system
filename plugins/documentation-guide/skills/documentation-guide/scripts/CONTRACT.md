@@ -36,8 +36,8 @@ rules below.
 
 - Handled centrally: `cli.mjs` intercepts `--help`/`-h` for every command and
   prints a manifest-generated detail view to **stdout**, exit **0**. A command
-  does **not** implement its own `--help` (the lone exception is `docs-help`,
-  which renders the full listing). This is why help is identical across
+  does **not** implement its own `--help` (the lone exception is the help
+  command itself, `docs-guide help`, which renders the full listing). This is why help is identical across
   languages — it never reaches the script.
 
 ## 4. Output

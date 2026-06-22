@@ -18,7 +18,7 @@ const args = parseArgs(process.argv.slice(2));
 const id = args._[0];
 
 if (args.flags.help || !id || !args.flags.body) {
-  printHelp('add-agent-log', [
+  printHelp('issue add-agent-log', [
     '<issue-id> --body <markdown> [--status in-progress|success|failed] [--iteration N]',
     '[--agent <name>] [--date YYYY-MM-DD] [--slug <short-slug>] [--group <a>[/<b>]] [--tracker <path>]',
     '',

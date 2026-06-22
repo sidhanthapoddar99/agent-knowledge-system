@@ -41,13 +41,13 @@ user-guide/
 
 ### Gap numbering — leave room to insert
 
-When you first lay out a folder, **don't number siblings 01, 02, 03…** — space them so a new doc can slot *between* two existing ones without renumbering the rest (renumbering churns URLs and forces a `docs-move` to fix links).
+When you first lay out a folder, **don't number siblings 01, 02, 03…** — space them so a new doc can slot *between* two existing ones without renumbering the rest (renumbering churns URLs and forces a `docs-guide move` to fix links).
 
 - **Default: step 5** → `05_`, `10_`, `15_`, `20_`, … Four free slots between neighbours; ~19 fit in the 01–99 range. This is the house default and what the top-level section folders already use.
 - **Denser: step 3** (`03_`, `06_`, `09_`, … ~33 slots) or **step 2** (`02_`, `04_`, … ~49 slots) — use when you expect many siblings in one folder. Smaller gaps, more total capacity.
 - Pick the step from how many siblings the folder will realistically hold: a handful of top sections → step 5; a long flat list → step 2–3.
 
-When two neighbours have no gap left between them (e.g. you must insert between `05_` and `06_`), re-prefix with **`docs-move`** rather than `mv` — it re-points every link as it renumbers. Squeezing `06_foo.md` between `05_x.md` and `10_y.md` needs no move at all; that's the whole point of the gaps.
+When two neighbours have no gap left between them (e.g. you must insert between `05_` and `06_`), re-prefix with **`docs-guide move`** rather than `mv` — it re-points every link as it renumbers. Squeezing `06_foo.md` between `05_x.md` and `10_y.md` needs no move at all; that's the whole point of the gaps.
 
 Order can also be overridden without renumbering at all via `settings.json` `position` (folders) or frontmatter `sidebar_position` (pages) — but the prefix is the primary, at-a-glance signal, so prefer gap-spaced prefixes and reserve `position` for exceptions.
 
@@ -123,12 +123,12 @@ See [installation](/user-guide/getting-started/installation) — also works.
 
 ## Validate
 
-The plugin ships **`docs-check-section`** (on your `PATH` after install) — runs structural checks against a docs section so you don't have to eyeball it.
+The plugin ships **`docs-guide check section`** (on your `PATH` after install) — runs structural checks against a docs section so you don't have to eyeball it.
 
 ```bash
 # Section-folder is required (no default — there can be many sections)
-docs-check-section ./data/user-guide
-docs-check-section ./data/dev-docs
+docs-guide check section ./data/user-guide
+docs-guide check section ./data/dev-docs
 ```
 
 What it checks:
@@ -139,14 +139,14 @@ What it checks:
 
 Exit code `0` = clean, `1` = errors found. Run after restructuring a section or before committing a batch of new pages.
 
-## Moving / renaming docs (docs-move)
+## Moving / renaming docs (docs-guide move)
 
 Pages cross-link each other with **relative** paths (see "Cross-linking between docs pages" above). A plain `mv` or `git mv` moves the file but leaves every one of those relative links pointing at the old location — so the moment you reorganise a section, links silently rot: inbound links from sibling pages 404, and the relative links *inside* the moved page now resolve from the wrong directory. Nothing warns you; the build still passes.
 
-The plugin ships **`docs-move`** (on your `PATH` after install) to make this safe — it's a link-aware move, the same move-and-update-links behaviour an editor like Obsidian does:
+The plugin ships **`docs-guide move`** (on your `PATH` after install) to make this safe — it's a link-aware move, the same move-and-update-links behaviour an editor like Obsidian does:
 
 ```bash
-docs-move <from> <to> [--dry-run] [--no-git] [--root <dir>]
+docs-guide move <from> <to> [--dry-run] [--no-git] [--root <dir>]
 ```
 
 - `<from>` may be a single `.md` file **or** a folder (moved recursively, all depths).
@@ -163,16 +163,16 @@ External links (`http://`, `https://`, `mailto:` …), site-absolute links (lead
 Flags:
 
 - `--dry-run` — print the planned move and every link edit (`file:line  old  →  new`), change nothing, exit `0`. Run this first when reorganising.
-- `--no-git` — force a plain filesystem move. By default, inside a git work tree `docs-move` uses `git mv` so history follows the file.
+- `--no-git` — force a plain filesystem move. By default, inside a git work tree `docs-guide move` uses `git mv` so history follows the file.
 - `--root <dir>` — widen or override the scan + validation scope. By default the scope is the content root resolved from `.env` (`CONFIG_DIR`); both `<from>` and `<to>` must resolve inside it.
 
 ```bash
 # preview a rename
-docs-move data/user-guide/05_getting-started/02_install.md \
+docs-guide move data/user-guide/05_getting-started/02_install.md \
           data/user-guide/05_getting-started/03_install.md --dry-run
 
 # move a whole subfolder, fixing links on both sides
-docs-move data/user-guide/10_configuration data/user-guide/12_configuration
+docs-guide move data/user-guide/10_configuration data/user-guide/12_configuration
 ```
 
 On success it prints `moved <N> file(s); rewrote <M> link(s) across <K> file(s)`.

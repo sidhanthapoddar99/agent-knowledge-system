@@ -69,8 +69,9 @@ export function parseArgs(argv) {
  * the call sites so `--help`/`-h` satisfy the uniform contract. Do not change
  * the stream here without doing the call-site rollout in the same change.
  */
-export function printHelp(name, lines) {
-  console.error(`Usage: docs-${name} ${lines[0]}\n`);
+export function printHelp(subcommand, lines) {
+  // `subcommand` is the full `docs-guide` path, e.g. 'issue list' or 'check issues'.
+  console.error(`Usage: docs-guide ${subcommand} ${lines[0]}\n`);
   for (const line of lines.slice(1)) console.error('  ' + line);
 }
 

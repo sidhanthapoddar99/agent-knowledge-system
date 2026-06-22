@@ -21,7 +21,7 @@ import { hasFrontmatterTitle, readText, reportAndExit } from '../_check-lib.mjs'
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 
 if (process.argv[2] === '--help' || process.argv[2] === '-h') {
-  console.error('Usage: docs-check-blog [blog-folder]\n');
+  console.error('Usage: docs-guide check blog [blog-folder]\n');
   console.error('  When [blog-folder] is omitted, derives <content-root>/data/blog from the framework\'s .env (CONFIG_DIR).\n');
   console.error('  Validates: YYYY-MM-DD-<slug>.md naming · frontmatter title · no nested folders');
   process.exit(0);

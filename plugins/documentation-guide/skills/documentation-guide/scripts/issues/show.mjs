@@ -21,7 +21,7 @@ const args = parseArgs(process.argv.slice(2));
 const id = args._[0];
 
 if (args.flags.help || !id) {
-  printHelp('show', [
+  printHelp('issue show', [
     '<issue-id> [--full] [--json] [--tracker <path>]',
     '',
     'Print metadata + subtask state summary + comment heads + agent-log heads.',

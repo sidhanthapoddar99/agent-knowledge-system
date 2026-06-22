@@ -11,7 +11,7 @@ const args = parseArgs(process.argv.slice(2));
 const id = args._[0];
 
 if (args.flags.help || !id) {
-  printHelp('agent-logs', [
+  printHelp('issue agent-logs', [
     '<issue-id> [--last N] [--full] [--json] [--tracker <path>]',
     '',
     'Print the last N agent-log entries (default 3).  --full prints bodies too.',

@@ -1,4 +1,4 @@
-# Images — optimizing screenshots & figures (`docs-img`)
+# Images — optimizing screenshots & figures (`docs-guide img`)
 
 Reference for keeping images small in a documentation-template project. Read this
 whenever you add or update an image/screenshot under `data/`.
@@ -11,23 +11,23 @@ is unusable; at ~100 KB you get ~10,000 — enough to illustrate issues, guides,
 blog posts for the life of the project. **Git-LFS is overkill** for small docs
 figures; the answer is to shrink images *before* they ever land in history.
 
-Rule: **never commit a raw screenshot.** Run `docs-img` on it first.
+Rule: **never commit a raw screenshot.** Run `docs-guide img` on it first.
 
-## What `docs-img` is (and isn't)
+## What `docs-guide img` is (and isn't)
 
 - It **optimizes** images: resize, grayscale, re-encode (webp/avif/png/jpg),
   strip metadata, and rewrite Markdown links when the extension changes.
 - It does **not capture** anything. It works on whatever image you give it —
   a Playwright screenshot, a manual screen grab you pasted in, an exported PNG.
 - **Engine:** the ImageMagick CLI (`magick`). One system prerequisite, no npm
-  install. If it's missing, `docs-img` tells you how to install it.
+  install. If it's missing, `docs-guide img` tells you how to install it.
 
 ### Capturing web pages (optional, separate)
 
 If you need a *screenshot of a running web page* and have **Playwright**
 installed, you can capture with it (`page.screenshot()` for raster,
-`page.pdf()` for crisp-text vector), then run `docs-img` to shrink the result.
-This is independent of `docs-img` — capture is not its job.
+`page.pdf()` for crisp-text vector), then run `docs-guide img` to shrink the result.
+This is independent of `docs-guide img` — capture is not its job.
 
 ## The one decision: what kind of image is it?
 
@@ -40,7 +40,7 @@ This is independent of `docs-img` — capture is not its job.
 ## Default recipe (most screenshots)
 
 ```bash
-docs-img path/to/images/*.png --dpr 2 --gray --format webp --quality 80 \
+docs-guide img path/to/images/*.png --dpr 2 --gray --format webp --quality 80 \
   --rewrite-links --report
 ```
 
@@ -57,7 +57,7 @@ Typical result: a 10-shot set of dense modals goes from ~2.3 MB → ~250 KB.
 ## Budget mode — hit a size target
 
 ```bash
-docs-img images/*.png --dpr 2 --gray --format webp --target-size 100KB --rewrite-links
+docs-guide img images/*.png --dpr 2 --gray --format webp --target-size 100KB --rewrite-links
 ```
 
 `--target-size` steps quality down (80 → 30) until each file fits. If even q30 is
@@ -77,7 +77,7 @@ modal) or `--max-dim`/`--scale` (smaller pixels beat lower quality for size).
 
 - **`--colors N` helps PNG, hurts lossy webp/avif.** Palette-posterizing smooth
   anti-aliased edges *adds* high-frequency detail the lossy codec must spend bits
-  on — the file gets *bigger*. `docs-img` warns if you combine them. Use
+  on — the file gets *bigger*. `docs-guide img` warns if you combine them. Use
   `--colors` only with `--format png`.
 - **Resolution, not codec, is the main lever.** `--dpr`/`--scale`/`--trim`
   shrink more than quality tweaks. Drop DPR and crop first.
@@ -92,7 +92,7 @@ modal) or `--max-dim`/`--scale` (smaller pixels beat lower quality for size).
 
 ## Full flag list
 
-Run `docs-img --help`. Highlights: geometry (`--dpr --scale --width --height
+Run `docs-guide img --help`. Highlights: geometry (`--dpr --scale --width --height
 --max-dim --trim`), color/quality (`--gray --quality/-q --lossless --colors
 --depth --dither`), format (`--format --no-strip`), output (`--out --backup
 --no-backup`), docs (`--rewrite-links --links-root --target-size`), misc
@@ -104,6 +104,6 @@ Vector with real (selectable) text would be ideal for flat UI, but **PNG→SVG
 tracing doesn't deliver it** — it turns glyphs into fuzzy outlines and the file
 usually ends up *larger* than a quantized webp. The only real win is
 **capture-time** (`<foreignObject>`/`dom-to-svg`, or `page.pdf()` for vector
-text), which belongs in a capture step, not in `docs-img`. So: don't convert
+text), which belongs in a capture step, not in `docs-guide img`. So: don't convert
 existing raster images to SVG; if you want crisp-text vector figures, capture
 them as SVG/PDF from the live DOM.

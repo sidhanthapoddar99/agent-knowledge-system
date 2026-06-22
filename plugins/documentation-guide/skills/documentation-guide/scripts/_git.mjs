@@ -10,7 +10,7 @@
  *   docs git log <issue|path>        commit history of one folder/file
  *   docs git commit --scope <path>   GUARDED: stage + commit ONLY that path
  *
- * Schema-agnostic — runs over any content path. Reuses docs-move's proven
+ * Schema-agnostic — runs over any content path. Reuses docs-guide move's proven
  * execFileSync git pattern. Honors the Category-0 contract: --json everywhere,
  * exit 0 ok / 1 nothing / 2 usage. **commit/push stay explicit, never automatic.**
  */

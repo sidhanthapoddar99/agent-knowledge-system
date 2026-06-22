@@ -21,7 +21,7 @@
  * filesystem path before deciding to rewrite — external (http/mailto),
  * site-absolute (`/...`) and pure-anchor (`#...`) links are left untouched.
  *
- *   docs-move <from> <to> [--dry-run] [--no-git] [--root <dir>] [--help]
+ *   docs-guide move <from> <to> [--dry-run] [--no-git] [--root <dir>] [--help]
  *
  * Exit code 0 = success (or dry-run), 1 = error.
  */
@@ -60,7 +60,7 @@ if (positional.length !== 2) {
 
 function usage(code) {
   const out = code === 0 ? console.log : console.error;
-  out('Usage: docs-move <from> <to> [--dry-run] [--no-git] [--root <dir>] [--help]\n');
+  out('Usage: docs-guide move <from> <to> [--dry-run] [--no-git] [--root <dir>] [--help]\n');
   out('  Link-aware move / rename for docs files and folders (Obsidian-style).');
   out('  Moves <from> to <to> and rewrites Markdown links so nothing breaks:');
   out('    • inbound  — links elsewhere that pointed at <from> are repointed');
@@ -155,7 +155,7 @@ function didMove(abs) {
   return movedFilesAbs.has(abs);
 }
 
-const LINK_RE = MD_LINK_RE; // shared regex from ../_links.mjs (also used by docs-img)
+const LINK_RE = MD_LINK_RE; // shared regex from ../_links.mjs (also used by docs-guide img)
 
 /**
  * Build a POSIX-style relative link from fileDir to targetAbs.
@@ -257,7 +257,7 @@ const totalEdits = [...editsByFile.values()].reduce((n, arr) => n + arr.length, 
 const filesTouched = [...editsByFile.keys()].filter(f => editsByFile.get(f).length).length;
 
 if (dryRun) {
-  console.log(`# docs-move (dry-run)\n`);
+  console.log(`# docs-guide move (dry-run)\n`);
   console.log(`move:  ${fromPath}`);
   console.log(`   →   ${toPath}`);
   console.log(`mode:  ${noGit ? 'fs (forced --no-git)' : (inGitTree(fromPath) ? 'git mv' : 'fs (not a git work tree)')}\n`);

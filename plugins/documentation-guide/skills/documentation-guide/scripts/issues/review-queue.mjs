@@ -13,7 +13,7 @@ import {
 
 const args = parseArgs(process.argv.slice(2));
 if (args.flags.help) {
-  printHelp('review-queue', [
+  printHelp('issue review-queue', [
     '[--json] [--tracker <path>]',
     '',
     'List items needing human review:',

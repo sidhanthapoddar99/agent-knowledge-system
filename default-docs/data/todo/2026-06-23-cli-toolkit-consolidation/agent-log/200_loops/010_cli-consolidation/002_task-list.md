@@ -10,7 +10,7 @@ Live execution checklist (mirrors the subtask plan; update status as the run pro
 - [x] 01 — decide naming model (GATE for 10/11) → **B + flat aliases** (notes/03)
 - [x] 14 — stand up the self-test harness early → `scripts/_selftest.mjs`, **true baseline 30/54 (bun)**
 - [x] 02 — `_cli.mjs` shared contract (parser/help/output/error) → lifted, no regression
-- [ ] 03 — command manifest (`name → {script, category, summary, flags}`)
+- [x] 03 — command manifest (`_manifest.mjs`; routing + harness manifest-driven; subcommand form live)
 - [ ] 04 — `help`/discovery command + `help --json`
 - [ ] 05 — roll uniform contract to every command (`-h`, stdout help, `--json`, exit codes)
 

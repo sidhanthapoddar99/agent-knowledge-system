@@ -1,47 +1,46 @@
 /**
  * Single dispatcher behind every bin/ wrapper (bash + .cmd).
  *
- * Invocation: node cli.mjs <command-name> [args...]
- * Each wrapper passes its own basename as <command-name>, so the
- * command → script routing lives only in the COMMANDS map below.
+ * Invocation: <runtime> cli.mjs <token...> [args...]
+ * Routing + all command metadata now live in _manifest.mjs (the single source
+ * of truth). Each flat `bin/<name>` shim passes its own basename as the first
+ * token; the `docs` subcommand form (`docs <group> <verb>`) resolves to the
+ * same manifest entry. See _manifest.mjs → resolveCommand().
  *
- * Adding a new CLI: add one entry here, then copy any existing
- * bin/<name> + bin/<name>.cmd pair under the new name (shim bodies
- * are identical — they self-route via their filename).
+ * Adding a command: add ONE entry to MANIFEST in _manifest.mjs, then copy a
+ * bin/<name> + bin/<name>.cmd shim pair (or rely on the `docs` subcommand).
  */
 
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { MANIFEST, resolveCommand } from './_manifest.mjs';
 
-const COMMANDS = {
-  'docs-list':          'issues/list.mjs',
-  'docs-show':          'issues/show.mjs',
-  'docs-subtasks':      'issues/subtasks.mjs',
-  'docs-agent-logs':    'issues/agent-logs.mjs',
-  'docs-set-state':     'issues/set-state.mjs',
-  'docs-add-comment':   'issues/add-comment.mjs',
-  'docs-add-agent-log': 'issues/add-agent-log.mjs',
-  'docs-review-queue':  'issues/review-queue.mjs',
-  'docs-check-blog':    'blog/check.mjs',
-  'docs-check-config':  'config/check.mjs',
-  'docs-check-section': 'docs/check.mjs',
-  'docs-move':          'docs/move.mjs',
-  'docs-img':           'images/optimize.mjs',
-};
+const tokens = process.argv.slice(2);
+const match = resolveCommand(tokens);
 
-const name = process.argv[2];
-const script = COMMANDS[name];
-
-if (!script) {
-  console.error(`cli.mjs: unknown command "${name ?? ''}"`);
+if (!match) {
+  const bad = tokens[0] ?? '';
+  console.error(`cli.mjs: unknown command "${bad}"`);
   console.error('known commands:');
-  for (const cmd of Object.keys(COMMANDS)) console.error(`  ${cmd}`);
+  for (const c of MANIFEST) {
+    const sub = c.group ? `${c.group} ${c.verb}` : c.verb;
+    console.error(`  ${c.bin}  (docs ${sub})`);
+  }
   process.exit(2);
 }
 
-// Drop the command name so target scripts see process.argv.slice(2)
-// as their own args, exactly as when they were invoked directly.
-process.argv.splice(2, 1);
+const { entry, rest } = match;
+
+// Future polyglot (subtask 13): non-mjs runtimes route to their interpreter.
+if (entry.runtime && entry.runtime !== 'mjs') {
+  console.error(`cli.mjs: runtime "${entry.runtime}" not yet supported for ${entry.bin}`);
+  process.exit(2);
+}
+
+// Rebuild argv so the target script sees its own args at process.argv.slice(2),
+// exactly as when invoked directly — whether reached via flat alias (drop 1
+// token) or subcommand form (drop 2).
+process.argv = [process.argv[0], process.argv[1], ...rest];
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-await import(pathToFileURL(path.join(here, script)).href);
+await import(pathToFileURL(path.join(here, entry.script)).href);

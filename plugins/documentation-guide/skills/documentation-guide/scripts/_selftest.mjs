@@ -24,6 +24,7 @@ import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { MANIFEST } from './_manifest.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const CLI = path.join(HERE, 'cli.mjs');
@@ -39,27 +40,15 @@ const RUNTIME = (() => {
   return probe.status === 0 ? 'bun' : process.execPath;
 })();
 
-// Command registry for the harness. Once _manifest.mjs lands (subtask 03),
-// switch this to import the manifest so the harness can never drift from reality.
-// `json: true`  → safe to run `<cmd> --json` with no positional and parse it.
-const COMMANDS = [
-  { name: 'docs-list',          json: true  },
-  { name: 'docs-show',          json: false },
-  { name: 'docs-subtasks',      json: false },
-  { name: 'docs-agent-logs',    json: false },
-  { name: 'docs-set-state',     json: false },
-  { name: 'docs-add-comment',   json: false },
-  { name: 'docs-add-agent-log', json: false },
-  { name: 'docs-review-queue',  json: true  },
-  { name: 'docs-check-blog',    json: false },
-  { name: 'docs-check-config',  json: false },
-  { name: 'docs-check-section', json: false },
-  { name: 'docs-move',          json: false },
-  { name: 'docs-img',           json: false },
-  // wired during the loop:
-  // { name: 'docs-check-issues', json: false },
-  // { name: 'docs-help',         json: true  },
-];
+// Command registry is DERIVED from the manifest — the harness can never drift
+// from the real command set. A command is `--json`-smoke-tested only if it
+// declares a --json flag AND takes no required positional (list / review-queue);
+// other --json commands need fixtures, tested elsewhere.
+const NO_REQUIRED_ARG = new Set(['docs-list', 'docs-review-queue']);
+const COMMANDS = MANIFEST.map((c) => ({
+  name: c.bin,
+  json: c.flags.some((f) => f.name === 'json') && NO_REQUIRED_ARG.has(c.bin),
+}));
 
 const results = [];
 function record(name, check, ok, detail) {

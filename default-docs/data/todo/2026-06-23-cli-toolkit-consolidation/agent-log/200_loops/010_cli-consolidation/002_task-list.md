@@ -30,7 +30,7 @@ Live execution checklist (mirrors the subtask plan; update status as the run pro
 
 ## Close-out (in order)
 - [x] 15 — update skills + preferences + CLAUDE.md → CLAUDE.md, documentation-guide SKILL.md, 41_searching.md, claude-skills.md, project memory; skill-links GREEN
-- [ ] 16 — update docs (user-guide / dev-docs)
+- [x] 16 — update docs (user-guide / dev-docs) → bin-wrappers dispatcher/manifest architecture + `docs` collision caveat + polyglot; installation count; sections validate
 - [ ] 17 — version bump (plugin.json)
 - [ ] 18 — recreate POST-EDIT feature matrix + delta (FINAL)
 

@@ -39,4 +39,4 @@ Every top-level folder is registered as a route in `default-docs/config/site.yam
 - `default-docs/config/site.yaml` — route definitions for each folder above
 - `user-guide/05_getting-started/04_data-structure.md` — end-user explanation of this layout
 - `.claude/skills/documentation-guide/SKILL.md` — the agent skill that reads this README for orientation
-- `.claude/skills/documentation-guide/references/` — per-content-type detail (writing, docs-layout, blog-layout, issue-layout, settings-layout)
+- `.claude/skills/documentation-guide/references/` — per-content-type detail (writing, docs-layout, blog-layout, issues, settings-layout)

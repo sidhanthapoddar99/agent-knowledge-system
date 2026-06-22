@@ -239,7 +239,7 @@ The framework reads `.env` from `documentation-template/.env`. Default for consu
 
 This project uses the `documentation-guide` Claude Code plugin. It ships:
 
-- **Skill** — automatically triggers on docs work; routes to domain-specific reference files (writing, docs-layout, blog-layout, issue-layout, settings-layout)
+- **Skill** — automatically triggers on docs work; routes to domain-specific reference files (writing, docs-layout, blog-layout, issues, settings-layout)
 - **CLI wrappers on PATH** — `docs-list`, `docs-show`, `docs-subtasks`, `docs-agent-logs`, `docs-set-state`, `docs-add-comment`, `docs-add-agent-log`, `docs-review-queue` (issue tracker), `docs-check-blog`, `docs-check-config`, `docs-check-section` (validators), `docs-move` (link-aware move/rename)
 - **Slash commands** — `/docs-init`, `/docs-add-section`
 

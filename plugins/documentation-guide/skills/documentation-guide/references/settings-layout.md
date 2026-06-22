@@ -426,4 +426,4 @@ Uses regex over the YAML text — no YAML library dependency. Catches the common
 - `@root/default-docs/data/user-guide/20_custom-pages/` — custom page definitions + creating custom layouts
 - `@root/default-docs/data/user-guide/25_themes/` — theme contract + creation walkthroughs
 - `references/writing.md` — markdown content authoring (per-content-type concerns are NOT in this file)
-- `references/layouts/docs-layout.md` / `blog-layout.md` / `issue-layout.md` — per-content-type structure
+- `references/layouts/docs-layout.md` / `blog-layout.md` / `issues/` (entry `00_overview.md`) — per-content-type structure

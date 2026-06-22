@@ -1,0 +1,40 @@
+# Notes — `notes/[<group>/[<subgroup>/]]<slug>.md`
+
+Supporting design docs — research, design decisions, alternatives weighed, reference material that doesn't belong in `issue.md`. The "thinking" half of an issue.
+
+## Shape
+
+No state. Frontmatter is minimal — often just `title`:
+
+```yaml
+---
+title: "..."
+color: "#7aa2f7"   # optional — tints only the sidebar icon, user-defined; preserve when editing
+---
+
+Body — freeform.
+```
+
+An optional `color:` tints only the sidebar icon and is user-defined — **don't strip or overwrite it** when editing.
+
+## Numbering — optional
+
+A numeric prefix is **optional** for notes (folders *and* files). When you do number them, `NN_` and `NNN_` are both good conventions, using the same shared ordering-prefix grammar as the rest of the project (2–5 digits, ordered by numeric value, `_` canonical / legacy `-` tolerated — see `references/layouts/docs-layout.md`).
+
+- **Gap-number** when a fixed reading order matters: `010_context.md`, `020_design.md`, `030_decision.md` — leaving room to slot `015_` between.
+- **Leave unprefixed** when order doesn't matter — the loader builds the tree from whatever it finds.
+
+## Subfolders
+
+May live at the root of `notes/`, or one or two folders deeper for grouping (e.g. `notes/design/phase-1/kickoff.md`). Folder names are freeform. **Two levels is the cap** — if you reach for a third, that's a sign to split into a sibling group or a new issue.
+
+## Add a note
+
+1. Decide where it lives:
+   - Single design doc → `<issue>/notes/<slug>.md`
+   - Part of a themed set → `<issue>/notes/<group>/<slug>.md` (e.g. `notes/design/overview.md`)
+   - Sub-phase of a themed set → `<issue>/notes/<group>/<subgroup>/<slug>.md` (e.g. `notes/design/phase-1/kickoff.md`)
+2. Pick a meaningful filename; add a numeric prefix only if reading order matters.
+3. Write the file — no required frontmatter beyond an optional `title` (+ optional `color:`).
+
+For moving/renaming a note link-aware, see [43_moving-restructuring.md](43_moving-restructuring.md).

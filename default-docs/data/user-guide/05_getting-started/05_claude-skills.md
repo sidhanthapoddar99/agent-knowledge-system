@@ -47,7 +47,7 @@ The skill triages every docs task to one of five domain references. The model lo
 | `references/writing.md` | Markdown basics, frontmatter, custom tags, asset embedding |
 | `references/layouts/docs-layout.md` | Docs folder structure, `NN_` prefixes, per-folder `settings.json`, sidebar generation |
 | `references/layouts/blog-layout.md` | Blog file naming (`YYYY-MM-DD-<slug>.md`), tags, index behaviour |
-| `references/layouts/issue-layout.md` | Issue tracker — folder-per-item, vocabulary, 4-state lifecycle, AI rules |
+| `references/layouts/issues/` (entry `00_overview.md`) | Issue tracker — folder-per-item, vocabulary, 4-state lifecycle, AI rules; split into focused files (overview, content types, tools, examples) |
 | `references/settings-layout.md` | `site.yaml`, `navbar.yaml`, `footer.yaml`, `.env`, path aliases, themes |
 
 The skill triggers automatically whenever you work on docs in a project that uses this framework (i.e. one where the `documentation-template/` folder is present, or you're inside it). You don't have to invoke it explicitly.

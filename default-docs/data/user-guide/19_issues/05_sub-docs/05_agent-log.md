@@ -165,6 +165,31 @@ agent-log/
 
 Iteration 1 — scoped the problem. Iteration 2 — tried incremental parsing, didn't work (log captures why). Iteration 3 — alternative approach worked. Iteration 4 — human flipped to `closed`, final summary written. Full story, readable in 4 files.
 
+## Structured workspace for dense runs (recommended)
+
+A flat list of entries is fine for a quick fix. For a **dense autonomous run** (a `/loop`, an ultracode session, a goal-driven sweep), the log reads better as a **typed execution workspace** — categories of activity, each carrying a goal, a live task-list, and its iterations:
+
+```
+agent-log/
+├── 000_agent-memory/      ← issue-scoped working memory the agent maintains
+├── 100_discussion/        ← agent↔human working dialogue during the run (dated)
+├── 200_loops/
+│   └── 010_<name>/
+│       ├── 001_loop-goal.md         ← what this run is trying to achieve
+│       ├── 002_task-list.md         ← live checklist / status for this run
+│       ├── 003_summary.md           ← post-execution summary (written when the run wraps)
+│       ├── 004_attention-needed.md  ← (optional) pointers / mid-run issues to discuss before closing
+│       └── 101_… / 102_…            ← iterations (failed ones kept as signal)
+├── 300_audits/            ← same goal + task-list + summary + iterations shape
+└── 400_refactors/         ← …extensible: 500_migrations/ drops in the same way
+```
+
+The meta block is just an ordering convention — `0xx` files (goal `001`, task-list `002`, summary `003`, attention-needed `004`) sort ahead of the `1xx` iterations purely by their leading-digit prefix, the same index grammar the rest of the tracker uses.
+
+This is **very recommended, not enforced** — there's no parser change, files still sort by their leading number, and existing flat logs stay valid. Categories are created on demand; never scaffold empty ones. The boundaries to hold: a loop's `002_task-list.md` is the *working checklist for one run* (not the issue's durable `subtasks/` **plan**); `100_discussion/` is *in-run dialogue* (not the durable issue-level `comments/`); `000_agent-memory/` is *issue-scoped* memory (it complements, never replaces, global `~/.claude` memory). A loop is almost a mini-issue — the line that keeps the two from merging is **`subtasks/` = the plan, `agent-log/` = the execution record.**
+
+Full agent-facing detail lives in the `documentation-guide` skill's `references/layouts/issues/24_agent-logs.md`.
+
 ## When NOT to write to the log
 
 - **Human edits** — comments belong in `comments/`, not agent-log. The log is for programmatic writes during autonomous runs.

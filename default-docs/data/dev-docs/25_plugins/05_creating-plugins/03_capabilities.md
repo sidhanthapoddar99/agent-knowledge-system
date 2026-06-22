@@ -57,7 +57,7 @@ Body — instructions, examples, conventions, references.
 | If the task involves… | Read |
 |---|---|
 | Frontmatter, custom tags | `references/writing.md` |
-| Issue tracker | `references/layouts/issue-layout.md` |
+| Issue tracker | `references/layouts/issues/00_overview.md` |
 ```
 
 ### Progressive disclosure — context retention

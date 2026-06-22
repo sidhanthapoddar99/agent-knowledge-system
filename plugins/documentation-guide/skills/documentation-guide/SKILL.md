@@ -1,6 +1,6 @@
 ---
 name: documentation-guide
-description: Use this skill for ANY work in a documentation-template project — writing markdown, working with the issue tracker (issues, subtasks, comments, agent-logs), creating blog posts, editing docs pages, configuring site.yaml / navbar.yaml / footer.yaml / .env, and anything touching files under the project's `data/` folder. The skill triages the task to a domain-specific reference file (writing, docs-layout, blog-layout, issue-layout, settings-layout). TRIGGER eagerly — documentation work in this project almost always benefits from this skill. Use it whenever the user mentions docs, frontmatter, settings.json, the todo / issues tracker, blog posts, the data folder, content types, themes, or any file under the project's content folders. SKIP only for pure framework source-code work under `astro-doc-code/src/` that doesn't touch any documentation file.
+description: Use this skill for ANY work in a documentation-template project — writing markdown, working with the issue tracker (issues, subtasks, comments, agent-logs), creating blog posts, editing docs pages, configuring site.yaml / navbar.yaml / footer.yaml / .env, and anything touching files under the project's `data/` folder. The skill triages the task to a domain-specific reference file (writing, docs-layout, blog-layout, issues, settings-layout). TRIGGER eagerly — documentation work in this project almost always benefits from this skill. Use it whenever the user mentions docs, frontmatter, settings.json, the todo / issues tracker, blog posts, the data folder, content types, themes, or any file under the project's content folders. SKIP only for pure framework source-code work under `astro-doc-code/src/` that doesn't touch any documentation file.
 ---
 
 # Documentation skill
@@ -18,7 +18,7 @@ Pick the reference file that matches the task. Read **only the one(s) you need**
 | Writing markdown, frontmatter, custom tags, asset embedding (across any content type) | writing | `references/writing.md` |
 | Files under `data/<sidebar-driven-section>/` (e.g. `user-guide/`, `dev-docs/`) | docs-layout | `references/layouts/docs-layout.md` |
 | Files under `data/blog/` (flat `YYYY-MM-DD-<slug>.md`) | blog-layout | `references/layouts/blog-layout.md` |
-| Files under `data/todo/` or any issue tracker (folder-per-item, `settings.json`, subtasks, comments, agent-logs) | issue-layout | `references/layouts/issue-layout.md` |
+| Files under `data/todo/` or any issue tracker (folder-per-item, `settings.json`, subtasks, comments, agent-logs) | issues | `references/layouts/issues/00_overview.md` (entry; drill into one sibling) |
 | `site.yaml` / `navbar.yaml` / `footer.yaml` / `.env` / paths / themes / project setup | settings-layout | `references/settings-layout.md` |
 | Optimizing / shrinking images or screenshots before committing (resize, grayscale, webp/avif, strip) | images | `references/images.md` |
 
@@ -62,7 +62,7 @@ If `data/README.md` doesn't exist, **create one** before doing the requested tas
 
 These apply across all domains. Reference files don't repeat them — they assume you know.
 
-- **`NN_` prefix** — folders and files inside `data/<docs-section>/` use a numeric prefix for ordering, sorted by value so widths coexist (`05_`, `010_`, `110_`). Width is 2–5 digits, used as a tier: **`NN_` is the convention** (use it almost always); **`NNN_` only when there's a special requirement** — a section with many entries that needs the headroom, or grouping via the leading digit; **`NNNN_`/`NNNNN_` are very rare** — reach for them only when the user explicitly demands it or a case is genuinely exceptional. Never 1 digit or 6+. Gap-space them to leave room to insert. The **issue tracker** uses the same grammar but treats **both `NN_` and `NNN_` as conventional** — subtasks (files *and* grouping folders) reach for 3-digit freely (grouping via the leading digit, or many items), and `NN_`/`NNN_` are good *optional* conventions for `agent-log/` (CLI writes `NNN_`) and `notes/`; blog posts use no prefix. Full rules: `references/layouts/docs-layout.md` (docs) and `references/layouts/issue-layout.md` (tracker).
+- **`NN_` prefix** — folders and files inside `data/<docs-section>/` use a numeric prefix for ordering, sorted by value so widths coexist (`05_`, `010_`, `110_`). Width is 2–5 digits, used as a tier: **`NN_` is the convention** (use it almost always); **`NNN_` only when there's a special requirement** — a section with many entries that needs the headroom, or grouping via the leading digit; **`NNNN_`/`NNNNN_` are very rare** — reach for them only when the user explicitly demands it or a case is genuinely exceptional. Never 1 digit or 6+. Gap-space them to leave room to insert. The **issue tracker** uses the same grammar but treats **both `NN_` and `NNN_` as conventional** — subtasks (files *and* grouping folders) reach for 3-digit freely (grouping via the leading digit, or many items), and `NN_`/`NNN_` are good *optional* conventions for `agent-log/` (CLI writes `NNN_`) and `notes/`; blog posts use no prefix. Full rules: `references/layouts/docs-layout.md` (docs) and `references/layouts/issues/23_subtasks.md` (tracker numbering).
 - **`settings.json`** — every docs folder has one (sidebar label, position). Issue trackers have a root `settings.json` declaring vocabulary. Issues have a per-issue `settings.json` for metadata.
 - **Frontmatter `title`** — required on every markdown file. Astro builds will fail without it.
 - **Theme variables only** — when editing CSS in layouts, consume declared theme variables (see `astro-doc-code/src/styles/theme.yaml → required_variables`). Never hardcode colours, fonts, or invent variable names.
@@ -109,7 +109,7 @@ This plugin ships 13 CLI wrappers in its `bin/` folder, which Claude Code adds t
 
 Each wrapper internally uses `bun` if available, falls back to `node`. Pass `--help` to any of them for the full flag list. Validators exit `0` on clean, `1` on errors found — useful in pre-commit / CI.
 
-**Searching the tracker — use `docs-list --search`, not the `Grep` tool.** Any "find / locate / grep / search" verb against `data/todo/` (or any tracker folder) should route to `docs-list`, which understands the schema (vocabulary, subtask states, frontmatter), composes structural filters with regex search in one call, and returns exact paths + line numbers. `Grep` only sees text. See `references/layouts/issue-layout.md` for the synonym list and examples.
+**Searching the tracker — use `docs-list --search`, not the `Grep` tool.** Any "find / locate / grep / search" verb against `data/todo/` (or any tracker folder) should route to `docs-list`, which understands the schema (vocabulary, subtask states, frontmatter), composes structural filters with regex search in one call, and returns exact paths + line numbers. `Grep` only sees text. See `references/layouts/issues/41_searching.md` for the synonym list and examples.
 
 ## Slash commands — bootstrap & section scaffolding
 
@@ -126,7 +126,7 @@ When the user says "set up a new docs project", "scaffold a new site", "add a ne
 
 For bulk file reads (10+ files), spawn a Haiku subagent via the Task/Agent tool to summarise rather than loading every file into the main context. Pattern: give the subagent the file list + the question, ask for a tight report (under 200 words).
 
-The reference files (especially `issue-layout.md`) document concrete subagent patterns for their domain.
+The reference files (especially `layouts/issues/41_searching.md`) document concrete subagent patterns for their domain.
 
 ## When to update this skill
 

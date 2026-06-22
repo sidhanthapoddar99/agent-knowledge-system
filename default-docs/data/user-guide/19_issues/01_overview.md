@@ -74,7 +74,7 @@ The validator emits an info-level hint when these are violated; both stay legal.
 
 Every file is plain markdown in a predictable folder. No API, no auth, no schema — an agent can `ls` the tracker, read any issue, write subtasks, append to agent logs. The 4-state lifecycle (`open → review → closed | cancelled`) exists specifically so AI-driven work can ship to **review** and hand the final call to a human. Subtasks carry their own 4-state independently — an issue can stay `open` while three of five subtasks are already `closed` or in `review`.
 
-Agents working with the tracker should invoke the `documentation-guide` skill — its `references/layouts/issue-layout.md` is the canonical agent-facing companion to this page.
+Agents working with the tracker should invoke the `documentation-guide` skill — its `references/layouts/issues/` folder (entry `00_overview.md`) is the canonical agent-facing companion to this page.
 
 ## What to read next
 

@@ -28,7 +28,7 @@ draft: false
 Per-content-type extras:
 - **docs** — `sidebar_label`, `sidebar_position`
 - **blog** — `date` (YYYY-MM-DD), `author`, `tags`
-- **issues** — see `issue-layout.md` (different schema, lives in `settings.json`). The tracker is comprehensive memory of thought-work for AI-augmented development. `created` is parsed from the folder slug; `updated` is derived from git history (don't write it into `settings.json` — the loader ignores it).
+- **issues** — see `layouts/issues/` (entry `00_overview.md`) (different schema, lives in `settings.json`). The tracker is comprehensive memory of thought-work for AI-augmented development. `created` is parsed from the folder slug; `updated` is derived from git history (don't write it into `settings.json` — the loader ignores it).
 
 ## Issue best practices
 
@@ -92,4 +92,4 @@ For long blocks, the `collapsible` custom tag wraps the block.
 - `@root/default-docs/data/user-guide/15_writing-content/` (the framework's bundled user-guide) — full section
 - `references/layouts/docs-layout.md` — docs-specific structure / settings
 - `references/layouts/blog-layout.md` — blog-specific naming / frontmatter
-- `references/layouts/issue-layout.md` — issue-specific structure
+- `references/layouts/issues/` (entry `00_overview.md`) — issue-specific structure

@@ -8,7 +8,7 @@ description: AI-powered skill, CLI wrappers, and slash commands for working with
 This template ships its own **Claude Code plugin** — `documentation-guide` — that teaches Claude how to work inside this project without you having to explain the conventions every time. It bundles:
 
 - **2 skills** — `documentation-guide` (triages every docs/issue/blog/config task to a domain-specific reference) and `doc-agent` (a thin execution-time skill for recording an agent's run in the tracker)
-- **11 CLI wrappers** auto-added to `$PATH` for the issue tracker and validators
+- **28 CLI commands** auto-added to `$PATH` — issue tracker, validators, docs/blog content, git metadata, and cross-content search (each works as `docs <group> <verb>` or a flat `docs-*` alias)
 - **2 slash commands** for project-level scaffolding (`/docs-init`, `/docs-add-section`)
 
 You install it from a marketplace once and Claude Code picks it up across every project on your machine. The plugin is distributed via [`sids-plugin-marketplace`](https://github.com/sidhanthapoddar99/sids-plugin-marketplace).
@@ -78,15 +78,29 @@ Typical first-time flow in a fresh directory:
 
 Then follow the printed instructions to clone the framework engine and run `./start` from the repo root.
 
-## CLI wrappers — 11 commands on `$PATH`
+## CLI commands — 28 on `$PATH`
 
-Claude Code adds the plugin's `bin/` folder to your `$PATH` automatically. Each wrapper is a single command you can type bare — no path knowledge required.
+Claude Code adds the plugin's `bin/` folder to your `$PATH` automatically. Each command can be typed bare — no path knowledge required.
 
-### Issue tracker (8)
+**Two equivalent forms.** Every command works as a `docs <group> <verb>` subcommand *and* as a flat `docs-*` alias (the alias prefix avoids colliding with other plugins). `docs issue list` ≡ `docs-list`; `docs git updated` ≡ `docs-git-updated`.
+
+**Discover with `docs help`.** Rather than memorising names: `docs help` lists everything grouped, `docs help <command>` shows one command's flags, `docs help --json` dumps the manifest. The contract is uniform — every command supports `--help`/`-h` (→ stdout, exit 0) and `--json` wherever it returns data; exit codes are `0` ok / `1` no-result-or-handled-error / `2` usage.
+
+### General / cross-content (5)
+
+| Command (alias) | What it does |
+|---|---|
+| `docs help` (`docs-help`) | List commands, show flags, or dump the manifest (`--json`) |
+| `docs find` (`docs-find`) | Schema-agnostic regex search across **all** content at once (docs+blog+issues+config); `--meta` / `--path` / `--type` / `--count` |
+| `docs move` (`docs-move`) | Link-aware move / rename of doc pages or folders |
+| `docs img` (`docs-img`) | Optimize images / screenshots so git stays small |
+| `docs resolve-context` (`docs-resolve-context`) | Emit the `.env`-derived content/config/data dirs (for non-JS scripts) |
+
+### Issue tracker (8) — `docs issue …`
 
 | Command | What it does |
 |---|---|
-| `docs-list` | Multi-field filter + free-text regex search over the tracker — drop-in replacement for `grep`/`find` on `data/todo/` |
+| `docs-list` | Multi-field filter + free-text regex search over the tracker — drop-in replacement for `grep`/`find` on `data/todo/`. Scope with `--path` / `--meta` / `--count` |
 | `docs-show <issue-id>` | One issue's metadata + subtask summary + comment & agent-log heads |
 | `docs-subtasks <issue-id>` | List subtasks for one issue (or `--all` for cross-issue) |
 | `docs-agent-logs <issue-id>` | Last N agent-log entries for an issue |
@@ -95,17 +109,35 @@ Claude Code adds the plugin's `bin/` folder to your `$PATH` automatically. Each 
 | `docs-add-agent-log` | Append an agent-log entry with auto-incremented iteration |
 | `docs-review-queue` | Items awaiting review (status=review issues + open issues with review subtasks) |
 
-### Validators (3)
+### Validators (5) — `docs check …`
 
-Exit `0` clean / `1` on errors found — handy in pre-commit / CI.
+Exit `0` clean / `1` on errors found — handy in pre-commit / CI. All support `--json`.
 
 | Command | What it does |
 |---|---|
 | `docs-check-blog` | Validate the blog folder — `YYYY-MM-DD-<slug>.md` naming, frontmatter `title:`, no nested folders |
 | `docs-check-config` | Validate `site.yaml` / `navbar.yaml` / `footer.yaml` — required keys, page structure, alias resolution |
 | `docs-check-section <folder>` | Validate any docs section — `NN_` prefix discipline, `settings.json` presence, frontmatter `title:`, prefix collisions |
+| `docs-check-issues` | Validate the issue tracker — schema, vocabulary, subtask states (use this on `data/todo/`, not `docs-check-section`) |
+| `docs-check-skill-links` | Maintainer tool: verify relative links between the skill's `.md` files resolve |
 
-Pass `--help` to any wrapper for the full flag list.
+### Docs + blog content (6) — `docs doc …` / `docs blog …`
+
+| Command | What it does |
+|---|---|
+| `docs-doc-list` / `docs-doc-show` / `docs-doc-search` | List / inspect / regex-search sidebar doc pages (optional `[section]`) |
+| `docs-blog-list` / `docs-blog-show` / `docs-blog-search` | List / inspect / regex-search blog posts (newest first) |
+
+### Git-derived content metadata (4) — `docs git …`
+
+| Command | What it does |
+|---|---|
+| `docs-git-updated <path>` | Last-commit date/author/subject for any issue/doc/post |
+| `docs-git-changed --since <ref>` | Content changed under `data/` since a ref (review sweeps) |
+| `docs-git-log <path>` | Commit history of one content folder/file |
+| `docs-git-commit --scope <path> --message <msg>` | **Guarded** stage + commit of only that path; never pushes (`--dry-run` previews) |
+
+Pass `--help` to any command for the full flag list, or run `docs help`.
 
 ## When to reach for what
 
@@ -117,12 +149,16 @@ You almost always describe the task in natural language and let the skill route 
 | Add / change frontmatter | Skill triggers automatically |
 | Bootstrap a new docs project | `/docs-init` |
 | Add a new top-level section | `/docs-add-section` |
+| Discover what commands/flags exist | `docs help` (`docs help <cmd>`, `docs help --json`) |
 | Find issues by priority / status / search | `docs-list` |
+| Find a string across **all** content types | `docs find` |
 | Inspect one issue | `docs-show` |
 | Update an issue or subtask state | `docs-set-state` |
 | Add a comment to an issue | `docs-add-comment` |
 | Validate site config before commit | `docs-check-config` |
 | Validate a docs section before commit | `docs-check-section <folder>` |
+| Validate the issue tracker before commit | `docs-check-issues` |
+| When was this issue/doc last touched | `docs-git-updated <path>` |
 
 ## Updates
 

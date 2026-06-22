@@ -29,7 +29,7 @@ Live execution checklist (mirrors the subtask plan; update status as the run pro
 - [x] 13 — polyglot/Python readiness → `_runtime.mjs` (interpreter detect) + cli.mjs runtime routing + `resolve-context` + `CONTRACT.md`; proven with throwaway .py; harness 117/117
 
 ## Close-out (in order)
-- [ ] 15 — update skills + preferences + CLAUDE.md
+- [x] 15 — update skills + preferences + CLAUDE.md → CLAUDE.md, documentation-guide SKILL.md, 41_searching.md, claude-skills.md, project memory; skill-links GREEN
 - [ ] 16 — update docs (user-guide / dev-docs)
 - [ ] 17 — version bump (plugin.json)
 - [ ] 18 — recreate POST-EDIT feature matrix + delta (FINAL)

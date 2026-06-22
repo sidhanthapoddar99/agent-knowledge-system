@@ -30,6 +30,15 @@ const CLI = path.join(HERE, 'cli.mjs');
 const BIN_DIR = path.resolve(HERE, '../../../bin'); // plugin bin/ folder
 const VERBOSE = process.argv.includes('--verbose');
 
+// Match the shim runtime: prefer bun, fall back to node. The plugin ships NO
+// node_modules; bun resolves deps (e.g. gray-matter) from its global cache,
+// node cannot. Running under node would crash issues/* on import and produce a
+// FALSE baseline — so detect bun the way bin/<name> does.
+const RUNTIME = (() => {
+  const probe = spawnSync('bun', ['--version'], { encoding: 'utf8' });
+  return probe.status === 0 ? 'bun' : process.execPath;
+})();
+
 // Command registry for the harness. Once _manifest.mjs lands (subtask 03),
 // switch this to import the manifest so the harness can never drift from reality.
 // `json: true`  → safe to run `<cmd> --json` with no positional and parse it.
@@ -58,7 +67,7 @@ function record(name, check, ok, detail) {
 }
 
 function run(args) {
-  const r = spawnSync(process.execPath, [CLI, ...args], { encoding: 'utf8' });
+  const r = spawnSync(RUNTIME, [CLI, ...args], { encoding: 'utf8' });
   return { status: r.status, stdout: r.stdout ?? '', stderr: r.stderr ?? '' };
 }
 
@@ -104,7 +113,7 @@ for (const r of results) {
   if (!byCmd.has(r.name)) byCmd.set(r.name, []);
   byCmd.get(r.name).push(r);
 }
-console.log(`# CLI self-test — ${passed.length}/${results.length} checks passed\n`);
+console.log(`# CLI self-test — ${passed.length}/${results.length} checks passed  (runtime: ${RUNTIME === 'bun' ? 'bun' : 'node'})\n`);
 for (const [name, checks] of byCmd) {
   const fails = checks.filter(c => !c.ok);
   const mark = fails.length === 0 ? '✓' : '✗';

@@ -17,6 +17,7 @@ import { createAssetEmbedPreprocessor, createBlogAssetResolver } from '../prepro
 import { headingIdsPostprocessor } from '../postprocessors/heading-ids';
 import { internalLinksPostprocessor } from '../postprocessors/internal-links';
 import { externalLinksPostprocessor } from '../postprocessors/external-links';
+import { tableWrapPostprocessor } from '../postprocessors/table-wrap';
 
 export class BlogParser extends BaseContentParser {
   constructor() {
@@ -31,7 +32,8 @@ export class BlogParser extends BaseContentParser {
       .addPreprocessor(blogAssetPreprocessor)
       .addPostprocessor(headingIdsPostprocessor)
       .addPostprocessor(internalLinksPostprocessor)
-      .addPostprocessor(externalLinksPostprocessor);
+      .addPostprocessor(externalLinksPostprocessor)
+      .addPostprocessor(tableWrapPostprocessor);
   }
 
   /**

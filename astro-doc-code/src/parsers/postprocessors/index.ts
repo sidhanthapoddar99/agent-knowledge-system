@@ -16,3 +16,8 @@ export {
 export {
   internalLinksPostprocessor,
 } from './internal-links';
+
+export {
+  createTableWrapPostprocessor,
+  tableWrapPostprocessor,
+} from './table-wrap';

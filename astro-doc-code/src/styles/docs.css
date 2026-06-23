@@ -231,10 +231,22 @@
   margin-bottom: 0;
 }
 
+/* Wrapper keeps wide tables scrollable inside the content area instead of
+   overflowing the page (added by the table-wrap postprocessor). */
+.docs-body .table-wrapper {
+  max-width: 100%;
+  overflow-x: auto;
+  margin: var(--spacing-lg) 0;
+}
+
 .docs-body table {
   width: 100%;
   margin: var(--spacing-lg) 0;
   border-collapse: collapse;
+}
+
+.docs-body .table-wrapper table {
+  margin: 0;
 }
 
 .docs-body th,

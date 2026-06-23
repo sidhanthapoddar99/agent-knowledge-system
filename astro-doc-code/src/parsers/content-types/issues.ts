@@ -16,6 +16,7 @@ import { internalLinksPostprocessor } from '../postprocessors/internal-links';
 import { issueBodyLinksPostprocessor } from '../postprocessors/issue-body-links';
 import { issueAssetSrcPostprocessor } from '../postprocessors/issue-asset-src';
 import { externalLinksPostprocessor } from '../postprocessors/external-links';
+import { tableWrapPostprocessor } from '../postprocessors/table-wrap';
 
 export class IssuesParser extends BaseContentParser {
   constructor() {
@@ -35,7 +36,8 @@ export class IssuesParser extends BaseContentParser {
       // Issues-only: relative <img src> → absolute /_issue-assets/… URLs
       // (issue folders aren't served at any browser-relative position).
       .addPostprocessor(issueAssetSrcPostprocessor)
-      .addPostprocessor(externalLinksPostprocessor);
+      .addPostprocessor(externalLinksPostprocessor)
+      .addPostprocessor(tableWrapPostprocessor);
   }
 
   parseFilename(filename: string) {

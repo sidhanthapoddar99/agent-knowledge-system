@@ -17,6 +17,7 @@ import { assetEmbedPreprocessor } from '../preprocessors/asset-embed';
 import { headingIdsPostprocessor } from '../postprocessors/heading-ids';
 import { internalLinksPostprocessor } from '../postprocessors/internal-links';
 import { externalLinksPostprocessor } from '../postprocessors/external-links';
+import { tableWrapPostprocessor } from '../postprocessors/table-wrap';
 
 export class DocsParser extends BaseContentParser {
   constructor() {
@@ -27,7 +28,8 @@ export class DocsParser extends BaseContentParser {
       .addPreprocessor(assetEmbedPreprocessor)
       .addPostprocessor(headingIdsPostprocessor)
       .addPostprocessor(internalLinksPostprocessor)
-      .addPostprocessor(externalLinksPostprocessor);
+      .addPostprocessor(externalLinksPostprocessor)
+      .addPostprocessor(tableWrapPostprocessor);
   }
 
   /**

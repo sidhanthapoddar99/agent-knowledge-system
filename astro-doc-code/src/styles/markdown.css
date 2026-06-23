@@ -178,11 +178,22 @@ body {
 }
 
 /* Tables */
+/* Wrapper keeps wide tables scrollable inside the content area instead of
+   overflowing the page (added by the table-wrap postprocessor). */
+.markdown-content .table-wrapper {
+  max-width: 100%;
+  overflow-x: auto;
+  margin: var(--spacing-md) 0;
+}
+
 .markdown-content table {
   width: 100%;
   border-collapse: collapse;
-  margin: var(--spacing-md) 0;
   font-size: var(--font-size-sm);
+}
+
+.markdown-content .table-wrapper table {
+  margin: 0;
 }
 
 .markdown-content th,

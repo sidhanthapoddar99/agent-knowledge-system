@@ -1,6 +1,6 @@
 /**
  * Shared MIME type map for the file-serving endpoints
- * (`/assets/[...path]` and `/issue-assets/[...path]`).
+ * (`/assets/[...path]` and `/content-assets/[...path]`).
  */
 export const mimeTypes: Record<string, string> = {
   '.svg': 'image/svg+xml',

@@ -80,7 +80,7 @@ src/parsers/
 │   ├── heading-ids.ts          # Add IDs to headings
 │   ├── internal-links.ts       # Rewrite relative links (strip NN_ prefixes, .md extensions)
 │   ├── issue-body-links.ts     # Issues only: re-root issue.md links for the detail-URL collapse
-│   ├── issue-asset-src.ts      # Issues only: relative <img src> → absolute /issue-assets/… URLs
+│   ├── asset-src.ts            # Shared: relative <img src> → absolute /content-assets/… URLs
 │   └── external-links.ts       # Security attrs for external links
 │
 └── transformers/               # Custom tag transformation

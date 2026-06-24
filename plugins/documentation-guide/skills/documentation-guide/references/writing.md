@@ -62,12 +62,55 @@ For the full list and syntax, read `@root/default-docs/data/user-guide/15_writin
 
 ## Asset embedding
 
-Images and downloadable files live under the project's `assets/` folder and are served from `/assets/`. Reference them with absolute paths:
+Two ways to reference images and downloadable files:
+
+- **Shared files** live under the project's root `assets/` folder, served from `/assets/` — reference with absolute paths:
+  ```markdown
+  ![Logo](/assets/logo.png)
+  [Download the spec](/assets/specs/api-v1.pdf)
+  ```
+- **Colocated files** sit next to the markdown that uses them (`./assets/flow.png`) — reference with a **relative** path. Works in docs, blog, and issues; the build rewrites the relative `<img src>` to `/content-assets/<path-relative-to-the-content-root>` (shared `asset-src` postprocessor + `/content-assets/[...path]` route). Colocated non-markdown files are never indexed into the sidebar.
+  ```markdown
+  ![Flow](./assets/flow.png)
+  ```
+
+For embedding a file's **raw text content** (not images), see the next section.
+
+## Content embedding (`[[path]]`)
+
+`[[path]]` inlines another file's **raw text content** at build time — the pattern is replaced with the file's bytes *before* the markdown renders. It's for code, text, and diagram source — **never images** (use `![]()` for those). Works the same in **all three content types** — docs, blog, and issues (each runs the asset-embed preprocessor); only path resolution differs (see below).
+
+The power move: wrap it in a fenced block so the embedded content is treated as that language. The file stays the single source of truth; the docs always show its current contents.
+
+**Embed a code file** (syntax-highlighted):
+
+````markdown
+```python
+[[./assets/example.py]]
+```
+````
+
+**Embed diagram source** — Mermaid / Graphviz blocks render from the embedded file, so the diagram lives in its own `.mmd` / `.dot` file:
+
+````markdown
+```mermaid
+[[./assets/flow.mmd]]
+```
+
+```graphviz
+[[./assets/graph.dot]]
+```
+````
+
+**Embed inside a custom tag** (e.g. collapsible):
 
 ```markdown
-![Logo](/assets/logo.png)
-[Download the spec](/assets/specs/api-v1.pdf)
+<collapsible-code-block language="python" title="example.py">
+[[./assets/example.py]]
+</collapsible-code-block>
 ```
+
+Path resolution differs per content type — docs: relative to the file (`./assets/x.py`); blog: `assets/<post-slug>/<name>`; issues: relative to the file, bare name → `<folder>/assets/<name>`. Escape with `\[[...]]` to render the brackets literally. Full rules + per-type examples: `@root/default-docs/data/user-guide/15_writing-content/03_asset-embedding.md`.
 
 ## Code blocks
 

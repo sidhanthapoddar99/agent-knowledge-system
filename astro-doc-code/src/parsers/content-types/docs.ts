@@ -16,6 +16,7 @@ import { parseOrderPrefix } from '../core/order-prefix';
 import { assetEmbedPreprocessor } from '../preprocessors/asset-embed';
 import { headingIdsPostprocessor } from '../postprocessors/heading-ids';
 import { internalLinksPostprocessor } from '../postprocessors/internal-links';
+import { assetSrcPostprocessor } from '../postprocessors/asset-src';
 import { externalLinksPostprocessor } from '../postprocessors/external-links';
 import { tableWrapPostprocessor } from '../postprocessors/table-wrap';
 
@@ -28,6 +29,9 @@ export class DocsParser extends BaseContentParser {
       .addPreprocessor(assetEmbedPreprocessor)
       .addPostprocessor(headingIdsPostprocessor)
       .addPostprocessor(internalLinksPostprocessor)
+      // Relative <img src> → absolute /content-assets/… URLs (content folders
+      // aren't served at any browser-relative position).
+      .addPostprocessor(assetSrcPostprocessor)
       .addPostprocessor(externalLinksPostprocessor)
       .addPostprocessor(tableWrapPostprocessor);
   }

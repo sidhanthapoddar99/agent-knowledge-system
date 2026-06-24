@@ -1,24 +1,26 @@
 /**
- * Dynamic route to serve colocated files from inside issue-tracker data dirs.
+ * Dynamic route to serve colocated files from inside content data dirs.
  *
- * The `issue-asset-src` postprocessor rewrites relative image srcs in issues
- * content to `/issue-assets/<path-relative-to-tracker-root>`; this endpoint
- * serves those files. All configured `type: issues` pages' data dirs are
- * searched in order (first match wins), mirroring `/assets/[...path].ts`.
- * (Astro excludes `_`-prefixed dirs under `src/pages` from routing, so the
- * prefix can't be underscored; the static `issue-assets` segment still wins
- * route priority over the `[...slug]` catch-all.)
+ * The shared `asset-src` postprocessor rewrites relative image srcs in content
+ * (docs, blog, issues) to `/content-assets/<path-relative-to-the-content-root>`;
+ * this endpoint serves those files. All content-category dirs (site.yaml
+ * `paths:` keys whose category is 'content', e.g. `data` / `data2`) are searched
+ * in order (first match wins), mirroring `/assets/[...path].ts` and superseding
+ * the former issues-only `/issue-assets/` route.
  *
- * Markdown and `settings.json` are never served — they have HTML routes /
- * are internal metadata respectively.
+ * Markdown and `settings.json` are never served — they have HTML routes / are
+ * internal metadata respectively. (Astro excludes `_`-prefixed dirs under
+ * `src/pages` from routing, so the prefix can't be underscored; the static
+ * `content-assets` segment still wins route priority over a `[...slug]`
+ * catch-all.)
  */
 import type { APIRoute, GetStaticPaths } from 'astro';
 import fs from 'fs';
 import path from 'path';
-import { loadSiteConfig } from '@loaders/index';
+import { getPathsByCategory } from '@loaders/paths';
 import { mimeTypes } from '../lib/mime';
 
-/** Files that must not be served raw out of issue folders. */
+/** Files that must not be served raw out of content folders. */
 function isServable(filename: string): boolean {
   if (filename.startsWith('.')) return false;
   if (/\.(md|mdx)$/i.test(filename)) return false;
@@ -26,12 +28,9 @@ function isServable(filename: string): boolean {
   return true;
 }
 
-/** Data dirs (absolute, alias-resolved at config load) of all issues pages. */
-function getIssueDataDirs(): string[] {
-  const pages = (loadSiteConfig() as { pages?: Record<string, any> }).pages || {};
-  return Object.values(pages)
-    .filter((p: any) => p?.type === 'issues' && typeof p?.data === 'string')
-    .map((p: any) => p.data as string);
+/** Data dirs (absolute, alias-resolved at config load) of category 'content'. */
+function getContentDirs(): string[] {
+  return getPathsByCategory('content');
 }
 
 function getAllServableFiles(dirPath: string, basePath: string = ''): string[] {
@@ -54,7 +53,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const seen = new Set<string>();
   const paths: { params: { path: string } }[] = [];
 
-  for (const dir of getIssueDataDirs()) {
+  for (const dir of getContentDirs()) {
     for (const file of getAllServableFiles(dir)) {
       if (!seen.has(file)) {
         seen.add(file);
@@ -72,7 +71,7 @@ export const GET: APIRoute = async ({ params, request }) => {
   }
 
   let fullPath: string | null = null;
-  for (const dir of getIssueDataDirs()) {
+  for (const dir of getContentDirs()) {
     const normalized = path.normalize(path.join(dir, filePath));
     if (!fs.existsSync(normalized) || !fs.statSync(normalized).isFile()) continue;
 

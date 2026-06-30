@@ -84,6 +84,13 @@ export function wirePanelSwitching() {
     const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('button[data-panel]');
     if (!btn) return;
     activate(btn.dataset.panel!);
+    // Comment entries swap to the comments panel, then scroll to the item.
+    const scrollTarget = btn.dataset.scroll;
+    if (scrollTarget) {
+      requestAnimationFrame(() => {
+        document.getElementById(scrollTarget)?.scrollIntoView({ block: 'start' });
+      });
+    }
   });
 
   const rawHash = decodeURIComponent(location.hash.slice(1));
@@ -98,6 +105,11 @@ export function wirePanelSwitching() {
       requestAnimationFrame(() => {
         document.getElementById(rawHash)?.scrollIntoView({ block: 'start' });
       });
+    } else if (rawHash === 'comment-issue' || rawHash.startsWith('comment-')) {
+      activate('comments', { updateHash: false });
+      requestAnimationFrame(() => {
+        document.getElementById(rawHash)?.scrollIntoView({ block: 'start' });
+      });
     } else if (knownPanel(rawHash)) {
       activate(rawHash, { updateHash: false });
     }
@@ -107,6 +119,9 @@ export function wirePanelSwitching() {
     const key = decodeURIComponent(location.hash.slice(1)) || 'overview';
     if (key.startsWith('comprehensive-')) {
       activate('comprehensive', { updateHash: false });
+      document.getElementById(key)?.scrollIntoView({ block: 'start' });
+    } else if (key.startsWith('comment-')) {
+      activate('comments', { updateHash: false });
       document.getElementById(key)?.scrollIntoView({ block: 'start' });
     } else if (key === 'overview' || knownPanel(key)) {
       activate(key, { updateHash: false });

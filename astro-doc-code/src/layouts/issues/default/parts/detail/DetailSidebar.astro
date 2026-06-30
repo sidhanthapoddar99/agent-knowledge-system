@@ -71,12 +71,10 @@ const tracker = baseUrl.replace(/^\/+/, '').replace(/\/+$/, '');
             aria-current={activeKey === 'overview' ? 'page' : undefined}
           >
             <span class="issue-sidebar__label">Overview</span>
-            {issue.comments.length > 0 && <span class="issue-sidebar__count">{issue.comments.length}</span>}
           </button>
         ) : (
           <a href={overviewHref} class="issue-sidebar__item" data-panel="overview">
             <span class="issue-sidebar__label">Overview</span>
-            {issue.comments.length > 0 && <span class="issue-sidebar__count">{issue.comments.length}</span>}
           </a>
         )}
         {subtaskTotal > 0 && (
@@ -143,6 +141,38 @@ const tracker = baseUrl.replace(/^\/+/, '').replace(/\/+$/, '');
         <SubdocTree tree={logTree} kind="log" baseUrl={baseUrl} issueId={issue.id} activeKey={activeKey} />
       )}
     </details>
+
+    {issue.comments.length > 0 && (
+      <details class="issue-sidebar__section" data-collapse-key="comments" open>
+        <summary class="issue-sidebar__heading">
+          <svg class="issue-sidebar__chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
+          <span>Comments</span>
+          <span class="issue-sidebar__heading-count">{issue.comments.length}</span>
+        </summary>
+        <div class="issue-sidebar__items">
+          {isOverviewMode ? (
+            <button type="button" class="issue-sidebar__item" data-panel="comments" data-scroll="comment-issue">
+              <span class="issue-sidebar__label">Issue</span>
+            </button>
+          ) : (
+            <a href={`${overviewHref}#comments`} class="issue-sidebar__item" data-panel="comments">
+              <span class="issue-sidebar__label">Issue</span>
+            </a>
+          )}
+          {issue.comments.map((c) => (
+            isOverviewMode ? (
+              <button type="button" class="issue-sidebar__item" data-panel="comments" data-scroll={`comment-${c.sequence}`}>
+                <span class="issue-sidebar__label">#{String(c.sequence).padStart(3, '0')} · {c.author || 'unknown'}</span>
+              </button>
+            ) : (
+              <a href={`${overviewHref}#comment-${c.sequence}`} class="issue-sidebar__item" data-panel="comments">
+                <span class="issue-sidebar__label">#{String(c.sequence).padStart(3, '0')} · {c.author || 'unknown'}</span>
+              </a>
+            )
+          ))}
+        </div>
+      </details>
+    )}
   </nav>
 
   <!--

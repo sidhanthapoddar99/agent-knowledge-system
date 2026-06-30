@@ -23,10 +23,10 @@
      Layout Dimensions
      ================================= */
   --max-width-primary: 1600px;
-  --max-width-secondary: 900px;
+  --max-width-secondary: 1336px;
   --max-width-prose: 65ch;
   --sidebar-width: 280px;
-  --outline-width: 220px;
+  --outline-width: 280px;
   --navbar-height: 64px;
   --footer-height: auto;
 

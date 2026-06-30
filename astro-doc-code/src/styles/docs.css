@@ -11,7 +11,7 @@
   display: flex;
   max-width: var(--max-width-primary);
   margin: 0 auto;
-  padding: 0 var(--spacing-2xl);
+  padding: 0 var(--spacing-sm);
 }
 
 /* =================================

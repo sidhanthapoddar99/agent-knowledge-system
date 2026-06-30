@@ -25,20 +25,28 @@ const subtaskTotal = sortedSubtasks.length;
       <div class="issue-meta-index__heading">On this page</div>
       <ul class="issue-meta-toc">
         <li><a href="#" class="issue-meta-toc__link is-top" data-toc-link="__issue_top">Issue body</a></li>
-        {issue.comments.length > 0 && (
-          <li class="issue-meta-toc__section-label">Comments ({issue.comments.length})</li>
-        )}
-        {issue.comments.map((c) => (
-          <li>
-            <a href={`#comment-${c.sequence}`} class="issue-meta-toc__link issue-meta-toc__link--comment" data-toc-link={`comment-${c.sequence}`}>
-              <span class="issue-meta-toc__seq">#{String(c.sequence).padStart(3, '0')}</span>
-              <span class="issue-meta-toc__text">{c.author || 'unknown'}<span class="issue-meta-toc__date"> · {c.date || '—'}</span></span>
-            </a>
-          </li>
-        ))}
       </ul>
     </div>
   </div>
+
+  {issue.comments.length > 0 && (
+    <div class="issue-meta__panel" data-meta-panel="comments" hidden>
+      <div class="issue-meta-index">
+        <div class="issue-meta-index__heading">Comments ({issue.comments.length})</div>
+        <ul class="issue-meta-toc">
+          <li><a href="#comment-issue" class="issue-meta-toc__link is-top" data-toc-link="comment-issue">Issue (opening)</a></li>
+          {issue.comments.map((c) => (
+            <li>
+              <a href={`#comment-${c.sequence}`} class="issue-meta-toc__link issue-meta-toc__link--comment" data-toc-link={`comment-${c.sequence}`}>
+                <span class="issue-meta-toc__seq">#{String(c.sequence).padStart(3, '0')}</span>
+                <span class="issue-meta-toc__text">{c.author || 'unknown'}<span class="issue-meta-toc__date"> · {c.date || '—'}</span></span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  )}
 
   {subtaskTotal > 0 && (
     <div class="issue-meta__panel" data-meta-panel="comprehensive" hidden>

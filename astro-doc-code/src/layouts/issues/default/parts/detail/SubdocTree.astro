@@ -9,7 +9,7 @@
  */
 import type { IssueAgentLog, IssueNote } from '@loaders/issues';
 import {
-  logPanelKey, notePanelKey, noteUrl, logUrl,
+  logPanelKey, notePanelKey, brainstormPanelKey, noteUrl, logUrl, brainstormUrl,
   type GroupedTree,
 } from '../../server/helpers';
 import { stripOrderPrefixLoose } from '@parsers/core/order-prefix';
@@ -18,7 +18,7 @@ type SubdocTree = GroupedTree<IssueNote> | GroupedTree<IssueAgentLog>;
 
 interface Props {
   tree: SubdocTree;
-  kind: 'note' | 'log';
+  kind: 'note' | 'log' | 'brainstorm';
   baseUrl: string;
   issueId: string;
   activeKey: string;
@@ -28,7 +28,7 @@ interface Props {
   pathPrefix?: string;
 }
 
-const { tree, kind, baseUrl, issueId, activeKey, nested = false, pathPrefix = (kind === 'note' ? 'notes' : 'agent-log') } = Astro.props;
+const { tree, kind, baseUrl, issueId, activeKey, nested = false, pathPrefix = (kind === 'note' ? 'notes' : kind === 'brainstorm' ? 'brainstorm' : 'agent-log') } = Astro.props;
 
 function leafLabel(item: IssueNote | IssueAgentLog): string {
   if (kind === 'log') {
@@ -40,15 +40,15 @@ function leafLabel(item: IssueNote | IssueAgentLog): string {
 }
 
 function leafKey(item: IssueNote | IssueAgentLog): string {
-  return kind === 'log'
-    ? logPanelKey(item as IssueAgentLog)
-    : notePanelKey(item as IssueNote);
+  if (kind === 'log') return logPanelKey(item as IssueAgentLog);
+  if (kind === 'brainstorm') return brainstormPanelKey(item as IssueNote);
+  return notePanelKey(item as IssueNote);
 }
 
 function leafHref(item: IssueNote | IssueAgentLog): string {
-  return kind === 'log'
-    ? logUrl(baseUrl, issueId, item as IssueAgentLog)
-    : noteUrl(baseUrl, issueId, item as IssueNote);
+  if (kind === 'log') return logUrl(baseUrl, issueId, item as IssueAgentLog);
+  if (kind === 'brainstorm') return brainstormUrl(baseUrl, issueId, item as IssueNote);
+  return noteUrl(baseUrl, issueId, item as IssueNote);
 }
 
 /** Total descendants under a tree node — used for the subgroup count. */
@@ -106,13 +106,17 @@ entries.sort((a, b) => a.sortName.localeCompare(b.sortName));
             aria-hidden="true"
             style={color ? `color: ${color}` : undefined}
           >
-            {kind === 'note' ? (
+            {kind === 'log' ? (
               <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M3 1h7l3 3v11H3V1z"/><path d="M10 1v3h3"/>
+                <circle cx="8" cy="8" r="6"/><path d="M8 4v4l3 2"/>
+              </svg>
+            ) : kind === 'brainstorm' ? (
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M8 1.5a4.5 4.5 0 0 0-3 7.8V11h6V9.3a4.5 4.5 0 0 0-3-7.8z"/><path d="M6 13h4M6.5 14.5h3"/>
               </svg>
             ) : (
               <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-                <circle cx="8" cy="8" r="6"/><path d="M8 4v4l3 2"/>
+                <path d="M3 1h7l3 3v11H3V1z"/><path d="M10 1v3h3"/>
               </svg>
             )}
           </span>

@@ -136,6 +136,13 @@ export function notePanelKey(note: IssueNote): string {
     : `note-${[...note.groupPath, note.name].join('--')}`;
 }
 
+/** Panel key for a brainstorm entry — same scheme, `brainstorm-` prefix. */
+export function brainstormPanelKey(doc: IssueNote): string {
+  return doc.groupPath.length === 0
+    ? `brainstorm-${doc.name}`
+    : `brainstorm-${[...doc.groupPath, doc.name].join('--')}`;
+}
+
 // ===== Sub-doc URL helpers (subtask 17) =====
 // Each sub-doc has its own URL so links are shareable / bookmarkable and
 // every heading anchor works natively without id-prefixing.
@@ -164,6 +171,10 @@ export function subtaskPanelKey(subtask: IssueSubtask): string {
 
 export function noteUrl(baseUrl: string, issueId: string, note: IssueNote): string {
   return joinPath(baseUrl, issueId, 'notes', ...note.groupPath, note.name);
+}
+
+export function brainstormUrl(baseUrl: string, issueId: string, doc: IssueNote): string {
+  return joinPath(baseUrl, issueId, 'brainstorm', ...doc.groupPath, doc.name);
 }
 
 export function logUrl(baseUrl: string, issueId: string, log: IssueAgentLog): string {

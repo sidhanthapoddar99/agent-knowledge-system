@@ -169,8 +169,11 @@ export interface Issue {
   subtasks: IssueSubtask[];
   /** Group folders under `subtasks/`. Used to label nested sections in the UI. */
   subtaskGroups: SubtaskGroupMeta[];
-  /** Notes — supporting markdown docs under notes/ */
+  /** Notes — finalized supporting markdown docs under notes/ */
   notes: IssueNote[];
+  /** Brainstorm — active deliberation / research / exploration under brainstorm/.
+   *  Same free-form, 2-level shape as notes. */
+  brainstorm: IssueNote[];
   /** Agent logs — iterative AI execution notes under agent-log/ */
   agentLogs: IssueAgentLog[];
 }
@@ -248,7 +251,7 @@ function computeSignature(dataPath: string): number {
     sig += statMtime(path.join(folder, 'settings.json'));
     sig += statMtime(path.join(folder, 'issue.md'));
 
-    for (const sub of ['comments', 'subtasks', 'notes', 'agent-log']) {
+    for (const sub of ['comments', 'subtasks', 'notes', 'brainstorm', 'agent-log']) {
       const subDir = path.join(folder, sub);
       sig += statMtime(subDir);
       // subtasks, notes, and agent-log support up to 2 levels of
@@ -394,7 +397,10 @@ async function loadIssueFolder(folderPath: string, dataPath: string): Promise<Is
   );
 
   // Notes: rendered markdown under notes/, up to 2 levels of subfolders
-  const notes = await readNotes(path.join(folderPath, 'notes'), dataPath, id);
+  const notes = await readFreeformDocs(path.join(folderPath, 'notes'), dataPath, id, 'notes');
+
+  // Brainstorm: same free-form 2-level shape as notes
+  const brainstorm = await readFreeformDocs(path.join(folderPath, 'brainstorm'), dataPath, id, 'brainstorm');
 
   // Agent logs: same 2-level shape as notes; sequence resets per leaf folder
   const agentLogs = await readAgentLogs(path.join(folderPath, 'agent-log'), dataPath, id);
@@ -430,6 +436,7 @@ async function loadIssueFolder(folderPath: string, dataPath: string): Promise<Is
     subtasks,
     subtaskGroups,
     notes,
+    brainstorm,
     agentLogs,
   };
 }
@@ -482,12 +489,13 @@ async function walkTwoLevels<T>(
   return out;
 }
 
-async function readNotes(
-  notesDir: string,
+async function readFreeformDocs(
+  dir: string,
   dataPath: string,
   issueId: string,
+  subName: string,
 ): Promise<IssueNote[]> {
-  return walkTwoLevels(notesDir, issueId, 'notes', async (abs, groupPath) => {
+  return walkTwoLevels(dir, issueId, subName, async (abs, groupPath) => {
     let fm: { color?: string } = {};
     try { fm = matter(fs.readFileSync(abs, 'utf-8')).data as typeof fm; } catch {}
     return {

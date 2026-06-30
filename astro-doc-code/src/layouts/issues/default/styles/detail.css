@@ -9,10 +9,14 @@
 /* ===== Layout shell ===== */
 .issue-layout {
   display: grid;
-  grid-template-columns: 260px 1fr 280px;
+  grid-template-columns: var(--sidebar-width) 1fr var(--outline-width);
   min-height: calc(100vh - var(--navbar-height, 60px));
-  max-width: 1600px;
+  /* Cap at the cluster width so the centre content never stretches past
+     --max-width-secondary; the sidebar + outline stay attached to the content
+     and any extra viewport space falls on the outside (centred trio). */
+  max-width: calc(var(--sidebar-width) + var(--max-width-secondary) + var(--outline-width));
   margin: 0 auto;
+  padding: 0 var(--spacing-sm);
 }
 
 /* ===== Left sidebar ===== */
@@ -181,7 +185,7 @@
 }
 
 /* ===== Main column ===== */
-.issue-main { padding: 1.5rem 2rem; min-width: 0; }
+.issue-main { padding: var(--spacing-lg) var(--spacing-xl); min-width: 0; }
 .issue-panel[hidden] { display: none !important; }
 .issue-main__header {
   margin-bottom: 1.5rem;

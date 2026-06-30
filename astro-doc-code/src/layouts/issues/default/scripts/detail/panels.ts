@@ -29,6 +29,10 @@ export function legacyHashRedirect(hash: string): string | null {
     const segments = hash.slice('note-'.length).split('--');
     return `${base}/notes/${segments.join('/')}${location.search}`;
   }
+  if (hash.startsWith('brainstorm-')) {
+    const segments = hash.slice('brainstorm-'.length).split('--');
+    return `${base}/brainstorm/${segments.join('/')}${location.search}`;
+  }
   if (hash.startsWith('log-')) {
     const segments = hash.slice('log-'.length).split('--');
     return `${base}/agent-log/${segments.join('/')}${location.search}`;

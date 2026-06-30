@@ -29,7 +29,6 @@ interface Props {
 const { issue, vocabulary, baseUrl } = Astro.props;
 const { meta } = issue;
 
-const subtaskTotal = issue.subtasks.length;
 const subtaskDone = issue.subtasks.filter((s) => TERMINAL.includes(s.state)).length;
 const subtaskReview = issue.subtasks.filter((s) => s.state === 'review').length;
 const openCount = issue.subtasks.filter((s) => s.state === 'open').length;

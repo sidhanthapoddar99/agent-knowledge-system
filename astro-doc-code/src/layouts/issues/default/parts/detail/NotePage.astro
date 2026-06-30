@@ -6,20 +6,24 @@
  */
 import type { IssueNote } from '@loaders/issues';
 import type { TocEntry } from '../../server/toc';
-import { notePanelKey } from '../../server/helpers';
+import { notePanelKey, brainstormPanelKey } from '../../server/helpers';
 
 interface Props {
   note: IssueNote & { toc?: TocEntry[] };
   standalone?: boolean;
+  /** Folder this doc lives under — 'notes' (default) or 'brainstorm'. Drives the
+   *  path label and panel-key namespace when NotePage is reused for brainstorm. */
+  prefix?: 'notes' | 'brainstorm';
 }
 
-const { note: n, standalone = false } = Astro.props;
-const pathDisplay = ['notes', ...n.groupPath, `${n.name}.md`].join('/');
+const { note: n, standalone = false, prefix = 'notes' } = Astro.props;
+const pathDisplay = [prefix, ...n.groupPath, `${n.name}.md`].join('/');
+const panelKey = prefix === 'brainstorm' ? brainstormPanelKey(n) : notePanelKey(n);
 ---
 
 <section
   class={`issue-panel ${standalone ? 'is-active' : ''}`}
-  data-panel={notePanelKey(n)}
+  data-panel={panelKey}
   role="tabpanel"
   hidden={!standalone}
 >

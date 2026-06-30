@@ -3,9 +3,7 @@
   "description": "Stabilize the outline panel: heading extraction, active-heading tracking, smooth scroll.",
   "status": "closed",
   "priority": "medium",
-  "component": [
-    "layouts-and-themes"
-  ],
+  "component": ["layout-docs"],
   "labels": [
     "task"
   ],

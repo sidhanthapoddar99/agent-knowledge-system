@@ -3,10 +3,7 @@
   "description": "Restructure the sidebar collapse cache from one localStorage key per folder to one blob per page scope (docs: section root; issues: tracker:issue-id), store only deviations from the server-rendered default (delete-on-default), and add a Browser Cache dev-toolbar app (below Cache Inspector) that lists and clears the framework's localStorage state. Follow-up to 2026-05-07-sidebar-state-persistence, driven by review discussion of key growth and scan cost.",
   "status": "closed",
   "priority": "medium",
-  "component": [
-    "layouts-and-themes",
-    "dev-toolbar"
-  ],
+  "component": ["layout-general", "dev-toolbar"],
   "labels": [
     "feature",
     "performance"

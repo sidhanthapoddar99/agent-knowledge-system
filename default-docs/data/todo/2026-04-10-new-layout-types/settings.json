@@ -3,9 +3,7 @@
   "description": "Add roadmap and releases as first-class content types alongside docs, blogs, issues, and custom.",
   "status": "open",
   "priority": "medium",
-  "component": [
-    "layouts-and-themes"
-  ],
+  "component": ["layout-general"],
   "labels": [
     "feature"
   ],

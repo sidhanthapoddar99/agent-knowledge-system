@@ -738,7 +738,6 @@
   gap: 0.45rem;
   min-height: 24px;
 }
-.issue-meta-panel__cell--wide { flex: 1; }
 .issue-meta-panel__cell dt {
   text-transform: uppercase;
   letter-spacing: 0.04em;

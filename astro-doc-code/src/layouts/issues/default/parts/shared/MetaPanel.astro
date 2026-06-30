@@ -1,7 +1,10 @@
 ---
 /**
  * MetaPanel — inline horizontal strip of issue metadata rendered under the
- * detail-page header. Five explicit lines, always horizontal.
+ * detail-page header. Three explicit lines, always horizontal:
+ *   1. ID · Component
+ *   2. Status · Priority · Labels
+ *   3. Author · Assignees · Created · Updated
  *
  * The vertical / non-compact variant previously shipped here was never
  * used after the header-strip move and has been removed. If a right-rail
@@ -39,9 +42,7 @@ const { rel: updatedRel, full: updatedFull } = formatRelativeTime(issue.updated)
   <div class="issue-meta-panel__line">
     <div class="issue-meta-panel__cell"><dt>Status</dt><dd><StatusBadge field="status" value={meta.status} vocabulary={vocabulary.fields} /></dd></div>
     <div class="issue-meta-panel__cell"><dt>Priority</dt><dd><StatusBadge field="priority" value={meta.priority} vocabulary={vocabulary.fields} /></dd></div>
-  </div>
-  <div class="issue-meta-panel__line">
-    <div class="issue-meta-panel__cell issue-meta-panel__cell--wide"><dt>Labels</dt><dd>
+    <div class="issue-meta-panel__cell"><dt>Labels</dt><dd>
       {meta.labels.length > 0
         ? meta.labels.map((l) => <StatusBadge field="labels" value={l} vocabulary={vocabulary.fields} />)
         : <span class="issue-meta-panel__empty">—</span>}
@@ -52,8 +53,6 @@ const { rel: updatedRel, full: updatedFull } = formatRelativeTime(issue.updated)
     <div class="issue-meta-panel__cell"><dt>Assignees</dt><dd>{meta.assignees.length > 0
       ? meta.assignees.join(', ')
       : <span class="issue-meta-panel__empty">—</span>}</dd></div>
-  </div>
-  <div class="issue-meta-panel__line">
     <div class="issue-meta-panel__cell"><dt>Created</dt><dd>{formatDate(issue.created)}</dd></div>
     <div class="issue-meta-panel__cell"><dt>Updated</dt><dd>{updatedRel
       ? <time datetime={issue.updated} title={updatedFull}>{updatedRel}</time>

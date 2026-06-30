@@ -20,7 +20,7 @@
       }
     },
     "component": {
-      "values": ["live-editor", "dev-toolbar", "content-pipeline", "loaders", "layout-general", "layout-docs", "layout-issues", "layout-blogs", "themes", "ai-skills", "integrations", "infra", "docs"]
+      "values": ["ai-skills", "content-pipeline", "dev-toolbar", "docs", "infra", "integrations", "layout-blogs", "layout-docs", "layout-general", "layout-issues", "live-editor", "loaders", "themes"]
     },
     "labels": {
       "values": ["wip", "blocked", "bug", "feature", "task", "performance", "refactor", "docs", "idea", "duplicate", "good-first-issue", "discussion", "blocked-external"]

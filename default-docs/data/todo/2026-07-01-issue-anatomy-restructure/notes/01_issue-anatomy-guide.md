@@ -6,18 +6,10 @@
 > (c) the spec for the framework/loader changes. Edit freely — structure decisions
 > live here first.
 
-An **issue** is a folder capturing one coherent unit of *thinking + execution*. Its
-parts are ordered around the lifecycle of getting something done:
-
-```
-Brainstorm  →  Notes  →  Subtasks  →  Agent-log (loops)  →  update Subtasks
- (decide       (record    (plan the    (run the work,         (close them out;
-  what to        what we     to-dos)      milestone by           add Notes if new
-  do)            decided)                 milestone)             output appears)
-```
-
-`Comments` runs alongside the whole thing as a lean evolution log; `Agent-memory`
-is the AI's always-on scratchpad for the issue.
+An **issue** is a folder capturing one coherent unit of *thinking + execution*. It's
+built from the sections below — use whichever fit what you're doing. There's a natural
+tendency (deliberate before you write things down, plan before you execute) but **no
+required order**; the sections are organized by *what they hold*, not a fixed sequence.
 
 ## The ideal tree
 

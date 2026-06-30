@@ -9,7 +9,8 @@
  */
 import type { IssueAgentLog, IssueNote } from '@loaders/issues';
 import {
-  logPanelKey, notePanelKey, brainstormPanelKey, noteUrl, logUrl, brainstormUrl,
+  logPanelKey, notePanelKey, brainstormPanelKey, agentMemoryPanelKey,
+  noteUrl, logUrl, brainstormUrl, agentMemoryUrl,
   type GroupedTree,
 } from '../../server/helpers';
 import { stripOrderPrefixLoose } from '@parsers/core/order-prefix';
@@ -18,7 +19,7 @@ type SubdocTree = GroupedTree<IssueNote> | GroupedTree<IssueAgentLog>;
 
 interface Props {
   tree: SubdocTree;
-  kind: 'note' | 'log' | 'brainstorm';
+  kind: 'note' | 'log' | 'brainstorm' | 'memory';
   baseUrl: string;
   issueId: string;
   activeKey: string;
@@ -28,7 +29,7 @@ interface Props {
   pathPrefix?: string;
 }
 
-const { tree, kind, baseUrl, issueId, activeKey, nested = false, pathPrefix = (kind === 'note' ? 'notes' : kind === 'brainstorm' ? 'brainstorm' : 'agent-log') } = Astro.props;
+const { tree, kind, baseUrl, issueId, activeKey, nested = false, pathPrefix = (kind === 'note' ? 'notes' : kind === 'brainstorm' ? 'brainstorm' : kind === 'memory' ? 'agent-memory' : 'agent-log') } = Astro.props;
 
 function leafLabel(item: IssueNote | IssueAgentLog): string {
   if (kind === 'log') {
@@ -42,12 +43,14 @@ function leafLabel(item: IssueNote | IssueAgentLog): string {
 function leafKey(item: IssueNote | IssueAgentLog): string {
   if (kind === 'log') return logPanelKey(item as IssueAgentLog);
   if (kind === 'brainstorm') return brainstormPanelKey(item as IssueNote);
+  if (kind === 'memory') return agentMemoryPanelKey(item as IssueNote);
   return notePanelKey(item as IssueNote);
 }
 
 function leafHref(item: IssueNote | IssueAgentLog): string {
   if (kind === 'log') return logUrl(baseUrl, issueId, item as IssueAgentLog);
   if (kind === 'brainstorm') return brainstormUrl(baseUrl, issueId, item as IssueNote);
+  if (kind === 'memory') return agentMemoryUrl(baseUrl, issueId, item as IssueNote);
   return noteUrl(baseUrl, issueId, item as IssueNote);
 }
 
@@ -113,6 +116,10 @@ entries.sort((a, b) => a.sortName.localeCompare(b.sortName));
             ) : kind === 'brainstorm' ? (
               <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
                 <path d="M8 1.5a4.5 4.5 0 0 0-3 7.8V11h6V9.3a4.5 4.5 0 0 0-3-7.8z"/><path d="M6 13h4M6.5 14.5h3"/>
+              </svg>
+            ) : kind === 'memory' ? (
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                <ellipse cx="8" cy="4" rx="5" ry="2"/><path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4"/><path d="M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
               </svg>
             ) : (
               <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">

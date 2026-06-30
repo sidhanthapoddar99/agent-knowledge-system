@@ -31,3 +31,13 @@ per change as it's completed.
       icon), subdoc pages at `/<issue>/brainstorm/<name>` (rendered via `NotePage` with
       a `prefix` so the path label/panel-key are namespaced correctly). Name decided:
       **Brainstorm** (see the issue's `brainstorm/01_section-naming.md`).
+- [x] **Agent Memory section added (full stack).** Same mirror as Brainstorm
+      (`agent-memory/`, `memory-` panel-key prefix, sidebar section after Agent log,
+      database icon, subdoc pages at `/<issue>/agent-memory/<name>`).
+- [x] **Guide panel.** Framework-bundled `guide.ts` (static issue-anatomy legend,
+      rendered via `@parsers/renderers` `renderMarkdown`) shown on a **Guide** panel
+      with a single entry in the "This issue" group. CLAUDE.md references it as the
+      skill-guide twin.
+- [x] **Dropped the strict lifecycle ordering** from the rendered guide + design note —
+      sections are organized by *what they hold*, used as the work needs, no required
+      order.

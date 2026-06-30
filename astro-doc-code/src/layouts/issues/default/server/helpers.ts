@@ -143,6 +143,13 @@ export function brainstormPanelKey(doc: IssueNote): string {
     : `brainstorm-${[...doc.groupPath, doc.name].join('--')}`;
 }
 
+/** Panel key for an agent-memory entry — same scheme, `memory-` prefix. */
+export function agentMemoryPanelKey(doc: IssueNote): string {
+  return doc.groupPath.length === 0
+    ? `memory-${doc.name}`
+    : `memory-${[...doc.groupPath, doc.name].join('--')}`;
+}
+
 // ===== Sub-doc URL helpers (subtask 17) =====
 // Each sub-doc has its own URL so links are shareable / bookmarkable and
 // every heading anchor works natively without id-prefixing.
@@ -175,6 +182,10 @@ export function noteUrl(baseUrl: string, issueId: string, note: IssueNote): stri
 
 export function brainstormUrl(baseUrl: string, issueId: string, doc: IssueNote): string {
   return joinPath(baseUrl, issueId, 'brainstorm', ...doc.groupPath, doc.name);
+}
+
+export function agentMemoryUrl(baseUrl: string, issueId: string, doc: IssueNote): string {
+  return joinPath(baseUrl, issueId, 'agent-memory', ...doc.groupPath, doc.name);
 }
 
 export function logUrl(baseUrl: string, issueId: string, log: IssueAgentLog): string {

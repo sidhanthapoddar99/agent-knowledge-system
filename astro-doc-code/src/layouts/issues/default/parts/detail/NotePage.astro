@@ -6,19 +6,22 @@
  */
 import type { IssueNote } from '@loaders/issues';
 import type { TocEntry } from '../../server/toc';
-import { notePanelKey, brainstormPanelKey } from '../../server/helpers';
+import { notePanelKey, brainstormPanelKey, agentMemoryPanelKey } from '../../server/helpers';
 
 interface Props {
   note: IssueNote & { toc?: TocEntry[] };
   standalone?: boolean;
-  /** Folder this doc lives under — 'notes' (default) or 'brainstorm'. Drives the
-   *  path label and panel-key namespace when NotePage is reused for brainstorm. */
-  prefix?: 'notes' | 'brainstorm';
+  /** Folder this doc lives under — 'notes' (default), 'brainstorm', or
+   *  'agent-memory'. Drives the path label and panel-key namespace when NotePage
+   *  is reused for those note-shaped collections. */
+  prefix?: 'notes' | 'brainstorm' | 'agent-memory';
 }
 
 const { note: n, standalone = false, prefix = 'notes' } = Astro.props;
 const pathDisplay = [prefix, ...n.groupPath, `${n.name}.md`].join('/');
-const panelKey = prefix === 'brainstorm' ? brainstormPanelKey(n) : notePanelKey(n);
+const panelKey = prefix === 'brainstorm' ? brainstormPanelKey(n)
+  : prefix === 'agent-memory' ? agentMemoryPanelKey(n)
+  : notePanelKey(n);
 ---
 
 <section

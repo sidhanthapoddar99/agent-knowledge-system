@@ -17,6 +17,7 @@ import MetaSidebar from './parts/detail/MetaSidebar.astro';
 import { allStateIcons } from './server/state-icon';
 import { extractAndPrefixToc } from './server/toc';
 import { TERMINAL, sortSubtasksByState, terminalStartIndex, subtaskPanelKey } from './server/helpers';
+import { ISSUE_GUIDE_HTML } from './guide';
 import type { Issue, IssuesVocabulary } from '@loaders/issues';
 import './styles/detail.css';
 
@@ -73,6 +74,12 @@ const sortedSubtaskDocs = sortedSubtasks.map((s) => {
 
     <section class="issue-panel" data-panel="comments" role="tabpanel" hidden>
       <IssueThread issue={issue} />
+    </section>
+
+    <section class="issue-panel" data-panel="guide" role="tabpanel" hidden>
+      <div class="issue-doc">
+        <div class="issue-doc__body markdown-content" set:html={ISSUE_GUIDE_HTML} />
+      </div>
     </section>
 
     <Comprehensive

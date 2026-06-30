@@ -37,6 +37,7 @@ export interface RouteProps {
     | { kind: 'subtask'; subtask: any }
     | { kind: 'note'; note: any }
     | { kind: 'brainstorm'; brainstorm: any }
+    | { kind: 'memory'; memory: any }
     | { kind: 'log'; log: any };
 }
 
@@ -141,7 +142,7 @@ function resolveSubDoc(issue: any, parts: string[]): RouteProps['subDoc'] | null
   // subtasks / notes / agent-log: rest = [...groupPath, slug-or-name],
   // groupPath is 0–2 segments.
   if (
-    (kind === 'subtasks' || kind === 'notes' || kind === 'brainstorm' || kind === 'agent-log')
+    (kind === 'subtasks' || kind === 'notes' || kind === 'brainstorm' || kind === 'agent-memory' || kind === 'agent-log')
     && rest.length >= 1 && rest.length <= 3
   ) {
     const groupPath = rest.slice(0, -1);
@@ -159,6 +160,10 @@ function resolveSubDoc(issue: any, parts: string[]): RouteProps['subDoc'] | null
     if (kind === 'brainstorm') {
       const b = issue.brainstorm.find((d: any) => d.name === tail && matchPath(d.groupPath));
       return b ? { kind: 'brainstorm', brainstorm: b } : null;
+    }
+    if (kind === 'agent-memory') {
+      const m = issue.agentMemory.find((d: any) => d.name === tail && matchPath(d.groupPath));
+      return m ? { kind: 'memory', memory: m } : null;
     }
     const log = issue.agentLogs.find((l: any) => l.name === tail && matchPath(l.groupPath));
     return log ? { kind: 'log', log } : null;
@@ -240,6 +245,7 @@ export function prepareRender(props: RouteProps): RenderPlan {
     const subTitle = subDoc.kind === 'subtask' ? subDoc.subtask.title
       : subDoc.kind === 'note' ? subDoc.note.name
       : subDoc.kind === 'brainstorm' ? subDoc.brainstorm.name
+      : subDoc.kind === 'memory' ? subDoc.memory.name
       : subDoc.log.name;
     title = `${subTitle} · ${issue.meta.title}`;
     layoutProps = { issue, vocabulary, baseUrl, subDoc };

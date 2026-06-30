@@ -174,6 +174,9 @@ export interface Issue {
   /** Brainstorm — active deliberation / research / exploration under brainstorm/.
    *  Same free-form, 2-level shape as notes. */
   brainstorm: IssueNote[];
+  /** Agent memory — AI-mutable working state under agent-memory/.
+   *  Same free-form, 2-level shape as notes. */
+  agentMemory: IssueNote[];
   /** Agent logs — iterative AI execution notes under agent-log/ */
   agentLogs: IssueAgentLog[];
 }
@@ -251,7 +254,7 @@ function computeSignature(dataPath: string): number {
     sig += statMtime(path.join(folder, 'settings.json'));
     sig += statMtime(path.join(folder, 'issue.md'));
 
-    for (const sub of ['comments', 'subtasks', 'notes', 'brainstorm', 'agent-log']) {
+    for (const sub of ['comments', 'subtasks', 'notes', 'brainstorm', 'agent-memory', 'agent-log']) {
       const subDir = path.join(folder, sub);
       sig += statMtime(subDir);
       // subtasks, notes, and agent-log support up to 2 levels of
@@ -402,6 +405,9 @@ async function loadIssueFolder(folderPath: string, dataPath: string): Promise<Is
   // Brainstorm: same free-form 2-level shape as notes
   const brainstorm = await readFreeformDocs(path.join(folderPath, 'brainstorm'), dataPath, id, 'brainstorm');
 
+  // Agent memory: AI-mutable working state; same free-form 2-level shape as notes
+  const agentMemory = await readFreeformDocs(path.join(folderPath, 'agent-memory'), dataPath, id, 'agent-memory');
+
   // Agent logs: same 2-level shape as notes; sequence resets per leaf folder
   const agentLogs = await readAgentLogs(path.join(folderPath, 'agent-log'), dataPath, id);
 
@@ -437,6 +443,7 @@ async function loadIssueFolder(folderPath: string, dataPath: string): Promise<Is
     subtaskGroups,
     notes,
     brainstorm,
+    agentMemory,
     agentLogs,
   };
 }

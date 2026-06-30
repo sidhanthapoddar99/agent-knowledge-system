@@ -99,6 +99,13 @@ export async function buildStaticPaths(siteConfig: { pages?: Record<string, any>
             props: { ...common, pageType: 'issues-subdoc', issue, vocabulary, subDoc: { kind: 'brainstorm', brainstorm: b } },
           });
         }
+        for (const m of issue.agentMemory) {
+          const slugPath = [baseUrl, issue.id, 'agent-memory', ...m.groupPath, m.name].filter(Boolean).join('/');
+          paths.push({
+            params: { slug: slugPath },
+            props: { ...common, pageType: 'issues-subdoc', issue, vocabulary, subDoc: { kind: 'memory', memory: m } },
+          });
+        }
         for (const log of issue.agentLogs) {
           const slugPath = [baseUrl, issue.id, 'agent-log', ...log.groupPath, log.name].filter(Boolean).join('/');
           paths.push({

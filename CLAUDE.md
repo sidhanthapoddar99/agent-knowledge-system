@@ -10,6 +10,8 @@ This project ships a Claude Code plugin (`documentation-guide`) — source at `p
 
 The plugin's `documentation-guide` skill carries the full operating manual, including the `docs-guide` CLI — defer to it for command usage rather than duplicating the toolkit here. It triggers automatically on docs/issue/blog/config work.
 
+**Bundled issue guide.** `astro-doc-code/src/layouts/issues/default/guide.ts` is a TypeScript module holding a static *issue-anatomy* guide (a thin legend of what each section is), rendered on every issue's **Guide** panel. It's the framework-bundled, plugin-independent twin of the `documentation-guide` skill's guide — present at every build/deploy even when the plugin isn't installed. Keep the two in sync: the skill carries the full manual, `guide.ts` carries the map.
+
 **Tracker mental model.** This tracker is comprehensive memory of thought-work for AI-augmented development. Each issue is a folder capturing one coherent unit of *thinking + execution* (`issue.md` + `notes/` → `subtasks/` → `agent-log/` → `comments/`). Ordering is `priority desc, updated desc`; `updated` is derived from git history (most recent commit touching anything under the folder). `created` comes from the folder slug. Best-practices: one `component` per issue (multi is allowed for genuinely cross-cutting work, hint-warned by validator); AI-handoff-bound issues should declare ≥1 subtask. **Don't add scheduling, release-bucket, or single-type fields without an explicit policy reversal** — they rot under continuous AI-driven shipping. Full framing: `default-docs/data/user-guide/19_issues/01_overview.md` and `02_design-philosophy.md`.
 
 **2 slash commands** for project-level scaffolding:

@@ -14,7 +14,7 @@ import SubDocMetaSidebar from './parts/detail/SubDocMetaSidebar.astro';
 import MetaPanel from './parts/shared/MetaPanel.astro';
 import { allStateIcons } from './server/state-icon';
 import { extractToc } from './server/toc';
-import { sortSubtasksByState, terminalStartIndex, TERMINAL, logPanelKey, notePanelKey, brainstormPanelKey, subtaskPanelKey } from './server/helpers';
+import { sortSubtasksByState, terminalStartIndex, TERMINAL, logPanelKey, notePanelKey, brainstormPanelKey, agentMemoryPanelKey, subtaskPanelKey } from './server/helpers';
 import type { Issue, IssuesVocabulary, IssueSubtask, IssueNote, IssueAgentLog } from '@loaders/issues';
 import './styles/detail.css';
 
@@ -26,6 +26,7 @@ interface Props {
     | { kind: 'subtask'; subtask: IssueSubtask }
     | { kind: 'note'; note: IssueNote }
     | { kind: 'brainstorm'; brainstorm: IssueNote }
+    | { kind: 'memory'; memory: IssueNote }
     | { kind: 'log'; log: IssueAgentLog };
 }
 
@@ -49,6 +50,9 @@ if (subDoc.kind === 'subtask') {
 } else if (subDoc.kind === 'brainstorm') {
   activeKey = brainstormPanelKey(subDoc.brainstorm);
   toc = extractToc(subDoc.brainstorm.html);
+} else if (subDoc.kind === 'memory') {
+  activeKey = agentMemoryPanelKey(subDoc.memory);
+  toc = extractToc(subDoc.memory.html);
 } else {
   activeKey = logPanelKey(subDoc.log);
   toc = extractToc(subDoc.log.html);
@@ -81,6 +85,9 @@ if (subDoc.kind === 'subtask') {
     )}
     {subDoc.kind === 'brainstorm' && (
       <NotePage note={subDoc.brainstorm} standalone prefix="brainstorm" />
+    )}
+    {subDoc.kind === 'memory' && (
+      <NotePage note={subDoc.memory} standalone prefix="agent-memory" />
     )}
     {subDoc.kind === 'log' && (
       <AgentLogPage log={subDoc.log} standalone />

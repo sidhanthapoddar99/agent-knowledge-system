@@ -33,6 +33,10 @@ export function legacyHashRedirect(hash: string): string | null {
     const segments = hash.slice('brainstorm-'.length).split('--');
     return `${base}/brainstorm/${segments.join('/')}${location.search}`;
   }
+  if (hash.startsWith('memory-')) {
+    const segments = hash.slice('memory-'.length).split('--');
+    return `${base}/agent-memory/${segments.join('/')}${location.search}`;
+  }
   if (hash.startsWith('log-')) {
     const segments = hash.slice('log-'.length).split('--');
     return `${base}/agent-log/${segments.join('/')}${location.search}`;

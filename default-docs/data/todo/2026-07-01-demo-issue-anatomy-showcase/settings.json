@@ -6,5 +6,6 @@
   "component": ["layout-issues"],
   "labels": ["feature", "docs"],
   "author": "sidhantha",
-  "assignees": ["sidhantha", "claude"]
+  "assignees": ["sidhantha", "claude"],
+  "agentLogKinds": { "ex": { "name": "experiment", "icon": "flask" } }
 }

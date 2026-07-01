@@ -12,10 +12,12 @@ It intentionally exercises:
   file to test label-only rendering.
 - **Subtasks** — prefixed, a nested `02_build/` group with its own `settings.json`, and
   an un-prefixed one.
-- **Agent Logs** — one activity folder per **kind** (`loop`, `audit`, `refactor`,
-  `workflow`, `fast-iteration`), each with a `settings.json`, goal file, and milestone
-  files carrying `iteration` frontmatter (so the `#N` badge shows) — plus a trivial flat
-  `101_quick-fix.md` one-off.
+- **Agent Logs** — one **activity folder** per kind, kind **encoded in the folder name**
+  (`NNN_<code>_<name>/`: `lp` / `au` / `rf` / `it` / `wf`, plus a custom `ex` from
+  `settings.json` and an **undefined** `nt` to show the fallback). Each folder holds optional
+  pinned meta files (`00_goal` / `01_summary` / `02_task_list`) and `MNN_` milestones with
+  `iteration` frontmatter (so the `#N` badge shows) — including a deliberately **failed** one
+  and a colour-tinted one. (Also mixes 3-digit prefixes `010`–`060` with a 2-digit `70`.)
 - **Agent Memory** — flat topic files *and* a `01_context/` folder.
 - **Comments** — a flat evolution log (opened → scope → handoff).
 

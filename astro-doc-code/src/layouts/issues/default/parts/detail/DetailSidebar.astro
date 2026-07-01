@@ -202,7 +202,7 @@ const tracker = baseUrl.replace(/^\/+/, '').replace(/\/+$/, '');
       {issue.agentLogs.length === 0 ? (
         <div class="issue-sidebar__items"><div class="issue-sidebar__empty">No agent-log entries</div></div>
       ) : (
-        <SubdocTree tree={logTree} kind="log" baseUrl={baseUrl} issueId={issue.id} activeKey={activeKey} />
+        <SubdocTree tree={logTree} kind="log" baseUrl={baseUrl} issueId={issue.id} activeKey={activeKey} kindMap={issue.agentLogKinds} />
       )}
     </details>
 

@@ -147,6 +147,23 @@ export interface SubtaskGroupMeta {
   title: string;
 }
 
+/** An agent-log kind: a display name plus an icon-name from the symbol palette
+ *  (see `layouts/issues/default/server/agent-log-icons.ts`). */
+export interface AgentLogKind {
+  name: string;
+  icon: string;
+}
+
+/** Framework-default agent-log kinds (code → {name, icon}). An issue's
+ *  `settings.json` `agentLogKinds` merges on top (adds / overrides). */
+export const DEFAULT_AGENT_LOG_KINDS: Record<string, AgentLogKind> = {
+  lp: { name: 'loop', icon: 'repeat' },
+  au: { name: 'audit', icon: 'search' },
+  rf: { name: 'refactor', icon: 'wrench' },
+  it: { name: 'iteration', icon: 'refresh-cw' },
+  wf: { name: 'workflow', icon: 'git-branch' },
+};
+
 export interface Issue {
   /** Folder name, e.g. "2026-04-17-editor-performance" — the canonical id */
   id: string;
@@ -183,6 +200,9 @@ export interface Issue {
   agentMemory: IssueNote[];
   /** Agent logs — iterative AI execution notes under agent-log/ */
   agentLogs: IssueAgentLog[];
+  /** Effective agent-log kind map (code → {name, icon}): framework defaults
+   *  merged with the issue's settings.json `agentLogKinds`. */
+  agentLogKinds: Record<string, AgentLogKind>;
 }
 
 export interface IssuesVocabularyField {
@@ -423,6 +443,27 @@ async function loadIssueFolder(folderPath: string, dataPath: string): Promise<Is
   // Agent logs: same 2-level shape as notes; sequence resets per leaf folder
   const agentLogs = await readAgentLogs(path.join(folderPath, 'agent-log'), dataPath, id);
 
+  // Effective agent-log kind map: framework defaults + this issue's overrides.
+  // Each override is `"code": "name"` (shorthand) or `"code": { name, icon }`.
+  // Only 2-letter codes with a non-empty name are accepted; icon falls back to
+  // any existing default icon for that code, else the palette's generic icon.
+  const agentLogKinds: Record<string, AgentLogKind> = { ...DEFAULT_AGENT_LOG_KINDS };
+  const rawKinds = (meta as { agentLogKinds?: unknown }).agentLogKinds;
+  if (rawKinds && typeof rawKinds === 'object') {
+    for (const [code, val] of Object.entries(rawKinds as Record<string, unknown>)) {
+      if (!/^[a-z]{2}$/.test(code)) continue;
+      const existing = agentLogKinds[code];
+      if (typeof val === 'string' && val.length > 0) {
+        agentLogKinds[code] = { name: val, icon: existing?.icon ?? 'tag' };
+      } else if (val && typeof val === 'object') {
+        const v = val as { name?: unknown; icon?: unknown };
+        const name = typeof v.name === 'string' && v.name.length > 0 ? v.name : existing?.name;
+        const icon = typeof v.icon === 'string' && v.icon.length > 0 ? v.icon : existing?.icon ?? 'tag';
+        if (name) agentLogKinds[code] = { name, icon };
+      }
+    }
+  }
+
   // Warn on stray root-level *.md (users upgrading from the old layout)
   const stray = fs
     .readdirSync(folderPath, { withFileTypes: true })
@@ -458,6 +499,7 @@ async function loadIssueFolder(folderPath: string, dataPath: string): Promise<Is
     brainstorm,
     agentMemory,
     agentLogs,
+    agentLogKinds,
   };
 }
 

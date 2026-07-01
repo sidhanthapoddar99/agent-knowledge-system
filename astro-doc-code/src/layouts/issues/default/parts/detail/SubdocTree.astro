@@ -7,12 +7,13 @@
  * The depth cap (2) is enforced upstream by the loader, so this component
  * doesn't need a guard — it stops naturally when `tree.groups` is empty.
  */
-import type { IssueAgentLog, IssueNote } from '@loaders/issues';
+import type { AgentLogKind, IssueAgentLog, IssueNote } from '@loaders/issues';
 import {
   logPanelKey, notePanelKey, brainstormPanelKey, agentMemoryPanelKey,
   noteUrl, logUrl, brainstormUrl, agentMemoryUrl, pad,
   type GroupedTree,
 } from '../../server/helpers';
+import { agentLogIcon } from '../../server/agent-log-icons';
 import { parseOrderPrefixLoose, stripOrderPrefixLoose } from '@parsers/core/order-prefix';
 
 type SubdocTree = GroupedTree<IssueNote> | GroupedTree<IssueAgentLog>;
@@ -27,9 +28,25 @@ interface Props {
   nested?: boolean;
   /** Folder-path prefix for the collapse-cache key (e.g. `notes`, `notes/design`). */
   pathPrefix?: string;
+  /** Agent-log kind code → {name, icon} (effective map). Only used for `kind==='log'`. */
+  kindMap?: Record<string, AgentLogKind>;
 }
 
-const { tree, kind, baseUrl, issueId, activeKey, nested = false, pathPrefix = (kind === 'note' ? 'notes' : kind === 'brainstorm' ? 'brainstorm' : kind === 'memory' ? 'agent-memory' : 'agent-log') } = Astro.props;
+const { tree, kind, baseUrl, issueId, activeKey, nested = false, kindMap = {}, pathPrefix = (kind === 'note' ? 'notes' : kind === 'brainstorm' ? 'brainstorm' : kind === 'memory' ? 'agent-memory' : 'agent-log') } = Astro.props;
+
+/** For an agent-log activity folder `NNN_<code>_<name>`: after stripping the order
+ *  prefix, if the remainder starts with a known two-letter kind code + `_`, split
+ *  it into { kind: <AgentLogKind>, label: <clean name> }. Otherwise no kind. */
+function logFolderParts(groupName: string): { kind: AgentLogKind | null; label: string } {
+  if (kind === 'log') {
+    const rest = stripOrderPrefixLoose(groupName);
+    const m = rest.match(/^([a-z]{2})_(.+)$/);
+    if (m && kindMap[m[1]]) {
+      return { kind: kindMap[m[1]], label: m[2].replace(/[-_]/g, ' ').trim() };
+    }
+  }
+  return { kind: null, label: cleanLabel(groupName) };
+}
 
 /** Human-readable label: prefix stripped, separators → spaces. Shared by files
  *  and folders, all kinds. */
@@ -47,8 +64,10 @@ function prefixNum(name: string): string {
  *  is {@link prefixNum}; agent-log layers a precedence override on top (its
  *  `#<iteration>` wins when set). */
 function leafNum(item: IssueNote | IssueAgentLog): string {
-  if (kind === 'log' && (item as IssueAgentLog).iteration !== null) {
-    return `#${(item as IssueAgentLog).iteration}`;
+  if (kind === 'log') {
+    // Milestones show `#<iteration>`; meta files (`0NN`, no iteration) are badge-less.
+    const it = (item as IssueAgentLog).iteration;
+    return it !== null ? `#${it}` : '';
   }
   return prefixNum(item.name);
 }
@@ -163,13 +182,21 @@ entries.sort((a, b) => {
     const child = entry.child!;
     const open = containsActive(child);
     const childPath = `${pathPrefix}/${groupName}`;
+    const { kind: groupKind, label: groupLabel } = logFolderParts(groupName);
     const groupNum = prefixNum(groupName);
-    const groupLabel = cleanLabel(groupName);
+    // Row: `NN  <symbol>  <name>  …  <count>` — numeric prefix, then the kind symbol
+    // up front (fast custom tooltip = name), the clean name, and the file count on the
+    // right. No recognised kind → no symbol, name keeps the code.
     return (
       <details class="issue-sidebar__subgroup" data-collapse-key={childPath} open={open ? true : undefined}>
         <summary class="issue-sidebar__subgroup-heading" title={groupLabel}>
           <svg class="issue-sidebar__chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
           {groupNum && <span class="issue-sidebar__num">{groupNum}</span>}
+          {groupKind && (
+            <span class="issue-sidebar__kind" data-tip={groupKind.name} aria-label={groupKind.name}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={agentLogIcon(groupKind.icon)} />
+            </span>
+          )}
           <span class="issue-sidebar__subgroup-name">{groupLabel}</span>
           <span class="issue-sidebar__heading-count">{descendantCount(child)}</span>
         </summary>
@@ -181,6 +208,7 @@ entries.sort((a, b) => {
           activeKey={activeKey}
           nested={true}
           pathPrefix={childPath}
+          kindMap={kindMap}
         />
       </details>
     );

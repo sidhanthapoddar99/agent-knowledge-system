@@ -5,13 +5,10 @@ status: success
 date: 2026-07-01
 ---
 # Milestone — generalized note reader
-
 ## Goal
 Read brainstorm + agent-memory with the same shape as notes.
-
 ## Result
-`readNotes` → `readFreeformDocs(dir, dataPath, issueId, subName)`; both new sections
-call it. 2-level walk reused. Build green.
-
+`readNotes` → `readFreeformDocs(dir, dataPath, issueId, subName)`; 2-level walk reused.
+Build green.
 ## Next
 Wire routing.

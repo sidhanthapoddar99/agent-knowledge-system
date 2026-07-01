@@ -51,6 +51,24 @@ per change as it's completed.
       icon now sits once on each section header (Notes / Brainstorm / Agent log / Agent
       memory) instead of on every row — more text width per item. The optional per-item
       `color` frontmatter now tints the label instead of the (removed) icon.
+- [x] **Agent-log kind badge implemented (full stack).** Loader reads `agentLogKinds`
+      (issue `settings.json`) merged over framework defaults → `Issue.agentLogKinds`; kinds
+      are now `{ name, icon }`. Folder rows render `NN  <symbol>  <name>  …  <count>`: numeric
+      prefix, kind **symbol up front**, code-stripped name, file count on the right (SVG from a
+      curated palette, `server/agent-log-icons.ts`, ~15–20 icons; **fast CSS tooltip** = name,
+      replacing the slow native `title`). settings.json accepts
+      `{ "ex": { "name": "experiment", "icon": "flask" } }` or shorthand string. Unknown code
+      → no symbol, name keeps the code, count shown. Meta files (`0NN`) badge-less; milestones
+      keep `#<iteration>`. Flat one-off dropped (folders-only norm; flat = backward-compat).
+      Codes finalized: `rf`=refactor, `it`=iteration. *(Still todo: the **Guide** should list
+      the symbol → meaning legend.)*
+- [x] **Demo fixture migrated to the new agent-log nomenclature.**
+      `NNN_<code>_<name>/` activity folders (`lp`/`au`/`rf`/`fi`/`wf` + a custom `ex`),
+      `settings.json{kind}` dropped, pinned meta files (`00_goal`/`01_summary`/
+      `02_task_list`) + `MNN_` milestones. In-folder order verified: meta first, then
+      `#iteration` milestones. `issue.md` + `glossary.md` updated (glossary now has an
+      "Agent-log kinds" section defining the custom `ex` code). Note: the folder-label
+      still shows the raw `<code>_` until `cleanLabel` is extended to strip it (subtask 03).
 - [x] **Glossary panel (per-issue, optional).** Reads an optional root-level
       `glossary.md` (`issue.glossaryHtml`, null when absent; excluded from the stray-md
       warning + added to the cache signature). Renders as a **Glossary** panel in the

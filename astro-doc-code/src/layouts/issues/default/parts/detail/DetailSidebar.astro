@@ -129,6 +129,20 @@ const tracker = baseUrl.replace(/^\/+/, '').replace(/\/+$/, '');
             <span class="issue-sidebar__label">Guide</span>
           </a>
         )}
+        {isOverviewMode ? (
+          <button
+            type="button"
+            class={`issue-sidebar__item ${activeKey === 'glossary' ? 'is-active' : ''}`}
+            data-panel="glossary"
+            aria-current={activeKey === 'glossary' ? 'page' : undefined}
+          >
+            <span class="issue-sidebar__label">Glossary</span>
+          </button>
+        ) : (
+          <a href={`${overviewHref}#glossary`} class="issue-sidebar__item" data-panel="glossary">
+            <span class="issue-sidebar__label">Glossary</span>
+          </a>
+        )}
       </div>
     </details>
 

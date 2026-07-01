@@ -51,6 +51,13 @@ per change as it's completed.
       icon now sits once on each section header (Notes / Brainstorm / Agent log / Agent
       memory) instead of on every row — more text width per item. The optional per-item
       `color` frontmatter now tints the label instead of the (removed) icon.
+- [x] **Glossary panel (per-issue, optional).** Reads an optional root-level
+      `glossary.md` (`issue.glossaryHtml`, null when absent; excluded from the stray-md
+      warning + added to the cache signature). Renders as a **Glossary** panel in the
+      "This issue" group right after Guide — populated when the file exists, else a
+      themed empty state prompting the author to add one. No new routing (panel, like
+      Guide/Comments); hash-addressable via `knownPanel`. Home for per-issue semantics
+      incl. what any sidebar `color:` tints mean. Demo fixture ships a populated one.
 - [x] **Agent-log two-bucket ordering.** At each tree level, agent-log entries split
       into (1) no-`iteration` files/folders — first, sorted by filename — then
       (2) `iteration` files, sorted by iteration number (filename tie-break). The

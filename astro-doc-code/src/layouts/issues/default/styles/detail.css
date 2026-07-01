@@ -514,6 +514,26 @@
 .issue-doc__body h2:first-child,
 .issue-doc__body h3:first-child { margin-top: 0; }
 
+.issue-doc__empty {
+  padding: var(--spacing-xl);
+  border: 1px dashed var(--color-border-default);
+  border-radius: var(--border-radius-lg);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  font-size: var(--ui-text-body);
+  max-width: 44rem;
+}
+.issue-doc__empty p { margin: 0 0 var(--spacing-sm); }
+.issue-doc__empty p:last-child { margin-bottom: 0; }
+.issue-doc__empty-title {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+.issue-doc__empty code {
+  font-family: var(--font-family-mono);
+  font-size: var(--content-code);
+}
+
 .issue-subtask-page__header {
   display: flex;
   align-items: center;

@@ -163,6 +163,10 @@ export interface Issue {
   meta: IssueMetadata;
   /** Rendered HTML of issue.md */
   html: string;
+  /** Rendered HTML of the optional per-issue `glossary.md`, or null when the
+   *  file is absent. Powers the Glossary panel (semantics / key terms / any
+   *  colour conventions this issue uses). */
+  glossaryHtml: string | null;
   /** Sorted comments (by filename) */
   comments: IssueComment[];
   /** Subtasks (sorted by filename, recursive — leaves at all depths) */
@@ -253,6 +257,7 @@ function computeSignature(dataPath: string): number {
     sig += statMtime(folder);
     sig += statMtime(path.join(folder, 'settings.json'));
     sig += statMtime(path.join(folder, 'issue.md'));
+    sig += statMtime(path.join(folder, 'glossary.md'));
 
     for (const sub of ['comments', 'subtasks', 'notes', 'brainstorm', 'agent-memory', 'agent-log']) {
       const subDir = path.join(folder, sub);
@@ -386,6 +391,13 @@ async function loadIssueFolder(folderPath: string, dataPath: string): Promise<Is
   const issuePath = path.join(folderPath, 'issue.md');
   const html = fs.existsSync(issuePath) ? await renderMarkdown(issuePath, dataPath) : '';
 
+  // Optional per-issue glossary — a single root-level glossary.md. Null when
+  // absent (the panel then shows an empty state prompting the author to add one).
+  const glossaryPath = path.join(folderPath, 'glossary.md');
+  const glossaryHtml = fs.existsSync(glossaryPath)
+    ? await renderMarkdown(glossaryPath, dataPath)
+    : null;
+
   // Comments
   const commentsDir = path.join(folderPath, 'comments');
   const comments = readComments(commentsDir);
@@ -414,7 +426,7 @@ async function loadIssueFolder(folderPath: string, dataPath: string): Promise<Is
   // Warn on stray root-level *.md (users upgrading from the old layout)
   const stray = fs
     .readdirSync(folderPath, { withFileTypes: true })
-    .filter((e) => e.isFile() && e.name.endsWith('.md') && e.name !== 'issue.md')
+    .filter((e) => e.isFile() && e.name.endsWith('.md') && e.name !== 'issue.md' && e.name !== 'glossary.md')
     .map((e) => e.name);
   if (stray.length) {
     console.warn(
@@ -438,6 +450,7 @@ async function loadIssueFolder(folderPath: string, dataPath: string): Promise<Is
       component: normalizeComponent((meta as { component?: unknown }).component),
     },
     html,
+    glossaryHtml,
     comments,
     subtasks,
     subtaskGroups,

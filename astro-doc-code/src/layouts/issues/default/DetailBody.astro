@@ -82,6 +82,23 @@ const sortedSubtaskDocs = sortedSubtasks.map((s) => {
       </div>
     </section>
 
+    <section class="issue-panel" data-panel="glossary" role="tabpanel" hidden>
+      {issue.glossaryHtml ? (
+        <div class="issue-doc">
+          <div class="issue-doc__body markdown-content" set:html={issue.glossaryHtml} />
+        </div>
+      ) : (
+        <div class="issue-doc__empty">
+          <p class="issue-doc__empty-title">No glossary yet</p>
+          <p>
+            This issue has no <code>glossary.md</code>. Add one at the issue-folder root to
+            record its key terms, semantics, and any conventions it relies on — for example
+            what the sidebar <strong>colours</strong> mean in this issue.
+          </p>
+        </div>
+      )}
+    </section>
+
     <Comprehensive
       sortedSubtaskDocs={sortedSubtaskDocs}
       subtaskReview={subtaskReview}

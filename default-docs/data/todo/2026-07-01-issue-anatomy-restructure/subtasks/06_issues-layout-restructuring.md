@@ -30,7 +30,8 @@ per change as it's completed.
       (`resolveSubDoc` + static-paths), sidebar section (ordered before Notes, lightbulb
       icon), subdoc pages at `/<issue>/brainstorm/<name>` (rendered via `NotePage` with
       a `prefix` so the path label/panel-key are namespaced correctly). Name decided:
-      **Brainstorm** (see the issue's `brainstorm/01_section-naming.md`).
+      **Brainstorm** (naming deliberation since folded into
+      `brainstorm/01_overall-structure/04_brainstorm.md`).
 - [x] **Agent Memory section added (full stack).** Same mirror as Brainstorm
       (`agent-memory/`, `memory-` panel-key prefix, sidebar section after Agent log,
       database icon, subdoc pages at `/<issue>/agent-memory/<name>`).

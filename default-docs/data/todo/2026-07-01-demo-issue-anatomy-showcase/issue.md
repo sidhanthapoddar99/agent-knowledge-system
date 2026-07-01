@@ -6,8 +6,10 @@
 
 It intentionally exercises:
 
-- **Brainstorm** — a numbered folder of options *and* a flat open-questions file, with a
-  second level of nesting.
+- **Brainstorm** — a numbered folder of options (plain names — the kind word is optional),
+  flat files carrying **full-word kinds** (`02_discuss_…`, `03_research_…`), a second level
+  of nesting, and one **resolved** brainstorm with a `**Resolved →**` graduation marker
+  pointing into Notes.
 - **Notes** — decided architecture, a `02_reference/` folder, and one **un-prefixed**
   file to test label-only rendering.
 - **Subtasks** — prefixed, a nested `02_build/` group with its own `settings.json`, and

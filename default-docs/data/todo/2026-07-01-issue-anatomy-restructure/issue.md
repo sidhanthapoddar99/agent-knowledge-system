@@ -10,9 +10,9 @@ Brainstorm  →  Notes  →  Subtasks  →  Agent-log (loops)  →  update Subta
   do)            decided)                 milestone)             output appears)
 ```
 
-The full design is captured in **`notes/01_issue-anatomy-guide.md`** (working draft).
-It stays in `notes/` as the finalized-output target; the deliberation that produced
-it belongs in `brainstorm/`.
+The full design lives in **`brainstorm/01_overall-structure/`** (one file per section —
+the working surface). When it stabilizes it graduates into `notes/` as the finalized
+issue-anatomy guide.
 
 ## What changes
 
@@ -23,8 +23,9 @@ it belongs in `brainstorm/`.
 - **Agent Memory** — new sibling section: AI-mutable working state for the issue.
 - **Comments** — kept **lean and flat** (no threading, no substructure): an evolution
   log of the issue, not a forum.
-- **Agent Logs** — flat `NNN_<name>/` activity folders, `kind` in per-folder
-  `settings.json`, skill-guided internals, milestone-not-step logging.
+- **Agent Logs** — `NNN_<code>_<name>/` activity folders (kind code in the folder
+  name, mapped via issue-level `agentLogKinds`), pinned meta files + `MNN_` milestones,
+  milestone-not-step logging.
 - `notes/`, `subtasks/`, and `brainstorm/` may all use the same `NNN_<name>/`
   folder-with-files pattern as agent-log (loader already walks 2 levels).
 
@@ -42,7 +43,9 @@ as a `000_` prefix. This realigns each section to a single owner + lifecycle.
 - "Discussion": **gone**, folded into Brainstorm.
 - Cancelled migration-direction issues: **not merged** — stay separate, linked via
   `Related:`.
-- Agent-log activity **kind**: per-folder `settings.json` field.
+- Agent-log activity **kind**: 2-letter code in the folder name
+  (`NNN_<code>_<name>/`), code → `{name, icon}` mapping in the issue's
+  `settings.json` (`agentLogKinds`, merged over framework defaults).
 
 ## Related
 

@@ -164,8 +164,8 @@
 .issue-sidebar__subgroup-heading {
   display: flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.3rem 0.5rem;
+  gap: 0.3rem;
+  padding: 0.2rem 0.2rem;
   font-size: var(--ui-text-micro);
   color: var(--color-text-muted);
   font-weight: 600;

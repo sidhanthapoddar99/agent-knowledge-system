@@ -1,0 +1,10 @@
+{
+  "title": "Demo: issue anatomy showcase (fixture)",
+  "description": "A stress-test fixture exercising every issue section at maximum variety — multi-tier notes & brainstorm, agent-memory with folders, and all agent-log kinds (loop / audit / refactor / workflow / fast-iteration) as NNN_<name>/ activity folders, plus a trivial flat one-off. Used to eyeball the issues layout with everything populated. Not real work.",
+  "status": "open",
+  "priority": "low",
+  "component": ["layout-issues"],
+  "labels": ["feature", "docs"],
+  "author": "sidhantha",
+  "assignees": ["sidhantha", "claude"]
+}

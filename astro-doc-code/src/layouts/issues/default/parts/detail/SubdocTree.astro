@@ -103,7 +103,39 @@ const entries: SubdocEntry[] = [
   ...tree.files.map((item): SubdocEntry => ({ kind: 'leaf', sortName: item.name, item })),
   ...Array.from(tree.groups, ([groupName, child]): SubdocEntry => ({ kind: 'group', sortName: groupName, groupName, child })),
 ];
-entries.sort((a, b) => a.sortName.localeCompare(b.sortName));
+
+/** Frontmatter `iteration` for an entry, or null. Only leaf agent-log files
+ *  carry one — folders and every other kind are always null. This is what
+ *  splits agent-log entries into the two sort buckets below. */
+function entryIteration(entry: SubdocEntry): number | null {
+  if (kind !== 'log' || entry.kind !== 'leaf') return null;
+  return (entry.item as IssueAgentLog).iteration;
+}
+
+/**
+ * Ordering.
+ *
+ * Non-log sections sort purely by on-disk name (numbered folders slot in among
+ * numbered files).
+ *
+ * Agent-log uses a two-bucket rule at each level, mirroring how the badge is
+ * shown: the `#<iteration>` badge takes precedence over the filename prefix for
+ * *display*, and iteration likewise governs *order* — but only within its own
+ * bucket, so ordering never depends on the filename prefix for iteration files:
+ *   1. entries with no `iteration` (goal / task-list / summary, and folders)
+ *      come first, sorted by filename;
+ *   2. entries with an `iteration` come after, sorted by iteration number
+ *      (filename as the tie-break).
+ */
+entries.sort((a, b) => {
+  if (kind === 'log') {
+    const ai = entryIteration(a);
+    const bi = entryIteration(b);
+    if ((ai === null) !== (bi === null)) return ai === null ? -1 : 1;
+    if (ai !== null && bi !== null && ai !== bi) return ai - bi;
+  }
+  return a.sortName.localeCompare(b.sortName);
+});
 ---
 
 <div class={`issue-sidebar__items ${nested ? 'issue-sidebar__items--nested' : ''}`}>

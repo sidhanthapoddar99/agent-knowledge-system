@@ -51,3 +51,10 @@ per change as it's completed.
       icon now sits once on each section header (Notes / Brainstorm / Agent log / Agent
       memory) instead of on every row — more text width per item. The optional per-item
       `color` frontmatter now tints the label instead of the (removed) icon.
+- [x] **Agent-log two-bucket ordering.** At each tree level, agent-log entries split
+      into (1) no-`iteration` files/folders — first, sorted by filename — then
+      (2) `iteration` files, sorted by iteration number (filename tie-break). The
+      `#<iteration>` badge takes precedence over the filename prefix for *both* display
+      and order, so a `101_`-prefixed file with `iteration: 1` shows `#1` and sorts as 1.
+      Non-log sections keep pure filename sort. (Fixture:
+      `2026-07-01-demo-issue-anatomy-showcase`.)

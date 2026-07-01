@@ -41,3 +41,13 @@ per change as it's completed.
 - [x] **Dropped the strict lifecycle ordering** from the rendered guide + design note —
       sections are organized by *what they hold*, used as the work needs, no required
       order.
+- [x] **Subdoc labels formatted like subtasks.** notes / brainstorm / agent-memory /
+      agent-log now render a `__num` badge (padded `NN` prefix) + a clean label
+      (prefix stripped, separators → spaces, no `.md`) for both files **and** folders,
+      instead of the raw filename. One shared parser (`prefixNum` + `cleanLabel`) with
+      agent-log's `#<iteration>` as a precedence override. Unprefixed files (e.g.
+      `gotchas.md`) show just the label.
+- [x] **Kind icon moved to the section heading.** The file/lightbulb/clock/database
+      icon now sits once on each section header (Notes / Brainstorm / Agent log / Agent
+      memory) instead of on every row — more text width per item. The optional per-item
+      `color` frontmatter now tints the label instead of the (removed) icon.

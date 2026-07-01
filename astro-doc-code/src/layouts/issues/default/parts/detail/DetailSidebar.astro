@@ -135,6 +135,7 @@ const tracker = baseUrl.replace(/^\/+/, '').replace(/\/+$/, '');
     <details class="issue-sidebar__section" data-collapse-key="brainstorm" open={activeBrainstormGroupOpen ? true : undefined}>
       <summary class="issue-sidebar__heading">
         <svg class="issue-sidebar__chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
+        <span class="issue-sidebar__heading-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1.5a4.5 4.5 0 0 0-3 7.8V11h6V9.3a4.5 4.5 0 0 0-3-7.8z"/><path d="M6 13h4M6.5 14.5h3"/></svg></span>
         <span>Brainstorm</span>
         {issue.brainstorm.length > 0 && <span class="issue-sidebar__heading-count">{issue.brainstorm.length}</span>}
       </summary>
@@ -148,6 +149,7 @@ const tracker = baseUrl.replace(/^\/+/, '').replace(/\/+$/, '');
     <details class="issue-sidebar__section" data-collapse-key="notes" open={activeNotesGroupOpen ? true : undefined}>
       <summary class="issue-sidebar__heading">
         <svg class="issue-sidebar__chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
+        <span class="issue-sidebar__heading-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 1h7l3 3v11H3V1z"/><path d="M10 1v3h3"/></svg></span>
         <span>Notes</span>
         {issue.notes.length > 0 && <span class="issue-sidebar__heading-count">{issue.notes.length}</span>}
       </summary>
@@ -179,6 +181,7 @@ const tracker = baseUrl.replace(/^\/+/, '').replace(/\/+$/, '');
     <details class="issue-sidebar__section" data-collapse-key="agent-log" open={activeLogGroupOpen ? true : undefined}>
       <summary class="issue-sidebar__heading">
         <svg class="issue-sidebar__chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
+        <span class="issue-sidebar__heading-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 4v4l3 2"/></svg></span>
         <span>Agent log</span>
         {issue.agentLogs.length > 0 && <span class="issue-sidebar__heading-count">{issue.agentLogs.length}</span>}
       </summary>
@@ -192,6 +195,7 @@ const tracker = baseUrl.replace(/^\/+/, '').replace(/\/+$/, '');
     <details class="issue-sidebar__section" data-collapse-key="agent-memory" open={activeMemoryGroupOpen ? true : undefined}>
       <summary class="issue-sidebar__heading">
         <svg class="issue-sidebar__chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
+        <span class="issue-sidebar__heading-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="8" cy="4" rx="5" ry="2"/><path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4"/><path d="M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/></svg></span>
         <span>Agent memory</span>
         {issue.agentMemory.length > 0 && <span class="issue-sidebar__heading-count">{issue.agentMemory.length}</span>}
       </summary>

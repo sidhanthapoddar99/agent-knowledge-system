@@ -10,10 +10,10 @@
 import type { IssueAgentLog, IssueNote } from '@loaders/issues';
 import {
   logPanelKey, notePanelKey, brainstormPanelKey, agentMemoryPanelKey,
-  noteUrl, logUrl, brainstormUrl, agentMemoryUrl,
+  noteUrl, logUrl, brainstormUrl, agentMemoryUrl, pad,
   type GroupedTree,
 } from '../../server/helpers';
-import { stripOrderPrefixLoose } from '@parsers/core/order-prefix';
+import { parseOrderPrefixLoose, stripOrderPrefixLoose } from '@parsers/core/order-prefix';
 
 type SubdocTree = GroupedTree<IssueNote> | GroupedTree<IssueAgentLog>;
 
@@ -31,13 +31,30 @@ interface Props {
 
 const { tree, kind, baseUrl, issueId, activeKey, nested = false, pathPrefix = (kind === 'note' ? 'notes' : kind === 'brainstorm' ? 'brainstorm' : kind === 'memory' ? 'agent-memory' : 'agent-log') } = Astro.props;
 
-function leafLabel(item: IssueNote | IssueAgentLog): string {
-  if (kind === 'log') {
-    const log = item as IssueAgentLog;
-    const stem = stripOrderPrefixLoose(log.name).replace(/[-_]/g, ' ');
-    return log.iteration !== null ? `#${log.iteration} ${stem}` : stem;
+/** Human-readable label: prefix stripped, separators → spaces. Shared by files
+ *  and folders, all kinds. */
+function cleanLabel(name: string): string {
+  return stripOrderPrefixLoose(name).replace(/[-_]/g, ' ').trim() || name;
+}
+
+/** Common ordering badge — the padded `NN` prefix, same rule for every kind and
+ *  for both files and folders. Empty string when the name has no prefix. */
+function prefixNum(name: string): string {
+  return pad(parseOrderPrefixLoose(name).position);
+}
+
+/** Leading badge for a leaf — mirrors the subtask `__num` treatment. Common rule
+ *  is {@link prefixNum}; agent-log layers a precedence override on top (its
+ *  `#<iteration>` wins when set). */
+function leafNum(item: IssueNote | IssueAgentLog): string {
+  if (kind === 'log' && (item as IssueAgentLog).iteration !== null) {
+    return `#${(item as IssueAgentLog).iteration}`;
   }
-  return `${item.name}.md`;
+  return prefixNum(item.name);
+}
+
+function leafLabel(item: IssueNote | IssueAgentLog): string {
+  return cleanLabel(item.name);
 }
 
 function leafKey(item: IssueNote | IssueAgentLog): string {
@@ -96,6 +113,7 @@ entries.sort((a, b) => a.sortName.localeCompare(b.sortName));
       const key = leafKey(item);
       const isActive = activeKey === key;
       const label = leafLabel(item);
+      const num = leafNum(item);
       const color = (item as { color?: string | null }).color ?? null;
       return (
         <a
@@ -104,30 +122,8 @@ entries.sort((a, b) => a.sortName.localeCompare(b.sortName));
           aria-current={isActive ? 'page' : undefined}
           title={label}
         >
-          <span
-            class="issue-sidebar__icon"
-            aria-hidden="true"
-            style={color ? `color: ${color}` : undefined}
-          >
-            {kind === 'log' ? (
-              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-                <circle cx="8" cy="8" r="6"/><path d="M8 4v4l3 2"/>
-              </svg>
-            ) : kind === 'brainstorm' ? (
-              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M8 1.5a4.5 4.5 0 0 0-3 7.8V11h6V9.3a4.5 4.5 0 0 0-3-7.8z"/><path d="M6 13h4M6.5 14.5h3"/>
-              </svg>
-            ) : kind === 'memory' ? (
-              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-                <ellipse cx="8" cy="4" rx="5" ry="2"/><path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4"/><path d="M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
-              </svg>
-            ) : (
-              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M3 1h7l3 3v11H3V1z"/><path d="M10 1v3h3"/>
-              </svg>
-            )}
-          </span>
-          <span class="issue-sidebar__label">{label}</span>
+          {num && <span class="issue-sidebar__num">{num}</span>}
+          <span class="issue-sidebar__label" style={color ? `color: ${color}` : undefined}>{label}</span>
         </a>
       );
     }
@@ -135,11 +131,14 @@ entries.sort((a, b) => a.sortName.localeCompare(b.sortName));
     const child = entry.child!;
     const open = containsActive(child);
     const childPath = `${pathPrefix}/${groupName}`;
+    const groupNum = prefixNum(groupName);
+    const groupLabel = cleanLabel(groupName);
     return (
       <details class="issue-sidebar__subgroup" data-collapse-key={childPath} open={open ? true : undefined}>
-        <summary class="issue-sidebar__subgroup-heading" title={groupName}>
+        <summary class="issue-sidebar__subgroup-heading" title={groupLabel}>
           <svg class="issue-sidebar__chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
-          <span class="issue-sidebar__subgroup-name">{groupName}</span>
+          {groupNum && <span class="issue-sidebar__num">{groupNum}</span>}
+          <span class="issue-sidebar__subgroup-name">{groupLabel}</span>
           <span class="issue-sidebar__heading-count">{descendantCount(child)}</span>
         </summary>
         <Astro.self

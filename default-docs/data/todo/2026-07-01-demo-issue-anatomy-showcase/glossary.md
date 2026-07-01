@@ -6,11 +6,19 @@ case-to-case — use the sections you need, prefer tables and pointers over para
 
 ## Colour legend
 
-The optional `color:` frontmatter tints a sidebar row's label. In this demo:
+The optional `color:` frontmatter tints a sidebar row's label. Meanings are **scoped per
+section** — the same colour can mean different things in Brainstorm than in Agent log:
+
+### Brainstorm
 
 | Colour | Meaning | Example |
 |---|---|---|
 | <span style="color:#7aa2f7">**blue**</span> | An exploratory option still in play. | `brainstorm/01_options/01_approach-a` |
+
+### Agent log
+
+| Colour | Meaning | Example |
+|---|---|---|
 | <span style="color:#e5a663">**amber**</span> | An iteration milestone worth eyeballing. | `agent-log/050_it_ui/101_sizing-tweaks` |
 
 Colour carries **no framework-defined meaning** — this legend is what makes it legible,

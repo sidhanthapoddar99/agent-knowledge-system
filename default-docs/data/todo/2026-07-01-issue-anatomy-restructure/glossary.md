@@ -2,13 +2,16 @@
 
 ## Colour legend
 
-Sidebar label tints (via `color:` frontmatter) mark discussion progress in
-`brainstorm/01_overall-structure/`:
+Sidebar label tints via `color:` frontmatter — meanings are scoped per section.
 
-| Colour | Meaning |
-|---|---|
-| **Green** (`--color-success`) | Section design **settled** — decided, no open questions. |
-| Untinted | Still open — carries a "To discuss" list. |
+### Brainstorm
+
+Marks discussion progress in `brainstorm/01_overall-structure/`:
+
+| Colour | Meaning | Example |
+|---|---|---|
+| **Green** (`--color-success`) | Section design **settled** — decided, no open questions. | `01_overall-structure/04_brainstorm` |
+| Untinted | Still open — carries a "To discuss" list. | `01_overall-structure/01_overall` |
 
 ## Key terms
 

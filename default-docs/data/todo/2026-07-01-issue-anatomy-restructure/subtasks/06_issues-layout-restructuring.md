@@ -107,6 +107,11 @@ per change as it's completed.
       themed empty state prompting the author to add one. No new routing (panel, like
       Guide/Comments); hash-addressable via `knownPanel`. Home for per-issue semantics
       incl. what any sidebar `color:` tints mean. Demo fixture ships a populated one.
+- [x] **Subtask group folders show `done/total`.** Folder rows in the subtask tree now
+      render completed-over-total (terminal states, matching `is-done`) instead of a raw
+      descendant count — mirroring the section header. Live-updated on state cycling via
+      `data-subtask-folder-count` spans scoped to their own `<details>`; the recreated
+      review-dot switched from native `title` to `data-tip`/`data-tip-always`.
 - [x] **Agent-log two-bucket ordering.** At each tree level, agent-log entries split
       into (1) no-`iteration` files/folders — first, sorted by filename — then
       (2) `iteration` files, sorted by iteration number (filename tie-break). The

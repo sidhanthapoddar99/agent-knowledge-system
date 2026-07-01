@@ -135,10 +135,19 @@ function updateSidebarSubtasksCount() {
       const dot = document.createElement('span');
       dot.className = 'issue-sidebar__review-dot';
       dot.setAttribute('aria-hidden', 'true');
-      dot.title = `${review} awaiting review`;
+      dot.setAttribute('data-tip', `${review} awaiting review`);
+      dot.setAttribute('data-tip-always', '');
       heading.appendChild(dot);
     }
   }
+  // Folder rows mirror the header's done/total, scoped to their own <details>.
+  document.querySelectorAll<HTMLElement>('[data-subtask-folder-count]').forEach((span) => {
+    const details = span.closest('details');
+    if (!details) return;
+    const inner = details.querySelectorAll<HTMLElement>('.issue-sidebar__item.is-subtask');
+    const innerDone = Array.from(inner).filter((i) => TERMINAL.includes(i.dataset.state as SubtaskState)).length;
+    span.textContent = `${innerDone}/${inner.length}`;
+  });
 }
 
 async function handleStateChange(key: string, filePath: string, nextState: SubtaskState, prevState: SubtaskState) {

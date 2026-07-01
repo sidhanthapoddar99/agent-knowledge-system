@@ -1,3 +1,7 @@
+---
+color: var(--color-success)
+---
+
 # Agent Memory
 
 **Scope:** AI-mutable working state for this issue — durable facts worth not rediscovering.

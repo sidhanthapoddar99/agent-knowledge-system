@@ -1,3 +1,7 @@
+---
+color: var(--color-success)
+---
+
 # Brainstorm
 
 **Scope:** active deliberation — research, exploration, discussion, ideation. The *process*

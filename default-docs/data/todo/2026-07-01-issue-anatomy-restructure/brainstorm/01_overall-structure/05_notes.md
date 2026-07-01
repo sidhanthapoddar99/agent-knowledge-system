@@ -1,3 +1,7 @@
+---
+color: var(--color-success)
+---
+
 # Notes
 
 **Scope:** finalized output + durable references — the decided approach you build on, plus

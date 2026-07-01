@@ -1,3 +1,7 @@
+---
+color: var(--color-success)
+---
+
 # Comments
 
 **Scope:** the lean **flat** evolution log — what changed, status shifts, hand-offs.
@@ -6,16 +10,38 @@ Like a changelog for the issue, **not** a discussion forum.
 Boundary: a comment records *that* something happened and the hand-off context — never
 the debate that produced it (that's Brainstorm).
 
-## To discuss
+## Structure (current — kept as-is)
 
-- Is the `NNN_` prefix **required** on comment files, or optional like other subdocs?
-- Extra frontmatter beyond `author:` + `date:`? (e.g. a `type:` like status-change /
-  hand-off / note — or is that the kind of field that rots?)
+```
+comments/
+├── 001_opened.md            ← NNN_<slug>.md — 3-digit sequence = the "#001" id
+├── 002_scope-narrowed.md
+└── 003_handoff.md
+```
+
+A comment file — attribution frontmatter, body free-form (usually a line or two):
+
+```markdown
+---
+author: claude
+date: 2026-07-01
+---
+Handed to claude to populate all agent-log kinds and the nested trees.
+```
+
+- **Rendering:** the **Comments** panel is the GitHub-style thread — issue body as the
+  opening post, comments in sequence below — with a per-comment index (`#NNN` + author
+  · date) in the right rail. Panel-based, hash-addressable (`#comments` /
+  `#comment-N`), single sidebar entry in the "This issue" group.
+- Sequence comes from the `NNN_` prefix; the slug after it is a human hint, not
+  displayed as the id.
 
 ## Decided
 
-- **Flat. No threading, no sub-comments, no substructure.** One file per comment
-  (`002_scope-narrowed.md`). Removes the costliest framework change from scope.
-- `author:` + `date:` frontmatter for attribution.
-- Rendered as the GitHub-style thread on the **Comments** panel (issue body = opening
-  post), with the per-comment index in the right rail.
+- **Works as-is** — no changes.
+- **Flat. No threading, no sub-comments, no substructure.** One file per comment.
+  Removes the costliest framework change from scope.
+- Frontmatter stays **`author:` + `date:` only** — a `type:` field (status-change /
+  hand-off / note) is exactly the kind of taxonomy that rots; the text says what it is.
+- `NNN_` sequence prefix is the norm (it *is* the comment id); append-only in practice —
+  comments record history, so they don't get renumbered or rewritten.

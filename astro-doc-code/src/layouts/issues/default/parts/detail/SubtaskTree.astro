@@ -57,6 +57,14 @@ function descendantCount(n: SubtaskGroupNode): number {
   return count;
 }
 
+/** Descendants in a terminal state (closed/cancelled) — the `done` half of the
+ *  folder's `done/total` count, mirroring the section-level header. */
+function doneCount(n: SubtaskGroupNode): number {
+  let count = n.files.filter((f) => TERMINAL.includes(f.state)).length;
+  for (const child of n.groups.values()) count += doneCount(child);
+  return count;
+}
+
 function containsActive(n: SubtaskGroupNode): boolean {
   if (n.files.some((f) => subtaskPanelKey(f) === activeKey)) return true;
   for (const child of n.groups.values()) {
@@ -101,7 +109,7 @@ function containsActive(n: SubtaskGroupNode): boolean {
             <span class="issue-sidebar__num">{pad(meta.sequence)}</span>
           )}
           <span class="issue-sidebar__subgroup-name">{meta?.title ?? e.name}</span>
-          <span class="issue-sidebar__heading-count">{descendantCount(child)}</span>
+          <span class="issue-sidebar__heading-count" data-subtask-folder-count>{doneCount(child)}/{descendantCount(child)}</span>
         </summary>
         <Astro.self
           node={child}

@@ -1,3 +1,7 @@
+---
+color: var(--color-success)
+---
+
 # Agent Log
 
 **Scope:** the execution record — autonomous loops & workflows for **long-running work**.

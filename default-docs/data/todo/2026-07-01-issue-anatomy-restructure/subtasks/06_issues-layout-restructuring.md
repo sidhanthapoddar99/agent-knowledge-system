@@ -51,13 +51,22 @@ per change as it's completed.
       icon now sits once on each section header (Notes / Brainstorm / Agent log / Agent
       memory) instead of on every row — more text width per item. The optional per-item
       `color` frontmatter now tints the label instead of the (removed) icon.
-- [x] **Sidebar tooltips unified onto one mechanism.** Rows (notes/brainstorm/memory/
-      agent-log via `SubdocTree`, subtasks via `SubtaskTree`, review-dot) previously used
-      the native `title` (~500ms, unstylable) while the kind symbol had a custom CSS tip —
-      two different effects. Now everything uses one shared `data-tip` tooltip
-      (`.issue-sidebar [data-tip]::after`): 60ms delay, 80ms rise-in fade, wraps at 220px,
-      theme-tokened; `:has()` suppresses the row tip while the symbol tip is hovered so only
-      one shows.
+- [x] **Sidebar tooltips unified onto one mechanism — cursor-anchored singleton.** Rows
+      (notes/brainstorm/memory/agent-log via `SubdocTree`, subtasks via `SubtaskTree`,
+      review-dot) previously used the native `title` (~500ms, unstylable) while the kind
+      symbol had a custom CSS tip — two different effects. Now everything carries `data-tip`
+      and a single JS-managed tooltip (`scripts/detail/tooltip.ts`, wired in `client.ts`)
+      shows at the **top-right of the cursor**, following it: `position: fixed` + z-index
+      1000 so it can never be clipped by the sidebar scroll container or hidden under other
+      elements; 60ms delay, 80ms rise-in, viewport-clamped (flips below at the top edge),
+      hides on scroll; delegation picks the innermost tip so only one ever shows.
+      **Promoted site-wide + made conditional:** moved to `src/scripts/tooltip.ts`
+      (self-init via BaseLayout, so docs/blogs/issues/custom all get it) with `.ui-tooltip`
+      in the default theme's `element.css` (uses `--z-index-tooltip`). Display rule lives in
+      the script: `data-tip-always` elements (kind symbols, review dot) always show; plain
+      text tips show **only when the text is actually cropped** (scrollWidth check on self +
+      descendants). Wired `data-tip` into docs Sidebar (links + headers), docs Outline, and
+      the issues MetaSidebar right-rail (comment index + subtask index).
 - [x] **Agent-memory shape settled: index + topic files (skills-style).** `memory.md` is
       the section's entry point — a one-line-per-topic index; topic files hold the facts
       and are edited in place. Sidebar pins `memory.md` first (sort precedence 0 for

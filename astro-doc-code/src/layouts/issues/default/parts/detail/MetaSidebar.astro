@@ -37,7 +37,7 @@ const subtaskTotal = sortedSubtasks.length;
           <li><a href="#comment-issue" class="issue-meta-toc__link is-top" data-toc-link="comment-issue">Issue (opening)</a></li>
           {issue.comments.map((c) => (
             <li>
-              <a href={`#comment-${c.sequence}`} class="issue-meta-toc__link issue-meta-toc__link--comment" data-toc-link={`comment-${c.sequence}`}>
+              <a href={`#comment-${c.sequence}`} class="issue-meta-toc__link issue-meta-toc__link--comment" data-toc-link={`comment-${c.sequence}`} data-tip={`${c.author || 'unknown'} · ${c.date || '—'}`}>
                 <span class="issue-meta-toc__seq">#{String(c.sequence).padStart(3, '0')}</span>
                 <span class="issue-meta-toc__text">{c.author || 'unknown'}<span class="issue-meta-toc__date"> · {c.date || '—'}</span></span>
               </a>
@@ -62,6 +62,7 @@ const subtaskTotal = sortedSubtasks.length;
                 class={`issue-meta-index__link state-${s.state}`}
                 data-state={s.state}
                 data-subtask-key={panelKey}
+                data-tip={s.title}
               >
                 <span class="issue-meta-index__icon" data-state-icon>
                   <Fragment set:html={stateIconSvg(s.state)} />

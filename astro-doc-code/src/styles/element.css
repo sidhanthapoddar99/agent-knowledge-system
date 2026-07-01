@@ -86,3 +86,35 @@
   --opacity-75: 0.75;
   --opacity-100: 1;
 }
+
+/* =================================
+   Site-wide tooltip ([data-tip])
+   JS-managed singleton (src/scripts/tooltip.ts), cursor-anchored (top-right of
+   pointer). Text tips show only when the text is cropped; `data-tip-always`
+   elements (icons/symbols) always show.
+   ================================= */
+.ui-tooltip {
+  position: fixed;
+  z-index: var(--z-index-tooltip);
+  width: max-content;
+  max-width: 260px;
+  white-space: normal;
+  padding: 0.2em 0.5em;
+  font-family: var(--font-family-base);
+  font-size: var(--ui-text-micro);
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--color-text-primary);
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--border-radius-sm);
+  box-shadow: var(--shadow-md);
+  opacity: 0;
+  transform: translateY(2px);
+  pointer-events: none;
+  transition: opacity 80ms ease, transform 80ms ease;
+}
+.ui-tooltip.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}

@@ -215,7 +215,7 @@ entries.sort((a, b) => {
           <svg class="issue-sidebar__chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
           {groupNum && <span class="issue-sidebar__num">{groupNum}</span>}
           {groupKind && (
-            <span class="issue-sidebar__kind" data-tip={groupKind.name} aria-label={groupKind.name}>
+            <span class="issue-sidebar__kind" data-tip={groupKind.name} data-tip-always aria-label={groupKind.name}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={agentLogIcon(groupKind.icon)} />
             </span>
           )}

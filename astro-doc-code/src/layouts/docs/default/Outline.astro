@@ -27,6 +27,7 @@ const { headings, title = 'On this page' } = Astro.props;
             href={`#${heading.slug}`}
             class="outline__link"
             data-outline-link={heading.slug}
+            data-tip={heading.text}
           >
             {heading.text}
           </a>

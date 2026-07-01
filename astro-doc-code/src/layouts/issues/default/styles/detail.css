@@ -144,48 +144,8 @@
 }
 .issue-sidebar__kind svg { display: block; }
 
-/* Shared fast tooltip for sidebar rows and kind symbols — one mechanism everywhere
-   (replaces the slow, unstylable native `title`). Below-left of the element; wraps
-   at a max width so long names stay inside the sidebar's clipped area. */
-.issue-sidebar [data-tip] { position: relative; }
-.issue-sidebar [data-tip]::after {
-  content: attr(data-tip);
-  position: absolute;
-  bottom: calc(100% + 3px);
-  right: 0;
-  z-index: 50;
-  width: max-content;
-  max-width: 220px;
-  white-space: normal;
-  padding: 0.2em 0.5em;
-  font-family: var(--font-family-base);
-  font-size: var(--ui-text-micro);
-  font-weight: 400;
-  line-height: 1.4;
-  text-transform: none;
-  letter-spacing: 0;
-  text-decoration: none;
-  color: var(--color-text-primary);
-  background: var(--color-bg-tertiary);
-  border: 1px solid var(--color-border-default);
-  border-radius: var(--border-radius-sm);
-  box-shadow: var(--shadow-md);
-  opacity: 0;
-  transform: translateY(-2px);
-  pointer-events: none;
-  transition: opacity 80ms ease, transform 80ms ease;
-}
-.issue-sidebar [data-tip]:hover::after {
-  opacity: 1;
-  transform: translateY(0);
-  transition-delay: 60ms;
-}
-/* When the kind symbol (a child tip) is hovered, suppress the row's own tip so
-   only one tooltip shows at a time. */
-.issue-sidebar [data-tip]:hover:has([data-tip]:hover)::after {
-  opacity: 0;
-  transform: translateY(-2px);
-}
+/* [data-tip] tooltips are site-wide: src/scripts/tooltip.ts + .ui-tooltip in
+   src/styles/element.css (wired in BaseLayout). */
 .issue-sidebar__label {
   flex: 1;
   min-width: 0;

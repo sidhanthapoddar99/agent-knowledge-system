@@ -1,5 +1,5 @@
 ---
-title: Agent Memory
+title: 07 · Agent Memory
 description: AI-mutable working state for the issue — a pinned memory.md index plus topic files, edited in place
 sidebar_position: 7
 ---

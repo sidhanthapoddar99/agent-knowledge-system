@@ -1,5 +1,5 @@
 ---
-title: Agent Log
+title: 05 · Agent Log
 description: The execution record — activity folders per loop/audit/refactor run, with kind symbols, pinned meta files, and status-tinted milestones
 sidebar_position: 5
 ---
@@ -9,6 +9,8 @@ sidebar_position: 5
 The `agent-log/` folder is the **execution record** of an issue — how autonomous loops and workflows actually ran. It exists for **long-running work**: each activity gets its own folder, holding pinned meta files and one file per **milestone**. Failed milestones are kept — they're as informative as successes. When a human reviews a `review`-flagged issue, the agent log is the first thing they read.
 
 This is the *how*; `subtasks/` is the *what* (the plan). That boundary is what keeps the two from merging.
+
+![The demo issue on an agent-log milestone page — activity folders with kind symbols, pinned meta files, and status-tinted #N milestone badges in the sidebar](../assets/demo-agent-log.png)
 
 ## The ideal structure — activity folders
 

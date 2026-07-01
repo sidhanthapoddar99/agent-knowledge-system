@@ -1,5 +1,5 @@
 ---
-title: Notes
+title: 04 · Notes
 description: Finalized output + durable references — the decided approach you build on; the product, not the process
 sidebar_position: 4
 ---

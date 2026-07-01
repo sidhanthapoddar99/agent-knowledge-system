@@ -1,5 +1,5 @@
 ---
-title: issue.md
+title: 01 · issue.md
 description: The main body of an issue — goal, context, motivation
 sidebar_position: 1
 ---
@@ -28,7 +28,9 @@ All metadata for the issue lives in the sibling `settings.json`. `issue.md` is p
 
 ## The optional sibling: `glossary.md`
 
-An issue may also carry a root-level `glossary.md` — rendered as-is on the **Glossary** panel (pure markdown, never generated; a themed blank-state prompts for it when absent). It holds this issue's key terms, semantics, and conventions. Suggested skeleton — tables and pointers over paragraphs: **Colour legend** (scoped per section with `###` sub-headings when the same colour means different things in Brainstorm than in Agent log, each row with an Example column) · **Key terms** · **Conventions**. The mechanical reference (section anatomy, effective agent-log kinds) is the **Guide** panel's job — the glossary is the author's voice.
+An issue may also carry a root-level `glossary.md` — rendered as-is on the **Glossary**
+panel (pure author markdown, never generated). Full treatment — suggested skeleton,
+per-section colour legends, the Guide-vs-Glossary boundary — in [Glossary](./glossary).
 
 ## Example
 

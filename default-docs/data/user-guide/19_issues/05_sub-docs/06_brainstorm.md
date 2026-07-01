@@ -1,5 +1,5 @@
 ---
-title: Brainstorm
+title: 06 · Brainstorm
 description: Active deliberation — research, exploration, ideas, discussion; the process of deciding what to do
 sidebar_position: 6
 ---

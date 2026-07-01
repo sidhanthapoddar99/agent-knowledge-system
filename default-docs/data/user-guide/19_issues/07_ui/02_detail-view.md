@@ -8,6 +8,8 @@ sidebar_position: 2
 
 The detail view renders at `/<base>/<YYYY-MM-DD-slug>`. It's the surface for working an issue: reading context, inspecting sub-docs, transitioning state. Three columns; the centre is **panel-based**, and every sub-doc has its **own page**.
 
+![Detail view — the demo issue's overview: sidebar with all sections, metadata header, issue body, right-rail TOC](../assets/demo-overview.png)
+
 ## Anatomy
 
 ```
@@ -51,6 +53,8 @@ Panel switching is hash-addressable — `#comments`, `#comprehensive`, `#guide`,
 | **Comprehensive** | Every subtask's full body on one page, filterable by state, heading ids prefixed. |
 | **Guide** | The issue-anatomy reference — static template + **generated islands** (this issue's effective agent-log kind table: symbol · code · name · use-for). Ordered most-complex-first; right rail = "On this page". |
 | **Glossary** | The optional root `glossary.md`, rendered as-is (never generated). Themed blank-state prompting for one when absent. |
+
+![Guide panel on the demo issue — the generated kinds table (five defaults + the issue's custom `ex`) with the right-rail outline](../assets/demo-guide.png)
 
 ## Content sections (sidebar)
 

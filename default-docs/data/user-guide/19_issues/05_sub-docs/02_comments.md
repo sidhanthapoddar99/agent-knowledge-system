@@ -1,5 +1,5 @@
 ---
-title: Comments
+title: 02 · Comments
 description: The thread — one markdown file per comment, ordered by sequence number
 sidebar_position: 2
 ---

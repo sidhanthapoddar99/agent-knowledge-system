@@ -4,22 +4,19 @@
  * Does NOT include sidebar or outline - those are separate components
  */
 
+// `title`/`description` are accepted (Layouts pass them) but not rendered here —
+// the page h1 comes from the markdown content itself.
 interface Props {
   title: string;
   description?: string;
   content: string;
 }
 
-const { title, description, content } = Astro.props;
+const { content } = Astro.props;
 ---
 
 <main class="docs-content">
   <article class="docs-article">
-    <!-- <header class="docs-header">
-      <h1 class="docs-title">{title}</h1>
-      {description && <p class="docs-description">{description}</p>}
-    </header> -->
-
     <div class="docs-body markdown-content">
       <Fragment set:html={content} />
     </div>

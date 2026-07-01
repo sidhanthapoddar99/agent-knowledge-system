@@ -7,5 +7,5 @@
   "labels": ["feature", "docs"],
   "author": "sidhantha",
   "assignees": ["sidhantha", "claude"],
-  "agentLogKinds": { "ex": { "name": "experiment", "icon": "flask" } }
+  "agentLogKinds": { "ex": { "name": "experiment", "icon": "flask", "desc": "One-off exploratory spikes — keep or discard." } }
 }

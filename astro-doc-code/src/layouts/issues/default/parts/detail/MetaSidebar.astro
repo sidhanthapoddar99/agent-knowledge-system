@@ -7,15 +7,17 @@
  * SubDocMetaSidebar), so no per-subtask / per-note / per-log entries here.
  */
 import type { Issue, IssueSubtask } from '@loaders/issues';
+import type { GuideHeading } from '../../guide';
 import { stateIconSvg } from '../../server/state-icon';
 import { pad, subtaskPanelKey } from '../../server/helpers';
 
 interface Props {
   issue: Issue;
   sortedSubtasks: IssueSubtask[];
+  guideHeadings?: GuideHeading[];
 }
 
-const { issue, sortedSubtasks } = Astro.props;
+const { issue, sortedSubtasks, guideHeadings = [] } = Astro.props;
 const subtaskTotal = sortedSubtasks.length;
 ---
 
@@ -41,6 +43,21 @@ const subtaskTotal = sortedSubtasks.length;
                 <span class="issue-meta-toc__seq">#{String(c.sequence).padStart(3, '0')}</span>
                 <span class="issue-meta-toc__text">{c.author || 'unknown'}<span class="issue-meta-toc__date"> · {c.date || '—'}</span></span>
               </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  )}
+
+  {guideHeadings.length > 0 && (
+    <div class="issue-meta__panel" data-meta-panel="guide" hidden>
+      <div class="issue-meta-index">
+        <div class="issue-meta-index__heading">On this page</div>
+        <ul class="issue-meta-toc">
+          {guideHeadings.map((h) => (
+            <li>
+              <a href={`#${h.slug}`} class="issue-meta-toc__link" data-toc-link={h.slug} data-tip={h.text}>{h.text}</a>
             </li>
           ))}
         </ul>

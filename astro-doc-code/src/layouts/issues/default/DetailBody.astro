@@ -17,7 +17,7 @@ import MetaSidebar from './parts/detail/MetaSidebar.astro';
 import { allStateIcons } from './server/state-icon';
 import { extractAndPrefixToc } from './server/toc';
 import { TERMINAL, sortSubtasksByState, terminalStartIndex, subtaskPanelKey } from './server/helpers';
-import { ISSUE_GUIDE_HTML } from './guide';
+import { buildIssueGuide } from './guide';
 import type { Issue, IssuesVocabulary } from '@loaders/issues';
 import './styles/detail.css';
 
@@ -38,6 +38,9 @@ const cancelledCount = issue.subtasks.filter((s) => s.state === 'cancelled').len
 
 const sortedSubtasks = sortSubtasksByState(issue.subtasks);
 const terminalStartIdx = terminalStartIndex(sortedSubtasks);
+
+// Guide panel: static template + generated islands (this issue's effective kind set).
+const guide = buildIssueGuide(issue.agentLogKinds);
 
 const statusColors = vocabulary.fields?.status?.colors || {};
 
@@ -78,7 +81,7 @@ const sortedSubtaskDocs = sortedSubtasks.map((s) => {
 
     <section class="issue-panel" data-panel="guide" role="tabpanel" hidden>
       <div class="issue-doc">
-        <div class="issue-doc__body markdown-content" set:html={ISSUE_GUIDE_HTML} />
+        <div class="issue-doc__body markdown-content" set:html={guide.html} />
       </div>
     </section>
 
@@ -95,6 +98,11 @@ const sortedSubtaskDocs = sortedSubtasks.map((s) => {
             record its key terms, semantics, and any conventions it relies on — for example
             what the sidebar <strong>colours</strong> mean in this issue.
           </p>
+          <p>
+            Suggested shape (use the sections you need — prefer tables and pointers over
+            paragraphs): <strong>Colour legend</strong> · <strong>Key terms</strong> ·
+            <strong>Conventions</strong>.
+          </p>
         </div>
       )}
     </section>
@@ -109,7 +117,7 @@ const sortedSubtaskDocs = sortedSubtasks.map((s) => {
     />
   </main>
 
-  <MetaSidebar issue={issue} sortedSubtasks={sortedSubtasks} />
+  <MetaSidebar issue={issue} sortedSubtasks={sortedSubtasks} guideHeadings={guide.headings} />
 </div>
 
 <script is:inline type="application/json" id="subtask-state-icons" set:html={JSON.stringify(allStateIcons())} />

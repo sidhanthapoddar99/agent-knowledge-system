@@ -148,20 +148,22 @@ export interface SubtaskGroupMeta {
 }
 
 /** An agent-log kind: a display name plus an icon-name from the symbol palette
- *  (see `layouts/issues/default/server/agent-log-icons.ts`). */
+ *  (see `layouts/issues/default/server/agent-log-icons.ts`). `desc` feeds the
+ *  generated kinds table on the Guide panel. */
 export interface AgentLogKind {
   name: string;
   icon: string;
+  desc?: string;
 }
 
-/** Framework-default agent-log kinds (code → {name, icon}). An issue's
+/** Framework-default agent-log kinds (code → {name, icon, desc}). An issue's
  *  `settings.json` `agentLogKinds` merges on top (adds / overrides). */
 export const DEFAULT_AGENT_LOG_KINDS: Record<string, AgentLogKind> = {
-  lp: { name: 'loop', icon: 'repeat' },
-  au: { name: 'audit', icon: 'search' },
-  rf: { name: 'refactor', icon: 'wrench' },
-  it: { name: 'iteration', icon: 'refresh-cw' },
-  wf: { name: 'workflow', icon: 'git-branch' },
+  lp: { name: 'loop', icon: 'repeat', desc: 'Autonomous multi-iteration runs toward one goal.' },
+  au: { name: 'audit', icon: 'search', desc: 'Systematic review / inspection sweeps.' },
+  rf: { name: 'refactor', icon: 'wrench', desc: 'Structural rework with no behaviour change.' },
+  it: { name: 'iteration', icon: 'refresh-cw', desc: 'Rapid ad-hoc change bursts.' },
+  wf: { name: 'workflow', icon: 'git-branch', desc: 'Multi-stage orchestrated pipelines.' },
 };
 
 export interface Issue {
@@ -456,10 +458,11 @@ async function loadIssueFolder(folderPath: string, dataPath: string): Promise<Is
       if (typeof val === 'string' && val.length > 0) {
         agentLogKinds[code] = { name: val, icon: existing?.icon ?? 'tag' };
       } else if (val && typeof val === 'object') {
-        const v = val as { name?: unknown; icon?: unknown };
+        const v = val as { name?: unknown; icon?: unknown; desc?: unknown };
         const name = typeof v.name === 'string' && v.name.length > 0 ? v.name : existing?.name;
         const icon = typeof v.icon === 'string' && v.icon.length > 0 ? v.icon : existing?.icon ?? 'tag';
-        if (name) agentLogKinds[code] = { name, icon };
+        const desc = typeof v.desc === 'string' && v.desc.length > 0 ? v.desc : existing?.desc;
+        if (name) agentLogKinds[code] = { name, icon, ...(desc ? { desc } : {}) };
       }
     }
   }

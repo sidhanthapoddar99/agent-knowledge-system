@@ -118,6 +118,11 @@ export function wirePanelSwitching() {
       requestAnimationFrame(() => {
         document.getElementById(rawHash)?.scrollIntoView({ block: 'start' });
       });
+    } else if (rawHash.startsWith('guide-')) {
+      activate('guide', { updateHash: false });
+      requestAnimationFrame(() => {
+        document.getElementById(rawHash)?.scrollIntoView({ block: 'start' });
+      });
     } else if (knownPanel(rawHash)) {
       activate(rawHash, { updateHash: false });
     }
@@ -130,6 +135,9 @@ export function wirePanelSwitching() {
       document.getElementById(key)?.scrollIntoView({ block: 'start' });
     } else if (key.startsWith('comment-')) {
       activate('comments', { updateHash: false });
+      document.getElementById(key)?.scrollIntoView({ block: 'start' });
+    } else if (key.startsWith('guide-')) {
+      activate('guide', { updateHash: false });
       document.getElementById(key)?.scrollIntoView({ block: 'start' });
     } else if (key === 'overview' || knownPanel(key)) {
       activate(key, { updateHash: false });

@@ -107,6 +107,21 @@ per change as it's completed.
       themed empty state prompting the author to add one. No new routing (panel, like
       Guide/Comments); hash-addressable via `knownPanel`. Home for per-issue semantics
       incl. what any sidebar `color:` tints mean. Demo fixture ships a populated one.
+- [x] **Glossary recommended shape settled (convention, not schema).** Sections + tables
+      + pointers over paragraphs: *Colour legend* (with an Example column) · *Key terms* ·
+      *Conventions* — case-to-case, open set, never generated. Skeleton surfaced in the
+      panel's blank state and the Guide's overview bullet; both shipped glossaries
+      (demo + this issue) restructured to match.
+- [x] **Guide panel rebuilt: generated, complexity-first, outlined.** `guide.ts` →
+      `buildIssueGuide(kindMap)` returning `{ html, headings }`. New structure: Overview
+      (pointer per section + the one combined full-issue tree + Glossary link), then
+      Agent log ★ / Subtasks / Agent memory / Brainstorm / Notes / Comments / Issue —
+      most-complex-first. Pointer-style bullets; inline frontmatter tables per section.
+      **Generated island:** the kinds table (symbol · code · name · use-for) from the
+      effective `agentLogKinds`; `AgentLogKind` gained optional `desc` (defaults carry
+      framework descriptions; demo's `ex` exercises a custom one). Right-rail **"On this
+      page"** TOC for the Guide panel: `h2`s id-stamped `guide-<slug>`, hash deep-links
+      activate-and-scroll like `#comment-N` (panels.ts).
 - [x] **Subtask group folders show `done/total`.** Folder rows in the subtask tree now
       render completed-over-total (terminal states, matching `is-done`) instead of a raw
       descendant count — mirroring the section header. Live-updated on state cycling via

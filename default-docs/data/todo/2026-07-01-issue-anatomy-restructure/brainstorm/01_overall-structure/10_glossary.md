@@ -1,21 +1,55 @@
+---
+color: var(--color-success)
+---
+
 # Glossary (framework view)
 
 **Scope:** the optional per-issue `glossary.md`, rendered **as-is** on the Glossary panel —
-**pure markdown, no generation, ever**. Issue-focused prose: the keywords that matter for
-understanding *this* issue, its structure if useful, and any colour / naming schemes the
-author wants to define.
+**pure markdown, no generation, ever**. Issue-focused: the keywords, semantics, and
+conventions that matter for understanding *this* issue.
+
+## Recommended shape — sections + tables, case-to-case
+
+Blank by default, but when written it should be **structured**: clear-cut sections,
+tables and pointers over paragraphs. Use only the sections the issue needs; add custom
+ones freely — this is a *suggested* skeleton, not a schema:
+
+```markdown
+# Glossary
+
+## Colour legend            ← if the issue uses color: frontmatter
+| Colour | Meaning | Example |
+|---|---|---|
+| blue   | …       | notes/… |
+
+## Key terms
+| Term | Meaning |
+|---|---|
+
+## Conventions              ← naming schemes, custom-kind semantics, etc.
+| Pattern | Meaning |
+|---|---|
+```
+
+- **Colour legend** — the one section that's near-mandatory *if* the issue tints
+  sidebar labels: colour has no framework meaning, so the legend is what makes it
+  legible. An `Example` column pointing at a real file keeps it honest.
+- **Key terms** — issue-specific vocabulary a newcomer needs.
+- **Conventions** — badge semantics, naming patterns, and the *prose meaning* of any
+  custom agent-log kinds (the code → name/icon mapping itself stays in
+  `settings.json` / Guide — the glossary explains what the kind *means here*).
+- The suggested skeleton is surfaced in two places: the panel's **blank state** and
+  the Guide's overview bullet.
 
 ## Decided
 
-- **Pure author markdown.** If nobody wrote a `glossary.md`, the panel shows a themed
-  blank-state prompting the author to add one — it never fabricates content. "Why create
-  distinction and confusion?" — generated reference material is the **Guide's** job
-  (see `09_guide`); the Glossary is the author's voice.
-- **Panel, not a route** — sits in the "This issue" group right after Guide;
-  hash-addressable, no new routing.
-- **The colour legend lives here.** Sidebar `color:` frontmatter has no framework-defined
-  meaning; an issue that uses colours documents what they mean in its glossary.
-- **Custom agent-log kinds do NOT belong here** — the code → name/icon mapping is
-  `settings.json` data surfaced by the Guide, not a glossary concern. (The glossary *may*
-  still explain a kind's semantics in prose if the author wants — e.g. what counts as an
-  "experiment" in this issue.)
+- **Pure author markdown, never generated.** Blank-state prompt when absent (now
+  including the suggested sections). "Why create distinction and confusion?" —
+  generated reference material is the **Guide's** job (see `09_guide`); the Glossary
+  is the author's voice.
+- **Structured-by-convention:** sections + tables + pointers, minimal paragraphs.
+  Convention only — the framework renders whatever markdown is there.
+- **Panel, not a route** — "This issue" group, right after Guide; hash-addressable.
+- **The colour legend lives here**, as a table with an Example column.
+- **Custom agent-log kind *mappings* do NOT belong here** — `settings.json` data
+  surfaced by the Guide; the glossary may explain a kind's semantics in prose.

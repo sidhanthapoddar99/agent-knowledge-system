@@ -190,6 +190,7 @@ body {
   width: 100%;
   border-collapse: collapse;
   font-size: var(--font-size-sm);
+  margin-bottom: var(--spacing-md);
 }
 
 .markdown-content .table-wrapper table {

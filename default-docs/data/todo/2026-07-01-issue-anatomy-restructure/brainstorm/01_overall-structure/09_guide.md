@@ -1,32 +1,62 @@
+---
+color: var(--color-success)
+---
+
 # Guide (framework view)
 
-**Scope:** the **auto-generated** reference block rendered on every issue's Guide panel —
-mechanical, not authored markdown. The framework-bundled twin of the skill's manual:
+**Scope:** the reference block rendered on every issue's Guide panel — a static
+template with **generated islands**. The framework-bundled twin of the skill's manual:
 present at every build/deploy even when the plugin isn't installed.
 
-## What it shows
+## Structure (implemented)
 
-The issue's anatomy and the **options currently available**:
+Ordered by **complexity, descending** — the Guide is a reference you open when
+confused, and confusion concentrates where the machinery is:
 
-- What each section is (subtasks / agent-log / agent-memory / notes / brainstorm) — the
-  thin legend, organized by *what each holds* (no required lifecycle order).
-- The effective **agent-log kind set**: the 5 framework defaults **plus** this issue's
-  `settings.json` additions, each with its **symbol → meaning**.
-- How to set colours, how to add & interpret comments, how to add more agent-log kinds.
+```
+Guide
+├── Overview      — what an issue is · one pointer per section · Glossary link
+│                   · the IDEAL FULL-ISSUE TREE (the one home for folder shapes)
+├── Agent log     ★ generated kinds table · meta files · milestones · status tints
+├── Subtasks      — states · groups (done/total) · surfaces
+├── Agent memory  — index + topics · belongs/doesn't
+├── Brainstorm    — kind words · graduation marker
+├── Notes         — contrast with brainstorm
+├── Comments      — flat log · NNN = id
+└── Issue         — issue.md + settings.json · created/updated derivation · color note
+```
 
-Same on every issue **unless** the issue customized its vocabulary — that's the part that
-varies, and why it must be generated rather than static.
+- **Pointer-style prose** — bullets over paragraphs; scannable, more content per line.
+- **Frontmatter tables inline** — each section carries its own fields table
+  (milestone: iteration/status/agent/date · subtask: title/state · comment:
+  author/date). No consolidated appendix — a lookup should be one hop.
+- **One combined tree in Overview** instead of per-section trees or an end
+  appendix — one home per shape, nothing to rot in two places.
+- **Right-rail "On this page" outline** — `h2`s are id-stamped (`guide-<slug>`);
+  `#guide-<slug>` hashes deep-link (activate panel + scroll), same pattern as
+  `#comment-N`.
+
+## Generated vs static
+
+- **Generated:** the agent-log **kinds table** — symbol · code · name · "use for",
+  built from the issue's effective `agentLogKinds` (defaults + additions).
+  `AgentLogKind` gained an optional **`desc`** field so custom kinds get a
+  description cell too (defaults carry framework descriptions).
+- **Static:** everything else — the legend text, frontmatter tables, tree,
+  status-tint legend.
+- Candidate second island (not built): subtask state values + colours from the
+  tracker root vocabulary. Add if the vocabulary ever diverges in practice.
 
 ## Guide vs Glossary (settled)
 
-- **Guide = auto-generated**, mechanical, reflects the issue's effective options.
+- **Guide = template + generated**, mechanical, reflects the issue's effective options.
 - **Glossary = pure `glossary.md`**, author markdown, never generated (see `10_glossary`).
 
-## Implementation (subtask 03)
+## Decided
 
-- Today the Guide is a static blob (`layouts/issues/default/guide.ts`). It must become
-  **generated**: the "agent-log kinds" list built from the effective `agentLogKinds`
-  mapping (defaults + issue additions), symbols included. Most of the legend stays
-  constant; the options list varies per issue.
-- Keep it in sync with the `documentation-guide` skill: the skill carries the full
-  manual, the Guide carries the map.
+- Complexity-descending section order (memory slotted after subtasks).
+- Overview is prose pointers (no table); the full-issue tree lives there and only there.
+- Frontmatter tables inline per section; no appendix.
+- `guide.ts` becomes `buildIssueGuide(kindMap)` → `{ html, headings }`; DetailBody
+  renders per issue; MetaSidebar gets the TOC panel.
+- Keep in sync with the `documentation-guide` skill: skill = full manual, Guide = map.

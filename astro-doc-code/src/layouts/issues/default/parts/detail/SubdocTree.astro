@@ -60,6 +60,24 @@ function prefixNum(name: string): string {
   return pad(parseOrderPrefixLoose(name).position);
 }
 
+/** Numeric *value* of the order prefix, for value-based sorting (so mixed widths
+ *  like `20_` and `100_` order by value, not lexically). Unprefixed → +∞ (last). */
+function prefixValue(name: string): number {
+  const p = parseOrderPrefixLoose(name).position;
+  return p === null ? Number.POSITIVE_INFINITY : p;
+}
+
+/** Milestone status → sidebar `#<iteration>` badge colour class. Agent-log only. */
+function logStatusModifier(item: IssueNote | IssueAgentLog): string {
+  if (kind !== 'log') return '';
+  const s = ((item as IssueAgentLog).status ?? '').toLowerCase().replace(/\s+/g, '-');
+  if (s === 'in-progress' || s === 'wip' || s === 'active') return 'is-in-progress';
+  if (s === 'success' || s === 'completed' || s === 'complete' || s === 'done') return 'is-success';
+  if (s === 'failed' || s === 'fail' || s === 'error') return 'is-failed';
+  if (s === 'not-started' || s === 'todo' || s === 'pending' || s === 'planned') return 'is-not-started';
+  return '';
+}
+
 /** Leading badge for a leaf — mirrors the subtask `__num` treatment. Common rule
  *  is {@link prefixNum}; agent-log layers a precedence override on top (its
  *  `#<iteration>` wins when set). */
@@ -107,9 +125,9 @@ function containsActive(t: SubdocTree): boolean {
 }
 
 /** A renderable entry at this tree level — a leaf file or a subgroup folder.
- *  Files and folders are interleaved and sorted lexicographically by raw
- *  on-disk name (including any `NNN_` prefix), so a numbered folder slots in
- *  among numbered files instead of being dumped at the bottom. */
+ *  Files and folders are interleaved and ordered by the precedence chain below
+ *  (bucket → iteration → numeric prefix value → lexicographic), so a numbered
+ *  folder slots in among numbered files by value instead of by string. */
 interface SubdocEntry {
   kind: 'leaf' | 'group';
   sortName: string;
@@ -132,28 +150,24 @@ function entryIteration(entry: SubdocEntry): number | null {
 }
 
 /**
- * Ordering.
- *
- * Non-log sections sort purely by on-disk name (numbered folders slot in among
- * numbered files).
- *
- * Agent-log uses a two-bucket rule at each level, mirroring how the badge is
- * shown: the `#<iteration>` badge takes precedence over the filename prefix for
- * *display*, and iteration likewise governs *order* — but only within its own
- * bucket, so ordering never depends on the filename prefix for iteration files:
- *   1. entries with no `iteration` (goal / task-list / summary, and folders)
- *      come first, sorted by filename;
- *   2. entries with an `iteration` come after, sorted by iteration number
- *      (filename as the tie-break).
+ * Ordering — precedence chain:
+ *   1. Bucket (agent-log only): entries with no `iteration` (goal / summary /
+ *      task-list, and folders) come first; `iteration` entries come after.
+ *   2. Iteration number (agent-log only): within the iteration bucket, by `#N`.
+ *   3. Numeric prefix *value* — so mixed widths (`20_` vs `100_`) order by value,
+ *      not lexically. Unprefixed sorts last (+∞).
+ *   4. Lexicographic on the raw name — the final tie-break.
  */
 entries.sort((a, b) => {
   if (kind === 'log') {
     const ai = entryIteration(a);
     const bi = entryIteration(b);
-    if ((ai === null) !== (bi === null)) return ai === null ? -1 : 1;
-    if (ai !== null && bi !== null && ai !== bi) return ai - bi;
+    if ((ai === null) !== (bi === null)) return ai === null ? -1 : 1;      // 1. bucket
+    if (ai !== null && bi !== null && ai !== bi) return ai - bi;           // 2. iteration
   }
-  return a.sortName.localeCompare(b.sortName);
+  const av = prefixValue(a.sortName), bv = prefixValue(b.sortName);
+  if (av !== bv) return av - bv;                                           // 3. prefix value
+  return a.sortName.localeCompare(b.sortName);                            // 4. lexicographic
 });
 ---
 
@@ -165,6 +179,7 @@ entries.sort((a, b) => {
       const isActive = activeKey === key;
       const label = leafLabel(item);
       const num = leafNum(item);
+      const statusMod = logStatusModifier(item);
       const color = (item as { color?: string | null }).color ?? null;
       return (
         <a
@@ -173,7 +188,7 @@ entries.sort((a, b) => {
           aria-current={isActive ? 'page' : undefined}
           title={label}
         >
-          {num && <span class="issue-sidebar__num">{num}</span>}
+          {num && <span class={`issue-sidebar__num ${statusMod}`}>{num}</span>}
           <span class="issue-sidebar__label" style={color ? `color: ${color}` : undefined}>{label}</span>
         </a>
       );

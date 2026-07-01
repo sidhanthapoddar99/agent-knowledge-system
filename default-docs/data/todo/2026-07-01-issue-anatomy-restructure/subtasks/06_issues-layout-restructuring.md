@@ -51,6 +51,13 @@ per change as it's completed.
       icon now sits once on each section header (Notes / Brainstorm / Agent log / Agent
       memory) instead of on every row — more text width per item. The optional per-item
       `color` frontmatter now tints the label instead of the (removed) icon.
+- [x] **Subdoc ordering fixed to numeric-by-value + milestone status colours.** Sidebar
+      sort precedence is now bucket → iteration → **numeric prefix value** → lexicographic
+      (fixes mixed-width mis-ordering, e.g. `70` before `200`; unprefixed last). The
+      `#<iteration>` badge is tinted by milestone `status` (not-started grey / in-progress
+      blue / success green / failed red, via theme tokens). Demo gains `200_it_stress/`
+      exercising both. Meta-file set confirmed standard-but-open (user *or agent* may add
+      more `0NN`).
 - [x] **Agent-log kind badge implemented (full stack).** Loader reads `agentLogKinds`
       (issue `settings.json`) merged over framework defaults → `Issue.agentLogKinds`; kinds
       are now `{ name, icon }`. Folder rows render `NN  <symbol>  <name>  …  <count>`: numeric

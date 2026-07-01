@@ -129,6 +129,12 @@
   flex-shrink: 0;
   min-width: 1.5em;
 }
+/* Milestone status colour on the `#<iteration>` badge (agent-log) — status tokens
+   blended toward the muted text colour so the tint reads as a hint, not a highlight. */
+.issue-sidebar__num.is-not-started { color: var(--color-text-muted); }
+.issue-sidebar__num.is-in-progress { color: color-mix(in srgb, var(--color-info) 55%, var(--color-text-muted)); }
+.issue-sidebar__num.is-success { color: color-mix(in srgb, var(--color-success) 55%, var(--color-text-muted)); }
+.issue-sidebar__num.is-failed { color: color-mix(in srgb, var(--color-error) 55%, var(--color-text-muted)); }
 .issue-sidebar__kind {
   flex-shrink: 0;
   display: inline-flex;

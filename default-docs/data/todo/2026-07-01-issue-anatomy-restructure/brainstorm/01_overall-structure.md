@@ -234,12 +234,22 @@ norm you should reach for by default.
 - **Pinned meta files** (`0NN`, no `iteration`): `00_goal.md`, `01_summary.md`,
   `02_task_list.md`. Kept at the top, generic names since the kind is on the folder.
   **Badge-less** — no `NN` badge; badges are reserved for kind (folders) and `#<iteration>`
-  (milestones). Ordering still follows the `0NN` prefix.
+  (milestones). Ordering follows the `0NN` prefix. The trio is the **standard set, not a
+  fixed one** — the user *or the agent* can add more `0NN` meta files as needed
+  (e.g. `03_references.md`), and any of them can be **omitted** when an activity doesn't
+  need it (a folder with only milestones is valid).
 - **Milestones:** `MNN_<name>.md`, `M ≥ 1` (`1NN`, `2NN`, …). The `M≥1` leading digit is
   what separates them from the `0NN` meta files. Displayed as **`#<iteration> <name>`**,
   where `iteration` is a **frontmatter** field independent of the `MNN` prefix — the prefix
   orders on disk, `iteration` drives the badge and the iteration sort-bucket. Keep failed
   milestones — they're signal.
+- **Milestone status colour.** The `#<iteration>` badge is tinted by the milestone's
+  frontmatter `status`: not-started → **grey**, in-progress → **blue**, success/completed →
+  **green**, failed → **red** (theme tokens `--color-text-muted / --color-info /
+  --color-success / --color-error`). Makes the "keep failed milestones" signal *visible*.
+- **Ordering (all subdoc trees).** Precedence: **bucket** (agent-log non-iteration first) →
+  **iteration** `#N` → **numeric prefix value** (mixed widths sort by value — `70` before
+  `200`, not lexically) → **lexicographic** tie-break. Unprefixed sorts last.
 - **Activity folders are the norm.** Agent-logs capture long-running work, so the first
   level is folders — even small work gets an activity folder. A flat `NNN_<name>.md` at the
   `agent-log/` root still parses (**backward compatibility**) but is **not** the

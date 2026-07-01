@@ -151,6 +151,8 @@ function entryIteration(entry: SubdocEntry): number | null {
 
 /**
  * Ordering — precedence chain:
+ *   0. `memory.md` pin (agent-memory only): the section's index / entry point
+ *      always sorts first.
  *   1. Bucket (agent-log only): entries with no `iteration` (goal / summary /
  *      task-list, and folders) come first; `iteration` entries come after.
  *   2. Iteration number (agent-log only): within the iteration bucket, by `#N`.
@@ -159,6 +161,11 @@ function entryIteration(entry: SubdocEntry): number | null {
  *   4. Lexicographic on the raw name — the final tie-break.
  */
 entries.sort((a, b) => {
+  if (kind === 'memory') {
+    const aPin = a.kind === 'leaf' && a.sortName === 'memory' ? 0 : 1;
+    const bPin = b.kind === 'leaf' && b.sortName === 'memory' ? 0 : 1;
+    if (aPin !== bPin) return aPin - bPin;                                 // 0. index pin
+  }
   if (kind === 'log') {
     const ai = entryIteration(a);
     const bi = entryIteration(b);
@@ -186,7 +193,7 @@ entries.sort((a, b) => {
           href={leafHref(item)}
           class={`issue-sidebar__item ${isActive ? 'is-active' : ''}`}
           aria-current={isActive ? 'page' : undefined}
-          title={label}
+          data-tip={label}
         >
           {num && <span class={`issue-sidebar__num ${statusMod}`}>{num}</span>}
           <span class="issue-sidebar__label" style={color ? `color: ${color}` : undefined}>{label}</span>
@@ -204,7 +211,7 @@ entries.sort((a, b) => {
     // right. No recognised kind → no symbol, name keeps the code.
     return (
       <details class="issue-sidebar__subgroup" data-collapse-key={childPath} open={open ? true : undefined}>
-        <summary class="issue-sidebar__subgroup-heading" title={groupLabel}>
+        <summary class="issue-sidebar__subgroup-heading" data-tip={groupLabel}>
           <svg class="issue-sidebar__chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
           {groupNum && <span class="issue-sidebar__num">{groupNum}</span>}
           {groupKind && (

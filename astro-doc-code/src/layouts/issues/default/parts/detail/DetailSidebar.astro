@@ -181,7 +181,7 @@ const tracker = baseUrl.replace(/^\/+/, '').replace(/\/+$/, '');
         {subtaskTotal > 0 && (
           <span class="issue-sidebar__heading-count" id="sidebar-subtasks-count">
             {subtaskDone}/{subtaskTotal}
-            {subtaskReview > 0 && <span class="issue-sidebar__review-dot" title={`${subtaskReview} awaiting review`} aria-hidden="true"></span>}
+            {subtaskReview > 0 && <span class="issue-sidebar__review-dot" data-tip={`${subtaskReview} awaiting review`} aria-hidden="true"></span>}
           </span>
         )}
       </summary>

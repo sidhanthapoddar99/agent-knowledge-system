@@ -51,11 +51,25 @@ per change as it's completed.
       icon now sits once on each section header (Notes / Brainstorm / Agent log / Agent
       memory) instead of on every row — more text width per item. The optional per-item
       `color` frontmatter now tints the label instead of the (removed) icon.
+- [x] **Sidebar tooltips unified onto one mechanism.** Rows (notes/brainstorm/memory/
+      agent-log via `SubdocTree`, subtasks via `SubtaskTree`, review-dot) previously used
+      the native `title` (~500ms, unstylable) while the kind symbol had a custom CSS tip —
+      two different effects. Now everything uses one shared `data-tip` tooltip
+      (`.issue-sidebar [data-tip]::after`): 60ms delay, 80ms rise-in fade, wraps at 220px,
+      theme-tokened; `:has()` suppresses the row tip while the symbol tip is hovered so only
+      one shows.
+- [x] **Agent-memory shape settled: index + topic files (skills-style).** `memory.md` is
+      the section's entry point — a one-line-per-topic index; topic files hold the facts
+      and are edited in place. Sidebar pins `memory.md` first (sort precedence 0 for
+      agent-memory). Both the demo and this issue now carry a `memory.md` index. Design in
+      brainstorm §7 (fully settled — agent-autonomous, always-on, no mirroring of what the
+      repo/issue already records).
 - [x] **Subdoc ordering fixed to numeric-by-value + milestone status colours.** Sidebar
       sort precedence is now bucket → iteration → **numeric prefix value** → lexicographic
       (fixes mixed-width mis-ordering, e.g. `70` before `200`; unprefixed last). The
       `#<iteration>` badge is tinted by milestone `status` (not-started grey / in-progress
-      blue / success green / failed red, via theme tokens). Demo gains `200_it_stress/`
+      blue / success green / failed red — status tokens blended 55/45 toward muted via
+      `color-mix` so the tint reads as a hint, not a highlight). Demo gains `200_it_stress/`
       exercising both. Meta-file set confirmed standard-but-open (user *or agent* may add
       more `0NN`).
 - [x] **Agent-log kind badge implemented (full stack).** Loader reads `agentLogKinds`

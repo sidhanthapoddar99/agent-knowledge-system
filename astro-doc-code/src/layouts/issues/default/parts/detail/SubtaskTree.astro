@@ -79,7 +79,7 @@ function containsActive(n: SubtaskGroupNode): boolean {
           data-subtask-key={key}
           data-state={s.state}
           aria-current={isActive ? 'page' : undefined}
-          title={s.title}
+          data-tip={s.title}
         >
           <span class="issue-sidebar__check" aria-hidden="true" data-state-icon>
             <Fragment set:html={stateIconSvg(s.state)} />
@@ -95,7 +95,7 @@ function containsActive(n: SubtaskGroupNode): boolean {
     const childPath = `${pathPrefix}/${e.name}`;
     return (
       <details class="issue-sidebar__subgroup" data-collapse-key={childPath} open={open ? true : undefined}>
-        <summary class="issue-sidebar__subgroup-heading" title={meta?.title ?? e.name}>
+        <summary class="issue-sidebar__subgroup-heading" data-tip={meta?.title ?? e.name}>
           <svg class="issue-sidebar__chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
           {meta?.sequence !== null && meta?.sequence !== undefined && (
             <span class="issue-sidebar__num">{pad(meta.sequence)}</span>

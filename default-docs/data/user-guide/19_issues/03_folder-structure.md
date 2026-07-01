@@ -1,6 +1,6 @@
 ---
 title: Folder Structure
-description: How a tracker is laid out on disk — folder-per-issue, six file types, URL shapes
+description: How a tracker is laid out on disk — folder-per-issue, the content sections, URL shapes
 sidebar_position: 3
 ---
 
@@ -59,46 +59,49 @@ Examples:
 2026-04-19-docs-phase-2/
 ├── settings.json                    ← metadata (required)
 ├── issue.md                         ← body (required)
-├── comments/                        ← thread, flat (optional)
-│   ├── 001_2026-04-19_sidhantha.md
-│   └── 002_2026-04-19_claude.md
-├── subtasks/                        ← checklist items, up to 2 subfolder levels (optional)
-│   ├── 01_issues-layout-docs.md
-│   ├── 02_implementation/                    ← level-1 group (folder = label only)
-│   │   ├── 01_backend.md
-│   │   └── 02_polish/                        ← level-2 group
-│   │       ├── 01_styles.md
-│   │       └── 02_a11y.md
-│   └── 03_editor-v2-docs.md
-├── notes/                           ← supporting docs, up to 2 subfolder levels (optional)
-│   ├── 01_proposed-file-structure.md          ← root-level note
-│   ├── design/                                ← level-1 group
-│   │   ├── api-shape.md
-│   │   └── phase-1/                           ← level-2 subgroup
-│   │       └── kickoff.md
-│   └── research/
-│       └── prior-art.md
-└── agent-log/                       ← AI audit trail, up to 2 subfolder levels (optional)
-    ├── 001_initial-triage.md                  ← root-level entry
-    └── exploration/                           ← level-1 subgroup
-        ├── 001_approach-a.md
-        └── phase-1/                           ← level-2 subgroup
-            ├── 001_kickoff.md
-            └── 002_decisions.md
+├── glossary.md                      ← per-issue glossary (optional)
+├── comments/                        ← evolution log, flat (optional)
+│   ├── 001_opened.md
+│   └── 002_scope-narrowed.md
+├── brainstorm/                      ← active deliberation, up to 2 levels (optional)
+│   ├── 01_research_prior-art.md               ← NN_<kind>_<slug>.md — full-word kind, optional
+│   └── 02_options/                            ← folder = one multi-file brainstorm
+│       └── 01_explore_approach-a.md
+├── notes/                           ← finalized output + references, up to 2 levels (optional)
+│   ├── 01_decided-architecture.md
+│   └── 02_reference/
+│       └── 01_links.md
+├── subtasks/                        ← the plan, up to 2 subfolder levels (optional)
+│   ├── 01_setup.md
+│   └── 02_implementation/                     ← group (folder = label only, shows done/total)
+│       ├── 01_backend.md
+│       └── 02_polish/                         ← level-2 group
+│           └── 01_styles.md
+├── agent-log/                       ← execution record (optional)
+│   └── 010_lp_implement-x/                    ← activity folder: NNN_<code>_<name>/
+│       ├── 00_goal.md                         ← pinned meta files
+│       ├── 01_summary.md
+│       └── 101_milestone.md                   ← MNN_ + iteration frontmatter → "#1"
+└── agent-memory/                    ← AI working state (optional)
+    ├── memory.md                              ← pinned index — read first
+    └── gotchas.md                             ← topic files, edited in place
 ```
 
 | Path | Required | Contents |
 |---|---|---|
-| `settings.json` | ✅ | All metadata — status, priority, labels, dates. See [Per-Issue Settings](./settings/per-issue). |
+| `settings.json` | ✅ | All metadata — status, priority, labels, plus optional `agentLogKinds`. See [Per-Issue Settings](./settings/per-issue). |
 | `issue.md` | ✅ | The goal / pitch / context. Pure markdown, no frontmatter. See [issue.md](./sub-docs/issue-md). |
-| `comments/` | — | One file per comment, named `NNN_YYYY-MM-DD_<author>.md`. Flat — no subfolders. See [Comments](./sub-docs/comments). |
-| `subtasks/` | — | Atomic units of work with `NN_<slug>.md` / `NNN_<slug>.md` naming (2- or 3-digit, both conventional), frontmatter-driven state. **Up to 2 levels of grouping subfolders** — folder = label only, leaves are first-class subtasks. See [Subtasks](./sub-docs/subtasks). |
-| `notes/` | — | Supporting design docs. **Up to 2 levels of freeform subfolders.** See [Notes](./sub-docs/notes). |
-| `agent-log/` | — | AI iteration records. **Up to 2 levels of freeform subfolders.** `NNN_` prefix on filenames is optional. See [Agent Log](./sub-docs/agent-log). |
+| `glossary.md` | — | Per-issue glossary, rendered as-is on the **Glossary** panel (never generated). Suggested sections: *Colour legend* · *Key terms* · *Conventions*, scoped per section where meanings differ. |
+| `comments/` | — | One file per comment — `NNN_<slug>.md` (author/date in frontmatter) or the strict `NNN_YYYY-MM-DD_<author>.md`. Flat — no subfolders. See [Comments](./sub-docs/comments). |
+| `brainstorm/` | — | Active deliberation — the *process* of deciding. `NN_<kind>_<slug>.md` with optional full-word kinds; folder = one brainstorm. See [Brainstorm](./sub-docs/brainstorm). |
+| `notes/` | — | Finalized output + durable references — the *product*. **Up to 2 levels of subfolders.** See [Notes](./sub-docs/notes). |
+| `subtasks/` | — | The plan — atomic units of work with `NN_<slug>.md` naming and frontmatter state. **Up to 2 levels of grouping subfolders** — folder = label only (sidebar shows its **done/total**), leaves are first-class subtasks. See [Subtasks](./sub-docs/subtasks). |
+| `agent-log/` | — | Execution record — `NNN_<code>_<name>/` **activity folders** (kind code in the name), pinned `0NN_` meta files + `MNN_` milestones inside. Flat files parse for backward compat only. See [Agent Log](./sub-docs/agent-log). |
+| `agent-memory/` | — | AI-mutable working state — pinned `memory.md` index + topic files. See [Agent Memory](./sub-docs/agent-memory). |
 
-### Subfolder rules (`subtasks/`, `notes/`, `agent-log/`)
+### Subfolder rules (`subtasks/`, `notes/`, `brainstorm/`, `agent-memory/`, `agent-log/`)
 
-`subtasks/`, `notes/`, and `agent-log/` accept up to **two levels of subfolders** for grouping. Folder and file names follow each type's existing conventions.
+All content sections except `comments/` accept up to **two levels of subfolders** for grouping. Folder and file names follow each type's conventions.
 
 - Mix files and folders freely at the root and at level-1. Level-2 is files-only — folders found at depth 3 are warned and silently skipped.
 - The same filename can appear in different folders (`notes/design/intro.md` and `notes/research/intro.md` coexist with distinct URLs).
@@ -110,14 +113,17 @@ Examples:
 - The `NNN_` prefix on the folder name preserves group ordering and is rendered in the sidebar.
 - Folders may ship an optional `settings.json` with at minimum a `title` field — overrides the slug-derived label. Absent file → fall back to slug → human-label.
 
-**Notes / agent-log specifics:**
-- Folder + file names are freeform — no naming convention required.
+**Notes / brainstorm / agent-memory specifics:**
+- Folder + file names are freeform; the `NN_` prefix is optional. Brainstorm files can carry a full-word kind (`NN_<kind>_<slug>.md`); agent-memory's `memory.md` pins first in the sidebar.
+
+**Agent-log specifics:**
+- The first level is **activity folders** `NNN_<code>_<name>/` — the 2-letter code is the kind (symbol in the sidebar; mapping via `agentLogKinds` in `settings.json`). Inside: `0NN_` meta files pin to the top (badge-less), `MNN_` milestones show `#<iteration>` tinted by `status`.
 
 `comments/` stays flat — it doesn't accept subfolders.
 
 ### Stray files warned, not crashed
 
-Any `.md` file at the issue root other than `issue.md` produces a **warning** (visible in the error-logger dev-toolbar app). The loader doesn't fail the build, but the file won't be rendered anywhere — move it into `notes/`, `subtasks/`, or rename it to `issue.md`.
+Any `.md` file at the issue root other than `issue.md` and `glossary.md` produces a **warning** (visible in the error-logger dev-toolbar app). The loader doesn't fail the build, but the file won't be rendered anywhere — move it into `notes/`, `subtasks/`, or rename it to `issue.md`.
 
 ## URL shapes
 
@@ -130,13 +136,17 @@ Where `<base>` comes from the `base_url` declared in `site.yaml`. See [Setup](./
 
 ### Sub-doc URLs
 
-Subtasks, notes, and agent-log entries currently render **inside** the issue's detail page (Comprehensive tab + sidebar-linked anchors). Separate URLs per sub-doc are planned — tracked in `2026-04-10-issues-layout/subtasks/17_subdoc-separate-urls.md`. Today's behaviour:
+Every sub-doc has **its own page**:
 
-- Detail page has two tabs: **Overview** (issue.md + comments + subtask summary) and **Comprehensive** (all subtask bodies concatenated with heading-id prefixing to prevent anchor collisions)
-- Left sidebar links jump to anchors within the Comprehensive view
-- Each sub-doc gets its own anchor (`#subtask-01-foo`, `#note-design`, `#agentlog-001`)
+| Sub-doc | URL |
+|---|---|
+| Subtask | `/<base>/<issue>/subtasks/<group>/<slug>` |
+| Note | `/<base>/<issue>/notes/<group>/<name>` |
+| Brainstorm | `/<base>/<issue>/brainstorm/<group>/<name>` |
+| Agent-memory | `/<base>/<issue>/agent-memory/<name>` |
+| Agent-log | `/<base>/<issue>/agent-log/<folder>/<file>` |
 
-Full detail-page tour in [Detail View](./ui/detail-view).
+(Group segments only when nested.) The detail page itself is panel-based and hash-addressable: `#comments`, `#comprehensive`, `#guide` (and `#guide-<section>` deep links), `#glossary`. Full detail-page tour in [Detail View](./ui/detail-view).
 
 ## Draft flag at two levels
 

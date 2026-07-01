@@ -1,7 +1,3 @@
----
-color: var(--color-success)
----
-
 # Brainstorm
 
 **Scope:** active deliberation — research, exploration, discussion, ideation. The *process*
@@ -51,7 +47,7 @@ brainstorm/
 When a brainstorm resolves, it is **not** deleted or moved — it gets one line at the top:
 
 ```markdown
-> **Resolved →** notes/01_issue-anatomy-guide.md
+> **Resolved →** notes/01_issue-anatomy/
 ```
 
 (or → a subtask, or → *dropped*). The brainstorm stays as the record of *why*; Notes hold

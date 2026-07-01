@@ -8,29 +8,29 @@ sidebar_position: 2
 
 Comments live in `<issue-folder>/comments/` — one markdown file per comment. The UI concatenates them into a chronological thread on the issue's detail page.
 
-## File naming — mandated
+## File naming
+
+Two accepted shapes — the 3-digit sequence **is** the comment id either way:
 
 ```
-NNN_YYYY-MM-DD_<author>.md
+NNN_<slug>.md                  ← the norm: slug describes, author/date in frontmatter
+NNN_YYYY-MM-DD_<author>.md     ← strict form: date + author parsed from the filename
 ```
 
-The loader's exact regex: `^(\d+)_(\d{4}-\d{2}-\d{2})_([a-z0-9-]+)\.md$` (case-insensitive).
-
-- **`NNN`** — zero-padded sequence number (`001`, `002`, …). Enforces ordering independent of filesystem sort quirks.
-- **`YYYY-MM-DD`** — date the comment was written.
-- **`<author>`** — short author slug, kebab-case or lowercase.
+- **`NNN`** — zero-padded sequence number (`001`, `002`, …). Enforces ordering independent of filesystem sort quirks; rendered as `#001` in the right-rail comment index.
+- **`<slug>`** — kebab-case, describes the comment (`001_opened.md`, `002_scope-narrowed.md`). With this shape, `author:` + `date:` come from frontmatter.
+- The strict `NNN_YYYY-MM-DD_<author>.md` form still parses (filename is authoritative for date + author; frontmatter overrides).
 
 Example folder:
 
 ```
 comments/
-├── 001_2026-04-17_sidhantha.md
-├── 002_2026-04-18_sidhantha.md
-├── 003_2026-04-19_claude.md
-└── 004_2026-04-21_sidhantha.md
+├── 001_opened.md
+├── 002_scope-narrowed.md
+└── 003_handoff.md
 ```
 
-Files that don't match the pattern are skipped with a warning (visible in the error-logger dev-toolbar app).
+Comments are **append-only in practice** — they record history, so they don't get renumbered or rewritten. Keep them a **lean evolution log** (what changed, status shifts, hand-offs), not a forum: the debate that produced a decision lives in [Brainstorm](./brainstorm).
 
 ## Why one file per comment
 
@@ -64,18 +64,18 @@ Both optional. If absent, the filename is authoritative.
 
 ## Body
 
-Pure markdown — no length cap. Comments can be one-liners or long-form reviews. For lengthy design deliberation, consider a **note** instead (see [Notes](./notes)); comments are for discussion, notes are for design docs.
+Pure markdown — no length cap, though most comments are a line or two. For design deliberation, use **[Brainstorm](./brainstorm)** — comments record *that* something happened (a decision, a status shift, a hand-off), never the debate that produced it.
 
 ## Rendering
 
-The detail page's Overview tab shows the full thread in filename order, each comment rendered as a styled card with author + date header. On the list page, the comment count per issue surfaces as a small indicator.
+Comments live on the detail page's **Comments panel** (`#comments`) — a GitHub-style thread with the issue body as the opening post, each comment a styled card with author + date header. The right rail carries a per-comment index (`#NNN` · author · date); `#comment-N` deep-links to one. On the list page, the comment count per issue surfaces as a small indicator.
 
 ## Adding a comment manually
 
 1. Find the highest existing `NNN` in `comments/` (`ls comments/ | sort -n | tail -1`)
 2. Pick the next sequence number
-3. Create `NNN_YYYY-MM-DD_<you>.md` with today's date and your author slug
-4. Write your comment. No frontmatter needed.
+3. Create `NNN_<slug>.md` with `author:` + `date:` frontmatter (or the strict `NNN_YYYY-MM-DD_<you>.md` form, no frontmatter needed)
+4. Write your comment.
 
 The live editor + planned `/issues` skill automate all of this — see [Using with AI](../using-with-ai).
 

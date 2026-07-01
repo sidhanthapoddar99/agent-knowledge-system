@@ -2,16 +2,9 @@
 
 ## Colour legend
 
-Sidebar label tints via `color:` frontmatter — meanings are scoped per section.
-
-### Brainstorm
-
-Marks discussion progress in `brainstorm/01_overall-structure/`:
-
-| Colour | Meaning | Example |
-|---|---|---|
-| **Green** (`--color-success`) | Section design **settled** — decided, no open questions. | `01_overall-structure/04_brainstorm` |
-| Untinted | Still open — carries a "To discuss" list. | `01_overall-structure/01_overall` |
+No sidebar tints currently in use. (During the design phase, green marked settled
+sections in `brainstorm/01_overall-structure/` — retired when the folder graduated
+into `notes/01_issue-anatomy/`.)
 
 ## Key terms
 

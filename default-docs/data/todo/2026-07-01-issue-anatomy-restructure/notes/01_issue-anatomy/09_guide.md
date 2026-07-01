@@ -1,7 +1,3 @@
----
-color: var(--color-success)
----
-
 # Guide (framework view)
 
 **Scope:** the reference block rendered on every issue's Guide panel — a static

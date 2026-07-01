@@ -1,7 +1,3 @@
----
-color: var(--color-success)
----
-
 # Glossary (framework view)
 
 **Scope:** the optional per-issue `glossary.md`, rendered **as-is** on the Glossary panel —

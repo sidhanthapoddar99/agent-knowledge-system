@@ -1,7 +1,3 @@
----
-color: var(--color-success)
----
-
 # Comments
 
 **Scope:** the lean **flat** evolution log — what changed, status shifts, hand-offs.

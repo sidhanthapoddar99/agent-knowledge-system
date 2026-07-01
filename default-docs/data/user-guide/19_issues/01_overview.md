@@ -13,17 +13,20 @@ If that framing surprises you, read [Design Philosophy](./design-philosophy) bef
 ## The flow inside an issue
 
 ```
-planning  →  execution  →  dialog
-issue.md     agent-log/     comments/
-notes/                      (and back to notes/ when something
-subtasks/                    needs to be properly written down)
+deliberate   →   write down   →   plan       →   execute        →   record
+brainstorm/      notes/           subtasks/      agent-log/         comments/
+(process)        (product)        (the what)     (the how)          (what changed)
 ```
 
+There's a natural flow, but **no required order** — sections are organized by *what they hold*, used as the work needs.
+
 - **`issue.md`** is the goal: what the work is, why, success criteria.
-- **`notes/`** is supporting design material — the thinking that didn't fit in `issue.md`. Multiple files, optional 2-level subfolder tree.
+- **`brainstorm/`** is active deliberation — research, options, trade-offs. The *process* of deciding; its conclusion **graduates into notes** (marked `**Resolved →** <target>`).
+- **`notes/`** is the finalized output + durable references — the *product* you build on.
 - **`subtasks/`** is the work breakdown. Each subtask is one explicit "did this happen yet?" checkbox — the AI handoff anchor.
-- **`agent-log/`** is the audit trail. One file per AI iteration: what was tried, what worked, what failed, what's next. Failed iterations are kept; they're as informative as successes.
-- **`comments/`** is the dialog — humans, agents, and review pushback.
+- **`agent-log/`** is the execution record — one **activity folder** per loop / audit / refactor run, milestones inside. Failed milestones are kept; they're as informative as successes.
+- **`agent-memory/`** is the AI's mutable working state — durable facts worth not rediscovering.
+- **`comments/`** is the flat evolution log — what changed, status shifts, hand-offs.
 
 A complete issue folder:
 
@@ -31,17 +34,24 @@ A complete issue folder:
 2026-04-19-docs-phase-2/
 ├── settings.json                    ← metadata (status, priority, component, labels)
 ├── issue.md                         ← the goal
+├── glossary.md                      ← optional per-issue glossary
+├── brainstorm/
+│   └── 01_research_prior-art.md
 ├── notes/
-│   ├── 01_proposed-file-structure.md
-│   └── design/
-│       └── 01_overview.md
+│   ├── 01_decided-architecture.md
+│   └── 02_reference/
+│       └── 01_links.md
 ├── subtasks/
 │   ├── 01_issues-layout-docs.md
 │   └── 02_theme-system-docs.md
 ├── agent-log/
-│   └── 001_initial-triage.md
+│   └── 010_lp_implement-x/
+│       ├── 00_goal.md
+│       └── 101_milestone.md
+├── agent-memory/
+│   └── memory.md
 └── comments/
-    └── 001_2026-04-19_sidhantha.md
+    └── 001_opened.md
 ```
 
 The ordering signals are **priority** + **status**. The recency signal is **derived from git** (most recent commit touching anything under the issue folder). That's the whole model.
@@ -67,7 +77,7 @@ The validator emits an info-level hint when these are violated; both stay legal.
 | Storage | One file per page | **One folder per item** |
 | Metadata | Frontmatter | **`settings.json`** (UI-editable) |
 | Lifecycle | Published / not | **open → review → closed \| cancelled** |
-| Sub-content | Nothing | `notes/` · `subtasks/` · `agent-log/` · `comments/` |
+| Sub-content | Nothing | `brainstorm/` · `notes/` · `subtasks/` · `agent-log/` · `agent-memory/` · `comments/` |
 | Audience | End users | Team + AI agents |
 
 ## AI-native by design

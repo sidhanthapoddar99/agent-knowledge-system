@@ -1,10 +1,11 @@
 ---
 title: Decide the final structure
-state: open
+state: closed
 ---
 
-Lock the section model and folder layout. The design lives in
-`brainstorm/01_overall-structure/` (one file per section — **all ten settled, green**).
+Lock the section model and folder layout. The final design lives in
+**`notes/01_issue-anatomy/`** (one file per section — all ten settled), graduated from
+`brainstorm/01_overall-structure/`.
 
 - [x] Confirm the six sections + Issue: Brainstorm · Notes · Subtasks · Agent Logs ·
       Agent Memory · Comments — plus the framework views (Guide · Glossary ·
@@ -21,5 +22,7 @@ Lock the section model and folder layout. The design lives in
       generated per issue via `buildIssueGuide(kindMap)`. See `09_guide`.
 - [x] `NNN_<name>/` folder-with-files pattern confirmed for notes / subtasks /
       brainstorm (not just agent-log) — loader walks 2 levels everywhere.
-- [ ] **Graduate** the brainstorm into `notes/` as the finalized issue-anatomy guide;
-      mark `brainstorm/01_overall-structure/` with the `**Resolved →**` marker.
+- [x] **Graduated** — the ten files moved as-is to `notes/01_issue-anatomy/` (they were
+      written as specs, so a rewrite would only create a mirror to rot). Green
+      progress-tints stripped (settled is the default in notes); a resolved stub with
+      `**Resolved →**` stays in `brainstorm/`; glossary legend retired.

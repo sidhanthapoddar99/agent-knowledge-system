@@ -1,7 +1,3 @@
----
-color: var(--color-success)
----
-
 # Subtasks
 
 **Scope:** the plan — a checklist of what's to be done, each with a state

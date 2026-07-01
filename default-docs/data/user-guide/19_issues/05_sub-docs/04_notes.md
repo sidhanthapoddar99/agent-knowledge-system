@@ -1,12 +1,14 @@
 ---
 title: Notes
-description: Supporting design docs — deep-dive content that doesn't belong in issue.md
+description: Finalized output + durable references — the decided approach you build on; the product, not the process
 sidebar_position: 4
 ---
 
 # Notes
 
-Notes are supporting markdown documents that live in `<issue-folder>/notes/`. Use them for deep content that would overwhelm `issue.md` — design proposals, research, file structures, decision records, reference material.
+Notes live in `<issue-folder>/notes/` and hold the issue's **finalized output + durable references** — the decided architecture, the agreed spec, research links worth keeping. Notes are defined by contrast with [Brainstorm](./brainstorm): brainstorm is *what we're figuring out*, notes are *what we know*.
+
+Content arrives two ways: by **graduating** out of a resolved brainstorm (the conclusion distilled, the trail left behind with a `> **Resolved →** notes/…` marker), or fully formed (a reference, a how-to, a link dump). Once here it should be **stable** — a note that keeps changing is a brainstorm wearing the wrong hat.
 
 ## File naming
 
@@ -19,7 +21,7 @@ notes/
 └── review-traces.md               ← un-numbered is fine
 ```
 
-A numeric prefix is **optional** for notes (folders and files) — but when you want a fixed reading order, `NN_` and `NNN_` are both good conventions, using the same 2–5 digit, sort-by-value grammar as the rest of the tracker. The prefix orders the note in the sidebar; the slug after it becomes the default title.
+A numeric prefix is **optional** for notes (folders and files) — but when you want a fixed reading order, `NN_` and `NNN_` are both good conventions, using the same 2–5 digit, sort-by-value grammar as the rest of the tracker. The prefix orders the note in the sidebar; the slug after it becomes the default title. The numbering is a **curated reading order** (the author's intended sequence), not a timeline — no kind words, no machinery.
 
 ## Subfoldering — up to 2 levels
 
@@ -66,19 +68,21 @@ If `title` is absent, the loader derives it from the slug (`01_proposed-file-str
 
 No `state` field — notes aren't work items. They're documentation.
 
-### `color` — optional sidebar-icon tint
+### `color` — optional sidebar-label tint
 
-Any string the browser accepts as a CSS color: named (`red`, `salmon`), hex (`#e06c75`, `#f00`), longer forms. **Only the sidebar icon is tinted** — the label, row background, and borders all stay default. The framework doesn't impose semantics — pick whatever convention fits your workflow (urgency, category, decision-vs-exploration). Same idea as GitHub label colors: you assign the meaning, the framework just paints.
+Any string the browser accepts as a CSS color: named (`red`, `salmon`), hex (`#e06c75`), or a theme token (`var(--color-success)` — preferred, so the tint stays readable in dark and light mode). **The sidebar label is tinted** — row background and borders stay default. The framework doesn't impose semantics — document what your colours mean in the issue's **`glossary.md`** (per-section legends: the same colour can mean different things in Notes than in Agent log).
 
 ## When to use a note vs…
 
 | If you want to… | Use |
 |---|---|
 | State the issue's goal / context | `issue.md` |
-| Discuss / update progress | `comments/` |
+| Record that something changed / a hand-off | `comments/` |
+| **Deliberate — research, options, trade-offs** | **`brainstorm/`** |
 | Track a chunk of work with its own state | `subtasks/` |
-| **Capture a design proposal, ADR, or research** | **`notes/`** |
-| Record an AI iteration | `agent-log/` |
+| **Capture the decided approach, ADR, or reference** | **`notes/`** |
+| Record an execution run / milestone | `agent-log/` |
+| Store durable AI working facts | `agent-memory/` |
 
 Notes are long-form. A comment is a paragraph or two; a note is a section, multi-heading, possibly with embedded diagrams. The distinction:
 
@@ -116,12 +120,7 @@ continuously.
 
 ## Rendering
 
-Notes render:
-
-- **In the detail page's left sidebar** as a list of links, each linking to an anchor in the Comprehensive tab.
-- **In the Comprehensive tab** as standalone sections under a "Notes" heading, in filename order. Each note's headings get ID-prefixed to avoid collisions with subtasks or other notes.
-
-Separate per-note URLs (`/todo/<id>/notes/<slug>`) are planned — same subtask as sub-doc URLs (`2026-04-10-issues-layout/subtasks/17_subdoc-separate-urls.md`).
+Notes render in the detail page's left sidebar (Notes section, `NN` badge + clean label) and each note has **its own URL**: `/<tracker>/<issue>/notes/<name>` (nested: `/notes/<group>/<name>`), with a per-page TOC in the right rail.
 
 ## Relationship to issue.md
 
@@ -134,6 +133,7 @@ If `issue.md` creeps past 300 lines, it probably wants to be split — extract t
 
 ## See also
 
+- [Brainstorm](./brainstorm) — the deliberation that graduates into notes
 - [issue.md](./issue-md) — the body that notes support
 - [Subtasks](./subtasks) — for breaking the work into trackable units
-- [Agent Log](./agent-log) — for AI iteration audit trails
+- [Agent Log](./agent-log) — the execution record

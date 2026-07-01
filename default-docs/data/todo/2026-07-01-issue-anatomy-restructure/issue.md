@@ -10,9 +10,8 @@ Brainstorm  →  Notes  →  Subtasks  →  Agent-log (loops)  →  update Subta
   do)            decided)                 milestone)             output appears)
 ```
 
-The full design lives in **`brainstorm/01_overall-structure/`** (one file per section —
-the working surface). When it stabilizes it graduates into `notes/` as the finalized
-issue-anatomy guide.
+The full design is finalized in **`notes/01_issue-anatomy/`** (one file per section) —
+graduated from `brainstorm/01_overall-structure/` once all ten sections settled.
 
 ## What changes
 

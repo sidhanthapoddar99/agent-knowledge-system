@@ -18,12 +18,17 @@ The required markdown file at the root of every issue folder. It carries the **g
 It is **not** for:
 - Progress updates (use `comments/`)
 - Breakdown of the work (use `subtasks/`)
-- Design deliberation (use `notes/`)
-- AI iteration logs (use `agent-log/`)
+- Design deliberation (use `brainstorm/`; the settled conclusion graduates into `notes/`)
+- Execution records (use `agent-log/`)
+- Issue-specific terms / colour conventions (use the sibling `glossary.md`)
 
 ## No frontmatter
 
 All metadata for the issue lives in the sibling `settings.json`. `issue.md` is pure prose — no `---` block at the top. The loader tolerates frontmatter if present (for portability from other systems), but it isn't interpreted.
+
+## The optional sibling: `glossary.md`
+
+An issue may also carry a root-level `glossary.md` — rendered as-is on the **Glossary** panel (pure markdown, never generated; a themed blank-state prompts for it when absent). It holds this issue's key terms, semantics, and conventions. Suggested skeleton — tables and pointers over paragraphs: **Colour legend** (scoped per section with `###` sub-headings when the same colour means different things in Brainstorm than in Agent log, each row with an Example column) · **Key terms** · **Conventions**. The mechanical reference (section anatomy, effective agent-log kinds) is the **Guide** panel's job — the glossary is the author's voice.
 
 ## Example
 

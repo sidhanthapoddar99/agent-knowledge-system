@@ -36,6 +36,7 @@ Every issue folder has a `settings.json` at its root. It holds the metadata — 
 | `author` | string | ✅ | The person who filed it. From `authors[]` in the tracker root |
 | `assignees` | string[] | ✅ | From `authors[]`. Empty array is fine |
 | `draft` | bool | — | `true` → issue hidden in prod builds (see [Drafts](/user-guide/writing-content/drafts)) |
+| `agentLogKinds` | object | — | Custom agent-log kind codes for this issue, merged over the framework defaults. See below. |
 
 All enum fields are validated at load time against the tracker's root `settings.json` vocabulary. An unknown value produces a warning (visible in the error-logger dev-toolbar app); the issue still loads, but the value may not render cleanly.
 
@@ -91,6 +92,19 @@ Both modes compose the same way as every other filter — AND across fields, OR 
 ### `draft`
 
 Same flag used by docs and blogs (see [Drafts](/user-guide/writing-content/drafts)). Per-issue `"draft": true` hides the one issue in production while keeping it visible in dev. To hide a whole tracker, set `"draft": true` in the tracker's **root** `settings.json` (see [Vocabulary](./vocabulary)).
+
+### `agentLogKinds`
+
+Optional dictionary declaring **custom agent-log kind codes** for this issue. Each key is a 2-letter code; each value is `{ name, icon, desc }` or a shorthand string (→ generic tag icon):
+
+```jsonc
+"agentLogKinds": {
+  "ex": { "name": "experiment", "icon": "flask", "desc": "One-off exploratory spikes." },
+  "hf": "hotfix"
+}
+```
+
+**Merge semantics** — the five framework defaults (`lp` loop · `au` audit · `rf` refactor · `it` iteration · `wf` workflow) are always available; the dictionary only adds or overrides. **Per-issue only** — there's no tracker-root layer. `icon` picks from the framework's curated symbol palette; `desc` fills the "use for" cell in the Guide panel's generated kinds table. See [Agent Log](../sub-docs/agent-log).
 
 ## Bigger example
 

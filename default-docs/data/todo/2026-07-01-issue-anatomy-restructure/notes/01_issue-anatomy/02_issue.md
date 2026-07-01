@@ -1,7 +1,3 @@
----
-color: var(--color-success)
----
-
 # Issue
 
 **Scope:** the issue's two root artifacts — `issue.md` (the body) and `settings.json`

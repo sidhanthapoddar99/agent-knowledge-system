@@ -1,13 +1,8 @@
----
-color: var(--color-success)
----
-
 # Overall — the issue structure
 
-> **Brainstorm — working surface.** One file per part of the anatomy: this file is the
-> whole-picture overview; the siblings are the per-section deep-dives. **All ten are now
-> settled (green)** — next step is graduating the conclusions into `notes/` (process →
-> product, subtask 01).
+> **Finalized.** The issue-anatomy spec — one file per part: this file is the
+> whole-picture overview; the siblings are the per-section references. Graduated from
+> `brainstorm/01_overall-structure/` once all ten sections settled (subtask 01).
 
 An issue is a single folder (`YYYY-MM-DD-<slug>/`) capturing one coherent unit of
 *thinking + execution*. Everything below lives inside it. Use whichever parts fit the

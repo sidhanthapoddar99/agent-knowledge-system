@@ -49,7 +49,7 @@ Rules:
 
 - The folder is a **label only**. No `subtask.md` / `index.md` body file convention to debate.
 - Each leaf is a regular subtask: own `state` / `done` frontmatter, own URL (`/<tracker>/<issue>/subtasks/<group>/<subgroup>/<slug>`), counted independently in the totals.
-- The `NNN_` prefix on the folder preserves ordering and is rendered as the group's number in the sidebar (e.g. "02. Implementation").
+- The `NNN_` prefix on the folder preserves ordering and is rendered as the group's number in the sidebar (e.g. "02. Implementation"). The group row shows a **done/total** count (e.g. `1/2`) — "done" = terminal states (closed + cancelled) — live-updated as states cycle; the section header shows the same for the whole issue, with an amber dot when anything sits in `review`.
 - Group folders may ship an optional `settings.json` with at minimum a `title` field — overrides the slug-derived label.
   ```json
   // subtasks/02_implementation/settings.json

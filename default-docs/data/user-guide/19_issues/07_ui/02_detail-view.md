@@ -1,179 +1,76 @@
 ---
 title: Detail View
-description: The single-issue page — three-column layout, Overview/Comprehensive tabs, editable metadata sidebar
+description: The single-issue page — panel-based layout, sub-doc pages at their own URLs, Guide + Glossary panels
 sidebar_position: 2
 ---
 
 # Detail View
 
-The detail view renders at `/<base>/<YYYY-MM-DD-slug>`. It's the surface for working an issue: reading context, inspecting sub-docs, transitioning state, editing metadata. Three columns and two tabs — that's the whole layout.
+The detail view renders at `/<base>/<YYYY-MM-DD-slug>`. It's the surface for working an issue: reading context, inspecting sub-docs, transitioning state. Three columns; the centre is **panel-based**, and every sub-doc has its **own page**.
 
 ## Anatomy
 
 ```
-┌────────────┬────────────────────────────────────────┬────────────┐
-│            │  Documentation update — phase 2        │            │
-│  DETAIL    │  Rewrite user-guide around 4 content…  │  META      │
-│  SIDEBAR   ├────────────────────────────────────────┤  SIDEBAR   │
-│            │  [Overview]  [Comprehensive]           │            │
-│  Overview  │                                        │  Status:   │
-│  Compreh…  │  ## Goal                               │  open   ▾  │
-│            │  Rewrite user-guide around 4 content   │            │
-│  Subtasks  │  types…                                │  Priority: │
-│   ○ 01     │                                        │  high   ▾  │
-│   ◐ 02     │  ## Comments                           │            │
-│   ● 03     │  [001] 2026-04-19 sidhantha           │  Component:│
-│   …        │  …                                     │  docs   ▾  │
-│            │                                        │            │
-│  Notes     │  ## Subtasks                           │  Labels:   │
-│   · file-  │  ○ 01  Issues layout — docs            │  [docs]    │
-│     struct │  ◐ 02  Theme system — docs             │  [task]    │
-│            │  …                                     │  + add     │
-│  Agent Log │                                        │            │
-│   · 001    │                                        │  Assignees:│
-│   · 002    │                                        │  sidhantha │
-│            │                                        │  claude    │
-└────────────┴────────────────────────────────────────┴────────────┘
+┌──────────────┬────────────────────────────────────────┬────────────┐
+│ THIS ISSUE   │  Documentation update — phase 2        │  META /    │
+│  Overview    │  status · priority · labels chips      │  TOC RAIL  │
+│  Comments    ├────────────────────────────────────────┤            │
+│  Comprehens. │                                        │  On this   │
+│  Guide       │  ## Goal                               │  page…     │
+│  Glossary    │  Rewrite user-guide around 4 content   │            │
+│              │  types…                                │  (per-     │
+│ Brainstorm   │                                        │   panel    │
+│  01 research │                                        │   index)   │
+│ Notes        │                                        │            │
+│  01 decided… │                                        │            │
+│ Subtasks 1/3 │                                        │            │
+│  ○ 01 setup  │                                        │            │
+│ Agent log    │                                        │            │
+│  10 ⟳ impl 5 │                                        │            │
+│ Agent memory │                                        │            │
+│  · memory    │                                        │            │
+└──────────────┴────────────────────────────────────────┴────────────┘
 ```
 
 ## Three columns
 
 | Column | Role |
 |---|---|
-| **Left — Detail Sidebar** | Nav: tab switch (Overview / Comprehensive) + links to every sub-doc with state icons |
-| **Center — Main** | Content: the issue body, then either the Overview summary or Comprehensive full-text |
-| **Right — Meta Sidebar** | Editable metadata form — every `settings.json` field as an input. Sticky on scroll. |
+| **Left — Detail Sidebar** | Two groups: **This issue** (panel switchers) + the **content sections** (links to sub-doc pages) |
+| **Center — Main** | The active panel (overview by default), or — on a sub-doc URL — that sub-doc's body |
+| **Right — Meta rail** | A per-panel index: comment index on Comments, subtask index on Comprehensive, "On this page" TOC on Guide and on sub-doc pages |
 
-The meta sidebar is load-bearing: every dropdown writes back to `settings.json`. Change the status here and the file changes on disk, the loader cache invalidates, the list view reflects the new state on next load.
+## The panels ("This issue" group)
 
-## The two tabs
+Panel switching is hash-addressable — `#comments`, `#comprehensive`, `#guide`, `#glossary` (no hash = overview). Deep links: `#comment-3`, `#comprehensive-<subtask>`, `#guide-<section>`.
 
-### Overview tab — default
-
-A concise, reading-friendly summary:
-
-1. **Metadata header** — title + description + status/priority/labels chips
-2. **`issue.md`** — rendered
-3. **Comments thread** — all comments in filename order, each as a styled card
-4. **Subtask checklist** — one line per subtask with state icon, title, click-to-toggle state
-5. **Sub-doc indicators** — "3 notes · 5 agent-log entries" links to the Comprehensive tab
-
-Purpose: a 2-minute read for a reviewer orienting on what the issue is and where it's at.
-
-### Comprehensive tab
-
-Everything, rendered inline:
-
-1. `issue.md`
-2. All comments (same as Overview)
-3. Every subtask's full body, concatenated in sort order, under per-subtask headings
-4. Every note's full body, concatenated in filename order, under per-note headings
-5. Every agent-log entry's full body, concatenated in sequence order, under per-log headings
-
-**Heading IDs are prefixed** (`#subtask-01-foo-goal`, `#note-design-tradeoffs`) to prevent collisions across sub-docs. Deep-linking to a specific section works reliably.
-
-Purpose: a printer-friendly, complete view. Reviewers who want to read everything without clicking around.
-
-### Tab state persists in URL
-
-`?tab=comprehensive` preserves the choice across refreshes and shares. Default is `overview`.
-
-## Left sidebar — Detail Sidebar
-
-Two sections:
-
-### Tab switcher (top)
-
-```
-[ Overview ] [ Comprehensive ]
-```
-
-Toggle matches the center-column tab content. URL-synced.
-
-### Sub-doc navigation (below)
-
-Every sub-doc gets a link with a state indicator next to it:
-
-```
-Subtasks
-  ○  01  Issues layout — docs
-  ◐  02  Theme system — docs
-  ●  03  Editor V2 — docs
-
-Notes
-  · 01  Proposed file structure
-  · 02  Design decisions
-
-Agent Log
-  · 001  Initial triage
-  · 002  Restructure approach
-```
-
-State icons for subtasks:
-
-| Icon | State |
+| Panel | Holds |
 |---|---|
-| `○` | `open` |
-| `◐` | `review` |
-| `●` | `closed` |
-| `✕` | `cancelled` |
+| **Overview** | `issue.md` only — the body, rendered. Metadata header above. |
+| **Comments** | The GitHub-style thread: issue body as opening post, then the flat comment log in sequence. Right rail = per-comment index (`#NNN`, author · date). |
+| **Comprehensive** | Every subtask's full body on one page, filterable by state, heading ids prefixed. |
+| **Guide** | The issue-anatomy reference — static template + **generated islands** (this issue's effective agent-log kind table: symbol · code · name · use-for). Ordered most-complex-first; right rail = "On this page". |
+| **Glossary** | The optional root `glossary.md`, rendered as-is (never generated). Themed blank-state prompting for one when absent. |
 
-Clicking a sub-doc link jumps to its anchor in the Comprehensive tab (switching tabs if needed).
+## Content sections (sidebar)
 
-## Right sidebar — Meta Sidebar
+Each section lists its files as links to **their own URLs** (`/<issue>/notes/<name>`, `/<issue>/agent-log/<folder>/<file>`, …):
 
-Every field in `settings.json` rendered as an editable input:
-
-| Field | Input |
-|---|---|
-| Status | Dropdown from vocabulary |
-| Priority | Dropdown from vocabulary |
-| Component | Dropdown from vocabulary |
-| Milestone | Dropdown from vocabulary |
-| Labels | Multi-select chip list |
-| Author | Dropdown from `authors[]` |
-| Assignees | Multi-select from `authors[]` |
-| Updated | Read-only (auto-bumped) |
-| Due | Date picker (or null) |
-
-Changes save on blur / enter — writes back to `settings.json` on disk. The sidebar shows a small save indicator while writing.
-
-Colors for status / priority chips come from the vocabulary. Unknown values (not in the enum) render with a warning glyph — click to see which value is unrecognised.
+- Rows render `NN` badge + clean label (prefix stripped, separators → spaces); an optional `color:` frontmatter tints the label (meaning documented in the issue's glossary).
+- **Subtasks** — state icon per row (`○` open · `◐` review · `●` closed · `✕` cancelled); group folders show a **done/total** count; the section header shows the issue-wide done/total with an amber dot when anything is in `review`.
+- **Agent log** — activity folders render `NN <symbol> <name> … <count>` (the kind symbol's tooltip names it); inside, `0NN_` meta files pin badge-less on top and milestones show `#<iteration>` tinted by status (grey/blue/green/red).
+- **Agent memory** — `memory.md` pins first.
+- Ordering everywhere: bucket (agent-log meta first) → iteration → numeric prefix value → name. Ascending, one rule for all sections.
+- Collapse state of sections and folders persists per issue.
 
 ## Interactions
 
-### Subtask state toggle
-
-Clicking the state icon next to a subtask (anywhere it appears) cycles through `open → review → closed → cancelled → open`. Backed by `POST /__editor/subtask-toggle`.
-
-### Live edits sync
-
-The live editor + Yjs presence manager keep this page in sync with the editing pane. If someone else has the issue open and changes status, your sidebar updates within ~250ms.
-
-### Deep-link to a sub-doc anchor
-
-Every sub-doc has a stable anchor:
-
-- `#subtask-<slug>` — jump to a subtask in Comprehensive
-- `#note-<slug>` — jump to a note
-- `#agentlog-<sequence>` — jump to an agent-log entry (or `#agentlog-<subgroup>-<sequence>` if it's in a subgroup folder)
-
-Sharing a URL with an anchor jumps the reader straight there.
-
-## Sub-doc URL separation — planned
-
-Each subtask / note / agent-log entry currently renders **inline** on the detail page. Dedicated URLs per sub-doc (`/todo/<id>/subtasks/<slug>`) are planned — tracked in `2026-04-10-issues-layout/subtasks/17_subdoc-separate-urls.md`. Until that ships, anchor-based deep links are the workaround.
-
-## Keyboard
-
-| Key | Action |
-|---|---|
-| `1` | Overview tab |
-| `2` | Comprehensive tab |
-| `g` then `l` | Back to list view |
+- **Subtask state cycling** — clicking a subtask's state icon cycles `open → review → closed → cancelled` (dev-mode editor endpoint writes the frontmatter); counts update live.
+- **Tooltips** — one site-wide cursor-anchored tooltip: kind symbols and the review dot always show theirs; text tips appear only when the text is actually cropped.
+- **Sub-doc pages** — each has the same three-column shell with its own right-rail TOC; the sidebar keeps your place.
 
 ## See also
 
 - [List View](./list-view) — how you get here
-- [Per-Issue Settings](../settings/per-issue) — the fields in the right sidebar
-- [Subtasks](../sub-docs/subtasks) — state icon meanings
+- [Per-Issue Settings](../settings/per-issue) — the metadata fields
+- [Sub-Documents](../sub-docs/issue-md) — each file type's conventions

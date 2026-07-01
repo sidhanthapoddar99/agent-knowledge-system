@@ -1,203 +1,143 @@
 ---
 title: Agent Log
-description: Audit trail for AI iterations — one file per iteration, kept forever, readable in review
+description: The execution record — activity folders per loop/audit/refactor run, with kind symbols, pinned meta files, and status-tinted milestones
 sidebar_position: 5
 ---
 
 # Agent Log
 
-The `agent-log/` folder holds an audit trail of AI iterations on an issue. Each file is one iteration: what was attempted, what happened, what's next. Failed iterations are kept — they're as informative as successes. When a human reviews a `review`-flagged issue, the agent log is the first thing they read.
+The `agent-log/` folder is the **execution record** of an issue — how autonomous loops and workflows actually ran. It exists for **long-running work**: each activity gets its own folder, holding pinned meta files and one file per **milestone**. Failed milestones are kept — they're as informative as successes. When a human reviews a `review`-flagged issue, the agent log is the first thing they read.
 
-This is one of the two features that make the tracker AI-native. Without it, long-running autonomous work is opaque; with it, every iteration is inspectable.
+This is the *how*; `subtasks/` is the *what* (the plan). That boundary is what keeps the two from merging.
 
-## File naming
-
-```
-agent-log/
-├── 001_initial-triage.md
-├── 002_incremental-parse-spike.md
-├── triage-followup.md                 ← NNN_ prefix is optional
-└── exploration/                       ← up to 2 levels of subgroup allowed
-    ├── 001_approach-a.md
-    └── phase-1/
-        ├── 001_spike.md
-        └── 002_polish.md
-```
-
-- **`NNN`** — sequence number (1-indexed). **Optional**. Follows the same shared ordering-prefix grammar as the rest of the tracker — **2 to 5 digits**, sorted by numeric value. The CLI writes 3-digit `NNN_` by default (`001_`, `002_`, …); a 2-digit `NN_` works just as well, while a single digit is not treated as a prefix. Zero-padding recommended when present.
-- **Separator** — `_` (canonical) or a legacy `-` (both work).
-- **Slug** — kebab-case, human-readable, describes the iteration's focus.
-
-When the `NNN_` prefix is present the loader parses it as the sequence number; when it's absent the loader assigns one based on sort order within the folder. Iteration counters are tracked separately in frontmatter, so prefix-less files still get correct iteration numbers if `iteration:` is set.
-
-Sequence numbers are **per leaf folder** — inside `agent-log/` top-level they start at 001; inside a subgroup like `exploration/` they restart at 001; inside a sub-subgroup like `exploration/phase-1/` they restart again.
-
-### Subgroups — up to 2 levels deep
-
-An agent exploring multiple approaches can create subgroup folders. The loader accepts up to **two levels** of subfoldering, with the same shape rules as `notes/`:
+## The ideal structure — activity folders
 
 ```
 agent-log/
-├── 001_initial-triage.md              ← root-level
-├── exploration/                       ← level-1 subgroup
-│   ├── 001_approach-a.md
-│   ├── 002_approach-b.md
-│   └── phase-1/                       ← level-2 subgroup
-│       ├── 001_kickoff.md
-│       └── 002_decisions.md
-└── implementation/
-    ├── 001_spike.md
-    └── 002_final.md
+├── 010_lp_implement-limiter/    ← activity folder: NNN_<code>_<name>/
+│   ├── 00_goal.md               ← pinned meta file — what this run is trying to achieve
+│   ├── 01_summary.md            ← outcome TL;DR (written when the run wraps)
+│   ├── 02_task_list.md          ← the run's live checklist
+│   ├── 101_token-bucket.md      ← milestone: MNN_<name>, M ≥ 1 → shown "#<iteration>"
+│   └── 102_redis-backing.md
+├── 020_au_edge-cases/
+│   └── 101_findings.md          ← meta files are omittable — milestones-only is valid
+└── 030_rf_extract-helper/       ← every entry is an activity folder (the norm)
 ```
 
-Mix files and folders freely at every level that allows folders — `agent-log/001.md` can sit beside `agent-log/exploration/`, and `agent-log/exploration/001.md` can sit beside `agent-log/exploration/phase-1/`. The deepest level (level 2) is files-only.
+- **`NNN`** — ordering prefix, 2–5 digits, sorted by numeric value (same shared grammar as the rest of the tracker).
+- **`<code>`** — a 2-letter **kind code** (below). Rendered as a symbol on the folder row and stripped from the label.
+- **`<name>`** — kebab-case, describes the run.
 
-Anything nested deeper than `agent-log/<group>/<subgroup>/<file>.md` produces a warning and is ignored. If a level-2 subgroup itself outgrows flat, that's a sign to split the issue, not nest deeper.
+A flat `NNN_<name>.md` at the `agent-log/` root still parses and renders (**backward compatibility**), but it is *not* the going-forward convention — agent-logs are for long-running work, so reach for the folder shape by default.
 
-Folder names are freeform — no naming convention is enforced. Pick names that describe the angle being explored (`exploration`, `implementation`, `benchmarks`, `failed-attempts`).
+## Kinds
 
-## Frontmatter
+The code in the folder name says *what sort* of run it was. Five framework defaults:
+
+| Code | Kind | Icon | Use for |
+|---|---|---|---|
+| `lp` | loop | `repeat` | Autonomous multi-iteration runs toward one goal. |
+| `au` | audit | `search` | Systematic review / inspection sweeps. |
+| `rf` | refactor | `wrench` | Structural rework with no behaviour change. |
+| `it` | iteration | `refresh-cw` | Rapid ad-hoc change bursts. |
+| `wf` | workflow | `git-branch` | Multi-stage orchestrated pipelines. |
+
+### Custom kinds — `agentLogKinds` in the issue's `settings.json`
+
+Declare only your *custom* codes; the defaults are always available (**merge** semantics — the dictionary adds / overrides). Per-issue only — there's no tracker-root layer.
+
+```jsonc
+{
+  "title": "…", "status": "open",
+  "agentLogKinds": {
+    "ex": { "name": "experiment", "icon": "flask", "desc": "One-off exploratory spikes." },
+    "hf": "hotfix"                    // shorthand string → generic tag icon
+  }
+}
+```
+
+- `icon` picks from the framework's curated symbol palette (`agent-log-icons.ts`, ~15–20 icons); unset/unknown → a generic tag icon.
+- `desc` is optional — it fills the "use for" cell in the **Guide panel's generated kinds table**, which always shows the issue's *effective* set (defaults + additions).
+- An unknown code in a folder name degrades gracefully: no symbol, the label keeps the code, the count still renders.
+
+### Sidebar rendering
+
+An activity folder renders as **`NN  <symbol>  <name>  …  <count>`** — numeric prefix, kind symbol up front (hover shows the kind name via the fast tooltip), the code-stripped name, and the file count on the right.
+
+## Meta files — pinned, badge-less
+
+`0NN_`-prefixed files (no `iteration` frontmatter) pin to the top of the folder, badge-less. The standard trio:
+
+- `00_goal.md` — what the run is trying to achieve (generic name — the kind is already on the folder).
+- `01_summary.md` — outcome TL;DR, written when the run wraps.
+- `02_task_list.md` — the run's live checklist. *This is the working checklist for one run, **not** the issue's durable `subtasks/` plan.*
+
+The set is **standard but open**: the user *or the agent* can add more (`03_references.md`, …), and any of them can be omitted — a folder with only milestones is valid.
+
+## Milestones
+
+`MNN_<name>.md` with `M ≥ 1` (`1NN`, `2NN`, …) — the leading digit ≥ 1 is what separates milestones from `0NN` meta files. A milestone is a **substantial completed chunk** (~3–6 per activity), not a step and not synced to subtask count.
 
 ```markdown
 ---
-iteration: 3
-agent: claude-opus-4-6
-status: success
-date: 2026-04-21
+iteration: 1            # → shown as "#1"; independent of the 101_ filename prefix
+agent: claude-opus-4-8
+status: success         # not-started | in-progress | success | failed
+date: 2026-06-30
 ---
 
-# Iteration 3 — restructure comprehensive view
+# Token-bucket limiter
 
 ## Goal
-
-Eliminate heading-ID collisions between subtasks when rendered together on the
-Comprehensive tab.
-
+…
 ## Approach
-
 …
-
 ## Result
-
-…
-
+…  (evidence: commits, test counts, file paths)
 ## Next
-
 …
 ```
 
 | Field | Type | Purpose |
 |---|---|---|
-| `iteration` | int | Sequential counter. Falls back to filename sequence if absent. |
-| `agent` | string | Which agent / model wrote this (e.g. `claude-opus-4-6`, `gpt-4`, `human:sidhantha`) |
-| `status` | string | Free-form: `in-progress`, `success`, `failed`, `abandoned`, `handed-off`, … |
-| `date` | ISO date | When this iteration ran |
-| `color` | CSS color | Tints only the sidebar icon (named, hex, or any browser-accepted color) |
+| `iteration` | int | Drives the **`#N` badge** and the iteration sort bucket — independent of the filename prefix. |
+| `status` | string | Tints the `#N` badge: grey `not-started` · blue `in-progress` · green `success` · red `failed`. |
+| `agent` | string | Which agent / model ran it (`claude-opus-4-8`, `human:sidhantha`, …). |
+| `date` | ISO date | When it landed. |
+| `color` | CSS color | Optional label tint — issue-defined meaning; document it in the issue's `glossary.md`. |
 
-All optional. The loader degrades gracefully when fields are missing.
+The Goal / Approach / Result / Next body shape isn't enforced, but it's what makes the log reviewable in order.
 
-### `color` — optional sidebar-icon tint
+### Ordering
 
-Any browser-accepted CSS color (`red`, `#e06c75`, `rgb(...)`). **Only the sidebar icon** picks up the tint — label, row background, borders stay default. User-defined semantics: maybe red marks an iteration that uncovered a problem, green a clean success, gray a routine status update. The framework doesn't assign meaning.
-
-## Body structure — the 4-section convention
-
-Not enforced by the loader, but **strongly recommended** for every entry. This shape is what makes the log useful under review:
-
-```markdown
-## Goal
-What was being attempted in this iteration.
-
-## Approach
-The plan / strategy. What files were going to be touched, what hypotheses
-were being tested.
-
-## Result
-What actually happened. Include evidence — file paths that changed, tests
-that passed / failed, commits made. Enough that a reviewer can verify
-without re-running everything.
-
-## Next
-What to try next (if failed / in-progress), or "done, handed off for review"
-if success.
-```
-
-The point is to leave a trail future iterations (and human reviewers) can read **in order**, rapidly catching up on what's been tried.
+Within a level, entries sort by: **bucket** (non-iteration files first — meta files and folders) → **iteration number** → **numeric prefix value** (mixed widths sort by value, so `70_` before `200_`) → filename. So meta files pin up top and milestones follow as `#1, #2, …` regardless of prefix widths.
 
 ## Rules of the road
 
-### Keep failed iterations
+- **Keep failed milestones.** A failed run with a clear Result + Next tells the next agent what not to do — and the red `#N` badge makes it visible at a glance.
+- **One file per milestone, not per minute.** Three files a minute are thoughts, not milestones — consolidate.
+- **New milestone = new file, not an edit.** Git history then tells a clean story.
+- **Read the log before starting work.** Pick up where the last run left off; don't repeat failed approaches.
+- **Close out on `closed`.** When the issue ships, write a final summary milestone (commit hash, what landed).
+- **Fast bursts:** low-nuance mechanical changes can live as a running checklist in one **subtask** instead; changes that carry reasoning belong in an `it` (iteration) activity. When ambiguous, ask which mode is wanted.
 
-Do not delete. A failed iteration with a clear `Result` + `Next` tells the next iteration what not to do. Deleting it forces the next agent to rediscover the failure.
+## What does NOT belong here
 
-### One file per iteration, not per minute
-
-An iteration is "I attempted approach X; here's what happened." If you're writing three files a minute, they're not iterations — they're thoughts. Consolidate.
-
-### New iteration = new file, not an edit
-
-Don't rewrite `003_spike.md` to describe what happened in iteration 4. Add `004_refinement.md`. Git history then tells a clean story.
-
-### Read the log before starting work
-
-When picking up an issue with existing agent logs, **read them all first** (the planned helper script `scripts/issues/agent-logs.mjs --last 5` will make this cheap). Otherwise you'll repeat failed approaches.
-
-### Close out on `closed`
-
-When the human flips the issue from `review → closed`, the agent's next pickup should write a final entry summarising the shipped state — commit hash, PR number, what landed. Leaving dangling "in-progress" entries makes the log feel live when it isn't.
+- **Human discussion** — `comments/` (the flat evolution log).
+- **Deliberation / options-weighing** — `brainstorm/`.
+- **Durable facts the agent learns** — `agent-memory/` (see [Agent Memory](./agent-memory)); the log records *what happened*, memory holds *what's still true*.
+- **Micro-progress pings** — batch into the next meaningful milestone.
 
 ## Rendering
 
-- **Detail page left sidebar** — each agent log file is linked, with status indicator next to the title.
-- **Comprehensive tab** — agent logs render in a dedicated section below notes, in sequence order, grouped by subgroup where present. Each log's headings get ID-prefixed.
-
-Separate per-log URLs are planned — tracked in `2026-04-10-issues-layout/subtasks/17_subdoc-separate-urls.md`.
-
-## Example: a completed log
-
-```
-agent-log/
-├── 001_initial-triage.md                          status: success
-├── 002_incremental-parse-spike.md                 status: failed
-├── 003_cache-invalidation-approach.md             status: success
-└── 004_shipped-closing-summary.md                 status: success
-```
-
-Iteration 1 — scoped the problem. Iteration 2 — tried incremental parsing, didn't work (log captures why). Iteration 3 — alternative approach worked. Iteration 4 — human flipped to `closed`, final summary written. Full story, readable in 4 files.
-
-## Structured workspace for dense runs (recommended)
-
-A flat list of entries is fine for a quick fix. For a **dense autonomous run** (a `/loop`, an ultracode session, a goal-driven sweep), the log reads better as a **typed execution workspace** — categories of activity, each carrying a goal, a live task-list, and its iterations:
-
-```
-agent-log/
-├── 000_agent-memory/      ← issue-scoped working memory the agent maintains
-├── 100_discussion/        ← agent↔human working dialogue during the run (dated)
-├── 200_loops/
-│   └── 010_<name>/
-│       ├── 001_loop-goal.md         ← what this run is trying to achieve
-│       ├── 002_task-list.md         ← live checklist / status for this run
-│       ├── 003_summary.md           ← post-execution summary (written when the run wraps)
-│       ├── 004_attention-needed.md  ← (optional) pointers / mid-run issues to discuss before closing
-│       └── 101_… / 102_…            ← iterations (failed ones kept as signal)
-├── 300_audits/            ← same goal + task-list + summary + iterations shape
-└── 400_refactors/         ← …extensible: 500_migrations/ drops in the same way
-```
-
-The meta block is just an ordering convention — `0xx` files (goal `001`, task-list `002`, summary `003`, attention-needed `004`) sort ahead of the `1xx` iterations purely by their leading-digit prefix, the same index grammar the rest of the tracker uses.
-
-This is **very recommended, not enforced** — there's no parser change, files still sort by their leading number, and existing flat logs stay valid. Categories are created on demand; never scaffold empty ones. The boundaries to hold: a loop's `002_task-list.md` is the *working checklist for one run* (not the issue's durable `subtasks/` **plan**); `100_discussion/` is *in-run dialogue* (not the durable issue-level `comments/`) and is **saved only when you explicitly ask** — an agent may offer to save a dense discussion but never persists it on its own; `000_agent-memory/` is *issue-scoped* memory (it complements, never replaces, global `~/.claude` memory). A loop is almost a mini-issue — the line that keeps the two from merging is **`subtasks/` = the plan, `agent-log/` = the execution record.**
-
-Full agent-facing detail lives in the `documentation-guide` skill's `references/layouts/issues/24_agent-logs.md`.
-
-## When NOT to write to the log
-
-- **Human edits** — comments belong in `comments/`, not agent-log. The log is for programmatic writes during autonomous runs.
-- **Micro-progress pings** — "I ran the test, it passed" isn't a worthwhile iteration. Batch into the next meaningful log.
-- **Editing old entries** — don't rewrite history. Add a new entry.
+- **Detail-page sidebar** — the Agent log section lists activity folders (`NN <symbol> <name> <count>`) with meta files and `#N` milestones inside; each file is a link to its own page.
+- **Own URLs** — `/<tracker>/<issue>/agent-log/<folder>/<file>` (sub-doc pages with their own TOC rail).
+- **Guide panel** — the generated kinds table documents this issue's effective kind set.
 
 ## See also
 
-- [Lifecycle and Review](../lifecycle-and-review) — how the log interacts with the review handoff
-- [Using with AI](../using-with-ai) — agent discipline + planned `/issues` skill
-- [Work an Issue](../workflows/work-an-issue) — when to add a log entry during a run
+- [Agent Memory](./agent-memory) — the AI's mutable working state (what's still true)
+- [Subtasks](./subtasks) — the plan the log executes against
+- [Lifecycle and Review](../lifecycle-and-review) — how the log feeds the review handoff
+- [Using with AI](../using-with-ai) — agent discipline

@@ -1,25 +1,51 @@
 ---
 title: Update the documentation guide, UI, and tooling
-state: open
+state: closed
 ---
 
-Implement the structure in the framework once it's decided (subtask 01).
+Implement the anatomy decided in subtask 01 (spec: `notes/01_issue-anatomy/`) across the
+three surfaces that have to agree on it: the **framework** (loader + issue layout), the
+**bundled guide** (what a reader sees on every issue's Guide panel), and the **plugin
+tooling** (validators that catch drift).
 
-- [x] Loader (`src/loaders/issues.ts`) — `brainstorm` + `agent-memory` added to the
-      sub-folder list and read via `readFreeformDocs`; comments stay flat.
-- [x] Routing + sidebar — Brainstorm + Agent-memory sections wired across
-      `DetailSidebar` / `SubdocTree` / `route-match` / `static-paths` / helpers /
-      `SubDocLayout` / `NotePage` / `panels.ts`.
-- [x] Agent-log `kind` badge — code lives in the folder name (`NNN_<code>_<name>/`); the
-      code→name map is `agentLogKinds` in issue `settings.json` merged over framework
-      defaults (`lp/au/rf/it/wf`). Sidebar renders `NN  <name>  (kind-tag)`; unknown codes
-      fall back to name+count; meta files (`0NN`) badge-less; milestones keep `#<iteration>`.
-- [x] The rendered **guide** surfaced on every issue — `guide.ts` (framework-bundled,
-      thin legend) rendered on a **Guide** panel; documented in CLAUDE.md as the
-      skill-guide twin.
-- [x] **Guide generated per issue** — `buildIssueGuide(kindMap)` renders the kinds table
-      (symbol · code · name · desc) from the effective `agentLogKinds`; complexity-first
-      section order, pointer-style; right-rail "On this page" TOC via id-stamped `h2`s +
-      `#guide-<slug>` deep links. Design settled in
-      `brainstorm/01_overall-structure/09_guide.md`.
-- [ ] Validators (`docs-check-section`) updated for the new sections
+## Done — framework
+
+- [x] **Loader knows the new sections.** `src/loaders/issues.ts` reads `brainstorm/` and
+      `agent-memory/` as issue sub-folders (same free-form walk as `notes/`); `comments/`
+      stays a flat list of `NNN_*.md` files.
+- [x] **UI renders them.** Sidebar sections, routes, and panels for Brainstorm and
+      Agent-memory wired through the issue detail layout (`DetailSidebar`, `SubdocTree`,
+      route matching, static paths, `panels.ts`).
+- [x] **Agent-log kind badges.** An activity folder is `NNN_<code>_<name>/` — the 2-letter
+      `<code>` says what sort of run it was (loop, audit, …). The code→label map is
+      `agentLogKinds` in the issue's `settings.json`, merged over framework defaults
+      (`lp` loop · `au` audit · `rf` refactor · `it` iteration · `wf` workflow). Sidebar
+      shows the label as a tag; unknown codes degrade gracefully; `0NN_` meta files get no
+      badge; milestones show their `#<iteration>` chip.
+
+## Done — guide
+
+- [x] **Guide panel on every issue.** `src/layouts/issues/default/guide.ts` renders a
+      built-in anatomy legend, so the map is available even without the plugin installed
+      (CLAUDE.md documents it as the skill-guide's thin twin).
+- [x] **Guide is generated per issue.** `buildIssueGuide(kindMap)` injects the issue's
+      effective `agentLogKinds` into the kinds table (icon · code · name · use-for) and
+      id-stamps the `h2`s, giving the right-rail "On this page" TOC and `#guide-<slug>`
+      deep links. Section order is complexity-first. Design: `notes/01_issue-anatomy/09_guide.md`.
+
+## Done — tooling
+
+- [x] **Validators updated for the new anatomy.** `docs-guide check issues`
+      (`scripts/issues/check.mjs`) now validates, per issue folder — all as *warnings*
+      (the loader tolerates every one of these; brainstorm deliberately gets no grammar):
+      - `brainstorm/` + `agent-memory/` walked as known sub-folders (frontmatter drift,
+        2-level depth cap); unknown root sub-folders flagged; root `glossary.md`
+        whitelisted alongside `issue.md`;
+      - agent-log grammar: `NNN_<code>_<name>/` activity folders (flat root files and
+        code-less/unknown-code folders hinted, with the issue's *effective* kind set in
+        the message); `0NN_` meta files must not carry `iteration`, milestones should;
+        milestone `status` checked against the badge-colour vocabulary;
+      - `agentLogKinds` in `settings.json`: 2-letter lowercase codes, string or
+        `{name, icon, desc}` shape, icon vetted against the symbol palette;
+      - agent-memory: `memory.md` index expected when the folder exists;
+      - subtasks: `title` + `state` frontmatter (pre-existing, unchanged).

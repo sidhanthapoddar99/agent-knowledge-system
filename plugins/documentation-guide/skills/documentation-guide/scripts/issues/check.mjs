@@ -9,7 +9,13 @@
  *   • Every issue folder matches YYYY-MM-DD-<slug>/
  *   • Every issue has settings.json + issue.md
  *   • Issue settings.json carries required fields and uses vocabulary values
+ *   • `agentLogKinds` well-formed (2-letter codes, string or {name, icon, desc})
  *   • Subtasks have valid `state` (open|review|closed|cancelled)
+ *   • Sub-folders are the known anatomy: subtasks / notes / brainstorm /
+ *     agent-log / agent-memory / comments (unknown dirs → warning)
+ *   • Agent-log grammar: NNN_<code>_<name>/ activity folders, 0NN meta files
+ *     vs milestone files (milestones carry `iteration`; status vocabulary)
+ *   • Agent-memory has a memory.md index
  *   • Comments / agent-logs follow naming conventions (warned, not errored)
  *   • Stray .md at folder root (other than issue.md) → warning
  *
@@ -52,7 +58,7 @@ const STRICT = !!args.flags.strict;
 // plus real-world frontmatter usage. When the schema changes, update here.
 const ISSUE_SETTINGS_KEYS = new Set([
   'title', 'description', 'status', 'priority', 'component', 'labels',
-  'author', 'assignees', 'draft',
+  'author', 'assignees', 'draft', 'agentLogKinds',
 ]);
 const TRACKER_ROOT_KEYS = new Set(['label', 'fields', 'authors', 'views', 'draft']);
 const TRACKER_FIELD_KEYS = new Set(['status', 'priority', 'component', 'labels']);
@@ -66,6 +72,29 @@ const AGENT_LOG_FM_KEYS = new Set([
   'color',
 ]);
 const COMMENT_FM_KEYS = new Set(['author', 'date', 'title', 'sidebar_label']);
+
+// Known issue sub-folders (the anatomy) + colocated assets. Anything else at
+// the issue root is probably a typo — the loader silently ignores it.
+const KNOWN_SUBFOLDERS = new Set([
+  'subtasks', 'notes', 'brainstorm', 'agent-log', 'agent-memory', 'comments', 'assets',
+]);
+
+// Agent-log kind machinery — mirrors src/loaders/issues.ts (defaults, code
+// shape) and layouts/issues/default/server/agent-log-icons.ts (palette).
+const DEFAULT_KIND_CODES = new Set(['lp', 'au', 'rf', 'it', 'wf']);
+const KIND_CODE_PATTERN = /^[a-z]{2}$/;
+const ICON_PALETTE = new Set([
+  'repeat', 'search', 'wrench', 'refresh-cw', 'git-branch',
+  'flask', 'zap', 'flag', 'star', 'book', 'shield', 'layers', 'clock',
+  'target', 'check-circle', 'bug', 'tag',
+]);
+// Milestone `status` vocabulary — aliases accepted by SubdocTree's colour map.
+const MILESTONE_STATUSES = new Set([
+  'not-started', 'todo', 'pending', 'planned',
+  'in-progress', 'wip', 'active',
+  'success', 'completed', 'complete', 'done',
+  'failed', 'fail', 'error',
+]);
 
 const errors = [];
 const warnings = [];
@@ -155,18 +184,57 @@ for (const entry of issueFolders) {
     }
   }
 
+  // agentLogKinds — per-issue code→kind map merged over framework defaults.
+  // The loader tolerates malformed entries (skips them), so shape problems are
+  // warnings, not errors. Valid custom codes join the effective set used to
+  // vet agent-log folder names below.
+  const effectiveKindCodes = new Set(DEFAULT_KIND_CODES);
+  if (meta.agentLogKinds !== undefined) {
+    if (typeof meta.agentLogKinds !== 'object' || meta.agentLogKinds === null || Array.isArray(meta.agentLogKinds)) {
+      warnings.push(`${id}/settings.json: \`agentLogKinds\` must be an object ({ code: name | {name, icon, desc} }) — ignored by loader`);
+    } else {
+      for (const [code, val] of Object.entries(meta.agentLogKinds)) {
+        if (!KIND_CODE_PATTERN.test(code)) {
+          warnings.push(`${id}/settings.json: agentLogKinds code \`${code}\` isn't two lowercase letters — ignored by loader`);
+          continue;
+        }
+        if (typeof val === 'string') {
+          if (val.trim()) effectiveKindCodes.add(code);
+          else warnings.push(`${id}/settings.json: agentLogKinds.\`${code}\` is an empty string — ignored by loader`);
+        } else if (val && typeof val === 'object' && !Array.isArray(val)) {
+          if (typeof val.name === 'string' && val.name.trim()) {
+            effectiveKindCodes.add(code);
+            if (val.icon !== undefined && !ICON_PALETTE.has(val.icon)) {
+              warnings.push(`${id}/settings.json: agentLogKinds.\`${code}\` icon \`${val.icon}\` not in the symbol palette — falls back to the generic tag`);
+            }
+          } else {
+            warnings.push(`${id}/settings.json: agentLogKinds.\`${code}\` has no \`name\` — ignored by loader`);
+          }
+        } else {
+          warnings.push(`${id}/settings.json: agentLogKinds.\`${code}\` must be a string or {name, icon, desc} — ignored by loader`);
+        }
+      }
+    }
+  }
+
   // issue.md required
   if (!fs.existsSync(path.join(folder, 'issue.md'))) {
     errors.push(`${id}/issue.md: missing`);
   }
 
-  // Stray *.md at folder root
-  const stray = fs
-    .readdirSync(folder, { withFileTypes: true })
-    .filter((e) => e.isFile() && e.name.endsWith('.md') && e.name !== 'issue.md')
+  // Stray *.md at folder root + unknown sub-folders (loader ignores both).
+  // issue.md is the body; glossary.md is the optional per-issue glossary panel.
+  const rootEntries = fs.readdirSync(folder, { withFileTypes: true });
+  const stray = rootEntries
+    .filter((e) => e.isFile() && e.name.endsWith('.md') && e.name !== 'issue.md' && e.name !== 'glossary.md')
     .map((e) => e.name);
   if (stray.length) {
     warnings.push(`${id}/: stray .md at folder root (move to notes/?): ${stray.join(', ')}`);
+  }
+  for (const e of rootEntries) {
+    if (e.isDirectory() && !KNOWN_SUBFOLDERS.has(e.name)) {
+      warnings.push(`${id}/${e.name}/: not a known issue sub-folder (${[...KNOWN_SUBFOLDERS].join('/')}) — ignored by loader`);
+    }
   }
 
   // Subtasks (recursive — up to 2 levels of grouping folders allowed).
@@ -218,15 +286,18 @@ for (const entry of issueFolders) {
     warnings.push(`${id}/: AI-handoff-bound issue has no subtasks — consider adding at least one as the agent's handoff anchor`);
   }
 
-  // notes/ + agent-log/ subfolder depth (max 2 levels — anything deeper is
-  // ignored by the loader). Depth 0 = root, depth 1 = group, depth 2 = subgroup.
-  // Also: schema-drift on every .md frontmatter under each sub-doc folder.
+  // Free-form sub-doc folders: depth cap (max 2 levels — anything deeper is
+  // ignored by the loader; depth 0 = root, depth 1 = group, depth 2 = subgroup)
+  // plus schema-drift on every .md frontmatter. Brainstorm and agent-memory
+  // share the notes frontmatter surface (free-form docs, no extra machinery).
   const FM_KEYS_BY_TYPE = {
     notes: NOTE_FM_KEYS,
+    brainstorm: NOTE_FM_KEYS,
+    'agent-memory': NOTE_FM_KEYS,
     'agent-log': AGENT_LOG_FM_KEYS,
     comments: COMMENT_FM_KEYS,
   };
-  for (const sub of ['notes', 'agent-log', 'comments']) {
+  for (const sub of ['notes', 'brainstorm', 'agent-memory', 'agent-log', 'comments']) {
     const subDir = path.join(folder, sub);
     if (!fs.existsSync(subDir)) continue;
     function walk(absDir, segments) {
@@ -253,6 +324,67 @@ for (const entry of issueFolders) {
       }
     }
     walk(subDir, []);
+  }
+
+  // agent-memory: memory.md is the section's entry point (index) — expected
+  // whenever the folder exists.
+  const memDir = path.join(folder, 'agent-memory');
+  if (fs.existsSync(memDir) && !fs.existsSync(path.join(memDir, 'memory.md'))) {
+    warnings.push(`${id}/agent-memory/: no \`memory.md\` index — agents read it first; add one line per topic file`);
+  }
+
+  // agent-log grammar: the norm is NNN_<code>_<name>/ activity folders (kind
+  // code in the folder name), with 0NN_ pinned meta files and milestone files
+  // (leading digit ≥ 1, `iteration` frontmatter) inside. Flat files and
+  // code-less folders still parse — hints only.
+  const logDir = path.join(folder, 'agent-log');
+  if (fs.existsSync(logDir)) {
+    for (const e of fs.readdirSync(logDir, { withFileTypes: true })) {
+      if (e.isFile() && e.name.endsWith('.md')) {
+        warnings.push(`${id}/agent-log/${e.name}: flat file at agent-log root — parses, but the convention is an NNN_<code>_<name>/ activity folder`);
+        continue;
+      }
+      if (!e.isDirectory()) continue;
+
+      const m = e.name.match(/^(\d{2,5})_(.+)$/);
+      const rest = m ? m[2] : e.name;
+      const codeMatch = rest.match(/^([a-z]{2})_(.+)$/);
+      if (!m) {
+        warnings.push(`${id}/agent-log/${e.name}/: no numeric order prefix — sorts last; convention is NNN_<code>_<name>/`);
+      } else if (!codeMatch) {
+        warnings.push(`${id}/agent-log/${e.name}/: no kind code after the prefix — renders without a symbol; convention is NNN_<code>_<name>/ (codes: ${[...effectiveKindCodes].sort().join('/')})`);
+      } else if (!effectiveKindCodes.has(codeMatch[1])) {
+        warnings.push(`${id}/agent-log/${e.name}/: kind code \`${codeMatch[1]}\` not in the effective set (${[...effectiveKindCodes].sort().join('/')}) — declare it in settings.json \`agentLogKinds\` or it renders without a symbol`);
+      }
+
+      // Inside an activity folder: 0NN_ = pinned meta (no iteration),
+      // leading digit ≥ 1 = milestone (iteration drives the #N badge).
+      let files;
+      try { files = fs.readdirSync(path.join(logDir, e.name), { withFileTypes: true }); }
+      catch { continue; }
+      for (const f of files) {
+        if (!f.isFile() || !f.name.endsWith('.md')) continue;
+        const rel = `${id}/agent-log/${e.name}/${f.name}`;
+        const pm = f.name.match(/^(\d{2,5})_/);
+        if (!pm) continue; // unprefixed — generic drift walk already covers fm
+        const isMeta = pm[1][0] === '0';
+        let fm;
+        try { fm = matter(fs.readFileSync(path.join(logDir, e.name, f.name), 'utf-8')).data || {}; }
+        catch { continue; } // malformed fm already reported by the generic walk
+        if (isMeta && fm.iteration !== undefined) {
+          warnings.push(`${rel}: 0NN_ meta file carries \`iteration\` — meta files are badge-less; milestones use a leading digit ≥ 1`);
+        }
+        if (!isMeta && fm.iteration === undefined) {
+          warnings.push(`${rel}: milestone without \`iteration:\` frontmatter — no #N badge; falls back to sequence`);
+        }
+        if (fm.status !== undefined) {
+          const s = String(fm.status).toLowerCase().replace(/\s+/g, '-');
+          if (!MILESTONE_STATUSES.has(s)) {
+            warnings.push(`${rel}: status \`${fm.status}\` not in the milestone vocabulary (not-started | in-progress | success | failed) — badge won't be tinted`);
+          }
+        }
+      }
+    }
   }
 }
 

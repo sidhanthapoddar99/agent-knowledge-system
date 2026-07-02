@@ -8,7 +8,7 @@
  * client (priority desc, then updated desc) — see scripts/index/client.ts.
  */
 import StatusBadge from '../shared/StatusBadge.astro';
-import { avatarColor, initial, formatRelativeTime } from '../../server/helpers';
+import { avatarColor, initial, formatRelativeTime, effectiveStatus } from '../../server/helpers';
 import type { Issue, IssuesVocabulary } from '@loaders/issues';
 
 interface Props {
@@ -90,7 +90,7 @@ const VISIBLE_AVATARS = 3;
                 <span class="issues-table__id">{issue.id}</span>
               </div>
             </td>
-            <td><StatusBadge field="status" value={issue.meta.status} vocabulary={vocabulary.fields} /></td>
+            <td><StatusBadge field="status" value={effectiveStatus(issue)} vocabulary={vocabulary.fields} /></td>
             <td>
               {issue.meta.priority
                 ? <StatusBadge field="priority" value={issue.meta.priority} vocabulary={vocabulary.fields} />

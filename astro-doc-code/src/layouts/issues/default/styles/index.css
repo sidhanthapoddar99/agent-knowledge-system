@@ -17,6 +17,11 @@
   gap: 1rem;
   flex-wrap: wrap;
 }
+.issues-index__tools {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
 .issues-index__title { margin: 0 0 0.25rem; font-size: var(--ui-text-title); font-weight: var(--font-weight-normal); }
 .issues-index__summary {
   margin: 0;

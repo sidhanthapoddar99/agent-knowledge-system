@@ -14,29 +14,32 @@ Per-issue `settings.json` files are validated against this root. Rename a value 
 
 The settings file may be plain `settings.json` **or** `settings.jsonc` — JSON that also allows `//` line comments, `/* */` block comments, and trailing commas. Both the framework loaders and the `docs-guide` toolkit read either; when both files exist for the same folder, **`.jsonc` wins**. Since JSONC is a strict superset of JSON, a comment-free `.json` file is still perfectly valid — the win is the ability to annotate.
 
-**For the root vocabulary, prefer `.jsonc` and comment what each `component` and `label` means.** The vocabulary is the controlled list every issue picks from, so a one-line gloss per value is the single best signal for humans *and* AI agents deciding where a new issue belongs — and it keeps `component` from decaying into a junk drawer. Keep the glosses accurate as the taxonomy changes.
+**For the root vocabulary, prefer `.jsonc` and annotate freely.** Each value's *meaning* now lives in a required `descriptions` map alongside `component` and `labels` (see [Value descriptions](#value-descriptions)) — that map is the controlled gloss every issue author and AI agent reads to decide where a new issue belongs, and it renders verbatim in the tracker's **Guide** modal. It keeps `component` from decaying into a junk drawer, so keep it accurate as the taxonomy changes. JSONC comments remain handy for rationale the descriptions don't cover.
 
 ## Example
 
 ```jsonc
 {
   "label": "Todo",
+
+  // Status COLORS only. The seven statuses and their four-category grouping are
+  // FIXED in framework code — a tracker can't add/rename statuses and there is
+  // deliberately no `values` list here. Keys must be a subset of the seven; omit
+  // any you keep at the default. A `fields.status` block is a hard error.
+  "statusColors": {
+    "open":         "#888888",
+    "blocked":      "#d1854f",
+    "in-progress":  "#61afef",
+    "input-needed": "#e8a54b",
+    "review":       "#f0c674",
+    "done":         "#7ec699",
+    "dropped":      "#c678dd"
+  },
+
   "fields": {
-    "status": {
-      // Statuses are FIXED in framework code — you may override colors, not the set.
-      "values": ["open", "blocked", "in-progress", "input-needed", "review", "done", "dropped"],
-      "colors": {
-        "open":         "#888888",
-        "blocked":      "#d1854f",
-        "in-progress":  "#61afef",
-        "input-needed": "#e8a54b",
-        "review":       "#f0c674",
-        "done":         "#7ec699",
-        "dropped":      "#c678dd"
-      }
-    },
     "priority": {
       "values": ["low", "medium", "high", "urgent"],
+      // `descriptions` optional for priority.
       "colors": {
         "low":    "#7aa2f7",
         "medium": "#f0c674",
@@ -47,33 +50,50 @@ The settings file may be plain `settings.json` **or** `settings.jsonc` — JSON 
     "component": {
       // Layer-of-the-stack axis — pick exactly one per issue (by center of gravity).
       "values": [
-        "architecture",          // engine/infra: refactors, plugin system, runtime, dev-toolbar
-        "loaders-and-renderers", // content pipeline: loading, link resolution, caching, render
-        "components",            // markdown-rendered elements (code blocks, diagrams, graph, wikilinks) + supplemental tools
-        "layout-general",        // building presentation: layouts (docs/blog/new types) + themes
-        "layout-issues",         // the issue-tracker presentation specifically
-        "editor",                // the live CodeMirror+Yjs editing app
-        "ai-plugin-and-docs"     // the meta-project: Claude Code plugin/skills + prose docs
-      ]
+        "architecture",
+        "loaders-and-renderers",
+        "components",
+        "layout-general",
+        "layout-issues",
+        "editor",
+        "ai-plugin-and-docs"
+      ],
+      // REQUIRED — every component value needs a description (a missing one is a
+      // hard error). Rendered verbatim in the tracker Guide modal.
+      "descriptions": {
+        "architecture":          "Engine/infra: refactors, plugin system, runtime, dev-toolbar.",
+        "loaders-and-renderers": "Content pipeline: loading, link resolution, caching, render.",
+        "components":            "Markdown-rendered elements (code blocks, diagrams, graph, wikilinks) + supplemental tools.",
+        "layout-general":        "Building presentation: layouts (docs/blog/new types) + themes.",
+        "layout-issues":         "The issue-tracker presentation specifically.",
+        "editor":                "The live CodeMirror+Yjs editing app.",
+        "ai-plugin-and-docs":    "The meta-project: Claude Code plugin/skills + prose docs."
+      }
     },
     "labels": {
       "values": [
-        "wip",              // DEPRECATED — superseded by the `in-progress` status; kept for back-compat
-        "blocked",          // DEPRECATED — superseded by the `blocked` status; kept for back-compat
-        "bug",              // behaves differently from intended
-        "feature",          // net-new capability
-        "task",             // concrete work that isn't a feature/bug
-        "performance",      // speed / memory / scaling
-        "refactor",         // restructuring, no behavior change
-        "docs",             // documentation/prose work (cross-cuts any component)
-        "idea",             // speculative, not yet committed
-        "duplicate",        // superseded by another issue
-        "good-first-issue", // low-context entry point for newcomers
-        "discussion",       // open design conversation, decision unsettled
-        "blocked-external"  // waiting on an upstream / third-party dependency
-      ]
+        "wip", "blocked", "bug", "feature", "task", "performance", "refactor",
+        "docs", "idea", "duplicate", "good-first-issue", "discussion", "blocked-external"
+      ],
+      // REQUIRED — same rule as component: every value carries a description.
+      "descriptions": {
+        "wip":              "DEPRECATED — superseded by the `in-progress` status; kept for back-compat.",
+        "blocked":          "DEPRECATED — superseded by the `blocked` status; kept for back-compat.",
+        "bug":              "Behaves differently from intended.",
+        "feature":          "Net-new capability.",
+        "task":             "Concrete work that isn't a feature/bug.",
+        "performance":      "Speed / memory / scaling.",
+        "refactor":         "Restructuring, no behavior change.",
+        "docs":             "Documentation/prose work (cross-cuts any component).",
+        "idea":             "Speculative, not yet committed.",
+        "duplicate":        "Superseded by another issue.",
+        "good-first-issue": "Low-context entry point for newcomers.",
+        "discussion":       "Open design conversation, decision unsettled.",
+        "blocked-external": "Waiting on an upstream / third-party dependency."
+      }
     }
   },
+
   "authors": ["sidhantha", "claude"],
   "views": [
     { "name": "High priority","filters": { "priority": ["high", "urgent"] } },
@@ -88,53 +108,59 @@ The settings file may be plain `settings.json` **or** `settings.jsonc` — JSON 
 | Field | Type | Required | Purpose |
 |---|---|:---:|---|
 | `label` | string | — | Human name for the tracker, shown in the sidebar + page header |
-| `fields` | object | ✅ | Enum definitions for every field issues pick from |
+| `statusColors` | object | — | Per-status colour overrides for the fixed lifecycle — `{ "<status>": "<hex>" }`, keys a subset of the seven statuses. A **top-level** key, sibling of `fields` (not inside it). See [Status colors](#status-colors) |
+| `fields` | object | ✅ | Enum definitions for `priority`, `component`, `labels`. **Status is not defined here** — it's fixed in code (only its colors are overridable, via `statusColors`) |
 | `authors` | string[] | — | Known authors — referenced by `author` / `assignees` in per-issue settings |
 | `views` | array | — | Preset filter views (see [Preset views](#preset-views)) |
 | `draft` | bool | — | `true` → entire tracker hidden in production |
 
 ## The `fields` object
 
-Each key is a field name (`status`, `priority`, `component`, `labels`). Each value has:
+Each key is a field name — `priority`, `component`, `labels`. (`status` is **not** a `fields` entry: it's fixed in framework code, with colors overridden separately via the top-level [`statusColors`](#status-colors) map.) Each value has:
 
 ```ts
 {
-  values: string[]           // allowed values
-  colors?: { [value]: hex }  // optional, per value
+  values: string[]                    // allowed values
+  descriptions?: { [value]: string }  // REQUIRED for component + labels; optional for priority
+  colors?: { [value]: hex }           // optional, per value
 }
 ```
 
 ### Required fields
 
-The loader expects these four fields at minimum. Adding more is possible but the built-in layout won't surface them.
+The loader expects these three fields under `fields` at minimum. Adding more is possible but the built-in layout won't surface them. (Lifecycle `status` is the fourth field every issue carries, but it's fixed in code — see [Status colors](#status-colors) — not declared here.)
 
 | Field | Multi-select? | Typically used for |
 |---|:---:|---|
-| `status` | — | Lifecycle status (seven statuses in four categories; fixed in code) |
 | `priority` | — | Urgency (low / medium / high / urgent) |
 | `component` | ✅ | Which part of the codebase / product. Convention is one entry per issue; multi-component is allowed for cross-cutting work |
 | `labels` | ✅ | Everything orthogonal — `wip`, `blocked`, `bug`, `feature`, `docs`, `idea`, … |
 
-The vocabulary shape is the same for single- and multi-select fields — just `values: string[]` (and optional `colors`). Whether issues consume each value singly or as a list is up to per-issue `settings.json`.
+The vocabulary shape is the same for single- and multi-select fields — `values: string[]`, an optional (or, for `component` / `labels`, required) `descriptions` map, and optional `colors`. Whether issues consume each value singly or as a list is up to per-issue `settings.json`.
 
 `priority` + `status` are the ordering signals — see [Design Philosophy](../design-philosophy) for why no other dimensions are wired in.
 
-### Status — the fixed seven-status contract
+### Status colors
+
+Statuses aren't declared under `fields` at all. The **only** per-tracker status
+customization is colors, via a top-level `statusColors` map (a sibling of `fields`):
 
 ```json
-"status": {
-  "values": ["open", "blocked", "in-progress", "input-needed", "review", "done", "dropped"],
-  "colors": {
-    "open":         "#888888",
-    "blocked":      "#d1854f",
-    "in-progress":  "#61afef",
-    "input-needed": "#e8a54b",
-    "review":       "#f0c674",
-    "done":         "#7ec699",
-    "dropped":      "#c678dd"
-  }
+"statusColors": {
+  "open":         "#888888",
+  "blocked":      "#d1854f",
+  "in-progress":  "#61afef",
+  "input-needed": "#e8a54b",
+  "review":       "#f0c674",
+  "done":         "#7ec699",
+  "dropped":      "#c678dd"
 }
 ```
+
+Keys must be a **subset of the seven fixed statuses** — a color for an unknown status is a
+hard error (it's a typo, not an override). Omit any status you're happy to leave at its
+default; the map merges over the built-in defaults. There is deliberately **no `values`
+field** for status.
 
 The seven statuses group into four categories — **Not Started** (`open`, `blocked`) ·
 **In Progress** (`in-progress`) · **Review** (`input-needed`, `review`) · **Closed**
@@ -142,21 +168,24 @@ The seven statuses group into four categories — **Not Started** (`open`, `bloc
 meanings and transition conventions are in [Lifecycle and Review](./lifecycle-and-review).
 
 **The status set is fixed in framework code — you cannot add, remove, or rename statuses
-per tracker.** Listing `values` in `settings.json` is documentation only; the loader and
-validator ignore custom values, and an unknown status is a hard error (not a silent
-default). The one thing you *can* customize is the **colors**.
+per tracker.** A `fields.status` block in the root settings is a **hard error** at
+build/dev startup (and fails `docs-guide check issues`): a stray `values` list there would
+read as authoritative and silently redefine the vocabulary, so the loader rejects it loudly
+rather than ignoring it. An unknown status *value* on an issue is likewise a hard error, not
+a silent default. Migrating an old `fields.status` block? Run
+`migration/2026-07-03_status-colors-only.py` — it detects the block and guides the rewrite.
 
 #### Why status is fixed, and everything else isn't
 
-`status` looks like every other enum in `fields` — a `values` array and an optional
-`colors` map — but it is **not** vocabulary-driven. The other enums (`priority`,
-`component`, `labels`) are read at runtime: add a value to `settings.json` and it shows
-up in filters, groupings, and chips with no code change. `status` is different by design.
+The other enums (`priority`, `component`, `labels`) are true vocabulary — read at runtime:
+add a value to `settings.json` and it shows up in filters, groupings, and chips with no
+code change. `status` is different by design: it isn't declared in `fields` at all, and
+only its **colors** are overridable (via the top-level `statusColors` map).
 
 | Concern | Source |
 |---|---|
 | Status **names** + **category grouping** | Fixed in framework code |
-| Status **colors** | ✅ Vocabulary (`fields.status.colors`) overrides the code defaults |
+| Status **colors** | ✅ Top-level `statusColors` map overrides the code defaults (colors only) |
 | Category **tabs** in the index view | Derived from the fixed categories |
 | Status **icons** + cycle order on subtasks | Fixed in code |
 | **Subtask** statuses | Same fixed set — issues and subtasks share one vocabulary and one field name (`status`) |
@@ -177,9 +206,25 @@ maintainer changing the lifecycle edits that one constant (and its CLI mirror in
 `_lib.mjs`); a tracker author never touches it. If you find yourself wanting a new status,
 that's a framework-level decision, not a per-tracker config change.
 
+### Value descriptions
+
+`component` and `labels` each require a parallel `descriptions` map — one `"<value>": "<meaning>"` entry for **every** value in `values`. A missing description is a **hard error** at build/dev startup (and fails `docs-guide check issues`); an extra description for a value that isn't in `values` is flagged too. `priority` descriptions are **optional**, and status carries its own fixed, built-in glosses (you don't write them).
+
+```jsonc
+"component": {
+  "values": ["architecture", "editor"],
+  "descriptions": {
+    "architecture": "Engine/infra: refactors, plugin system, runtime, dev-toolbar.",
+    "editor":       "The live CodeMirror+Yjs editing app."
+  }
+}
+```
+
+Why required: these glosses are the controlled definition every issue author and AI agent reads when deciding where a new issue belongs, and they render verbatim in the tracker's **Guide** modal (the **Guide** button beside the table/card toggle on the [list view](../ui/list-view)). Keeping them mandatory stops `component` from silently drifting into a junk drawer. To backfill descriptions on an older tracker, run `migration/2026-07-03_vocabulary-descriptions.py`.
+
 ### Colors
 
-Purely cosmetic — drive badge fills on the list view and anywhere status chips render. Omit `colors` for a field entirely, and the UI falls back to neutral text. Per-value — only provide colors for values that need them.
+Purely cosmetic — drive badge fills on the list view and anywhere chips render. Two maps set them: a per-field `colors` map (inside `fields.priority` / `component` / `labels`) and, for the fixed lifecycle, the top-level `statusColors` map. Omit either and the UI falls back to the built-in defaults (status) or neutral text (other fields). Per-value — only provide colors for values that need them.
 
 Use any CSS color syntax: hex, `rgb()`, `hsl()`, or CSS variables from the theme (e.g. `"var(--color-success)"`). Hex is the safest for portability across themes.
 

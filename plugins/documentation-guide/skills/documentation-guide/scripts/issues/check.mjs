@@ -60,8 +60,10 @@ const ISSUE_SETTINGS_KEYS = new Set([
   'title', 'description', 'status', 'priority', 'component', 'labels',
   'author', 'assignees', 'draft', 'agentLogKinds',
 ]);
-const TRACKER_ROOT_KEYS = new Set(['label', 'fields', 'authors', 'views', 'draft']);
-const TRACKER_FIELD_KEYS = new Set(['status', 'priority', 'component', 'labels']);
+const TRACKER_ROOT_KEYS = new Set(['label', 'fields', 'authors', 'views', 'draft', 'statusColors']);
+// `status` is no longer a valid field — statuses are code-fixed and colours
+// live under the top-level `statusColors` map (see the explicit check below).
+const TRACKER_FIELD_KEYS = new Set(['priority', 'component', 'labels']);
 const SUBTASK_FM_KEYS = new Set(['title', 'status', 'state', 'sidebar_label']);
 const NOTE_FM_KEYS = new Set([
   'title', 'description', 'sidebar_label', 'author', 'date', 'created', 'tags',
@@ -128,6 +130,32 @@ const validLabels = vocab?.fields?.labels?.values || [];
 // Schema-drift on tracker root + its fields block
 reportDrift('<root>/settings.json', unknownKeys(vocab, TRACKER_ROOT_KEYS), TRACKER_ROOT_KEYS);
 reportDrift('<root>/settings.json (fields)', unknownKeys(vocab?.fields, TRACKER_FIELD_KEYS), TRACKER_FIELD_KEYS);
+
+// Statuses are code-fixed: a per-tracker `fields.status` is an error (its
+// `values` list would read as authoritative). Colours live under a top-level
+// `statusColors` map, validated against the fixed vocabulary — a colour for a
+// status that doesn't exist is a typo, not an override.
+if (vocab?.fields?.status) {
+  errors.push(`<root>/settings.json: remove \`fields.status\` — statuses are fixed in code; override colours via a top-level \`statusColors\` map instead (migration/2026-07-03_root-settings-schema.py)`);
+}
+if (vocab?.statusColors && typeof vocab.statusColors === 'object') {
+  for (const key of Object.keys(vocab.statusColors)) {
+    if (!STATUSES.includes(key)) {
+      errors.push(`<root>/settings.json: \`statusColors.${key}\` is not a valid status (${STATUSES.join('|')}) — a colour for a status that doesn't exist is a typo`);
+    }
+  }
+}
+// Every component/label value must carry a description (rendered in the Guide
+// modal). priority meanings stay optional.
+for (const field of ['component', 'labels']) {
+  const def = vocab?.fields?.[field];
+  if (!def || !Array.isArray(def.values) || def.values.length === 0) continue;
+  const descriptions = (def.descriptions && typeof def.descriptions === 'object') ? def.descriptions : {};
+  const missing = def.values.filter((v) => typeof descriptions[v] !== 'string' || descriptions[v].trim() === '');
+  if (missing.length > 0) {
+    errors.push(`<root>/settings.json: \`fields.${field}\` — missing description(s) for: ${missing.join(', ')}. Add a \`descriptions\` map alongside \`values\` (migration/2026-07-03_root-settings-schema.py)`);
+  }
+}
 
 const FOLDER_PATTERN = /^(\d{4}-\d{2}-\d{2})-([a-z0-9][a-z0-9-]*)$/;
 const VALID_SUBTASK_STATES = STATUSES;

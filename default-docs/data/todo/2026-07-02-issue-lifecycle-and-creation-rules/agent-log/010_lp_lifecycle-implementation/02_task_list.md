@@ -79,6 +79,10 @@ Flagged for sidhantha: the "Active" default tab + the click-cycle happy-path.
 
 ## Wrap-up
 
-- [ ] All subtasks → review (or input-needed with inline question)
-- [ ] Milestones (`1NN_`) + `01_summary.md` written; agent-memory updated
-- [ ] Issue left open for sidhantha's sign-off
+- [x] All subtasks → review (or input-needed with inline question)
+- [x] Milestones (`1NN_`) + `01_summary.md` written; agent-memory updated
+- [x] Issue left open for sidhantha's sign-off
+
+Post-loop (2026-07-02): sidhantha approved the **Active** default tab (click-cycle
+still pending his verdict) and directed three follow-ups, captured as subtasks
+10–12 — outside this activity's scope.

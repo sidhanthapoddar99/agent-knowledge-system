@@ -24,7 +24,7 @@ You can have multiple trackers in one project — e.g. `data/bugs/`, `data/roadm
 
 ### Tracker root `settings.json`
 
-Defines the vocabulary that every issue in the tracker must use — allowed status values, priorities, labels, colors, preset views, authors. Full schema in [Vocabulary](./settings/vocabulary).
+Defines the vocabulary that every issue in the tracker must use — priorities, components, labels (with their descriptions), plus status colors, preset views, and authors. (The lifecycle statuses themselves are fixed in framework code, not defined here.) Full schema in [Vocabulary](./settings/vocabulary).
 
 ## The issue folder
 

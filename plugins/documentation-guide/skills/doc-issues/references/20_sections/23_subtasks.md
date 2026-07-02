@@ -14,7 +14,7 @@ Body — describe the work in enough detail that someone (or an agent) can pick 
 ```
 
 `status` uses the **same seven-status vocabulary as issue `status`** — one shared field
-name, one shared set (see [03_vocabulary.md](../00_anatomy/03_vocabulary.md)) — tracked independently per
+name, one shared set (see [03_overall-issue-tracker-vocabulary.md](../00_anatomy/03_overall-issue-tracker-vocabulary.md)) — tracked independently per
 subtask. (Subtasks used to carry a separate `state:` field; it's been unified to `status:`.
 The legacy `state:` is auto-mapped with a migrate-me warning until renamed.)
 

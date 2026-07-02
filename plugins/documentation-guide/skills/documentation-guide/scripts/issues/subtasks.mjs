@@ -28,13 +28,21 @@ if (args.flags.help || (!positional && !args.flags.all)) {
     '--flat   one-line-per-subtask, no grouping (issue<TAB>file<TAB>status<TAB>title).',
     '--json   machine-readable; carries groupPath per subtask + group metadata.',
     'Default scope: everything not in the Closed category (done/dropped hidden).',
+    '--status all   include every status (done/dropped shown too).',
   ]);
   process.exit(args.flags.help ? 0 : 1);
 }
 
 const tracker = resolveTracker(args.flags.tracker);
-// Accept `--status` (canonical) and `--state` (legacy alias).
-const stateFilter = csv(args.flags.status ?? args.flags.state).filter(isValidState);
+// Accept `--status` (canonical) and `--state` (legacy alias). The `all`
+// keyword widens to every status (mirrors `issue list` at list.mjs) — it must
+// be expanded BEFORE the vocabulary filter, which would otherwise drop it and
+// silently fall back to the default non-Closed scope. Unknown tokens are still
+// dropped so a typo can't smuggle in an empty filter as "everything".
+const rawStatus = csv(args.flags.status ?? args.flags.state);
+const stateFilter = rawStatus.includes('all')
+  ? [...STATUSES]
+  : rawStatus.filter(isValidState);
 const scope = stateFilter.length
   ? stateFilter
   : STATUSES.filter((s) => !TERMINAL_STATUSES.includes(s));

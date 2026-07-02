@@ -37,13 +37,16 @@ import matter from 'gray-matter';
 import { createIssuesParser } from '../parsers/content-types/issues';
 import { getIssueDate } from './issue-dates';
 import { parseOrderPrefixLoose } from '../parsers/core/order-prefix';
-import { readSettings, statSettingsMtime } from './settings-file';
+import { readSettings, statSettingsMtime, resolveSettingsPath } from './settings-file';
 import {
   type IssueStatus,
   type CategoryId,
   categoryOf,
   normalizeStatus,
   unknownStatusMessage,
+  statusFieldForbiddenMessage,
+  resolveStatusColors,
+  STATUSES as STATUS_LIST,
 } from './issue-status';
 
 // Re-export the lifecycle vocabulary so layouts / server helpers can import it
@@ -52,6 +55,8 @@ export {
   STATUSES,
   CATEGORIES,
   DEFAULT_STATUS_COLORS,
+  STATUS_DESCRIPTIONS,
+  CATEGORY_DESCRIPTIONS,
   TERMINAL_STATUSES,
   REVIEW_STATUSES,
   categoryOf,
@@ -239,6 +244,11 @@ export interface Issue {
 export interface IssuesVocabularyField {
   values: string[];
   colors?: Record<string, string>;
+  /** Per-value human meaning, keyed by value. Rendered in the tracker Guide
+   *  modal. Required for `component` and `labels` (a value without a meaning is
+   *  a hole in the guide); optional for `priority`. Kept as a parallel map so
+   *  `values` stays a plain `string[]` for filters/ordering. */
+  descriptions?: Record<string, string>;
 }
 
 export interface IssuesPresetView {
@@ -258,12 +268,20 @@ export interface IssuesVocabulary {
   authors?: string[];
   /** Preset views defined in root settings.json — subtask 13 */
   views?: IssuesPresetView[];
+  /** Per-tracker status-colour overrides (colours-only — the statuses
+   *  themselves are fixed in code). Keys must be a subset of the seven
+   *  statuses; a key outside the vocabulary is a hard error. */
+  statusColors?: Record<string, string>;
 }
 
 export interface LoadedIssues {
   vocabulary: IssuesVocabulary;
   /** Root-level draft flag — if true, the whole tracker is dev-only */
   rootDraft: boolean;
+  /** Resolved seven-status colour map: framework defaults merged with the
+   *  tracker's `statusColors` overrides. The single place any surface (badges,
+   *  the Guide modal) should read status colours from. */
+  statusColors: Record<IssueStatus, string>;
   issues: Issue[];
 }
 
@@ -386,6 +404,67 @@ function resolveStatus(raw: unknown, fileHint: string): IssueStatus {
 /** Read a settings file, preferring a sibling `.jsonc` (comments/trailing commas). */
 function readJson<T>(filePath: string): T | null {
   return readSettings<T>(filePath);
+}
+
+/** Hard-error message when a `component`/`labels` value lacks a description.
+ *  Descriptions are human-authored meaning surfaced in the tracker Guide, so a
+ *  missing one is a hole we refuse to render silently. */
+function missingDescriptionsMessage(
+  field: string,
+  missing: string[],
+  fileHint: string,
+): string {
+  return [
+    `[issues] "${fileHint}" — every \`${field}\` value must declare a description`,
+    `(these are rendered in the tracker Guide). Missing for: ${missing.join(', ')}.`,
+    `Fix: add a \`descriptions\` map alongside \`values\` under \`fields.${field}\`, e.g.`,
+    `  "${field}": { "values": [...], "descriptions": { "${missing[0]}": "what it means" } }`,
+    `See the migration script migration/2026-07-03_root-settings-schema.py.`,
+  ].join('\n');
+}
+
+/**
+ * Validate the tracker-root vocabulary and resolve its derived data. Run once
+ * per load, before any issue is read, so a malformed root settings file fails
+ * loudly and early:
+ *  - a per-tracker `fields.status` block is rejected (statuses are code-fixed;
+ *    only colours are overridable, under a top-level `statusColors` map);
+ *  - `statusColors` is validated against the fixed vocabulary and merged onto
+ *    the framework defaults;
+ *  - every `component` and `labels` value must carry a description;
+ *  - an in-memory `fields.status` (fixed values + resolved colours) is
+ *    synthesised so existing badge layouts keep reading `fields.status.colors`
+ *    unchanged — this is never written back to disk.
+ * Mutates `vocabulary.fields` in place; returns the resolved colour map.
+ */
+function resolveVocabulary(
+  vocabulary: IssuesVocabulary,
+  fileHint: string,
+): Record<IssueStatus, string> {
+  const fields = vocabulary.fields ?? (vocabulary.fields = {});
+
+  if (fields.status) {
+    throw new Error(statusFieldForbiddenMessage(fileHint));
+  }
+
+  const statusColors = resolveStatusColors(vocabulary.statusColors, fileHint);
+
+  for (const field of ['component', 'labels'] as const) {
+    const def = fields[field];
+    if (!def || !Array.isArray(def.values) || def.values.length === 0) continue;
+    const descriptions = def.descriptions ?? {};
+    const missing = def.values.filter(
+      (v) => typeof descriptions[v] !== 'string' || descriptions[v].trim() === '',
+    );
+    if (missing.length > 0) {
+      throw new Error(missingDescriptionsMessage(field, missing, fileHint));
+    }
+  }
+
+  // Synthesised from the code constant — layouts read this; disk never carries it.
+  fields.status = { values: [...STATUS_LIST], colors: statusColors };
+
+  return statusColors;
 }
 
 // Single shared parser — initialized lazily
@@ -777,15 +856,19 @@ export async function loadIssues(
     fields: {},
   };
   const rootDraft = !!vocabulary.draft;
+  // Validate the root vocabulary and resolve status colours before reading any
+  // issue — a malformed root settings file should fail loudly and early. The
+  // hint names the real file on disk (`.jsonc` when that's what's authored).
+  const statusColors = resolveVocabulary(vocabulary, resolveSettingsPath(dataPath));
 
   if (!fs.existsSync(dataPath)) {
-    const empty: LoadedIssues = { vocabulary, rootDraft, issues: [] };
+    const empty: LoadedIssues = { vocabulary, rootDraft, statusColors, issues: [] };
     cache.set(cacheKey, { signature, data: empty });
     return empty;
   }
 
   if (rootDraft && !includeDrafts) {
-    const empty: LoadedIssues = { vocabulary, rootDraft, issues: [] };
+    const empty: LoadedIssues = { vocabulary, rootDraft, statusColors, issues: [] };
     cache.set(cacheKey, { signature, data: empty });
     return empty;
   }
@@ -807,7 +890,7 @@ export async function loadIssues(
   // client when the user clicks a sortable column header.
   issues.sort((a, b) => b.updated.localeCompare(a.updated));
 
-  const result: LoadedIssues = { vocabulary, rootDraft, issues };
+  const result: LoadedIssues = { vocabulary, rootDraft, statusColors, issues };
   cache.set(cacheKey, { signature, data: result });
   return result;
 }

@@ -79,6 +79,12 @@ When picking up an issue, read in this order. Stop as soon as you have enough:
    git. The status vocabulary itself is fixed in framework code; don't invent statuses or
    scheduling/release-bucket fields.
 6. **Read before writing.** Don't overwrite; append / edit precisely.
+7. **Review-debt surfaces automatically — don't hand off the parent for it.** When you set a
+   *subtask* to `review` (or `input-needed`), its active, non-closed parent issue is pulled
+   onto the **Review** tab and **displays a `review` badge** on the index, even though the
+   issue's own stored status is unchanged. It's display-only and reverts when the subtask
+   moves on — so you don't (and shouldn't) rewrite the parent's stored status just to make it
+   show up for review. `blocked` subtasks never promote.
 
 ### 4. Status transitions you ARE allowed
 

@@ -27,37 +27,48 @@ Minimum viable:
 ```json
 {
   "label": "Bugs",
+  "statusColors": {
+    "open":         "#888888",
+    "blocked":      "#d1854f",
+    "in-progress":  "#61afef",
+    "input-needed": "#e8a54b",
+    "review":       "#f0c674",
+    "done":         "#7ec699",
+    "dropped":      "#c678dd"
+  },
   "fields": {
-    "status": {
-      "values": ["open", "blocked", "in-progress", "input-needed", "review", "done", "dropped"],
-      "colors": {
-        "open":         "#888888",
-        "blocked":      "#d1854f",
-        "in-progress":  "#61afef",
-        "input-needed": "#e8a54b",
-        "review":       "#f0c674",
-        "done":         "#7ec699",
-        "dropped":      "#c678dd"
-      }
-    },
     "priority": {
       "values": ["low", "medium", "high", "urgent"]
     },
     "component": {
-      "values": ["frontend", "backend", "infra"]
+      "values": ["frontend", "backend", "infra"],
+      "descriptions": {
+        "frontend": "UI, client-side rendering, styling.",
+        "backend":  "APIs, business logic, data access.",
+        "infra":    "Build, deploy, CI, hosting."
+      }
     },
     "labels": {
-      "values": ["reproduced", "needs-repro", "regression", "enhancement"]
+      "values": ["reproduced", "needs-repro", "regression", "enhancement"],
+      "descriptions": {
+        "reproduced":  "Bug confirmed reproducible locally.",
+        "needs-repro": "Reported but not yet reproduced.",
+        "regression":  "Worked before; a recent change broke it.",
+        "enhancement": "Improvement request rather than a defect."
+      }
     }
   },
   "authors": ["sidhantha"]
 }
 ```
 
+Status colors are a **top-level** `statusColors` map (sibling of `fields`), not a field. `component` and `labels` each carry a required `descriptions` map — one entry per value.
+
 ### Rules
 
-- **The seven statuses are fixed in framework code** — `open / blocked / in-progress / input-needed / review / done / dropped`. You may override their colors but not the set: listing `values` is documentation only (the loader ignores custom values and hard-errors on an unknown status). The UI's category tabs and review handoff depend on this fixed vocabulary.
+- **The seven statuses are fixed in framework code** — `open / blocked / in-progress / input-needed / review / done / dropped`. You don't declare them: there is **no `fields.status` block** (adding one is a hard error), and the only override is colors, via the top-level `statusColors` map (keys a subset of the seven). An unknown status value on an issue hard-errors. The UI's category tabs and review handoff depend on this fixed vocabulary.
 - **Other fields are yours to design.** Pick values that match how you actually triage.
+- **`component` and `labels` values each need a `descriptions` entry** — a parallel `"<value>": "<meaning>"` map (a missing one is a hard error). `priority` descriptions are optional. These glosses render in the tracker's **Guide** modal and steer where new issues land.
 - **Colors are optional** but useful — they drive badge fills on the list view.
 - **Don't over-specify up front.** It's easier to add values than to remove them once issues use them.
 

@@ -2,10 +2,35 @@
  * Small server-side utilities shared across the detail-page components.
  * Kept here so the .astro files stay focused on templating.
  */
-import type { IssueAgentLog, IssueNote, IssueSubtask, IssueStatus } from '@loaders/issues';
-import { TERMINAL_STATUSES, isTerminalStatus } from '@loaders/issues';
+import type { Issue, IssueAgentLog, IssueNote, IssueSubtask, IssueStatus } from '@loaders/issues';
+import { TERMINAL_STATUSES, isTerminalStatus, categoryOf } from '@loaders/issues';
 
 export const TERMINAL: readonly IssueStatus[] = TERMINAL_STATUSES;
+
+/** Review-debt: an issue that should surface under the Review tab. True when its
+ *  own status is in the Review category, OR it's active (not closed, not already
+ *  review) with ≥1 subtask awaiting review. A closed issue never carries debt.
+ *  This is THE predicate the Review tab and the review-debt badge both consume,
+ *  so the two can never disagree. */
+export function needsReview(issue: Issue): boolean {
+  const cat = categoryOf(issue.meta.status);
+  if (cat === 'review') return true;
+  if (cat === 'closed') return false;
+  return issue.subtasks.some((s) => s.category === 'review');
+}
+
+/** Effective *display* status: the stored status, overridden to `review` when
+ *  review-debt promotion pulls an active, non-review issue into the Review tab —
+ *  so the badge agrees with the tab it's filed under. Display-only: the stored
+ *  status is never mutated (the CLI / `--json` still report it) and reverts on
+ *  its own once the review subtask moves on. */
+export function effectiveStatus(issue: Issue): IssueStatus {
+  const cat = categoryOf(issue.meta.status);
+  if (cat !== 'review' && cat !== 'closed' && issue.subtasks.some((s) => s.category === 'review')) {
+    return 'review';
+  }
+  return issue.meta.status;
+}
 
 /** Pad a sequence number with a leading zero (`1` → `01`). Null → empty. */
 export function pad(n: number | null): string {

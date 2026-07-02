@@ -1,6 +1,6 @@
 ---
 title: "doc-issues skill restructure: foldered references, documentation-guide prerequisite, scripts home"
-status: review
+status: done
 ---
 
 Folded in from the standalone issue `2026-07-02-doc-issues-skill-structure`
@@ -23,16 +23,16 @@ rebasing content edits over renames.
 worked examples). Directories make the bands visible — the folder listing itself
 should read as a table of contents.
 
-- [ ] Decide the folder scheme — natural candidate mirroring the bands: `anatomy/`
+- [x] Decide the folder scheme — natural candidate mirroring the bands: `anatomy/`
       (00–03) · `writing/` (10) · `sections/` (20–27) · `operations/` (41–43) ·
       `examples/` (61–64). Decide whether files keep `NN_` prefixes inside folders
       (recommended — preserves ordering and stable names) and whether folders take
       prefixes.
-- [ ] Move (`git mv`) + rewrite every cross-link: inter-reference links, the
+- [x] Move (`git mv`) + rewrite every cross-link: inter-reference links, the
       SKILL.md triage table, pointers from the `documentation-guide` sibling.
-- [ ] Sweep external pointers — repo `CLAUDE.md`, user-guide pages, open
+- [x] Sweep external pointers — repo `CLAUDE.md`, user-guide pages, open
       issues/subtasks citing `doc-issues/references/<file>` paths.
-- [ ] Sanity-load the skill once and confirm the triage table resolves every
+- [x] Sanity-load the skill once and confirm the triage table resolves every
       reference at its new path.
 
 ## 2 — Declare the documentation-guide prerequisite up front
@@ -41,14 +41,14 @@ should read as a table of contents.
 needs the sibling's domain references — image handling is the known case. Nothing
 currently tells an agent doing tracker work to pull the sibling in.
 
-- [ ] Inventory which `documentation-guide` references tracker work actually
+- [x] Inventory which `documentation-guide` references tracker work actually
       reaches for (`images.md` confirmed; check `writing.md`, `settings-layout.md`,
       asset conventions, others).
-- [ ] Write the prerequisite note at the *start* of `doc-issues/SKILL.md` (not
+- [x] Write the prerequisite note at the *start* of `doc-issues/SKILL.md` (not
       buried in the sibling-skill aside): when a tracker task touches one of the
       inventoried domains, also load `documentation-guide` and read the matching
       reference — name the trigger cases concretely.
-- [ ] Keep the mutual references symmetric — `documentation-guide`'s pointer at
+- [x] Keep the mutual references symmetric — `documentation-guide`'s pointer at
       `doc-issues` stays accurate; the sync notes between the two writing guides
       still hold.
 
@@ -60,17 +60,17 @@ stated rule. **Note:** subtask 07 of this issue creates the next migration scrip
 if this rule can land first, that script is born in the right place; if not, the
 script follows the existing `migration/` precedent and gets relocated here.
 
-- [ ] Inventory every script under both skills' folders (`scripts/`, `migration/`),
+- [x] Inventory every script under both skills' folders (`scripts/`, `migration/`),
       what each does, where it's referenced from.
-- [ ] Decide the placement rule — (a) everything into `bin/`; (b) in-skill under a
+- [x] Decide the placement rule — (a) everything into `bin/`; (b) in-skill under a
       declared convention (README + path invocation); (c) split: durable tools →
       `bin/` / `docs-guide` subcommands, one-shot dated migrations stay in-skill.
       Write the rule down so the next script has an obvious home.
-- [ ] Execute the move/reformat — relocate per the rule, update every reference to
+- [x] Execute the move/reformat — relocate per the rule, update every reference to
       old paths, adjust invocation instructions (PATH vs explicit path).
 
 ## Wrap-up
 
-- [ ] Repo source ↔ installed cache in sync (`diff -r` verified identical).
-- [ ] Plugin version bumped once for the whole restructure.
-- [ ] `docs-guide` self-test / help still green; skills trigger and resolve.
+- [x] Repo source ↔ installed cache in sync (`diff -r` verified identical).
+- [x] Plugin version bumped once for the whole restructure.
+- [x] `docs-guide` self-test / help still green; skills trigger and resolve.

@@ -117,6 +117,13 @@ subtasks in the Review category** (`review` or `input-needed`), still surfaces o
 index page's **Review tab** — as long as the issue isn't Closed. The tab counts anywhere
 a human is needed in the tree.
 
+On the index (table and cards), such a promoted issue also **displays a `review` status
+badge**, not just a Review-tab placement — so the badge agrees with the tab it's filed
+under. This is **display-only**: the stored status in `settings.json` is untouched (the CLI
+and `--json` report the real status), and the displayed badge reverts on its own once the
+review subtask moves on. Closed issues never inherit it, and an issue already in the Review
+category shows its own status.
+
 This is the cue for a human scanning the queue: *you have unconfirmed work (or an
 unanswered question) here*, even if the top-level status hasn't changed. Note that
 `blocked` does **not** promote upward — it's a resting state, not a call to action; its

@@ -5,9 +5,11 @@
  * page-frame styles live in styles/index.css.
  */
 import { loadIssues, STATUSES, categoryOf } from '@loaders/issues';
+import { needsReview } from './server/helpers';
 import './styles/index.css';
 import './styles/groups.css';
 import ViewToggle from './parts/index/ViewToggle.astro';
+import GuideModal from './parts/index/GuideModal.astro';
 import FilterBar from './parts/index/FilterBar.astro';
 import PresetStrip from './parts/index/PresetStrip.astro';
 import StateTabs from './parts/index/StateTabs.astro';
@@ -21,7 +23,7 @@ interface Props {
 }
 
 const { dataPath, baseUrl } = Astro.props;
-const { vocabulary, rootDraft, issues } = await loadIssues(dataPath);
+const { vocabulary, rootDraft, issues, statusColors } = await loadIssues(dataPath);
 
 const FILTER_FIELDS = ['priority', 'component', 'labels'] as const;
 const filterGroups: Array<{
@@ -67,15 +69,11 @@ function searchBlob(issue: typeof issues[number]): string {
 function issueCategory(issue: typeof issues[number]): string {
   return categoryOf(issue.meta.status);
 }
-function issueNeedsReview(issue: typeof issues[number]): boolean {
-  const cat = issueCategory(issue);
-  if (cat === 'review') return true;
-  if (cat === 'closed') return false;
-  return issue.subtasks.some((s) => s.category === 'review');
-}
-const reviewCount = issues.filter(issueNeedsReview).length;
-const inProgressCount = issues.filter((i) => issueCategory(i) === 'in-progress' && !issueNeedsReview(i)).length;
-const notStartedCount = issues.filter((i) => issueCategory(i) === 'not-started' && !issueNeedsReview(i)).length;
+// `needsReview` is shared with the badge rendering (server/helpers.ts) so the
+// Review tab and the review-debt badge are driven by one predicate.
+const reviewCount = issues.filter(needsReview).length;
+const inProgressCount = issues.filter((i) => issueCategory(i) === 'in-progress' && !needsReview(i)).length;
+const notStartedCount = issues.filter((i) => issueCategory(i) === 'not-started' && !needsReview(i)).length;
 const closedCount = issues.filter((i) => issueCategory(i) === 'closed').length;
 const activeCount = issues.filter((i) => issueCategory(i) !== 'closed').length;
 
@@ -113,7 +111,10 @@ const clientConfig = {
           {rootDraft ? ' · dev-only tracker' : ''}
         </p>
       </div>
-      <ViewToggle />
+      <div class="issues-index__tools">
+        <GuideModal vocabulary={vocabulary} statusColors={statusColors} />
+        <ViewToggle />
+      </div>
     </div>
   </header>
 

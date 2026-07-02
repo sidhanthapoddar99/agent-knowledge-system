@@ -47,6 +47,8 @@ This matters: it surfaces work waiting on a human even when the issue's own stat
 Review (4 total — 2 with review subtasks)
 ```
 
+For a promoted issue, the **status badge on the row displays `review` too** — not just its tab placement. So a `2/6` issue that's really `in-progress` but has a subtask awaiting sign-off shows a `review` badge, keeping the badge honest about the Review tab it's filed under. This is **display-only**: the stored status in `settings.json` is unchanged (the CLI and `--json` still report the real status), and the badge reverts on its own once the review subtask moves on. A closed issue never inherits `review`, and an issue already in the Review category shows its own status.
+
 ### Default tab
 
 The default is **Active** — everything not yet Closed. Bookmark the base URL to land there. Adding `?state=review` to the URL jumps straight to the Review tab.
@@ -139,6 +141,10 @@ A small toggle in the header switches between:
 
 The choice persists via URL param (`?view=cards`).
 
+### Guide button
+
+Beside the view toggle sits a **Guide** button. It opens a tracker-level reference modal that lays out the fixed lifecycle — the seven statuses and four categories with their built-in meanings — alongside this tracker's own `component`, `labels`, and `priority` values and their descriptions, tagged to show what's **fixed in code** versus **editable** in `settings.json`. It's the in-app companion to the vocabulary: the same `descriptions` maps you write in the root settings render here. (Distinct from each issue's own **Guide** panel, which explains that one issue's anatomy.)
+
 ## Issue rows
 
 Each row / card shows:
@@ -147,7 +153,7 @@ Each row / card shows:
 |---|---|
 | Component | Chip group (one chip per value) |
 | Title | Prominent |
-| Status badge | Colored chip |
+| Status badge | Colored chip. Shows the issue's stored status — except an active issue with a review-debt subtask displays `review` (see [Subtask-debt promotion](#subtask-debt-promotion)) |
 | Priority badge | Colored chip — sortable column |
 | Assignees | Avatar circles (initials) — first 3 then `+N`; `—` if unassigned |
 | Subtasks | Two-line cell — count on top, progress bar below |

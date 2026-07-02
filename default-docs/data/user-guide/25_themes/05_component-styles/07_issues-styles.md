@@ -110,7 +110,7 @@ Tab count styled one tier smaller than tab label (`--ui-text-micro` vs `--ui-tex
 
 ## Status + priority badges — vocabulary colours
 
-The tracker's root `settings.json` declares colour per enum value. The layout reads those at render time and applies them inline-style or as CSS custom properties:
+The tracker's root `settings.json` declares a colour per value: `priority` colours live under `fields.priority.colors`, while the fixed lifecycle's colours come from the top-level `statusColors` map (a colours-only override of the seven built-in defaults — the status set itself is fixed in framework code). The layout reads those at render time and applies them inline-style or as CSS custom properties:
 
 ```astro
 <!-- In the Astro component -->

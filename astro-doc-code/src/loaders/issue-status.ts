@@ -62,6 +62,27 @@ export const LEGACY_STATUS_MAP: Record<string, IssueStatus> = {
   cancelled: 'dropped',
 };
 
+/** One-line meaning per status — the fixed vocabulary's built-in legend, shared
+ *  by the tracker Guide modal (and available to `guide.ts`) so the glosses are
+ *  declared once alongside the statuses they describe. */
+export const STATUS_DESCRIPTIONS: Record<IssueStatus, string> = {
+  open: 'Untouched — no work started yet.',
+  blocked: 'Waiting on another issue or subtask; the reason is in prose.',
+  'in-progress': 'Actively being worked. Agents set this automatically when they pick an item up.',
+  'input-needed': 'An agent hit a wall and needs a human answer — the question is written inline in the item.',
+  review: 'Work is done and awaiting human sign-off.',
+  done: 'Shipped. Human-only — an agent never sets this.',
+  dropped: 'Deliberately abandoned. Human-only, and needs a comment saying why.',
+};
+
+/** One-line meaning per category, in the same UI order as {@link CATEGORIES}. */
+export const CATEGORY_DESCRIPTIONS: Record<CategoryId, string> = {
+  'in-progress': 'Actively moving.',
+  review: 'Needs a human — either an answer or a sign-off.',
+  'not-started': 'Not begun yet.',
+  closed: 'Finished — shipped or abandoned.',
+};
+
 const STATUS_SET = new Set<string>(STATUSES);
 const STATUS_TO_CATEGORY = new Map<IssueStatus, CategoryId>();
 for (const cat of CATEGORIES) {
@@ -120,4 +141,51 @@ export function unknownStatusMessage(rawValue: string, fileHint: string): string
     `this for a legacy value, run the state→status migration script`,
     `(plugins/documentation-guide/.../migration/2026-07-02_state-to-status.py).`,
   ].join('\n');
+}
+
+/** Message when a tracker still declares `fields.status` in its root settings.
+ *  The status axis is code-fixed; the only permitted per-tracker customization
+ *  is colours, which live under a top-level `statusColors` map. A stray
+ *  `values` list under `fields.status` reads as authoritative and would
+ *  eventually be consumed as the vocabulary — so we reject it loudly instead of
+ *  ignoring it. */
+export function statusFieldForbiddenMessage(fileHint: string): string {
+  return [
+    `[issues] "${fileHint}" declares \`fields.status\`, but statuses are fixed by the`,
+    `framework and cannot be defined per-tracker. A \`values\` list here reads as`,
+    `authoritative and will eventually be consumed as the vocabulary — which is wrong.`,
+    `Fix: delete the entire \`fields.status\` block. To override colours, add a`,
+    `top-level \`statusColors\` map instead — e.g. { "statusColors": { "review": "#f0c674" } }.`,
+    `Keys must be a subset of: ${STATUSES.join(' | ')}.`,
+    `See the migration script migration/2026-07-03_root-settings-schema.py for the exact rewrite.`,
+  ].join('\n');
+}
+
+/** Message when a `statusColors` override names a status outside the fixed set —
+ *  a colour for a status that doesn't exist is a typo, not an override. */
+export function unknownStatusColorMessage(key: string, fileHint: string): string {
+  return [
+    `[issues] "${fileHint}" sets a colour for unknown status "${key}" under \`statusColors\`.`,
+    `A colour for a status that doesn't exist is a typo, not an override.`,
+    `Valid statuses: ${STATUSES.join(' | ')}.`,
+  ].join('\n');
+}
+
+/**
+ * Validate and merge per-tracker status-colour overrides onto the fixed
+ * defaults. Throws {@link unknownStatusColorMessage} on a key outside the
+ * vocabulary. Returns the resolved seven-colour map every status surface reads.
+ */
+export function resolveStatusColors(
+  overrides: Record<string, string> | undefined,
+  fileHint: string,
+): Record<IssueStatus, string> {
+  const resolved: Record<string, string> = { ...DEFAULT_STATUS_COLORS };
+  if (overrides && typeof overrides === 'object') {
+    for (const [key, value] of Object.entries(overrides)) {
+      if (!STATUS_SET.has(key)) throw new Error(unknownStatusColorMessage(key, fileHint));
+      if (typeof value === 'string' && value) resolved[key] = value;
+    }
+  }
+  return resolved as Record<IssueStatus, string>;
 }

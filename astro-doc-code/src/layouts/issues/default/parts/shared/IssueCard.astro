@@ -1,6 +1,6 @@
 ---
 import StatusBadge from './StatusBadge.astro';
-import { formatRelativeTime } from '../../server/helpers';
+import { formatRelativeTime, effectiveStatus } from '../../server/helpers';
 import type { Issue, IssuesVocabulary } from '@loaders/issues';
 
 interface Props {
@@ -20,7 +20,7 @@ const { rel: updatedRel, full: updatedFull } = formatRelativeTime(issue.updated)
       <h3 class="issue-card__title">{meta.title}</h3>
       {meta.description && <p class="issue-card__description">{meta.description}</p>}
       <div class="issue-card__badges">
-        <StatusBadge field="status" value={meta.status} vocabulary={vocabulary.fields} />
+        <StatusBadge field="status" value={effectiveStatus(issue)} vocabulary={vocabulary.fields} />
         <StatusBadge field="priority" value={meta.priority} vocabulary={vocabulary.fields} />
         {meta.component.map((c) => <StatusBadge field="component" value={c} vocabulary={vocabulary.fields} />)}
         {meta.labels.map((l) => <StatusBadge field="labels" value={l} vocabulary={vocabulary.fields} />)}

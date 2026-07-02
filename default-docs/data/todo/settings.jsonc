@@ -1,35 +1,39 @@
 // Issue-tracker vocabulary (JSONC — comments + trailing commas allowed).
 // This root file declares the controlled vocabulary every issue picks from.
-// The meanings below are the source of truth for humans AND AI agents deciding
-// where a new issue belongs — keep them accurate as the taxonomy evolves.
+// The `descriptions` below are the source of truth for humans AND AI agents
+// deciding where a new issue belongs — and they are rendered verbatim in the
+// tracker's Guide modal, so keep them accurate as the taxonomy evolves.
 {
   "label": "Todo",
 
-  "fields": {
-    // Lifecycle status — FIXED IN FRAMEWORK CODE (see
-    // astro-doc-code/src/loaders/issue-status.ts). Seven statuses grouped into
-    // four categories: Not Started (open, blocked) · In Progress (in-progress) ·
-    // Review (input-needed, review) · Closed (done, dropped). A tracker can NO
-    // LONGER define its own statuses — `values` here is documentation only and
-    // is ignored by the loader/validator; only `colors` overrides are honored.
-    // Agents set `in-progress` (auto) and `review`/`input-needed`; `done` and
-    // `dropped` are human-only. Transitions are unenforced guidance.
-    "status": {
-      "values": ["open", "blocked", "in-progress", "input-needed", "review", "done", "dropped"],
-      "colors": {
-        "open": "#888888",          // Not Started — neutral grey
-        "blocked": "#d1854f",       // Not Started — burnt orange (depends on another item)
-        "in-progress": "#61afef",   // In Progress — active blue
-        "input-needed": "#e8a54b",  // Review — amber (agent needs a human answer)
-        "review": "#f0c674",        // Review — yellow (done, awaiting sign-off)
-        "done": "#7ec699",          // Closed — green (shipped)
-        "dropped": "#c678dd"        // Closed — magenta (deliberately abandoned)
-      }
-    },
+  // Per-tracker status COLOUR overrides only. The seven statuses and their
+  // four-category grouping are FIXED IN FRAMEWORK CODE
+  // (astro-doc-code/src/loaders/issue-status.ts) — a tracker can NO LONGER
+  // define its own statuses, and there is deliberately no `values` field here
+  // (a stray one would read as authoritative). Keys must be a subset of the
+  // fixed vocabulary; omit any you don't wish to override. Agents set
+  // `in-progress` (auto) and `review`/`input-needed`; `done` and `dropped` are
+  // human-only. Transitions are unenforced guidance.
+  "statusColors": {
+    "open": "#888888",          // Not Started — neutral grey
+    "blocked": "#d1854f",       // Not Started — burnt orange (depends on another item)
+    "in-progress": "#61afef",   // In Progress — active blue
+    "input-needed": "#e8a54b",  // Review — amber (agent needs a human answer)
+    "review": "#f0c674",        // Review — yellow (done, awaiting sign-off)
+    "done": "#7ec699",          // Closed — green (shipped)
+    "dropped": "#c678dd"        // Closed — magenta (deliberately abandoned)
+  },
 
+  "fields": {
     // How much this matters / how soon. Ordering is `priority desc, updated desc`.
     "priority": {
       "values": ["low", "medium", "high", "urgent"],
+      "descriptions": {
+        "low": "Nice to have; no urgency.",
+        "medium": "Normal priority; get to it in due course.",
+        "high": "Important; schedule soon.",
+        "urgent": "Drop-everything; needs immediate attention."
+      },
       "colors": {
         "low": "#7aa2f7",
         "medium": "#f0c674",
@@ -40,69 +44,65 @@
 
     // Which part of the system the issue lives in. Pick exactly ONE — tag by
     // center of gravity even for cross-cutting work (the validator warns on >1).
-    // The seven buckets are a layer-of-the-stack axis:
+    // The seven buckets are a layer-of-the-stack axis; `issue-dump` is the
+    // deliberate exception. Every value MUST carry a description (rendered in
+    // the Guide; the loader hard-errors on a missing one).
     "component": {
       "values": [
-        // The engine/infra under everything: refactors, the plugin system,
-        // runtime & build tooling, the dev-toolbar. Core system work that isn't
-        // tied to one content layer.
         "architecture",
-
-
-
-        // First-class / markdown-rendered content ELEMENTS (markdown itself,
-        // code blocks, mermaid & excalidraw diagrams, knowledge graph, wikilinks)
-        // plus supplemental tools layered on the core (e.g. site-wide search).
         "components",
-
-        // The content pipeline — how content gets from disk to the screen:
-        // loading, link resolution, caching, and rendering to the frontend.
         "loaders-and-renderers",
-
-        // Building the PRESENTATION: layouts (docs, blog, new layout types),
-        // themes, responsive/sizing. Layout-development work in general.
         "layout-general",
-
-        // The issue-tracker presentation specifically (this layout & its parts).
         "layout-issues",
-
-        // The live editing application — CodeMirror + Yjs: core, sync/presence,
-        // view modes, and the editor server's operational surface.
         "editor",
-
-        // The meta-project around the framework: the Claude Code plugin & skills
-        // plus the written prose documentation.
         "ai-plugin-and-docs",
-
-
-
-        // The DELIBERATE exception to the layer-of-the-stack axis: marks dump
-        // issues — lightweight capture surfaces for unhomed, half-formed thoughts
-        // (pre-issues, not a layer). A few dump issues, one per kind; each entry a
-        // subtask. Entries graduate to real issues (promote AND delete — never
-        // tick off). Capture via /docs-quick-idea-note. Convention only, not
-        // code-enforced.
         "issue-dump"
-      ]
+      ],
+      "descriptions": {
+        "architecture": "The engine/infra under everything: refactors, the plugin system, runtime & build tooling, the dev-toolbar. Core system work that isn't tied to one content layer.",
+        "components": "First-class / markdown-rendered content elements (markdown itself, code blocks, mermaid & excalidraw diagrams, knowledge graph, wikilinks) plus supplemental tools layered on the core (e.g. site-wide search).",
+        "loaders-and-renderers": "The content pipeline — how content gets from disk to the screen: loading, link resolution, caching, and rendering to the frontend.",
+        "layout-general": "Building the presentation: layouts (docs, blog, new layout types), themes, responsive/sizing. Layout-development work in general.",
+        "layout-issues": "The issue-tracker presentation specifically (this layout & its parts).",
+        "editor": "The live editing application — CodeMirror + Yjs: core, sync/presence, view modes, and the editor server's operational surface.",
+        "ai-plugin-and-docs": "The meta-project around the framework: the Claude Code plugin & skills plus the written prose documentation.",
+        "issue-dump": "The deliberate exception to the layer-of-the-stack axis: marks dump issues — lightweight capture surfaces for unhomed, half-formed thoughts (pre-issues, not a layer). A few dump issues, one per kind; each entry a subtask. Entries graduate to real issues (promote AND delete — never tick off). Capture via /docs-quick-idea-note. Convention only, not code-enforced."
+      }
     },
 
     // Free-form cross-cutting tags (multi-select). Independent of `component`.
+    // Every value MUST carry a description (rendered in the Guide).
     "labels": {
       "values": [
-        "wip",              // DEPRECATED — superseded by the `in-progress` status (single source of truth). Kept so old issues still validate; do not add to new issues.
-        "blocked",          // DEPRECATED as a progress signal — superseded by the `blocked` status. Kept for back-compat; prefer setting status: blocked.
-        "bug",              // behaves differently from intended
-        "feature",          // net-new capability
-        "task",             // concrete work that isn't a feature or bug (chore, maintenance)
-        "performance",      // speed / memory / scaling work
-        "refactor",         // restructuring with no behavior change
-        "docs",             // documentation/prose work (cross-cuts any component)
-        "idea",             // speculative proposal, not yet committed
-        "duplicate",        // superseded by another issue
-        "good-first-issue", // self-contained, low-context entry point for newcomers
-        "discussion",       // open design conversation; decision not yet settled
-        "blocked-external"  // waiting on an upstream / third-party dependency outside the repo
-      ]
+        "wip",
+        "blocked",
+        "bug",
+        "feature",
+        "task",
+        "performance",
+        "refactor",
+        "docs",
+        "idea",
+        "duplicate",
+        "good-first-issue",
+        "discussion",
+        "blocked-external"
+      ],
+      "descriptions": {
+        "wip": "DEPRECATED — superseded by the `in-progress` status (single source of truth). Kept so old issues still validate; do not add to new issues.",
+        "blocked": "DEPRECATED as a progress signal — superseded by the `blocked` status. Kept for back-compat; prefer setting status: blocked.",
+        "bug": "Behaves differently from intended.",
+        "feature": "Net-new capability.",
+        "task": "Concrete work that isn't a feature or bug (chore, maintenance).",
+        "performance": "Speed / memory / scaling work.",
+        "refactor": "Restructuring with no behavior change.",
+        "docs": "Documentation/prose work (cross-cuts any component).",
+        "idea": "Speculative proposal, not yet committed.",
+        "duplicate": "Superseded by another issue.",
+        "good-first-issue": "Self-contained, low-context entry point for newcomers.",
+        "discussion": "Open design conversation; decision not yet settled.",
+        "blocked-external": "Waiting on an upstream / third-party dependency outside the repo."
+      }
     }
   },
 

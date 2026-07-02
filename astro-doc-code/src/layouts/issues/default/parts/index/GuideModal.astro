@@ -1,0 +1,310 @@
+---
+/**
+ * GuideModal — a tracker-level "what is this tracker?" reference, opened from a
+ * button beside the view toggle on the issues index.
+ *
+ * The detail-page Guide (guide.ts) explains ONE issue's anatomy; this explains
+ * the whole tracker's VOCABULARY:
+ *   - the FIXED lifecycle — seven statuses / four categories, rendered straight
+ *     from the code constant (issue-status.ts) so it can never drift;
+ *   - the EDITABLE per-tracker vocabulary — priority / component / labels,
+ *     rendered from root settings.json with each value's description.
+ *
+ * All content is server-rendered; the only client JS is open/close wiring.
+ */
+import {
+  CATEGORIES,
+  CATEGORY_DESCRIPTIONS,
+  STATUS_DESCRIPTIONS,
+  type IssueStatus,
+  type IssuesVocabulary,
+  type IssuesVocabularyField,
+} from '@loaders/issues';
+
+interface Props {
+  vocabulary: IssuesVocabulary;
+  statusColors: Record<string, string>;
+}
+const { vocabulary, statusColors } = Astro.props;
+
+const priority = vocabulary.fields?.priority;
+const component = vocabulary.fields?.component;
+const labels = vocabulary.fields?.labels;
+
+function describe(field: IssuesVocabularyField | undefined, value: string): string {
+  return field?.descriptions?.[value] ?? '';
+}
+
+const editableSections: Array<{ title: string; field: IssuesVocabularyField | undefined }> = [
+  { title: 'Priority', field: priority },
+  { title: 'Component', field: component },
+  { title: 'Labels', field: labels },
+];
+---
+
+<button type="button" class="issues-guide-trigger" data-guide-open aria-haspopup="dialog">
+  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M2 3.5A1.5 1.5 0 0 1 3.5 2H7v11H3.5A1.5 1.5 0 0 0 2 14.5z" />
+    <path d="M14 3.5A1.5 1.5 0 0 0 12.5 2H9v11h3.5A1.5 1.5 0 0 1 14 14.5z" />
+  </svg>
+  <span>Guide</span>
+</button>
+
+<dialog class="issues-guide" data-guide-dialog aria-label="Tracker guide">
+  <div class="issues-guide__frame">
+    <header class="issues-guide__head">
+      <h2 class="issues-guide__title">{vocabulary.label || 'Tracker'} — guide</h2>
+      <button type="button" class="issues-guide__close" data-guide-close aria-label="Close guide">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <line x1="4" y1="4" x2="12" y2="12" /><line x1="12" y1="4" x2="4" y2="12" />
+        </svg>
+      </button>
+    </header>
+
+    <div class="issues-guide__body">
+      <p class="issues-guide__lede">
+        The <strong>lifecycle</strong> — statuses and their categories — is fixed by the framework and
+        shared by every tracker; you can only recolour it. The <strong>priority</strong>,
+        <strong>component</strong>, and <strong>label</strong> vocabularies are this tracker's own to edit.
+      </p>
+
+      <section class="issues-guide__section">
+        <h3 class="issues-guide__h3">
+          Status &amp; categories <span class="issues-guide__tag">fixed in code</span>
+        </h3>
+        <p class="issues-guide__note">
+          The seven statuses and four categories live in the framework
+          (<code>issue-status.ts</code>) and cannot be redefined per-tracker — only their colours are
+          overridable. Agents set <em>in-progress</em> automatically and stop at the Review category;
+          <em>done</em> and <em>dropped</em> are human-only. The list filters by <em>category</em>; the
+          badge shows the status.
+        </p>
+        {CATEGORIES.map((cat) => (
+          <div class="issues-guide__cat">
+            <div class="issues-guide__cat-head">
+              <span class="issues-guide__cat-name">{cat.label}</span>
+              <span class="issues-guide__cat-desc">{CATEGORY_DESCRIPTIONS[cat.id]}</span>
+            </div>
+            {cat.statuses.map((s) => (
+              <div class="issues-guide__row">
+                <span class="issues-guide__badge" style={`--badge-color: ${statusColors[s as IssueStatus] || 'var(--color-text-muted)'}`}>{s}</span>
+                <span class="issues-guide__desc">{STATUS_DESCRIPTIONS[s as IssueStatus]}</span>
+              </div>
+            ))}
+          </div>
+        ))}
+      </section>
+
+      {editableSections.map(({ title, field }) => (
+        field?.values?.length ? (
+          <section class="issues-guide__section">
+            <h3 class="issues-guide__h3">
+              {title} <span class="issues-guide__tag issues-guide__tag--edit">editable</span>
+            </h3>
+            {field.values.map((v) => (
+              <div class="issues-guide__row">
+                <span
+                  class="issues-guide__dot"
+                  style={field.colors?.[v] ? `background: ${field.colors[v]}` : 'background: var(--color-border-default)'}
+                ></span>
+                <span class="issues-guide__key">{v}</span>
+                <span class="issues-guide__desc">{describe(field, v) || '—'}</span>
+              </div>
+            ))}
+          </section>
+        ) : null
+      ))}
+
+      <p class="issues-guide__foot">
+        Edit priority / component / label vocabularies (and status colours) in this tracker's root
+        <code>settings.json</code>. Every component and label must carry a description — they're what
+        you're reading here.
+      </p>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>('[data-guide-dialog]');
+  document.querySelector('[data-guide-open]')?.addEventListener('click', () => dialog?.showModal());
+  dialog?.querySelector('[data-guide-close]')?.addEventListener('click', () => dialog.close());
+  // Click on the backdrop (the dialog element itself, outside the frame) closes.
+  dialog?.addEventListener('click', (e) => {
+    if (e.target === dialog) dialog.close();
+  });
+</script>
+
+<style>
+  .issues-guide-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.75rem;
+    background: transparent;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--border-radius-md);
+    color: var(--color-text-secondary);
+    font-size: var(--ui-text-micro);
+    font-family: var(--font-family-base);
+    cursor: pointer;
+    transition: background var(--transition-fast), color var(--transition-fast);
+  }
+  .issues-guide-trigger:hover {
+    color: var(--color-brand-primary);
+    background: color-mix(in srgb, var(--color-brand-primary) 10%, transparent);
+  }
+
+  .issues-guide {
+    width: min(720px, 92vw);
+    max-height: 85vh;
+    padding: 0;
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--border-radius-lg);
+    background: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    box-shadow: var(--shadow-xl);
+    overflow: hidden;
+  }
+  .issues-guide::backdrop {
+    background: color-mix(in srgb, #000 45%, transparent);
+  }
+  .issues-guide__frame {
+    display: flex;
+    flex-direction: column;
+    max-height: 85vh;
+  }
+  .issues-guide__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-bottom: 1px solid var(--color-border-light);
+    background: var(--color-bg-secondary);
+  }
+  .issues-guide__title {
+    margin: 0;
+    font-size: var(--ui-text-body);
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+  .issues-guide__close {
+    display: inline-flex;
+    padding: 0.3rem;
+    background: transparent;
+    border: none;
+    border-radius: var(--border-radius-sm);
+    color: var(--color-text-muted);
+    cursor: pointer;
+  }
+  .issues-guide__close:hover {
+    color: var(--color-text-primary);
+    background: var(--color-bg-tertiary);
+  }
+
+  .issues-guide__body {
+    padding: var(--spacing-lg);
+    overflow-y: auto;
+  }
+  .issues-guide__lede {
+    margin: 0 0 var(--spacing-lg);
+    font-size: var(--ui-text-body);
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+  }
+  .issues-guide__section { margin-bottom: var(--spacing-xl); }
+  .issues-guide__section:last-of-type { margin-bottom: var(--spacing-md); }
+  .issues-guide__h3 {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin: 0 0 var(--spacing-sm);
+    font-size: var(--ui-text-body);
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+  .issues-guide__tag {
+    padding: 0.1rem 0.4rem;
+    border-radius: var(--border-radius-full);
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-muted);
+    font-size: var(--ui-text-micro);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .issues-guide__tag--edit {
+    background: color-mix(in srgb, var(--color-brand-primary) 15%, transparent);
+    color: var(--color-brand-primary);
+  }
+  .issues-guide__note {
+    margin: 0 0 var(--spacing-md);
+    font-size: var(--ui-text-micro);
+    color: var(--color-text-muted);
+    line-height: 1.5;
+  }
+  .issues-guide__cat { margin-bottom: var(--spacing-md); }
+  .issues-guide__cat-head {
+    display: flex;
+    align-items: baseline;
+    gap: var(--spacing-sm);
+    margin-bottom: 0.35rem;
+  }
+  .issues-guide__cat-name {
+    font-size: var(--ui-text-micro);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--color-text-secondary);
+  }
+  .issues-guide__cat-desc {
+    font-size: var(--ui-text-micro);
+    color: var(--color-text-muted);
+  }
+  .issues-guide__row {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr;
+    align-items: baseline;
+    gap: var(--spacing-md);
+    padding: 0.3rem 0;
+  }
+  .issues-guide__badge {
+    justify-self: start;
+    padding: 0.1rem 0.5rem;
+    border-radius: var(--border-radius-full);
+    font-size: var(--ui-text-micro);
+    font-weight: 600;
+    color: var(--badge-color);
+    background: color-mix(in srgb, var(--badge-color) 16%, transparent);
+    border: 1px solid color-mix(in srgb, var(--badge-color) 40%, transparent);
+  }
+  .issues-guide__dot {
+    justify-self: start;
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: var(--border-radius-full);
+    align-self: center;
+  }
+  .issues-guide__key {
+    font-size: var(--ui-text-body);
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+  /* Priority/component/label rows: dot + key on the left column, desc on right. */
+  .issues-guide__section .issues-guide__row:has(.issues-guide__dot) {
+    grid-template-columns: 0.7rem minmax(6rem, auto) 1fr;
+  }
+  .issues-guide__desc {
+    font-size: var(--ui-text-micro);
+    color: var(--color-text-secondary);
+    line-height: 1.45;
+  }
+  .issues-guide__foot {
+    margin: var(--spacing-md) 0 0;
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--color-border-light);
+    font-size: var(--ui-text-micro);
+    color: var(--color-text-muted);
+    line-height: 1.5;
+  }
+</style>

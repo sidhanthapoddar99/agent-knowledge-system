@@ -28,11 +28,39 @@ iteration (context may reset between loop wake-ups).
   CONTRACT.md §8 scripts rule; version 0.5.0→0.6.0; cache `rsync --delete` + identical.
   Milestone 105.
 - **LOOP COMPLETE — all 9 subtasks `review`, issue still `open` for sidhantha's sign-off**
-  (he owns `done`). `01_summary.md` written. Nothing left to execute; do not resume the
-  loop. If reopened, the only pending items are sidhantha's two flagged product choices
-  (Active default tab, click-cycle happy-path) and the out-of-scope themes-doc selector gap.
-- **Two product choices flagged for sidhantha (documented, not vetoed):** the "Active"
-  default list tab + the click-cycle happy-path (`open→in-progress→review→done→open`).
+  (he owns `done`). `01_summary.md` written. Do not resume the loop.
+- **Post-loop sign-off + follow-ups (2026-07-02/03): DONE — activity folder
+  `020_it_signoff-and-followups/`.** sidhantha approved the "Active" default tab, then
+  asked to sign off the loop, fix 13, and complete 10–12. Result: **01–09 → `done`**
+  (checkboxes ticked, statuses flipped); **10–13 implemented + verified → `review`**
+  (agent ceiling; his to flip to `done`). What shipped:
+  - **13** `subtasks.mjs` expands `all` before the vocab filter (mirrors `list.mjs:118`).
+  - **12** status colours → top-level `statusColors` map; `fields.status` + unknown colour
+    key = hard error (loader `resolveVocabulary` + `check.mjs`). Loader merges onto
+    `DEFAULT_STATUS_COLORS` (fixed a latent partial-override bug), exposes
+    `LoadedIssues.statusColors`, synthesises in-memory `fields.status` so badge layouts
+    are untouched.
+  - **11** component/label descriptions = required parallel `descriptions` map (hard error);
+    `GuideModal.astro` on the index renders fixed lifecycle (from `issue-status.ts`
+    constants incl. new `STATUS_DESCRIPTIONS`/`CATEGORY_DESCRIPTIONS`) + editable vocab.
+  - **10** index badges show `review` for review-debt via shared `needsReview`/
+    `effectiveStatus` in `server/helpers.ts` (badge↔tab one predicate); stored status
+    untouched; detail/CLI keep stored.
+  - One detection-only migration **`2026-07-03_root-settings-schema.py`** (two
+    facets: status-colours-only + required descriptions; merged from two scripts at
+    sidhantha's call — same file, same transition). Per-file `2026-07-02_state-to-
+    status.py` stays separate (already applied, auto-writes frontmatter).
+    `data/todo/settings.jsonc` migrated by hand.
+  - Docs: 7 user-guide pages + skill (`03_overall-issue-tracker-vocabulary.md`, SKILL.md
+    rule 4, `02_per-issue-settings.md` "4 states"→"7 statuses/4 categories").
+  - Plugin **0.6.0 → 0.7.0**, repo↔cache `diff -rq` IDENTICAL. Build 651pp green, check
+    exit 0, self-test PASS, skill-links green both roots.
+  - **Anatomy refs renamed this session** (parallel task): `02_settings.md`→
+    `02_per-issue-settings.md`, `03_vocabulary.md`→`03_overall-issue-tracker-vocabulary.md`.
+- **Click-cycle happy-path** still pending sidhantha's verdict. **Out-of-scope doc-hygiene
+  the sweep flagged:** `09_using-with-ai.md` still frames the skill/CLI as "planned".
+- The related issue `2026-07-01-issue-anatomy-restructure` is fully `done` (all 7 subtasks
+  signed off, incl. 04_update-skill-and-adhoc-command + 07_set-rules).
 - **Themes-doc note (beyond lifecycle scope):** `07_issues-styles.md` documents a
   fictional `.issue-subtask__state--*` BEM taxonomy; the *real* classes are `.state-done`
   etc. I fixed only the lifecycle vocabulary there — the selector-accuracy gap is a

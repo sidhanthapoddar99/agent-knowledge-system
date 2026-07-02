@@ -107,8 +107,8 @@ contents.
 | **`00_anatomy/` — orientation** | |
 | [00_overview.md](00_overview.md) | *(this file)* operating model, lifecycle + AI rules, this index |
 | [01_folder-layout.md](01_folder-layout.md) | the `<issue>/` folder tree, the 2-level rule, URL shapes |
-| [02_settings.md](02_settings.md) | per-issue `settings.json`; derived vs stored; `agentLogKinds` |
-| [03_vocabulary.md](03_vocabulary.md) | the tracker-root `settings.json(c)` — `fields` vocabulary, authors, views |
+| [02_per-issue-settings.md](02_per-issue-settings.md) | per-issue `settings.json`; derived vs stored; `agentLogKinds` |
+| [03_overall-issue-tracker-vocabulary.md](03_overall-issue-tracker-vocabulary.md) | the tracker-root `settings.json(c)` — `fields` vocabulary, authors, views |
 | **`10_writing/` — writing inside issues** | |
 | [10_writing.md](../10_writing/10_writing.md) | writing markdown inside issues — frontmatter, tags, diagrams, assets, linking |
 | **`20_sections/` — sub-document types** | |

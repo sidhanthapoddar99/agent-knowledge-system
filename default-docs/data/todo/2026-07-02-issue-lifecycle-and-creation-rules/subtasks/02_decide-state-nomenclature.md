@@ -1,6 +1,6 @@
 ---
 title: Decide the state nomenclature and category grouping
-status: review
+status: done
 ---
 
 Finalize the expanded lifecycle before any code moves. **Decided 2026-07-02** in a

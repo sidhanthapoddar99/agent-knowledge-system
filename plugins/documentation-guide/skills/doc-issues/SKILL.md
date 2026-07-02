@@ -44,7 +44,7 @@ itself and `agent-memory/` as the always-on, agent-owned working state.
 
 | Section | Owner | Lifecycle | Holds |
 |---|---|---|---|
-| `issue.md` + `settings.json` | both | — | Problem, context, metadata ([20](references/20_sections/20_issue-md.md), [02](references/00_anatomy/02_settings.md)) |
+| `issue.md` + `settings.json` | both | — | Problem, context, metadata ([20](references/20_sections/20_issue-md.md), [02](references/00_anatomy/02_per-issue-settings.md)) |
 | `brainstorm/` | human + AI | in-flux | Active deliberation ([25](references/20_sections/25_brainstorm.md)) |
 | `notes/` | human + AI | finalized | Finalized output + references ([22](references/20_sections/22_notes.md)) |
 | `subtasks/` | both | plan | The checklist of what's to be done ([23](references/20_sections/23_subtasks.md)) |
@@ -121,8 +121,10 @@ The AI rules are the most important rules in this skill:
 3. **Default search scope is everything not Closed** (open, blocked, in-progress,
    input-needed, review) — skip the Closed category (`done`/`dropped`) unless explicitly asked.
 4. **Review-debt promotion:** an active (non-closed) issue with any subtask in the
-   **Review category** (`review` or `input-needed`) surfaces as "needs review". `blocked`
-   never promotes — it rests, reason read in place.
+   **Review category** (`review` or `input-needed`) surfaces as "needs review" — it lands on
+   the Review tab and **displays a `review` badge on the index** (display-only; the stored
+   status is unchanged and the CLI/`--json` still report it, reverting once the subtask moves
+   on). `blocked` never promotes — it rests, reason read in place.
 5. **`dropped` requires a comment** explaining why, first (human-only).
 
 ## Executing work — agent-log, memory, discussion
@@ -155,8 +157,8 @@ Full detail + recipes: [24_agent-logs.md](references/20_sections/24_agent-logs.m
 | Task | Read |
 |---|---|
 | Orientation: folder shapes, URL forms, nesting caps | [01_folder-layout.md](references/00_anatomy/01_folder-layout.md) |
-| Per-issue `settings.json` fields | [02_settings.md](references/00_anatomy/02_settings.md) |
-| Tracker-root vocabulary (status/priority/component/labels, views) | [03_vocabulary.md](references/00_anatomy/03_vocabulary.md) |
+| Per-issue `settings.json` fields | [02_per-issue-settings.md](references/00_anatomy/02_per-issue-settings.md) |
+| Tracker-root vocabulary (status/priority/component/labels, views) | [03_overall-issue-tracker-vocabulary.md](references/00_anatomy/03_overall-issue-tracker-vocabulary.md) |
 | Writing markdown inside issues (frontmatter, tags, diagrams, links) | [10_writing.md](references/10_writing/10_writing.md) |
 | `issue.md` body | [20_issue-md.md](references/20_sections/20_issue-md.md) |
 | Comments (+ add-a-comment recipe) | [21_comments.md](references/20_sections/21_comments.md) |

@@ -98,7 +98,7 @@ The verdict drops into the four-branch decision tree above without you ever load
 
 1. Apply the creation threshold above; then run the duplicate check if context is thin.
 2. Create the folder: `<tracker>/<YYYY-MM-DD>-<kebab-slug>/` (today's date + a short slug).
-3. Write `settings.json` with all required fields (`title`, `status: open`, `priority`, `component`, `labels`, `author`, `assignees`) — all enum values must come from the tracker vocabulary ([03_vocabulary.md](../00_anatomy/03_vocabulary.md)).
+3. Write `settings.json` with all required fields (`title`, `status: open`, `priority`, `component`, `labels`, `author`, `assignees`) — all enum values must come from the tracker vocabulary ([03_overall-issue-tracker-vocabulary.md](../00_anatomy/03_overall-issue-tracker-vocabulary.md)).
 4. Write `issue.md` — goal, context, success criteria ([20_issue-md.md](../20_sections/20_issue-md.md)).
 5. If it's an AI-handoff-bound issue, declare ≥1 subtask ([23_subtasks.md](../20_sections/23_subtasks.md)).
 6. Validate (below).

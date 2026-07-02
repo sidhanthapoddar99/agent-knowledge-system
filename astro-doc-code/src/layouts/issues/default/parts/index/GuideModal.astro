@@ -85,12 +85,18 @@ const editableSections: Array<{ title: string; field: IssuesVocabularyField | un
               <span class="issues-guide__cat-name">{cat.label}</span>
               <span class="issues-guide__cat-desc">{CATEGORY_DESCRIPTIONS[cat.id]}</span>
             </div>
-            {cat.statuses.map((s) => (
-              <div class="issues-guide__row">
-                <span class="issues-guide__badge" style={`--badge-color: ${statusColors[s as IssueStatus] || 'var(--color-text-muted)'}`}>{s}</span>
-                <span class="issues-guide__desc">{STATUS_DESCRIPTIONS[s as IssueStatus]}</span>
-              </div>
-            ))}
+            <table class="issues-guide__table">
+              <tbody>
+                {cat.statuses.map((s) => (
+                  <tr>
+                    <td class="issues-guide__term">
+                      <span class="issues-guide__badge" style={`--badge-color: ${statusColors[s as IssueStatus] || 'var(--color-text-muted)'}`}>{s}</span>
+                    </td>
+                    <td class="issues-guide__desc">{STATUS_DESCRIPTIONS[s as IssueStatus]}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         ))}
       </section>
@@ -101,16 +107,24 @@ const editableSections: Array<{ title: string; field: IssuesVocabularyField | un
             <h3 class="issues-guide__h3">
               {title} <span class="issues-guide__tag issues-guide__tag--edit">editable</span>
             </h3>
-            {field.values.map((v) => (
-              <div class="issues-guide__row">
-                <span
-                  class="issues-guide__dot"
-                  style={field.colors?.[v] ? `background: ${field.colors[v]}` : 'background: var(--color-border-default)'}
-                ></span>
-                <span class="issues-guide__key">{v}</span>
-                <span class="issues-guide__desc">{describe(field, v) || '—'}</span>
-              </div>
-            ))}
+            <table class="issues-guide__table">
+              <tbody>
+                {field.values.map((v) => (
+                  <tr>
+                    <td class="issues-guide__dotcell">
+                      <span
+                        class="issues-guide__dot"
+                        style={field.colors?.[v] ? `background: ${field.colors[v]}` : 'background: var(--color-border-default)'}
+                      ></span>
+                    </td>
+                    <td class="issues-guide__term issues-guide__term--key">
+                      <span class="issues-guide__key">{v}</span>
+                    </td>
+                    <td class="issues-guide__desc">{describe(field, v) || '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </section>
         ) : null
       ))}
@@ -155,6 +169,9 @@ const editableSections: Array<{ title: string; field: IssuesVocabularyField | un
   }
 
   .issues-guide {
+    /* The global reset (`* { margin: 0 }`) strips the UA's `margin: auto` that
+       centres a modal <dialog> — restore it explicitly. */
+    margin: auto;
     width: min(720px, 92vw);
     max-height: 85vh;
     padding: 0;
@@ -261,15 +278,41 @@ const editableSections: Array<{ title: string; field: IssuesVocabularyField | un
     font-size: var(--ui-text-micro);
     color: var(--color-text-muted);
   }
-  .issues-guide__row {
-    display: grid;
-    grid-template-columns: 7.5rem 1fr;
-    align-items: baseline;
-    gap: var(--spacing-md);
+  /* One shared table shape for every section (statuses, priority, component,
+     labels): fixed-width term column so all sections align identically, and
+     top-aligned cells so multi-line descriptions never float the term. */
+  .issues-guide__table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+  .issues-guide__table td {
     padding: 0.3rem 0;
+    vertical-align: top;
+    border: none;
+    background: transparent;
+  }
+  .issues-guide__term {
+    width: 9rem;
+    padding-right: var(--spacing-md);
+  }
+  /* Vocab tables split the term into two columns: dot | name. Their widths sum
+     to the status tables' 9rem term column so descriptions align across all
+     sections. */
+  /* Dot cell mirrors the key cell's type metrics so its 1lh equals the key's
+     first-line height — the dot centres on the FIRST line even when the row
+     wraps to several. */
+  .issues-guide__dotcell {
+    width: 1.5rem;
+    font-size: var(--ui-text-body);
+    line-height: 1.5;
+  }
+  .issues-guide__term--key {
+    width: 7.5rem;
+    line-height: 1.5;
   }
   .issues-guide__badge {
-    justify-self: start;
+    display: inline-block;
     padding: 0.1rem 0.5rem;
     border-radius: var(--border-radius-full);
     font-size: var(--ui-text-micro);
@@ -279,20 +322,20 @@ const editableSections: Array<{ title: string; field: IssuesVocabularyField | un
     border: 1px solid color-mix(in srgb, var(--badge-color) 40%, transparent);
   }
   .issues-guide__dot {
-    justify-self: start;
+    display: block;
     width: 0.7rem;
     height: 0.7rem;
+    /* Centre the dot within the first line box: (line height − dot height) / 2.
+       The 0.3rem fallback approximates it where the lh unit is unsupported. */
+    margin-top: 0.3rem;
+    margin-top: calc((1lh - 0.7rem) );
     border-radius: var(--border-radius-full);
-    align-self: center;
   }
   .issues-guide__key {
     font-size: var(--ui-text-body);
     font-weight: 600;
     color: var(--color-text-primary);
-  }
-  /* Priority/component/label rows: dot + key on the left column, desc on right. */
-  .issues-guide__section .issues-guide__row:has(.issues-guide__dot) {
-    grid-template-columns: 0.7rem minmax(6rem, auto) 1fr;
+    overflow-wrap: break-word;
   }
   .issues-guide__desc {
     font-size: var(--ui-text-micro);

@@ -1,6 +1,6 @@
 ---
 title: Refactor the documentation-guide tracker's own issues
-state: open
+state: closed
 ---
 
 Dogfood the finalized anatomy (`notes/01_issue-anatomy/`) on our own backlog: the
@@ -34,7 +34,7 @@ the live work-list.
       `01_frameworks.md` ("decided on Go + Vite; formalized in notes/architecture/");
       14 pointers fixed in-issue plus a broken cross-issue link in
       `update-date-time-optimization/notes/04`.
-- [ ] **Split mixed Notes.** Tracker-wide sweep done (read-only): most notes are clean
+- [x] **Split mixed Notes.** Tracker-wide sweep done (read-only): most notes are clean
       decision-record product. Three moves remain, ranked:
       1. `knowledge-graph-and-wiki-links/notes/01_original-layered-scope.md` →
          `brainstorm/` (superseded original framing + open questions;
@@ -90,7 +90,7 @@ about issues themselves.
       (problem + superseded browser-side design + proposal + assessment); five inbound
       references repointed (sidebar-state-persistence ×3, sidebar-cache-v2, dev-docs
       sidebar-state-cache page); folder deleted.
-- [ ] Distil the decision into the general **issue vs brainstorm-file rule** — when
+- [x] Distil the decision into the general **issue vs brainstorm-file rule** — when
       does a thought get its own issue vs a brainstorm inside an existing one? Feeds
       subtask 02's rules. The cluster refactor supplies it: **an issue that shipped
       work stays an issue** (close with a supersession comment mapping open questions
@@ -98,3 +98,12 @@ about issues themselves.
       deliberation converging elsewhere folds into the winner's `brainstorm/`** (with
       a `**Resolved →**` overview + source-slug provenance) **and is deleted** — git
       history keeps the original.
+
+      **Graduated →** the broader threshold question (when a thought deserves a full
+      issue at all vs a subtask vs a brainstorm entry, plus the expanded lifecycle
+      states) got its own issue:
+      `2026-07-02-issue-lifecycle-and-creation-rules`. The distilled rule above is
+      its starting input.
+
+Closed 2026-07-02 — refactor confirmed done by sidhantha; remaining thought-work
+graduated to the issue above.

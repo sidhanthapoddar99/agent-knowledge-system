@@ -44,6 +44,8 @@ When a brainstorm resolves, don't delete or move it — add one line at the top:
 
 (or → a subtask, or → *dropped*). The brainstorm stays as the record of *why*; the distilled *what* lives in Notes. It answers the question every reader has when opening an old brainstorm: *did this go anywhere?*
 
+**When to graduate:** at the moment something downstream needs to *cite* the conclusion as ground truth — a subtask about to be written against it, code about to implement it. "The discussion feels finished" is not the trigger; being *built upon* is. A brainstorm that resolves to "do nothing" doesn't graduate — its marker points at the closing comment (or says *dropped*) instead of at a note.
+
 ## Frontmatter
 
 Only `title` and `color` are interpreted — same as notes. `color` tints the sidebar label; its meaning is issue-defined, so document it in the issue's `glossary.md` (per-section legends — the same colour can mean something different in Brainstorm than in Agent log).

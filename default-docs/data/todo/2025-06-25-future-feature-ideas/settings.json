@@ -1,10 +1,10 @@
 {
-  "title": "Backlog: unscheduled feature proposals",
-  "description": "Long-tail feature backlog — content, navigation, visuals, social, performance, analytics, dev tooling. Not scheduled.",
+  "title": "Dump: future features & ideas",
+  "description": "Issue dump for unhomed feature ideas, grouped by category as subtasks. Entries graduate to real issues (promote + delete), never tick off. Capture via /docs-quick-idea-note.",
   "status": "open",
   "priority": "low",
   "component": [
-    "architecture"
+    "issue-dump"
   ],
   "labels": [
     "feature",

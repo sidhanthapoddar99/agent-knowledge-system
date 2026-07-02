@@ -10,9 +10,35 @@ Three ways to create an issue, depending on how you're working:
 
 - **Via the live editor** — point-and-click in the dev-toolbar editor (usually fastest)
 - **By hand in the filesystem** — the canonical form; everything else ends up here anyway
-- **Via the planned `/issues` skill** — once it ships, for AI agents doing autonomous creation
+- **Via the `doc-issues` Claude Code skill** — for AI agents doing autonomous creation
 
 This page walks the filesystem path. The editor path does the same thing behind a form.
+
+## 0. First — does this thought earn an issue at all?
+
+The ceremony of an issue folder must be earned, or the tracker bloats with
+folders that aren't issues. All convention, never code-enforced:
+
+**Litmus test: can you name the issue's component and its first subtask in one
+breath?** An issue is fundamentally a coherent unit of thinking + execution that
+decomposes into subtasks — if you can't name even one, it isn't an issue yet.
+Route it instead:
+
+- **A subtask on an existing issue** — one-prompt fixes and small features attach
+  to the issue whose center of gravity they belong to, never a new folder. Work
+  that would merely deepen an existing issue's scope extends that issue.
+- **A brainstorm entry** — deliberation about *what to do* (research, direction
+  weighing, migration proposals) lives in `brainstorm/` inside the issue it
+  informs, never as its own issue. When a standalone issue turns out to be pure
+  deliberation converging elsewhere, fold it into the winner's `brainstorm/` (with
+  a `**Resolved →**` overview) and delete it — git history keeps it. An issue that
+  *shipped work* stays, closed with a supersession comment.
+- **A dump entry** — an unhomed half-formed thought goes to a **dump issue**
+  (component `issue-dump`; each entry a subtask). Capture with
+  `/docs-quick-idea-note`. A dump entry graduates to a real issue exactly when it
+  passes the litmus test — and is then **deleted from the dump**, not ticked off.
+
+If the thought passes the test, continue below.
 
 ## 1. Decide the slug
 

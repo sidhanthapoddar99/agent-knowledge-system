@@ -25,7 +25,9 @@ reference half of phase 3. Shipped in one session (2026-07-02), plugin version
 - **Validation**: `docs-guide check skill-links` green for both skills (repo +
   cache), `check issues` green, CLI sanity green.
 
-Remaining in subtask 04 phase 3: the `/docs-quick-idea-note` slash command (a
-command, not a CLI tool) and any CLI-surface updates — plus subtask 07's
-vocabulary/dump groundwork (`issue-dump` component, blessing
-`future-feature-ideas`).
+Milestone #2 closed out the rest (see `102_rules-propagation.md`): the
+`/docs-quick-idea-note` slash command, the `issue-dump` vocabulary entry,
+`future-feature-ideas` blessed as the first dump issue, the creation-threshold
+section in the user-guide's create-an-issue page, and the litmus/routing/dump lines
+in `guide.ts`. Subtasks 04 and 07 are fully ticked and marked `review`; nothing
+remains in this activity.

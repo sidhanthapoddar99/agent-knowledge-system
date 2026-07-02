@@ -28,6 +28,15 @@ There's a natural flow, but **no required order** — sections are organized by 
 - **`agent-memory/`** is the AI's mutable working state — durable facts worth not rediscovering.
 - **`comments/`** is the flat evolution log — what changed, status shifts, hand-offs.
 
+When unsure where a piece of content belongs, two questions route it — is it *thinking* or *doing*, and is it *in motion* or *settled*:
+
+| | In motion | Settled |
+|---|---|---|
+| **Thinking** | `brainstorm/` | `notes/` |
+| **Doing** | `subtasks/` (the plan) | `agent-log/` (how it went) |
+
+Comments deliberately fit no box — they're the changelog *of the issue itself*, not of the work.
+
 A complete issue folder:
 
 ```

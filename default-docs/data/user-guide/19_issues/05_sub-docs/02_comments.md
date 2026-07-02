@@ -30,7 +30,7 @@ comments/
 └── 003_handoff.md
 ```
 
-Comments are **append-only in practice** — they record history, so they don't get renumbered or rewritten. Keep them a **lean evolution log** (what changed, status shifts, hand-offs), not a forum: the debate that produced a decision lives in [Brainstorm](./brainstorm).
+Comments are **append-only in practice** — they record history, so they don't get renumbered or rewritten. Keep them a **lean evolution log** (what changed, status shifts, hand-offs), not a forum: the debate that produced a decision lives in [Brainstorm](./brainstorm). The tripwire: a comment is **a couple of lines plus a pointer** — the moment you're writing a second paragraph you're in the wrong section (debating → Brainstorm, specifying → [Notes](./notes)); link instead of inlining.
 
 ## Why one file per comment
 

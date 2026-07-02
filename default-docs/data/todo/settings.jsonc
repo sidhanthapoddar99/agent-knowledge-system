@@ -62,7 +62,17 @@
 
         // The meta-project around the framework: the Claude Code plugin & skills
         // plus the written prose documentation.
-        "ai-plugin-and-docs"
+        "ai-plugin-and-docs",
+
+
+
+        // The DELIBERATE exception to the layer-of-the-stack axis: marks dump
+        // issues — lightweight capture surfaces for unhomed, half-formed thoughts
+        // (pre-issues, not a layer). A few dump issues, one per kind; each entry a
+        // subtask. Entries graduate to real issues (promote AND delete — never
+        // tick off). Capture via /docs-quick-idea-note. Convention only, not
+        // code-enforced.
+        "issue-dump"
       ]
     },
 

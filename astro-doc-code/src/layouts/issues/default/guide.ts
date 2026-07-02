@@ -64,6 +64,14 @@ An issue is one folder — one coherent unit of *thinking + execution*.
   (author markdown; suggested sections: *Colour legend* · *Key terms* · *Conventions* —
   tables and pointers over paragraphs).
 
+**When does a thought earn an issue?** Litmus test: you can name its component and
+its first subtask in one breath. Otherwise it's a **subtask** on an existing issue
+(one-prompt fixes always), a **brainstorm entry** in the issue it informs
+(deliberation never opens its own issue), or a **dump entry** (an \`issue-dump\`
+issue; graduated entries are promoted to real issues and *deleted*, never ticked).
+Routing between sections: thinking in motion → Brainstorm · thinking settled →
+Notes · the plan → Subtasks · how it actually went → Agent log.
+
 The ideal shape at a glance:
 
 \`\`\`

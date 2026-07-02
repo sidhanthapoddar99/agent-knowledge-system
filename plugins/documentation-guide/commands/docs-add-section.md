@@ -165,8 +165,8 @@ Read the current file. Find the `pages:` block. Append the new entry with proper
 
 After writing:
 
-1. Run `docs-check-section <data_root>/<name>` — should exit `0` clean.
-2. If site.yaml was edited, run `docs-check-config <project_root>/config` — should exit `0` clean.
+1. Run `docs-guide check section <data_root>/<name>` — should exit `0` clean.
+2. If site.yaml was edited, run `docs-guide check config <project_root>/config` — should exit `0` clean.
 
 If either fails, show the user what's wrong and offer to fix.
 

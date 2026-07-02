@@ -19,4 +19,6 @@ model, and fold in the threshold rules from subtask 01.
       update its state table to the expanded enum
 - [ ] `09_using-with-ai.md` — agent rules under the new states (ceiling stays
       `review`)
-- [ ] Add/extend a page with the creation-threshold rules (subtask 01 output)
+- [x] Add/extend a page with the creation-threshold rules (subtask 01 output) —
+      landed 2026-07-02 as "§0" of `19_issues/08_workflows/01_create-an-issue.md`
+      (via anatomy-restructure subtask 07; don't duplicate)

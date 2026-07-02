@@ -1,6 +1,6 @@
 ---
 title: Update the skill + add an adhoc-issue capture command
-state: open
+state: review
 ---
 
 Bring the plugin's skills in line with the new structure, and add tooling for the
@@ -77,11 +77,23 @@ with subtask 07, which tracks the operating-rules propagation):
       `doc-issues/references/23_subtasks.md` (cold-pickup intro, bolded-lead
       checkboxes, `##` groups, spelled-out pointers, decision markers, plus the
       running-checklist pattern)
-- [ ] **New slash command `/docs-quick-idea-note`** to quickly note down an adhoc
+- [x] **New slash command `/docs-quick-idea-note`** to quickly note down an adhoc
       idea/issue into the dump without hand-building a folder (pairs with subtask
       02's "issues dump" — writes a subtask entry into the right dump issue).
       A **command** in `plugins/documentation-guide/commands/` (peer of
       `/docs-init`, `/docs-add-section`) — NOT a `docs-guide` CLI tool: the model
       routes the idea to the right dump issue and writes the subtask entry itself.
-- [ ] Update the `docs-guide` CLI for any new sections + teach both skills the
-      latest CLI surface
+      Shipped 2026-07-02: route-first flow (existing-issue check → litmus check →
+      dump), creates the first dump issue on demand, no-bare-dump entry template,
+      speed-first guardrails.
+- [x] Update the `docs-guide` CLI for any new sections + teach both skills the
+      latest CLI surface — the CLI already understands the new anatomy (its
+      `check issues` validates activity-folder naming and JSONC vocabulary; landed
+      with subtask 03's implementation); the `doc-issues` SKILL.md carries the
+      issue-group command surface inline, `documentation-guide` keeps the full
+      `references/cli-toolkit.md`, and `docs-guide help` remains the discovery
+      path. Stale flat `docs-*` names in `/docs-add-section` fixed to
+      `docs-guide check …` forms.
+
+**Complete 2026-07-02** — all three phases done; execution record in
+`agent-log/010_rf_skill-split/`. Marked review for human sign-off.

@@ -1,10 +1,17 @@
 {
   "title": "Issue-creation threshold rules + expanded lifecycle states",
-  "description": "Two linked decisions to cut tracker bloat: (1) rules for when a thought deserves a full issue vs a subtask vs a brainstorm entry; (2) expand the 4-state lifecycle into three categories — Not Started (open, blocked/deferred), In Progress (in-progress, review), Completed (closed, cancelled) — retiring the assignees-derived in-progress signal. Spans code (frontend + backend), user-guide docs, guide.ts, and the skill plugin.",
+  "description": "Two linked decisions to cut tracker bloat: (1) rules for when a thought deserves a full issue vs a subtask vs a brainstorm entry (decided); (2) replace the 4-state lifecycle with 4 hardcoded categories / 7 hardcoded statuses — Not Started (open, blocked), In Progress (in-progress), Review (input-needed, review), Closed (done, dropped) — retiring the assignees-derived in-progress signal and unifying state/status naming. Ground truth: notes/01_lifecycle-vocabulary.md. Spans code (frontend + backend), migration, user-guide docs, guide.ts, and the skill plugin.",
   "status": "open",
   "priority": "high",
-  "component": ["layout-issues"],
-  "labels": ["feature", "discussion"],
+  "component": [
+    "layout-issues"
+  ],
+  "labels": [
+    "feature",
+    "discussion"
+  ],
   "author": "sidhantha",
-  "assignees": ["sidhantha"]
+  "assignees": [
+    "sidhantha"
+  ]
 }

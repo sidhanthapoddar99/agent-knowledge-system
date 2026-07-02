@@ -47,21 +47,23 @@ derivation never matched practice — in-progress is not really determined by as
 This issue **deliberately reverses** the "transient state is a label, not a status"
 doctrine (see `user-guide/19_issues/02_design-philosophy.md`) for these two signals.
 
-Proposed taxonomy — three categories grouping six-ish states:
+**DECIDED 2026-07-02** — ground truth in `notes/01_lifecycle-vocabulary.md` (the
+deliberation trail is `brainstorm/01_discuss_lifecycle-decisions.md`). Final shape —
+**4 hardcoded categories, 7 hardcoded statuses**, both fixed in framework code, no
+user extension (only color overrides):
 
-| Category | States | Notes |
+| Category | Statuses | Notes |
 |---|---|---|
-| **Not Started** | `open` · `blocked`/`deferred` | blocked/deferred always carries its reason in a comment or `issue.md` |
-| **In Progress** | `in-progress` · `review` | explicit state, no longer derived from assignees |
-| **Completed** | `closed` · `cancelled` | unchanged terminals |
+| **Not Started** | `open` · `blocked` | blocked = structural dependency on another item, reason in prose |
+| **In Progress** | `in-progress` | set automatically by agents when work starts |
+| **Review** | `input-needed` · `review` | the "needs a human" category: stuck-on-a-question vs done-verify-me |
+| **Closed** | `done` · `dropped` | human-only terminals; `dropped` requires a comment |
 
-**Scope: issues AND subtasks.** Subtask `state` mirrors the issue `status` vocabulary
-(as it does today with the 4-state model) — the expansion applies to both levels.
-
-Open questions to settle in subtask 02: `blocked` vs `deferred` — one state or two;
-final names; what happens to the `wip`/`blocked` labels; whether categories are stored
-or a UI/vocabulary grouping; transition rules; whether agent rules change (agent
-ceiling stays `review`); migration mapping for existing issues.
+**Scope: issues AND subtasks** — one shared enum, one shared field name (`status`,
+after subtask 07's rename), one shared validation. Unknown status = hard startup
+error with a copy-pasteable message. Transitions unenforced (guidance only).
+Category is always derived from status, never stored in issue files. UI filters by
+category, not status.
 
 **Consequence:** every mention of "assignees double as the in-progress signal" in the
 documentation and the skill gets removed (see subtasks 04 and 06).

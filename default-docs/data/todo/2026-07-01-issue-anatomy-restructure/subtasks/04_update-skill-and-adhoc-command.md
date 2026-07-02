@@ -1,6 +1,6 @@
 ---
 title: Update the skill + add an adhoc-issue capture command
-state: review
+state: closed
 ---
 
 Bring the plugin's skills in line with the new structure, and add tooling for the

@@ -4,7 +4,7 @@ Cross-cutting rules for writing markdown content across content types (docs, blo
 
 **Canonical source of truth:** the framework's bundled `@root/default-docs/data/user-guide/15_writing-content/` — read those pages when this reference is unclear.
 
-> **Sync note:** the mechanics sections here (custom tags, assets, `[[path]]` embedding, code blocks) are mirrored in the `doc-issues` skill's `references/10_writing.md` — when editing one, mirror the other.
+> **Sync note:** the mechanics sections here (custom tags, assets, `[[path]]` embedding, code blocks) are mirrored in the `doc-issues` skill's `references/10_writing/10_writing.md` — when editing one, mirror the other.
 
 > **Status:** stub. The detailed spec is being authored under `2025-06-25-claude-skills/subtasks/03_writing-skill.md`. For now, this file captures the essentials.
 

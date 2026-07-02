@@ -86,7 +86,27 @@ source of truth for where content lives, in both consumer and dogfood modes.
 4. The self-test harness (`_selftest.mjs`) picks it up automatically from the
    manifest — it checks `--help`/`-h`/exit-0 and `--json` where applicable.
 
-## 8. Polyglot readiness (status)
+## 8. Where a script lives — durable command vs one-shot migration
+
+Two homes, one rule:
+
+- **Durable, reusable capability → a `docs-guide` subcommand.** Add a manifest
+  entry (§7) and put the script at `scripts/<group>/<verb>.<ext>`. It is invoked
+  through the single `docs-guide` dispatcher (never on PATH directly), discoverable
+  via `docs-guide help`, and covered by `_selftest.mjs`. Anything meant to be run
+  more than once, by anyone, lives here.
+- **One-shot, dated data migration → `migration/YYYY-MM-DD_<name>.py`.** Run
+  directly by explicit path (`bun`/`python3 …/migration/<file>`), **not** a manifest
+  entry and **not** on PATH. Must be idempotent with `detect` / `locate` / `migrate`
+  / `verify` modes (see `2026-07-02_state-to-status.py` for the reference shape) and
+  is kept in place afterwards as the historical record of that change.
+
+The line between them is *durable capability* vs *tied to one specific data change
+at one point in time*. The `doc-issues` skill ships **no** scripts of its own — all
+executable logic lives here under `documentation-guide/` and is surfaced through the
+one dispatcher, so there is exactly one place to look.
+
+## 9. Polyglot readiness (status)
 
 `cli.mjs` routes by `runtime` and detects a Python interpreter (`py -3` →
 `python3` → `python`) exactly as it falls back bun → node, failing with exit

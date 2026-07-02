@@ -10,10 +10,22 @@ tracker lives at `data/todo/`; a project may have several, all with the same sha
 (folder-per-issue, `settings.json` metadata, vocabulary in the tracker root).
 
 > **Sibling skill — `documentation-guide`.** That skill owns everything *outside* the
-> tracker: docs sections, blog posts, `site.yaml` / themes / `.env`, image handling, and
-> general markdown writing. This skill is self-contained for tracker work (including
-> [how to write inside issues](references/10_writing.md)); reach for
-> `documentation-guide` only when the task leaves the tracker.
+> tracker: docs sections, blog posts, `site.yaml` / themes / `.env`, and general markdown
+> writing. This skill is self-contained for the *thinking* of tracker work (including
+> [how to write inside issues](references/10_writing/10_writing.md)).
+>
+> **Prerequisite — also load `documentation-guide` for these in-tracker jobs:**
+> - **Images / screenshots / figures inside an issue** (issue `assets/`, brainstorm
+>   diagrams, a screenshot in a comment) → read its
+>   [`images.md`](../documentation-guide/references/images.md) for the `docs-guide img`
+>   optimization workflow. `10_writing.md` tells you *never to commit a raw screenshot*;
+>   `images.md` is *how*.
+> - **When the work leaves the tracker** — editing `site.yaml`/themes/`.env`
+>   ([`settings-layout.md`](../documentation-guide/references/settings-layout.md)), or
+>   authoring a docs page / blog post — hand off to `documentation-guide` entirely.
+>
+> The `docs-guide` CLI is shared by both skills; the full command reference is the
+> sibling's [`cli-toolkit.md`](../documentation-guide/references/cli-toolkit.md).
 
 **Canonical source of truth:** the framework's bundled user-guide at
 `@root/default-docs/data/user-guide/19_issues/` — when this skill is unclear or stale,
@@ -32,14 +44,14 @@ itself and `agent-memory/` as the always-on, agent-owned working state.
 
 | Section | Owner | Lifecycle | Holds |
 |---|---|---|---|
-| `issue.md` + `settings.json` | both | — | Problem, context, metadata ([20](references/20_issue-md.md), [02](references/02_settings.md)) |
-| `brainstorm/` | human + AI | in-flux | Active deliberation ([25](references/25_brainstorm.md)) |
-| `notes/` | human + AI | finalized | Finalized output + references ([22](references/22_notes.md)) |
-| `subtasks/` | both | plan | The checklist of what's to be done ([23](references/23_subtasks.md)) |
-| `agent-log/` | AI | append-only | Execution record, activity folders ([24](references/24_agent-logs.md)) |
-| `agent-memory/` | AI | mutable | Issue-scoped agent working state ([26](references/26_agent-memory.md)) |
-| `comments/` | both | append, flat | Evolution log, not a forum ([21](references/21_comments.md)) |
-| `glossary.md` (optional) | human | — | This issue's colour legend / terms ([27](references/27_guide-and-glossary.md)) |
+| `issue.md` + `settings.json` | both | — | Problem, context, metadata ([20](references/20_sections/20_issue-md.md), [02](references/00_anatomy/02_settings.md)) |
+| `brainstorm/` | human + AI | in-flux | Active deliberation ([25](references/20_sections/25_brainstorm.md)) |
+| `notes/` | human + AI | finalized | Finalized output + references ([22](references/20_sections/22_notes.md)) |
+| `subtasks/` | both | plan | The checklist of what's to be done ([23](references/20_sections/23_subtasks.md)) |
+| `agent-log/` | AI | append-only | Execution record, activity folders ([24](references/20_sections/24_agent-logs.md)) |
+| `agent-memory/` | AI | mutable | Issue-scoped agent working state ([26](references/20_sections/26_agent-memory.md)) |
+| `comments/` | both | append, flat | Evolution log, not a forum ([21](references/20_sections/21_comments.md)) |
+| `glossary.md` (optional) | human | — | This issue's colour legend / terms ([27](references/20_sections/27_guide-and-glossary.md)) |
 
 Ordering is `priority` desc, then recency (`updated`, derived from git) desc; `created`
 comes from the folder slug. Transient execution state ("actively working", stuck) is now
@@ -48,7 +60,7 @@ the old `wip` label is deprecated in place.
 
 ## Creation rules — when a thought earns what
 
-All convention, never code-enforced. Full detail: [42_updating.md](references/42_updating.md).
+All convention, never code-enforced. Full detail: [42_updating.md](references/40_operations/42_updating.md).
 
 **Litmus test for a new issue: can you name its component and its first subtask in one
 breath?** If not, it isn't an issue yet — it's one of:
@@ -135,29 +147,29 @@ meta files, then `MNN_` milestone files (`101_…`, `102_…`).
   brainstorm or a comment) **only when the user asks**; when it turns dense or
   decision-bearing you may *offer* — never persist on your own initiative.
 
-Full detail + recipes: [24_agent-logs.md](references/24_agent-logs.md),
-[26_agent-memory.md](references/26_agent-memory.md).
+Full detail + recipes: [24_agent-logs.md](references/20_sections/24_agent-logs.md),
+[26_agent-memory.md](references/20_sections/26_agent-memory.md).
 
 ## Triage — which reference to read
 
 | Task | Read |
 |---|---|
-| Orientation: folder shapes, URL forms, nesting caps | [01_folder-layout.md](references/01_folder-layout.md) |
-| Per-issue `settings.json` fields | [02_settings.md](references/02_settings.md) |
-| Tracker-root vocabulary (status/priority/component/labels, views) | [03_vocabulary.md](references/03_vocabulary.md) |
-| Writing markdown inside issues (frontmatter, tags, diagrams, links) | [10_writing.md](references/10_writing.md) |
-| `issue.md` body | [20_issue-md.md](references/20_issue-md.md) |
-| Comments (+ add-a-comment recipe) | [21_comments.md](references/21_comments.md) |
-| Notes (+ add-a-note recipe) | [22_notes.md](references/22_notes.md) |
-| Subtasks: numbering, groups, states (+ recipes) | [23_subtasks.md](references/23_subtasks.md) |
-| Agent-log activity folders (+ add-entry recipe) | [24_agent-logs.md](references/24_agent-logs.md) |
-| Brainstorm: kinds, threads, graduation | [25_brainstorm.md](references/25_brainstorm.md) |
-| Agent-memory: index + topics | [26_agent-memory.md](references/26_agent-memory.md) |
-| Guide panel & glossary.md | [27_guide-and-glossary.md](references/27_guide-and-glossary.md) |
-| Searching (scope, no-Grep rule, subagent patterns) | [41_searching.md](references/41_searching.md) |
-| Creating issues, duplicate checks, validating | [42_updating.md](references/42_updating.md) |
-| Moving / promoting / splitting / merging | [43_moving-restructuring.md](references/43_moving-restructuring.md) |
-| Worked examples | [61](references/61_multiple-subtasks.md) · [62](references/62_research-focused.md) · [63](references/63_agent-loops.md) · [64](references/64_phase-index.md) |
+| Orientation: folder shapes, URL forms, nesting caps | [01_folder-layout.md](references/00_anatomy/01_folder-layout.md) |
+| Per-issue `settings.json` fields | [02_settings.md](references/00_anatomy/02_settings.md) |
+| Tracker-root vocabulary (status/priority/component/labels, views) | [03_vocabulary.md](references/00_anatomy/03_vocabulary.md) |
+| Writing markdown inside issues (frontmatter, tags, diagrams, links) | [10_writing.md](references/10_writing/10_writing.md) |
+| `issue.md` body | [20_issue-md.md](references/20_sections/20_issue-md.md) |
+| Comments (+ add-a-comment recipe) | [21_comments.md](references/20_sections/21_comments.md) |
+| Notes (+ add-a-note recipe) | [22_notes.md](references/20_sections/22_notes.md) |
+| Subtasks: numbering, groups, states (+ recipes) | [23_subtasks.md](references/20_sections/23_subtasks.md) |
+| Agent-log activity folders (+ add-entry recipe) | [24_agent-logs.md](references/20_sections/24_agent-logs.md) |
+| Brainstorm: kinds, threads, graduation | [25_brainstorm.md](references/20_sections/25_brainstorm.md) |
+| Agent-memory: index + topics | [26_agent-memory.md](references/20_sections/26_agent-memory.md) |
+| Guide panel & glossary.md | [27_guide-and-glossary.md](references/20_sections/27_guide-and-glossary.md) |
+| Searching (scope, no-Grep rule, subagent patterns) | [41_searching.md](references/40_operations/41_searching.md) |
+| Creating issues, duplicate checks, validating | [42_updating.md](references/40_operations/42_updating.md) |
+| Moving / promoting / splitting / merging | [43_moving-restructuring.md](references/40_operations/43_moving-restructuring.md) |
+| Worked examples | [61](references/60_examples/61_multiple-subtasks.md) · [62](references/60_examples/62_research-focused.md) · [63](references/60_examples/63_agent-loops.md) · [64](references/60_examples/64_phase-index.md) |
 
 ## The CLI — `docs-guide`
 
@@ -170,10 +182,10 @@ uniform contract (`--help`, `--json`, exit codes 0/1/2).
 **Search the tracker with `docs-guide issue list` (or `docs-guide find`), never the
 `Grep` tool** — the CLI understands the schema (vocabulary, subtask states,
 frontmatter) and composes structural filters with regex in one call. See
-[41_searching.md](references/41_searching.md).
+[41_searching.md](references/40_operations/41_searching.md).
 
 For bulk reads (10+ files), hand the file list + question to a Haiku subagent and ask
-for a tight report — patterns in [41_searching.md](references/41_searching.md).
+for a tight report — patterns in [41_searching.md](references/40_operations/41_searching.md).
 
 ## Universal conventions (assumed by every reference)
 

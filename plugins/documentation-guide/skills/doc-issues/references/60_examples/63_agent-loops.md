@@ -2,7 +2,7 @@
 
 A long autonomous run (`/loop`, ultracode, a goal-driven session) where the
 *execution record itself* is substantial. This is the issue type that earns multiple
-**activity folders** (see [24_agent-logs.md](24_agent-logs.md)).
+**activity folders** (see [24_agent-logs.md](../20_sections/24_agent-logs.md)).
 
 ## Layout
 
@@ -55,7 +55,7 @@ iterate → milestone entry → (comment if a human decision is needed) → re-i
    human before closing.
 6. **Durable facts** ("test X is flaky because of a shared fixture") go in
    `agent-memory/` (a first-class section, not inside agent-log), so they survive
-   across runs — see [26_agent-memory.md](26_agent-memory.md).
+   across runs — see [26_agent-memory.md](../20_sections/26_agent-memory.md).
 7. **Milestone numbering restarts per activity**: `020_lp_second-sweep/` starts at
    `101_` again; the `#N` badge comes from the `iteration` frontmatter.
 

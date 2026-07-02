@@ -4,7 +4,7 @@ The "thinking" half of the tracker. Heavy on `notes/`, few or no code subtasks, 
 
 ## Layout
 
-The weight is in `notes/` — gap-numbered because reading order matters here (see [22_notes.md](22_notes.md)):
+The weight is in `notes/` — gap-numbered because reading order matters here (see [22_notes.md](../20_sections/22_notes.md)):
 
 ```
 2026-05-02-search-backend-eval/

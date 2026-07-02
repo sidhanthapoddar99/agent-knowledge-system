@@ -40,7 +40,7 @@ context:
 - **Agent-log milestones**: real `## Goal / Approach / Result / Next` headings with
   evidence (commits, test counts, paths) — never one run-on paragraph.
 - **Comments**: a couple of lines + a pointer (the two-paragraph tripwire — see
-  [21_comments.md](21_comments.md)).
+  [21_comments.md](../20_sections/21_comments.md)).
 - **Decision markers**: date + author decided lines (`**Decided (sidhantha,
   2026-07-02):** …`) and graduation markers (`> **Resolved →** <target>`) keep
   provenance in-file.
@@ -130,8 +130,8 @@ prefix is **optional** for most subdocs:
 
 | Where | Convention |
 |---|---|
-| `subtasks/` | `NN_` or `NNN_` freely (leading digit can annotate a group) — see [23_subtasks.md](23_subtasks.md) |
+| `subtasks/` | `NN_` or `NNN_` freely (leading digit can annotate a group) — see [23_subtasks.md](../20_sections/23_subtasks.md) |
 | `comments/` | `NNN_` **auto-numbered by the CLI** — the number is the comment id, never hand-gapped |
-| `agent-log/` | `NNN_<code>_<name>/` activities; `0NN` meta; `MNN_` milestones — see [24_agent-logs.md](24_agent-logs.md) |
+| `agent-log/` | `NNN_<code>_<name>/` activities; `0NN` meta; `MNN_` milestones — see [24_agent-logs.md](../20_sections/24_agent-logs.md) |
 | `brainstorm/`, `notes/` | optional; gap-number only when reading order matters |
 | `agent-memory/` | usually none — name by topic |

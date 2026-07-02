@@ -4,7 +4,7 @@ The most common shape: a feature or fix decomposed into a handful of subtasks, w
 
 ## Layout
 
-Gap-number the subtasks so you can slot work in later without renumbering (see [23_subtasks.md](23_subtasks.md)):
+Gap-number the subtasks so you can slot work in later without renumbering (see [23_subtasks.md](../20_sections/23_subtasks.md)):
 
 ```
 2026-04-19-docs-phase-2/
@@ -52,6 +52,6 @@ Gap-number the subtasks so you can slot work in later without renumbering (see [
 
 ## Key points
 
-- **Subtasks go to `review`, never `done`** — that's the human's call (AI rule #1, [00_overview.md](00_overview.md)).
+- **Subtasks go to `review`, never `done`** — that's the human's call (AI rule #1, [00_overview.md](../00_anatomy/00_overview.md)).
 - **Mark the issue `review` only when** all subtasks are `review`/`done`, there's a verifiable artefact (PR / diff / screenshot), and the agent-log captures what happened (AI rule #5).
 - A flat `agent-log/` is fine here — this isn't a long autonomous run. For the structured-workspace case, see [63_agent-loops.md](63_agent-loops.md).

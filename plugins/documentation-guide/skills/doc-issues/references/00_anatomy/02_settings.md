@@ -25,7 +25,7 @@ Per-issue metadata. Values are drawn from the tracker vocabulary (see [03_vocabu
 | `labels` | string[] | ✅ | Multi-select; values from `fields.labels.values` (often `[]`) |
 | `author` | string | ✅ | Must be in tracker `authors` list |
 | `assignees` | string[] | ✅ | Often `[]`; otherwise members of `authors` |
-| `agentLogKinds` | object | optional | Custom agent-log kind codes — `{ "ex": { "name": "experiment", "icon": "flask" } }` or shorthand `"hf": "hotfix"`. Adds to / overrides the 5 framework defaults (see [24_agent-logs.md](24_agent-logs.md)) |
+| `agentLogKinds` | object | optional | Custom agent-log kind codes — `{ "ex": { "name": "experiment", "icon": "flask" } }` or shorthand `"hf": "hotfix"`. Adds to / overrides the 5 framework defaults (see [24_agent-logs.md](../20_sections/24_agent-logs.md)) |
 | `draft` | boolean | optional | If `true`, hidden from the tracker UI |
 
 ## Derived vs stored

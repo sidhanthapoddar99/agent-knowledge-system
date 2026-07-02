@@ -14,7 +14,7 @@ Body — describe the work in enough detail that someone (or an agent) can pick 
 ```
 
 `status` uses the **same seven-status vocabulary as issue `status`** — one shared field
-name, one shared set (see [03_vocabulary.md](03_vocabulary.md)) — tracked independently per
+name, one shared set (see [03_vocabulary.md](../00_anatomy/03_vocabulary.md)) — tracked independently per
 subtask. (Subtasks used to carry a separate `state:` field; it's been unified to `status:`.
 The legacy `state:` is auto-mapped with a migrate-me warning until renamed.)
 
@@ -61,7 +61,7 @@ activity instead (see [24_agent-logs.md](24_agent-logs.md)); when ambiguous, ask
 
 ## Create a subtask
 
-1. **If your context on this area is thin, run the duplicate check** first (see [42_updating.md](42_updating.md)). If the search returns an existing subtask covering the same work, tell the user instead of creating.
+1. **If your context on this area is thin, run the duplicate check** first (see [42_updating.md](../40_operations/42_updating.md)). If the search returns an existing subtask covering the same work, tell the user instead of creating.
 2. Decide where it lives:
    - Single leaf → `<issue>/subtasks/NN_<slug>.md`
    - Inside a themed group → `<issue>/subtasks/NN_<group>/NN_<slug>.md`
@@ -93,7 +93,7 @@ Or via the editor API if running locally: `POST /__editor/subtask-toggle`. Prefe
 
 > **AI rule:** set subtasks to `in-progress` when you start, hand off at `review` (or
 > `input-needed` with a question inline) — never `done`/`dropped`, which are human-only
-> transitions (see the AI rules in [00_overview.md](00_overview.md)).
+> transitions (see the AI rules in [00_overview.md](../00_anatomy/00_overview.md)).
 
 ## vs. a loop task-list in `agent-log/`
 

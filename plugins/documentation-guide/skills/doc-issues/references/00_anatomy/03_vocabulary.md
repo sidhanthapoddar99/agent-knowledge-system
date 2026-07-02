@@ -45,7 +45,7 @@ Keep the comments accurate as the taxonomy evolves — a stale gloss is worse th
 
 1. **Tracker-wide** — root `settings.json` (above)
 2. **Per-issue** — values picked from the tracker vocabulary (see [02_settings.md](02_settings.md))
-3. **Per-subtask** — the `status` field uses the same seven-status vocabulary as issue `status` (one shared field name), tracked independently per subtask (see [23_subtasks.md](23_subtasks.md))
+3. **Per-subtask** — the `status` field uses the same seven-status vocabulary as issue `status` (one shared field name), tracked independently per subtask (see [23_subtasks.md](../20_sections/23_subtasks.md))
 
 ## Don't add scheduling / milestone fields
 

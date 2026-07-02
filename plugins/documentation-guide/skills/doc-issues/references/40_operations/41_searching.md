@@ -2,7 +2,7 @@
 
 ## Default search scope
 
-Per AI rule #3 (see [00_overview.md](00_overview.md)): search everything **not** closed — the Closed category (`done`/`dropped`) stays hidden — unless told otherwise.
+Per AI rule #3 (see [00_overview.md](../00_anatomy/00_overview.md)): search everything **not** closed — the Closed category (`done`/`dropped`) stays hidden — unless told otherwise.
 
 > [!WARNING]
 > **The default scope silently hides the Closed category (`done` and `dropped`).** Every `docs-guide issue list` query — structural filter, `--search`, `--path`, `--meta` — runs against the non-closed statuses only. So a query can come back empty (or look complete) while a matching issue sits in `done`/`dropped`. **"Not found" in the default scope is not "doesn't exist."** This is the single most common way a tracker lookup goes wrong — e.g. hunting a *dropped* upgrade issue by slug and concluding it was never filed.

@@ -1,6 +1,6 @@
 # Folder & file layout
 
-The on-disk skeleton every tracker and issue follows. (Numbering rules for subtasks live in [23_subtasks.md](23_subtasks.md); for notes/agent-log in [22_notes.md](22_notes.md) / [24_agent-logs.md](24_agent-logs.md).)
+The on-disk skeleton every tracker and issue follows. (Numbering rules for subtasks live in [23_subtasks.md](../20_sections/23_subtasks.md); for notes/agent-log in [22_notes.md](../20_sections/22_notes.md) / [24_agent-logs.md](../20_sections/24_agent-logs.md).)
 
 Every tracker has the same skeleton:
 

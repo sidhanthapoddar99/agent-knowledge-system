@@ -61,13 +61,21 @@ Revisit-in-sweep flags: "Active" default tab; click-cycle happy-path subset.
 **Subtask 08 → review.** Record: milestone `104_consistency-sweep.md`.
 Flagged for sidhantha: the "Active" default tab + the click-cycle happy-path.
 
-## Phase 4 — Plugin restructure (subtask 09, LAST)
+## Phase 4 — Plugin restructure (subtask 09, LAST) ✅ DONE (iter 5)
 
-- [ ] References foldered + all links rewritten + external-pointer sweep
-- [ ] documentation-guide prerequisite note at top of doc-issues SKILL.md
-- [ ] Scripts/migration home rule decided + executed (07's script relocated if
-      the rule demands)
-- [ ] Cache mirror + single version bump + skill sanity-load
+- [x] References foldered into 5 band dirs (`00_anatomy`/`10_writing`/`20_sections`/
+      `40_operations`/`60_examples`) via deterministic script; 83 links rewritten;
+      `00_overview` index reworked; sibling sync-note path fixed; external-pointer
+      sweep clean; `check-skill-links` green on both skill roots
+- [x] documentation-guide prerequisite block at the top of doc-issues SKILL.md
+      (images→images.md the confirmed in-tracker case; +settings-layout/cli-toolkit)
+- [x] Scripts/migration home rule written into CONTRACT.md §8 (durable→docs-guide
+      subcommand · one-shot dated→migration/). No relocation needed — 07's script
+      was already in `migration/`
+- [x] Cache mirror (`rsync --delete` + `diff -rq` identical) + version bump
+      0.5.0→0.6.0 + self-test/skill-links sanity-load green
+
+**Subtask 09 → review.** Record: milestone `105_skill-restructure.md`.
 
 ## Wrap-up
 

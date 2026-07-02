@@ -98,9 +98,9 @@ The verdict drops into the four-branch decision tree above without you ever load
 
 1. Apply the creation threshold above; then run the duplicate check if context is thin.
 2. Create the folder: `<tracker>/<YYYY-MM-DD>-<kebab-slug>/` (today's date + a short slug).
-3. Write `settings.json` with all required fields (`title`, `status: open`, `priority`, `component`, `labels`, `author`, `assignees`) — all enum values must come from the tracker vocabulary ([03_vocabulary.md](03_vocabulary.md)).
-4. Write `issue.md` — goal, context, success criteria ([20_issue-md.md](20_issue-md.md)).
-5. If it's an AI-handoff-bound issue, declare ≥1 subtask ([23_subtasks.md](23_subtasks.md)).
+3. Write `settings.json` with all required fields (`title`, `status: open`, `priority`, `component`, `labels`, `author`, `assignees`) — all enum values must come from the tracker vocabulary ([03_vocabulary.md](../00_anatomy/03_vocabulary.md)).
+4. Write `issue.md` — goal, context, success criteria ([20_issue-md.md](../20_sections/20_issue-md.md)).
+5. If it's an AI-handoff-bound issue, declare ≥1 subtask ([23_subtasks.md](../20_sections/23_subtasks.md)).
 6. Validate (below).
 
 ## Validating after writes
@@ -122,7 +122,7 @@ Three optional flags shape the output:
 - Don't touch closed-category issues (`done` / `dropped`) without an explicit human prompt.
 - Don't rewrite history in `comments/` or `agent-log/` — append, don't edit prior entries.
 - Don't change `author` or `date` on someone else's comment.
-- Don't mark an issue or subtask `done` or `dropped` — closing is a human-only transition (AI rule #1, [00_overview.md](00_overview.md)).
+- Don't mark an issue or subtask `done` or `dropped` — closing is a human-only transition (AI rule #1, [00_overview.md](../00_anatomy/00_overview.md)).
 
 ## Per-type write recipes — where they live
 
@@ -130,9 +130,9 @@ Each sub-doc type's own file carries the recipe to add one:
 
 | To add a… | Recipe in |
 |---|---|
-| comment | [21_comments.md](21_comments.md) |
-| note | [22_notes.md](22_notes.md) |
-| subtask (create / update status) | [23_subtasks.md](23_subtasks.md) |
-| agent-log entry | [24_agent-logs.md](24_agent-logs.md) |
+| comment | [21_comments.md](../20_sections/21_comments.md) |
+| note | [22_notes.md](../20_sections/22_notes.md) |
+| subtask (create / update status) | [23_subtasks.md](../20_sections/23_subtasks.md) |
+| agent-log entry | [24_agent-logs.md](../20_sections/24_agent-logs.md) |
 
 To **move or restructure** existing items (rename, promote a subtask to its own issue, split/merge), see [43_moving-restructuring.md](43_moving-restructuring.md).

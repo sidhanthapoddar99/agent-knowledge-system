@@ -42,7 +42,7 @@ old `wip` label is deprecated in place.
 - **The creation litmus test:** a thought earns a full issue only if you can name its
   component and its first subtask in one breath — otherwise it's a subtask on an
   existing issue, a brainstorm entry, or a dump entry. Full rules:
-  [42_updating.md](42_updating.md).
+  [42_updating.md](../40_operations/42_updating.md).
 
 **Don't add scheduling, release-bucket, or single-type fields without an explicit
 policy reversal.** This tracker treats those as project-management primitives that
@@ -99,32 +99,36 @@ filters by; the status is the per-row badge.
 
 Read **only the file(s) you need** — each is self-contained.
 
+Files live in five band folders — the folder listing itself reads as this table of
+contents.
+
 | File | Read it for |
 |---|---|
-| **Part 1 — Overall** | |
+| **`00_anatomy/` — orientation** | |
 | [00_overview.md](00_overview.md) | *(this file)* operating model, lifecycle + AI rules, this index |
 | [01_folder-layout.md](01_folder-layout.md) | the `<issue>/` folder tree, the 2-level rule, URL shapes |
 | [02_settings.md](02_settings.md) | per-issue `settings.json`; derived vs stored; `agentLogKinds` |
 | [03_vocabulary.md](03_vocabulary.md) | the tracker-root `settings.json(c)` — `fields` vocabulary, authors, views |
-| [10_writing.md](10_writing.md) | writing markdown inside issues — frontmatter, tags, diagrams, assets, linking |
-| **Part 2 — Content (sub-document types)** | |
-| [20_issue-md.md](20_issue-md.md) | `issue.md` — the goal/context body |
-| [21_comments.md](21_comments.md) | comments — flat evolution log, **+ add-a-comment recipe** |
-| [22_notes.md](22_notes.md) | notes — finalized output, **+ add-a-note recipe** |
-| [23_subtasks.md](23_subtasks.md) | subtasks — numbering, groups, states, **+ create/update recipes** |
-| [24_agent-logs.md](24_agent-logs.md) | agent-log — **activity folders**, kinds, milestones, **+ add-entry recipe** |
-| [25_brainstorm.md](25_brainstorm.md) | brainstorm — kinds, threads, the graduation marker |
-| [26_agent-memory.md](26_agent-memory.md) | agent-memory — index + topic files, always-on rules |
-| [27_guide-and-glossary.md](27_guide-and-glossary.md) | the Guide panel + per-issue `glossary.md` |
-| **Part 3 — Tools / activity** | |
-| [41_searching.md](41_searching.md) | search scope, the no-`Grep` rule, subagent patterns |
-| [42_updating.md](42_updating.md) | creation rules (litmus test, dump), duplicate-check, validating |
-| [43_moving-restructuring.md](43_moving-restructuring.md) | `docs-guide move` + promoting/splitting/merging issues |
-| **Part 4 — Examples** | |
-| [61_multiple-subtasks.md](61_multiple-subtasks.md) | a standard implementation issue with several subtasks |
-| [62_research-focused.md](62_research-focused.md) | a research/design issue — heavy deliberation, few code subtasks |
-| [63_agent-loops.md](63_agent-loops.md) | an issue worked across many agent-log iterations |
-| [64_phase-index.md](64_phase-index.md) | the phase / index issue — subtasks promoted to their own issues |
+| **`10_writing/` — writing inside issues** | |
+| [10_writing.md](../10_writing/10_writing.md) | writing markdown inside issues — frontmatter, tags, diagrams, assets, linking |
+| **`20_sections/` — sub-document types** | |
+| [20_issue-md.md](../20_sections/20_issue-md.md) | `issue.md` — the goal/context body |
+| [21_comments.md](../20_sections/21_comments.md) | comments — flat evolution log, **+ add-a-comment recipe** |
+| [22_notes.md](../20_sections/22_notes.md) | notes — finalized output, **+ add-a-note recipe** |
+| [23_subtasks.md](../20_sections/23_subtasks.md) | subtasks — numbering, groups, statuses, **+ create/update recipes** |
+| [24_agent-logs.md](../20_sections/24_agent-logs.md) | agent-log — **activity folders**, kinds, milestones, **+ add-entry recipe** |
+| [25_brainstorm.md](../20_sections/25_brainstorm.md) | brainstorm — kinds, threads, the graduation marker |
+| [26_agent-memory.md](../20_sections/26_agent-memory.md) | agent-memory — index + topic files, always-on rules |
+| [27_guide-and-glossary.md](../20_sections/27_guide-and-glossary.md) | the Guide panel + per-issue `glossary.md` |
+| **`40_operations/` — tools / activity** | |
+| [41_searching.md](../40_operations/41_searching.md) | search scope, the no-`Grep` rule, subagent patterns |
+| [42_updating.md](../40_operations/42_updating.md) | creation rules (litmus test, dump), duplicate-check, validating |
+| [43_moving-restructuring.md](../40_operations/43_moving-restructuring.md) | `docs-guide move` + promoting/splitting/merging issues |
+| **`60_examples/` — worked examples** | |
+| [61_multiple-subtasks.md](../60_examples/61_multiple-subtasks.md) | a standard implementation issue with several subtasks |
+| [62_research-focused.md](../60_examples/62_research-focused.md) | a research/design issue — heavy deliberation, few code subtasks |
+| [63_agent-loops.md](../60_examples/63_agent-loops.md) | an issue worked across many agent-log iterations |
+| [64_phase-index.md](../60_examples/64_phase-index.md) | the phase / index issue — subtasks promoted to their own issues |
 
 ---
 

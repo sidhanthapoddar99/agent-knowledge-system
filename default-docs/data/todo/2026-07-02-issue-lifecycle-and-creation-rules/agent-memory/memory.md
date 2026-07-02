@@ -23,10 +23,14 @@ iteration (context may reset between loop wake-ups).
   themes doc, this issue's `issue.md` tense. guide.ts/skills/CLAUDE.md/notes/brainstorm
   clean. Repo-wide leftover `cancelled`/`4-state` = historical records in *other* issues
   (preserved, not drift). Build 640pp green, check exit 0. Milestone 104.
-- **Remaining: ONLY subtask 09** (doc-issues skill restructure — LAST overall; renames
-  the `doc-issues/references/` files that milestone 3 just edited, so no rebasing the
-  other way). Then wrap: all subtasks → review, `01_summary.md`, leave issue open for
-  sidhantha's sign-off.
+- **Subtask 09 (skill restructure, iter 5): DONE → review.** References foldered into 5
+  band dirs (83 links rewritten, `check-skill-links` green both roots), prerequisite note,
+  CONTRACT.md §8 scripts rule; version 0.5.0→0.6.0; cache `rsync --delete` + identical.
+  Milestone 105.
+- **LOOP COMPLETE — all 9 subtasks `review`, issue still `open` for sidhantha's sign-off**
+  (he owns `done`). `01_summary.md` written. Nothing left to execute; do not resume the
+  loop. If reopened, the only pending items are sidhantha's two flagged product choices
+  (Active default tab, click-cycle happy-path) and the out-of-scope themes-doc selector gap.
 - **Two product choices flagged for sidhantha (documented, not vetoed):** the "Active"
   default list tab + the click-cycle happy-path (`open→in-progress→review→done→open`).
 - **Themes-doc note (beyond lifecycle scope):** `07_issues-styles.md` documents a

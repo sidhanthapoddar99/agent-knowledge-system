@@ -158,4 +158,4 @@ For rapid ad-hoc changes landed in a burst, pick the logging home by how much
 - Don't rewrite history — append; prior milestones stay as written.
 - Don't scaffold empty activity folders or meta files nothing needs.
 
-For a worked example of a long autonomous run, see [63_agent-loops.md](63_agent-loops.md).
+For a worked example of a long autonomous run, see [63_agent-loops.md](../60_examples/63_agent-loops.md).

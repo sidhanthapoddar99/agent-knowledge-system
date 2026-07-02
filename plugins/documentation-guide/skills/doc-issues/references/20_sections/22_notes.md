@@ -43,4 +43,4 @@ May live at the root of `notes/`, or one or two folders deeper for grouping (e.g
 2. Pick a meaningful filename; add a numeric prefix only if reading order matters.
 3. Write the file — no required frontmatter beyond an optional `title` (+ optional `color:`).
 
-For moving/renaming a note link-aware, see [43_moving-restructuring.md](43_moving-restructuring.md).
+For moving/renaming a note link-aware, see [43_moving-restructuring.md](../40_operations/43_moving-restructuring.md).

@@ -17,7 +17,7 @@
  * Claude Code plugin is installed.
  */
 import { renderMarkdown } from '@parsers/renderers';
-import type { AgentLogKind } from '@loaders/issues';
+import { CATEGORIES, STATUSES, type AgentLogKind } from '@loaders/issues';
 import { agentLogIcon } from './server/agent-log-icons';
 
 export interface GuideHeading {
@@ -44,6 +44,14 @@ function kindsTable(kinds: Record<string, AgentLogKind>): string {
     .map(([code, k]) => `| ${kindSvg(k.icon)} | \`${code}\` | ${k.name} | ${k.desc ?? '—'} |`)
     .join('\n');
   return `| | Code | Kind | Use for |\n|---|---|---|---|\n${rows}`;
+}
+
+/** Generated island: the fixed lifecycle line, built from the code constant so
+ *  this guide can never drift from `issue-status.ts`. */
+function lifecycleLine(): string {
+  return CATEGORIES.map(
+    (c) => `*${c.label}* ${c.statuses.map((s) => `\`${s}\``).join('·')}`,
+  ).join(' · ');
 }
 
 function guideMarkdown(kinds: Record<string, AgentLogKind>): string {
@@ -87,7 +95,7 @@ YYYY-MM-DD-<slug>/                    ← the issue folder
 ├── notes/
 │   └── 01_decided-architecture.md    ← plain NN_<slug>.md — curated order
 ├── subtasks/
-│   ├── 01_setup.md                   ← title + state frontmatter
+│   ├── 01_setup.md                   ← title + status frontmatter
 │   └── 02_build/…                    ← group folder — shows done/total
 ├── agent-log/
 │   └── 010_lp_implement-x/           ← NNN_<code>_<name>/ — code = kind
@@ -137,9 +145,8 @@ The plan — the *what* (agent-log records the *how*).
 - One to-do per \`NN_<slug>.md\`.
 - Group folders \`NN_<group>/\` = plan chapters — display title in their
   \`settings.json\`, sidebar shows a **done/total** count.
-- Status is the shared lifecycle vocabulary (same as the issue) — **7 statuses
-  in 4 categories**: *Not Started* \`open\`·\`blocked\` · *In Progress*
-  \`in-progress\` · *Review* \`input-needed\`·\`review\` · *Closed* \`done\`·\`dropped\`.
+- Status is the shared lifecycle vocabulary (same as the issue) — **${STATUSES.length} statuses
+  in ${CATEGORIES.length} categories**: ${lifecycleLine()}.
   Agents auto-set \`in-progress\`, hand off at \`review\` (or \`input-needed\` with the
   question inline); \`done\`/\`dropped\` are human-only. Terminal (done) = the Closed
   category. The UI filters by category; the badge shows the status.

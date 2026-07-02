@@ -43,9 +43,10 @@ This tracker originally held a stricter line: the only primary statuses were
 That doctrine was **revised** (2026-07-02) for exactly two signals — in-progress and
 blocked — which are now first-class statuses. Two things forced the reversal:
 
-- **The old "in-progress" signal was derived from `assignees.length > 0`, and that never
-  matched practice.** Assigning someone doesn't mean work started; work often starts with
-  nobody assigned. A derived signal that lies is worse than an explicit one.
+- **"In progress" must be an explicit signal, not a derived one.** Assignment doesn't
+  mean work started; work often starts with nobody assigned. Any progress signal
+  *inferred* from other fields (assignees, labels, recency) will eventually lie — so
+  `assignees` stays pure who-is-involved metadata and `in-progress` is a status you set.
 - **For an AI-operated tracker, a fixed shared vocabulary matters more than field
   minimalism.** Agents read a manual and key their behavior off status names; "the agent
   is running" and "this is waiting on another item" are load-bearing enough to deserve

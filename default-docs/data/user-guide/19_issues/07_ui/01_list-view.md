@@ -64,7 +64,7 @@ One-click filter + group configurations, declared in the tracker's root `setting
 ```json
 "views": [
   { "name": "High priority", "filters": { "priority": ["high", "urgent"] } },
-  { "name": "Blocked",       "filters": { "status": ["blocked"] } },
+  { "name": "Blocked",       "filters": { "labels": ["blocked"] } },
   { "name": "By component",  "group": "component" }
 ]
 ```
@@ -136,10 +136,10 @@ Shareable, back/forward navigable, survives refresh. The client reads the URL on
 
 A small toggle in the header switches between:
 
-- **Table** — dense tabular rows. Default for ≥10 visible issues.
+- **Table** — dense tabular rows. The default.
 - **Cards** — one card per issue with more visual breathing room. Better for small result sets.
 
-The choice persists via URL param (`?view=cards`).
+The choice persists in the browser (`localStorage`) — it isn't part of the URL, so sharing a link doesn't carry it.
 
 ### Guide button
 

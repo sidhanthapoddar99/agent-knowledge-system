@@ -57,7 +57,25 @@ iteration (context may reset between loop wake-ups).
     exit 0, self-test PASS, skill-links green both roots.
   - **Anatomy refs renamed this session** (parallel task): `02_settings.md`→
     `02_per-issue-settings.md`, `03_vocabulary.md`→`03_overall-issue-tracker-vocabulary.md`.
-- **ISSUE CLOSED (2026-07-03).** Sidhantha signed off the whole issue after a final
+- **REOPENED → AUDITED → FIXED → `review` (2026-07-03, activity folder
+  `030_au_four-agent-consistency-audit/`).** After closing, sidhantha ran four
+  parallel Opus audit agents (skills coherence · code↔user-guide ·
+  error↔migration↔guide.ts · assignees-history sweep), then reopened the issue to
+  record them (4 milestones + fix wave + summary) and fix everything actionable.
+  Implementation itself: zero code bugs. 14 describing-layer defects fixed: dead
+  `status` preset examples (docs + our own settings.jsonc "Blocked" view — presets
+  filter priority/component/labels/assignees, never status), ≥10-issues view-default
+  and URL-param claims, orphan-descriptions claim, full migration paths in all error
+  messages (incl. unknownStatusColorMessage which cited nothing), per-issue fileHint
+  via resolveSettingsPath, migration `guide` typo'd-statusColors gap, guide.ts `state
+  frontmatter` label + **lifecycle line now GENERATED from CATEGORIES/STATUSES
+  imports** (last hand-copy gone), review-queue one-liner, `wip` example label, two
+  assignees-history narrations rewritten to present tense. Deferred (separate
+  tickets): themes-doc fictional selectors, using-with-ai "planned" framing. All
+  verified green. **Sidhantha reviewed and signed off same day: issue `done`**
+  (comment `004_final-signoff.md`). This issue is finished for good — do not
+  resume work under it; the two deferred concerns get their own issues.
+- **ISSUE PREVIOUSLY CLOSED (2026-07-03).** Sidhantha signed off the whole issue after a final
   overview verification (build 652pp, check exit 0, self-test PASS, skill-links green,
   cache identical, migration verify clean, live surfaces confirmed, user-guide
   independently audited by a fork agent — its one defect, two dangling pre-merge

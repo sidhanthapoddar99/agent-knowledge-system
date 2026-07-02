@@ -157,7 +157,9 @@ export function statusFieldForbiddenMessage(fileHint: string): string {
     `Fix: delete the entire \`fields.status\` block. To override colours, add a`,
     `top-level \`statusColors\` map instead — e.g. { "statusColors": { "review": "#f0c674" } }.`,
     `Keys must be a subset of: ${STATUSES.join(' | ')}.`,
-    `See the migration script migration/2026-07-03_root-settings-schema.py for the exact rewrite.`,
+    `See the migration script`,
+    `(plugins/documentation-guide/skills/documentation-guide/migration/2026-07-03_root-settings-schema.py)`,
+    `for the exact rewrite.`,
   ].join('\n');
 }
 
@@ -168,6 +170,8 @@ export function unknownStatusColorMessage(key: string, fileHint: string): string
     `[issues] "${fileHint}" sets a colour for unknown status "${key}" under \`statusColors\`.`,
     `A colour for a status that doesn't exist is a typo, not an override.`,
     `Valid statuses: ${STATUSES.join(' | ')}.`,
+    `The migration script's \`detect\` subcommand flags exactly this`,
+    `(plugins/documentation-guide/skills/documentation-guide/migration/2026-07-03_root-settings-schema.py).`,
   ].join('\n');
 }
 

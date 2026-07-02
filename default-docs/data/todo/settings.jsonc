@@ -110,7 +110,9 @@
 
   "views": [
     { "name": "High priority", "filters": { "priority": ["high", "urgent"] } },
-    { "name": "Blocked", "filters": { "status": ["blocked"] } },
+    // Presets filter priority/component/labels/assignees — never status (that's
+    // the category tabs' job), so this targets the block-related labels.
+    { "name": "Blocked", "filters": { "labels": ["blocked", "blocked-external"] } },
     { "name": "By component", "group": "component" }
   ]
 }

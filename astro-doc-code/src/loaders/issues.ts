@@ -419,7 +419,8 @@ function missingDescriptionsMessage(
     `(these are rendered in the tracker Guide). Missing for: ${missing.join(', ')}.`,
     `Fix: add a \`descriptions\` map alongside \`values\` under \`fields.${field}\`, e.g.`,
     `  "${field}": { "values": [...], "descriptions": { "${missing[0]}": "what it means" } }`,
-    `See the migration script migration/2026-07-03_root-settings-schema.py.`,
+    `See the migration script`,
+    `(plugins/documentation-guide/skills/documentation-guide/migration/2026-07-03_root-settings-schema.py).`,
   ].join('\n');
 }
 
@@ -528,7 +529,8 @@ async function loadIssueFolder(folderPath: string, dataPath: string): Promise<Is
   const match = id.match(FOLDER_PATTERN);
   if (!match) return null;
 
-  const settingsPath = path.join(folderPath, 'settings.json');
+  // Resolve to the real on-disk file (.jsonc wins) so error hints name it correctly.
+  const settingsPath = resolveSettingsPath(folderPath);
   const meta = readJson<IssueMetadata>(settingsPath);
   if (!meta) {
     console.warn(`[issues] Skipping "${id}" — missing or invalid settings.json`);

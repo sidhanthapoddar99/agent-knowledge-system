@@ -97,7 +97,7 @@ The settings file may be plain `settings.json` **or** `settings.jsonc` — JSON 
   "authors": ["sidhantha", "claude"],
   "views": [
     { "name": "High priority","filters": { "priority": ["high", "urgent"] } },
-    { "name": "Blocked",      "filters": { "status": ["blocked"] } },
+    { "name": "Blocked",      "filters": { "labels": ["blocked"] } },
     { "name": "By component", "group": "component" }
   ]
 }
@@ -208,7 +208,7 @@ that's a framework-level decision, not a per-tracker config change.
 
 ### Value descriptions
 
-`component` and `labels` each require a parallel `descriptions` map — one `"<value>": "<meaning>"` entry for **every** value in `values`. A missing description is a **hard error** at build/dev startup (and fails `docs-guide check issues`); an extra description for a value that isn't in `values` is flagged too. `priority` descriptions are **optional**, and status carries its own fixed, built-in glosses (you don't write them).
+`component` and `labels` each require a parallel `descriptions` map — one `"<value>": "<meaning>"` entry for **every** value in `values`. A missing description is a **hard error** at build/dev startup (and fails `docs-guide check issues`). An extra description for a value that isn't in `values` is silently ignored. `priority` descriptions are **optional**, and status carries its own fixed, built-in glosses (you don't write them).
 
 ```jsonc
 "component": {
@@ -255,8 +255,9 @@ Per-view fields:
 | Field | Type | Purpose |
 |---|---|---|
 | `name` | string | Label shown in the preset strip |
-| `filters` | `{ [field]: string[] }` | Field → values to include (OR within, AND across fields) |
+| `filters` | `{ [field]: string[] }` | Field → values to include (OR within, AND across fields). Filterable fields: `priority`, `component`, `labels`, `assignees` — **not** `status`, which is filtered by the category tabs instead |
 | `group` | string | Field to group the result list by (`component` or `priority`) |
+| `search` | string | Pre-fills the free-text search box |
 | `sort` | `"updated" \| "created" \| "priority"` | Default sort for this view |
 | `dir` | `"asc" \| "desc"` | Sort direction |
 

@@ -254,6 +254,20 @@ def cmd_guide(path: Path) -> int:
             print("   2. No `statusColors` map needed — every colour matched the default.")
         if unknown:
             print(f"\n   ⚠ NOT valid statuses (drop them): {', '.join(unknown)}")
+    else:
+        # Already on the new shape — but a typo'd key in the top-level
+        # `statusColors` map still hard-fails the build (the loader rejects
+        # unknown statuses), so `guide` must not give it a clean bill.
+        sc = data.get("statusColors")
+        if isinstance(sc, dict):
+            unknown = [k for k in sc if k not in STATUSES]
+            if unknown:
+                any_work = True
+                print(f"A. statusColors — for {f}\n")
+                print(f"   ⚠ NOT valid statuses (fix or drop them): {', '.join(unknown)}")
+                print(f"     Valid: {' | '.join(STATUSES)}")
+                print("     (a colour for a status that doesn't exist is a typo — the")
+                print("      loader hard-fails on it at build/dev startup.)")
 
     for field in REQUIRED_DESC_FIELDS + OPTIONAL_DESC_FIELDS:
         miss = missing_descriptions(data, field)

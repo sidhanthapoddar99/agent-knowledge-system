@@ -45,7 +45,7 @@ There is **one binary** (`docs-guide`, plus its Windows `docs-guide.cmd` twin) r
 | `docs-guide issue agent-logs <id>` | Last N agent-log entries | `--last <N>` · `--full` · `--json` · `--tracker` |
 | `docs-guide issue add-comment <id>` | Append a comment (auto-incremented prefix) | `--author <name>` · `--body <md>` · `--date` · `--slug` · `--tracker` |
 | `docs-guide issue add-agent-log <id>` | Append an agent-log entry | `--body <md>` · `--status <state>` · `--iteration <N>` · `--agent <name>` · `--group <a[/b]>` · `--date` · `--slug` · `--tracker` |
-| `docs-guide issue review-queue` | Items awaiting review (status=review + open w/ review subtask) | `--json` · `--tracker` |
+| `docs-guide issue review-queue` | Items awaiting review (Review-category status — `review`/`input-needed` — + any active issue w/ a Review-category subtask) | `--json` · `--tracker` |
 
 **Search scoping** (`list`): `--path` matches the file/folder path text; `--meta` matches only the structured layer (frontmatter + `settings.json`); `--count` summarises instead of dumping excerpts. `docs-guide issue list --path astro --status all` finds the astro issue in one call.
 

@@ -9,7 +9,7 @@ Per-issue metadata. Values are drawn from the tracker vocabulary (see [03_overal
   "status": "open",
   "priority": "medium",
   "component": ["live-editor"],
-  "labels": ["feature", "wip"],
+  "labels": ["feature", "docs"],
   "author": "sidhantha",
   "assignees": []
 }
@@ -38,9 +38,6 @@ Per-issue metadata. Values are drawn from the tracker vocabulary (see [03_overal
 
 `assignees` records who is currently responsible; it can change as responsibility
 moves. It is **not** the in-progress signal — that's the explicit `in-progress` status.
-(An earlier convention derived "in-progress" from `assignees.length > 0`; that policy was
-reversed on 2026-07-02 and the derivation is gone from the code — being assigned no longer
-implies work is underway.)
 
 The tracker exposes assignees as a two-tier filter:
 

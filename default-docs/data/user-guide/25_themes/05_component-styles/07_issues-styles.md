@@ -20,7 +20,7 @@ The default theme currently styles issues via a combination of `element.css` (va
 | `.issues-index__header` | Tracker label + count |
 | `.issues-presets` | Preset view strip |
 | `.issues-preset-chip` | One preset button |
-| `.issues-state-tabs` | Open / Review / Closed / Cancelled tabs |
+| `.issues-state-tabs` | Category filter tabs (Active / In Progress / Review / Not Started / Closed / All) |
 | `.issues-state-tab` | Single tab |
 | `.issues-state-tab--active` | Currently-selected tab |
 | `.issues-filter-bar` | Search + dropdowns row |
@@ -172,13 +172,16 @@ Same sticky pattern as docs — offset by `--navbar-height`.
   transition: background var(--transition-fast);
 }
 
-.issue-subtask__state--open       { color: var(--color-text-muted); }
-.issue-subtask__state--review     { color: var(--color-warning); }
-.issue-subtask__state--closed     { color: var(--color-success); }
-.issue-subtask__state--cancelled  { color: var(--color-text-muted); opacity: var(--opacity-50); }
+.issue-subtask__state--open          { color: var(--color-text-muted); }
+.issue-subtask__state--blocked       { color: var(--color-warning); }
+.issue-subtask__state--in-progress   { color: var(--color-info); }
+.issue-subtask__state--input-needed  { color: var(--color-warning); }
+.issue-subtask__state--review        { color: var(--color-warning); }
+.issue-subtask__state--done          { color: var(--color-success); }
+.issue-subtask__state--dropped       { color: var(--color-error); }
 ```
 
-Icon colours pull from status semantics — `review` is warning (yellow/gold), `closed` is success (green), `cancelled` is muted.
+Icon colours pull from status semantics — `review` is warning (yellow/gold), `done` is success (green), `dropped` is error (red). The seven statuses fall in four categories (Not Started · In Progress · Review · Closed); the tabs above filter by category.
 
 ## Customising issues styling
 

@@ -66,7 +66,7 @@ color: "#7aa2f7"     # optional — tints only the sidebar icon
 
 If `title` is absent, the loader derives it from the slug (`01_proposed-file-structure` → `proposed file structure`).
 
-No `state` field — notes aren't work items. They're documentation.
+No `status` field — notes aren't work items. They're documentation.
 
 ### `color` — optional sidebar-label tint
 

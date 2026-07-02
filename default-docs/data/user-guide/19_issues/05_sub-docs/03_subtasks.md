@@ -48,7 +48,7 @@ subtasks/
 Rules:
 
 - The folder is a **label only**. No `subtask.md` / `index.md` body file convention to debate.
-- Each leaf is a regular subtask: own `state` / `done` frontmatter, own URL (`/<tracker>/<issue>/subtasks/<group>/<subgroup>/<slug>`), counted independently in the totals.
+- Each leaf is a regular subtask: own `status` frontmatter, own URL (`/<tracker>/<issue>/subtasks/<group>/<subgroup>/<slug>`), counted independently in the totals.
 - The `NNN_` prefix on the folder preserves ordering and is rendered as the group's number in the sidebar (e.g. "02. Implementation"). The group row shows a **done/total** count (e.g. `1/2`) — "done" = the Closed category (`done` + `dropped`) — live-updated as statuses cycle; the section header shows the same for the whole issue, with an amber dot when anything sits in the Review category.
 - Group folders may ship an optional `settings.json` with at minimum a `title` field — overrides the slug-derived label.
   ```json
@@ -123,12 +123,12 @@ Subtasks without a body are valid — the frontmatter alone is enough if the tit
 
 **On the list page:** each issue row shows a subtask summary (`2 / 5 closed, 1 review`). Issues with `review` subtasks get a secondary badge.
 
-## State transitions
+## Status transitions
 
 Three common paths:
 
-1. **Author writes it `open` → AI picks it up → marks `review` when done → human flips to `closed`.** Most common path.
-2. **Author writes it `open` → they do it themselves → mark `closed` directly.** Fine for solo work.
+1. **Author writes it `open` → AI picks it up → marks `review` when done → human flips to `done`.** Most common path.
+2. **Author writes it `open` → they do it themselves → mark `done` directly.** Fine for solo work.
 3. **Author writes it `open` → discussion concludes it shouldn't happen → a human marks it `dropped` with a comment explaining why.** Leave the file in place — the audit trail is valuable.
 
 There's a built-in endpoint for cycling statuses in the UI — `POST /__editor/subtask-toggle` — so clicking a subtask's status icon in the detail view progresses through the happy path `open → in-progress → review → done → open`. (The other statuses — `blocked`, `input-needed`, `dropped` — are set by editing the frontmatter.) Agents can also edit the frontmatter directly.

@@ -46,11 +46,20 @@ Revisit-in-sweep flags: "Active" default tab; click-cycle happy-path subset.
       subtask `--json` no longer disagree) + fixed stale user-facing tip text and
       AI-rule cross-ref numbers. Milestone `103`. → review (iter 3)
 
-## Phase 3 — Verification (subtask 08)
+## Phase 3 — Verification (subtask 08) ✅ DONE (iter 4)
 
-- [ ] Re-read shipped code, diff against every describing surface
-- [ ] Fix drifts / file gaps; spot-run documented CLI commands
-- [ ] All trackers validator-green, build green
+- [x] Re-read shipped code (`issue-status.ts`), diff against every describing
+      surface (broad grep + Haiku subagent over all 21 `19_issues/` pages +
+      code cross-checks for CSS classes / tab set / URL param)
+- [x] Fixed drifts: user-guide (4 hard + field-name), themes doc (tabs +
+      status-colour example), this issue's `issue.md` tense. Verified clean:
+      guide.ts, skills, CLAUDE.md, notes colours, brainstorm marker, dev-docs.
+      Repo-wide: remaining stale mentions are historical records in *other*
+      issues (correctly preserved). Spot-ran documented CLI commands.
+- [x] Build green (640 pages) + `docs-guide check issues` exit 0
+
+**Subtask 08 → review.** Record: milestone `104_consistency-sweep.md`.
+Flagged for sidhantha: the "Active" default tab + the click-cycle happy-path.
 
 ## Phase 4 — Plugin restructure (subtask 09, LAST)
 

@@ -112,10 +112,10 @@ The skill is paired with a set of Node CLI scripts under `scripts/issues/` that 
 | Script | Purpose |
 |---|---|
 | `list.mjs [--status open\|review\|...] [--label X] [--component Y]` | List issues matching filters as `id\tstatus\ttitle` |
-| `show.mjs <issue-id> [--full]` | Print one issue's metadata + subtask state summary + agent-log heads |
-| `subtasks.mjs <issue-id> [--state X]` | List subtasks for an issue with state + 1-line title |
+| `show.mjs <issue-id> [--full]` | Print one issue's metadata + subtask status summary + agent-log heads |
+| `subtasks.mjs <issue-id> [--status X]` | List subtasks for an issue with status + 1-line title |
 | `agent-logs.mjs <issue-id> [--last N]` | Print the last N agent-log entries |
-| `set-state.mjs <issue-or-subtask-path> <state>` | Update `status` / `state` frontmatter safely |
+| `set-state.mjs <issue-or-subtask-path> <status>` | Update the `status` frontmatter safely (or a subtask's, via `--subtask`) |
 | `add-comment.mjs <issue-id> --author X --body md` | Append `comments/NNN_date_author.md` with next sequence |
 | `add-agent-log.mjs <issue-id> --status X --body md` | Append `agent-log/NNN_slug.md` with next sequence |
 | `review-queue.mjs` | List everything awaiting human review (issues + subtask-debt promotions) |

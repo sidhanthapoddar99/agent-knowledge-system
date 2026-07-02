@@ -41,7 +41,7 @@ its `07_set-rules.md`):
 
 ## Decision 2 — expanded lifecycle states (policy reversal)
 
-The current model is 4 flat states (`open → review → closed | cancelled`) with
+The prior model was 4 flat states (`open → review → closed | cancelled`) with
 in-progress *derived from `assignees.length > 0`* and blocked/wip as labels. That
 derivation never matched practice — in-progress is not really determined by assignees.
 This issue **deliberately reverses** the "transient state is a label, not a status"

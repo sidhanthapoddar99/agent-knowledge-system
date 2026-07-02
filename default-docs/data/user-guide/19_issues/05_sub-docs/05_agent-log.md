@@ -121,7 +121,7 @@ Within a level, entries sort by: **bucket** (non-iteration files first — meta 
 - **One file per milestone, not per minute.** Three files a minute are thoughts, not milestones — consolidate.
 - **New milestone = new file, not an edit.** Git history then tells a clean story.
 - **Read the log before starting work.** Pick up where the last run left off; don't repeat failed approaches.
-- **Close out on `closed`.** When the issue ships, write a final summary milestone (commit hash, what landed).
+- **Close out on `done`.** When the issue ships, write a final summary milestone (commit hash, what landed).
 - **Fast bursts:** low-nuance mechanical changes can live as a running checklist in one **subtask** instead; changes that carry reasoning belong in an `it` (iteration) activity. When ambiguous, ask which mode is wanted.
 
 ## What does NOT belong here

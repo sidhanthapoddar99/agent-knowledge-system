@@ -18,13 +18,21 @@ iteration (context may reset between loop wake-ups).
   While here, finished the subtask-07 tail: the JS CLI mirror still exposed subtask
   `.state` while the TS side used `.status` — unified it (fixes issue-vs-subtask `--json`
   disagreement); also fixed a stale user-facing `list` tip and AI-rule cross-ref numbers.
-- **Remaining: 08 (consistency sweep — LAST of the descriptive ones), 09 (doc-issues
-  skill restructure — LAST overall, renames reference files 06/08 touch).** Then wrap:
-  all subtasks → review, `01_summary.md`, leave issue open for sidhantha's sign-off.
-- **Out-of-scope finds queued for subtask 08:** `user-guide/25_themes/05_component-
-  styles/07_issues-styles.md` still names `.issue-subtask__state--cancelled`/`closed`
-  CSS classes; sweep dev-docs; re-check the user-guide's own `AI rule #N` cross-refs
-  against the 6-rule list in `00_overview.md`.
+- **Subtask 08 (consistency sweep, iter 4): DONE → review.** All describing surfaces
+  diffed against `issue-status.ts`; fixed user-guide (4 hard + field-name drifts),
+  themes doc, this issue's `issue.md` tense. guide.ts/skills/CLAUDE.md/notes/brainstorm
+  clean. Repo-wide leftover `cancelled`/`4-state` = historical records in *other* issues
+  (preserved, not drift). Build 640pp green, check exit 0. Milestone 104.
+- **Remaining: ONLY subtask 09** (doc-issues skill restructure — LAST overall; renames
+  the `doc-issues/references/` files that milestone 3 just edited, so no rebasing the
+  other way). Then wrap: all subtasks → review, `01_summary.md`, leave issue open for
+  sidhantha's sign-off.
+- **Two product choices flagged for sidhantha (documented, not vetoed):** the "Active"
+  default list tab + the click-cycle happy-path (`open→in-progress→review→done→open`).
+- **Themes-doc note (beyond lifecycle scope):** `07_issues-styles.md` documents a
+  fictional `.issue-subtask__state--*` BEM taxonomy; the *real* classes are `.state-done`
+  etc. I fixed only the lifecycle vocabulary there — the selector-accuracy gap is a
+  separate themes-doc concern, not this issue's.
 
 ## Key file map (for the prose subtasks)
 

@@ -17,7 +17,7 @@ The flow inside an issue: **planning** (`issue.md` + `notes/`) → **execution**
 **Ordering signals are `priority` + `status`. Recency is derived from git** (most recent commit touching any file under the issue folder). `created` comes from the folder slug. Transient state (actively-working-on, stuck) is a **label**, not a status.
 
 **Best-practice rules** (convention, not enforcement):
-- **One component per issue.** Multi-component is allowed for genuinely cross-cutting work but is the exception. When tempted to list two, ask "should this be two issues?" — usually yes.
+- **One component per issue** — always. Pick the single component the issue most belongs to; even genuinely cross-cutting work gets tagged by its center of gravity, not by every surface it touches. When two feel equally right, that's usually the signal to split into two issues. (The validator hints when it sees more than one.)
 - **AI-handoff-bound issues declare ≥1 subtask.** The subtask is the handoff anchor. Issues a human resolves in five seconds don't need this.
 
 **Don't add scheduling, release-bucket, or single-type fields without an explicit policy reversal.** This tracker treats those as project-management primitives that rot under continuous AI-driven shipping. If a future change makes one genuinely useful, that's a deliberate decision, not an oversight.

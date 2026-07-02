@@ -34,7 +34,7 @@ Per-content-type extras:
 
 When writing or scaffolding issues — yours or via an agent:
 
-- **One component per issue** is the convention. Multiple components is allowed but should be reserved for genuinely cross-cutting work; usually that's a sign to split into two issues. The validator emits a hint when an issue declares more than one.
+- **One component per issue** — assign the single component the issue most belongs to (its center of gravity), even when the work touches several surfaces. If two feel equally central, that's usually a sign to split into two issues. The validator emits a hint when an issue declares more than one.
 - **AI-handoff-bound issues should declare ≥1 subtask.** The subtask is the agent's anchor: an explicit "did this happen yet?" checkbox the next agent (or human reviewer) can resume from. Trivial human-only fixes don't need this.
 
 ## Custom tags

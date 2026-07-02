@@ -3,7 +3,7 @@
   "description": "Restructure the issue folder anatomy around the work lifecycle: add Brainstorm + Agent-memory as sections, redefine Notes as finalized output, keep Comments lean and flat, flatten Agent-logs. Spans the framework, skill, and CLI. Final design in notes/01_issue-anatomy/.",
   "status": "open",
   "priority": "high",
-  "component": ["layout-issues", "ai-skills"],
+  "component": ["layout-issues"],
   "labels": ["feature", "refactor"],
   "author": "sidhantha",
   "assignees": ["sidhantha"]

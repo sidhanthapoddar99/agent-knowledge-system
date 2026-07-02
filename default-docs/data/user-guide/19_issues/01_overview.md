@@ -64,10 +64,10 @@ A 1–4 person team that uses AI agents heavily and ships continuously. Coordina
 
 Two conventions, both soft (validator hints, never errors):
 
-- **One component per issue.** Multi-component is allowed for genuinely cross-cutting work (a refactor that hits loaders + layouts + plugin scripts simultaneously). When tempted to list two, ask "should this be two issues instead?" — usually yes.
+- **One component per issue.** Assign the single component the issue most belongs to — its center of gravity — even when the work touches several surfaces (a migration that spans loaders + layouts + plugin scripts is still tagged by the one it's *most* about). If two feel equally central, that's the signal to split into two issues.
 - **AI-handoff-bound issues should declare ≥1 subtask.** The subtask is the agent's anchor: an explicit checkbox the next agent (or human reviewer) can resume from. Trivial human-only fixes don't need this.
 
-The validator emits an info-level hint when these are violated; both stay legal. Cross-cutting work and one-line fixes have their place.
+The validator emits an info-level hint when these are violated; both stay legal (the hint nudges, it doesn't block). One-line fixes have their place too.
 
 ## What makes an issue different from a doc page
 

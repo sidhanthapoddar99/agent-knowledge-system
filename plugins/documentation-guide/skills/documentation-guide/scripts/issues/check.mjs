@@ -167,11 +167,10 @@ for (const entry of issueFolders) {
   if (components.length === 0 && validComponents.length > 0) {
     warnings.push(`${id}/settings.json: \`component\` is empty`);
   }
-  // Convention: prefer 1 component per issue. Multi-component is allowed
-  // for genuinely cross-cutting work but should be the exception. Hint
-  // surfaces the decision; never an error.
+  // Convention: exactly 1 component per issue — tag by center of gravity,
+  // even for cross-cutting work. Hint surfaces the decision; never an error.
   if (components.length > 1) {
-    warnings.push(`${id}/settings.json: declares ${components.length} components — consider whether this should be split into separate issues`);
+    warnings.push(`${id}/settings.json: declares ${components.length} components — pick the single one it most belongs to, or split into separate issues`);
   }
   for (const c of components) {
     if (validComponents.length && !validComponents.includes(c)) {

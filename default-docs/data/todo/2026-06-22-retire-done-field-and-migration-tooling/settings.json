@@ -3,10 +3,7 @@
   "description": "`done:` is a vestigial subtask frontmatter field — the loader reads `state:` first and only falls back to `done` for pre-4-state files, and the displayed completion is re-derived from `state`, so `done:` is inert whenever `state:` is present. Remove it everywhere as if it never existed (skill + framework code), and stand up a reusable, self-documenting migration-script convention (a `migration/` folder of dated Python one-off scripts) with `done:`→`state:` as the first migration.",
   "status": "closed",
   "priority": "medium",
-  "component": [
-    "ai-skills",
-    "docs"
-  ],
+  "component": ["ai-skills"],
   "labels": [
     "refactor",
     "task"

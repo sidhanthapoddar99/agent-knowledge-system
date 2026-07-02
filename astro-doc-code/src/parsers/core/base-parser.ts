@@ -259,8 +259,8 @@ export abstract class BaseContentParser {
       case 'yaml':
         return this.parseYamlFile(filePath, basePath);
       case 'json':
-        // Skip settings.json files
-        if (path.basename(filePath) === 'settings.json') {
+        // Skip settings.json / settings.jsonc files
+        if (path.basename(filePath) === 'settings.json' || path.basename(filePath) === 'settings.jsonc') {
           return null;
         }
         return this.parseJsonFile(filePath, basePath);

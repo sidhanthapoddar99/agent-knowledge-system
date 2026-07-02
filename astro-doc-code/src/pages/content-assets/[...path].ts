@@ -24,7 +24,7 @@ import { mimeTypes } from '../lib/mime';
 function isServable(filename: string): boolean {
   if (filename.startsWith('.')) return false;
   if (/\.(md|mdx)$/i.test(filename)) return false;
-  if (filename === 'settings.json') return false;
+  if (filename === 'settings.json' || filename === 'settings.jsonc') return false;
   return true;
 }
 

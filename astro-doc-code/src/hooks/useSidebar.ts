@@ -14,6 +14,7 @@ import path from 'path';
 import type { LoadedContent } from '@loaders/data';
 import cacheManager from '@loaders/cache-manager';
 import { parseOrderPrefix } from '../parsers/core/order-prefix';
+import { parseJsonc, resolveSettingsPath } from '@loaders/settings-file';
 
 // Re-export for backward compatibility
 export { invalidateSidebarCache } from '@loaders/cache-manager';
@@ -67,7 +68,7 @@ function extractPosition(name: string): { position: number; cleanName: string } 
  * Returns settings and the file path (for dependency tracking)
  */
 function loadFolderSettings(folderPath: string): { settings: FolderSettings; settingsPath: string | null } {
-  const settingsPath = path.join(folderPath, 'settings.json');
+  const settingsPath = resolveSettingsPath(folderPath);
 
   if (!fs.existsSync(settingsPath)) {
     return { settings: {}, settingsPath: null };
@@ -75,7 +76,7 @@ function loadFolderSettings(folderPath: string): { settings: FolderSettings; set
 
   try {
     const raw = fs.readFileSync(settingsPath, 'utf-8');
-    const settings = JSON.parse(raw) as FolderSettings;
+    const settings = parseJsonc<FolderSettings>(raw);
     return { settings, settingsPath };
   } catch {
     return { settings: {}, settingsPath: null };

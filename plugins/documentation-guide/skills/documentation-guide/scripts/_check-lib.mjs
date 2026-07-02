@@ -9,6 +9,7 @@
  */
 
 import fs from 'node:fs';
+import { parseJsonc } from './_jsonc.mjs';
 
 /** A `.md` file has a `title:` key inside its leading `---` frontmatter block. */
 export const FRONTMATTER_TITLE_RE = /^---\r?\n[\s\S]*?^title:\s*\S+/m;
@@ -44,7 +45,7 @@ export function readJsonChecked(abs, relPath, errors) {
     return null;
   }
   try {
-    return JSON.parse(raw);
+    return parseJsonc(raw);
   } catch (e) {
     errors.push(`${relPath}: invalid JSON (${e.message})`);
     return null;

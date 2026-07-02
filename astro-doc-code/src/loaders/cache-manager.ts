@@ -105,8 +105,8 @@ export function detectFileType(filePath: string, watchPaths?: CacheManagerState[
   const ext = path.extname(filePath).toLowerCase();
   const basename = path.basename(filePath);
 
-  // Settings files
-  if (basename === 'settings.json') {
+  // Settings files (JSON or JSONC)
+  if (basename === 'settings.json' || basename === 'settings.jsonc') {
     return 'settings';
   }
 

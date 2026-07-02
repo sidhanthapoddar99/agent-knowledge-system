@@ -19,6 +19,7 @@ import {
   type ContentSettings,
 } from '../parsers/types';
 import cacheManager from './cache-manager';
+import { parseJsonc, resolveSettingsPath } from './settings-file';
 
 // Keep error functions from old cache for compatibility
 import { addError, addWarning } from './cache';
@@ -350,7 +351,7 @@ export function loadSettings(dataPath: string): ContentSettings {
   }
   const absolutePath = dataPath;
 
-  const settingsPath = path.join(absolutePath, 'settings.json');
+  const settingsPath = resolveSettingsPath(absolutePath);
 
   // Default settings
   const defaultSettings: ContentSettings = {
@@ -385,7 +386,7 @@ export function loadSettings(dataPath: string): ContentSettings {
 
   try {
     const raw = fs.readFileSync(settingsPath, 'utf-8');
-    const settings = JSON.parse(raw) as ContentSettings;
+    const settings = parseJsonc<ContentSettings>(raw);
 
     // Merge with defaults
     const merged: ContentSettings = {

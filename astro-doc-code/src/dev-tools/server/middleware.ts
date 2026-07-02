@@ -23,6 +23,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import matter from 'gray-matter';
 import { collectServerMetrics } from './metrics';
+import { readSettings, isSettingsFile } from '../../loaders/settings-file';
 
 interface FileTreeNode {
   name: string;
@@ -52,12 +53,9 @@ function buildFileTree(dirPath: string): FileTreeNode {
   const dirName = path.basename(dirPath);
   const { prefix } = parsePrefix(dirName);
 
-  // Read settings.json if present
-  let settings: Record<string, any> | undefined;
-  const settingsPath = path.join(dirPath, 'settings.json');
-  if (fs.existsSync(settingsPath)) {
-    try { settings = JSON.parse(fs.readFileSync(settingsPath, 'utf-8')); } catch {}
-  }
+  // Read settings.json / settings.jsonc if present
+  const settings: Record<string, any> | undefined =
+    readSettings<Record<string, any>>(dirPath) ?? undefined;
 
   const displayName = settings?.label || cleanDisplayName(dirName);
 
@@ -80,7 +78,7 @@ function buildFileTree(dirPath: string): FileTreeNode {
   }
 
   for (const entry of entries) {
-    if (entry.name === 'settings.json' || entry.name.startsWith('.')) continue;
+    if (isSettingsFile(entry.name) || entry.name.startsWith('.')) continue;
 
     const fullPath = path.join(dirPath, entry.name);
     const { prefix: childPrefix } = parsePrefix(entry.name);

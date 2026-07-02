@@ -16,6 +16,7 @@ import matter from 'gray-matter';
 import { resolveProjectContext } from '../_env.mjs';
 import { parseOrderPrefixLoose } from '../_order-prefix.mjs';
 import { parseArgs, printHelp } from '../_cli.mjs';
+import { parseJsonc, preferJsonc } from '../_jsonc.mjs';
 
 // parseArgs/printHelp now live canonically in _cli.mjs (lifted in subtask 02);
 // re-exported here so issues/* import sites are unchanged.
@@ -92,7 +93,8 @@ export function csv(s) {
 // ---------- Read helpers ----------------------------------------------------
 
 export function readJson(filePath) {
-  try { return JSON.parse(fs.readFileSync(filePath, 'utf-8')); }
+  // Prefer a sibling `.jsonc` (comments / trailing commas) when present.
+  try { return parseJsonc(fs.readFileSync(preferJsonc(filePath), 'utf-8')); }
   catch { return null; }
 }
 

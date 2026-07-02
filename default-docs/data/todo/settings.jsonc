@@ -1,0 +1,95 @@
+// Issue-tracker vocabulary (JSONC — comments + trailing commas allowed).
+// This root file declares the controlled vocabulary every issue picks from.
+// The meanings below are the source of truth for humans AND AI agents deciding
+// where a new issue belongs — keep them accurate as the taxonomy evolves.
+{
+  "label": "Todo",
+
+  "fields": {
+    // Lifecycle state. Agents set `review`, never `closed` (human-only gate).
+    "status": {
+      "values": ["open", "review", "closed", "cancelled"],
+      "colors": {
+        "open": "#888888",
+        "review": "#f0c674",
+        "closed": "#7ec699",
+        "cancelled": "#666666"
+      }
+    },
+
+    // How much this matters / how soon. Ordering is `priority desc, updated desc`.
+    "priority": {
+      "values": ["low", "medium", "high", "urgent"],
+      "colors": {
+        "low": "#7aa2f7",
+        "medium": "#f0c674",
+        "high": "#e5a663",
+        "urgent": "#e06c75"
+      }
+    },
+
+    // Which part of the system the issue lives in. Pick exactly ONE — tag by
+    // center of gravity even for cross-cutting work (the validator warns on >1).
+    // The seven buckets are a layer-of-the-stack axis:
+    "component": {
+      "values": [
+        // The engine/infra under everything: refactors, the plugin system,
+        // runtime & build tooling, the dev-toolbar. Core system work that isn't
+        // tied to one content layer.
+        "architecture",
+
+        // The content pipeline — how content gets from disk to the screen:
+        // loading, link resolution, caching, and rendering to the frontend.
+        "loaders-and-renderers",
+
+        // First-class / markdown-rendered content ELEMENTS (markdown itself,
+        // code blocks, mermaid & excalidraw diagrams, knowledge graph, wikilinks)
+        // plus supplemental tools layered on the core (e.g. site-wide search).
+        "components",
+
+        // Building the PRESENTATION: layouts (docs, blog, new layout types),
+        // themes, responsive/sizing. Layout-development work in general.
+        "layout-general",
+
+        // The issue-tracker presentation specifically (this layout & its parts).
+        "layout-issues",
+
+        // The live editing application — CodeMirror + Yjs: core, sync/presence,
+        // view modes, and the editor server's operational surface.
+        "editor",
+
+        // The meta-project around the framework: the Claude Code plugin & skills
+        // plus the written prose documentation.
+        "ai-plugin-and-docs"
+      ]
+    },
+
+    // Free-form cross-cutting tags (multi-select). Independent of `component`.
+    "labels": {
+      "values": [
+        "wip",              // actively being worked on right now (transient; not a status)
+        "blocked",          // can't proceed — waiting on another issue/decision inside this repo
+        "bug",              // behaves differently from intended
+        "feature",          // net-new capability
+        "task",             // concrete work that isn't a feature or bug (chore, maintenance)
+        "performance",      // speed / memory / scaling work
+        "refactor",         // restructuring with no behavior change
+        "docs",             // documentation/prose work (cross-cuts any component)
+        "idea",             // speculative proposal, not yet committed
+        "duplicate",        // superseded by another issue
+        "good-first-issue", // self-contained, low-context entry point for newcomers
+        "discussion",       // open design conversation; decision not yet settled
+        "blocked-external"  // waiting on an upstream / third-party dependency outside the repo
+      ]
+    }
+  },
+
+  "authors": ["sidhantha", "claude"],
+
+  "views": [
+    { "name": "Assigned", "filters": { "assignees": ["assigned"] } },
+    { "name": "High priority", "filters": { "priority": ["high", "urgent"] } },
+    { "name": "Blocked", "filters": { "labels": ["blocked", "blocked-external"] } },
+    { "name": "By component", "group": "component" }
+  ]
+}

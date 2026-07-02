@@ -1,6 +1,6 @@
 ---
 title: Vocabulary
-description: The tracker-root settings.json — enums, colors, preset views, authors, tracker-wide draft
+description: The tracker-root settings.json / settings.jsonc — enums, colors, preset views, authors, tracker-wide draft
 sidebar_position: 2
 ---
 
@@ -10,9 +10,15 @@ Every tracker has a root `settings.json` that defines its **vocabulary** — the
 
 Per-issue `settings.json` files are validated against this root. Rename a value here, and every issue using it either migrates or starts warning.
 
+## JSON or JSONC — annotate the meanings
+
+The settings file may be plain `settings.json` **or** `settings.jsonc` — JSON that also allows `//` line comments, `/* */` block comments, and trailing commas. Both the framework loaders and the `docs-guide` toolkit read either; when both files exist for the same folder, **`.jsonc` wins**. Since JSONC is a strict superset of JSON, a comment-free `.json` file is still perfectly valid — the win is the ability to annotate.
+
+**For the root vocabulary, prefer `.jsonc` and comment what each `component` and `label` means.** The vocabulary is the controlled list every issue picks from, so a one-line gloss per value is the single best signal for humans *and* AI agents deciding where a new issue belongs — and it keeps `component` from decaying into a junk drawer. Keep the glosses accurate as the taxonomy changes.
+
 ## Example
 
-```json
+```jsonc
 {
   "label": "Todo",
   "fields": {
@@ -35,10 +41,33 @@ Per-issue `settings.json` files are validated against this root. Rename a value 
       }
     },
     "component": {
-      "values": ["live-editor", "dev-toolbar", "content-pipeline", "layouts-and-themes", "loaders", "components", "ai-skills", "integrations", "infra", "docs"]
+      // Layer-of-the-stack axis — pick exactly one per issue (by center of gravity).
+      "values": [
+        "architecture",          // engine/infra: refactors, plugin system, runtime, dev-toolbar
+        "loaders-and-renderers", // content pipeline: loading, link resolution, caching, render
+        "components",            // markdown-rendered elements (code blocks, diagrams, graph, wikilinks) + supplemental tools
+        "layout-general",        // building presentation: layouts (docs/blog/new types) + themes
+        "layout-issues",         // the issue-tracker presentation specifically
+        "editor",                // the live CodeMirror+Yjs editing app
+        "ai-plugin-and-docs"     // the meta-project: Claude Code plugin/skills + prose docs
+      ]
     },
     "labels": {
-      "values": ["wip", "blocked", "bug", "feature", "task", "performance", "refactor", "docs", "idea", "duplicate", "good-first-issue", "discussion", "blocked-external"]
+      "values": [
+        "wip",              // actively being worked on (transient — not a status)
+        "blocked",          // waiting on another issue/decision inside this repo
+        "bug",              // behaves differently from intended
+        "feature",          // net-new capability
+        "task",             // concrete work that isn't a feature/bug
+        "performance",      // speed / memory / scaling
+        "refactor",         // restructuring, no behavior change
+        "docs",             // documentation/prose work (cross-cuts any component)
+        "idea",             // speculative, not yet committed
+        "duplicate",        // superseded by another issue
+        "good-first-issue", // low-context entry point for newcomers
+        "discussion",       // open design conversation, decision unsettled
+        "blocked-external"  // waiting on an upstream / third-party dependency
+      ]
     }
   },
   "authors": ["sidhantha", "claude"],

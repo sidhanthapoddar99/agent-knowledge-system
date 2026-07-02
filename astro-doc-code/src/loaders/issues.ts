@@ -37,6 +37,7 @@ import matter from 'gray-matter';
 import { createIssuesParser } from '../parsers/content-types/issues';
 import { getIssueDate } from './issue-dates';
 import { parseOrderPrefixLoose } from '../parsers/core/order-prefix';
+import { readSettings, statSettingsMtime } from './settings-file';
 
 export interface IssueMetadata {
   title: string;
@@ -263,7 +264,7 @@ function statMtime(p: string): number {
 }
 
 function computeSignature(dataPath: string): number {
-  let sig = statMtime(path.join(dataPath, 'settings.json'));
+  let sig = statSettingsMtime(dataPath);
   sig += statMtime(dataPath); // folder listing changes
 
   let entries: fs.Dirent[];
@@ -277,7 +278,7 @@ function computeSignature(dataPath: string): number {
     if (!entry.isDirectory() || !FOLDER_PATTERN.test(entry.name)) continue;
     const folder = path.join(dataPath, entry.name);
     sig += statMtime(folder);
-    sig += statMtime(path.join(folder, 'settings.json'));
+    sig += statSettingsMtime(folder);
     sig += statMtime(path.join(folder, 'issue.md'));
     sig += statMtime(path.join(folder, 'glossary.md'));
 
@@ -296,7 +297,7 @@ function computeSignature(dataPath: string): number {
           } else if (item.isDirectory() && allowsNesting) {
             sig += statMtime(abs);
             // Folder-level settings.json (subtasks groups may carry one).
-            sig += statMtime(path.join(abs, 'settings.json'));
+            sig += statSettingsMtime(abs);
             try {
               for (const inner of fs.readdirSync(abs, { withFileTypes: true })) {
                 const innerAbs = path.join(abs, inner.name);
@@ -304,7 +305,7 @@ function computeSignature(dataPath: string): number {
                   sig += statMtime(innerAbs);
                 } else if (inner.isDirectory()) {
                   sig += statMtime(innerAbs);
-                  sig += statMtime(path.join(innerAbs, 'settings.json'));
+                  sig += statSettingsMtime(innerAbs);
                   try {
                     for (const f of fs.readdirSync(innerAbs)) {
                       if (f.endsWith('.md')) sig += statMtime(path.join(innerAbs, f));
@@ -334,12 +335,9 @@ function normalizeComponent(raw: unknown): string[] {
   return [];
 }
 
+/** Read a settings file, preferring a sibling `.jsonc` (comments/trailing commas). */
 function readJson<T>(filePath: string): T | null {
-  try {
-    return JSON.parse(fs.readFileSync(filePath, 'utf-8')) as T;
-  } catch {
-    return null;
-  }
+  return readSettings<T>(filePath);
 }
 
 // Single shared parser — initialized lazily

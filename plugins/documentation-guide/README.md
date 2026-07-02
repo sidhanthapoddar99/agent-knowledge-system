@@ -2,11 +2,11 @@
 
 Claude Code plugin for the [documentation-template](https://github.com/sidhanthapoddar99/documentation-template) framework. Ships:
 
-- **1 skill** — `documentation-guide` — operating manual that triages docs/issue/blog/config tasks to domain-specific reference files
-- **13 CLI wrappers** — 8 for the issue tracker (`docs-list`, `docs-show`, `docs-subtasks`, `docs-agent-logs`, `docs-set-state`, `docs-add-comment`, `docs-add-agent-log`, `docs-review-queue`), 3 validators (`docs-check-blog`, `docs-check-config`, `docs-check-section`), and `docs-move` (move/rename doc pages with link rewriting), plus `docs-img` (optimize images so git stays small)
+- **2 skills** — `documentation-guide` (operating manual for docs / blog / config / writing / themes — triages to domain-specific reference files) and `doc-issues` (the complete, self-contained issue-tracker skill: anatomy, creation rules, subtasks, brainstorms, agent-logs, agent-memory, the dump — also fires on the execution verbs audit / refactor / loop / discuss)
+- **The `docs-guide` CLI** — one dispatcher on `PATH`; every operation is `docs-guide <group> <verb>` (issue tracker, validators, docs+blog content, git metadata, cross-content `find`, link-aware `move`, `img`). Discover with `docs-guide help`
 - **2 slash commands** — `/docs-init` (bootstrap a new docs project from zero) and `/docs-add-section` (scaffold a new top-level section)
 
-The skill teaches Claude Code how to navigate this Astro-based docs framework: the project's `data/` content layout, frontmatter conventions, the folder-per-issue tracker, `site.yaml` configuration, custom themes, and more. Triages every task to a domain-specific reference file rather than dumping everything into one long prompt.
+The skills teach Claude Code how to navigate this Astro-based docs framework: the project's `data/` content layout, frontmatter conventions, the folder-per-issue tracker, `site.yaml` configuration, custom themes, and more. Each task is triaged to a domain-specific reference file rather than dumping everything into one long prompt.
 
 ## Install
 
@@ -18,17 +18,17 @@ Distributed via [`sids-plugin-marketplace`](https://github.com/sidhanthapoddar99
 /reload-plugins
 ```
 
-After install, the 13 CLI wrappers are on your `PATH` automatically (Claude Code adds the plugin's `bin/` to PATH at session start). Each command ships as an extensionless bash shim (Linux / macOS / WSL / Git Bash) plus a `.cmd` shim (native Windows cmd / PowerShell) — your shell picks the right one. Try one:
+After install, `docs-guide` is on your `PATH` automatically (Claude Code adds the plugin's `bin/` to PATH at session start), as an extensionless bash shim (Linux / macOS / WSL / Git Bash) plus a `.cmd` shim (native Windows cmd / PowerShell). Try:
 
 ```
-docs-list --priority high
-docs-list --search "indexer" --status open,review
-docs-review-queue
-docs-check-config             # validate site.yaml / navbar.yaml / footer.yaml
-docs-check-section ./data/user-guide
+docs-guide issue list --priority high
+docs-guide issue list --search "indexer" --status open,review
+docs-guide issue review-queue
+docs-guide check config             # validate site.yaml / navbar.yaml / footer.yaml
+docs-guide check section ./data/user-guide
 ```
 
-The skill triggers automatically whenever you work on docs in a documentation-template project (i.e. one with a `documentation-template/` framework folder, with `.env`'s `CONFIG_DIR` pointing at the project's config).
+The skills trigger automatically whenever you work on docs (documentation-guide) or the issue tracker (doc-issues) in a documentation-template project (i.e. one with a `documentation-template/` framework folder, with `.env`'s `CONFIG_DIR` pointing at the project's config).
 
 ## Bootstrap a new project
 
@@ -52,9 +52,10 @@ Computes the next `NN_` prefix, scaffolds `settings.json` + `01_overview.md`, an
 
 | Capability | Where |
 |---|---|
-| Skill | `skills/documentation-guide/SKILL.md` (+ 5 reference files in `references/`) |
-| 13 CLI wrappers | `bin/docs-*` (bash) + `bin/docs-*.cmd` (Windows) — identical self-routing shims |
-| CLI dispatcher | `skills/documentation-guide/scripts/cli.mjs` — the command → script map; every shim routes through it by its own filename |
+| Docs/blog/config skill | `skills/documentation-guide/SKILL.md` (+ reference files in `references/`) |
+| Issue-tracker skill | `skills/doc-issues/SKILL.md` (+ ~20 reference files in `references/`) |
+| CLI entrypoint | `bin/docs-guide` (bash) + `bin/docs-guide.cmd` (Windows) |
+| CLI dispatcher | `skills/documentation-guide/scripts/cli.mjs` — the `<group> <verb>` → script map |
 | 2 slash commands | `commands/docs-init.md`, `commands/docs-add-section.md` |
 | Helper scripts | `skills/documentation-guide/scripts/{issues,blog,config,docs}/*.mjs` (the dispatcher routes to these) |
 

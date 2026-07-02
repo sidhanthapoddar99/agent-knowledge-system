@@ -1,6 +1,6 @@
 ---
 name: documentation-guide
-description: Use this skill for ANY work in a documentation-template project — writing markdown, working with the issue tracker (issues, subtasks, comments, agent-logs), creating blog posts, editing docs pages, configuring site.yaml / navbar.yaml / footer.yaml / .env, and anything touching files under the project's `data/` folder. The skill triages the task to a domain-specific reference file (writing, docs-layout, blog-layout, issues, settings-layout). TRIGGER eagerly — documentation work in this project almost always benefits from this skill. Use it whenever the user mentions docs, frontmatter, settings.json, the todo / issues tracker, blog posts, the data folder, content types, themes, or any file under the project's content folders. SKIP only for pure framework source-code work under `astro-doc-code/src/` that doesn't touch any documentation file.
+description: Use this skill for ANY non-tracker content work in a documentation-template project — writing markdown, creating blog posts, editing docs pages, configuring site.yaml / navbar.yaml / footer.yaml / .env, themes, image optimization, and anything touching files under the project's `data/` folder EXCEPT the issue tracker. The skill triages the task to a domain-specific reference file (writing, docs-layout, blog-layout, settings-layout, images). TRIGGER eagerly — documentation work in this project almost always benefits from this skill. Use it whenever the user mentions docs, frontmatter, settings.json, blog posts, the data folder, content types, or themes. For the issue tracker (data/todo/ — issues, subtasks, comments, brainstorms, agent-logs, the dump) use the doc-issues skill instead. SKIP only for pure framework source-code work under `astro-doc-code/src/` that doesn't touch any documentation file.
 ---
 
 # Documentation skill
@@ -9,7 +9,7 @@ Operating manual for working in an Astro-based documentation-template project. T
 
 > **Two modes.** *Consumer mode* (the default) — the framework is a subfolder of the user's project (`<project>/documentation-template/`) and the user's content lives at the project root (`config/`, `data/`, `assets/`, `themes/` next to the framework folder). *Dogfood mode* — the framework repo *is* the project; content lives under `default-docs/`. The scripts derive the actual location from `.env` (`CONFIG_DIR`), so this skill describes paths relative to **the user's content folders** and the underlying scripts handle both modes. Where this skill says `data/`, the script resolves to `<project>/data/` (consumer) or `<framework>/default-docs/data/` (dogfood).
 
-> **Companion skill — `doc-agent`.** This plugin also ships a thin `doc-agent` skill with a *different trigger surface*: it covers **how to use an issue's `agent-log/`** and fires on the execution verbs — **audit / refactor / loop** (or any autonomous run), plus **agent-memory** (always) and **discussion** (explicit-save-only). This skill (`documentation-guide`) is the broad author/maintain manual; `doc-agent` is the narrow execution-time nudge that points back here. If you're running/recording work in `agent-log/`, that's `doc-agent`'s job; depth still lives in `references/layouts/issues/24_agent-logs.md`.
+> **Sibling skill — `doc-issues`.** This plugin also ships a self-contained `doc-issues` skill that owns the **entire issue-tracker domain** — issues, subtasks, comments, brainstorms, notes, agent-logs, agent-memory, the tracker vocabulary, the issues dump, and the execution verbs (audit / refactor / loop / discuss) against a tracked issue. For any work under `data/todo/` (or another tracker), load that skill; this one covers everything else. (The former thin `doc-agent` skill was absorbed into `doc-issues`.)
 
 ## Triage — which reference file to read
 
@@ -20,7 +20,7 @@ Pick the reference file that matches the task. Read **only the one(s) you need**
 | Writing markdown, frontmatter, custom tags, asset embedding (across any content type) | writing | `references/writing.md` |
 | Files under `data/<sidebar-driven-section>/` (e.g. `user-guide/`, `dev-docs/`) | docs-layout | `references/layouts/docs-layout.md` |
 | Files under `data/blog/` (flat `YYYY-MM-DD-<slug>.md`) | blog-layout | `references/layouts/blog-layout.md` |
-| Files under `data/todo/` or any issue tracker (folder-per-item, `settings.json`, subtasks, comments, agent-logs) | issues | `references/layouts/issues/00_overview.md` (entry; drill into one sibling) |
+| Files under `data/todo/` or any issue tracker | issues | **the `doc-issues` skill** (self-contained — load it instead of a reference here) |
 | `site.yaml` / `navbar.yaml` / `footer.yaml` / `.env` / paths / themes / project setup | settings-layout | `references/settings-layout.md` |
 | Optimizing / shrinking images or screenshots before committing (resize, grayscale, webp/avif, strip) | images | `references/images.md` |
 
@@ -66,8 +66,8 @@ If `data/README.md` doesn't exist, **create one** before doing the requested tas
 
 These apply across all domains. Reference files don't repeat them — they assume you know.
 
-- **`NN_` prefix** — folders and files inside `data/<docs-section>/` use a numeric prefix for ordering, sorted by value so widths coexist (`05_`, `010_`, `110_`). Width is 2–5 digits, used as a tier: **`NN_` is the convention** (use it almost always); **`NNN_` only when there's a special requirement** — a section with many entries that needs the headroom, or grouping via the leading digit; **`NNNN_`/`NNNNN_` are very rare** — reach for them only when the user explicitly demands it or a case is genuinely exceptional. Never 1 digit or 6+. Gap-space them to leave room to insert. The **issue tracker** uses the same grammar but treats **both `NN_` and `NNN_` as conventional** — subtasks (files *and* grouping folders) reach for 3-digit freely (grouping via the leading digit, or many items), and `NN_`/`NNN_` are good *optional* conventions for `agent-log/` (CLI writes `NNN_`) and `notes/`; blog posts use no prefix. Full rules: `references/layouts/docs-layout.md` (docs) and `references/layouts/issues/23_subtasks.md` (tracker numbering).
-- **`settings.json`** — every docs folder has one (sidebar label, position). Issue trackers have a root `settings.json` declaring vocabulary. Issues have a per-issue `settings.json` for metadata. Any of these may instead be **`settings.jsonc`** (JSON + `//`/`/* */` comments + trailing commas); loaders and the `docs-guide` toolkit read either, and `.jsonc` wins when both exist. **Prefer `.jsonc` for the tracker-root vocabulary** and comment what each `component`/`label` means — see `references/layouts/issues/03_vocabulary.md`.
+- **`NN_` prefix** — folders and files inside `data/<docs-section>/` use a numeric prefix for ordering, sorted by value so widths coexist (`05_`, `010_`, `110_`). Width is 2–5 digits, used as a tier: **`NN_` is the convention** (use it almost always); **`NNN_` only when there's a special requirement** — a section with many entries that needs the headroom, or grouping via the leading digit; **`NNNN_`/`NNNNN_` are very rare** — reach for them only when the user explicitly demands it or a case is genuinely exceptional. Never 1 digit or 6+. Gap-space them to leave room to insert. The **issue tracker** uses the same grammar with looser conventions (both `NN_` and `NNN_` conventional; prefix optional for most subdocs — see the `doc-issues` skill); blog posts use no prefix. Full rules: `references/layouts/docs-layout.md`.
+- **`settings.json`** — every docs folder has one (sidebar label, position). Issue trackers have a root `settings.json` declaring vocabulary. Issues have a per-issue `settings.json` for metadata. Any of these may instead be **`settings.jsonc`** (JSON + `//`/`/* */` comments + trailing commas); loaders and the `docs-guide` toolkit read either, and `.jsonc` wins when both exist. **Prefer `.jsonc` for the tracker-root vocabulary** and comment what each `component`/`label` means — see the `doc-issues` skill.
 - **Frontmatter `title`** — required on every markdown file. Astro builds will fail without it.
 - **Theme variables only** — when editing CSS in layouts, consume declared theme variables (see `astro-doc-code/src/styles/theme.yaml → required_variables`). Never hardcode colours, fonts, or invent variable names.
 - **Edit, don't rewrite** — prefer `Edit` over `Write` for existing files. Surgical regex replaces preserve formatting and key order in JSON.
@@ -85,7 +85,7 @@ These apply across all domains. Reference files don't repeat them — they assum
 >
 > **Legacy `docs-<name>` scripts are retired.** Earlier versions exposed flat binaries (`docs-list`, `docs-check-blog`, …); everything is now `docs-guide <group> <verb>`. If you encounter old `docs-<name>` invocations in a project's `CLAUDE.md`, agent memory, or scripts, **update them to the `docs-guide` form (and remove the stale references)** as you go.
 
-**Searching the tracker — use `docs-guide issue list` (or `docs-guide find`), not the `Grep` tool.** Any "find / locate / grep / search" verb against `data/todo/` routes to `docs-guide issue list`, which understands the schema (vocabulary, subtask states, frontmatter) and composes structural filters with regex search in one call. For a string anywhere across **all** content types at once, use `docs-guide find`. `Grep` only sees text. See `references/layouts/issues/41_searching.md` and the full toolkit reference above.
+**Searching across content — use `docs-guide find`, not the `Grep` tool**, for a string anywhere across all content types at once. Tracker-specific searching (schema-aware `docs-guide issue list`) is covered by the `doc-issues` skill.
 
 ## Slash commands — bootstrap & section scaffolding
 
@@ -102,7 +102,7 @@ When the user says "set up a new docs project", "scaffold a new site", "add a ne
 
 For bulk file reads (10+ files), spawn a Haiku subagent via the Task/Agent tool to summarise rather than loading every file into the main context. Pattern: give the subagent the file list + the question, ask for a tight report (under 200 words).
 
-The reference files (especially `layouts/issues/41_searching.md`) document concrete subagent patterns for their domain.
+The reference files document concrete subagent patterns for their domain where relevant.
 
 ## When to update this skill
 

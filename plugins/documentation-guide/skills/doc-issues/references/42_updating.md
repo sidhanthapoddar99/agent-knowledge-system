@@ -1,6 +1,49 @@
 # Updating the tracker — cross-cutting flow
 
-This file covers the flow that spans sub-doc types: checking for duplicates, creating a brand-new issue, validating after writes, and when *not* to edit. **Per-type write recipes live with their content file** (see the table at the bottom).
+This file covers the flow that spans sub-doc types: the creation threshold rules,
+checking for duplicates, creating a brand-new issue, validating after writes, and
+when *not* to edit. **Per-type write recipes live with their content file** (see the
+table at the bottom).
+
+## The creation threshold — when a thought earns a full issue
+
+All convention, never code-enforced. The ceremony of an issue folder must be earned:
+
+**Litmus test — can you name its component and its first subtask in one breath?**
+
+- **Both nameable** → it may be a full issue (a coherent thinking + execution unit
+  that decomposes into subtasks).
+- **Can't name a first subtask** → it is not an issue yet. Route it instead:
+  - a **subtask** on the existing issue whose center of gravity it belongs to —
+    one-prompt fixes and small features always land here, never in a new folder;
+  - a **brainstorm entry** inside the issue it is trying to inform — deliberation
+    about *what to do* never opens its own issue;
+  - a **dump entry** if it has no home yet (below).
+
+**Center of gravity wins over novelty:** work that would merely deepen an existing
+issue's scope extends that issue.
+
+**Supersession corollary:** an issue that **shipped work stays an issue** — close it
+with a supersession comment mapping its open questions to their fates. An issue that
+is **pure deliberation converging elsewhere folds into the winner's `brainstorm/`**
+(with a `**Resolved →**` overview + source-slug provenance) **and is deleted** — git
+history keeps the original.
+
+## The issue dump — capture for the unhomed
+
+Half-formed thoughts that fail the litmus test but shouldn't be lost go to a **dump
+issue**: component **`issue-dump`** (the one deliberate exception to the
+component-as-stack-layer axis — it marks *pre-issues*). A tracker keeps a small
+number of dump issues, one per kind (e.g. backlog, future features); **each dump
+entry is a subtask** of its dump issue.
+
+- **Graduation = promote and delete.** A dump entry becomes a real issue exactly when
+  it passes the litmus test — and is then **deleted from the dump, not ticked off**.
+  A dump's value is its *current* contents; git history keeps provenance, and the new
+  issue links back if the entry carried real context.
+- **The dump is only for the unhomed** — a one-liner that obviously belongs to an
+  existing issue goes straight to that issue's `subtasks/`, never through the dump.
+- Don't scaffold empty dump issues — create a kind only when entries exist for it.
 
 ## Before creating any new issue or subtask — check for duplicates when context is thin
 
@@ -53,7 +96,7 @@ The verdict drops into the four-branch decision tree above without you ever load
 
 ## Create a new issue
 
-1. Run the duplicate check above if context is thin.
+1. Apply the creation threshold above; then run the duplicate check if context is thin.
 2. Create the folder: `<tracker>/<YYYY-MM-DD>-<kebab-slug>/` (today's date + a short slug).
 3. Write `settings.json` with all required fields (`title`, `status: open`, `priority`, `component`, `labels`, `author`, `assignees`) — all enum values must come from the tracker vocabulary ([03_vocabulary.md](03_vocabulary.md)).
 4. Write `issue.md` — goal, context, success criteria ([20_issue-md.md](20_issue-md.md)).

@@ -1,6 +1,12 @@
 # Notes — `notes/[<group>/[<subgroup>/]]<slug>.md`
 
-Supporting design docs — research, design decisions, alternatives weighed, reference material that doesn't belong in `issue.md`. The "thinking" half of an issue.
+**Finalized output + durable references** — the decided approach you build on, plus
+reference material. The *product*, defined by contrast with `brainstorm/`: brainstorm
+is *what we're figuring out*, notes are *what we know*. Content arrives by
+**graduating** out of a resolved brainstorm (the conclusion distilled, the trail left
+behind with a `**Resolved →**` marker) or fully formed (a spec, a how-to, a link
+dump). Once here it should be **stable** — a note that keeps changing is a brainstorm
+wearing the wrong hat; demote it back (see [25_brainstorm.md](25_brainstorm.md)).
 
 ## Shape
 
@@ -19,7 +25,7 @@ An optional `color:` tints only the sidebar icon and is user-defined — **don't
 
 ## Numbering — optional
 
-A numeric prefix is **optional** for notes (folders *and* files). When you do number them, `NN_` and `NNN_` are both good conventions, using the same shared ordering-prefix grammar as the rest of the project (2–5 digits, ordered by numeric value, `_` canonical / legacy `-` tolerated — see `references/layouts/docs-layout.md`).
+A numeric prefix is **optional** for notes (folders *and* files). When you do number them, `NN_` and `NNN_` are both good conventions, using the same shared ordering-prefix grammar as the rest of the project (2–5 digits, ordered by numeric value, `_` canonical / legacy `-` tolerated — see the `documentation-guide` skill's `references/layouts/docs-layout.md`).
 
 - **Gap-number** when a fixed reading order matters: `010_context.md`, `020_design.md`, `030_decision.md` — leaving room to slot `015_` between.
 - **Leave unprefixed** when order doesn't matter — the loader builds the tree from whatever it finds.

@@ -7,7 +7,7 @@ description: AI-powered skill, CLI wrappers, and slash commands for working with
 
 This template ships its own **Claude Code plugin** — `documentation-guide` — that teaches Claude how to work inside this project without you having to explain the conventions every time. It bundles:
 
-- **2 skills** — `documentation-guide` (triages every docs/issue/blog/config task to a domain-specific reference) and `doc-agent` (a thin execution-time skill for recording an agent's run in the tracker)
+- **2 skills** — `documentation-guide` (triages every docs/blog/config/writing task to a domain-specific reference) and `doc-issues` (the complete, self-contained issue-tracker skill — anatomy, rules, agent-logs, agent-memory, and the execution verbs)
 - **28 CLI commands** auto-added to `$PATH` — issue tracker, validators, docs/blog content, git metadata, and cross-content search (one `docs-guide` entrypoint; every operation is a `docs-guide <group> <verb>` subcommand)
 - **2 slash commands** for project-level scaffolding (`/docs-init`, `/docs-add-section`)
 
@@ -40,23 +40,23 @@ You should see issues from your tracker. If the command isn't found, run `/reloa
 
 ## Skill — `documentation-guide`
 
-The skill triages every docs task to one of five domain references. The model loads only the reference it needs, so the skill stays cheap regardless of how detailed the references get.
+The skill triages every non-tracker docs task to one of five domain references. The model loads only the reference it needs, so the skill stays cheap regardless of how detailed the references get.
 
 | Reference | Covers |
 |---|---|
 | `references/writing.md` | Markdown basics, frontmatter, custom tags, asset embedding |
 | `references/layouts/docs-layout.md` | Docs folder structure, `NN_` prefixes, per-folder `settings.json`, sidebar generation |
 | `references/layouts/blog-layout.md` | Blog file naming (`YYYY-MM-DD-<slug>.md`), tags, index behaviour |
-| `references/layouts/issues/` (entry `00_overview.md`) | Issue tracker — folder-per-item, vocabulary, 4-state lifecycle, AI rules; split into focused files (overview, content types, tools, examples) |
 | `references/settings-layout.md` | `site.yaml`, `navbar.yaml`, `footer.yaml`, `.env`, path aliases, themes |
+| `references/images.md` | Image optimization before committing |
 
-The skill triggers automatically whenever you work on docs in a project that uses this framework (i.e. one where the `documentation-template/` folder is present, or you're inside it). You don't have to invoke it explicitly.
+The skill triggers automatically whenever you work on docs in a project that uses this framework (i.e. one where the `documentation-template/` folder is present, or you're inside it). You don't have to invoke it explicitly. For the issue tracker it hands off to `doc-issues`.
 
-## Skill — `doc-agent`
+## Skill — `doc-issues`
 
-A second, deliberately thin skill with a **different trigger surface**, covering **how to use a tracked issue's `agent-log/`**. `documentation-guide` fires on "I'm authoring docs"; `doc-agent` fires on the execution verbs themselves — **audit this**, **refactor this**, run a **loop** / ultracode / autonomous iteration, or **"let's discuss this point"** — plus maintaining issue-scoped **agent memory**. That's exactly the moment the broad skill won't trigger on its own, which is why the agent-log workspace (its whole point being resumability) would otherwise go unused when it matters most.
+The **self-contained issue-tracker skill** — everything about working a tracker lives here, so tracker tasks never bounce between skills. It owns the full anatomy (`brainstorm/`, `notes/`, `subtasks/`, `agent-log/` activity folders, `agent-memory/`, flat `comments/`, `glossary.md`), the **creation threshold rules** (when a thought earns a full issue vs a subtask vs a brainstorm entry vs a dump entry), the lifecycle + AI rules, schema-aware searching, and its own tracker-flavoured writing reference (~20 focused reference files; the model loads only what the task needs).
 
-It carries the common case inline (the trigger verbs, the `agent-log/` activity structure across loops/audits/refactors, agent-memory as always-on, and the rule that **discussion is saved only when the user explicitly asks** — the skill may *offer* to save a dense discussion but never auto-saves) and defers depth to `documentation-guide`'s `references/layouts/issues/24_agent-logs.md`. Audiences and triggers differ — doc author vs autonomous executor — so the two skills don't double-fire confusingly.
+It has a **dual trigger surface**: the tracker nouns (issue, subtask, comment, backlog, vocabulary…) *and* the execution verbs — **audit this**, **refactor this**, run a **loop** / ultracode / autonomous iteration, or **"let's discuss this point"** against a tracked issue. On the execution side it records activity folders in `agent-log/`, keeps issue-scoped **agent-memory** always-on, and saves discussion **only when you explicitly ask** (it may offer when a discussion turns dense, but never auto-saves). It absorbed the former thin `doc-agent` skill, whose separate existence was only ever a patch for the verb triggers.
 
 ## Slash commands
 
@@ -187,10 +187,13 @@ Plugin files are cached **once** at user level, regardless of which scope (user 
 ├── bin/                  ← auto-added to $PATH at session start
 ├── commands/             ← /docs-init, /docs-add-section
 └── skills/
-    └── documentation-guide/
+    ├── documentation-guide/
+    │   ├── SKILL.md
+    │   ├── references/   ← 5 domain reference files
+    │   └── scripts/      ← bundled .mjs implementations (the docs-guide CLI)
+    └── doc-issues/
         ├── SKILL.md
-        ├── references/   ← 5 domain reference files
-        └── scripts/      ← bundled .mjs implementations
+        └── references/   ← ~20 issue-tracker reference files
 ```
 
 What differs across scopes is just a boolean entry in each scope's `settings.json`:
@@ -205,9 +208,11 @@ What differs across scopes is just a boolean entry in each scope's `settings.jso
 
 For a deep dive on the cache vs. the per-scope registration, see the dev-docs page on [plugin storage and scope](/dev-docs/plugins/storage-and-scope).
 
-## Why one skill, not five?
+## Why two skills, not one or five?
 
-Earlier drafts split this into separate skills (`docs-guide`, `docs-settings`, `blog`, `issues`, `writing`). Validation testing across 22 agent runs showed the umbrella skill is **30% faster** in real-world multi-task usage with **100% correctness**, because the per-task loading cost amortises across the conversation. The single-skill design also removes the cognitive overhead of picking which skill to invoke.
+Earlier drafts split this into five per-domain skills (`docs-guide`, `docs-settings`, `blog`, `issues`, `writing`). Validation testing across 22 agent runs showed an umbrella skill is **30% faster** in real-world multi-task usage with **100% correctness**, because docs / blog / settings / writing tasks compose constantly and share the same conventions — splitting them duplicates the preamble and bloats the always-in-context description budget.
+
+The **issue tracker is the one domain that earned extraction** (2026-07): it is the highest-frequency, most nuanced, most self-contained surface — a complete structure of its own — and it needs a *second trigger surface* (the execution verbs: audit / refactor / loop / discuss) that a docs-flavoured description can't carry. `doc-issues` owns both surfaces and is deliberately self-contained, including its own writing reference (skills load one at a time; a little duplication beats mid-task skill-hopping, guarded by sync notes). This also retired the thin `doc-agent` skill, which existed only to patch the verb triggers.
 
 If a future release adds something genuinely orthogonal (custom themes, custom Astro components), it may ship as its own skill — the catalogue above is kept in sync with whatever is actually installed.
 

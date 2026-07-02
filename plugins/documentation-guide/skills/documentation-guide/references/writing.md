@@ -1,8 +1,10 @@
 # Writing markdown content — reference
 
-Cross-cutting rules for writing markdown content across all content types (docs, blog, issues, custom pages).
+Cross-cutting rules for writing markdown content across content types (docs, blog, custom pages). For writing *inside the issue tracker*, the `doc-issues` skill carries its own self-contained writing reference.
 
 **Canonical source of truth:** the framework's bundled `@root/default-docs/data/user-guide/15_writing-content/` — read those pages when this reference is unclear.
+
+> **Sync note:** the mechanics sections here (custom tags, assets, `[[path]]` embedding, code blocks) are mirrored in the `doc-issues` skill's `references/10_writing.md` — when editing one, mirror the other.
 
 > **Status:** stub. The detailed spec is being authored under `2025-06-25-claude-skills/subtasks/03_writing-skill.md`. For now, this file captures the essentials.
 
@@ -28,14 +30,7 @@ draft: false
 Per-content-type extras:
 - **docs** — `sidebar_label`, `sidebar_position`
 - **blog** — `date` (YYYY-MM-DD), `author`, `tags`
-- **issues** — see `layouts/issues/` (entry `00_overview.md`) (different schema, lives in `settings.json`). The tracker is comprehensive memory of thought-work for AI-augmented development. `created` is parsed from the folder slug; `updated` is derived from git history (don't write it into `settings.json` — the loader ignores it).
-
-## Issue best practices
-
-When writing or scaffolding issues — yours or via an agent:
-
-- **One component per issue** — assign the single component the issue most belongs to (its center of gravity), even when the work touches several surfaces. If two feel equally central, that's usually a sign to split into two issues. The validator emits a hint when an issue declares more than one.
-- **AI-handoff-bound issues should declare ≥1 subtask.** The subtask is the agent's anchor: an explicit "did this happen yet?" checkbox the next agent (or human reviewer) can resume from. Trivial human-only fixes don't need this.
+- **issues** — different schema (metadata in `settings.json`, per-subdoc frontmatter): see the `doc-issues` skill.
 
 ## Custom tags
 
@@ -128,11 +123,11 @@ For long blocks, the `collapsible` custom tag wraps the block.
 
 - **Drafts** — `draft: true` works on every type
 - **Dev-only content** — see `@root/default-docs/data/user-guide/10_configuration/06_dev-mode.md`
-- **`NN_` prefix** — used in docs/dev-docs folders (NOT in blog, NOT in issues)
+- **`NN_` prefix** — used in docs/dev-docs folders (NOT in blog; optional-and-looser in the tracker — see the `doc-issues` skill)
 
 ## Cross-references
 
 - `@root/default-docs/data/user-guide/15_writing-content/` (the framework's bundled user-guide) — full section
 - `references/layouts/docs-layout.md` — docs-specific structure / settings
 - `references/layouts/blog-layout.md` — blog-specific naming / frontmatter
-- `references/layouts/issues/` (entry `00_overview.md`) — issue-specific structure
+- the `doc-issues` skill — issue-specific structure + tracker writing

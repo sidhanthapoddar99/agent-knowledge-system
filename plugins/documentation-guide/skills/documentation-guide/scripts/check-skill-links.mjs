@@ -2,7 +2,7 @@
 /**
  * check-skill-links.mjs — verify relative markdown links between skill files resolve.
  *
- * The references are split across many files (e.g. `layouts/issues/` has 16) that
+ * The references are split across many files (e.g. the doc-issues skill has ~20) that
  * cross-link with relative paths like `[24_agent-logs.md](24_agent-logs.md)`. A
  * rename or move can silently break those — nothing else catches it. This walks
  * every `.md` under the skill and confirms each relative `*.md` link target exists.

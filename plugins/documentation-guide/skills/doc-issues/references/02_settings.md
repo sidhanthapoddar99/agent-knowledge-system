@@ -25,6 +25,7 @@ Per-issue metadata. Values are drawn from the tracker vocabulary (see [03_vocabu
 | `labels` | string[] | ✅ | Multi-select; values from `fields.labels.values` (often `[]`) |
 | `author` | string | ✅ | Must be in tracker `authors` list |
 | `assignees` | string[] | ✅ | Often `[]`; otherwise members of `authors` |
+| `agentLogKinds` | object | optional | Custom agent-log kind codes — `{ "ex": { "name": "experiment", "icon": "flask" } }` or shorthand `"hf": "hotfix"`. Adds to / overrides the 5 framework defaults (see [24_agent-logs.md](24_agent-logs.md)) |
 | `draft` | boolean | optional | If `true`, hidden from the tracker UI |
 
 ## Derived vs stored
@@ -33,11 +34,16 @@ Per-issue metadata. Values are drawn from the tracker vocabulary (see [03_vocabu
 
 **`null` / missing handling:** Missing `labels` / `assignees` → treat as `[]`. Missing `component` → treat as `[]` and surface as a validation issue (it's required).
 
-## Assignees double as the "in-progress" signal
+## Assignees — who's on it (not a status)
 
-An issue with `assignees.length > 0` is actively being worked on; `assignees: []` is unassigned and idle. **Do not propose adding a separate `in_progress` boolean** — two sources of truth for the same fact will drift. Anything that needs the in-progress signal should derive it from `assignees`.
+`assignees` records who is currently responsible; it can change as responsibility
+moves. It is **not** the in-progress signal. (An earlier convention derived
+"in-progress" from `assignees.length > 0`; that policy was reversed on 2026-07-02 —
+an explicit `in-progress` status is being introduced by
+`2026-07-02-issue-lifecycle-and-creation-rules`. Until that lands in code, the UI may
+still show the assignee-derived shortcut; don't build new logic on it.)
 
-The tracker exposes this as a two-tier filter:
+The tracker exposes assignees as a two-tier filter:
 
 - **Coarse** — pseudo-values `assigned` / `unassigned` ("is anybody on it?")
 - **Fine** — specific names from the tracker root's `authors[]` ("what is X working on?")

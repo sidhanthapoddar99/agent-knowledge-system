@@ -25,7 +25,8 @@ Efficiency is the goal: the ceremony of a full issue folder must be *earned*.
 ## Decision 1 — creation threshold rules
 
 When does a thought become each of these? Write the rules down (they extend
-`2026-07-01-issue-anatomy-restructure/subtasks/02_set-rules.md`):
+`2026-07-01-issue-anatomy-restructure/subtasks/02_decide-rules.md`, propagation in
+its `07_set-rules.md`):
 
 - **Full issue** — a coherent unit of thinking + execution that decomposes into
   subtasks. Rule of thumb: if it can't declare at least one real subtask, it isn't an

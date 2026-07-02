@@ -41,8 +41,10 @@ itself and `agent-memory/` as the always-on, agent-owned working state.
 | `comments/` | both | append, flat | Evolution log, not a forum ([21](references/21_comments.md)) |
 | `glossary.md` (optional) | human | — | This issue's colour legend / terms ([27](references/27_guide-and-glossary.md)) |
 
-Ordering signals are `priority` + `status`; recency (`updated`) is derived from git,
-`created` from the folder slug. Transient "actively working" is a **label**, not a status.
+Ordering is `priority` desc, then recency (`updated`, derived from git) desc; `created`
+comes from the folder slug. Transient execution state ("actively working", stuck) is now
+carried by the **status** itself (`in-progress`, `blocked`, `input-needed`), not a label —
+the old `wip` label is deprecated in place.
 
 ## Creation rules — when a thought earns what
 
@@ -83,18 +85,33 @@ git history keeps it.
 entry graduates to a real issue exactly when it passes the litmus test — and is then
 **deleted** from the dump, not ticked off.
 
-## Lifecycle — states & AI rules
+## Lifecycle — statuses & AI rules
 
-States: `open` → `review` → `closed` | `cancelled` (issues and subtasks share the
-vocabulary). The AI rules are the most important rules in this skill:
+**7 statuses in 4 categories** (issues and subtasks share one vocabulary and one field,
+`status`; both fixed in framework code — a tracker overrides only colors):
 
-1. **Mark `review`, never `closed`.** `closed` is a human-only transition; the agent's
-   job ends at `review` with a verifiable artefact (PR, diff, screenshot, test output).
-2. **Default search scope is `open` + `review`** — skip `closed`/`cancelled` unless
-   explicitly asked.
-3. **Review-debt promotion:** an `open` issue with any `review` subtask surfaces as
-   "needs review".
-4. **`cancelled` requires a comment** explaining why, first.
+| Category | Statuses |
+|---|---|
+| **Not Started** | `open` · `blocked` (depends on another item; reason in prose) |
+| **In Progress** | `in-progress` |
+| **Review** | `input-needed` (stuck, question inline) · `review` (done, awaiting sign-off) |
+| **Closed** | `done` · `dropped` |
+
+The AI rules are the most important rules in this skill:
+
+1. **Manage `in-progress` yourself; hand off at the Review category, never `done`.** Set
+   `in-progress` when you start executing. Your ceiling is `review` (or `input-needed`) —
+   `done`/`dropped` are **human-only** transitions. Hand off with a verifiable artefact
+   (PR, diff, screenshot, test output).
+2. **Hit a wall → `input-needed`, not `blocked`.** Write the actual question **inline in
+   the subtask/issue body** so a fresh session sees it; reserve `blocked` for a structural
+   dependency on another issue/subtask.
+3. **Default search scope is everything not Closed** (open, blocked, in-progress,
+   input-needed, review) — skip the Closed category (`done`/`dropped`) unless explicitly asked.
+4. **Review-debt promotion:** an active (non-closed) issue with any subtask in the
+   **Review category** (`review` or `input-needed`) surfaces as "needs review". `blocked`
+   never promotes — it rests, reason read in place.
+5. **`dropped` requires a comment** explaining why, first (human-only).
 
 ## Executing work — agent-log, memory, discussion
 

@@ -150,7 +150,7 @@ function makeSubtask(abs, groupPath) {
   const slug = name.replace(/\.md$/, '');
   const { position: sequence, cleanName } = parseOrderPrefixLoose(slug);
   let title = cleanName.replace(/[-_]/g, ' ');
-  let state = 'open';
+  let status = 'open';
   try {
     const fm = matter(fs.readFileSync(abs, 'utf-8')).data;
     if (fm.title) title = fm.title;
@@ -158,9 +158,9 @@ function makeSubtask(abs, groupPath) {
     // legacy values (closed/cancelled) so a partial migration still reads.
     const raw = fm.status ?? fm.state;
     const norm = normalizeStatus(raw);
-    if (norm) state = norm;
+    if (norm) status = norm;
   } catch { /* malformed frontmatter — keep defaults */ }
-  return { slug, sequence, title, state, category: categoryOf(state), groupPath, filePath: abs, fileName: name };
+  return { slug, sequence, title, status, category: categoryOf(status), groupPath, filePath: abs, fileName: name };
 }
 
 /** Subtasks may live under up to 2 levels of grouping folders; the folder

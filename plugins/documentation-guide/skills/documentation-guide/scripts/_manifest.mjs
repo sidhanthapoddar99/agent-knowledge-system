@@ -50,7 +50,7 @@ export const MANIFEST = [
     bin: 'docs-list', group: 'issue', verb: 'list', category: 2, script: 'issues/list.mjs', runtime: 'mjs',
     summary: 'Multi-field filter + free-text regex search over the tracker',
     flags: [
-      { name: 'status', value: 'vals', desc: 'open,review,closed,cancelled (default open,review)' },
+      { name: 'status', value: 'vals', desc: 'open,blocked,in-progress,input-needed,review,done,dropped (default: not-Closed)' },
       { name: 'priority', value: 'vals', desc: 'low,medium,high,urgent' },
       { name: 'component', value: 'vals', desc: 'filter by component' },
       { name: 'label', value: 'vals', desc: 'filter by label' },

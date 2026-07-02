@@ -6,32 +6,25 @@ Working state for the `010_lp_lifecycle-implementation` loop. Ground truth is
 `notes/01_lifecycle-vocabulary.md`; this file is durable orientation for the next
 iteration (context may reset between loop wake-ups).
 
-## In progress (iter 2 — subtask 04, user-guide docs)
+## Where things stand (after iter 3 — subtask 06 done)
 
-- **Core 19_issues pages rewritten by main agent (done):** 06_lifecycle-and-review
-  (full rewrite), 02_design-philosophy (policy-reversal sections), 04_setup/
-  02_vocabulary (fixed-vocabulary contract + single-constant note), 09_using-with-ai
-  (agent rules + transition tables), 05_sub-docs/03_subtasks (shared status table).
-  Plus unassigned: 07_ui/02_detail-view, 08_workflows/01_create-an-issue.
-- **6 peripheral pages delegated to 2 subagents (verify on completion):**
-  A → 01_overview, 08_workflows/02_work-an-issue, 08_workflows/03_review-and-close;
-  B → 07_ui/01_list-view, 04_setup/01_per-issue, 04_setup/10_setup-new-tracker.
-- **Remaining for iter 2:** reconcile subagent output, final `grep` sweep for
-  `cancelled`/`4-state`/`state:`/assignee-in-progress across 19_issues, `./start
-  build` green, mark subtask 04 → review, log milestone 102, tick task list.
-- **Out-of-scope find for subtask 08 sweep:** `user-guide/25_themes/05_component-
-  styles/07_issues-styles.md` still names `.issue-subtask__state--cancelled` /
-  `closed` CSS classes (renamed to done/dropped in the ship). Also check dev-docs
-  and `guide.ts` (subtask 05) / skill (subtask 06).
-
-## Where things stand (after iter 1)
-
-- **Phase 1 (code + migration, subtasks 03 + 07): DONE, green, marked review.**
-  Data is migrated to the unified `status` vocabulary. Build + `docs-guide check
-  issues` both green. Committed on branch `loop/lifecycle-implementation`.
-- **Remaining: 04 (user-guide), 05 (guide.ts), 06 (skill plugin), 08 (consistency
-  sweep — LAST of the descriptive ones), 09 (doc-issues skill restructure — LAST
-  overall, renames reference files 06/08 touch).**
+- **Phase 1 (code + migration, subtasks 03 + 07): DONE, review, committed.** Data
+  migrated to the unified `status` vocabulary; build + `docs-guide check issues` green.
+- **Subtask 04 (user-guide, iter 2): DONE → review.** 11 `19_issues/` pages rewritten;
+  milestone 102.
+- **Subtask 05 (guide.ts, iter 2): DONE → review.** Panel legend = 7 statuses/4 cats.
+- **Subtask 06 (skill plugin, iter 3): DONE → review.** Both skills + `CLAUDE.md`
+  updated, version 0.4.0→0.5.0, cache mirrored + `diff -rq` identical; milestone 103.
+  While here, finished the subtask-07 tail: the JS CLI mirror still exposed subtask
+  `.state` while the TS side used `.status` — unified it (fixes issue-vs-subtask `--json`
+  disagreement); also fixed a stale user-facing `list` tip and AI-rule cross-ref numbers.
+- **Remaining: 08 (consistency sweep — LAST of the descriptive ones), 09 (doc-issues
+  skill restructure — LAST overall, renames reference files 06/08 touch).** Then wrap:
+  all subtasks → review, `01_summary.md`, leave issue open for sidhantha's sign-off.
+- **Out-of-scope finds queued for subtask 08:** `user-guide/25_themes/05_component-
+  styles/07_issues-styles.md` still names `.issue-subtask__state--cancelled`/`closed`
+  CSS classes; sweep dev-docs; re-check the user-guide's own `AI rule #N` cross-refs
+  against the 6-rule list in `00_overview.md`.
 
 ## Key file map (for the prose subtasks)
 
@@ -63,6 +56,12 @@ iteration (context may reset between loop wake-ups).
 - DOM attribute `data-state` was deliberately KEPT (internal rendering detail);
   only the loader data field is `.status`. Don't "fix" `data-state` in docs as if
   it were the field name.
+- **CLI internal property is now `.status`** (iter 3) — the JS mirror `_lib.mjs`
+  `makeSubtask()` returns `{ status, category, … }` and `subtasks --json` emits
+  `status`, matching the TS loader and the issue-level output. The frontmatter reader
+  still accepts legacy `state:` (`fm.status ?? fm.state`) and the `set-state` verb /
+  `--state` flag alias stay. So: field name = `status` everywhere; only the CLI verb
+  `set-state` and the DOM `data-state` keep the word "state".
 - Two product choices made unilaterally, flagged for the subtask-08 sweep / sidhantha:
   the **"Active" default meta-tab** (union of non-closed, preserves closed-hidden
   default) and the **click-cycle happy-path** (`open→in-progress→review→done`;

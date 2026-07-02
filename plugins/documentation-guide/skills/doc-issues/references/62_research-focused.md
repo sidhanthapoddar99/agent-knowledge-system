@@ -29,7 +29,7 @@ The weight is in `notes/` — gap-numbered because reading order matters here (s
 - **`notes/` carries the substance** — one file per option, a benchmarks file with methodology, a recommendation file. This is where the reasoning lives; `issue.md` stays the orientation layer.
 - **Subtasks are minimal** — often a single "land the decision and get sign-off." The work product is the written conclusion, so there's little to decompose.
 - **`comments/` is load-bearing** — the back-and-forth that converges on the decision (alternatives challenged, constraints clarified) belongs here as the durable thread.
-- **Shipping to `review`** means "the recommendation is written and defensible" — the human reads `040_recommendation.md` and either accepts (→ `closed`, often spawning an implementation issue) or pushes back in a comment (→ `open`).
+- **Shipping to `review`** means "the recommendation is written and defensible" — the human reads `040_recommendation.md` and either accepts (→ `done`, often spawning an implementation issue) or pushes back in a comment (→ `open`).
 
 ## When to reach for this shape
 

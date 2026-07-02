@@ -10,7 +10,7 @@
  *   • Every issue has settings.json + issue.md
  *   • Issue settings.json carries required fields and uses vocabulary values
  *   • `agentLogKinds` well-formed (2-letter codes, string or {name, icon, desc})
- *   • Subtasks have valid `state` (open|review|closed|cancelled)
+ *   • Subtasks have valid `status` (open|blocked|in-progress|input-needed|review|done|dropped)
  *   • Sub-folders are the known anatomy: subtasks / notes / brainstorm /
  *     agent-log / agent-memory / comments (unknown dirs → warning)
  *   • Agent-log grammar: NNN_<code>_<name>/ activity folders, 0NN meta files

@@ -7,7 +7,8 @@
  * one-line-per-subtask list instead — handy when you want to pipe into
  * another tool and don't care about the grouping intent.
  *
- * Default state filter: open + review (matches the AI default-search rule).
+ * Default status filter: everything not in the Closed category (done/dropped
+ * hidden) — matches the AI default-search rule.
  */
 
 import {
@@ -47,13 +48,13 @@ for (const id of issueIds) {
   const subs = readIssueSubtasks(tracker, id);
   const groups = readIssueSubtaskGroups(tracker, id);
   for (const s of subs) {
-    if (!scope.includes(s.state)) continue;
+    if (!scope.includes(s.status)) continue;
     matches.push({
       issue: id,
       file: [...s.groupPath, s.fileName].join('/'),
       slug: s.slug,
       groupPath: s.groupPath,
-      state: s.state,
+      status: s.status,
       title: s.title,
       sequence: s.sequence,
     });
@@ -71,7 +72,7 @@ if (args.flags.json) {
 }
 
 if (flat) {
-  for (const m of matches) console.log(`${m.issue}\t${m.file}\t${m.state}\t${m.title}`);
+  for (const m of matches) console.log(`${m.issue}\t${m.file}\t${m.status}\t${m.title}`);
   process.exit(0);
 }
 
@@ -132,9 +133,9 @@ function printIssueTree(issueId) {
     });
     for (const e of entries) {
       if (e.kind === 'leaf') {
-        const { state, title, sequence } = e.leaf;
+        const { status, title, sequence } = e.leaf;
         const seq = sequence !== null ? `${pad(sequence)}. ` : '    ';
-        console.log(`${indentFor(depth)}${seq}[${state}] ${title}`);
+        console.log(`${indentFor(depth)}${seq}[${status}] ${title}`);
       } else {
         const meta = e.group.meta;
         const seq = meta?.sequence !== null && meta?.sequence !== undefined ? `${pad(meta.sequence)}. ` : '    ';

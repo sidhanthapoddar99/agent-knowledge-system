@@ -24,7 +24,7 @@ if (args.flags.help || !id) {
   printHelp('issue show', [
     '<issue-id> [--full] [--json] [--tracker <path>]',
     '',
-    'Print metadata + subtask state summary + comment heads + agent-log heads.',
+    'Print metadata + subtask status summary + comment heads + agent-log heads.',
     '--full also prints issue.md, comment bodies, and agent-log bodies.',
   ]);
   process.exit(id ? 0 : 1);
@@ -59,7 +59,7 @@ if (meta.description) console.log(`\n${meta.description}`);
 console.log(`\n## Subtasks (${subtasks.length})`);
 const counts = subtasks.reduce((a, s) => { a[s.category] = (a[s.category] || 0) + 1; return a; }, {});
 console.log(`  not-started: ${counts['not-started'] || 0}  in-progress: ${counts['in-progress'] || 0}  review: ${counts.review || 0}  closed: ${counts.closed || 0}`);
-for (const s of subtasks) console.log(`  [${s.state}] ${s.slug} — ${s.title}`);
+for (const s of subtasks) console.log(`  [${s.status}] ${s.slug} — ${s.title}`);
 
 console.log(`\n## Comments (${comments.length})`);
 for (const c of comments) {

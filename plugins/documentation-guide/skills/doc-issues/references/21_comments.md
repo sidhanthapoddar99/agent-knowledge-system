@@ -43,7 +43,7 @@ Direct file write (when the helper isn't available):
 2. Write `<issue>/comments/NNN_<slug>.md` (or `NNN_<date>_<author>.md`)
 3. Frontmatter: `author`, `date` (today, `YYYY-MM-DD`)
 
-**A `cancelled` issue always needs a comment first** explaining why (AI rule #5 in [00_overview.md](00_overview.md)).
+**A `dropped` issue always needs a comment first** explaining why (AI rule #6 in [00_overview.md](00_overview.md)).
 
 ## vs. working dialogue
 

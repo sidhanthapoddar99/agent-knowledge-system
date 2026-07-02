@@ -2,22 +2,22 @@
 
 ## Default search scope
 
-Per AI rule #2 (see [00_overview.md](00_overview.md)): search `open` + `review` only unless told otherwise.
+Per AI rule #3 (see [00_overview.md](00_overview.md)): search everything **not** closed — the Closed category (`done`/`dropped`) stays hidden — unless told otherwise.
 
 > [!WARNING]
-> **The default scope silently hides `closed` and `cancelled`.** Every `docs-guide issue list` query — structural filter, `--search`, `--path`, `--meta` — runs against `open,review` only. So a query can come back empty (or look complete) while a matching issue sits in `closed`/`cancelled`. **"Not found" in the default scope is not "doesn't exist."** This is the single most common way a tracker lookup goes wrong — e.g. hunting a *cancelled* upgrade issue by slug and concluding it was never filed.
+> **The default scope silently hides the Closed category (`done` and `dropped`).** Every `docs-guide issue list` query — structural filter, `--search`, `--path`, `--meta` — runs against the non-closed statuses only. So a query can come back empty (or look complete) while a matching issue sits in `done`/`dropped`. **"Not found" in the default scope is not "doesn't exist."** This is the single most common way a tracker lookup goes wrong — e.g. hunting a *dropped* upgrade issue by slug and concluding it was never filed.
 >
 > `docs-guide issue list` guards against this for you: when a query matches issues that the default scope hid, it prints a one-line **tip to stderr** with the count and breakdown, e.g.
 >
 > ```
-> tip: showing open,review only — 1 more issue(s) match in 1 cancelled. Add --status all (or --include-cancelled) to include them.
+> tip: showing active only — 1 more issue(s) match in 1 dropped. Add --status all (or --include-closed) to include them.
 > ```
 >
-> When you see that tip — or any time the answer hinges on "does this issue exist at all" — **re-run with `--status all`** (every state) or `--include-cancelled` (default scope + cancelled). `docs-guide find` is status-agnostic and never hides anything, so it's the other safe fallback. Suppress the tip with `--quiet-tips` only when you've deliberately scoped the search.
+> When you see that tip — or any time the answer hinges on "does this issue exist at all" — **re-run with `--status all`** (every status) or `--include-closed` (default scope + the Closed category). `docs-guide find` is status-agnostic and never hides anything, so it's the other safe fallback. Suppress the tip with `--quiet-tips` only when you've deliberately scoped the search.
 
 ## Do not use `Grep` or `find` on the tracker — use `docs-guide issue list`
 
-`docs-guide issue list` (the `list.mjs` wrapper) is the tuned drop-in replacement. It understands the schema (vocabulary, subtask states, frontmatter, agent-log subgroups), combines structural filters with free-text regex search **in one call**, and returns exact file paths + line numbers + excerpts so you can `Read` precisely. `Grep` only sees text; `docs-guide issue list` sees the schema.
+`docs-guide issue list` (the `list.mjs` wrapper) is the tuned drop-in replacement. It understands the schema (vocabulary, subtask statuses, frontmatter, agent-log subgroups), combines structural filters with free-text regex search **in one call**, and returns exact file paths + line numbers + excerpts so you can `Read` precisely. `Grep` only sees text; `docs-guide issue list` sees the schema.
 
 Use `Grep` only for content **outside** the tracker (source code, docs, blog).
 
@@ -33,18 +33,18 @@ This routing rule applies to every natural-language phrase the user might use. R
 
 ## Helper scripts — use these, they're the fastest path
 
-The plugin ships 8 issue-tracker CLI wrappers (`docs-guide issue list`, `docs-guide issue show`, `docs-guide issue subtasks`, `docs-guide issue agent-logs`, `docs-guide issue set-state`, `docs-guide issue add-comment`, `docs-guide issue add-agent-log`, `docs-guide issue review-queue`) on your `PATH`. **Prefer them over hand-rolled grep** — they understand the schema (subtask `state`, component-as-array, agent-log subgroups) and emit terse output by default. Each wrapper internally uses `bun` (preferred) with `node` as fallback.
+The plugin ships 8 issue-tracker CLI wrappers (`docs-guide issue list`, `docs-guide issue show`, `docs-guide issue subtasks`, `docs-guide issue agent-logs`, `docs-guide issue set-state`, `docs-guide issue add-comment`, `docs-guide issue add-agent-log`, `docs-guide issue review-queue`) on your `PATH`. **Prefer them over hand-rolled grep** — they understand the schema (subtask `status`, component-as-array, agent-log subgroups) and emit terse output by default. Each wrapper internally uses `bun` (preferred) with `node` as fallback.
 
 | Command (script) | What it does |
 |---|---|
-| `docs-guide issue list` (`list.mjs`) | Multi-field filter **+ free-text regex search**. Returns paths + line numbers + excerpts. Drop-in replacement for `grep` / `find` over `data/todo/`. Default scope: open + review. |
-| `docs-guide issue show` (`show.mjs`) | Print one issue's metadata + subtask state summary + comment & agent-log heads. `--full` for bodies. |
-| `docs-guide issue subtasks` (`subtasks.mjs`) | List subtasks for one issue, or across all with `--all`. Default: grouped tree (mirrors the 2-level folders). `--flat` for one-line-per-subtask. Default state: open + review. |
+| `docs-guide issue list` (`list.mjs`) | Multi-field filter **+ free-text regex search**. Returns paths + line numbers + excerpts. Drop-in replacement for `grep` / `find` over `data/todo/`. Default scope: non-closed (hides `done`/`dropped`). |
+| `docs-guide issue show` (`show.mjs`) | Print one issue's metadata + subtask status summary + comment & agent-log heads. `--full` for bodies. |
+| `docs-guide issue subtasks` (`subtasks.mjs`) | List subtasks for one issue, or across all with `--all`. Default: grouped tree (mirrors the 2-level folders). `--flat` for one-line-per-subtask. Default scope: non-closed (hides `done`/`dropped`). |
 | `docs-guide issue agent-logs` (`agent-logs.mjs`) | Print the last N agent-log entries (default 3) — catch up before resuming work. |
-| `docs-guide issue set-state` (`set-state.mjs`) | Update issue status (`settings.json`) or subtask state (frontmatter). Path-allow-listed to the content root. |
+| `docs-guide issue set-state` (`set-state.mjs`) | Update issue status (`settings.json`) or subtask status (frontmatter). Path-allow-listed to the content root. |
 | `docs-guide issue add-comment` (`add-comment.mjs`) | Append a comment with auto-incremented `NNN_` prefix. |
 | `docs-guide issue add-agent-log` (`add-agent-log.mjs`) | Append an agent-log entry with auto-incremented iteration. Supports `--group` for subgroups. |
-| `docs-guide issue review-queue` (`review-queue.mjs`) | List items needing review — `status: review` issues + `open` issues with `review` subtasks. |
+| `docs-guide issue review-queue` (`review-queue.mjs`) | List items needing review — issues in the **Review category** (`review` / `input-needed`) + active (non-closed) issues with a Review-category subtask. |
 
 Common usage:
 
@@ -58,7 +58,7 @@ docs-guide issue list --search "indexer"
 # Combine structural filter + free-text search in one call
 docs-guide issue list --priority high --search "yjs|crdt" --search-fields body,subtasks
 
-# Issues created since April 1st with at least one review-state subtask
+# Issues created since April 1st with at least one review-status subtask
 docs-guide issue list --created-after 2026-04-01 --has-review-subtasks
 
 # High-priority work nobody's picked up (coarse "unassigned" pseudo-value)
@@ -75,17 +75,17 @@ docs-guide issue list --path "astro"            # match issues by file/folder PA
 docs-guide issue list --meta "priority: high"   # match only the structured layer (frontmatter + JSON), not prose
 docs-guide issue list --search "yjs" --count    # match counts + titles only, skip the per-line excerpt dump
 
-# Every review-state subtask across the tracker (cross-issue, grouped tree)
-docs-guide issue subtasks --all --state review
+# Every review-status subtask across the tracker (cross-issue, grouped tree)
+docs-guide issue subtasks --all --status review
 
-# One issue end-to-end (metadata + subtask state + log heads)
+# One issue end-to-end (metadata + subtask status + log heads)
 docs-guide issue show 2026-04-19-docs-phase-2
 
 # Catch up on prior iterations before resuming work
 docs-guide issue agent-logs 2026-04-19-docs-phase-2 --last 5
 
-# Mark a subtask done / an issue ready for review
-docs-guide issue set-state 2026-04-19-foo/subtasks/02_bar.md closed
+# Set a subtask in-progress, then hand the issue off for review
+docs-guide issue set-state 2026-04-19-foo in-progress --subtask 02
 docs-guide issue set-state 2026-04-19-foo review
 
 # What's awaiting human review?
@@ -98,7 +98,7 @@ Each script supports `--help` (full options), `--json` (machine-readable), and `
 
 `docs-guide issue list` (and the cross-content `docs-guide find`) take three flags that restrict *where* a regex matches, so a broad query doesn't flood output:
 
-- `--path <regex>` — match the file/folder **path text** only (no content scan). The fast way to locate an issue by slug — e.g. `docs-guide issue list --path astro --status all` finds the astro-upgrade issue in one call (note `--status all`: that issue is *cancelled*, so the default `open,review` scope would hide it — see the scope warning above).
+- `--path <regex>` — match the file/folder **path text** only (no content scan). The fast way to locate an issue by slug — e.g. `docs-guide issue list --path astro --status all` finds the astro-upgrade issue in one call (note `--status all`: that issue is *dropped*, so the default non-closed scope would hide it — see the scope warning above).
 - `--meta <regex>` — match only the **structured layer**: frontmatter on `.md` files + whole `.json`/`.yaml` files. Use when you want a field value (`priority: high`, a label, a component) and not prose mentions.
 - `--count` — print match counts + titles only, suppressing the per-line excerpt dump. Pairs well with a broad `--search` to gauge breadth before drilling in.
 
@@ -136,7 +136,7 @@ This is the canonical "search → gather → synthesise" pipeline: `docs-guide i
 synthesise. Read-only.
 
 ### TaskA — <name>
-docs-guide issue list --status open,review --search "indexer" --quiet-tips
+docs-guide issue list --search "indexer" --quiet-tips
 Output format: <what the user expects>.
 
 ### TaskB — <name>

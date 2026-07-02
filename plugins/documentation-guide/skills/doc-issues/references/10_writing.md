@@ -18,7 +18,7 @@ each subdoc has its own small schema:
 |---|---|
 | `issue.md` | `title` only — metadata lives in `settings.json` |
 | `comments/NNN_*.md` | `author` + `date` (YYYY-MM-DD) only — no `title` needed by the loader, but harmless |
-| `subtasks/**.md` | `title` + `state` (`open` / `review` / `closed` / `cancelled`) |
+| `subtasks/**.md` | `title` + `status` (one of the 7 statuses) |
 | `notes/**`, `brainstorm/**`, `agent-memory/**` | `title` (+ optional `color:`) |
 | `agent-log/**` milestones | `iteration`, `agent`, `status`, `date` (+ optional `color:`) |
 | any subdoc | optional `color:` — tints the sidebar label, issue-defined meaning |

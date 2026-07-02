@@ -6,17 +6,18 @@ The tracker-root settings file defines the enum values every issue draws from:
 {
   "label": "Todo",
   "fields": {
-    "status":    { "values": ["open", "review", "closed", "cancelled"], "colors": {...} },
+    // status is FIXED in framework code (7 statuses / 4 categories) — colors overridable, values are not
+    "status":    { "values": ["open", "blocked", "in-progress", "input-needed", "review", "done", "dropped"], "colors": {...} },
     "priority":  { "values": ["low", "medium", "high", "urgent"],       "colors": {...} },
     "component": { "values": ["architecture", "components", ...] },
-    "labels":    { "values": ["wip", "blocked", "feature", "bug", ...] }
+    "labels":    { "values": ["wip", "blocked", "feature", "bug", ...] } // wip/blocked labels DEPRECATED (superseded by statuses)
   },
   "authors": ["sidhantha", "claude"],
   "views": [ ... preset views ... ]
 }
 ```
 
-When creating an issue, **all enum values must come from this vocabulary**. To add a new value, edit the tracker settings file first, then use it.
+When creating an issue, **all enum values must come from this vocabulary**. To add a new value to `component` / `labels` / `priority`, edit the tracker settings file first, then use it. **`status` is the exception:** its seven values are fixed in framework code and cannot be extended per-tracker (you may override the colors) — an unknown status is a hard error, not a new value.
 
 ## Prefer `settings.jsonc` for the root vocabulary — annotate the meanings
 
@@ -44,8 +45,8 @@ Keep the comments accurate as the taxonomy evolves — a stale gloss is worse th
 
 1. **Tracker-wide** — root `settings.json` (above)
 2. **Per-issue** — values picked from the tracker vocabulary (see [02_settings.md](02_settings.md))
-3. **Per-subtask** — `state` field uses the same 4-state vocabulary as `status`, but tracked independently per subtask (see [23_subtasks.md](23_subtasks.md))
+3. **Per-subtask** — the `status` field uses the same seven-status vocabulary as issue `status` (one shared field name), tracked independently per subtask (see [23_subtasks.md](23_subtasks.md))
 
 ## Don't add scheduling / milestone fields
 
-This tracker treats scheduling, release-buckets, and single-type fields as project-management primitives that rot under continuous AI-driven shipping. **Don't add them to the vocabulary without an explicit policy reversal** — if a future change makes one genuinely useful, that's a deliberate decision, not an oversight. Transient state (actively-working-on, stuck) belongs in `labels`, not a new field.
+This tracker treats scheduling, release-buckets, and single-type fields as project-management primitives that rot under continuous AI-driven shipping. **Don't add them to the vocabulary without an explicit policy reversal** — if a future change makes one genuinely useful, that's a deliberate decision, not an oversight. (Progress and blocking *were* label-only on this same reasoning, until a deliberate 2026-07-02 reversal promoted them to the `in-progress` and `blocked` statuses — the `wip`/`blocked` labels are now deprecated.)

@@ -38,7 +38,7 @@ It prints `moved <N> file(s); rewrote <M> link(s) across <K> file(s)` on success
 The core move of the **phase/index pattern** ([64_phase-index.md](64_phase-index.md)): a parked subtask is a lightweight pointer until work begins, then it graduates to a full issue.
 
 1. Create the new issue folder (`<YYYY-MM-DD>-<slug>/`) with its own `settings.json` + `issue.md` (see [42_updating.md](42_updating.md)). Carry the subtask's framing into `issue.md`.
-2. **Leave the original subtask in place** as the index entry, but update it to point at the new issue (`Promoted to <new-issue-id>`) and flip its state to `review`/`closed` as appropriate — the index issue stays the roadmap.
+2. **Leave the original subtask in place** as the index entry, but update it to point at the new issue (`Promoted to <new-issue-id>`) and flip its status to `review`/`done` as appropriate — the index issue stays the roadmap.
 3. Use `docs-guide move` for any notes that should travel from the parent into the new issue so their links survive.
 
 ### Split an issue
@@ -47,7 +47,7 @@ When an issue has grown two distinct responsibilities: create the second issue, 
 
 ### Merge issues
 
-When two issues turn out to be the same work (often caught by the duplicate check too late): pick the canonical one, `docs-guide move` the other's `notes/`/`subtasks/` into it, add a comment summarising the merge, and `cancelled`-with-a-comment the now-empty duplicate (never just delete it — see [21_comments.md](21_comments.md)).
+When two issues turn out to be the same work (often caught by the duplicate check too late): pick the canonical one, `docs-guide move` the other's `notes/`/`subtasks/` into it, add a comment summarising the merge, and `dropped`-with-a-comment the now-empty duplicate (never just delete it — see [21_comments.md](21_comments.md); the `dropped` flip itself is human-only).
 
 ### Regroup subtasks
 

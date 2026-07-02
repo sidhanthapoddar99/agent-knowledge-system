@@ -28,10 +28,11 @@ the issue itself; `agent-memory/` is the AI's always-on, issue-scoped working st
 Subtasks are the AI-handoff units — each one an explicit "did this happen yet?"
 checkbox the next agent (or human reviewer) can pick up cold.
 
-**Ordering signals are `priority` + `status`. Recency is derived from git** (most
-recent commit touching any file under the issue folder). `created` comes from the
-folder slug. Transient state (actively-working-on, stuck) is a **label**, not a
-status.
+**Ordering is `priority` desc, then recency (`updated`) desc. Recency is derived from
+git** (most recent commit touching any file under the issue folder). `created` comes
+from the folder slug. Transient execution state (actively-working, stuck) is now carried
+by the **status** itself — `in-progress`, `blocked`, `input-needed` — not by a label; the
+old `wip` label is deprecated in place.
 
 **Best-practice rules** (convention, not enforcement):
 - **One component per issue.** Multi-component is allowed for genuinely cross-cutting
@@ -49,39 +50,47 @@ rot under continuous AI-driven shipping.
 
 ---
 
-## Lifecycle — the 4 states & AI rules
+## Lifecycle — 7 statuses, 4 categories & AI rules
 
-States: `open` → `review` → `closed` | `cancelled` — shared by issue `status` and
-subtask `state`.
+**7 statuses in 4 categories**, shared by issue `status` and subtask `status` (one field,
+one vocabulary — both fixed in framework code):
 
-| From | Allowed transitions | Notes |
+| Category | Statuses | Notes |
 |---|---|---|
-| `open` | → `review`, → `cancelled` | Most common forward path is `open → review` |
-| `review` | → `open`, → `closed` | `review → open` if pushback in a comment |
-| `closed` | (terminal) | Generally don't reopen — file a new issue |
-| `cancelled` | (terminal) | Always paired with a comment explaining why |
+| **Not Started** | `open` · `blocked` | `blocked` = depends on another issue/subtask; reason in prose |
+| **In Progress** | `in-progress` | Agent sets it automatically when work starts |
+| **Review** | `input-needed` · `review` | `input-needed` = stuck on a question (written inline); `review` = done, awaiting sign-off |
+| **Closed** | `done` · `dropped` | Terminal; both **human-only**; `dropped` needs a comment first |
+
+Transitions are **unenforced** — any jump is legal. The category grouping is what the UI
+filters by; the status is the per-row badge.
 
 ### AI rules — the most important rules in the whole skill
 
-1. **Always mark `review`, never `closed` directly.** `closed` is a *human-only*
-   transition in autonomous mode. The agent's job ends at `review` — the human
-   inspects the artefact (PR, file diff, screenshot) and flips to `closed`.
+1. **Manage `in-progress`; hand off at Review; never mark `done`/`dropped`.** Set
+   `in-progress` when you start executing. Your ceiling is `review` (or `input-needed`) —
+   `done`/`dropped` are *human-only*. The human inspects the artefact (PR, diff,
+   screenshot) and flips to `done`.
 
-2. **Default search scope is `open` + `review`.** When the user asks an open-ended
-   question about issues ("what's blocked?", "what needs review?"), search **only**
-   `open` and `review` items unless the prompt explicitly asks for closed history.
+2. **Hit a wall → `input-needed`, not `blocked`.** Set `input-needed` and write the
+   actual question **inline in the subtask/issue body** so a fresh session picks it up.
+   Reserve `blocked` for a structural dependency on another issue/subtask (named in prose).
 
-3. **Subtask review-debt promotion.** An `open` issue with **any** `review`-state
-   subtask is treated as review-gated — surface it under "needs review". (This is a
-   `review`-only special case: `review` is an actionable item for the human.
-   Blocked-style resting states don't promote — their reason just sits in a comment
-   or `issue.md` for whoever opens the issue.)
+3. **Default search scope is everything not Closed** (`open`, `blocked`, `in-progress`,
+   `input-needed`, `review`). When the user asks an open-ended question ("what's in
+   progress?", "what needs review?"), skip the Closed category (`done`/`dropped`) unless
+   the prompt explicitly asks for closed history.
 
-4. **Mark `review` only when:** implementation is done from your perspective, all
-   subtasks are `review`/`closed`, there's a verifiable artefact (PR, file diff,
-   screenshot, test output), and the agent-log captures what was tried.
+4. **Subtask review-debt promotion.** An active (non-closed) issue with **any** subtask in
+   the **Review category** (`review` or `input-needed`) is treated as review-gated —
+   surface it under "needs review". `blocked` and other resting states don't promote —
+   their reason sits in a comment or `issue.md` for whoever opens the issue.
 
-5. **`cancelled` requires a comment.** Write `comments/NNN_….md` explaining why
+5. **Mark `review` only when:** implementation is done from your perspective, all subtasks
+   are `review`/`done`, there's a verifiable artefact (PR, file diff, screenshot, test
+   output), and the agent-log captures what was tried.
+
+6. **`dropped` requires a comment** (human-only). Write `comments/NNN_….md` explaining why
    before flipping.
 
 ---
@@ -123,6 +132,6 @@ Read **only the file(s) you need** — each is self-contained.
 
 - `@root/default-docs/data/user-guide/19_issues/` — the canonical user-guide section
 - `…/19_issues/02_design-philosophy.md` — why the tracker is shaped this way
-- `…/19_issues/04_setup/06_lifecycle-and-review.md` — deep dive on the 4-state model
+- `…/19_issues/04_setup/06_lifecycle-and-review.md` — deep dive on the seven-status / four-category model
 - `…/19_issues/09_using-with-ai.md` — agent-facing rules
 - For docs / blog / config work outside the tracker: the **`documentation-guide`** skill

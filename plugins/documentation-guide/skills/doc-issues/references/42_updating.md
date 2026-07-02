@@ -63,14 +63,14 @@ The check has three modes depending on how the user phrased the request:
    ```
    docs-guide issue subtasks <issue-id> --quiet-tips
    ```
-   Skim titles + states. If the work overlaps an existing subtask, surface that instead of duplicating.
+   Skim titles + statuses. If the work overlaps an existing subtask, surface that instead of duplicating.
 
 ### Decision tree after the search
 
 - **No hits** → proceed with creation. Move on.
-- **Strong match (same scope, similar title, open or review state)** → **don't create**. Tell the user: "This looks like it overlaps with `<id>` — want me to (a) extend that issue with a new subtask, (b) add a comment there, or (c) create the new one anyway?" Wait for the call.
+- **Strong match (same scope, similar title, open or review status)** → **don't create**. Tell the user: "This looks like it overlaps with `<id>` — want me to (a) extend that issue with a new subtask, (b) add a comment there, or (c) create the new one anyway?" Wait for the call.
 - **Partial match (related but distinct)** → create the new item but **link to the related ones** in the body (e.g. "Related: `…/subtasks/05_ai-search-api.md` — covers the upstream HTTP API; this is the offline fallback"). Surface the relationship in your reply.
-- **Closed / cancelled match** → usually fine to proceed; mention the prior closed issue in the body if it's load-bearing context.
+- **Closed-category match (`done` / `dropped`)** → usually fine to proceed; mention the prior issue in the body if it's load-bearing context.
 
 ### Run the check itself via Pattern C
 
@@ -119,10 +119,10 @@ Three optional flags shape the output:
 
 ## When NOT to edit
 
-- Don't touch `closed` / `cancelled` issues without an explicit human prompt.
+- Don't touch closed-category issues (`done` / `dropped`) without an explicit human prompt.
 - Don't rewrite history in `comments/` or `agent-log/` — append, don't edit prior entries.
 - Don't change `author` or `date` on someone else's comment.
-- Don't mark an issue or subtask `closed` — that's a human-only transition (AI rule #1, [00_overview.md](00_overview.md)).
+- Don't mark an issue or subtask `done` or `dropped` — closing is a human-only transition (AI rule #1, [00_overview.md](00_overview.md)).
 
 ## Per-type write recipes — where they live
 
@@ -132,7 +132,7 @@ Each sub-doc type's own file carries the recipe to add one:
 |---|---|
 | comment | [21_comments.md](21_comments.md) |
 | note | [22_notes.md](22_notes.md) |
-| subtask (create / update state) | [23_subtasks.md](23_subtasks.md) |
+| subtask (create / update status) | [23_subtasks.md](23_subtasks.md) |
 | agent-log entry | [24_agent-logs.md](24_agent-logs.md) |
 
 To **move or restructure** existing items (rename, promote a subtask to its own issue, split/merge), see [43_moving-restructuring.md](43_moving-restructuring.md).

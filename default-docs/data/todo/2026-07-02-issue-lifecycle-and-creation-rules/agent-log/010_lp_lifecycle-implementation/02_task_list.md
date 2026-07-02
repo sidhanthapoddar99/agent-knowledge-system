@@ -40,8 +40,11 @@ Revisit-in-sweep flags: "Active" default tab; click-cycle happy-path subset.
       green, sweep clean. Milestone `102_user-guide-docs.md`. → review (iter 2)
 - [x] 05: guide.ts legend updated (7 statuses / 4 categories, thin map) +
       build-checked green. → review (iter 2)
-- [ ] 06: skill plugin (both skills) updated, CLAUDE.md paragraph, version bump,
-      cache mirrored + diff-verified
+- [x] 06: skill plugin (both skills) updated, CLAUDE.md paragraph, version bump
+      (0.4.0→0.5.0), cache mirrored + diff-verified identical. Also finished the
+      subtask-07 tail: unified the CLI's `.state`→`.status` property (issue vs
+      subtask `--json` no longer disagree) + fixed stale user-facing tip text and
+      AI-rule cross-ref numbers. Milestone `103`. → review (iter 3)
 
 ## Phase 3 — Verification (subtask 08)
 

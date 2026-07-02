@@ -2,8 +2,8 @@
 /**
  * review-queue.mjs — list everything currently awaiting human review.
  *
- *   - Issues with status: review (direct)
- *   - Issues with status: open AND any subtask in state: review (review-debt promotion)
+ *   - Issues whose status is in the Review category — review or input-needed (direct)
+ *   - Active (non-closed) issues with any subtask in the Review category (review-debt promotion)
  */
 
 import {

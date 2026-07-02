@@ -10,7 +10,7 @@ The weight is in `agent-log/`, one activity folder per run:
 
 ```
 2026-05-10-flaky-test-sweep/
-├── settings.json                  status: open, labels: ["wip"], assignees: ["claude"]
+├── settings.json                  status: in-progress, assignees: ["claude"]
 ├── issue.md                       goal: drive the flaky-test rate to zero
 ├── subtasks/
 │   └── 010_zero-flakes.md         the PLAN: the durable success criterion

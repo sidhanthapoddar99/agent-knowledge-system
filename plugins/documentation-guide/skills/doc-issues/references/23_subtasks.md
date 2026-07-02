@@ -1,21 +1,24 @@
 # Subtasks — `subtasks/[<group>/[<subgroup>/]]NNN_<slug>.md`
 
-The atomic unit of work and the **AI-handoff anchor**. Each leaf `.md` is a first-class subtask with its own state, URL, and count. Grouping folders are *labels only* — no body file.
+The atomic unit of work and the **AI-handoff anchor**. Each leaf `.md` is a first-class subtask with its own status, URL, and count. Grouping folders are *labels only* — no body file.
 
 ## Shape
 
 ```yaml
 ---
 title: "Short imperative title"
-state: open
+status: open
 ---
 
 Body — describe the work in enough detail that someone (or an agent) can pick it up cold.
 ```
 
-`state` follows the same 4-state vocabulary as issue `status` (see [03_vocabulary.md](03_vocabulary.md)), tracked independently per subtask.
+`status` uses the **same seven-status vocabulary as issue `status`** — one shared field
+name, one shared set (see [03_vocabulary.md](03_vocabulary.md)) — tracked independently per
+subtask. (Subtasks used to carry a separate `state:` field; it's been unified to `status:`.
+The legacy `state:` is auto-mapped with a migrate-me warning until renamed.)
 
-A subtask may live at the root of `subtasks/`, or inside one or two levels of grouping folders (`subtasks/020_implementation/010_backend.md`, `subtasks/020_implementation/020_polish/010_styles.md`). **The folder is a label only** — no folder body file. Folders use the same numbering as leaves and sort interleaved with them. In the sidebar a group folder shows **done/total** (terminal states count as done); the section header carries the same count plus an amber review-dot when any subtask sits in `review`.
+A subtask may live at the root of `subtasks/`, or inside one or two levels of grouping folders (`subtasks/020_implementation/010_backend.md`, `subtasks/020_implementation/020_polish/010_styles.md`). **The folder is a label only** — no folder body file. Folders use the same numbering as leaves and sort interleaved with them. In the sidebar a group folder shows **done/total** (the Closed category — `done`/`dropped` — counts as done); the section header carries the same count plus an amber review-dot when any subtask sits in the Review category (`review` or `input-needed`).
 
 **Optional folder `settings.json`:** a group folder may carry `{ "title": "..." }` to override the slug-derived sidebar label. Skip the file when the slug already reads cleanly.
 
@@ -64,15 +67,17 @@ activity instead (see [24_agent-logs.md](24_agent-logs.md)); when ambiguous, ask
    - Inside a themed group → `<issue>/subtasks/NN_<group>/NN_<slug>.md`
    - Inside a sub-phase → `<issue>/subtasks/NN_<group>/NN_<subgroup>/NN_<slug>.md` (deepest the loader accepts)
 3. Find the next prefix in the target folder: `ls <target-folder>/` → use the next gap-spaced value. Folders and leaves share the numbering at each level (they sort interleaved).
-4. Write the file with the standard frontmatter (`title`, `state: open`).
+4. Write the file with the standard frontmatter (`title`, `status: open`).
 5. Body: enough detail to pick up cold; if a related issue/subtask turned up in the duplicate check, link to it in a "Related:" line.
 
-## Update a subtask state
+## Update a subtask status
 
-Prefer the helper (it flips `state`):
+Prefer the helper (it writes the `status` field). Target the subtask by path, or by
+number/slug with `--subtask`:
 
 ```bash
 docs-guide issue set-state <issue>/subtasks/NN_<slug>.md review
+docs-guide issue set-state <issue> review --subtask NN      # resolves the subtask file
 ```
 
 Direct file write:
@@ -80,13 +85,15 @@ Direct file write:
 ```yaml
 ---
 title: "..."
-state: review
+status: review
 ---
 ```
 
 Or via the editor API if running locally: `POST /__editor/subtask-toggle`. Prefer **direct file writes / the helper** unless the user explicitly asks to use the editor API.
 
-> **AI rule:** mark subtasks `review`, never `closed` — `closed` is a human-only transition (see the AI rules in [00_overview.md](00_overview.md)).
+> **AI rule:** set subtasks to `in-progress` when you start, hand off at `review` (or
+> `input-needed` with a question inline) — never `done`/`dropped`, which are human-only
+> transitions (see the AI rules in [00_overview.md](00_overview.md)).
 
 ## vs. a loop task-list in `agent-log/`
 

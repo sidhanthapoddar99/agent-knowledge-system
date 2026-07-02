@@ -6,8 +6,9 @@
  * (vocabulary, subtask states, frontmatter, agent-log subgroups) and emits
  * issue ids + exact file paths + line numbers + excerpts in one call.
  *
- * Default scope: open + review (skips closed/cancelled). Override with
- * --status, or --include-cancelled to see everything. AND across fields,
+ * Default scope: everything not Closed (open, blocked, in-progress, input-needed,
+ * review — skips the Closed category done/dropped). Override with --status, or
+ * --include-closed to see everything. AND across fields,
  * OR within a field.
  *
  * Search backend (auto-picked, fastest first): ripgrep → grep → pure JS.
@@ -30,7 +31,8 @@ if (args.flags.help || args.flags.h) {
     '[filters] [--search <regex>] [output] [--quiet-tips]',
     '',
     'Filters (AND across fields, OR within):',
-    '  --status open,review,closed,cancelled    default: open,review (use `all` for every state)',
+    '  --status open,blocked,in-progress,input-needed,review,done,dropped',
+    '                                           default: everything not Closed (use `all` for every status)',
     '  --priority low,medium,high,urgent',
     '  --component <vals>',
     '  --label <vals>',
@@ -41,7 +43,7 @@ if (args.flags.help || args.flags.h) {
     '  --created-before YYYY-MM-DD',
     '  --subtasks-min N        --subtasks-max N',
     '  --has-open-subtasks     --has-review-subtasks     --has-closed-subtasks',
-    '  --include-cancelled                      shorthand for adding cancelled to default scope',
+    '  --include-closed                         widen the default scope to include done/dropped',
     '',
     'Search (free-text regex over issue files):',
     '  --search <regex>                         POSIX ERE / JS-regex syntax',
@@ -173,8 +175,8 @@ for (const id of listIssueFolders(tracker)) {
                    || subtasksMin != null || subtasksMax != null;
   if (needSubs) subs = readIssueSubtasks(tracker, id);
   if (requireReviewSub && !subs.some((s) => s.category === 'review'))          continue;
-  if (requireOpenSub   && !subs.some((s) => s.state === 'open'))               continue;
-  if (requireClosedSub && !subs.some((s) => TERMINAL_STATUSES.includes(s.state))) continue;
+  if (requireOpenSub   && !subs.some((s) => s.status === 'open'))              continue;
+  if (requireClosedSub && !subs.some((s) => TERMINAL_STATUSES.includes(s.status))) continue;
   if (subtasksMin != null && (subs ?? []).length < subtasksMin)      continue;
   if (subtasksMax != null && (subs ?? []).length > subtasksMax)      continue;
 
@@ -254,18 +256,19 @@ if (pathPattern) {
 }
 
 // ---------- Apply the status scope (last) ----------------------------------
-// Everything above ran across all four states. Split by the active scope now:
+// Everything above ran across all seven statuses. Split by the active scope now:
 // what's in-scope is the real result; what's out-of-scope (only possible under
-// the default open,review scope) powers the discoverability tip below.
+// the default non-closed scope) powers the discoverability tip below.
 const hiddenByScope = results.filter((r) => !scope.includes(r.status));
 results = results.filter((r) => scope.includes(r.status));
 
 if (limit != null) results = results.slice(0, limit);
 
-// Discoverability tip: the default scope silently hides closed/cancelled. When
-// a query would have matched some of those, the user can wrongly conclude
-// "not found" / "that's all of them". Nudge them toward `--status all`. To
-// stderr (never pollutes stdout/--json), and suppressible with --quiet-tips.
+// Discoverability tip: the default scope silently hides the Closed category
+// (done/dropped). When a query would have matched some of those, the user can
+// wrongly conclude "not found" / "that's all of them". Nudge them toward
+// `--status all`. To stderr (never pollutes stdout/--json), suppressible with
+// --quiet-tips.
 if (defaultScope && hiddenByScope.length && !quietTips) {
   const n = hiddenByScope.length;
   const byState = {};
@@ -275,8 +278,8 @@ if (defaultScope && hiddenByScope.length && !quietTips) {
     .map((s) => `${byState[s]} ${s}`)
     .join(', ');
   console.error(
-    `tip: showing open,review only — ${n} more issue(s) match in ${breakdown}. ` +
-    `Add --status all (or --include-cancelled) to include them.`,
+    `tip: showing active only — ${n} more issue(s) match in ${breakdown}. ` +
+    `Add --status all (or --include-closed) to include them.`,
   );
 }
 

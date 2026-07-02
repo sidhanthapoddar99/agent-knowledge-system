@@ -38,11 +38,11 @@ There is **one binary** (`docs-guide`, plus its Windows `docs-guide.cmd` twin) r
 
 | Command | What it does | Key flags |
 |---|---|---|
-| `docs-guide issue list` | Multi-field filter + free-text regex search over the tracker | `--status open,review,closed,cancelled` (default `open,review`; `all` = every state) · `--priority` · `--component` · `--label` · `--assignee` · `--search <regex>` · `--search-fields body,settings,comments,subtasks,notes,agent-log` · `--path <regex>` · `--meta <regex>` · `--count` · `--limit <N>` · `--paths-only` · `--json` · `--tracker <path>` |
+| `docs-guide issue list` | Multi-field filter + free-text regex search over the tracker | `--status open,blocked,in-progress,input-needed,review,done,dropped` (default: not-Closed; `all` = every status; `--include-closed` widens) · `--priority` · `--component` · `--label` · `--assignee` · `--search <regex>` · `--search-fields body,settings,comments,subtasks,notes,agent-log` · `--path <regex>` · `--meta <regex>` · `--count` · `--limit <N>` · `--paths-only` · `--json` · `--tracker <path>` |
 | `docs-guide issue show <id>` | One issue's metadata + subtask/comment/agent-log heads | `--full` (bodies) · `--json` · `--tracker` |
-| `docs-guide issue subtasks [id]` | Subtasks for one issue, or `--all` cross-issue | `--all` · `--state <vals>` · `--flat` · `--json` · `--tracker` |
+| `docs-guide issue subtasks [id]` | Subtasks for one issue, or `--all` cross-issue | `--all` · `--status <vals>` · `--flat` · `--json` · `--tracker` |
+| `docs-guide issue set-state <id> <status>` | Set an issue status, or a subtask status via `--subtask <num\|slug>` (or a subtask path) | `--subtask <num\|slug>` · `--tracker` |
 | `docs-guide issue agent-logs <id>` | Last N agent-log entries | `--last <N>` · `--full` · `--json` · `--tracker` |
-| `docs-guide issue set-state <id\|subtask-path> <state>` | Set issue status or subtask state | `--tracker` |
 | `docs-guide issue add-comment <id>` | Append a comment (auto-incremented prefix) | `--author <name>` · `--body <md>` · `--date` · `--slug` · `--tracker` |
 | `docs-guide issue add-agent-log <id>` | Append an agent-log entry | `--body <md>` · `--status <state>` · `--iteration <N>` · `--agent <name>` · `--group <a[/b]>` · `--date` · `--slug` · `--tracker` |
 | `docs-guide issue review-queue` | Items awaiting review (status=review + open w/ review subtask) | `--json` · `--tracker` |

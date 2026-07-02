@@ -37,11 +37,10 @@ Per-issue metadata. Values are drawn from the tracker vocabulary (see [03_vocabu
 ## Assignees — who's on it (not a status)
 
 `assignees` records who is currently responsible; it can change as responsibility
-moves. It is **not** the in-progress signal. (An earlier convention derived
-"in-progress" from `assignees.length > 0`; that policy was reversed on 2026-07-02 —
-an explicit `in-progress` status is being introduced by
-`2026-07-02-issue-lifecycle-and-creation-rules`. Until that lands in code, the UI may
-still show the assignee-derived shortcut; don't build new logic on it.)
+moves. It is **not** the in-progress signal — that's the explicit `in-progress` status.
+(An earlier convention derived "in-progress" from `assignees.length > 0`; that policy was
+reversed on 2026-07-02 and the derivation is gone from the code — being assigned no longer
+implies work is underway.)
 
 The tracker exposes assignees as a two-tier filter:
 

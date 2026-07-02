@@ -57,8 +57,8 @@ console.log(`Created:   ${created || '—'}`);
 if (meta.description) console.log(`\n${meta.description}`);
 
 console.log(`\n## Subtasks (${subtasks.length})`);
-const counts = subtasks.reduce((a, s) => { a[s.state] = (a[s.state] || 0) + 1; return a; }, {});
-console.log(`  open: ${counts.open || 0}  review: ${counts.review || 0}  closed: ${counts.closed || 0}  cancelled: ${counts.cancelled || 0}`);
+const counts = subtasks.reduce((a, s) => { a[s.category] = (a[s.category] || 0) + 1; return a; }, {});
+console.log(`  not-started: ${counts['not-started'] || 0}  in-progress: ${counts['in-progress'] || 0}  review: ${counts.review || 0}  closed: ${counts.closed || 0}`);
 for (const s of subtasks) console.log(`  [${s.state}] ${s.slug} — ${s.title}`);
 
 console.log(`\n## Comments (${comments.length})`);

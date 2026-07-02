@@ -1,6 +1,6 @@
 ---
 title: Explore including the NN_ prefix in docs URLs (backward compatible?)
-state: closed
+status: done
 ---
 
 Today the `NN_` ordering prefix is **stripped** from docs URLs:

@@ -1,6 +1,6 @@
 ---
 title: Standardize NN_ / NNN_ notation (from XX_) + digit-width convention
-state: closed
+status: done
 ---
 
 Make the placeholder notation and the digit-width rule consistent across docs **and** the

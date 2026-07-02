@@ -1,6 +1,6 @@
 ---
 title: "Sync testing"
-state: open
+status: open
 ---
 
 ## Tasks

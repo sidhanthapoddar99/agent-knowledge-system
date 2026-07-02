@@ -1,6 +1,6 @@
 ---
 title: "Plugin marketplace · dogfood install · init slash commands · retire download-script"
-state: closed
+status: done
 ---
 
 Switch the skill distribution model from "curl-down a `download-skills.sh`" to a **Claude Code plugin marketplace hosted in this same repo**. Dogfood it (this repo installs its own plugin), ship slash commands inside the plugin to bootstrap new projects, then update the docs and README to match.

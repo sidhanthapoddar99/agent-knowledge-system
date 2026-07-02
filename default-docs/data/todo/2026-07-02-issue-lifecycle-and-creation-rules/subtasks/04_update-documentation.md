@@ -1,6 +1,6 @@
 ---
 title: Update the user-guide documentation
-state: open
+status: open
 ---
 
 Rewrite the lifecycle story in `default-docs/data/user-guide/19_issues/` against

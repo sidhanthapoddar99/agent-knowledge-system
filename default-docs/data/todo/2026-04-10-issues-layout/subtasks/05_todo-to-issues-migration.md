@@ -1,6 +1,6 @@
 ---
 title: "Migration — todo/ → issues/"
-state: closed
+status: done
 ---
 
 Migrating the legacy `dynamic_data/data/docs/todo/` hierarchy into the new folder-per-item issues format. This `todo-migration/` tracker is the result.

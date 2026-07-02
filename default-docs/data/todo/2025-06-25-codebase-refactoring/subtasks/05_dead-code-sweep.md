@@ -1,6 +1,6 @@
 ---
 title: "Remove dead code and unused imports"
-state: open
+status: open
 ---
 
 **What it means.** Find and delete code nothing references any more — unused imports, unreferenced exported functions/types, and branches left behind by earlier refactors.

@@ -1,6 +1,6 @@
 ---
 title: "`docs:issues_layout` Author the `issues` Claude skill (+ helper Node scripts)"
-state: closed
+status: done
 ---
 
 The `issues` skill is the operating manual that lets an AI agent treat this tracker as its own queue. It must cover *traversal, reading, writing, the review handoff,* and *agent-log discipline* — and ship with helper Node scripts so the agent can filter / scan without dumping every file into context.

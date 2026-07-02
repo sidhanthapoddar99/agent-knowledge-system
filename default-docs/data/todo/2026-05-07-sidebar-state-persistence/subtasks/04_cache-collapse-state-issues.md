@@ -1,6 +1,6 @@
 ---
 title: "Issues sidebar: cache collapse / expand state per sub-doc folder (30-day TTL)"
-state: closed
+status: done
 ---
 
 - [ ] On user click of any collapse / expand toggle in the sub-doc tree (subtasks group, notes folder, agent-log folder, including 2-level nests from subtask 20), write the new state to `localStorage`.

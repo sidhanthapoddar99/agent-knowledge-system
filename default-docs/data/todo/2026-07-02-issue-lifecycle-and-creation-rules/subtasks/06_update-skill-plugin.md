@@ -1,6 +1,6 @@
 ---
 title: Update the documentation-guide skill plugin
-state: open
+status: open
 ---
 
 Mirror `notes/01_lifecycle-vocabulary.md` into the plugin — repo source

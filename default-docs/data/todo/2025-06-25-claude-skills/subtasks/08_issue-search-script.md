@@ -1,6 +1,6 @@
 ---
 title: "Issue search script — regex + filters, drop-in replacement for grep/find"
-state: closed
+status: done
 ---
 
 The skill ships `scripts/issues/list.mjs` which already does multi-field filtering (status, priority, component, milestone, label, has-review-subtasks). What's missing is a **regex/free-text body search** dimension — currently the only path for "find issues mentioning X" is `Grep`, which validation (`comments/003_12-agent-validation-and-loading-caveat.md`) flagged as the one task where the baseline beats the skill.

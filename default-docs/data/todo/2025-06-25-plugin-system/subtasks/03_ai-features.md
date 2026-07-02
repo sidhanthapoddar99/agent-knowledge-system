@@ -1,6 +1,6 @@
 ---
 title: "AI-powered features"
-state: open
+status: open
 ---
 
 ## Tasks

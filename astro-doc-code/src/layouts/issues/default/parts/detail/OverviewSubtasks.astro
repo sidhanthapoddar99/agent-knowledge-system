@@ -41,18 +41,18 @@ const pct = (n: number) => (subtaskTotal ? (n / subtaskTotal) * 100 : 0);
   <ul class="issue-overview-subtasks__list">
     {sortedSubtasks.map((s) => (
       <li
-        class={`issue-overview-subtasks__item state-${s.state}`}
+        class={`issue-overview-subtasks__item state-${s.status}`}
         data-subtask-key={subtaskPanelKey(s)}
         data-file={s.filePath}
-        data-state={s.state}
+        data-state={s.status}
       >
         <button
           type="button"
           class="issue-overview-subtasks__state"
-          aria-label={`Subtask state: ${s.state}. Click to cycle.`}
-          data-state={s.state}
+          aria-label={`Subtask state: ${s.status}. Click to cycle.`}
+          data-state={s.status}
         >
-          <Fragment set:html={stateIconSvg(s.state)} />
+          <Fragment set:html={stateIconSvg(s.status)} />
         </button>
         {s.sequence !== null && <span class="issue-overview-subtasks__num">{pad(s.sequence)}</span>}
         <a href={subtaskUrl(baseUrl, issue.id, s)} class="issue-overview-subtasks__link">{s.title}</a>

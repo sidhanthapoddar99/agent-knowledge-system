@@ -1,6 +1,6 @@
 ---
 title: "Surfaces — backlinks cards + graph dev-tools app"
-state: open
+status: open
 ---
 
 Absorbed from the original phase-3 scope (Layer 4). Once the registry, graph, and query API exist, surface them where authors and agents will actually encounter them.

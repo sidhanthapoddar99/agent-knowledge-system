@@ -1,6 +1,6 @@
 ---
 title: "Server cache inspector"
-state: open
+status: open
 ---
 
 View of what is currently in the server's in-memory caches. Names, sizes, and

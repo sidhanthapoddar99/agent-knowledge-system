@@ -1,6 +1,6 @@
 ---
 title: "Performance improvements"
-state: open
+status: open
 ---
 
 > See [notes/02_editor-performance.md](../notes/02_editor-performance.md) for the full review (file paths, problem, fix, recommended order).

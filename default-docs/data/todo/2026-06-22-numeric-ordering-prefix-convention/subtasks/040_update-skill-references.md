@@ -1,6 +1,6 @@
 ---
 title: Update docs-layout / issue-layout references for 2–5 digit + grouping
-state: closed
+status: done
 ---
 
 Update the skill reference docs to describe the unified convention:

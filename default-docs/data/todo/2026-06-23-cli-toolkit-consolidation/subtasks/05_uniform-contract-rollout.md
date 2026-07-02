@@ -1,6 +1,6 @@
 ---
 title: "Category 0a — roll out the uniform contract to every command"
-state: closed
+status: done
 ---
 
 Make every command speak the same contract, using the shared `_cli.mjs` (subtask 02) and generated help (subtask 03).

@@ -1,6 +1,6 @@
 ---
 title: "Relative-time rendering for the `updated` column"
-state: closed
+status: done
 ---
 
 The `updated` value coming out of `getIssueDate()` is a full ISO 8601 timestamp with timezone (e.g. `2026-05-07T22:00:57+05:30`). Today's layouts strip the time portion via `formatDate(issue.updated)` ("May 7 2026") or `issue.updated.slice(0, 10)` ("2026-05-07"). Replace that with relative-time formatting, with a fall-through to full date+time for older entries.

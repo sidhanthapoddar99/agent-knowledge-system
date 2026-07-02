@@ -1,6 +1,6 @@
 ---
 title: "Absorb the 11 shell wrappers into the CLI binary"
-state: cancelled
+status: dropped
 ---
 
 Today the framework ships 11 CLI wrappers (`docs-list`, `docs-show`, `docs-subtasks`, `docs-agent-logs`, `docs-set-state`, `docs-add-comment`, `docs-add-agent-log`, `docs-review-queue`, `docs-check-blog`, `docs-check-config`, `docs-check-section`) as bash wrappers inside the Claude Code plugin (`plugins/documentation-guide/bin/`). Each wrapper exec's a `.mjs` script via `bun`. This means the tooling only works inside Claude Code with the plugin loaded *and* requires Bun on PATH.

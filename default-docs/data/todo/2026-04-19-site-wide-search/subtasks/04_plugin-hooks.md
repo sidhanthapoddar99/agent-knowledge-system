@@ -1,6 +1,6 @@
 ---
 title: "Plugin hooks — let integrations index their own content"
-state: open
+status: open
 ---
 
 Search shouldn't be hard-coded to the built-in content types. Any future plugin / custom loader should be able to register records with the index.

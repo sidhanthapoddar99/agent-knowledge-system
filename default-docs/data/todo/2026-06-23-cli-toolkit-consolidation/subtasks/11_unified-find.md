@@ -1,6 +1,6 @@
 ---
 title: "Add unified cross-content `find` (Category 1)"
-state: closed
+status: done
 ---
 
 A schema-agnostic search across **all** content types at once — path + raw-text + `--meta`. Complements the per-type schema-aware `search` (subtask 10): answers "where is this string anywhere in content" vs "find the issue about X".

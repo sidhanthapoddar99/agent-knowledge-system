@@ -1,6 +1,6 @@
 ---
 title: Docs collapsible standardization
-state: closed
+status: done
 ---
 
 Document a house default for sidebar collapse behaviour in docs folders, so new sections

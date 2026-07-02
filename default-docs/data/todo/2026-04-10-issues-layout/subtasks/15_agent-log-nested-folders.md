@@ -1,6 +1,6 @@
 ---
 title: "Agent-log: support 2-level folder hierarchy"
-state: closed
+status: done
 ---
 
 Currently `agent-log/` is a flat folder of numbered files. Long-running issues with many iterations + parallel agent runs (one branch experimenting, another debugging, another running benchmarks) outgrow flat fast. Add support for **one extra level of nesting** so iterations can be grouped.

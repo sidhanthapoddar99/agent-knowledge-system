@@ -1,6 +1,6 @@
 ---
 title: "Theme system — docs"
-state: open
+status: open
 ---
 
 Absorbed from `2026-04-10-theme-system-refactor/subtasks/02_documentation.md`. Covers the two-tier token contract for both audiences.

@@ -1,6 +1,6 @@
 ---
 title: Decide the final structure
-state: closed
+status: done
 ---
 
 Lock the section model and folder layout. The final design lives in

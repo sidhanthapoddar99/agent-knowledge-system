@@ -1,7 +1,7 @@
 {
   "title": "Consolidate & extend the docs-* CLI toolkit",
   "description": "The 13 docs-* CLI wrappers are issue-tracker-heavy: content search, list, and show exist only for issues, not for docs or blog. Capture a feature matrix across content types (3 categories: common code, common-name/type-specific code, type-specific), the current dispatcher architecture (one COMMANDS map in cli.mjs — refactor is cheap), and a proposed end-state (fill gaps + optional docs <group> <verb> subcommands).",
-  "status": "closed",
+  "status": "done",
   "priority": "medium",
   "component": [
     "ai-plugin-and-docs"

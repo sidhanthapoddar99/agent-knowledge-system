@@ -1,6 +1,6 @@
 ---
 title: "Implementation — index page, detail page, theming"
-state: closed
+status: done
 ---
 
 The visual half — index page, detail page, subtask interactivity, and typography alignment with the theme contract.

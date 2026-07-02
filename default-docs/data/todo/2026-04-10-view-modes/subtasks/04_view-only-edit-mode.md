@@ -1,6 +1,6 @@
 ---
 title: "View-only mode / edit-mode lock"
-state: open
+status: open
 ---
 
 ## Tasks

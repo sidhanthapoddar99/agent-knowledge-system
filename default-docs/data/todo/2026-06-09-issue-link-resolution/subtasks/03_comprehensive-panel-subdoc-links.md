@@ -1,6 +1,6 @@
 ---
 title: "Resolve internal links to absolute at render time (browser-independent) — fixes the Comprehensive-panel embed + the whole class"
-state: open
+status: open
 ---
 
 **Decision (2026-06-09):** stop depending on the browser to resolve relative

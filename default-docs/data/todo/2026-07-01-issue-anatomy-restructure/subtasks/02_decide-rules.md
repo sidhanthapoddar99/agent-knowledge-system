@@ -1,6 +1,6 @@
 ---
 title: Decide the rules — when to create issues + the issue dump
-state: closed
+status: done
 ---
 
 Decide and write down the operating rules for the new structure, so the sections

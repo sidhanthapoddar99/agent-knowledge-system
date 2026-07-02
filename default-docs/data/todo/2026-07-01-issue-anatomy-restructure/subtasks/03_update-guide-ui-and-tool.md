@@ -1,6 +1,6 @@
 ---
 title: Update the documentation guide, UI, and tooling
-state: closed
+status: done
 ---
 
 Implement the anatomy decided in subtask 01 (spec: `notes/01_issue-anatomy/`) across the

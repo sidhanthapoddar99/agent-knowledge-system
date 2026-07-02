@@ -1,6 +1,6 @@
 ---
 title: "Browser Cache dev-toolbar app (list + clear localStorage state)"
-state: closed
+status: done
 ---
 
 New toolbar app below Cache Inspector in the 3-dot overflow: lists the framework's localStorage keys grouped by prefix, with per-group Clear and Clear-all.

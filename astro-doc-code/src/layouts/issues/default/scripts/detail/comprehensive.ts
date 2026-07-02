@@ -1,22 +1,29 @@
 /**
  * Comprehensive-panel behaviour:
- *   - Filter tabs (Review / Open / Closed / Cancelled / All) — also filters
- *     the right-sidebar subtasks index so they stay in sync.
+ *   - Filter tabs (Review / In Progress / Not Started / Closed / All — the four
+ *     lifecycle categories) — also filters the right-sidebar subtasks index so
+ *     they stay in sync.
  *   - Word-capped expand/collapse for items past COMPREHENSIVE_WORD_CAP.
  */
-import type { CompTab, SubtaskState } from './types';
+import type { CompTab } from './types';
+import { categoryOf, isValidStatus } from '@loaders/issue-status';
 
 let currentCompTab: CompTab = 'review';
 
+/** A subtask row matches the current tab when its status's category equals the
+ *  tab (or the tab is "all"). */
+function matchesTab(status: string): boolean {
+  if (currentCompTab === 'all') return true;
+  return isValidStatus(status) && categoryOf(status) === currentCompTab;
+}
+
 export function applyComprehensiveTabFilter() {
   document.querySelectorAll<HTMLElement>('.issue-comprehensive__item').forEach((i) => {
-    const s = i.dataset.state as SubtaskState;
-    i.style.display = currentCompTab === 'all' || currentCompTab === s ? '' : 'none';
+    i.style.display = matchesTab(i.dataset.state || '') ? '' : 'none';
   });
   document.querySelectorAll<HTMLElement>('.issue-meta-index__link').forEach((a) => {
-    const s = a.dataset.state as SubtaskState;
     (a.parentElement as HTMLElement).style.display =
-      currentCompTab === 'all' || currentCompTab === s ? '' : 'none';
+      matchesTab(a.dataset.state || '') ? '' : 'none';
   });
 }
 

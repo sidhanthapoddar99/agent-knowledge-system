@@ -1,6 +1,6 @@
 ---
 title: "Surface the search index in dev-tools (cache + RAM viewers)"
-state: open
+status: open
 ---
 
 The search index is another in-memory cache + another source of RAM pressure. The dev-tools already expose both axes — extend them so the search index is visible alongside Yjs rooms / editor docs / presence.

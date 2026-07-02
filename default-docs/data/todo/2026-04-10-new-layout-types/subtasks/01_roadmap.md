@@ -1,6 +1,6 @@
 ---
 title: "Roadmap layout type"
-state: open
+status: open
 ---
 
 A forward-looking, public-facing view of planned and in-flight work.

@@ -1,6 +1,6 @@
 ---
 title: "Advanced search — regex, field-restricted queries, operators"
-state: open
+status: open
 ---
 
 Full-text fuzzy handles 90% of queries. The remaining 10% wants precision: "find me the literal string `const foo = 3`", "only in titles", "exclude agent-log".

@@ -1,6 +1,6 @@
 ---
 title: "Editor v2 documentation"
-state: review
+status: review
 ---
 
 > **⏸ Under review — tracked by `2026-04-19-docs-phase-2` (deferred)**

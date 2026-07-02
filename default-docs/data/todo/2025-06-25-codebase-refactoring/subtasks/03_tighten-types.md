@@ -1,6 +1,6 @@
 ---
 title: "Tighten TypeScript types — drive out `any`"
-state: open
+status: open
 ---
 
 **What it means.** Replace loose `any` usage in the loaders with real types: concrete interfaces, generics, or `unknown` + a narrowing check. `any` disables the type checker for that value and everything derived from it, so bugs (typos in property names, wrong shapes) slip through silently.

@@ -1,6 +1,6 @@
 ---
 title: Add a shared parseOrderPrefix helper
-state: closed
+status: done
 ---
 
 Create one helper — `parseOrderPrefix(name) → { sequence, rest }` — that defines the

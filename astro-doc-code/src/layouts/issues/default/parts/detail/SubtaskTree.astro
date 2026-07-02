@@ -60,7 +60,7 @@ function descendantCount(n: SubtaskGroupNode): number {
 /** Descendants in a terminal state (closed/cancelled) — the `done` half of the
  *  folder's `done/total` count, mirroring the section-level header. */
 function doneCount(n: SubtaskGroupNode): number {
-  let count = n.files.filter((f) => TERMINAL.includes(f.state)).length;
+  let count = n.files.filter((f) => TERMINAL.includes(f.status)).length;
   for (const child of n.groups.values()) count += doneCount(child);
   return count;
 }
@@ -83,14 +83,14 @@ function containsActive(n: SubtaskGroupNode): boolean {
       return (
         <a
           href={subtaskUrl(baseUrl, issueId, s)}
-          class={`issue-sidebar__item is-subtask ${TERMINAL.includes(s.state) ? 'is-done' : ''} ${isActive ? 'is-active' : ''}`}
+          class={`issue-sidebar__item is-subtask ${TERMINAL.includes(s.status) ? 'is-done' : ''} ${isActive ? 'is-active' : ''}`}
           data-subtask-key={key}
-          data-state={s.state}
+          data-state={s.status}
           aria-current={isActive ? 'page' : undefined}
           data-tip={s.title}
         >
           <span class="issue-sidebar__check" aria-hidden="true" data-state-icon>
-            <Fragment set:html={stateIconSvg(s.state)} />
+            <Fragment set:html={stateIconSvg(s.status)} />
           </span>
           {s.sequence !== null && <span class="issue-sidebar__num">{pad(s.sequence)}</span>}
           <span class="issue-sidebar__label">{s.title}</span>

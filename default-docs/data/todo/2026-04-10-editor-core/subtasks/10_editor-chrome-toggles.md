@@ -1,6 +1,6 @@
 ---
 title: "Editor chrome — toggles, resize, scroll sync"
-state: closed
+status: done
 ---
 
 ## Tasks

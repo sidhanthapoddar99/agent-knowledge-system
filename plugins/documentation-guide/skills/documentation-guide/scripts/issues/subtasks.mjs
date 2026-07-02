@@ -12,7 +12,7 @@
 
 import {
   resolveTracker, listIssueFolders, readIssueSubtasks, readIssueSubtaskGroups,
-  parseArgs, csv, printHelp, isValidState,
+  parseArgs, csv, printHelp, isValidState, STATUSES, TERMINAL_STATUSES,
 } from './_lib.mjs';
 
 const args = parseArgs(process.argv.slice(2));
@@ -20,20 +20,23 @@ const positional = args._[0];
 
 if (args.flags.help || (!positional && !args.flags.all)) {
   printHelp('issue subtasks', [
-    '<issue-id|--all> [--state open,review,closed,cancelled] [--flat] [--json] [--tracker <path>]',
+    '<issue-id|--all> [--status open,in-progress,review,done,…] [--flat] [--json] [--tracker <path>]',
     '',
     'List subtasks for one issue, or across all issues with --all.',
     'Default: grouped output (mirrors the subtasks/ folder tree, up to 2 levels).',
-    '--flat   one-line-per-subtask, no grouping (issue<TAB>file<TAB>state<TAB>title).',
+    '--flat   one-line-per-subtask, no grouping (issue<TAB>file<TAB>status<TAB>title).',
     '--json   machine-readable; carries groupPath per subtask + group metadata.',
-    'Default state filter: open + review.',
+    'Default scope: everything not in the Closed category (done/dropped hidden).',
   ]);
   process.exit(args.flags.help ? 0 : 1);
 }
 
 const tracker = resolveTracker(args.flags.tracker);
-const stateFilter = csv(args.flags.state).filter(isValidState);
-const scope = stateFilter.length ? stateFilter : ['open', 'review'];
+// Accept `--status` (canonical) and `--state` (legacy alias).
+const stateFilter = csv(args.flags.status ?? args.flags.state).filter(isValidState);
+const scope = stateFilter.length
+  ? stateFilter
+  : STATUSES.filter((s) => !TERMINAL_STATUSES.includes(s));
 const isAll = args.flags.all || positional === '--all';
 const flat = !!args.flags.flat;
 

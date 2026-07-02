@@ -1,6 +1,6 @@
 ---
 title: Bump the plugin version to 0.2.1
-state: closed
+status: done
 ---
 
 Final step, after `010`–`040` land. Patch bump (behavior-neutral cleanup + new migration

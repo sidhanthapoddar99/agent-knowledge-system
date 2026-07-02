@@ -1,7 +1,7 @@
 {
   "title": "Subtask 2-level grouping — test fixture",
   "description": "Test fixture exercising the 2-level subtasks/ tree (subtask 22 of 2026-04-10-issues-layout). Not real work — keep around as a regression fixture.",
-  "status": "closed",
+  "status": "done",
   "priority": "low",
   "component": ["layout-issues"],
   "labels": ["task"],

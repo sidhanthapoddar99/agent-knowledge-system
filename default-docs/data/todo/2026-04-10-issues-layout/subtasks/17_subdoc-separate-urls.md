@@ -1,6 +1,6 @@
 ---
 title: "Subtasks / notes / agent-log get their own URLs"
-state: closed
+status: done
 ---
 
 Today every panel on the detail page lives under one URL (`/<base>/<issue-id>`) with a hash for the active panel (`#subtask-foo`, `#note-bar`, `#log-baz`). Overview ↔ Comprehensive is a filter between two views of the same data — fine as hash. But subtasks / notes / agent-logs are **distinct documents**; they should be real pages.

@@ -30,11 +30,11 @@ interface Props {
 const { issue, vocabulary, baseUrl } = Astro.props;
 const { meta } = issue;
 
-const subtaskDone = issue.subtasks.filter((s) => TERMINAL.includes(s.state)).length;
-const subtaskReview = issue.subtasks.filter((s) => s.state === 'review').length;
-const openCount = issue.subtasks.filter((s) => s.state === 'open').length;
-const closedCount = issue.subtasks.filter((s) => s.state === 'closed').length;
-const cancelledCount = issue.subtasks.filter((s) => s.state === 'cancelled').length;
+const subtaskDone = issue.subtasks.filter((s) => TERMINAL.includes(s.status)).length;
+const subtaskReview = issue.subtasks.filter((s) => s.category === 'review').length;
+const notStartedCount = issue.subtasks.filter((s) => s.category === 'not-started').length;
+const inProgressCount = issue.subtasks.filter((s) => s.category === 'in-progress').length;
+const closedCount = subtaskDone;
 
 const sortedSubtasks = sortSubtasksByState(issue.subtasks);
 const terminalStartIdx = terminalStartIndex(sortedSubtasks);
@@ -109,10 +109,10 @@ const sortedSubtaskDocs = sortedSubtasks.map((s) => {
 
     <Comprehensive
       sortedSubtaskDocs={sortedSubtaskDocs}
-      subtaskReview={subtaskReview}
-      openCount={openCount}
+      reviewCount={subtaskReview}
+      inProgressCount={inProgressCount}
+      notStartedCount={notStartedCount}
       closedCount={closedCount}
-      cancelledCount={cancelledCount}
       statusColors={statusColors}
     />
   </main>

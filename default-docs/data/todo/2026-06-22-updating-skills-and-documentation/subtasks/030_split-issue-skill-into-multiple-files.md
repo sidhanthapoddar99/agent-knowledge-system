@@ -1,6 +1,6 @@
 ---
 title: Split the issue skill reference into multiple files
-state: closed
+status: done
 ---
 
 `references/layouts/issue-layout.md` is ~586 lines across 10 sections (§0–§9). When the

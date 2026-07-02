@@ -1,6 +1,6 @@
 ---
 title: Post-completion consistency sweep — skills, docs, and guide vs shipped reality
-state: open
+status: open
 ---
 
 After the implementation subtasks (03–07) have all landed, do one final

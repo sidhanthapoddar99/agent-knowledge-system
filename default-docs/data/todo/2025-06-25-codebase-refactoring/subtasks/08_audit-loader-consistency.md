@@ -1,6 +1,6 @@
 ---
 title: "Audit loaders for consistency (decomposition pass)"
-state: closed
+status: done
 ---
 
 **What it meant.** The original umbrella task was "Audit *and refactor* loaders for consistency." This subtask captures the **audit** half — the pass that inspects `astro-doc-code/src/loaders/` and turns "make it consistent" into concrete, trackable work.

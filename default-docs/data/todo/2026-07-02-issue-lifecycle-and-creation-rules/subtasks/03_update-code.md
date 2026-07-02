@@ -1,6 +1,6 @@
 ---
 title: Update code for the new states (frontend + backend)
-state: open
+status: review
 ---
 
 Implement `notes/01_lifecycle-vocabulary.md` end-to-end. **Coordinate with subtask

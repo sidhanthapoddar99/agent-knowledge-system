@@ -1,6 +1,6 @@
 ---
 title: "Drop `due` from the tracker (clean removal — no trace)"
-state: closed
+status: done
 ---
 
 - [x] **Relax validator first.** `docs-check-section` no longer requires / warns on `due`.

@@ -1,6 +1,6 @@
 ---
 title: "Documentation & skills (split & moved)"
-state: closed
+status: done
 ---
 
 > **✅ Closed — work split and relocated.**

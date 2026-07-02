@@ -1,6 +1,6 @@
 ---
 title: Validator — 2–5 digit rule + numeric-value collision key
-state: closed
+status: done
 ---
 
 In `scripts/docs/check.mjs`:

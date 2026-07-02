@@ -1,6 +1,6 @@
 ---
 title: "Wire the orphaned commands (issues check + skill-links)"
-state: closed
+status: done
 ---
 
 Two scripts ship with no command name. `issues/check.mjs` is the real tracker validator — its absence is why `docs-check-section` gets misused on the tracker and floods false positives.

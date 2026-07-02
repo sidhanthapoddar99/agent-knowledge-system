@@ -1,6 +1,6 @@
 ---
 title: "Tabs — multiple open files, close, reorder"
-state: open
+status: open
 ---
 
 ## Tab bar

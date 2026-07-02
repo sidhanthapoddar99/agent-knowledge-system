@@ -25,7 +25,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
-import { resolveTracker, listIssueFolders, readVocabulary, parseArgs, printHelp } from './_lib.mjs';
+import { resolveTracker, listIssueFolders, readVocabulary, parseArgs, printHelp, STATUSES, TERMINAL_STATUSES, normalizeStatus, LEGACY_STATUS_MAP } from './_lib.mjs';
 import { readJsonChecked, reportAndExit } from '../_check-lib.mjs';
 
 const args = parseArgs(process.argv.slice(2));
@@ -62,7 +62,7 @@ const ISSUE_SETTINGS_KEYS = new Set([
 ]);
 const TRACKER_ROOT_KEYS = new Set(['label', 'fields', 'authors', 'views', 'draft']);
 const TRACKER_FIELD_KEYS = new Set(['status', 'priority', 'component', 'labels']);
-const SUBTASK_FM_KEYS = new Set(['title', 'state', 'sidebar_label']);
+const SUBTASK_FM_KEYS = new Set(['title', 'status', 'state', 'sidebar_label']);
 const NOTE_FM_KEYS = new Set([
   'title', 'description', 'sidebar_label', 'author', 'date', 'created', 'tags',
   'color',
@@ -117,7 +117,10 @@ const vocab = readVocabulary(tracker);
 if (!vocab || !vocab.fields) {
   errors.push(`<root>/settings.json: missing or no \`fields\` block (vocabulary)`);
 }
-const validStatuses = vocab?.fields?.status?.values || ['open', 'review', 'closed', 'cancelled'];
+// Statuses are fixed in framework code (mirrored in _lib.mjs) — a tracker can
+// no longer define its own. `settings.json` may still list them for reference
+// but they are not the source of validity.
+const validStatuses = STATUSES;
 const validPriorities = vocab?.fields?.priority?.values || [];
 const validComponents = vocab?.fields?.component?.values || [];
 const validLabels = vocab?.fields?.labels?.values || [];
@@ -127,7 +130,7 @@ reportDrift('<root>/settings.json', unknownKeys(vocab, TRACKER_ROOT_KEYS), TRACK
 reportDrift('<root>/settings.json (fields)', unknownKeys(vocab?.fields, TRACKER_FIELD_KEYS), TRACKER_FIELD_KEYS);
 
 const FOLDER_PATTERN = /^(\d{4}-\d{2}-\d{2})-([a-z0-9][a-z0-9-]*)$/;
-const VALID_SUBTASK_STATES = ['open', 'review', 'closed', 'cancelled'];
+const VALID_SUBTASK_STATES = STATUSES;
 
 // 2. Walk each issue folder
 const allEntries = fs.readdirSync(tracker, { withFileTypes: true });
@@ -155,8 +158,11 @@ for (const entry of issueFolders) {
 
   if (!meta.title) errors.push(`${id}/settings.json: missing \`title\``);
   if (!meta.status) errors.push(`${id}/settings.json: missing \`status\``);
+  else if (LEGACY_STATUS_MAP[meta.status]) {
+    warnings.push(`${id}/settings.json: legacy status \`${meta.status}\` — run the state→status migration (→ ${LEGACY_STATUS_MAP[meta.status]})`);
+  }
   else if (!validStatuses.includes(meta.status)) {
-    errors.push(`${id}/settings.json: status \`${meta.status}\` not in vocabulary (${validStatuses.join('|')})`);
+    errors.push(`${id}/settings.json: status \`${meta.status}\` not in the fixed vocabulary (${validStatuses.join('|')})`);
   }
   if (meta.priority && validPriorities.length && !validPriorities.includes(meta.priority)) {
     errors.push(`${id}/settings.json: priority \`${meta.priority}\` not in vocabulary`);
@@ -259,11 +265,18 @@ for (const entry of issueFolders) {
           const abs = path.join(absDir, e.name);
           try {
             const fm = matter(fs.readFileSync(abs, 'utf-8')).data || {};
-            if (fm.state !== undefined && !VALID_SUBTASK_STATES.includes(fm.state)) {
-              errors.push(`${id}/subtasks/${rel}: invalid state \`${fm.state}\``);
+            // Canonical field is `status:`; `state:` is the legacy name.
+            const rawStatus = fm.status ?? fm.state;
+            if (fm.status === undefined && fm.state !== undefined) {
+              warnings.push(`${id}/subtasks/${rel}: legacy \`state:\` field — run the state→status migration to rename it to \`status:\``);
             }
-            if (fm.state === undefined) {
-              warnings.push(`${id}/subtasks/${rel}: no \`state:\` — defaults to open`);
+            if (rawStatus !== undefined && LEGACY_STATUS_MAP[rawStatus]) {
+              warnings.push(`${id}/subtasks/${rel}: legacy status \`${rawStatus}\` — run the migration (→ ${LEGACY_STATUS_MAP[rawStatus]})`);
+            } else if (rawStatus !== undefined && !VALID_SUBTASK_STATES.includes(rawStatus)) {
+              errors.push(`${id}/subtasks/${rel}: invalid status \`${rawStatus}\` (fixed vocabulary: ${VALID_SUBTASK_STATES.join('|')})`);
+            }
+            if (rawStatus === undefined) {
+              warnings.push(`${id}/subtasks/${rel}: no \`status:\` — defaults to open`);
             }
             reportDrift(`${id}/subtasks/${rel}`, unknownKeys(fm, SUBTASK_FM_KEYS), SUBTASK_FM_KEYS);
           } catch (err) {
@@ -281,7 +294,7 @@ for (const entry of issueFolders) {
   const assignees = Array.isArray(meta.assignees) ? meta.assignees : [];
   const AI_AGENTS = new Set(['claude', 'gpt', 'gpt-4', 'gpt-5', 'codex', 'cursor', 'aider']);
   const hasAIAssignee = assignees.some((a) => AI_AGENTS.has(String(a).toLowerCase()));
-  if (hasAIAssignee && subtaskCount === 0 && !['closed', 'cancelled'].includes(meta.status)) {
+  if (hasAIAssignee && subtaskCount === 0 && !TERMINAL_STATUSES.includes(normalizeStatus(meta.status))) {
     warnings.push(`${id}/: AI-handoff-bound issue has no subtasks — consider adding at least one as the agent's handoff anchor`);
   }
 

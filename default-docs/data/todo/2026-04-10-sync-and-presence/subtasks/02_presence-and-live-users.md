@@ -1,6 +1,6 @@
 ---
 title: "Presence cursors & live users"
-state: open
+status: open
 ---
 
 ## Cursors in CM6

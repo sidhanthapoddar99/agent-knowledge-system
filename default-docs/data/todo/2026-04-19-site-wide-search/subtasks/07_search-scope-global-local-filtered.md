@@ -1,6 +1,6 @@
 ---
 title: "Search scope — global / section-local / filter-scoped"
-state: open
+status: open
 ---
 
 The same search box behaves differently depending on which page the user is on. One engine, three scope modes.

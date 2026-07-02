@@ -5,26 +5,27 @@
  * sidebar, subtasks index), and POSTs to /__editor/subtask-toggle so the
  * change persists to settings.json. Failed POSTs roll back the UI.
  */
-import { CYCLE, TERMINAL, readIcons, type SubtaskState } from './types';
+import { CYCLE, TERMINAL, readIcons, type IssueStatus } from './types';
+import { categoryOf, isValidStatus } from '@loaders/issue-status';
 
 const ICONS = readIcons();
 
-async function postState(filePath: string, state: SubtaskState) {
+async function postState(filePath: string, status: IssueStatus) {
   const res = await fetch('/__editor/subtask-toggle', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ filePath, state }),
+    body: JSON.stringify({ filePath, status }),
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
 }
 
-function setStateOn(el: HTMLElement | null, state: SubtaskState) {
+function setStateOn(el: HTMLElement | null, state: IssueStatus) {
   if (!el) return;
   el.dataset.state = state;
-  el.className = el.className.replace(/\bstate-(open|review|closed|cancelled)\b/g, '').trim() + ` state-${state}`;
+  el.className = el.className.replace(/\bstate-[a-z-]+\b/g, '').trim() + ` state-${state}`;
 }
 
-function applySubtaskState(key: string, state: SubtaskState) {
+function applySubtaskState(key: string, state: IssueStatus) {
   const isDone = TERMINAL.includes(state);
 
   const overviewItem = document.querySelector<HTMLElement>(
@@ -83,14 +84,14 @@ function applySubtaskState(key: string, state: SubtaskState) {
 function updateOverviewProgress() {
   const items = document.querySelectorAll<HTMLElement>('.issue-overview-subtasks__item');
   if (!items.length) return;
-  let closed = 0, cancelled = 0, review = 0;
+  let doneN = 0, dropped = 0, review = 0;
   items.forEach((i) => {
-    const s = i.dataset.state as SubtaskState;
-    if (s === 'closed') closed++;
-    else if (s === 'cancelled') cancelled++;
-    else if (s === 'review') review++;
+    const s = i.dataset.state || '';
+    if (s === 'done') doneN++;
+    else if (s === 'dropped') dropped++;
+    else if (isValidStatus(s) && categoryOf(s) === 'review') review++;
   });
-  const done = closed + cancelled;
+  const done = doneN + dropped;
   const total = items.length;
   const count = document.getElementById('overview-subtasks-count');
   if (count) count.textContent = `${done} / ${total}`;
@@ -98,35 +99,36 @@ function updateOverviewProgress() {
   if (bar) {
     const pct = (n: number) => `${total ? (n / total) * 100 : 0}%`;
     const segs = bar.querySelectorAll<HTMLElement>('.issue-overview-subtasks__seg');
-    if (segs[0]) segs[0].style.width = pct(closed);
-    if (segs[1]) segs[1].style.width = pct(cancelled);
+    if (segs[0]) segs[0].style.width = pct(doneN);
+    if (segs[1]) segs[1].style.width = pct(dropped);
     if (segs[2]) segs[2].style.width = pct(review);
   }
 }
 
 function updateComprehensiveTabCounts() {
   const items = document.querySelectorAll<HTMLElement>('.issue-comprehensive__item');
-  const counts: Record<string, number> = { open: 0, review: 0, closed: 0, cancelled: 0 };
+  // Comprehensive tabs are the four lifecycle categories.
+  const counts: Record<string, number> = { 'in-progress': 0, review: 0, 'not-started': 0, closed: 0 };
   items.forEach((i) => {
     const s = i.dataset.state || '';
-    if (s in counts) counts[s]++;
+    if (isValidStatus(s)) counts[categoryOf(s)]++;
   });
   const total = items.length;
   const set = (key: string, n: number) => {
     const el = document.querySelector<HTMLElement>(`[data-comprehensive-tab="${key}"] .issue-comprehensive__tab-count`);
     if (el) el.textContent = String(n);
   };
-  set('open', counts.open);
+  set('in-progress', counts['in-progress']);
   set('review', counts.review);
+  set('not-started', counts['not-started']);
   set('closed', counts.closed);
-  set('cancelled', counts.cancelled);
   set('all', total);
 }
 
 function updateSidebarSubtasksCount() {
   const items = document.querySelectorAll<HTMLElement>('.issue-sidebar__item.is-subtask');
   if (!items.length) return;
-  const done = Array.from(items).filter((i) => TERMINAL.includes(i.dataset.state as SubtaskState)).length;
+  const done = Array.from(items).filter((i) => TERMINAL.includes(i.dataset.state as IssueStatus)).length;
   const review = Array.from(items).filter((i) => i.dataset.state === 'review').length;
   const heading = document.getElementById('sidebar-subtasks-count');
   if (heading) {
@@ -145,12 +147,12 @@ function updateSidebarSubtasksCount() {
     const details = span.closest('details');
     if (!details) return;
     const inner = details.querySelectorAll<HTMLElement>('.issue-sidebar__item.is-subtask');
-    const innerDone = Array.from(inner).filter((i) => TERMINAL.includes(i.dataset.state as SubtaskState)).length;
+    const innerDone = Array.from(inner).filter((i) => TERMINAL.includes(i.dataset.state as IssueStatus)).length;
     span.textContent = `${innerDone}/${inner.length}`;
   });
 }
 
-async function handleStateChange(key: string, filePath: string, nextState: SubtaskState, prevState: SubtaskState) {
+async function handleStateChange(key: string, filePath: string, nextState: IssueStatus, prevState: IssueStatus) {
   applySubtaskState(key, nextState);
   try {
     await postState(filePath, nextState);
@@ -167,7 +169,7 @@ export function wireStateButton(selector: string, itemSelector: string) {
       e.stopPropagation();
       const item = btn.closest<HTMLElement>(itemSelector);
       if (!item) return;
-      const prev = (btn.dataset.state || 'open') as SubtaskState;
+      const prev = (btn.dataset.state || 'open') as IssueStatus;
       const next = CYCLE[(CYCLE.indexOf(prev) + 1) % CYCLE.length];
       handleStateChange(item.dataset.subtaskKey!, item.dataset.file!, next, prev);
     });

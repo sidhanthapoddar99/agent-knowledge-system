@@ -42,7 +42,7 @@ export function presetToParams(preset: PresetView, currentStateTab: string): URL
     const vals = filters[f];
     if (vals && vals.length) params.set(f, vals.join(','));
   }
-  if (currentStateTab !== 'open') params.set('state', currentStateTab);
+  if (currentStateTab !== 'active') params.set('state', currentStateTab);
   if (preset.group) params.set('group', preset.group);
   if (preset.sort && preset.dir) {
     params.set('sort', preset.sort);

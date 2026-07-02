@@ -1,6 +1,6 @@
 ---
 title: "`docs:writing` skill"
-state: closed
+status: done
 ---
 
 Cross-cutting authoring skill that covers markdown content itself, independent of content type. Supersedes / expands the existing `docs-guide`.

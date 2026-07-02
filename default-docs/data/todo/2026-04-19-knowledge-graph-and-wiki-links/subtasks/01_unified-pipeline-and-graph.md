@@ -1,6 +1,6 @@
 ---
 title: "Unified parser pipeline + graph indexer + queries"
-state: open
+status: open
 ---
 
 The foundation. Collapse per-parser wiring into one shared pipeline; build the graph on top; expose queries; cache it.

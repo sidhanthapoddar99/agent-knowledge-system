@@ -1,6 +1,6 @@
 ---
 title: "Spell check"
-state: open
+status: open
 ---
 
 ## Tasks

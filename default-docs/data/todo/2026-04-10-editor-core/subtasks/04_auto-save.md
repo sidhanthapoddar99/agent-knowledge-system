@@ -1,6 +1,6 @@
 ---
 title: "Auto-save timer"
-state: open
+status: open
 ---
 
 ## Tasks

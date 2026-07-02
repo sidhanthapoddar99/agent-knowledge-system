@@ -4,7 +4,7 @@
  * one value applied uniformly across all groups. Only pagination is
  * actually per-group (each group has its own page cursor).
  */
-import { needsReview, rowMatchesStateTab, sortValue } from './filters';
+import { rowMatchesStateTab, sortValue } from './filters';
 import type { Config, FilterState, GroupSubState, StateTab } from './types';
 
 /** In-memory state per group value. Reset when the group dimension changes. */
@@ -51,16 +51,14 @@ export function buildGroupSection(
 ): HTMLElement {
   const sub = getGroupSub(value);
 
-  // Count per state tab within this group (global filters already applied).
-  const counts: Record<StateTab, number> = { open: 0, review: 0, closed: 0, cancelled: 0, all: 0 };
+  // Count per category tab within this group (global filters already applied).
+  const counts: Record<StateTab, number> = {
+    active: 0, 'in-progress': 0, review: 0, 'not-started': 0, closed: 0, all: 0,
+  };
   for (const r of groupRows) {
     counts.all++;
-    if (needsReview(r)) counts.review++;
-    else {
-      const s = r.dataset.status || '';
-      if (s === 'closed') counts.closed++;
-      else if (s === 'cancelled') counts.cancelled++;
-      else counts.open++;
+    for (const tab of ['active', 'in-progress', 'review', 'not-started', 'closed'] as StateTab[]) {
+      if (rowMatchesStateTab(r, tab)) counts[tab]++;
     }
   }
 

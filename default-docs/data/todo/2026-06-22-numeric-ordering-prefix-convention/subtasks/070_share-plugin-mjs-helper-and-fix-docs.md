@@ -1,6 +1,6 @@
 ---
 title: Share the grammar in the plugin (mjs) and reconcile the reference docs
-state: closed
+status: done
 ---
 
 The plugin can't import the framework's TS, so it had its own copies of the prefix

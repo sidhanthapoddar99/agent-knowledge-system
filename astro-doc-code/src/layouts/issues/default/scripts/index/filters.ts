@@ -4,6 +4,13 @@
  */
 import { CLOSED_STATUSES, FIELDS, MULTI_FIELDS, PSEUDO_VALUES } from './types';
 import type { Config, FilterState, StateTab } from './types';
+import { categoryOf, isValidStatus } from '@loaders/issue-status';
+
+/** Category a row's status rolls up to (`''` when the status is unknown). */
+function rowCategory(row: HTMLElement): string {
+  const status = row.dataset.status || '';
+  return isValidStatus(status) ? categoryOf(status) : '';
+}
 
 /**
  * OR-match a row's values for one field against the user's selected set,
@@ -29,20 +36,25 @@ function rowFieldMatches(row: HTMLElement, field: string, selected: Set<string>)
 }
 
 export function needsReview(row: HTMLElement): boolean {
-  const status = row.dataset.status || '';
-  if (status === 'review') return true;
-  if (CLOSED_STATUSES.has(status)) return false;
+  const cat = rowCategory(row);
+  // The issue's own status is in the Review category (review | input-needed)…
+  if (cat === 'review') return true;
+  // …or it's still active (not closed) and carries a review-debt subtask.
+  if (cat === 'closed') return false;
   return row.dataset.hasReviewSubtask === '1';
 }
 
 export function rowMatchesStateTab(row: HTMLElement, tab: StateTab): boolean {
   if (tab === 'all') return true;
-  const status = row.dataset.status || '';
-  // Review covers explicit status=review AND open issues with any subtask in review.
+  const cat = rowCategory(row);
+  // Active = everything not in the Closed category (the default view).
+  if (tab === 'active') return cat !== 'closed';
+  // Review covers the Review category AND active issues with a review-debt subtask.
   if (tab === 'review') return needsReview(row);
-  // Open = not closed/cancelled and not already surfaced under Review.
-  if (tab === 'open') return !CLOSED_STATUSES.has(status) && !needsReview(row);
-  return status === tab;
+  // Closed is never promoted elsewhere; the active categories yield their
+  // review-debt rows to the Review tab so an item shows under exactly one tab.
+  if (tab === 'closed') return cat === 'closed';
+  return cat === tab && !needsReview(row);
 }
 
 /** Read a row's values for a field. Multi-valued fields (labels, component)

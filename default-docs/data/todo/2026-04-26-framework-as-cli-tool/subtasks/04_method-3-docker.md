@@ -1,6 +1,6 @@
 ---
 title: "Method 3 — Docker (Claude skill generates Dockerfile + docker-compose + nginx)"
-state: cancelled
+status: dropped
 ---
 
 Method 3: run or deploy the framework via Docker. A Claude skill prompts the user for their scenario (dev-in-container vs production-deploy, plus topology / mode / domain) and generates `Dockerfile` + `docker-compose.yml` + `nginx.conf`. The same artifacts also serve as a documented hand-rollable pattern for users who'd rather copy-paste than run a skill.

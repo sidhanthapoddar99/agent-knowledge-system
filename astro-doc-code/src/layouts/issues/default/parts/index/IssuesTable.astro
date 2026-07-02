@@ -68,7 +68,7 @@ const VISIBLE_AVATARS = 3;
             class="issues-table__row"
             data-issue
             data-status={issue.meta.status}
-            data-has-review-subtask={issue.subtasks.some((s) => s.state === 'review') ? '1' : '0'}
+            data-has-review-subtask={issue.subtasks.some((s) => s.category === 'review') ? '1' : '0'}
             data-priority={issue.meta.priority}
             data-component={issue.meta.component.join(' ')}
             data-labels={issue.meta.labels.join(' ')}
@@ -115,20 +115,20 @@ const VISIBLE_AVATARS = 3;
             <td class="issues-table__subtasks-cell">
               {issue.subtasks.length > 0 ? (() => {
                 const total = issue.subtasks.length;
-                const closed = issue.subtasks.filter((s) => s.state === 'closed').length;
-                const cancelled = issue.subtasks.filter((s) => s.state === 'cancelled').length;
-                const review = issue.subtasks.filter((s) => s.state === 'review').length;
-                const open = total - closed - cancelled - review;
-                const done = closed + cancelled;
+                const doneN = issue.subtasks.filter((s) => s.status === 'done').length;
+                const dropped = issue.subtasks.filter((s) => s.status === 'dropped').length;
+                const review = issue.subtasks.filter((s) => s.category === 'review').length;
+                const active = total - doneN - dropped - review;
+                const done = doneN + dropped;
                 const pct = (n: number) => `${(n / total) * 100}%`;
-                const tip = `${closed} closed · ${review} review · ${cancelled} cancelled · ${open} open`;
+                const tip = `${doneN} done · ${review} review · ${dropped} dropped · ${active} active`;
                 return (
                   <div class="issues-table__progress" title={tip}>
                     <div class="issues-table__progress-label">{done} / {total} done</div>
                     <div class="issues-table__progress-bar">
-                      <div class="issues-table__progress-seg issues-table__progress-seg--closed" style={`width: ${pct(closed)}`}></div>
+                      <div class="issues-table__progress-seg issues-table__progress-seg--closed" style={`width: ${pct(doneN)}`}></div>
                       <div class="issues-table__progress-seg issues-table__progress-seg--review" style={`width: ${pct(review)}`}></div>
-                      <div class="issues-table__progress-seg issues-table__progress-seg--cancelled" style={`width: ${pct(cancelled)}`}></div>
+                      <div class="issues-table__progress-seg issues-table__progress-seg--cancelled" style={`width: ${pct(dropped)}`}></div>
                     </div>
                   </div>
                 );

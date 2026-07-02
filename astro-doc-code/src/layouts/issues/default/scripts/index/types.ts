@@ -3,8 +3,12 @@
  * Split out so filters/groups/presets modules can import them without
  * reaching into client.ts.
  */
+import { TERMINAL_STATUSES } from '@loaders/issue-status';
 
-export type StateTab = 'open' | 'review' | 'closed' | 'cancelled' | 'all';
+/** The list filter tabs are the four lifecycle CATEGORIES, plus a default
+ *  "active" meta-tab (everything not Closed — preserves the old "closed hidden
+ *  by default" UX) and "all". The individual status shows as the row badge. */
+export type StateTab = 'active' | 'in-progress' | 'review' | 'not-started' | 'closed' | 'all';
 
 export type ViewMode = 'cards' | 'table';
 
@@ -49,7 +53,9 @@ export const FIELDS = ['priority', 'component', 'labels', 'assignees'] as const;
 /** Fields that hold multiple values per row — encoded in the dataset as
  *  space-joined strings and split back to arrays in filter / group code. */
 export const MULTI_FIELDS = new Set<string>(['labels', 'component', 'assignees']);
-export const CLOSED_STATUSES = new Set(['closed', 'cancelled']);
+/** Statuses in the terminal (Closed) category — derived from the single
+ *  framework vocabulary so it never drifts from the loader. */
+export const CLOSED_STATUSES = new Set<string>(TERMINAL_STATUSES);
 
 /** Per-field pseudo-values that don't appear in the row's dataset but stand
  *  for a derived condition. Currently only `assignees` uses these:

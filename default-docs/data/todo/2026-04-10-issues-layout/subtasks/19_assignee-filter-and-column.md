@@ -1,6 +1,6 @@
 ---
 title: "Assignee filter · assignee column · in-progress semantics"
-state: closed
+status: done
 ---
 
 Add `assignee` as a first-class filter dimension in the UI, surface assignees as a table column, and codify the **"in-progress = has assignee"** model across the docs and the skill.

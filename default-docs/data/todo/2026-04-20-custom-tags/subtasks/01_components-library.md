@@ -1,6 +1,6 @@
 ---
 title: "UI components library"
-state: open
+status: open
 ---
 
 Absorbed from `2025-06-25-components/subtasks/03_components-library.md` on 2026-04-20. Scope: the built-in custom tags (callout / tabs / collapsible) and related UI primitives (badges, buttons), plus the showcase / live-examples / theme-testing work.

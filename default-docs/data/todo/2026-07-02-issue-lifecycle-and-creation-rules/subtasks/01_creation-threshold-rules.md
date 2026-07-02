@@ -1,6 +1,6 @@
 ---
 title: Decide the issue vs subtask vs brainstorm threshold rules
-state: review
+status: review
 ---
 
 Write the operating rules for *when the ceremony of a full issue folder is earned*:

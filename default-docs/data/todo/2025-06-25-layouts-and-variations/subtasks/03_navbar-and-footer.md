@@ -1,6 +1,6 @@
 ---
 title: "Navbar & footer variations"
-state: open
+status: open
 ---
 
 ## Done

@@ -1,6 +1,6 @@
 ---
 title: "Standardize error-handling patterns across loaders"
-state: open
+status: open
 ---
 
 **What it means.** The loaders currently surface failures three different ways, with no consistent rule for which to use:

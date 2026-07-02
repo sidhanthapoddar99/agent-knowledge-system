@@ -1,6 +1,6 @@
 ---
 title: "Content enhancements"
-state: open
+status: open
 ---
 
 ## Interactive code blocks

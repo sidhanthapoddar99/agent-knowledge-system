@@ -1,6 +1,6 @@
 ---
 title: "Notes / subtasks / agent-log: TOC instead of MetaPanel"
-state: closed
+status: done
 ---
 
 The right-side MetaPanel is about the parent issue — it doesn't add value on a sub-page.

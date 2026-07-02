@@ -1,6 +1,6 @@
 ---
 title: "Build a self-test / smoke harness for the toolkit"
-state: closed
+status: done
 ---
 
 The test backbone the loop verifies against. A single runnable harness that exercises every command's contract — so each iteration can prove it didn't regress.

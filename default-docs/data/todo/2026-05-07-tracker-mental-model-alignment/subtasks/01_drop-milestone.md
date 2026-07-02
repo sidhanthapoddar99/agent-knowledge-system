@@ -1,6 +1,6 @@
 ---
 title: "Drop `milestone` from the tracker (clean removal — no trace)"
-state: closed
+status: done
 ---
 
 - [x] **Relax validator first.** Update `plugins/documentation-guide/scripts/issues/check.mjs` (and any helpers in `_lib.mjs`) so a missing `milestone` field is OK — neither required nor warned. This commit lands on its own and unblocks all the steps below.

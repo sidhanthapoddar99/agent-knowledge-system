@@ -4,7 +4,7 @@
  * Component-specific UI + styles live under parts/index/ and scripts/index/;
  * page-frame styles live in styles/index.css.
  */
-import { loadIssues } from '@loaders/issues';
+import { loadIssues, STATUSES, categoryOf } from '@loaders/issues';
 import './styles/index.css';
 import './styles/groups.css';
 import ViewToggle from './parts/index/ViewToggle.astro';
@@ -60,23 +60,24 @@ function searchBlob(issue: typeof issues[number]): string {
     .toLowerCase();
 }
 
-const CLOSED_STATUSES = new Set(['closed', 'cancelled']);
-
 // Review tab covers two cases:
-//   1. Issue explicitly in status=review
-//   2. Issue still open but has at least one subtask in review — surface the
-//      review debt to the human without forcing the issue status to flip.
+//   1. Issue's own status is in the Review category (review | input-needed)
+//   2. Issue still active but has ≥1 subtask in the Review category — surface
+//      the review debt to the human without forcing the issue status to flip.
+function issueCategory(issue: typeof issues[number]): string {
+  return categoryOf(issue.meta.status);
+}
 function issueNeedsReview(issue: typeof issues[number]): boolean {
-  if (issue.meta.status === 'review') return true;
-  if (!CLOSED_STATUSES.has(issue.meta.status)) {
-    return issue.subtasks.some((s) => s.state === 'review');
-  }
-  return false;
+  const cat = issueCategory(issue);
+  if (cat === 'review') return true;
+  if (cat === 'closed') return false;
+  return issue.subtasks.some((s) => s.category === 'review');
 }
 const reviewCount = issues.filter(issueNeedsReview).length;
-const openCount = issues.filter((i) => !CLOSED_STATUSES.has(i.meta.status) && !issueNeedsReview(i)).length;
-const closedCount = issues.filter((i) => i.meta.status === 'closed').length;
-const cancelledCount = issues.filter((i) => i.meta.status === 'cancelled').length;
+const inProgressCount = issues.filter((i) => issueCategory(i) === 'in-progress' && !issueNeedsReview(i)).length;
+const notStartedCount = issues.filter((i) => issueCategory(i) === 'not-started' && !issueNeedsReview(i)).length;
+const closedCount = issues.filter((i) => issueCategory(i) === 'closed').length;
+const activeCount = issues.filter((i) => issueCategory(i) !== 'closed').length;
 
 // Group-by only offers dimensions that actually have a vocabulary —
 // otherwise there's nothing to group under. `status` intentionally
@@ -94,7 +95,7 @@ const presets = Array.isArray(vocabulary.views) ? vocabulary.views : [];
 // Server-side config passed to the client script via a JSON script tag
 const clientConfig = {
   priorityOrder: vocabulary.fields?.priority?.values ?? [],
-  statusOrder: vocabulary.fields?.status?.values ?? [],
+  statusOrder: [...STATUSES],
   colorsByField: Object.fromEntries(filterGroups.map((g) => [g.key, g.colors])),
   groupDimensions,
   groupOrderByField,
@@ -120,7 +121,7 @@ const clientConfig = {
 
   <PresetStrip presets={presets} />
 
-  <StateTabs openCount={openCount} reviewCount={reviewCount} closedCount={closedCount} cancelledCount={cancelledCount} totalCount={issues.length} />
+  <StateTabs activeCount={activeCount} inProgressCount={inProgressCount} reviewCount={reviewCount} notStartedCount={notStartedCount} closedCount={closedCount} totalCount={issues.length} />
 
   {issues.length > 0 ? (
     <>

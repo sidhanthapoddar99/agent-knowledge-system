@@ -1,6 +1,6 @@
 ---
 title: "Update Claude skills — authoring + graph queries"
-state: open
+status: open
 ---
 
 Teach both authoring skills and graph-query skills, so humans and AI agents both benefit from the new reference layer.

@@ -1,6 +1,6 @@
 ---
 title: "Slash commands"
-state: open
+status: open
 ---
 
 ## Tasks

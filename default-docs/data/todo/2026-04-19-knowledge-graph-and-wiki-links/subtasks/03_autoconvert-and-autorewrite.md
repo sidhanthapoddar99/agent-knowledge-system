@@ -1,6 +1,6 @@
 ---
 title: "Autoconvert shorthand → URLs; autorewrite on rename"
-state: open
+status: open
 ---
 
 Two directions of automation wired through the same registry.

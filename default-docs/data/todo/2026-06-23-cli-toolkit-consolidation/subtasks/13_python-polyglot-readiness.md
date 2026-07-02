@@ -1,6 +1,6 @@
 ---
 title: "Make the dispatcher polyglot-ready (future Python)"
-state: closed
+status: done
 ---
 
 Roadmap-level: keep the door open for Python scripts without forking the contract. The contract must live in the **manifest + a written spec**, not in JS helpers.

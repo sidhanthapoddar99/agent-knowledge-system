@@ -1,6 +1,6 @@
 ---
 title: "Sync docs + verify code examples match the refactored code"
-state: open
+status: open
 ---
 
 **What it means.** After the refactor lands, the developer documentation (`data/dev-docs/`, especially the architecture + loaders pages) must describe the *new* module layout, and every code snippet in the docs must still match reality — file paths, function signatures, import lines.

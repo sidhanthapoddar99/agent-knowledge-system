@@ -1,7 +1,7 @@
 {
   "title": "Tracker mental-model alignment: drop milestone + due, codify philosophy, surface priority",
   "description": "Drop project-management residue (`milestone`, `due`) from the issue tracker schema. Make priority a first-class index column. Codify the tracker's actual purpose — comprehensive memory of thought-work for AI-augmented development, not project planning — in user-guide, plugin skill, and CLAUDE.md so the dropped fields don't get re-introduced. Includes best-practice rules: 1 component per issue (multiple = exception), ≥1 subtask for AI-handoff-bound issues.",
-  "status": "closed",
+  "status": "done",
   "priority": "medium",
   "component": ["layout-issues"],
   "labels": ["refactor", "docs"],

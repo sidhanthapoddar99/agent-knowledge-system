@@ -1,6 +1,6 @@
 ---
 title: "Add JSDoc comments to public APIs"
-state: closed
+status: done
 ---
 
 **What it meant.** Every exported symbol in the loaders (`astro-doc-code/src/loaders/`) should carry a `/** … */` doc block describing its contract.

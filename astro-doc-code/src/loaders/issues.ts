@@ -38,11 +38,34 @@ import { createIssuesParser } from '../parsers/content-types/issues';
 import { getIssueDate } from './issue-dates';
 import { parseOrderPrefixLoose } from '../parsers/core/order-prefix';
 import { readSettings, statSettingsMtime } from './settings-file';
+import {
+  type IssueStatus,
+  type CategoryId,
+  categoryOf,
+  normalizeStatus,
+  unknownStatusMessage,
+} from './issue-status';
+
+// Re-export the lifecycle vocabulary so layouts / server helpers can import it
+// from the loader barrel as before.
+export {
+  STATUSES,
+  CATEGORIES,
+  DEFAULT_STATUS_COLORS,
+  TERMINAL_STATUSES,
+  REVIEW_STATUSES,
+  categoryOf,
+  isValidStatus,
+  isTerminalStatus,
+  type IssueStatus,
+  type CategoryId,
+} from './issue-status';
 
 export interface IssueMetadata {
   title: string;
   description?: string;
-  status: string;
+  /** Canonical lifecycle status (shared 7-value vocabulary with subtasks). */
+  status: IssueStatus;
   priority: string;
   /** Multi-select. Stored as `string[]` in memory; settings.json may write
    *  either `"component": "x"` (legacy single) or `"component": ["x", "y"]`
@@ -111,7 +134,8 @@ export interface IssueAgentLog {
   html: string;
 }
 
-export type SubtaskState = 'open' | 'review' | 'closed' | 'cancelled';
+/** @deprecated Use `IssueStatus`. Retained as an alias while call-sites migrate. */
+export type SubtaskState = IssueStatus;
 
 export interface IssueSubtask {
   /** Filename without extension, used as stable id within the issue */
@@ -120,8 +144,12 @@ export interface IssueSubtask {
   sequence: number | null;
   /** Display title (from frontmatter `title`, or derived from slug) */
   title: string;
-  /** Canonical 4-state status. Defaults to `open` when absent/invalid. */
-  state: SubtaskState;
+  /** Canonical lifecycle status (shared 7-value vocabulary with issues).
+   *  Read from frontmatter `status:` (legacy `state:` still tolerated with a
+   *  warning). Defaults to `open` when absent. */
+  status: IssueStatus;
+  /** Category the status rolls up to (derived, never stored on disk). */
+  category: CategoryId;
   /** Folder segments below `subtasks/` — 0/1/2 entries.
    *  `[]` for top-level, `["02_impl"]` for `subtasks/02_impl/01_foo.md`,
    *  `["02_impl", "03_polish"]` for `subtasks/02_impl/03_polish/01_foo.md`. */
@@ -335,6 +363,26 @@ function normalizeComponent(raw: unknown): string[] {
   return [];
 }
 
+/**
+ * Resolve a raw lifecycle value (issue `status` or subtask `status`/`state`)
+ * to a canonical status. Legacy values (`closed`/`cancelled`) are mapped with a
+ * one-line warning nudging migration; a value that is neither canonical nor
+ * legacy throws the hard, copy-pasteable "unknown status" error — statuses are
+ * fixed by the framework and cannot be invented per-tracker.
+ */
+function resolveStatus(raw: unknown, fileHint: string): IssueStatus {
+  const resolved = normalizeStatus(raw);
+  if (!resolved) {
+    throw new Error(unknownStatusMessage(String(raw), fileHint));
+  }
+  if (resolved.legacy) {
+    console.warn(
+      `[issues] "${fileHint}" uses legacy status "${String(raw)}" → mapped to "${resolved.status}". Run the state→status migration to update it in place.`,
+    );
+  }
+  return resolved.status;
+}
+
 /** Read a settings file, preferring a sibling `.jsonc` (comments/trailing commas). */
 function readJson<T>(filePath: string): T | null {
   return readSettings<T>(filePath);
@@ -487,6 +535,7 @@ async function loadIssueFolder(folderPath: string, dataPath: string): Promise<Is
     folderPath,
     meta: {
       ...meta,
+      status: resolveStatus(meta.status, path.relative(dataPath, settingsPath)),
       labels: Array.isArray(meta.labels) ? meta.labels : [],
       assignees: Array.isArray(meta.assignees) ? meta.assignees : [],
       component: normalizeComponent((meta as { component?: unknown }).component),
@@ -622,14 +671,20 @@ async function readSubtaskFile(
   const slug = name.replace(/\.md$/, '');
   const sequence = parseOrderPrefixLoose(slug).position;
   let title = slugToLabel(slug);
-  let state: SubtaskState = 'open';
+  let status: IssueStatus = 'open';
   try {
     const parsed = matter(fs.readFileSync(abs, 'utf-8'));
-    const fm = parsed.data as { title?: string; state?: string };
+    const fm = parsed.data as { title?: string; status?: string; state?: string };
     if (fm.title) title = fm.title;
-    if (fm.state === 'open' || fm.state === 'review' || fm.state === 'closed' || fm.state === 'cancelled') {
-      state = fm.state;
+    // Canonical field is `status:`; `state:` is the legacy name still tolerated
+    // (with a warning) until the state→status migration has swept every tracker.
+    const raw = fm.status ?? fm.state;
+    if (fm.status == null && fm.state != null) {
+      console.warn(
+        `[issues] "${path.relative(dataPath, abs)}" uses the legacy \`state:\` field — run the state→status migration to rename it to \`status:\`.`,
+      );
     }
+    status = resolveStatus(raw, path.relative(dataPath, abs));
   } catch {
     // malformed frontmatter — fall back to defaults
   }
@@ -638,7 +693,8 @@ async function readSubtaskFile(
     slug,
     sequence,
     title,
-    state,
+    status,
+    category: categoryOf(status),
     groupPath,
     filePath: abs,
     relativePath: path.relative(dataPath, abs),

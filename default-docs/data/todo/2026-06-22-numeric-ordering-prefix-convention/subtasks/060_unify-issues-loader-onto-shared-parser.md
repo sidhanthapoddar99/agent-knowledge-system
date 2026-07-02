@@ -1,6 +1,6 @@
 ---
 title: Unify the issue-tracker side onto the shared parser
-state: closed
+status: done
 ---
 
 Make "across docs & issues" literally true — the issue tracker now defers to the same

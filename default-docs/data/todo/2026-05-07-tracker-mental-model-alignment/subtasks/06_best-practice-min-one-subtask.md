@@ -1,6 +1,6 @@
 ---
 title: "Best-practice: ≥1 subtask per AI-handoff-bound issue"
-state: closed
+status: done
 ---
 
 - [x] Document the convention: any issue intended for AI execution should declare **at least one subtask**. The subtask is the handoff anchor — it gives the agent an explicit "did this happen yet?" checkbox and a place to record progress. Issues a human will resolve in five seconds don't need this.

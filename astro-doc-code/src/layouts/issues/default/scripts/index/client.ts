@@ -19,6 +19,7 @@ import {
 import {
   needsReview,
   rowMatchesExcluding,
+  rowMatchesStateTab,
   rowValues,
   sortValue,
   rowMatchesGlobal,
@@ -72,7 +73,7 @@ function loadFilterCache(): URLSearchParams | null {
         if (vals && vals.length) params.set(f, vals.join(','));
       }
     }
-    if (data.state && data.state !== 'open') params.set('state', data.state);
+    if (data.state && data.state !== 'active') params.set('state', data.state);
     if (data.group) params.set('group', data.group);
     if (data.sort && data.dir) {
       params.set('sort', data.sort);
@@ -105,10 +106,8 @@ function readConfig(): Config {
 function readState(): FilterState {
   const params = new URLSearchParams(location.search);
   const rawTab = params.get('state');
-  const tab: StateTab =
-    rawTab === 'review' || rawTab === 'closed' || rawTab === 'cancelled' || rawTab === 'all'
-      ? rawTab
-      : 'open';
+  const VALID_TABS: StateTab[] = ['active', 'in-progress', 'review', 'not-started', 'closed', 'all'];
+  const tab: StateTab = VALID_TABS.includes(rawTab as StateTab) ? (rawTab as StateTab) : 'active';
   const state: FilterState = {
     q: params.get('q') || '',
     fields: {},
@@ -132,7 +131,7 @@ function writeState(state: FilterState) {
     const vals = Array.from(state.fields[f]);
     if (vals.length > 0) params.set(f, vals.join(','));
   }
-  if (state.state !== 'open') params.set('state', state.state);
+  if (state.state !== 'active') params.set('state', state.state);
   if (state.group) params.set('group', state.group);
   if (state.sort && state.dir) {
     params.set('sort', state.sort);
@@ -192,16 +191,18 @@ function renderActiveTags(state: FilterState, cfg: Config, onToggle: (f: string,
 }
 
 function renderStateTabs(state: FilterState, allRows: HTMLElement[]) {
-  const counts: Record<StateTab, number> = { open: 0, review: 0, closed: 0, cancelled: 0, all: 0 };
+  const counts: Record<StateTab, number> = {
+    active: 0, 'in-progress': 0, review: 0, 'not-started': 0, closed: 0, all: 0,
+  };
   const stateNeutralState = { ...state, state: 'all' as StateTab };
   for (const row of allRows) {
     if (!rowMatchesExcluding(row, stateNeutralState, null)) continue;
     counts.all++;
-    const status = row.dataset.status || '';
-    if (needsReview(row)) counts.review++;
-    else if (status === 'closed') counts.closed++;
-    else if (status === 'cancelled') counts.cancelled++;
-    else counts.open++;
+    // Count each row under exactly one primary category tab (Review absorbs
+    // active review-debt), plus the Active meta-tab for anything non-closed.
+    for (const tab of ['active', 'in-progress', 'review', 'not-started', 'closed'] as StateTab[]) {
+      if (rowMatchesStateTab(row, tab)) counts[tab]++;
+    }
   }
   // Only update the GLOBAL strip (id=issues-state-tabs). Group clones carry
   // no id so they're left untouched — buildGroupSection sets their counts.
@@ -213,9 +214,10 @@ function renderStateTabs(state: FilterState, allRows: HTMLElement[]) {
     const countEl = btn.querySelector<HTMLElement>('[data-state-count]');
     if (countEl) countEl.textContent = String(counts[tab]);
   });
-  // Hide Status column unless on the All tab — the tab itself encodes status.
+  // The status badge stays visible in every category tab (a category spans
+  // several statuses) — only the "All" view is unchanged. Never hide it now.
   document.querySelectorAll<HTMLElement>('.issues-table').forEach((tbl) => {
-    tbl.classList.toggle('is-hide-status', state.state !== 'all');
+    tbl.classList.remove('is-hide-status');
   });
 }
 
@@ -374,7 +376,7 @@ function apply(cfg: Config) {
 
     const emptyEl = document.getElementById('issues-empty');
     if (emptyEl) {
-      const anyFilter = state.q || state.state !== 'open' || FIELDS.some((f) => state.fields[f].size > 0);
+      const anyFilter = state.q || state.state !== 'active' || FIELDS.some((f) => state.fields[f].size > 0);
       emptyEl.hidden = !(total === 0 && anyFilter);
     }
 

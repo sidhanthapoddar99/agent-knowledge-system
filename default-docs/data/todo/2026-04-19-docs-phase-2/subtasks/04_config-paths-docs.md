@@ -1,6 +1,6 @@
 ---
 title: "Config — path system docs"
-state: open
+status: open
 ---
 
 Absorbed from `2025-06-25-multiple-data-paths/issue.md` — the only remaining doc task from that (otherwise closed) issue: *"Update documentation for new path system"*.

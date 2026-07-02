@@ -1,7 +1,7 @@
 {
   "title": "Issues content type and layout",
   "description": "GitHub-style issues tracker as a first-class layout type \u2014 folder-per-item data model, vocabulary-driven metadata, index + detail pages, subtask interactivity.",
-  "status": "closed",
+  "status": "done",
   "priority": "high",
   "component": ["layout-issues"],
   "labels": [

@@ -20,7 +20,7 @@ import {
   resolveTracker, listIssueFolders, readIssueMeta, readIssueSubtasks,
   parseArgs, csv, printHelp,
   detectSearchBackend, maybePrintInstallHint, runSearch, listSearchableFiles,
-  issueDateFromId,
+  issueDateFromId, STATUSES, TERMINAL_STATUSES, normalizeStatus,
 } from './_lib.mjs';
 import { writeStdout } from '../_cli.mjs';
 
@@ -106,16 +106,19 @@ const quietTips        = !!args.flags['quiet-tips'];
 
 const reFlags = caseSensitive ? '' : 'i';
 
-const ALL_STATUSES = ['open', 'review', 'closed', 'cancelled'];
+const ALL_STATUSES = STATUSES;
+// Default scope = everything not in the Closed category (open · blocked ·
+// in-progress · input-needed · review). `--include-closed` (alias
+// `--include-cancelled`) widens to all seven; `--status all` does the same.
+const ACTIVE_STATUSES = STATUSES.filter((s) => !TERMINAL_STATUSES.includes(s));
+const includeClosed = !!args.flags['include-closed'] || !!args.flags['include-cancelled'];
 const scope = filterStatus.length
   ? (filterStatus.includes('all') ? ALL_STATUSES : filterStatus)
-  : (args.flags['include-cancelled']
-      ? ALL_STATUSES
-      : ['open', 'review']);
+  : (includeClosed ? ALL_STATUSES : ACTIVE_STATUSES);
 // Whether the *default* narrow scope is in effect (no explicit --status, no
-// --include-cancelled). Drives the discoverability tip near the output stage:
-// when a query matches issues we hid because they're closed/cancelled, say so.
-const defaultScope = !filterStatus.length && !args.flags['include-cancelled'];
+// --include-closed). Drives the discoverability tip near the output stage:
+// when a query matches issues we hid because they're closed, say so.
+const defaultScope = !filterStatus.length && !includeClosed;
 
 // ---------- Phase 1: structural filter -------------------------------------
 // NOTE: we deliberately do NOT drop out-of-scope statuses here. Every other
@@ -169,9 +172,9 @@ for (const id of listIssueFolders(tracker)) {
   const needSubs = requireReviewSub || requireOpenSub || requireClosedSub
                    || subtasksMin != null || subtasksMax != null;
   if (needSubs) subs = readIssueSubtasks(tracker, id);
-  if (requireReviewSub && !subs.some((s) => s.state === 'review'))   continue;
-  if (requireOpenSub   && !subs.some((s) => s.state === 'open'))     continue;
-  if (requireClosedSub && !subs.some((s) => s.state === 'closed'))   continue;
+  if (requireReviewSub && !subs.some((s) => s.category === 'review'))          continue;
+  if (requireOpenSub   && !subs.some((s) => s.state === 'open'))               continue;
+  if (requireClosedSub && !subs.some((s) => TERMINAL_STATUSES.includes(s.state))) continue;
   if (subtasksMin != null && (subs ?? []).length < subtasksMin)      continue;
   if (subtasksMax != null && (subs ?? []).length > subtasksMax)      continue;
 

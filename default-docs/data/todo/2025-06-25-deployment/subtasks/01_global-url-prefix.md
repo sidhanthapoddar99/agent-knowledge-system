@@ -1,6 +1,6 @@
 ---
 title: "Global URL prefix"
-state: open
+status: open
 ---
 
 Allow all routes to be served under a configurable base path so the docs can be deployed alongside another app (e.g. `app.com/docs/...` instead of `app.com/...`).

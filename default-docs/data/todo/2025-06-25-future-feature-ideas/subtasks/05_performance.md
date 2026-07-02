@@ -1,6 +1,6 @@
 ---
 title: "Performance"
-state: open
+status: open
 ---
 
 ## Offline support

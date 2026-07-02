@@ -1,6 +1,6 @@
 ---
 title: "Make component a multi-select field (list)"
-state: closed
+status: done
 ---
 
 `component` is currently a single string per issue (`"component": "live-editor"`). Many issues genuinely span multiple components (e.g. editor work that touches the content pipeline) and forcing a single value loses information and skews the "By component" grouping.

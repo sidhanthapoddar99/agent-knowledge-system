@@ -1,6 +1,6 @@
 ---
 title: "Navigation & discovery"
-state: open
+status: open
 ---
 
 ## Breadcrumbs

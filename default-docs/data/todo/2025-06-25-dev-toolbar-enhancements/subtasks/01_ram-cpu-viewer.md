@@ -1,6 +1,6 @@
 ---
 title: "RAM / CPU utilization viewer"
-state: open
+status: open
 ---
 
 ## Tasks

@@ -1,6 +1,6 @@
 ---
 title: "Watcher debounce + edge polish (optional)"
-state: open
+status: open
 ---
 
 Optional polish layered on top of subtasks 01 and 02. Three small refinements that handle scripted-git operations, concurrent events, and cache-file hygiene. Land if the underlying pain shows up; skip otherwise — the unified design works correctly without these.

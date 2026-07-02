@@ -1,6 +1,6 @@
 ---
 title: "Releases layout type"
-state: open
+status: open
 ---
 
 A backward-looking changelog — what shipped, when, and what was in it.

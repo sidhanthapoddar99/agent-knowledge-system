@@ -23,7 +23,7 @@ const { issues, vocabulary, baseUrl, searchBlob } = Astro.props;
       class="issues-view__row"
       data-issue
       data-status={issue.meta.status}
-      data-has-review-subtask={issue.subtasks.some((s) => s.state === 'review') ? '1' : '0'}
+      data-has-review-subtask={issue.subtasks.some((s) => s.category === 'review') ? '1' : '0'}
       data-priority={issue.meta.priority}
       data-component={issue.meta.component.join(' ')}
       data-labels={issue.meta.labels.join(' ')}

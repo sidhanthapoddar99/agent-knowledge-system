@@ -1,6 +1,6 @@
 ---
 title: "Excalidraw integration"
-state: open
+status: open
 ---
 
 The bigger lift — Excalidraw needs a real inline editor surface (canvas, persistent state, binary `.excalidraw` files).

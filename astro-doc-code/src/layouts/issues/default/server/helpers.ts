@@ -2,9 +2,10 @@
  * Small server-side utilities shared across the detail-page components.
  * Kept here so the .astro files stay focused on templating.
  */
-import type { IssueAgentLog, IssueNote, IssueSubtask, SubtaskState } from '@loaders/issues';
+import type { IssueAgentLog, IssueNote, IssueSubtask, IssueStatus } from '@loaders/issues';
+import { TERMINAL_STATUSES, isTerminalStatus } from '@loaders/issues';
 
-export const TERMINAL: SubtaskState[] = ['closed', 'cancelled'];
+export const TERMINAL: readonly IssueStatus[] = TERMINAL_STATUSES;
 
 /** Pad a sequence number with a leading zero (`1` → `01`). Null → empty. */
 export function pad(n: number | null): string {
@@ -12,15 +13,14 @@ export function pad(n: number | null): string {
   return String(n).padStart(2, '0');
 }
 
-/** State-grouped subtask sort: active group (open | review) first, terminal
- *  group (closed | cancelled) after; within each group, ascending by sequence.
- *  Drives the Overview panel, MetaSidebar, the active/terminal divider, and
- *  Comprehensive-doc order. NOT the detail sidebar tree — that sorts by
- *  sequence only (see SubtaskTree.astro). */
-const STATE_GROUP: Record<SubtaskState, number> = { open: 0, review: 0, closed: 1, cancelled: 1 };
+/** Status-grouped subtask sort: active statuses (anything not in the Closed
+ *  category) first, terminal (Closed: done | dropped) after; within each group,
+ *  ascending by sequence. Drives the Overview panel, MetaSidebar, the
+ *  active/terminal divider, and Comprehensive-doc order. NOT the detail sidebar
+ *  tree — that sorts by sequence only (see SubtaskTree.astro). */
 export function sortSubtasksByState(subtasks: IssueSubtask[]): IssueSubtask[] {
   return [...subtasks].sort((a, b) => {
-    const g = STATE_GROUP[a.state] - STATE_GROUP[b.state];
+    const g = (isTerminalStatus(a.status) ? 1 : 0) - (isTerminalStatus(b.status) ? 1 : 0);
     if (g !== 0) return g;
     const sa = a.sequence ?? Number.MAX_SAFE_INTEGER;
     const sb = b.sequence ?? Number.MAX_SAFE_INTEGER;
@@ -31,7 +31,7 @@ export function sortSubtasksByState(subtasks: IssueSubtask[]): IssueSubtask[] {
 /** Where the terminal group starts in a sidebar-sorted list; used to insert
  *  the "is-group-start" divider between active and terminal subtasks. */
 export function terminalStartIndex(sorted: IssueSubtask[]): number {
-  return sorted.findIndex((s) => TERMINAL.includes(s.state));
+  return sorted.findIndex((s) => isTerminalStatus(s.status));
 }
 
 /**

@@ -1,6 +1,6 @@
 ---
 title: "Drag-and-drop file upload"
-state: open
+status: open
 ---
 
 ## Tasks

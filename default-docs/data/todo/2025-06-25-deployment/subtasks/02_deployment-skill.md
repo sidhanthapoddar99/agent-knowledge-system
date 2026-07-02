@@ -1,6 +1,6 @@
 ---
 title: "Deployment skill (Docker Compose + nginx + content-type skills)"
-state: open
+status: open
 ---
 
 A Claude skill that walks the user through deploying the framework in the common hosting topologies, plus skills for spinning up the canonical content types.

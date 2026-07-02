@@ -1,6 +1,6 @@
 ---
 title: "doc-issues skill restructure: foldered references, documentation-guide prerequisite, scripts home"
-state: open
+status: open
 ---
 
 Folded in from the standalone issue `2026-07-02-doc-issues-skill-structure`

@@ -8,7 +8,7 @@
 
 import {
   resolveTracker, listIssueFolders, readIssueMeta, readIssueSubtasks,
-  parseArgs, printHelp,
+  parseArgs, printHelp, categoryOf, normalizeStatus,
 } from './_lib.mjs';
 
 const args = parseArgs(process.argv.slice(2));
@@ -17,8 +17,8 @@ if (args.flags.help) {
     '[--json] [--tracker <path>]',
     '',
     'List items needing human review:',
-    '  • issues with status: review',
-    '  • open issues with at least one subtask in state: review (review-debt promotion)',
+    '  • issues whose status is in the Review category (review | input-needed)',
+    '  • active (non-closed) issues with ≥1 subtask in the Review category (review-debt promotion)',
   ]);
   process.exit(0);
 }
@@ -29,11 +29,12 @@ const matches = [];
 for (const id of listIssueFolders(tracker)) {
   const meta = readIssueMeta(tracker, id);
   if (!meta) continue;
+  const cat = categoryOf(normalizeStatus(meta.status));
   let reason = null;
-  if (meta.status === 'review') reason = 'issue';
-  else if (meta.status === 'open') {
+  if (cat === 'review') reason = 'issue';
+  else if (cat !== 'closed') {
     const subs = readIssueSubtasks(tracker, id);
-    const reviewSubs = subs.filter((s) => s.state === 'review');
+    const reviewSubs = subs.filter((s) => s.category === 'review');
     if (reviewSubs.length) reason = `${reviewSubs.length} review subtask${reviewSubs.length > 1 ? 's' : ''}`;
   }
   if (reason) matches.push({ id, status: meta.status, reason, title: meta.title });

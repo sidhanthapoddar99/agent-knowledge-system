@@ -1,6 +1,6 @@
 ---
 title: "Live Preview mode (Obsidian-style)"
-state: open
+status: open
 ---
 
 ## Tasks

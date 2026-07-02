@@ -1,6 +1,6 @@
 ---
 title: "Issues layout — docs"
-state: open
+status: open
 ---
 
 Absorbed from `2026-04-10-issues-layout/subtasks/06_documentation-and-skills.md`. User-guide and dev-docs coverage for the **issues** content type.

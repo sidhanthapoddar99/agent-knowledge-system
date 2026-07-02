@@ -1,6 +1,6 @@
 ---
 title: "Static-build fallback — Pagefind when there's no server"
-state: open
+status: open
 ---
 
 Orama lives in the Node process. If someone builds this template to static HTML (CDN-deployed, no Node runtime), there's no `/api/search` to hit. They still need search.

@@ -6,14 +6,24 @@
   "label": "Todo",
 
   "fields": {
-    // Lifecycle state. Agents set `review`, never `closed` (human-only gate).
+    // Lifecycle status — FIXED IN FRAMEWORK CODE (see
+    // astro-doc-code/src/loaders/issue-status.ts). Seven statuses grouped into
+    // four categories: Not Started (open, blocked) · In Progress (in-progress) ·
+    // Review (input-needed, review) · Closed (done, dropped). A tracker can NO
+    // LONGER define its own statuses — `values` here is documentation only and
+    // is ignored by the loader/validator; only `colors` overrides are honored.
+    // Agents set `in-progress` (auto) and `review`/`input-needed`; `done` and
+    // `dropped` are human-only. Transitions are unenforced guidance.
     "status": {
-      "values": ["open", "review", "closed", "cancelled"],
+      "values": ["open", "blocked", "in-progress", "input-needed", "review", "done", "dropped"],
       "colors": {
-        "open": "#888888",
-        "review": "#f0c674",
-        "closed": "#7ec699",
-        "cancelled": "#666666"
+        "open": "#888888",          // Not Started — neutral grey
+        "blocked": "#d1854f",       // Not Started — burnt orange (depends on another item)
+        "in-progress": "#61afef",   // In Progress — active blue
+        "input-needed": "#e8a54b",  // Review — amber (agent needs a human answer)
+        "review": "#f0c674",        // Review — yellow (done, awaiting sign-off)
+        "done": "#7ec699",          // Closed — green (shipped)
+        "dropped": "#c678dd"        // Closed — magenta (deliberately abandoned)
       }
     },
 
@@ -79,8 +89,8 @@
     // Free-form cross-cutting tags (multi-select). Independent of `component`.
     "labels": {
       "values": [
-        "wip",              // actively being worked on right now (transient; not a status)
-        "blocked",          // can't proceed — waiting on another issue/decision inside this repo
+        "wip",              // DEPRECATED — superseded by the `in-progress` status (single source of truth). Kept so old issues still validate; do not add to new issues.
+        "blocked",          // DEPRECATED as a progress signal — superseded by the `blocked` status. Kept for back-compat; prefer setting status: blocked.
         "bug",              // behaves differently from intended
         "feature",          // net-new capability
         "task",             // concrete work that isn't a feature or bug (chore, maintenance)
@@ -99,9 +109,8 @@
   "authors": ["sidhantha", "claude"],
 
   "views": [
-    { "name": "Assigned", "filters": { "assignees": ["assigned"] } },
     { "name": "High priority", "filters": { "priority": ["high", "urgent"] } },
-    { "name": "Blocked", "filters": { "labels": ["blocked", "blocked-external"] } },
+    { "name": "Blocked", "filters": { "status": ["blocked"] } },
     { "name": "By component", "group": "component" }
   ]
 }

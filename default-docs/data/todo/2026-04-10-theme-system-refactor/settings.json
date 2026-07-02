@@ -1,7 +1,7 @@
 {
   "title": "Theme system refactor — two-tier token model and enforced contract",
   "description": "Restructured theming around a primitive / semantic token split with a contract that every theme (built-in and user) must satisfy. Layouts now consume semantic tokens only.",
-  "status": "closed",
+  "status": "done",
   "priority": "medium",
   "component": ["layout-general"],
   "labels": [

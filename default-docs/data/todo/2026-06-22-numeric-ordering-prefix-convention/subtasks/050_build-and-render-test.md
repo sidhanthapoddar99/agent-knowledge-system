@@ -1,6 +1,6 @@
 ---
 title: Build + render-test 3-digit and grouped pages
-state: closed
+status: done
 ---
 
 Prove the change end-to-end before closing:

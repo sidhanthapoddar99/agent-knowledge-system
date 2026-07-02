@@ -1,6 +1,6 @@
 ---
 title: Relax docs prefix to 2–5 digits across the 5 hard-coded spots
-state: closed
+status: done
 ---
 
 Move every fixed-`\d{2}` docs assumption onto the shared helper / `\d{2,5}`:

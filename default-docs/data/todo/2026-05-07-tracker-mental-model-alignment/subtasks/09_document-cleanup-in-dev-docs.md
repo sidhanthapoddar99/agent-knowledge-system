@@ -1,6 +1,6 @@
 ---
 title: "Document the cleanup + new mechanisms in dev-docs"
-state: open
+status: open
 ---
 
 **Deferred — write this after subtasks 1–8 land. Don't write to a moving target.**

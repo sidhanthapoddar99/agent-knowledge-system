@@ -1,6 +1,6 @@
 ---
 title: "Canonical redirect: /<tracker>/<issue>/issue → /<tracker>/<issue>"
-state: closed
+status: done
 ---
 
 `/<tracker>/<issue>/issue` previously 404'd (`issue` is not a sub-doc kind in `resolveSubDoc`). Added a base-agnostic canonical redirect to the detail root.

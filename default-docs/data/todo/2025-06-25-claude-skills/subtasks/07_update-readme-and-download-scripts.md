@@ -1,6 +1,6 @@
 ---
 title: "Update user-guide skill catalogue + download-skills.{mjs,sh}"
-state: cancelled
+status: dropped
 ---
 
 > [!cancelled] Cancelled — superseded by subtask 09 (`09_plugin-marketplace-dogfood.md`)

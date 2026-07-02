@@ -1,6 +1,6 @@
 ---
 title: Establish the `migration/` convention + `references/doc-migration.md`
-state: closed
+status: done
 ---
 
 Stand up a home for one-off format-migration scripts and document it, so removing `done:`

@@ -1,6 +1,6 @@
 ---
 title: "Orama integration — in-process index + save-hook wiring"
-state: open
+status: open
 ---
 
 Land the core engine wired into the Astro server.

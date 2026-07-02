@@ -31,12 +31,12 @@ const relPath = ['subtasks', ...s.groupPath, `${s.slug}.md`].join('/');
 >
   <div class="issue-doc">
     <div class="issue-doc__path">{relPath}</div>
-    <div class="issue-subtask-page" data-subtask-key={panelKey} data-file={s.filePath} data-state={s.state}>
+    <div class="issue-subtask-page" data-subtask-key={panelKey} data-file={s.filePath} data-state={s.status}>
       <div class="issue-subtask-page__header">
         {s.sequence !== null && <span class="issue-subtask-page__num">{pad(s.sequence)}</span>}
         <span class="issue-subtask-page__title">{s.title}</span>
-        <span class="issue-subtask-page__badge" data-state-pill style={statusColors[s.state] ? `--badge-color: ${statusColors[s.state]}` : undefined}>
-          {s.state}
+        <span class="issue-subtask-page__badge" data-state-pill style={statusColors[s.status] ? `--badge-color: ${statusColors[s.status]}` : undefined}>
+          {s.status}
         </span>
       </div>
       {s.html && (

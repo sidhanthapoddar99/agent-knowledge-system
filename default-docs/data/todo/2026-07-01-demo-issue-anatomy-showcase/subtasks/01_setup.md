@@ -1,6 +1,6 @@
 ---
 title: Setup fixture scaffolding
-state: closed
+status: done
 ---
 - [x] Create the issue folder + settings.json
 - [x] Draft issue.md

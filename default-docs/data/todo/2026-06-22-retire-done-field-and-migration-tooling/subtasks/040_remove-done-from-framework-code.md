@@ -1,6 +1,6 @@
 ---
 title: Remove the `done` field from the documentation-template code
-state: closed
+status: done
 ---
 
 Make `state:` the sole subtask source of truth in the framework. Remove all reading,

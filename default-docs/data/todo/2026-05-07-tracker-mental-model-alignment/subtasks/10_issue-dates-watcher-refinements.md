@@ -1,6 +1,6 @@
 ---
 title: "Refine git-watcher wiring in the issue-dates cache"
-state: closed
+status: done
 ---
 
 Two small follow-ups to subtask [03](./03_drop-updated-and-add-derived-cache.md) (the derived-`updated`-date cache loader at `astro-doc-code/src/loaders/issue-dates.ts`). Neither is a correctness bug; both are refinements surfaced by post-landing review.

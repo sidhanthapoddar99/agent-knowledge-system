@@ -1,6 +1,6 @@
 ---
 title: "AI/agent-facing search API + Claude skill"
-state: open
+status: open
 ---
 
 Claude Code (and any other agent) should be able to query the search index without reading raw files one by one. Faster, lower-context, respects scoping.

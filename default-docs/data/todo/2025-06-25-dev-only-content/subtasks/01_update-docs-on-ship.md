@@ -1,6 +1,6 @@
 ---
 title: "Update docs when feature ships"
-state: open
+status: open
 ---
 
 Placeholder doc already exists at **`dynamic_data/data/user-guide/10_configuration/06_dev-mode.md`** — created on 2026-04-21 (merged from the now-deleted `15_writing-content/06_dev-mode.md`) with a "Planned — not implemented yet" banner pointing back to this issue. When the feature lands, update the doc to describe actual behaviour rather than intended behaviour.

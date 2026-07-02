@@ -1,6 +1,6 @@
 ---
 title: "URL registry — every file and asset"
-state: open
+status: open
 ---
 
 Build the single source of truth for addressable things. The pipeline and graph both read from this.

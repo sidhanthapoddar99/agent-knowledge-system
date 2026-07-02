@@ -1,6 +1,6 @@
 ---
 title: "CM6 integration"
-state: closed
+status: done
 ---
 
 ## Tasks

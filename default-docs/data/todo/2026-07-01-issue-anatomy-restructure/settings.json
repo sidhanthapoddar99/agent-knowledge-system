@@ -1,7 +1,7 @@
 {
   "title": "Issue anatomy restructure: brainstorm + agent-memory sections, lean flat comments",
   "description": "Restructure the issue folder anatomy around the work lifecycle: add Brainstorm + Agent-memory as sections, redefine Notes as finalized output, keep Comments lean and flat, flatten Agent-logs. Spans the framework, skill, and CLI. Final design in notes/01_issue-anatomy/.",
-  "status": "closed",
+  "status": "done",
   "priority": "high",
   "component": ["layout-issues"],
   "labels": ["feature", "refactor"],

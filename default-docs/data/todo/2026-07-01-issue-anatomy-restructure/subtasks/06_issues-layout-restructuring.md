@@ -1,6 +1,6 @@
 ---
 title: Issues layout restructuring
-state: closed
+status: done
 ---
 
 Running log of structural / UI tweaks to the issues layout. One or two lines appended

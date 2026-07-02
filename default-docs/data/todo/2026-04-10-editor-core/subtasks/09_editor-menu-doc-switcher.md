@@ -1,6 +1,6 @@
 ---
 title: "Editor menu — doc switcher"
-state: open
+status: open
 ---
 
 ## Tasks

@@ -1,28 +1,34 @@
 ---
 /**
- * StateTabs — GitHub-style Open / Review / Closed / Cancelled / All tabs above the issue list.
- * Default state is "open". The Review tab surfaces issues awaiting human review
- * (AI thinks it's done, human hasn't confirmed yet) — drawn in warning colour
- * to pull the eye.
+ * StateTabs — category tabs above the issue list: Active (default) · In Progress ·
+ * Review · Not Started · Closed · All. Filtering is by lifecycle CATEGORY, not by
+ * the individual status (which shows as the row badge) — a handful of categories
+ * keeps the holistic picture; seven status tabs would clutter it.
  *
- * Counts are seeded server-side; `client.ts` updates them live as filters
- * narrow the visible rows.
+ * "Active" is the union of the three non-closed categories — it preserves the
+ * old default of hiding closed issues on load. The Review tab is drawn in warning
+ * colour and also absorbs review-debt (active issues with a subtask awaiting
+ * review) so nothing needing a human hides in another tab.
+ *
+ * Counts are seeded server-side; `client.ts` updates them live as filters narrow.
  */
 interface Props {
-  openCount: number;
+  activeCount: number;
+  inProgressCount: number;
   reviewCount: number;
+  notStartedCount: number;
   closedCount: number;
-  cancelledCount: number;
   totalCount: number;
 }
 
-const { openCount, reviewCount, closedCount, cancelledCount, totalCount } = Astro.props;
+const { activeCount, inProgressCount, reviewCount, notStartedCount, closedCount, totalCount } = Astro.props;
 
 const tabs = [
+  { key: 'active', label: 'Active', count: activeCount },
+  { key: 'in-progress', label: 'In Progress', count: inProgressCount },
   { key: 'review', label: 'Review', count: reviewCount, highlight: true },
-  { key: 'open', label: 'Open', count: openCount },
+  { key: 'not-started', label: 'Not Started', count: notStartedCount },
   { key: 'closed', label: 'Closed', count: closedCount },
-  { key: 'cancelled', label: 'Cancelled', count: cancelledCount },
   { key: 'all', label: 'All', count: totalCount },
 ];
 ---
@@ -34,7 +40,7 @@ const tabs = [
       class={`issues-state-tabs__btn ${tab.highlight ? 'is-review' : ''}`}
       data-state-tab={tab.key}
       role="tab"
-      aria-selected={tab.key === 'open' ? 'true' : 'false'}
+      aria-selected={tab.key === 'active' ? 'true' : 'false'}
     >
       <span class="issues-state-tabs__label">{tab.label}</span>
       <span class="issues-state-tabs__count" data-state-count={tab.key}>{tab.count}</span>
@@ -49,6 +55,7 @@ const tabs = [
     gap: 0.25rem;
     border-bottom: 1px solid var(--color-border-default);
     margin: 1rem 0 0.75rem;
+    flex-wrap: wrap;
   }
   .issues-state-tabs__btn {
     display: inline-flex;

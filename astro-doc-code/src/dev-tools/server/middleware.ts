@@ -7,7 +7,7 @@
  * - POST /__editor/open      — Open document + create Yjs room
  * - POST /__editor/save      — Save document to disk
  * - POST /__editor/close     — Close document, destroy Yjs room
- * - POST /__editor/subtask-toggle — Set a subtask's `state` in its frontmatter
+ * - POST /__editor/subtask-toggle — Set a subtask's `status` in its frontmatter
  * - POST /__editor/presence  — Presence actions (join/leave/page/cursor-clear)
  * - WS   /__editor/yjs       — Yjs CRDT sync + cursors, ping, config, render (handled by YjsSync)
  *
@@ -24,6 +24,7 @@ import { fileURLToPath } from 'url';
 import matter from 'gray-matter';
 import { collectServerMetrics } from './metrics';
 import { readSettings, isSettingsFile } from '../../loaders/settings-file';
+import { STATUSES, isValidStatus } from '../../loaders/issue-status';
 
 interface FileTreeNode {
   name: string;
@@ -374,7 +375,10 @@ export function setupEditorMiddleware(
         }
 
         case '/__editor/subtask-toggle': {
-          const { filePath, state } = body;
+          // Client sends `status` (canonical); older callers may still send
+          // `state`. Accept either off the wire, always persist `status:`.
+          const { filePath } = body;
+          const status = body.status ?? body.state;
           if (!filePath || typeof filePath !== 'string') {
             return sendJson(res, 400, { error: 'filePath is required' });
           }
@@ -389,16 +393,18 @@ export function setupEditorMiddleware(
           if (allowed && !allowed.some((wp) => resolved.startsWith(path.resolve(wp)))) {
             return sendJson(res, 403, { error: 'Path not allowed' });
           }
-          // `state` is the sole source of truth — one of the 4 canonical values.
-          const VALID = new Set(['open', 'review', 'closed', 'cancelled']);
-          if (typeof state !== 'string' || !VALID.has(state)) {
-            return sendJson(res, 400, { error: 'state is required (open|review|closed|cancelled)' });
+          // `status` is the sole source of truth — one of the 7 canonical values.
+          if (typeof status !== 'string' || !isValidStatus(status)) {
+            return sendJson(res, 400, { error: `status is required (${STATUSES.join('|')})` });
           }
           const raw = fs.readFileSync(resolved, 'utf-8');
           const parsed = matter(raw);
-          const data = { ...parsed.data, state };
+          // Write canonical `status:` and drop any legacy `state:` so the file
+          // never carries both after a toggle.
+          const { state: _legacyState, ...rest } = parsed.data as Record<string, unknown>;
+          const data = { ...rest, status };
           fs.writeFileSync(resolved, matter.stringify(parsed.content, data));
-          return sendJson(res, 200, { ok: true, state });
+          return sendJson(res, 200, { ok: true, status });
         }
 
         case '/__editor/delete': {

@@ -1,6 +1,6 @@
 ---
 title: "Update dev-docs — engine + architecture"
-state: open
+status: open
 ---
 
 The engine restructure has to be documented for maintainers. Three areas touch the parser, the loader, and the dev-toolbar layer.

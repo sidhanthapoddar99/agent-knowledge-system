@@ -1,16 +1,28 @@
-export type SubtaskState = 'open' | 'review' | 'closed' | 'cancelled';
-export const CYCLE: SubtaskState[] = ['open', 'review', 'closed', 'cancelled'];
-export const TERMINAL: SubtaskState[] = ['closed', 'cancelled'];
+import { STATUSES, TERMINAL_STATUSES, type IssueStatus, type CategoryId } from '@loaders/issue-status';
 
-export type CompTab = 'open' | 'review' | 'closed' | 'cancelled' | 'all';
+export type { IssueStatus };
+/** @deprecated alias retained during the state→status rename */
+export type SubtaskState = IssueStatus;
 
-/** Read server-rendered SVG markup for each state from the JSON script tag. */
-export function readIcons(): Record<SubtaskState, string> {
+/** Click-to-cycle happy path. Blocked / input-needed / dropped are set by
+ *  editing the file (or an agent) rather than by cycling — keeps the click
+ *  ergonomic (open → in-progress → review → done → open). */
+export const CYCLE: IssueStatus[] = ['open', 'in-progress', 'review', 'done'];
+
+/** Terminal (Closed category) statuses. */
+export const TERMINAL: IssueStatus[] = [...TERMINAL_STATUSES];
+
+/** Comprehensive-panel tabs are the four lifecycle categories, plus "all". */
+export type CompTab = CategoryId | 'all';
+
+/** Read server-rendered SVG markup for each status from the JSON script tag. */
+export function readIcons(): Record<IssueStatus, string> {
+  const empty = Object.fromEntries(STATUSES.map((s) => [s, ''])) as Record<IssueStatus, string>;
   const el = document.getElementById('subtask-state-icons');
-  if (!el?.textContent) return { open: '', review: '', closed: '', cancelled: '' };
+  if (!el?.textContent) return empty;
   try {
-    return JSON.parse(el.textContent) as Record<SubtaskState, string>;
+    return JSON.parse(el.textContent) as Record<IssueStatus, string>;
   } catch {
-    return { open: '', review: '', closed: '', cancelled: '' };
+    return empty;
   }
 }

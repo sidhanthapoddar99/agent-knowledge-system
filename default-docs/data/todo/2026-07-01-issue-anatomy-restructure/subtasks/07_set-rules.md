@@ -1,6 +1,6 @@
 ---
 title: Set the rules — propagate the operating rules into skill, docs, and guide
-state: closed
+status: done
 ---
 
 Take the decided operating rules (`notes/02_operating-rules.md`, decided in

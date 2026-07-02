@@ -62,10 +62,40 @@ function relForDisplay(filePath) {
 
 const FOLDER_PATTERN = /^(\d{4}-\d{2}-\d{2})-([a-z0-9][a-z0-9-]*)$/;
 const COMMENT_PATTERN = /^(\d+)_(\d{4}-\d{2}-\d{2})_([a-z0-9-]+)\.md$/i;
-const VALID_STATES = ['open', 'review', 'closed', 'cancelled'];
+
+// Lifecycle vocabulary — the CLI's mirror of the framework constant
+// (astro-doc-code/src/loaders/issue-status.ts). Fixed in code: issues and
+// subtasks share these seven statuses grouped into four categories. Keep in
+// sync with the loader (both are the single source on their side of the wall).
+export const STATUSES = ['open', 'blocked', 'in-progress', 'input-needed', 'review', 'done', 'dropped'];
+export const CATEGORIES = {
+  'not-started': ['open', 'blocked'],
+  'in-progress': ['in-progress'],
+  'review': ['input-needed', 'review'],
+  'closed': ['done', 'dropped'],
+};
+export const TERMINAL_STATUSES = CATEGORIES.closed;
+export const REVIEW_STATUSES = CATEGORIES.review;
+// Legacy values still tolerated on read (mapped) so a partially-migrated tree
+// doesn't hard-fail the CLI; `check issues` flags them as needing migration.
+export const LEGACY_STATUS_MAP = { closed: 'done', cancelled: 'dropped' };
+const _STATUS_TO_CATEGORY = {};
+for (const [cat, list] of Object.entries(CATEGORIES)) for (const s of list) _STATUS_TO_CATEGORY[s] = cat;
+
+const VALID_STATES = STATUSES;
 
 export function isValidState(s) {
-  return VALID_STATES.includes(s);
+  return STATUSES.includes(s);
+}
+export function categoryOf(status) {
+  return _STATUS_TO_CATEGORY[status] || null;
+}
+/** Normalise a raw lifecycle value: canonical → itself; legacy → mapped;
+ *  empty → 'open'; unknown → null (caller decides how loud to be). */
+export function normalizeStatus(raw) {
+  if (raw == null || raw === '') return 'open';
+  if (STATUSES.includes(raw)) return raw;
+  return LEGACY_STATUS_MAP[raw] || null;
 }
 
 /**
@@ -124,9 +154,13 @@ function makeSubtask(abs, groupPath) {
   try {
     const fm = matter(fs.readFileSync(abs, 'utf-8')).data;
     if (fm.title) title = fm.title;
-    if (VALID_STATES.includes(fm.state)) state = fm.state;
+    // Canonical field is `status:`; tolerate the legacy `state:` name and
+    // legacy values (closed/cancelled) so a partial migration still reads.
+    const raw = fm.status ?? fm.state;
+    const norm = normalizeStatus(raw);
+    if (norm) state = norm;
   } catch { /* malformed frontmatter — keep defaults */ }
-  return { slug, sequence, title, state, groupPath, filePath: abs, fileName: name };
+  return { slug, sequence, title, state, category: categoryOf(state), groupPath, filePath: abs, fileName: name };
 }
 
 /** Subtasks may live under up to 2 levels of grouping folders; the folder

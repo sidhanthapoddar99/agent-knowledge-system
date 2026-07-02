@@ -35,8 +35,8 @@ const { meta } = issue;
 
 const sortedSubtasks = sortSubtasksByState(issue.subtasks);
 const terminalStartIdx = terminalStartIndex(sortedSubtasks);
-const subtaskDone = issue.subtasks.filter((s) => TERMINAL.includes(s.state)).length;
-const subtaskReview = issue.subtasks.filter((s) => s.state === 'review').length;
+const subtaskDone = issue.subtasks.filter((s) => TERMINAL.includes(s.status)).length;
+const subtaskReview = issue.subtasks.filter((s) => s.category === 'review').length;
 const statusColors = vocabulary.fields?.status?.colors || {};
 
 let activeKey: string;

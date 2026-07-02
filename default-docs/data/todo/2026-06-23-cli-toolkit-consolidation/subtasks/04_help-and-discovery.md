@@ -1,6 +1,6 @@
 ---
 title: "Category 0b — add the `help` / discovery command"
-state: closed
+status: done
 ---
 
 The keystone for agent discoverability. An agent must learn the whole toolkit in ONE call, not by reading 14 inconsistent `--help`s. Backed by the manifest (subtask 03).

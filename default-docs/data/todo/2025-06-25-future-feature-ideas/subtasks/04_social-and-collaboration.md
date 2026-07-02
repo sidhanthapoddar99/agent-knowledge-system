@@ -1,6 +1,6 @@
 ---
 title: "Social & collaboration"
-state: open
+status: open
 ---
 
 ## Comments

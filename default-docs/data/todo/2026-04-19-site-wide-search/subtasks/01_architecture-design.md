@@ -1,6 +1,6 @@
 ---
 title: "Architecture design — scope, indexing pipeline, API shape"
-state: open
+status: open
 ---
 
 Nail the design before writing code. Output: a short design doc in `notes/` covering the questions below.

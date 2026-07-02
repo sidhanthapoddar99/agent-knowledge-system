@@ -1,6 +1,6 @@
 ---
 title: "Embedding support"
-state: open
+status: open
 ---
 
 ## Tasks

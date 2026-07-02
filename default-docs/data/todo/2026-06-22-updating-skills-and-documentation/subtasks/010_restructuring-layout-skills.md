@@ -1,6 +1,6 @@
 ---
 title: Restructuring layout skills
-state: closed
+status: done
 ---
 
 Group the three content-type layout references under one folder so the skill's

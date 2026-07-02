@@ -1,6 +1,6 @@
 ---
 title: "Overview — combined subtask view (all bodies inline)"
-state: closed
+status: done
 ---
 
 After the comment thread, render every subtask's body inline as a stack of comment-style boxes. Lets the reader review the whole issue without clicking through every subtask page.

@@ -1,6 +1,6 @@
 ---
 title: "Docs sidebar: cache collapse / expand state per section (localStorage, 30-day TTL)"
-state: closed
+status: done
 ---
 
 - [ ] On user click of a folder's collapse / expand toggle, write the new state to `localStorage` keyed by section + folder path.

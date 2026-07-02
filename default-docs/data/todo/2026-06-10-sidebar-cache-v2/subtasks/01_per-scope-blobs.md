@@ -1,6 +1,6 @@
 ---
 title: "Per-scope blob format + delete-on-default (docs + issues sidebars)"
-state: closed
+status: done
 ---
 
 Rewrote both inline persistence scripts from one-key-per-folder to one-blob-per-scope, storing only deviations from the server-rendered default.

@@ -1,6 +1,6 @@
 ---
 title: "Method 2 — manual / from-source usage (clone + run)"
-state: cancelled
+status: dropped
 ---
 
 The "developer / contributor" usage path: clone the repo, run `./start`, do whatever you want with the source. No CLI tool to install, no Docker container, no `docs.conf` file required. This method exists explicitly to provide **total control** — if you want to hack on the framework itself, edit layouts, add custom hooks, or just understand what's running, this is the entry point.

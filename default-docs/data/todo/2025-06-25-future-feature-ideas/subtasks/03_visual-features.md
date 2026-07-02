@@ -1,6 +1,6 @@
 ---
 title: "Visual features"
-state: open
+status: open
 ---
 
 ## Image enhancements

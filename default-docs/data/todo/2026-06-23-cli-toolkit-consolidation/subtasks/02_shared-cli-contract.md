@@ -1,6 +1,6 @@
 ---
 title: "Lift the shared CLI contract into a top-level _cli.mjs"
-state: closed
+status: done
 ---
 
 The good parts (arg-parser, help renderer, output helpers) are trapped in `issues/_lib.mjs` where no other domain can reach them — the root cause of the "two civilizations" split. Promote them to a top-level `_cli.mjs` consumed by every domain. Foundational; unblocks 03/04/05.

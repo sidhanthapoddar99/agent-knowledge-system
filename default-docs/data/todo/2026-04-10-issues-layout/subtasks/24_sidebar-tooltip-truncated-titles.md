@@ -1,6 +1,6 @@
 ---
 title: "Sidebar: tooltip on hover for truncated sub-doc titles"
-state: closed
+status: done
 ---
 
 - [x] **Show the full untruncated title as a tooltip on hover** for every entry in the sub-doc tree (subtasks, notes, agent-log — they share `SubdocTree.astro`). The sidebar truncates long titles to fit the column; hover should reveal the full string.

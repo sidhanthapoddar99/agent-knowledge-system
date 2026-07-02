@@ -1,6 +1,6 @@
 ---
 title: "Grouped view: unified + persistent status filter"
-state: closed
+status: done
 ---
 
 - [x] **Sync the status filter across all groups.** When grouping is active, every group section should reflect a single shared status value rather than each group carrying its own independent status tab. Toggling the status anywhere — global strip or any group's strip — updates that one value and re-renders all groups. The per-group tab UI can stay for ergonomic reasons (close to where the user is looking), but it becomes a synced view of one state, not N independent filters.

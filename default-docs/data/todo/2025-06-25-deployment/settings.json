@@ -1,7 +1,7 @@
 {
   "title": "Multi-target deployment toolkit",
   "description": "One-command deployment story: static export, Docker, platform guides (Vercel/Netlify/GH Pages/Cloudflare), and CI/CD templates.",
-  "status": "cancelled",
+  "status": "dropped",
   "priority": "medium",
   "component": [
     "architecture"

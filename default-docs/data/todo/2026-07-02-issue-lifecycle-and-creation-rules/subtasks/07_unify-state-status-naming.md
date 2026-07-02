@@ -1,6 +1,6 @@
 ---
 title: Unify the state/status field naming + migration script with validation
-state: open
+status: review
 ---
 
 Today the same lifecycle vocabulary travels under **two field names**: issues carry

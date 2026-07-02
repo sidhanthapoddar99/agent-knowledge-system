@@ -1,6 +1,6 @@
 ---
 title: Author + test the `done`→`state` migration script
-state: closed
+status: done
 ---
 
 Drop the first migration into the `migration/` folder (from `020`):

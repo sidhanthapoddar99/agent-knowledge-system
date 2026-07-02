@@ -1,6 +1,6 @@
 ---
 title: "Asset manager"
-state: open
+status: open
 ---
 
 ## Tasks

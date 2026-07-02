@@ -1,6 +1,6 @@
 ---
 title: "Resolved historical bugs"
-state: closed
+status: done
 ---
 
 Bugs from the old `data/docs/todo/02_backlog/01_bugs.md` tracker, already fixed.

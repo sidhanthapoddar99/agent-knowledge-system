@@ -1,6 +1,6 @@
 ---
 title: Remove the `done:` field from the skill entirely
-state: closed
+status: done
 ---
 
 Strip every reference to the `done:` subtask field from the `documentation-guide` skill —

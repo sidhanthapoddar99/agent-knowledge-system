@@ -163,8 +163,8 @@
   font-family: var(--font-family-mono);
 }
 .issue-sidebar__item[data-state='review'] .issue-sidebar__check { color: var(--color-warning); }
-.issue-sidebar__item[data-state='closed'] .issue-sidebar__check { color: var(--color-success); }
-.issue-sidebar__item[data-state='cancelled'] .issue-sidebar__check { color: var(--color-error); }
+.issue-sidebar__item[data-state='done'] .issue-sidebar__check { color: var(--color-success); }
+.issue-sidebar__item[data-state='dropped'] .issue-sidebar__check { color: var(--color-error); }
 .issue-sidebar__item.is-done { color: var(--color-text-muted); }
 .issue-sidebar__item.is-done .issue-sidebar__label { text-decoration: line-through; }
 .issue-sidebar__empty {
@@ -347,8 +347,8 @@
 }
 .issue-overview-subtasks__state:hover { background: color-mix(in srgb, var(--color-border-default) 40%, transparent); }
 .issue-overview-subtasks__state[data-state='review'] { color: var(--color-warning); }
-.issue-overview-subtasks__state[data-state='closed'] { color: var(--color-success); }
-.issue-overview-subtasks__state[data-state='cancelled'] { color: var(--color-error); }
+.issue-overview-subtasks__state[data-state='done'] { color: var(--color-success); }
+.issue-overview-subtasks__state[data-state='dropped'] { color: var(--color-error); }
 .issue-overview-subtasks__num {
   font-family: var(--font-family-mono);
   font-size: var(--ui-text-micro);
@@ -364,8 +364,8 @@
   min-width: 0;
 }
 .issue-overview-subtasks__link:hover { color: var(--color-brand-primary); }
-.issue-overview-subtasks__item.state-closed .issue-overview-subtasks__link,
-.issue-overview-subtasks__item.state-cancelled .issue-overview-subtasks__link {
+.issue-overview-subtasks__item.state-done .issue-overview-subtasks__link,
+.issue-overview-subtasks__item.state-dropped .issue-overview-subtasks__link {
   text-decoration: line-through;
   color: var(--color-text-muted);
 }
@@ -442,8 +442,8 @@
 }
 .issue-comprehensive__state:hover { background: color-mix(in srgb, var(--color-border-default) 40%, transparent); }
 .issue-comprehensive__state[data-state='review'] { color: var(--color-warning); }
-.issue-comprehensive__state[data-state='closed'] { color: var(--color-success); }
-.issue-comprehensive__state[data-state='cancelled'] { color: var(--color-error); }
+.issue-comprehensive__state[data-state='done'] { color: var(--color-success); }
+.issue-comprehensive__state[data-state='dropped'] { color: var(--color-error); }
 .issue-comprehensive__num {
   font-family: var(--font-family-mono);
   font-size: var(--ui-text-body);
@@ -642,10 +642,10 @@
   color: var(--color-text-primary);
 }
 .issue-meta-index__link.state-review .issue-meta-index__icon { color: var(--color-warning); }
-.issue-meta-index__link.state-closed .issue-meta-index__icon { color: var(--color-success); }
-.issue-meta-index__link.state-cancelled .issue-meta-index__icon { color: var(--color-error); }
-.issue-meta-index__link.state-closed .issue-meta-index__label,
-.issue-meta-index__link.state-cancelled .issue-meta-index__label {
+.issue-meta-index__link.state-done .issue-meta-index__icon { color: var(--color-success); }
+.issue-meta-index__link.state-dropped .issue-meta-index__icon { color: var(--color-error); }
+.issue-meta-index__link.state-done .issue-meta-index__label,
+.issue-meta-index__link.state-dropped .issue-meta-index__label {
   color: var(--color-text-muted);
   text-decoration: line-through;
 }

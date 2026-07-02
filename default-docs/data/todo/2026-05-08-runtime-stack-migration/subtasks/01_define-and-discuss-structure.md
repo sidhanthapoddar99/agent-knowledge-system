@@ -1,6 +1,6 @@
 ---
 title: "Define & discuss the structure / layout / theme / shell separation"
-state: open
+status: open
 ---
 
 First design task of the migration's **architecture update**: formalize the

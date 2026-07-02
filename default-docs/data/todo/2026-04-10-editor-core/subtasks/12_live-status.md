@@ -1,6 +1,6 @@
 ---
 title: "Live status indicator"
-state: open
+status: open
 ---
 
 ## Tasks

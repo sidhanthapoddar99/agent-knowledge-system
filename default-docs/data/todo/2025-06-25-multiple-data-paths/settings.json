@@ -1,7 +1,7 @@
 {
   "title": "Multi-source data via `@` aliases",
   "description": "Support multiple named data paths via `@key/...` aliases instead of a single DATA_DIR.",
-  "status": "closed",
+  "status": "done",
   "priority": "medium",
   "component": [
     "loaders-and-renderers"

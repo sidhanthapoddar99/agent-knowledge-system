@@ -1,6 +1,6 @@
 ---
 title: "Refactor implementation"
-state: closed
+status: done
 ---
 
 ## Tasks

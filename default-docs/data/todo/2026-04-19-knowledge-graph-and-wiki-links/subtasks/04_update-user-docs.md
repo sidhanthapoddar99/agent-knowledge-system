@@ -1,6 +1,6 @@
 ---
 title: "Update user-guide + migration note"
-state: open
+status: open
 ---
 
 The authoring surface changes — single syntax across all content types, plus a migration path for anyone who wrote against the old per-parser rules.

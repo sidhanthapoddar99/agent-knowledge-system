@@ -1,6 +1,6 @@
 ---
 title: "Document the sidebar cache structure in dev-docs"
-state: closed
+status: done
 ---
 
 **Done 2026-06-10** — written after subtasks 01–04 shipped and were verified, so the documented shapes are the settled ones.

@@ -76,13 +76,13 @@ const subtaskTotal = sortedSubtasks.length;
             <li>
               <a
                 href={`#comprehensive-${panelKey}`}
-                class={`issue-meta-index__link state-${s.state}`}
-                data-state={s.state}
+                class={`issue-meta-index__link state-${s.status}`}
+                data-state={s.status}
                 data-subtask-key={panelKey}
                 data-tip={s.title}
               >
                 <span class="issue-meta-index__icon" data-state-icon>
-                  <Fragment set:html={stateIconSvg(s.state)} />
+                  <Fragment set:html={stateIconSvg(s.status)} />
                 </span>
                 {s.sequence !== null && <span class="issue-meta-index__num">{pad(s.sequence)}</span>}
                 <span class="issue-meta-index__label">{s.title}</span>

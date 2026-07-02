@@ -1,6 +1,6 @@
 ---
 title: "Fix latent bugs surfaced by the audit"
-state: closed
+status: done
 ---
 
 Cheap correctness wins found while mapping the toolkit.

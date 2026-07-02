@@ -1,6 +1,6 @@
 ---
 title: "Docs sidebar: sync selection + scroll-into-view to currently opened page"
-state: closed
+status: done
 ---
 
 - [ ] On every navigation (initial load + client-side route changes), find the sidebar entry that matches the current URL and mark it active.

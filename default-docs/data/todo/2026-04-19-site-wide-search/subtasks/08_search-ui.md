@@ -1,6 +1,6 @@
 ---
 title: "Search UI — navbar modal, inline results, keyboard-first"
-state: open
+status: open
 ---
 
 One UI, used everywhere. Scope-aware (see subtask 07), keyboard-first, respects the theme contract.

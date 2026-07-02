@@ -1,6 +1,6 @@
 ---
 title: "Update the sidebar-state-cache dev-docs page to the v2 format"
-state: closed
+status: done
 ---
 
 `dev-docs/05_architecture/05_layout-internals/07_sidebar-state-cache.md` was written against the v1 per-folder format; rewrite the key/value/TTL/GC sections for v2 (per-scope blobs, delete-on-default, legacy-key migration) and mention the Browser Cache toolbar app.

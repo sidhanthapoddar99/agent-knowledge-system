@@ -1,7 +1,7 @@
 {
   "title": "Fix: ToC rendering and active-section tracking",
   "description": "Stabilize the outline panel: heading extraction, active-heading tracking, smooth scroll.",
-  "status": "closed",
+  "status": "done",
   "priority": "medium",
   "component": ["layout-general"],
   "labels": [

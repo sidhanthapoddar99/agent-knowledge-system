@@ -1,6 +1,6 @@
 ---
 title: "Restructure src/layouts/issues/default folder"
-state: closed
+status: done
 ---
 
 The layout has grown organically; `DetailBody.astro` is now 1576 lines, `client.ts` is 752 lines, `parts/` mixes Astro components with JS modules, and large style blocks live inside `.astro` files. Time to restructure before adding new features.

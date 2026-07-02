@@ -1,6 +1,6 @@
 ---
 title: "@root alias + supporting scaffold (defaults rename, template, init)"
-state: closed
+status: done
 ---
 
 Land the `@root` system alias along with the surrounding scaffolding it depends on: rename `dynamic_data/` to a clearer name, build a copyable starter template, wire `init` to use that template, and propagate the renames through skills and docs. Captured here as one subtask because the pieces are interlocking (e.g., `@root/default-docs/themes` only resolves cleanly once the rename + template both exist).

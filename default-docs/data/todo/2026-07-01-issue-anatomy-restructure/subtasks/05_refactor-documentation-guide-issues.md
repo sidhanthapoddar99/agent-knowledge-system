@@ -1,6 +1,6 @@
 ---
 title: Refactor the documentation-guide tracker's own issues
-state: closed
+status: done
 ---
 
 Dogfood the finalized anatomy (`notes/01_issue-anatomy/`) on our own backlog: the

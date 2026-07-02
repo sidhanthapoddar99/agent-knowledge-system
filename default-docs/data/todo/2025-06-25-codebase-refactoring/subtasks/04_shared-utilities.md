@@ -1,6 +1,6 @@
 ---
 title: "Consolidate repeated primitives into shared utilities"
-state: open
+status: open
 ---
 
 **What it means.** The loaders re-implement the same low-level operations in several places. Pull the recurring ones into a single shared helper each, so there's one implementation to reason about and fix.

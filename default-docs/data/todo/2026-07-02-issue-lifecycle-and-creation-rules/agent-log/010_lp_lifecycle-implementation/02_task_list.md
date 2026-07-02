@@ -6,28 +6,31 @@ Running checklist for the loop. Tick items as they land; add discovered work und
 the matching phase rather than silently doing it. Detail lives in the subtask
 files — this list is the flight plan, not the spec.
 
-## Phase 1 — Code + migration (subtasks 03 + 07, one wave)
+## Phase 1 — Code + migration (subtasks 03 + 07, one wave) ✅ DONE (iter 1)
 
-- [ ] Exported status/category/color constant in `src/loaders/issues.ts`; old
-      `SubtaskState` union + scattered lists replaced
-- [ ] Shared issue+subtask validation against the constant (hard error, detailed
-      copy-pasteable message; silent default-to-open removed) — implemented but
-      NOT yet fatal for legacy values
-- [ ] Migration script (new, dated, per `2026-06-22_done-to-state.py` precedent):
-      `state:`→`status:` rename + `closed`→`done` + `cancelled`→`dropped`, all
-      trackers, idempotent, check/migrate modes, validation pass as exit criterion
-- [ ] Run migration on `data/todo/`, `data/todo-testing/`, demo issues; verify
-      zero legacy fields/values remain
-- [ ] Hard validation confirmed active + tested with a deliberate bad status
-- [ ] Root `settings.jsonc`: values→fixed-comment, new colors, `wip` deprecation
-      annotation
-- [ ] CLI: set-state (7 statuses, both levels, **subtask-targeting bug fixed**),
-      list/review-queue category filters + not-Closed default scope, check issues
-      against the constant
-- [ ] Frontend: category tabs, 7-status badges w/ decided colors, FilterBar,
-      review-debt via Review category, views (Blocked by status; Assigned
-      revisited), subtask counts
-- [ ] Build green + validators green + manual exercise (tabs, badges, error msg)
+- [x] Exported status/category/color constant — `src/loaders/issue-status.ts`
+      (loader re-exports; CLI mirrors in `_lib.mjs`); old `SubtaskState` union now
+      a deprecated alias
+- [x] Shared issue+subtask validation against the constant (hard error, detailed
+      copy-pasteable message; silent default-to-open removed). Legacy values are
+      *mapped* not rejected, so the hard error is safe & already active
+- [x] Migration script `2026-07-02_state-to-status.py` (detect/locate/migrate/
+      verify, idempotent, per the precedent)
+- [x] Ran migration on `data/todo/` — 248 files (229 field renames + 19 settings
+      remaps); `verify` exits 0. (No `todo-testing/`; only one live tracker.)
+- [x] Hard validation active + tested (`banana` → rejected with the 7-value msg)
+- [x] Root `settings.jsonc`: values→fixed-comment + 7 colors, `wip`/`blocked`
+      labels annotated DEPRECATED, Blocked view → status, Assigned view removed
+- [x] CLI (repo + cache identical): set-state (7 statuses, both levels,
+      **subtask-targeting bug fixed** via `--subtask`), list `--include-closed` +
+      non-closed default scope, check/subtasks/show/review-queue category-aware
+- [x] Frontend: category tabs (+Active default), 7-status badges/icons/colors,
+      review-debt via Review category, Comprehensive category tabs, subtask cycle,
+      Blocked view by status
+- [x] Build green + `docs-guide check issues` green + manual exercise
+
+**Subtasks 03 + 07 → review.** Record: milestone `101_code-and-migration.md`.
+Revisit-in-sweep flags: "Active" default tab; click-cycle happy-path subset.
 
 ## Phase 2 — Descriptions (subtasks 04, 05, 06)
 

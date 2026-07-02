@@ -1,6 +1,6 @@
 ---
 title: Bump the plugin version number
-state: closed
+status: done
 ---
 
 Once the work in this issue lands (the skill split `030`, agent-log standardization `040`,

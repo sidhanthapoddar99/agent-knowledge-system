@@ -13,14 +13,14 @@ type SubtaskDoc = IssueSubtask & { toc: TocEntry[] };
 
 interface Props {
   sortedSubtaskDocs: SubtaskDoc[];
-  subtaskReview: number;
-  openCount: number;
+  reviewCount: number;
+  inProgressCount: number;
+  notStartedCount: number;
   closedCount: number;
-  cancelledCount: number;
   statusColors: Record<string, string>;
 }
 
-const { sortedSubtaskDocs, subtaskReview, openCount, closedCount, cancelledCount, statusColors } = Astro.props;
+const { sortedSubtaskDocs, reviewCount, inProgressCount, notStartedCount, closedCount, statusColors } = Astro.props;
 const subtaskTotal = sortedSubtaskDocs.length;
 if (subtaskTotal === 0) return null as any;
 ---
@@ -29,16 +29,16 @@ if (subtaskTotal === 0) return null as any;
   <div class="issue-comprehensive">
     <div class="issue-comprehensive__tabs" role="tablist">
       <button type="button" class="issue-comprehensive__tab is-active" data-comprehensive-tab="review">
-        Review <span class="issue-comprehensive__tab-count">{subtaskReview}</span>
+        Review <span class="issue-comprehensive__tab-count">{reviewCount}</span>
       </button>
-      <button type="button" class="issue-comprehensive__tab" data-comprehensive-tab="open">
-        Open <span class="issue-comprehensive__tab-count">{openCount}</span>
+      <button type="button" class="issue-comprehensive__tab" data-comprehensive-tab="in-progress">
+        In Progress <span class="issue-comprehensive__tab-count">{inProgressCount}</span>
+      </button>
+      <button type="button" class="issue-comprehensive__tab" data-comprehensive-tab="not-started">
+        Not Started <span class="issue-comprehensive__tab-count">{notStartedCount}</span>
       </button>
       <button type="button" class="issue-comprehensive__tab" data-comprehensive-tab="closed">
         Closed <span class="issue-comprehensive__tab-count">{closedCount}</span>
-      </button>
-      <button type="button" class="issue-comprehensive__tab" data-comprehensive-tab="cancelled">
-        Cancelled <span class="issue-comprehensive__tab-count">{cancelledCount}</span>
       </button>
       <button type="button" class="issue-comprehensive__tab" data-comprehensive-tab="all">
         All <span class="issue-comprehensive__tab-count">{subtaskTotal}</span>
@@ -52,10 +52,10 @@ if (subtaskTotal === 0) return null as any;
         const panelKey = subtaskPanelKey(s);
         return (
           <li
-            class={`issue-comprehensive__item state-${s.state} ${clippable ? 'is-clipped' : ''}`}
+            class={`issue-comprehensive__item state-${s.status} ${clippable ? 'is-clipped' : ''}`}
             data-subtask-key={panelKey}
             data-file={s.filePath}
-            data-state={s.state}
+            data-state={s.status}
             data-clippable={clippable ? 'true' : undefined}
             id={`comprehensive-${panelKey}`}
           >
@@ -63,15 +63,15 @@ if (subtaskTotal === 0) return null as any;
               <button
                 type="button"
                 class="issue-comprehensive__state"
-                aria-label={`Subtask state: ${s.state}. Click to cycle.`}
-                data-state={s.state}
+                aria-label={`Subtask status: ${s.status}. Click to cycle.`}
+                data-state={s.status}
               >
-                <Fragment set:html={stateIconSvg(s.state)} />
+                <Fragment set:html={stateIconSvg(s.status)} />
               </button>
               {s.sequence !== null && <span class="issue-comprehensive__num">{pad(s.sequence)}</span>}
               <span class="issue-comprehensive__title">{s.title}</span>
-              <span class="issue-comprehensive__pill" data-state-pill style={statusColors[s.state] ? `--badge-color: ${statusColors[s.state]}` : undefined}>
-                {s.state}
+              <span class="issue-comprehensive__pill" data-state-pill style={statusColors[s.status] ? `--badge-color: ${statusColors[s.status]}` : undefined}>
+                {s.status}
               </span>
             </div>
             {s.html && (

@@ -1,6 +1,6 @@
 ---
 title: "Code block enhancements"
-state: closed
+status: done
 ---
 
 ## Tasks

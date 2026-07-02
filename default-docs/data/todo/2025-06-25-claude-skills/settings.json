@@ -1,7 +1,7 @@
 {
   "title": "Author framework skills for Claude",
   "description": "Author Claude skills that accelerate working in the framework — themes, layouts, components, configs, content.",
-  "status": "closed",
+  "status": "done",
   "priority": "medium",
   "component": [
     "ai-plugin-and-docs"

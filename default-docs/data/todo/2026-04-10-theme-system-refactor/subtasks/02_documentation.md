@@ -1,6 +1,6 @@
 ---
 title: "Documentation for the refactored theme system"
-state: closed
+status: done
 ---
 
 > **⏸ Under review — absorbed by `2026-04-19-docs-phase-2`**

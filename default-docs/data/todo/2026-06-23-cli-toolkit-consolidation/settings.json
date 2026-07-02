@@ -4,7 +4,7 @@
   "status": "closed",
   "priority": "medium",
   "component": [
-    "ai-skills"
+    "ai-plugin-and-docs"
   ],
   "labels": [
     "refactor",

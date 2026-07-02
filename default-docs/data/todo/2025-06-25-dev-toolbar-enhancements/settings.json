@@ -4,7 +4,7 @@
   "status": "open",
   "priority": "medium",
   "component": [
-    "dev-toolbar"
+    "architecture"
   ],
   "labels": [
     "wip",

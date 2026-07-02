@@ -3,7 +3,7 @@
   "description": "Ship the framework as a standalone tool (curl|sh installable Rust binary), with three usage methods — CLI, manual clone, Docker — that all converge on the same underlying flow. Replaces the previous 'framework as npm package' direction. Brainstorm captured in brainstorm/01_discuss_distribution.md; subtasks and decisions to be cherry-picked from 2026-04-25-framework-as-npm-package and 2025-06-25-deployment as they firm up.",
   "status": "closed",
   "priority": "low",
-  "component": ["infra"],
+  "component": ["architecture"],
   "labels": [
     "refactor",
     "feature",

@@ -3,7 +3,7 @@
   "description": "Verify blog index + post layouts, sorting, filtering, authors/tags, and pagination.",
   "status": "open",
   "priority": "medium",
-  "component": ["layout-blogs"],
+  "component": ["layout-general"],
   "labels": [
     "wip",
     "task"

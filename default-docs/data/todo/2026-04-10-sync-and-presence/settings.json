@@ -4,7 +4,7 @@
   "status": "open",
   "priority": "medium",
   "component": [
-    "live-editor"
+    "editor"
   ],
   "labels": [
     "wip",

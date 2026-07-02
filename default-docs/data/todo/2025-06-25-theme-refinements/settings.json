@@ -3,7 +3,7 @@
   "description": "Round out theme variable coverage, smooth dark-mode transitions, document the theme contract.",
   "status": "closed",
   "priority": "low",
-  "component": ["themes"],
+  "component": ["layout-general"],
   "labels": [
     "task"
   ],

@@ -4,7 +4,7 @@
   "status": "cancelled",
   "priority": "medium",
   "component": [
-    "infra"
+    "architecture"
   ],
   "labels": [
     "feature"

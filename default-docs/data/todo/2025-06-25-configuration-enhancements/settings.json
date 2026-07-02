@@ -4,7 +4,7 @@
   "status": "open",
   "priority": "medium",
   "component": [
-    "loaders"
+    "loaders-and-renderers"
   ],
   "labels": [
     "feature"

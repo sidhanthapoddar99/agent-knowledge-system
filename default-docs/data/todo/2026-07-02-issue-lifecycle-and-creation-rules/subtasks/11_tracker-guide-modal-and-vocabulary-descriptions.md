@@ -1,6 +1,6 @@
 ---
 title: Tracker guide modal + promote component/label descriptions to required data
-status: review
+status: done
 ---
 
 Sidhantha's direction (2026-07-02, post-loop sign-off). Two halves of one feature —
@@ -51,10 +51,13 @@ them to proper fields the loader returns, and make them a **strict requirement**
       component / labels from settings with their descriptions. Verified in the
       built HTML: 4 categories, 7 status badges, 3 editable + 1 fixed tags,
       descriptions rendered.
-- [~] Propagate: user-guide vocabulary + setup-new-tracker, skill reference
-      `00_anatomy/03_overall-issue-tracker-vocabulary.md` (renamed) —
-      **in flight this wave** (doc sweep). Plugin version bump + cache mirror at
-      finalize.
+- [x] Propagate: user-guide vocabulary + setup-new-tracker + list-view +
+      folder-structure, skill reference
+      `00_anatomy/03_overall-issue-tracker-vocabulary.md` (renamed) — landed in
+      the doc sweep and independently audited (fork agent, 2026-07-03; two
+      dangling references to the pre-merge migration names fixed in
+      `02_vocabulary.md`). Plugin bumped 0.6.0→0.7.0, cache mirrored
+      `diff -rq` identical.
 - [x] Build green (647pp) + `docs-guide check issues` exit 0.
 
 **Sequencing:** landed WITH subtask 12 in one wave, one plugin version bump.

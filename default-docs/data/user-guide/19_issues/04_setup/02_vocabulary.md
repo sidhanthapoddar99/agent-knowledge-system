@@ -173,7 +173,7 @@ build/dev startup (and fails `docs-guide check issues`): a stray `values` list t
 read as authoritative and silently redefine the vocabulary, so the loader rejects it loudly
 rather than ignoring it. An unknown status *value* on an issue is likewise a hard error, not
 a silent default. Migrating an old `fields.status` block? Run
-`migration/2026-07-03_status-colors-only.py` — it detects the block and guides the rewrite.
+`migration/2026-07-03_root-settings-schema.py` — it detects the block and guides the rewrite.
 
 #### Why status is fixed, and everything else isn't
 
@@ -220,7 +220,7 @@ that's a framework-level decision, not a per-tracker config change.
 }
 ```
 
-Why required: these glosses are the controlled definition every issue author and AI agent reads when deciding where a new issue belongs, and they render verbatim in the tracker's **Guide** modal (the **Guide** button beside the table/card toggle on the [list view](../ui/list-view)). Keeping them mandatory stops `component` from silently drifting into a junk drawer. To backfill descriptions on an older tracker, run `migration/2026-07-03_vocabulary-descriptions.py`.
+Why required: these glosses are the controlled definition every issue author and AI agent reads when deciding where a new issue belongs, and they render verbatim in the tracker's **Guide** modal (the **Guide** button beside the table/card toggle on the [list view](../ui/list-view)). Keeping them mandatory stops `component` from silently drifting into a junk drawer. To backfill descriptions on an older tracker, run `migration/2026-07-03_root-settings-schema.py`.
 
 ### Colors
 

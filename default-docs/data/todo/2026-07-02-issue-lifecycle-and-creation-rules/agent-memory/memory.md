@@ -57,8 +57,16 @@ iteration (context may reset between loop wake-ups).
     exit 0, self-test PASS, skill-links green both roots.
   - **Anatomy refs renamed this session** (parallel task): `02_settings.md`→
     `02_per-issue-settings.md`, `03_vocabulary.md`→`03_overall-issue-tracker-vocabulary.md`.
-- **Click-cycle happy-path** still pending sidhantha's verdict. **Out-of-scope doc-hygiene
-  the sweep flagged:** `09_using-with-ai.md` still frames the skill/CLI as "planned".
+- **ISSUE CLOSED (2026-07-03).** Sidhantha signed off the whole issue after a final
+  overview verification (build 652pp, check exit 0, self-test PASS, skill-links green,
+  cache identical, migration verify clean, live surfaces confirmed, user-guide
+  independently audited by a fork agent — its one defect, two dangling pre-merge
+  migration names in `02_vocabulary.md`, fixed). Subtasks 10–13 `review → done`,
+  issue `open → done`, all internal checkboxes ticked. Comment `002_issue-closed.md`.
+  This issue is finished — do not resume work under it; new concerns get new homes.
+- **Click-cycle happy-path**: implicitly accepted with the full sign-off (shipped,
+  verified, closed without veto). **Out-of-scope doc-hygiene the sweep flagged:**
+  `09_using-with-ai.md` still frames the skill/CLI as "planned".
 - The related issue `2026-07-01-issue-anatomy-restructure` is fully `done` (all 7 subtasks
   signed off, incl. 04_update-skill-and-adhoc-command + 07_set-rules).
 - **Themes-doc note (beyond lifecycle scope):** `07_issues-styles.md` documents a

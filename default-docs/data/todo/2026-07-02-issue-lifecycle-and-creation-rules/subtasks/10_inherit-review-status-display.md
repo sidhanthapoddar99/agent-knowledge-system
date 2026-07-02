@@ -1,6 +1,6 @@
 ---
 title: Inherit review into the issue's displayed status when review-debt promotes it
-status: review
+status: done
 ---
 
 Sidhantha's direction (2026-07-02, post-loop sign-off): when a subtask sits in
@@ -36,9 +36,11 @@ that's a one-line pivot to flag before implementing.
       right there). CLI `list`/`show`/`--json` keep stored (review-debt already has
       its own `review-queue` view; `--json` consumers must see the real field).
       Recorded so the invariant is explicit.
-- [~] Propagate: user-guide list-view + lifecycle pages and the skill's review-debt
-      rule note the displayed-status inheritance — **in flight this wave** (doc
-      sweep).
+- [x] Propagate: user-guide list-view + lifecycle pages + using-with-ai (AI rule 7)
+      and the skill's review-debt rule note the displayed-status inheritance —
+      landed in the doc sweep and independently audited (fork agent, 2026-07-03):
+      all statements correct (display-only, stored untouched, CLI shows stored,
+      closed never inherits).
 - [x] Build green (647pp) + `docs-guide check issues` exit 0. Verified in built
       HTML: `2026-04-10-editor-core` & the demo issue render a `review` badge while
       `data-status="open"` stays stored.

@@ -1,6 +1,6 @@
 ---
 title: Root settings — status becomes colors-only; hard-error on a values field
-status: review
+status: done
 ---
 
 Sidhantha's direction (2026-07-02, post-loop sign-off): the root-settings `status`
@@ -33,11 +33,13 @@ instead. The only thing a tracker may configure about status is **colors**.
 - [x] Migrated our own `data/todo/settings.jsonc` — `fields.status` gone,
       top-level `statusColors` added, fixed-vocabulary comment kept. `verify`
       clean.
-- [~] Propagate the new shape: loader types **done**; docs (user-guide
+- [x] Propagate the new shape: loader types **done**; docs (user-guide
       vocabulary + setup-new-tracker + themes example) and skill reference
       `00_anatomy/03_overall-issue-tracker-vocabulary.md` (renamed from
-      `03_vocabulary.md`) — **in flight this wave** (doc-propagation sweep).
-      Plugin version bump + cache mirror at finalize.
+      `03_vocabulary.md`) — landed in the doc-propagation sweep and independently
+      audited (fork agent, 2026-07-03): no stale `fields.status.colors`
+      instructions anywhere, every `fields.status` mention is in hard-error
+      context. Plugin bumped 0.6.0→0.7.0, cache mirrored `diff -rq` identical.
 - [x] Build green (647pp) + `docs-guide check issues` exit 0 (CLI mirrored).
 
 **Sequencing:** landed WITH subtask 11 — both reshape root-settings vocabulary

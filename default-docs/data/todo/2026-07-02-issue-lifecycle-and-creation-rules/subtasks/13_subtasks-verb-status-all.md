@@ -1,6 +1,6 @@
 ---
 title: subtasks verb — --status all silently degrades to the default scope
-status: review
+status: done
 ---
 
 Found 2026-07-02 while validating the loop output against a fully-`done` issue:
@@ -22,7 +22,8 @@ same silent-ignore disease subtask 12 targets in settings. (`set-state`'s
       unknown tokens are still dropped so a typo can't smuggle in an empty
       filter as "everything".
 - [x] Document the `all` keyword in the verb's `--help` status line.
-- [~] Self-test case — the CLI `_selftest.mjs` is a per-command *contract*
+- [x] Self-test case — resolved as *not the right harness*: `_selftest.mjs` is a
+      per-command *contract*
       smoke-test (help exit 0, `-h` honored, `--json` shape), not a
       fixture-driven behavioral harness; a `--status all` assertion would have to
       couple to specific live data (this issue having `done` subtasks) and rot

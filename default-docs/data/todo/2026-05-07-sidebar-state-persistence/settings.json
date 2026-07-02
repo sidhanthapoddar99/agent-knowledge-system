@@ -3,7 +3,7 @@
   "description": "Two related sidebar bugs across docs and issues layouts: (1) sidebar selection doesn't track the currently-open page, and (2) collapse / expand state is lost on every navigation and refresh. Cache should persist across refresh + navigation with a 30-day per-key TTL.",
   "status": "closed",
   "priority": "medium",
-  "component": ["layout-general"],
+  "component": ["loaders-and-renderers"],
   "labels": [
     "bug",
     "feature"

@@ -38,14 +38,16 @@
         // tied to one content layer.
         "architecture",
 
-        // The content pipeline — how content gets from disk to the screen:
-        // loading, link resolution, caching, and rendering to the frontend.
-        "loaders-and-renderers",
+
 
         // First-class / markdown-rendered content ELEMENTS (markdown itself,
         // code blocks, mermaid & excalidraw diagrams, knowledge graph, wikilinks)
         // plus supplemental tools layered on the core (e.g. site-wide search).
         "components",
+
+        // The content pipeline — how content gets from disk to the screen:
+        // loading, link resolution, caching, and rendering to the frontend.
+        "loaders-and-renderers",
 
         // Building the PRESENTATION: layouts (docs, blog, new layout types),
         // themes, responsive/sizing. Layout-development work in general.

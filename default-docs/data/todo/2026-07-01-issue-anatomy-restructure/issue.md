@@ -54,5 +54,6 @@ as a `000_` prefix. This realigns each section to a single owner + lifecycle.
 - **`2026-06-22-numeric-ordering-prefix-convention`** (closed) — the `NNN_` grammar
   the new folders rely on.
 - **`2026-05-08-runtime-stack-migration`** (open) — its architecture-update model is
-  the substrate the structure should survive; some of its `notes/discussion/` content
-  is really brainstorm under the new model.
+  the substrate the structure should survive; its former `notes/discussion/` content
+  was brainstorm under the new model and has since moved to
+  `brainstorm/04_discuss_stack-and-migration/`.

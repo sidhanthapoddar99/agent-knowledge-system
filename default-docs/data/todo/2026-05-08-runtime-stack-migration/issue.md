@@ -6,14 +6,14 @@ This issue is the **discussion + design capture**. Implementation subtasks land 
 
 ## Why
 
-Direct trigger: SSR module isolation in Vite 6 silently splits module-level state between plugin and SSR contexts, leaving the cache stuck on stale data after watcher events. Couldn't fix it cleanly inside Astro. See `notes/discussion/05_issue.md`.
+Direct trigger: SSR module isolation in Vite 6 silently splits module-level state between plugin and SSR contexts, leaving the cache stuck on stale data after watcher events. Couldn't fix it cleanly inside Astro. See `brainstorm/04_discuss_stack-and-migration/05_issue.md`.
 
 Broader motivation: zero runtime dependencies for end users, ~25 MB binary instead of ~250 MB `node_modules/`, sub-100 ms cold start, predictable production behaviour, and a clean substrate for future features (CRDT collab, search index, plugin runtime). See `notes/architecture/`.
 
 ## Notes
 
 - **`notes/architecture-update/`** — the **structure / layout / theme / shell** separation model (added 2026-06-09). Decouples the overloaded `type` into four orthogonal axes; structures self-register their URL + parsing rules so a per-structure change never touches a central switch. The design work to formalize it is `subtasks/01`. **This is the conceptual backbone the Go rewrite should be built on.** Its companion `02_known-issues-content-pipeline.md` records the known per-parser pipeline divergence (asset embeds / image srcs / custom tags / link gating drift per content type) as an issue the Go pipeline must solve by construction — the full unification is specced in `2026-04-19-knowledge-graph-and-wiki-links` and deliberately *not* built into the Astro code.
-- **`notes/discussion/`** — Q&A from the conversation that produced this design.
+- **`brainstorm/04_discuss_stack-and-migration/`** — Q&A from the conversation that produced this design (moved from `notes/discussion/`; see the resolved marker on `01_frameworks.md`).
   - Framework comparison (Astro / Next.js / Go+Vite / 100 % Rust)
   - Architecture survival (site.yaml, themes, layouts, custom pages)
   - Migration shape and effort estimate

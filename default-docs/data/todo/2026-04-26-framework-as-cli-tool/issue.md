@@ -2,7 +2,7 @@
 
 Ship the framework as a **standalone tool**, not as an npm package. End-state: a small Rust CLI installed by `curl … | sh`, a `docs.conf` per-project config (replacing the `.env` convention), and three symmetric ways to use it — CLI (the ideal), manual clone, Docker container.
 
-This issue is the **umbrella**. The brainstorm that produced this direction lives in `agent-log/001_distribution-brainstorm.md` — read that first; it captures the 3-method architecture, the convergence pattern that makes them symmetric, the Node/Bun reality the Rust CLI has to deal with, and the open design decisions.
+This issue is the **umbrella**. The brainstorm that produced this direction lives in `brainstorm/01_discuss_distribution.md` — read that first; it captures the 3-method architecture, the convergence pattern that makes them symmetric, the Node/Bun reality the Rust CLI has to deal with, and the open design decisions.
 
 ## Relationship to existing issues
 

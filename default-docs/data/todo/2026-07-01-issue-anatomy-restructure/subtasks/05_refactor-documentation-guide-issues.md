@@ -11,23 +11,42 @@ the live work-list.
 
 ## Mechanical migration
 
-- [ ] **Flat agent-logs → activity folders.** Old issues log directly as
-      `agent-log/NNN_<name>.md`; the norm is now `NNN_<code>_<name>/` activity folders
-      (kind code in the name, `0NN_` meta + milestone files inside). Pick the right code
-      per activity (`lp`/`au`/`rf`/`it`/`wf`). Validator-flagged offenders:
-      `issue-link-resolution`, `sidebar-state-persistence`,
-      `numeric-ordering-prefix-convention`, `docs-phase-2`, `framework-as-cli-tool`,
-      `tracker-mental-model-alignment`, `sidebar-cache-v2`, `claude-skills`,
-      `issues-layout`.
-- [ ] **Code-less activity folders.** `cli-toolkit-consolidation` has `200_loops/`
-      (needs a kind code) and `000_agent-memory/` — the latter is agent-memory
-      mis-filed inside agent-log; move it to a real `agent-memory/` section.
-- [ ] **Mis-filed deliberation → `brainstorm/`.** Pre-decision thinking parked under
-      `notes/discussion/` is *process*, not *product* — relocate it (e.g.
-      `runtime-stack-migration/notes/discussion/`).
-- [ ] **Split mixed Notes.** Where `notes/` blends finalized output with deliberation,
-      keep the product in `notes/` and move the rest to `brainstorm/` (with
-      `**Resolved →**` markers where the thread concluded).
+- [x] **Flat agent-logs → activity folders.** Done across all nine offenders. Six were
+      genuine execution records and became activity folders (`lp` for the autonomous
+      runs in `sidebar-cache-v2`, `issue-link-resolution`, `sidebar-state-persistence`,
+      `numeric-ordering-prefix-convention`, `claude-skills`; `au` for
+      `tracker-mental-model-alignment`'s mechanism write-up; `rf` for `issues-layout`'s
+      refactor log). Two were deliberation in disguise and moved to `brainstorm/`
+      instead (`docs-phase-2`'s scope braindump, `framework-as-cli-tool`'s
+      distribution thinking-log — both with `**Resolved →**` markers). Multi-`iter-N`
+      files grouped as milestones in one folder; git sees renames, prose untouched.
+      `issues-layout`'s depth-cap fixtures (`agent-log/exploration/phase-1/deeper/`,
+      `notes/design/phase-1/deeper/`) were **kept deliberately** — still the only
+      coverage for the loader's depth-cap warning (demo-showcase stays within the cap);
+      its `test-color-absent.md` was deleted (demo-showcase covers colour-less rendering).
+- [x] **Code-less activity folders.** `cli-toolkit-consolidation`: `000_agent-memory/`
+      → real `agent-memory/` (memory.md index + `toolkit-facts.md`); `200_loops/`
+      wrapper dissolved → `200_lp_cli-consolidation/` at the agent-log root, meta trio
+      renamed to `00_goal` / `01_summary` / `02_task_list`.
+- [x] **Mis-filed deliberation → `brainstorm/`.**
+      `runtime-stack-migration/notes/discussion/` (5 files) moved verbatim to
+      `brainstorm/04_discuss_stack-and-migration/` with a resolved marker on
+      `01_frameworks.md` ("decided on Go + Vite; formalized in notes/architecture/");
+      14 pointers fixed in-issue plus a broken cross-issue link in
+      `update-date-time-optimization/notes/04`.
+- [ ] **Split mixed Notes.** Tracker-wide sweep done (read-only): most notes are clean
+      decision-record product. Three moves remain, ranked:
+      1. `knowledge-graph-and-wiki-links/notes/01_original-layered-scope.md` →
+         `brainstorm/` (superseded original framing + open questions;
+         `**Resolved →** issue.md`);
+      2. `updating-skills-and-documentation/notes/050_skill-review-ideation.md` →
+         `brainstorm/` (proposal-weighing; its Outcome section is the graduation);
+      3. `editor-advanced/notes/01_canvas-rendering.md` → `brainstorm/` (kind
+         `research`; Status: Research with an unresolved options table).
+      Deferred: `update-date-time-optimization/comments/001+002` are notes-grade spec
+      walkthroughs — move only when that issue is next touched. Cosmetic: five
+      editor-*/view-modes notes carry dead pre-migration `Type/Priority/Status` header
+      blocks.
 
 ## Issues that are really brainstorms
 
@@ -44,8 +63,29 @@ new home; (c) leave standing. Note the within-issue "graduation doesn't delete" 
 does **not** apply here — that rule is about brainstorm files inside an issue, not
 about issues themselves.
 
-- [ ] Assess the cancelled migration-direction issues →
-      `runtime-stack-migration/brainstorm/` (pick a / b / c above)
+- [x] Assess the cancelled migration-direction issues →
+      `runtime-stack-migration/brainstorm/` — **done, option (a): fold in + delete.**
+      Three parallel agents migrated each issue into a brainstorm thread
+      (`01_explore_framework-as-npm-package/`, `02_idea_editor-as-standalone-product/`,
+      `03_research_astro-6-upgrade/` — 12 files, each overview opening with a
+      `**Resolved →**` marker and source-slug provenance), then the source folders were
+      deleted (git history keeps them; zero markdown links pointed at them, only prose
+      mentions). Tracker: 49 → 46 issues, validator clean, build green.
+- [x] **`2026-04-26-framework-as-cli-tool`** — fourth member of the same cluster
+      (middle of the supersession chain npm-package → cli-tool → runtime migration).
+      **Decided: keep.** Unlike the three deleted issues it is not pure deliberation —
+      real work shipped under it and is still in force (consumer-mode refactor: `@root`
+      alias, `dynamic_data/`→`default-docs/` rename, starter template, `/docs-init`,
+      plugin `_env.mjs`), so it is the provenance record for running code. Its
+      superseded *direction* half is already graduated in place: comment 003 carries a
+      question-by-question resolution table pointing into the runtime migration.
+      Its flat `agent-log/001_distribution-brainstorm.md` gets fixed by the mechanical
+      agent-log pass above, not by moving issues around.
 - [ ] Distil the decision into the general **issue vs brainstorm-file rule** — when
       does a thought get its own issue vs a brainstorm inside an existing one? Feeds
-      subtask 02's rules.
+      subtask 02's rules. The cluster refactor supplies it: **an issue that shipped
+      work stays an issue** (close with a supersession comment mapping open questions
+      to their fates — see cli-tool's comment 003); **an issue that is pure
+      deliberation converging elsewhere folds into the winner's `brainstorm/`** (with
+      a `**Resolved →**` overview + source-slug provenance) **and is deleted** — git
+      history keeps the original.

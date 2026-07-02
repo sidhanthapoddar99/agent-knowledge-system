@@ -68,5 +68,5 @@ In Go: one process, one set of module instances, one cache. The bug class is imp
 ## Companion reading
 
 - **`../../../2026-05-08-update-date-time-optimization/notes/03_ssr-module-isolation.md`** — the engineering investigation, the dual-invalidation fix code, and the diagnostic logging.
-- **`../architecture/02_go-runtime.md`** — how Go's single-process model eliminates the bug class.
+- **`../../notes/architecture/02_go-runtime.md`** — how Go's single-process model eliminates the bug class.
 - **MEMORY.md → "Vite 6 SSR module isolation"** — the saved lesson-learned.

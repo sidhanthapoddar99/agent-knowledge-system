@@ -22,7 +22,7 @@ Make loop/audit/refactor agent-logs readable and meaningful: structured markdown
 - **Proved it on this very loop:** rewrote the 18 per-subtask iteration logs into these 6 milestone entries, each in the new rich format.
 
 ```text
-agent-log/200_loops/010_cli-consolidation/
+agent-log/200_lp_cli-consolidation/        (was agent-log/200_loops/010_cli-consolidation/ pre-restructure)
   before:  101_naming … 118_post-edit-matrix      18 logs · 1 per subtask · flat prose
   after:   101 foundation
            102 correctness-and-cleanup

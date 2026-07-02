@@ -19,7 +19,7 @@ While searching the tracker for the Astro-upgrade issue, a broad `docs-list --se
 
 ## Status
 
-**Planned — ready to execute via a `/loop`.** Findings are settled and the work is fully decomposed into **18 subtasks**. The naming model (subtask 01) is the one open gate, to be decided in-loop before the per-type commands. The loop scaffold lives in `agent-log/200_loops/010_cli-consolidation/` (goal + testing methodology + live task-list); durable facts in `agent-log/000_agent-memory/`.
+**Planned — ready to execute via a `/loop`.** Findings are settled and the work is fully decomposed into **18 subtasks**. The naming model (subtask 01) is the one open gate, to be decided in-loop before the per-type commands. The loop scaffold lives in `agent-log/200_lp_cli-consolidation/` (goal + testing methodology + live task-list); durable facts in `agent-memory/`.
 
 ## Key findings up front
 

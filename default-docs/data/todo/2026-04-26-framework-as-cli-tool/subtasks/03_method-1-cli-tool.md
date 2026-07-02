@@ -9,7 +9,7 @@ The "ideal way" usage path. A small Go binary, installed via `curl … | sh`, th
 
 ## Status
 
-Design firm (see `agent-log/001_distribution-brainstorm.md` for the discussion that produced it). Implementation depends on:
+Design firm (see `brainstorm/01_discuss_distribution.md` for the discussion that produced it). Implementation depends on:
 
 1. **Subtask 02** (Method 2 from-source) verified working — gives the underlying behaviour the CLI just spawns
 2. **Subtask 01** (`@root`, defaults rename, template, init) — provides the template `docs.yaml` for `astro-doc init` to scaffold
@@ -103,7 +103,7 @@ No `instances/` folder — there are no detached instances to track.
 
 ## Distribution
 
-- **Language:** Go (decision recorded in agent-log/001 — Rust only wins if the CLI shares a core with the Rust editor backend; Go is the right call for a pure CLI).
+- **Language:** Go (decision recorded in brainstorm/01_discuss_distribution.md — Rust only wins if the CLI shares a core with the Rust editor backend; Go is the right call for a pure CLI).
 - **Output:** single static binary per platform (linux-x86, linux-arm, mac-x86, mac-arm, windows-x86 — see open question on Windows).
 - **Hosting:** an install domain (TBD via rebrand issue). `https://<domain>/install.sh` and `https://<domain>/install.ps1`.
 - **Installer:** `curl https://<domain>/install.sh | sh` — downloads the platform-appropriate binary, drops it in `~/.local/bin/<name>`, optionally adds to `$PATH` in `~/.zshrc` / `~/.bashrc` (with the user's consent).

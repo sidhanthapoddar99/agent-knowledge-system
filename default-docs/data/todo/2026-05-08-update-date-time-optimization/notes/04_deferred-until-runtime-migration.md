@@ -67,4 +67,4 @@ If none of these happen, the next code touch on derived-`updated` is in Go.
 ## Cross-reference
 
 - Successor: [`2026-05-08-runtime-stack-migration`](../../2026-05-08-runtime-stack-migration/issue.md)
-- Specifically: [`notes/discussion/03_migration.md` (phase 1)](../../2026-05-08-runtime-stack-migration/notes/discussion/03_migration.md) lists tracker derived-updated cache as a phase-1 deliverable.
+- Specifically: [`brainstorm/04_discuss_stack-and-migration/03_migration.md` (phase 1)](../../2026-05-08-runtime-stack-migration/brainstorm/04_discuss_stack-and-migration/03_migration.md) lists tracker derived-updated cache as a phase-1 deliverable.

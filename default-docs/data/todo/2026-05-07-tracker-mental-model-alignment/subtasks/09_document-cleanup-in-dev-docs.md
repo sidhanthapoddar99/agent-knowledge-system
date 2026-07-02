@@ -15,7 +15,7 @@ state: open
 2. **What's NOT in the schema and why** — record the removals (`due`, `milestone`, `type`, in-progress / blocked statuses). One sentence each.
 3. **Server-side mechanisms** — the derived `updated` cache. Two authoritative sources to draw from / link to:
    - [`notes/derived-issues-updates/00_design-rationale.md`](../notes/derived-issues-updates/00_design-rationale.md) — original design rationale.
-   - [`agent-log/001_cache-and-update-mechanism.md`](../agent-log/001_cache-and-update-mechanism.md) — **canonical implementation reference** post-landing: cache shape, lazy invalidation flow, watcher specifics, what was rejected and why, fallbacks. Quote or link as the dev-docs source-of-truth for "how the cache actually works after subtasks 03 and 10 landed".
+   - [`agent-log/010_au_cache-and-update-mechanism/101_writeup.md`](../agent-log/010_au_cache-and-update-mechanism/101_writeup.md) — **canonical implementation reference** post-landing: cache shape, lazy invalidation flow, watcher specifics, what was rejected and why, fallbacks. Quote or link as the dev-docs source-of-truth for "how the cache actually works after subtasks 03 and 10 landed".
 4. **Validators** — what `docs-check-section` enforces vs. what it warns about as soft hints.
 5. **CLI surface** — quick reference to the plugin's `docs-list` / `docs-show` flags after the cleanup.
 6. **Migration history** — pointer to this issue itself, so future readers can find the *why* behind every schema removal in one place.

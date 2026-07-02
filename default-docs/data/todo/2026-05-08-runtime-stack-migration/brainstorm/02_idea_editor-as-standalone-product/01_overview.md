@@ -3,7 +3,7 @@ title: "Editor as a standalone product — proposal and how it folded in"
 sidebar_label: "01 · Overview"
 ---
 
-> **Resolved →** folded into this issue as migration **phase 3** (see `notes/discussion/03_migration.md`); the three-methods integration thinking was absorbed into `notes/deployment-methods/`.
+> **Resolved →** folded into this issue as migration **phase 3** (see `brainstorm/04_discuss_stack-and-migration/03_migration.md`); the three-methods integration thinking was absorbed into `notes/deployment-methods/`.
 
 # Editor as a standalone product
 
@@ -42,7 +42,7 @@ beyond this repo, (2) the editor has demand beyond "I want it for my own docs," 
 The runtime-stack migration answered the "how do we run/distribute the framework?" question a
 different way: **one Go binary that embeds a Vite-built frontend** — not a Rust editor product
 living beside an Astro renderer. Once the runtime is a single Go process, the editor stops being
-a separate-product problem and becomes **phase 3** of the migration (`notes/discussion/03_migration.md`):
+a separate-product problem and becomes **phase 3** of the migration (`brainstorm/04_discuss_stack-and-migration/03_migration.md`):
 
 - **Phase 3a (preferred)** — the editor lives *inside* the Go binary: `y-go` for server-side
   CRDT, CodeMirror as a JS island, one binary, one process, no separate desktop app.

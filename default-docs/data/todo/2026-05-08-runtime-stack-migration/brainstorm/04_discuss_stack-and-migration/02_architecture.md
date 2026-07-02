@@ -73,11 +73,11 @@ Drop the binary, run `./doc-engine serve`, the site is up. No `bun install`, no 
 ## Why this is *better* than today, not just equivalent
 
 - **Theme CSS hot-reload**: today Vite re-bundles theme CSS on change (~200–500ms). Go just serves the file with a cache-busting query (~5ms). HMR feels instant.
-- **No SSR isolation**: the bug class that produced `notes/discussion/05_issue.md` is structurally impossible. One process, one module graph, one cache instance.
+- **No SSR isolation**: the bug class that produced `05_issue.md` is structurally impossible. One process, one module graph, one cache instance.
 - **Cold start**: Astro dev-server cold start ~2–4s; Go server cold start ~50–100ms. Restarts stop being a friction point.
 - **Theme variable contract validation** runs at startup with structured errors instead of silently freezing var-fallback values.
 
 ## Companion notes
 
-- **`../architecture/05_runtime-config-surface.md`** — full enumeration of what stays user-editable, with code-level detail.
-- **`../architecture/03_vite-frontend-and-dist.md`** — how the Vite bundle gets embedded and why that doesn't reduce customisation.
+- **`../../notes/architecture/05_runtime-config-surface.md`** — full enumeration of what stays user-editable, with code-level detail.
+- **`../../notes/architecture/03_vite-frontend-and-dist.md`** — how the Vite bundle gets embedded and why that doesn't reduce customisation.

@@ -3,6 +3,8 @@ title: "Framework comparison — Astro / Next.js / Go+Vite / 100 % Rust"
 sidebar_label: "01 · Frameworks"
 ---
 
+> **Resolved →** decided on **Go + Vite**; formalized in `notes/architecture/` (the design) and captured as this issue's plan (`issue.md`).
+
 # Framework comparison — what we considered
 
 The conversation that opened the migration question started with "we couldn't fix the SSR isolation bug in Astro — does Astro still make sense?" and moved through four candidate stacks. This note captures the comparison so we don't re-derive it later.
@@ -31,12 +33,12 @@ The conversation that opened the migration question started with "we couldn't fi
 | **1** | **Go + Vite** | Cleanest architectural fit. SSR isolation simply doesn't exist (one process, one module graph). Embedded Vite dist gives single-binary distribution. CodeMirror works as-is in the bundled JS. Migration cost ~14–18 weeks; after that, ongoing maintenance drops dramatically. |
 | **2** | **Rust backend + Vite/TS frontend** | Same architectural wins as Go with tighter type safety. Compile times hurt dev velocity. Worth choosing only if we're confident Rust will also own the editor backend (shared crates with `2026-04-26-editor-as-standalone-product`). |
 | **3** | **Next.js App Router** | Half the migration cost (~8 weeks); mature; battle-tested. Solves SSR isolation by virtue of having a real server runtime. But bigger artifact, mandatory React, and Vercel-shaped opinions. The "stop the bleeding" answer. |
-| **4** | **Astro (stay)** | Only if migration is genuinely impossible right now. The bug we triggered this conversation with (`notes/discussion/05_issue.md`) is structural, not incidental. |
+| **4** | **Astro (stay)** | Only if migration is genuinely impossible right now. The bug we triggered this conversation with (`05_issue.md`) is structural, not incidental. |
 | **5** | **100 % Rust** | Most fun to think about, worst to ship at this scope. The CodeMirror cliff is the killer — "100 % Rust" collapses to "Rust + a JS editor island," defeating the philosophical point. |
 
 ## What we explicitly rejected and why
 
-- **Pure Astro tweaks** (caching middleware, restart-on-commit hooks). The bug is structural to Vite's SSR module graph; tweaks paper over symptoms. Confirmed during the SSR-isolation debugging session — see `notes/discussion/05_issue.md`.
+- **Pure Astro tweaks** (caching middleware, restart-on-commit hooks). The bug is structural to Vite's SSR module graph; tweaks paper over symptoms. Confirmed during the SSR-isolation debugging session — see `05_issue.md`.
 - **Pure Rust SSG** (Zola-style). Loses the dynamic-route + theme-switching story; would force every change to rebuild the whole site. Doesn't fit the live-editor + dev-mode workflow.
 - **Hybrid Astro-but-with-Rust-cache** (sidecar process for the cache). Adds a process boundary, doesn't address the fundamental Vite SSR-graph problem, complicates dev-server lifecycle.
 

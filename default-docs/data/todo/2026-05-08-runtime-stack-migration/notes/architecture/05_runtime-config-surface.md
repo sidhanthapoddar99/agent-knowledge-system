@@ -5,7 +5,7 @@ sidebar_label: "05 · Runtime config"
 
 # Runtime config surface — what stays user-editable
 
-Companion to `notes/discussion/02_architecture.md` — that note explains the principle ("binary owns engine, default-docs/ owns content + config + customisations"). This note enumerates the surface in detail with implementation specifics.
+Companion to `brainstorm/04_discuss_stack-and-migration/02_architecture.md` — that note explains the principle ("binary owns engine, default-docs/ owns content + config + customisations"). This note enumerates the surface in detail with implementation specifics.
 
 ## Site-level config (`site.yaml`)
 

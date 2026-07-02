@@ -60,7 +60,7 @@ HTTP server embedding a Vite-built bundle, shipped as one cross-compiled ~25-35 
 The deciding argument: npm-package distribution still leaves every consumer carrying Node +
 `node_modules/` (~250 MB) and inherits Vite's dev/prod divergence — including the SSR
 module-isolation bug class that directly triggered this migration
-(`notes/discussion/05_issue.md`). A single self-contained binary makes the whole "did the
+(`brainstorm/04_discuss_stack-and-migration/05_issue.md`). A single self-contained binary makes the whole "did the
 install run cleanly / which Node version" failure surface disappear:
 
 | Dimension | npm-package branch | Go single-binary (what won) |

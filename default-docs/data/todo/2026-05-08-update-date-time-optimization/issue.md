@@ -38,5 +38,5 @@ After this lands: ~24 s/day of cumulative request-path blocking → ~0 s.
 
 ## Related
 
-- Mechanism today (lazy invalidation, full walk) — [`agent-log/001_cache-and-update-mechanism.md`](../2026-05-07-tracker-mental-model-alignment/agent-log/001_cache-and-update-mechanism.md) of the mental-model issue.
+- Mechanism today (lazy invalidation, full walk) — [`agent-log/010_au_cache-and-update-mechanism/101_writeup.md`](../2026-05-07-tracker-mental-model-alignment/agent-log/010_au_cache-and-update-mechanism/101_writeup.md) of the mental-model issue.
 - Per-commit flow walk-throughs — see this issue's [comment 001 (current)](./comments/001_current-commit-flow.md) and [comment 002 (post-incremental)](./comments/002_post-incremental-flow.md).

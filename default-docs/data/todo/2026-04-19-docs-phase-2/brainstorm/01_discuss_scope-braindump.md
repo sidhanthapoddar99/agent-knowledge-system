@@ -1,11 +1,6 @@
----
-iteration: 1
-agent: claude
-status: in-progress
-date: 2026-04-19
----
-
 # Scope braindump — verbatim + structured interpretation
+
+> **Resolved →** subtasks/ (expanded into subtasks 01–06)
 
 ## Verbatim from the user
 

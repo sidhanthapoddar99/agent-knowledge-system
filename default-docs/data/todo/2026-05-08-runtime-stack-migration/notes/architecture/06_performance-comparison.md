@@ -249,7 +249,7 @@ The "fresh after commit" is the qualitative win. Today users see stale data and 
 
 ## Caveats
 
-- All numbers are estimates. Real benchmarks happen during phase 1 of the migration (see `notes/discussion/03_migration.md`) on a representative content corpus.
+- All numbers are estimates. Real benchmarks happen during phase 1 of the migration (see `brainstorm/04_discuss_stack-and-migration/03_migration.md`) on a representative content corpus.
 - Astro 5 may improve some numbers (better Vite SSR caching, for example). Doesn't change the structural issues (module isolation, dev-mode-only feature surface).
 - Go+Vite numbers depend on library choices (`templ` vs `html/template`, `gix-go` vs shell-out, etc.). Phase 1 spike will tighten ranges.
 - Editor performance (CodeMirror + Yjs) is unaffected by the runtime swap — it's all client-side. Server-side Yjs (yrs vs y-go) may show small differences but neither is a bottleneck.
@@ -258,5 +258,5 @@ The "fresh after commit" is the qualitative win. Today users see stale data and 
 
 - `01_overview.md` — the architectural shape these numbers fall out of.
 - `02_go-runtime.md` — what Go owns; library choices that drive the numbers.
-- `notes/discussion/03_migration.md` — phase-by-phase plan; phase 1 includes the benchmark spike.
-- `notes/discussion/05_issue.md` — the SSR-isolation incident that quantifies the "stale data" pain.
+- `brainstorm/04_discuss_stack-and-migration/03_migration.md` — phase-by-phase plan; phase 1 includes the benchmark spike.
+- `brainstorm/04_discuss_stack-and-migration/05_issue.md` — the SSR-isolation incident that quantifies the "stale data" pain.

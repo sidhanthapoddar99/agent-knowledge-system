@@ -102,7 +102,7 @@ Several pages in `default-docs/data/user-guide/` mention the wrappers or the bas
 | `19_issues/...` | Wrapper command examples → subcommand form |
 | `25_layouts/...` | Layout overlay path stays; references to `.astro` files renamed to `.html` (Go templates) |
 
-The user-guide migration is a phase 5 task (see `notes/discussion/03_migration.md`).
+The user-guide migration is a phase 5 task (see `brainstorm/04_discuss_stack-and-migration/03_migration.md`).
 
 ## Documentation parity
 

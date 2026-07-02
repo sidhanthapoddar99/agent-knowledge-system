@@ -1,11 +1,6 @@
----
-iteration: 1
-agent: claude
-status: in-progress
-date: 2026-04-26
----
-
 # Distribution brainstorm — from npm-package to tool-package
+
+> **Resolved →** [`comments/003_superseded-by-runtime-stack-migration.md`](../comments/003_superseded-by-runtime-stack-migration.md) — superseded by [`2026-05-08-runtime-stack-migration`](../../2026-05-08-runtime-stack-migration/issue.md)
 
 This log captures the conversation that pivoted the distribution direction from "framework as an npm package" (issue `2026-04-25-framework-as-npm-package`) to "framework as a standalone tool with three usage methods." It's a thinking log, not a polished spec — written so the reasoning survives long enough to drive subtask design later.
 

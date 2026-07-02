@@ -85,7 +85,7 @@ The migration's defining structural choice is the three-layer split between **ru
 
 ## Why this is more reliable than today
 
-- **Single module graph** — the `notes/discussion/05_issue.md` bug class is impossible.
+- **Single module graph** — the `brainstorm/04_discuss_stack-and-migration/05_issue.md` bug class is impossible.
 - **No package-manager state** — no "did `bun install` run cleanly?" failure mode.
 - **No Vite dev/prod divergence** — what you build is what you ship; no SSR adapter mismatches.
 - **Predictable production runtime** — Go binary either runs or prints a structured error; no Node process management.

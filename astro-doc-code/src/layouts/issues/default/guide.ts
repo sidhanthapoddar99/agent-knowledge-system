@@ -57,7 +57,7 @@ An issue is one folder — one coherent unit of *thinking + execution*.
 - **Comments** — the flat evolution log: what changed, hand-offs.
 - **Brainstorm** — active deliberation: the *process* of deciding.
 - **Notes** — finalized output + references: the *product*.
-- **Subtasks** — the plan: to-dos with states.
+- **Subtasks** — the plan: to-dos with statuses.
 - **Agent log** — the execution record: loops & workflows.
 - **Agent memory** — the AI's issue-scoped working state.
 - Issue-specific terms + colour conventions → this issue's **Glossary** panel
@@ -137,8 +137,12 @@ The plan — the *what* (agent-log records the *how*).
 - One to-do per \`NN_<slug>.md\`.
 - Group folders \`NN_<group>/\` = plan chapters — display title in their
   \`settings.json\`, sidebar shows a **done/total** count.
-- States cycle \`open → review → closed\`; \`cancelled\` for dropped work.
-  Terminal (done) = closed + cancelled.
+- Status is the shared lifecycle vocabulary (same as the issue) — **7 statuses
+  in 4 categories**: *Not Started* \`open\`·\`blocked\` · *In Progress*
+  \`in-progress\` · *Review* \`input-needed\`·\`review\` · *Closed* \`done\`·\`dropped\`.
+  Agents auto-set \`in-progress\`, hand off at \`review\` (or \`input-needed\` with the
+  question inline); \`done\`/\`dropped\` are human-only. Terminal (done) = the Closed
+  category. The UI filters by category; the badge shows the status.
 - Surfaces: sidebar tree · **Comprehensive** panel (all subtasks, one page) ·
   right-rail index · the overview progress bar.
 - Frontmatter:
@@ -146,7 +150,7 @@ The plan — the *what* (agent-log records the *how*).
 | Field | Meaning |
 |---|---|
 | \`title\` | Display title. |
-| \`state\` | \`open\` / \`review\` / \`closed\` / \`cancelled\`. |
+| \`status\` | One of the 7 fixed statuses above (shared with issues). |
 
 ## Agent memory
 

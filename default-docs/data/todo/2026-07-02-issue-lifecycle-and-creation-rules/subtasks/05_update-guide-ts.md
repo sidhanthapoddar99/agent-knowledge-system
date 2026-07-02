@@ -1,6 +1,6 @@
 ---
 title: Update the bundled guide.ts issue-anatomy panel
-status: open
+status: review
 ---
 
 `astro-doc-code/src/layouts/issues/default/guide.ts` is the plugin-independent

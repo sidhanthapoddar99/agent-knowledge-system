@@ -38,7 +38,8 @@ Revisit-in-sweep flags: "Active" default tab; click-cycle happy-path subset.
       design-philosophy reversal, assignee-signal removal, subtasks, using-with-ai,
       list-view/detail-view, all 3 workflows, per-issue, setup-new-tracker). Build
       green, sweep clean. Milestone `102_user-guide-docs.md`. → review (iter 2)
-- [ ] 05: guide.ts legend updated + build-checked
+- [x] 05: guide.ts legend updated (7 statuses / 4 categories, thin map) +
+      build-checked green. → review (iter 2)
 - [ ] 06: skill plugin (both skills) updated, CLAUDE.md paragraph, version bump,
       cache mirrored + diff-verified
 

@@ -35,5 +35,9 @@ New dev-toolbar app (`src/dev-tools/browser-cache/`), registered directly below 
 ## Related
 
 - **`2026-05-07-sidebar-state-persistence`** (closed) — v1 implementation this supersedes the storage format of.
-- **`2026-05-07-cache-isolation-cross-project`** (open) — site-identity namespacing wraps these keys when it lands; per-scope blobs make that wrapper cheaper (fewer keys to wrap/archive).
+- Cross-project cache isolation — the browser-side namespacing plan (former
+  `2026-05-07-cache-isolation-cross-project` issue) was folded into the runtime
+  migration: dev-mode UI state moves server-side into a per-project cache
+  (`2026-05-08-runtime-stack-migration/brainstorm/05_idea_backend-side-cache-isolation.md`).
+  Per-scope blobs stay useful either way (fewer keys, one blob per scope).
 - Dev-docs: `dev-docs/05_architecture/05_layout-internals/07_sidebar-state-cache.md` documents the format.

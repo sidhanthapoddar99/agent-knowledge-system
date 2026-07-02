@@ -81,6 +81,15 @@ about issues themselves.
       question-by-question resolution table pointing into the runtime migration.
       Its flat `agent-log/001_distribution-brainstorm.md` gets fixed by the mechanical
       agent-log pass above, not by moving issues around.
+- [x] **`2026-05-07-cache-isolation-cross-project`** — fourth fold-in, same rule
+      (nothing ever shipped under it; pure problem + proposed design). Superseded by
+      sidhantha's proposal that the Go runtime dissolves the problem: dev-mode UI state
+      moves server-side into a per-project cache folder keyed by the invoking project
+      dir, so browser-storage collisions can't occur. Absorbed into
+      `runtime-stack-migration/brainstorm/05_idea_backend-side-cache-isolation.md`
+      (problem + superseded browser-side design + proposal + assessment); five inbound
+      references repointed (sidebar-state-persistence ×3, sidebar-cache-v2, dev-docs
+      sidebar-state-cache page); folder deleted.
 - [ ] Distil the decision into the general **issue vs brainstorm-file rule** — when
       does a thought get its own issue vs a brainstorm inside an existing one? Feeds
       subtask 02's rules. The cluster refactor supplies it: **an issue that shipped

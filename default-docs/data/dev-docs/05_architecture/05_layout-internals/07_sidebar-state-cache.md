@@ -112,8 +112,9 @@ covers the browser side. Source: `src/dev-tools/browser-cache/`.
 
 Local dev and preview reuse the same `localhost:<port>` origin, so **two
 different documentation projects currently share these keys** (the scope
-segments disambiguate *content*, not *projects*). Site-identity namespacing —
-wrapping all browser-side cache keys under a per-project identity prefix, with
-archive-on-mismatch — is planned under the
-`2026-05-07-cache-isolation-cross-project` issue; when it lands, the wrapper
-layer will be documented here.
+segments disambiguate *content*, not *projects*). The isolation plan changed
+direction: instead of browser-side site-identity namespacing (the former
+`2026-05-07-cache-isolation-cross-project` issue), dev-mode UI state is slated
+to move server-side into a per-project cache owned by the Go runtime — see the
+`runtime-stack-migration` issue's `05_idea_backend-side-cache-isolation`
+brainstorm. Until that lands, keys are shared across same-port projects.

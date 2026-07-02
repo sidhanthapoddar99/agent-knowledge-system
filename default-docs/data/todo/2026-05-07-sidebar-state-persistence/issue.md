@@ -16,7 +16,9 @@ Applies to: **docs** sidebar (every docs section) and **issues** sidebar (the su
 ## Out of scope
 
 - Settings-driven defaults for "collapsed by default" / "collapsible by default" — the user explicitly skipped that. Cache-only.
-- Cross-project cache namespacing — handled by [the cache-isolation issue](../2026-05-07-cache-isolation-cross-project/issue.md).
+- Cross-project cache namespacing — direction now folded into the runtime migration:
+  [backend-side cache brainstorm](../2026-05-08-runtime-stack-migration/brainstorm/05_idea_backend-side-cache-isolation.md)
+  (formerly the `2026-05-07-cache-isolation-cross-project` issue).
 - Persisting sidebar scroll position (only the active item needs to be visible, not the exact scroll Y).
 
 See subtasks for the breakdown.

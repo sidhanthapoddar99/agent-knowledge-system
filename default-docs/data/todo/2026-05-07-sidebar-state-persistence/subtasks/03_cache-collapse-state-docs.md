@@ -19,7 +19,12 @@ sidebar-collapse:<section>:<folder-path>
 
 ## Cross-project caveat
 
-Two projects deployed on the same `localhost:<port>` will share `localStorage` until [the cache-isolation issue](../../2026-05-07-cache-isolation-cross-project/issue.md) lands. That work namespaces ALL cache keys (this one included) by site identity. Don't pre-empt it here — write the keys flat for now; the namespacing wrapper will pick them up automatically when it ships.
+Two projects deployed on the same `localhost:<port>` will share `localStorage` for now.
+The isolation direction changed: instead of browser-side site-identity namespacing (the
+former `2026-05-07-cache-isolation-cross-project` issue), dev-mode UI state is planned to
+move server-side under the Go runtime — see the
+[backend-side cache brainstorm](../../2026-05-08-runtime-stack-migration/brainstorm/05_idea_backend-side-cache-isolation.md).
+Don't pre-empt it here — write the keys flat for now.
 
 ## Files likely touched
 

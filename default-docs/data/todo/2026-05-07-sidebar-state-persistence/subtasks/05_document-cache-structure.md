@@ -6,7 +6,10 @@ state: closed
 **Done 2026-06-10** — written after subtasks 01–04 shipped and were verified, so the documented shapes are the settled ones.
 
 - [x] Page: `dev-docs/05_architecture/05_layout-internals/07_sidebar-state-cache.md` — covers storage location + why flat keys, key shape per layout (docs vs. issues), value shape (`{c, ts}` rationale), 30-day TTL + lazy GC, the FOUC-free blocking restore, and the sync-wins-for-ancestors rule.
-- [x] Cross-links the cache-isolation issue (`2026-05-07-cache-isolation-cross-project`) as planned work — that issue hasn't landed yet, so the page marks the namespacing wrapper as pending and to-be-documented there.
+- [x] Cross-links the cache-isolation work as planned — *(since folded into the runtime
+      migration as the backend-side cache direction:
+      `2026-05-08-runtime-stack-migration/brainstorm/05_idea_backend-side-cache-isolation.md`;
+      the dev-docs page was updated accordingly)*.
 - [x] Also records the known **delete-on-default** improvement (store only deviations from the server-rendered default) discussed during review.
 
 ## What to cover

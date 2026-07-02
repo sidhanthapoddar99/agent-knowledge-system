@@ -133,7 +133,7 @@ Each file:
 ```markdown
 ---
 title: "Profile baseline"
-state: open
+status: open
 ---
 
 Capture baseline metrics before any changes. Target scenarios:

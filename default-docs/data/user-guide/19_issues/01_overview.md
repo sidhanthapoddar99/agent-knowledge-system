@@ -85,13 +85,13 @@ The validator emits an info-level hint when these are violated; both stay legal 
 | Purpose | Published reading material | Recorded thought-work |
 | Storage | One file per page | **One folder per item** |
 | Metadata | Frontmatter | **`settings.json`** (UI-editable) |
-| Lifecycle | Published / not | **open → review → closed \| cancelled** |
+| Lifecycle | Published / not | **open → in-progress → review → done** (7 statuses / 4 categories) |
 | Sub-content | Nothing | `brainstorm/` · `notes/` · `subtasks/` · `agent-log/` · `agent-memory/` · `comments/` |
 | Audience | End users | Team + AI agents |
 
 ## AI-native by design
 
-Every file is plain markdown in a predictable folder. No API, no auth, no schema — an agent can `ls` the tracker, read any issue, write subtasks, append to agent logs. The 4-state lifecycle (`open → review → closed | cancelled`) exists specifically so AI-driven work can ship to **review** and hand the final call to a human. Subtasks carry their own 4-state independently — an issue can stay `open` while three of five subtasks are already `closed` or in `review`.
+Every file is plain markdown in a predictable folder. No API, no auth, no schema — an agent can `ls` the tracker, read any issue, write subtasks, append to agent logs. The seven-status, four-category lifecycle (`open → in-progress → review → done`, plus `blocked`, `input-needed`, and `dropped` for the off-path cases) exists specifically so AI-driven work can ship to **review** and hand the final call to a human — `done` and `dropped` are human-only transitions. Subtasks share the same `status` field and carry it independently — an issue can stay `open` while three of five subtasks are already `done` or in `review`.
 
 Agents working with the tracker should invoke the `documentation-guide` skill — its `references/layouts/issues/` folder (entry `00_overview.md`) is the canonical agent-facing companion to this page.
 
@@ -101,7 +101,7 @@ Agents working with the tracker should invoke the `documentation-guide` skill �
 - [Folder Structure](./folder-structure) — the data layout in detail
 - [Per-Issue Settings](./settings/per-issue) — metadata schema
 - [Vocabulary](./settings/vocabulary) — tracker-root `settings.json`
-- [Lifecycle and Review](./lifecycle-and-review) — the 4-state model
+- [Lifecycle and Review](./lifecycle-and-review) — the seven-status / four-category model
 - [Sub-Documents](./sub-docs/issue-md) — each file type's conventions
 - [List View](./ui/list-view) and [Detail View](./ui/detail-view)
 - [Workflows](./workflows/create-an-issue) — step-by-step guides

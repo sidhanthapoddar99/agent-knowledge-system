@@ -23,12 +23,16 @@ The settings file may be plain `settings.json` **or** `settings.jsonc` — JSON 
   "label": "Todo",
   "fields": {
     "status": {
-      "values": ["open", "review", "closed", "cancelled"],
+      // Statuses are FIXED in framework code — you may override colors, not the set.
+      "values": ["open", "blocked", "in-progress", "input-needed", "review", "done", "dropped"],
       "colors": {
-        "open":      "#888888",
-        "review":    "#f0c674",
-        "closed":    "#7ec699",
-        "cancelled": "#666666"
+        "open":         "#888888",
+        "blocked":      "#d1854f",
+        "in-progress":  "#61afef",
+        "input-needed": "#e8a54b",
+        "review":       "#f0c674",
+        "done":         "#7ec699",
+        "dropped":      "#c678dd"
       }
     },
     "priority": {
@@ -54,8 +58,8 @@ The settings file may be plain `settings.json` **or** `settings.jsonc` — JSON 
     },
     "labels": {
       "values": [
-        "wip",              // actively being worked on (transient — not a status)
-        "blocked",          // waiting on another issue/decision inside this repo
+        "wip",              // DEPRECATED — superseded by the `in-progress` status; kept for back-compat
+        "blocked",          // DEPRECATED — superseded by the `blocked` status; kept for back-compat
         "bug",              // behaves differently from intended
         "feature",          // net-new capability
         "task",             // concrete work that isn't a feature/bug
@@ -73,7 +77,7 @@ The settings file may be plain `settings.json` **or** `settings.jsonc` — JSON 
   "authors": ["sidhantha", "claude"],
   "views": [
     { "name": "High priority","filters": { "priority": ["high", "urgent"] } },
-    { "name": "Blocked",      "filters": { "labels": ["blocked", "blocked-external"] } },
+    { "name": "Blocked",      "filters": { "status": ["blocked"] } },
     { "name": "By component", "group": "component" }
   ]
 }
@@ -106,7 +110,7 @@ The loader expects these four fields at minimum. Adding more is possible but the
 
 | Field | Multi-select? | Typically used for |
 |---|:---:|---|
-| `status` | — | Lifecycle state (the 4-state review model) |
+| `status` | — | Lifecycle status (seven statuses in four categories; fixed in code) |
 | `priority` | — | Urgency (low / medium / high / urgent) |
 | `component` | ✅ | Which part of the codebase / product. Convention is one entry per issue; multi-component is allowed for cross-cutting work |
 | `labels` | ✅ | Everything orthogonal — `wip`, `blocked`, `bug`, `feature`, `docs`, `idea`, … |
@@ -115,59 +119,63 @@ The vocabulary shape is the same for single- and multi-select fields — just `v
 
 `priority` + `status` are the ordering signals — see [Design Philosophy](../design-philosophy) for why no other dimensions are wired in.
 
-### Status — the 4-state contract
+### Status — the fixed seven-status contract
 
 ```json
 "status": {
-  "values": ["open", "review", "closed", "cancelled"],
+  "values": ["open", "blocked", "in-progress", "input-needed", "review", "done", "dropped"],
   "colors": {
-    "open":      "#888888",
-    "review":    "#f0c674",
-    "closed":    "#7ec699",
-    "cancelled": "#666666"
+    "open":         "#888888",
+    "blocked":      "#d1854f",
+    "in-progress":  "#61afef",
+    "input-needed": "#e8a54b",
+    "review":       "#f0c674",
+    "done":         "#7ec699",
+    "dropped":      "#c678dd"
   }
 }
 ```
 
-**These exact four values are required.** The layout's state-tabs, the Review tab's subtask-debt promotion, and the agent-log review handoff all assume `open / review / closed / cancelled`. Renaming them will break the UI.
+The seven statuses group into four categories — **Not Started** (`open`, `blocked`) ·
+**In Progress** (`in-progress`) · **Review** (`input-needed`, `review`) · **Closed**
+(`done`, `dropped`). The UI filters by category; the status is the per-row badge. Full
+meanings and transition conventions are in [Lifecycle and Review](./lifecycle-and-review).
 
-If you need finer-grained intermediate states (`in-progress`, `blocked`, `needs-design`), use **labels**, not statuses. See [Design Philosophy](../design-philosophy).
+**The status set is fixed in framework code — you cannot add, remove, or rename statuses
+per tracker.** Listing `values` in `settings.json` is documentation only; the loader and
+validator ignore custom values, and an unknown status is a hard error (not a silent
+default). The one thing you *can* customize is the **colors**.
 
-#### Why it's a contract, not a vocabulary
+#### Why status is fixed, and everything else isn't
 
-`status` looks like every other enum in `fields` — `values` array, optional `colors` map — but it isn't truly vocabulary-driven. The other enums (`priority`, `component`, `labels`) are read at runtime: add a new value to `settings.json` and it shows up in filters, groupings, and chips with no code change. `status` is **special-cased** end-to-end.
-
-Here's what *is* vs. *isn't* driven by the vocabulary:
+`status` looks like every other enum in `fields` — a `values` array and an optional
+`colors` map — but it is **not** vocabulary-driven. The other enums (`priority`,
+`component`, `labels`) are read at runtime: add a value to `settings.json` and it shows
+up in filters, groupings, and chips with no code change. `status` is different by design.
 
 | Concern | Source |
 |---|---|
-| State **names** (`open` / `review` / `closed` / `cancelled`) | Hardcoded in TS + Astro |
-| State **colors** | ✅ Vocabulary (`fields.status.colors`) |
-| State **tabs** in the index view | Hardcoded as a static array |
-| State **icons** + cycle order on subtasks | Hardcoded |
-| **Subtask** states | Same hardcoded set — issue and subtask share one literal union |
-| Filter / progress-bar segments | Hardcoded (4 segments) |
-| Subtask-debt promotion (open issue → Review tab if any subtask is `review`) | Keyed off the literal string `'review'` |
+| Status **names** + **category grouping** | Fixed in framework code |
+| Status **colors** | ✅ Vocabulary (`fields.status.colors`) overrides the code defaults |
+| Category **tabs** in the index view | Derived from the fixed categories |
+| Status **icons** + cycle order on subtasks | Fixed in code |
+| **Subtask** statuses | Same fixed set — issues and subtasks share one vocabulary and one field name (`status`) |
+| Review-debt promotion (active issue → Review tab if any subtask is in the Review category) | Derived from the fixed category grouping |
 | `priority` ordering | ✅ Vocabulary (`fields.priority.values`) — drives default index sort |
 
-**Bottom line:** the colors are tweakable from `settings.json`. The names, the count, and the order are not.
+**Bottom line:** the colors are tweakable from `settings.json`; the names, the count,
+the categories, and the order are not. This is deliberate — see
+[Design Philosophy](../design-philosophy) for why an AI-operated tracker fixes its
+lifecycle vocabulary rather than letting each project drift.
 
-#### Adding a 5th state (`blocked`, `deferred`, …)
+#### The single source of truth (for framework maintainers)
 
-Possible, but it's a code change in **7 files**, not a config change. Edit:
-
-| File | What to change |
-|---|---|
-| `src/loaders/issues.ts` | State validation in the frontmatter parse — extend the literal `===` check |
-| `src/layouts/issues/default/scripts/detail/types.ts` | `SubtaskState` union and `CYCLE` array |
-| `src/layouts/issues/default/scripts/index/types.ts` | `StateTab` union and `CLOSED_STATUSES` if the new state is terminal |
-| `src/layouts/issues/default/parts/index/StateTabs.astro` | Add a 5th `<button>` for the new tab |
-| `src/layouts/issues/default/parts/detail/Comprehensive.astro` | Add a 5th `data-comprehensive-tab` button |
-| `src/layouts/issues/default/server/state-icon.ts` | Add a `case` in the switch (icon SVG + `aria-label`) |
-| `src/dev-tools/server/middleware.ts` | Add the new value to the `VALID` set in the subtask-toggle handler |
-| `src/layouts/issues/default/scripts/detail/subtask-state.ts` | Update the regex that strips state class names from DOM |
-
-The changes are mechanical (no algorithmic shift), but they touch enough surfaces that a future "make `status` truly vocabulary-driven" refactor would be a worthwhile cleanup. Until then, treat the 4 states as a **schema constraint** — and use **labels** for any extra dimensions you'd otherwise reach for a new state to express.
+There is exactly one place the vocabulary lives: `astro-doc-code/src/loaders/issue-status.ts`
+(statuses, categories, default colors, helpers). The loader, layouts, `guide.ts` panel,
+and — mirrored on the JS side — the `docs-guide` CLI all consume it. A framework
+maintainer changing the lifecycle edits that one constant (and its CLI mirror in
+`_lib.mjs`); a tracker author never touches it. If you find yourself wanting a new status,
+that's a framework-level decision, not a per-tracker config change.
 
 ### Colors
 

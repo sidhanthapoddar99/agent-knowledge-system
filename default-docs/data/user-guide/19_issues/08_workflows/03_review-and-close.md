@@ -6,14 +6,14 @@ sidebar_position: 3
 
 # Review and Close
 
-When an issue (or subtask) is flipped to `review`, it's waiting for you. This is the one transition that stays on the human side in the autonomous loop — everything else an agent can do itself. This page is the operating manual for the reviewer.
+When an issue (or subtask) is flipped to `review`, it's waiting for you. Signing it off to `done` — like dropping it to `dropped` — is a transition that stays on the human side in the autonomous loop; everything up to **review** an agent can do itself. This page is the operating manual for the reviewer.
 
 ## Why review stays human
 
 In a fully-autonomous tracker, AI would close its own work. Two problems:
 
 1. **Silent breakage.** AI thinks it's done; something subtle broke. Shipped anyway. User finds out when the site is wrong.
-2. **No audit.** No one ever actually read the diff. The tracker says `closed` but nobody can confirm.
+2. **No audit.** No one ever actually read the diff. The tracker says `done` but nobody can confirm.
 
 The review state is a deliberate trust boundary. The AI's claim is "I think this is done." The human's job is to **verify**. Without this step, you're either over-trusting or babysitting — no middle ground.
 
@@ -53,24 +53,24 @@ Open them. Actually look. "The agent said it's done" is not review.
 
 ### 4. Spot-check the subtask states
 
-Look at the subtask checklist. Anything `open` or `cancelled` without a reason? Anything `review` that you haven't flipped to `closed` yet? The subtask graph should make sense:
+Look at the subtask checklist. Anything `open` or `dropped` without a reason? Anything `review` that you haven't flipped to `done` yet? The subtask graph should make sense:
 
-- Everything `closed` → work done
-- Everything `cancelled` → reasons visible in comments / agent-log
+- Everything `done` → work done
+- Everything `dropped` → reasons visible in comments / agent-log
 - Everything `review` → the batch you're looking at now
 
 ### 5. Decide
 
 Three options:
 
-- **Accept** — flip `review → closed`. See [Accepting](#accepting).
+- **Accept** — flip `review → done`. See [Accepting](#accepting).
 - **Reject** — flip `review → open`, write a comment explaining what needs to change. The agent picks up again.
-- **Partial accept** — close individual subtasks but push back on others. Flip specific subtasks to `closed`, leave or bump others back to `open`.
+- **Partial accept** — close individual subtasks but push back on others. Flip specific subtasks to `done`, leave or bump others back to `open`.
 
 ### Accepting
 
-1. Flip each subtask that's in `review` to `closed` (in the UI's subtask checklist, or manually edit frontmatter)
-2. If the issue-level status is `review`, flip that to `closed`
+1. Flip each subtask that's in `review` to `done` (in the UI's subtask checklist, or manually edit frontmatter)
+2. If the issue-level status is `review`, flip that to `done`
 3. **Trigger a closing agent-log entry** — the convention is: when the human closes, the agent's next pickup writes a final log summarising shipped state (commit hash / PR number). This closes out the audit trail cleanly.
 
 After closing:
@@ -95,13 +95,13 @@ second hydration behind a mount flag.
 Subtask 01 and 03 look good, leaving those in review.
 ```
 
-The next agent pickup reads the comment and resumes. Subtask state back to `open` is the signal: *this needs more work*.
+The next agent pickup reads the comment and resumes. Subtask status back to `open` is the signal: *this needs more work*.
 
 ### Partial accept
 
 Common when most of a batch is good but one subtask needs iteration:
 
-1. Flip subtasks `01`, `03`, `05` → `closed` (accepted)
+1. Flip subtasks `01`, `03`, `05` → `done` (accepted)
 2. Leave subtask `02` at `review` — or bump to `open` with a comment explaining
 3. The parent issue's status often stays at `review` with subtask-debt showing partial progress
 
@@ -127,7 +127,7 @@ After closing a large issue, leave a final comment or closing agent-log entry su
 
 ### Agent closes something it shouldn't have
 
-Happens if the skill rules aren't being followed. Flip back `closed → open`, write a comment noting the skill violation, and adjust the skill's prompt if this keeps happening.
+Happens if the skill rules aren't being followed. Flip back `done → open`, write a comment noting the skill violation, and adjust the skill's prompt if this keeps happening.
 
 ### Log says success, diff looks broken
 
@@ -137,17 +137,17 @@ Hard to investigate. Flip `review → open`, ask in a comment: *"Log says X, but
 
 "Cannot review without audit trail. Flip to `open` with a comment requesting agent-log entry." Do not accept blind. See [Agent Log](../sub-docs/agent-log).
 
-## Cancelling during review
+## Dropping during review
 
 If you realise the issue shouldn't proceed at all:
 
-1. Flip to `cancelled`
-2. Write a comment with the reason
+1. Flip to `dropped`
+2. Write a comment with the reason (required for `dropped`)
 3. Close-out log entry is still useful — summarise what was tried and why it won't ship
 
 ## See also
 
-- [Lifecycle and Review](../lifecycle-and-review) — the 4-state model in detail
+- [Lifecycle and Review](../lifecycle-and-review) — the seven-status / four-category model in detail
 - [Work an Issue](./work-an-issue) — the other side of the handoff
 - [Using with AI](../using-with-ai) — how agents are trained to respect the review boundary
 - [Agent Log](../sub-docs/agent-log) — what to read first, every review

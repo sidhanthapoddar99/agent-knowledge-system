@@ -6,6 +6,24 @@ Working state for the `010_lp_lifecycle-implementation` loop. Ground truth is
 `notes/01_lifecycle-vocabulary.md`; this file is durable orientation for the next
 iteration (context may reset between loop wake-ups).
 
+## In progress (iter 2 — subtask 04, user-guide docs)
+
+- **Core 19_issues pages rewritten by main agent (done):** 06_lifecycle-and-review
+  (full rewrite), 02_design-philosophy (policy-reversal sections), 04_setup/
+  02_vocabulary (fixed-vocabulary contract + single-constant note), 09_using-with-ai
+  (agent rules + transition tables), 05_sub-docs/03_subtasks (shared status table).
+  Plus unassigned: 07_ui/02_detail-view, 08_workflows/01_create-an-issue.
+- **6 peripheral pages delegated to 2 subagents (verify on completion):**
+  A → 01_overview, 08_workflows/02_work-an-issue, 08_workflows/03_review-and-close;
+  B → 07_ui/01_list-view, 04_setup/01_per-issue, 04_setup/10_setup-new-tracker.
+- **Remaining for iter 2:** reconcile subagent output, final `grep` sweep for
+  `cancelled`/`4-state`/`state:`/assignee-in-progress across 19_issues, `./start
+  build` green, mark subtask 04 → review, log milestone 102, tick task list.
+- **Out-of-scope find for subtask 08 sweep:** `user-guide/25_themes/05_component-
+  styles/07_issues-styles.md` still names `.issue-subtask__state--cancelled` /
+  `closed` CSS classes (renamed to done/dropped in the ship). Also check dev-docs
+  and `guide.ts` (subtask 05) / skill (subtask 06).
+
 ## Where things stand (after iter 1)
 
 - **Phase 1 (code + migration, subtasks 03 + 07): DONE, green, marked review.**

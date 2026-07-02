@@ -17,7 +17,7 @@ The tracker is designed to be AI-native — every file is plain markdown in a pr
 1. **How to traverse** — list issues, filter by state / label / component, follow cross-references
 2. **How to read** — orientation order (`issue.md` → recent `agent-log/` → relevant subtasks → comments)
 3. **How to write** — where comments go, how to add subtasks, how to write agent-log entries
-4. **The review handoff** — when to mark `review`, when never to mark `closed` directly
+4. **The review handoff** — when to mark `review`, when never to mark `done` directly
 5. **Agent-log discipline** — one file per iteration, keep failed attempts, 4-section body
 
 The skill lives at `.claude/skills/issues/SKILL.md` (exact path set when the skill ships).
@@ -56,34 +56,54 @@ When picking up an issue, read in this order. Stop as soon as you have enough:
 
 1. **`issue.md`** — the goal. Skip nothing here.
 2. **Last 3 `agent-log/` entries** — avoid repeating failed approaches.
-3. **Subtask list + states** — know what's done, in review, open.
+3. **Subtask list + statuses** — know what's done, in review, in progress, open.
 4. **Recent comments** — pivots, pushback, questions.
 5. **Notes** — only when a subtask or comment points to one.
 
-### 3. The four rules that matter most
+### 3. The rules that matter most
 
-1. **Never close (`*→closed`) directly in autonomous mode.** Always go through `review`. Closed is human.
-2. **Write an agent-log entry every iteration.** Goal / Approach / Result / Next. Keep failed iterations.
-3. **Stay inside the existing schema.** The tracker is intentionally narrow — `priority` + `status` order the index, `labels` carry orthogonal categorical signal, `updated` is derived from git. Don't invent scheduling or release-bucket fields without an explicit policy reversal.
-4. **Read before writing.** Don't overwrite; append / edit precisely.
+1. **Never mark work `done` or `dropped` in autonomous mode.** The agent ceiling is the
+   **Review category** (`review` or `input-needed`). `done`/`dropped` are human-only;
+   `dropped` also needs a comment. Always hand off through Review.
+2. **Manage `in-progress` yourself.** Set a subtask/issue to `in-progress` when you start
+   executing it — no ceremony, no waiting to be told.
+3. **When you hit a wall, use `input-needed` — not `blocked`.** Set the status to
+   `input-needed` and write the actual question **inline in the subtask (or issue) body**
+   so a fresh session picks it up on read. When it's answered, delete the question or keep
+   the Q&A logged inline, then continue. Reserve `blocked` for a *structural dependency*
+   on another issue/subtask (name the dependency in a comment or the body).
+4. **Write an agent-log entry every iteration.** Goal / Approach / Result / Next. Keep
+   failed iterations.
+5. **Stay inside the existing schema.** The tracker is intentionally narrow — `priority`
+   + `status` order the index, `labels` carry orthogonal signal, `updated` is derived from
+   git. The status vocabulary itself is fixed in framework code; don't invent statuses or
+   scheduling/release-bucket fields.
+6. **Read before writing.** Don't overwrite; append / edit precisely.
 
-### 4. State transitions you ARE allowed
+### 4. Status transitions you ARE allowed
+
+Transitions are unenforced guidance — any jump is technically legal — but the conventions
+for an autonomous agent are:
 
 | From | To | When |
 |---|---|---|
-| `open` | `review` | Work done, evidence in place, ready for human |
-| `open` | `cancelled` | With a comment explaining why (scope change, duplicate, obsolete) |
-| `review` | `open` | Got pushback in a comment; resuming work |
+| `open` | `in-progress` | You've started executing (set it automatically) |
+| any active | `review` | Work done, evidence in place, ready for human sign-off |
+| any active | `input-needed` | Stuck on a question; write it inline in the body |
+| any active | `blocked` | Depends on another specific issue/subtask (named in prose) |
+| `review` | `in-progress` | Got pushback in a comment; resuming work |
 
-### 5. State transitions you are NEVER allowed autonomously
+### 5. Status transitions you are NEVER allowed autonomously
 
 | From | To | Who does it |
 |---|---|---|
-| `open` | `closed` | Human only |
-| `review` | `closed` | Human only |
-| Any | `closed` | Human only |
+| Any | `done` | Human only |
+| Any | `dropped` | Human only (with a comment) |
 
-Exception: if the human explicitly pre-authorises direct closure in the issue prompt (typo fixes, comment-only edits), that's fine — but it must be explicit.
+The agent's terminal move is the Review category — a human makes the `→ done` / `→ dropped`
+call after inspecting the artefact. Exception: if the human explicitly pre-authorises
+direct closure in the issue prompt (typo fixes, comment-only edits), that's fine — but it
+must be explicit.
 
 ## Helper scripts (planned)
 
@@ -129,11 +149,11 @@ node scripts/issues/add-agent-log.mjs 2026-04-21-editor-perf \
 # 4. Flip the subtask
 node scripts/issues/set-state.mjs subtasks/02_presence-batching.md review
 
-# 5. If all subtasks are now review/closed, hand off the issue
+# 5. If all subtasks are now review/done, hand off the issue
 node scripts/issues/set-state.mjs 2026-04-21-editor-perf review
 ```
 
-Human reviews. Either flips `review → closed` or comments asking for revision.
+Human reviews. Either flips `review → done` or comments asking for revision.
 
 ## Without the skill
 
@@ -154,6 +174,6 @@ A well-briefed agent, equipped with the skill and helper scripts, can run for ho
 
 ## See also
 
-- [Lifecycle and Review](./lifecycle-and-review) — the 4-state model the skill enforces
+- [Lifecycle and Review](./lifecycle-and-review) — the seven-status / four-category model the skill enforces
 - [Agent Log](./sub-docs/agent-log) — iteration-file conventions the skill writes
 - [Review and Close](./workflows/review-and-close) — the human's counterpart to the agent's workflow

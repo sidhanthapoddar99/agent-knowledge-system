@@ -29,7 +29,7 @@ Every issue folder has a `settings.json` at its root. It holds the metadata — 
 |---|---|:---:|---|
 | `title` | string | ✅ | Shown on list + detail views |
 | `description` | string | — | Shown under the title on list + detail |
-| `status` | enum | ✅ | Single value from `fields.status.values` in the tracker root |
+| `status` | enum | ✅ | One of the seven fixed lifecycle statuses (framework-defined; a tracker overrides only their colors). See [Lifecycle and Review](./lifecycle-and-review) |
 | `priority` | enum | ✅ | Single value from `fields.priority.values` |
 | `component` | string[] | ✅ | Multi-select from `fields.component.values`. Convention is one entry; multiple is allowed for genuinely cross-cutting work. A bare string (`"x"`) is accepted and normalised to `["x"]` |
 | `labels` | string[] | ✅ | Multi-select from `fields.labels.values` — any subset |
@@ -38,7 +38,7 @@ Every issue folder has a `settings.json` at its root. It holds the metadata — 
 | `draft` | bool | — | `true` → issue hidden in prod builds (see [Drafts](/user-guide/writing-content/drafts)) |
 | `agentLogKinds` | object | — | Custom agent-log kind codes for this issue, merged over the framework defaults. See below. |
 
-All enum fields are validated at load time against the tracker's root `settings.json` vocabulary. An unknown value produces a warning (visible in the error-logger dev-toolbar app); the issue still loads, but the value may not render cleanly.
+Enum fields are validated at load time — the tracker-defined fields (`priority`, `component`, `labels`) against the tracker's root `settings.json` vocabulary, and `status` against the framework's fixed lifecycle set. An unknown tracker-field value produces a warning (visible in the error-logger dev-toolbar app); the issue still loads, but the value may not render cleanly. An unknown `status`, by contrast, is a hard error — the lifecycle vocabulary can't be extended per-tracker.
 
 ## Fields that are NOT stored
 
@@ -78,13 +78,13 @@ Labels carry the categorical signal — `bug`, `feature`, `refactor`, `docs`, et
 - **`author`** — who filed the issue. One person. Doesn't change.
 - **`assignees`** — who's currently working on it. Zero or more. Can change as responsibility moves. Often same as `author` in solo projects.
 
-#### `assignees` doubles as the "in-progress" signal
+#### Filtering by assignee
 
-There's no separate `in_progress` boolean — and there shouldn't be. An issue with `assignees.length > 0` is being worked on; an empty `assignees` array means nobody has picked it up yet. Two sources of truth for the same fact would inevitably drift, so the framework derives the in-progress state from the array.
+Assignees are just who's on the issue — they don't signal progress. Whether work is underway is the explicit `in-progress` status (see [Lifecycle and Review](./lifecycle-and-review)), tracked independently of who's assigned. An empty `assignees` array simply means nobody has picked it up yet.
 
-The filter bar exposes this as a two-tier picker:
+The filter bar still exposes assignees as a two-tier picker:
 
-- **Coarse** — pseudo-values `assigned` / `unassigned`. "Is anybody on this?" Use this for the broad "what's actively being worked on" view, or its inverse "what's idle, waiting for an owner."
+- **Coarse** — pseudo-values `assigned` / `unassigned`. "Is anybody on this?" Use this for the broad "what has an owner" view, or its inverse "what's idle, waiting for someone to pick it up."
 - **Fine** — the specific names from the tracker root's `authors[]`. "What is X working on?"
 
 Both modes compose the same way as every other filter — AND across fields, OR within a field. The same model holds at the CLI: `list.mjs --assignee unassigned` is the coarse filter; `list.mjs --assignee sid` is the fine filter; `list.mjs --assignee assigned,sid` ORs them.
@@ -126,7 +126,7 @@ Optional dictionary declaring **custom agent-log kind codes** for this issue. Ea
 Load-time validation covers:
 
 - **Required fields present** — missing `title`, `status`, etc. produces a warning; the issue is skipped (won't appear in the index).
-- **Enum values known** — unknown `status`, `priority`, `component[i]`, or `labels[i]` produces a warning but doesn't block the load.
+- **Enum values known** — an unknown `priority`, `component[i]`, or `labels[i]` produces a warning but doesn't block the load. An unknown `status` is the exception: it's a hard error, since the seven lifecycle statuses are fixed in framework code.
 - **`authors[]` membership** — `author` and each entry in `assignees` should be in the tracker-root `authors[]`. Extensible — new people can be added to the root list at any time.
 
 Warnings surface in the **error-logger** dev-toolbar app. Builds succeed; the loader errs on the side of not crashing when metadata drift is the only problem.

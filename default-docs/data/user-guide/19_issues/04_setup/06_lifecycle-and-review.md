@@ -1,93 +1,131 @@
 ---
 title: Lifecycle and Review
-description: The 4-state status model — open, review, closed, cancelled — and why the review handoff is the whole point
+description: The seven-status, four-category lifecycle model — and why the review handoff is the whole point
 sidebar_position: 6
 ---
 
 # Lifecycle and Review
 
-The tracker's lifecycle is deliberately minimal: four states, one diagram, one rule about who transitions what. Everything else is labels or subtasks.
+The tracker's lifecycle is **seven statuses grouped into four categories**. Both the
+statuses and the categories are fixed in framework code — a tracker cannot invent its
+own (it can only override the colors). The categories are what the UI filters by; the
+status is the precise signal on each row.
 
-## The 4 states
+## The four categories, seven statuses
 
 ```
-open  →  review  →  closed
-            ↘
-              cancelled
+Not Started        In Progress      Review                 Closed
+  open               in-progress      input-needed           done
+  blocked                             review                 dropped
 ```
 
-Any state can also flow to `cancelled`.
+| Category | Status | Meaning | Color | Who sets it |
+|---|---|---|---|---|
+| **Not Started** | `open` | Default entry state — not started | `#888888` | Creation default |
+| **Not Started** | `blocked` | Structurally depends on another issue/subtask; reason lives in prose | `#d1854f` | Anyone, with the dependency named |
+| **In Progress** | `in-progress` | Actively being worked | `#61afef` | Agent sets it automatically when work starts |
+| **Review** | `input-needed` | Stuck — needs a human answer to proceed; the question is written inline | `#e8a54b` | Agent (or human) when blocked on input |
+| **Review** | `review` | Work claims to be done — awaiting human sign-off | `#f0c674` | Agent or author on completion |
+| **Closed** | `done` | Reviewed and accepted — shipped | `#7ec699` | **Human only** |
+| **Closed** | `dropped` | Deliberately abandoned — needs a comment saying why | `#c678dd` | **Human only** |
 
-| State | Meaning | Color | Who sets it |
-|---|---|---|---|
-| `open` | Not started, or in progress | gray | Creation default |
-| `review` | Work claims to be done — awaiting human verification | gold / yellow | Agent or author on completion |
-| `closed` | Reviewed and accepted — shipped | green | **Human only** (in autonomous workflows) |
-| `cancelled` | Decided not to do this | dark gray | Human, with reason |
+Statuses are **hard-enforced**: a value outside these seven is a build/loader error, not
+a silent default. Transitions, by contrast, are **unenforced guidance** — any jump is
+legal (you can go `open → done` directly). The rules below are convention, not a state
+machine.
 
-**Deliberately missing:** `in-progress`, `blocked`, `needs-design`. Those are labels (`wip`, `blocked`) or subtask states, not primary statuses. Transient state goes stale in tracker fields; it stays fresher as a conversation or a label. See [Design Philosophy](./design-philosophy).
+`blocked` is specifically for a *structural dependency* on another item — it is **not**
+the "agent has a question" state. That's `input-needed`.
 
-## The review state is the whole point
+## The Review category is the whole point
 
-Without a dedicated `review` state, you have two bad options for AI-driven work:
+Without a dedicated place for "a human needs to look at this", AI-driven work has two
+bad options:
 
-1. **Over-trust the AI.** Agent closes things, silent breakage ships.
-2. **Babysit every change.** Zero async leverage, you might as well type the code yourself.
+1. **Over-trust the AI.** The agent closes things; silent breakage ships.
+2. **Babysit every change.** Zero async leverage — you might as well type the code yourself.
 
-`review` is the third path. The AI marks "I think this is done — evidence in agent-log, diff is clean, ready for human confirmation." The human's job becomes specifically and only to **confirm or reject**. This is how async AI work scales: the human is the quality gate, not the writer.
+The **Review category** is the third path, and it holds two distinct "needs a human"
+signals:
 
-### Valid agent-driven transitions
+- **`review`** — "I think this is done. Evidence is in the agent-log, the diff is clean,
+  ready for your confirmation." The human's job is specifically to **confirm or reject**.
+- **`input-needed`** — "I hit a wall and can't proceed without your answer." The agent
+  writes the actual question **inline in the subtask/issue body** so a fresh session
+  picks it up on read; once answered, the agent may delete the question or keep the
+  Q&A logged inline, then continue.
 
-- `open → review` — work claimed done, awaiting review
-- `open → cancelled` — with a comment explaining why (scope change, duplicate, obsolete)
-- `review → open` — if the agent gets pushback in a comment and resumes work
+Both roll up to the Review category, so both surface in the same "needs you" queue — but
+the status tells you *why* at a glance.
 
-### Agent-driven transitions that are NEVER OK
+### The agent ceiling is the Review category
 
-- `open → closed` — bypasses the review gate
-- `review → closed` — that's a human transition
+The one hard trust boundary: an agent's terminal move is `review` (or `input-needed`).
+**`done` and `dropped` are human-only.** The agent never marks its own work shipped;
+the human does, after inspecting the artefact. `dropped` additionally requires a comment
+explaining the decision.
 
-The `review → closed` flip is *specifically* the human's job. It's the one explicit trust boundary in the whole system. The `/issues` skill (planned) is the operating manual that teaches agents this rule. See [Using with AI](./using-with-ai).
+### Agent transition conventions
+
+- Agent starts executing → sets `in-progress` automatically (no ceremony).
+- Work claimed done → `review`, with a verifiable artefact (diff, test output, screenshot).
+- Stuck on a question → `input-needed`, question written inline. (Not `blocked` — that's
+  for dependencies.)
+- Depends on another item → `blocked`, dependency named in a comment or the body.
+- **Never** `→ done` or `→ dropped` — those are the human's flips.
 
 ### When humans close
 
-After flipping `review → closed`, the convention is to trigger the agent to write a **closing log entry** — final state, shipped commit / PR, any followups. This closes out the audit trail cleanly instead of leaving dangling in-progress entries.
+After flipping `review → done`, the convention is to trigger the agent to write a
+**closing log entry** — final state, shipped commit / PR, any followups — so the audit
+trail closes cleanly instead of leaving dangling in-progress entries.
 
-## Subtasks have the same 4 states
+## Subtasks share the same vocabulary
 
-Every subtask carries its own `state` in frontmatter. Same four values, same rules:
+Every subtask carries its own `status` in frontmatter — the **same seven statuses** as
+issues, under the **same field name**. (Subtasks previously used a separate `state:`
+field; that has been unified to `status:`.)
 
 ```markdown
 ---
 title: "UI filters"
-state: review
+status: review
 ---
 ```
 
-So a single issue can be `open` at the top level with subtasks in wildly different states:
+So a single issue can be `open` at the top level with subtasks in wildly different
+statuses:
 
 ```
 Issue: 2026-04-19-docs-phase-2  [status: open]
-├── subtask 01: closed   ← done
-├── subtask 02: closed   ← done
-├── subtask 03: review   ← agent shipped, waiting for human
-├── subtask 04: open     ← next to pick up
-├── subtask 05: open     ← not started
-└── subtask 06: cancelled ← absorbed elsewhere
+├── subtask 01: done         ← shipped
+├── subtask 02: done         ← shipped
+├── subtask 03: review       ← agent shipped, waiting for human
+├── subtask 04: in-progress  ← being worked now
+├── subtask 05: input-needed ← agent stuck, question inline
+├── subtask 06: open         ← not started
+└── subtask 07: dropped      ← absorbed elsewhere
 ```
 
-This separation is what lets long-running issues progress — subtasks close one at a time, the parent issue moves when enough have landed.
+This separation is what lets long-running issues progress — subtasks advance one at a
+time, the parent issue moves when enough have landed.
 
-## Subtask-debt promotion — the Review tab
+## Review-debt promotion — the Review tab
 
-An issue with `status: open` and **one or more subtasks in `review`** will surface on the index page's **Review tab**, even though its own status isn't `review`. The tab counts issues where human attention is needed anywhere in the tree.
+An issue whose own status is **not** in the Review category, but which has **one or more
+subtasks in the Review category** (`review` or `input-needed`), still surfaces on the
+index page's **Review tab** — as long as the issue isn't Closed. The tab counts anywhere
+a human is needed in the tree.
 
-This is the cue for a human scanning the queue: *you have unconfirmed work here*, even if the top-level state hasn't changed.
+This is the cue for a human scanning the queue: *you have unconfirmed work (or an
+unanswered question) here*, even if the top-level status hasn't changed. Note that
+`blocked` does **not** promote upward — it's a resting state, not a call to action; its
+reason is read in place.
 
-The tab count on the list page reads something like:
+The list page filters by **category**, so the tabs read something like:
 
 ```
-Open (7)    Review (4 — includes 2 with review subtasks)    Closed (38)    Cancelled (3)
+Active (13)   In Progress (4)   Review (5 — includes 2 with review subtasks)   Not Started (6)   Closed (41)   All
 ```
 
 See [List View](./ui/list-view) for the full index-page tour.
@@ -96,54 +134,67 @@ See [List View](./ui/list-view) for the full index-page tour.
 
 **Scenario: agent-driven issue, 4-subtask breakdown.**
 
-1. **Create** — human opens `2026-04-21-foo/` with `settings.json` (`status: open`), `issue.md`, and four subtasks all `open`.
-2. **Pickup** — agent reads `issue.md`, reads any existing agent-log entries, writes `agent-log/001_triage.md` scoping the approach.
-3. **Work subtask 01** — agent implements, writes `agent-log/002_subtask-01.md`, flips subtask 01 to `review`.
-4. **Continue** — subtasks 02, 03 follow same pattern. Each gets a log entry, each advances to `review` or `closed` (if trivially safe).
-5. **Hand off** — once all 4 subtasks are `review` or `closed`, agent flips the **issue** `status: open → review` and writes a summary agent-log entry.
-6. **Human reviews** — reads agent log, inspects diff, spot-checks evidence.
-7. **Accept** — human flips issue `review → closed`.
-8. **Closing log** — agent's next pickup writes `agent-log/005_closed.md` referencing the shipped commit.
+1. **Create** — human opens `2026-04-21-foo/` with `settings.json` (`status: open`),
+   `issue.md`, and four subtasks all `open`.
+2. **Pickup** — agent reads `issue.md` + existing agent-log, sets the issue and the first
+   subtask to `in-progress`, writes `agent-log/…` scoping the approach.
+3. **Work subtask 01** — agent implements, logs a milestone, flips subtask 01 to `review`.
+4. **Continue** — subtasks 02, 03 follow the same pattern; each advances to `review`.
+   If the agent needs a decision, it sets that subtask `input-needed` and writes the
+   question inline, then moves to the next unblocked subtask.
+5. **Hand off** — once all four subtasks are `review`, the agent flips the **issue** to
+   `review` and writes a summary agent-log entry.
+6. **Human reviews** — reads the agent log, inspects the diff, answers any `input-needed`
+   questions, spot-checks evidence.
+7. **Accept** — human flips the issue `review → done` (subtasks likewise).
+8. **Closing log** — the agent's next pickup writes a closing entry referencing the
+   shipped commit.
 
 ## When to mark `review` (checklist)
 
 An agent should mark an issue (or subtask) `review` when:
 
 - [ ] Implementation is done from the agent's perspective
-- [ ] All child subtasks are `review` or `closed` (for issue-level review)
+- [ ] All child subtasks are `review` or `done` (for issue-level review)
 - [ ] There's a **verifiable artefact** the human can inspect — file diff, test output, screenshot, commit
 - [ ] The agent log captures what was tried and what the final state is
-- [ ] Dangling questions are surfaced (in a comment, if any)
+- [ ] Any dangling questions are surfaced as `input-needed` with the question inline
 
-## When to cancel
+## When to drop
 
-Cancellation is legitimate, not a failure. Valid reasons:
+Dropping (abandoning) is legitimate, not a failure — but it's a **human** transition and
+needs a comment. Valid reasons:
 
-- Scope changed; work is no longer relevant
+- Scope changed; the work is no longer relevant
 - Duplicate of another issue (link it in the body / comment)
 - Absorbed by a larger refactor
 - Turned out to be a misunderstanding on discovery
 
-Leave the folder on disk — the audit trail is valuable. Don't `rm -rf` cancelled issues.
+Leave the folder on disk — the audit trail is valuable. Don't `rm -rf` dropped issues.
 
-## Labels vs status for transient state
+## Status vs labels
 
-When you want to express "this is stuck" or "someone's actively on this":
+Progress and blocking are now **statuses**, not labels. The old `wip` and `blocked`
+labels are **deprecated** (kept so historical issues still validate, but superseded):
 
 | Intent | Use |
 |---|---|
-| "Stuck on external dependency" | Label `blocked-external` |
-| "Stuck on internal problem" | Label `blocked` |
-| "Someone's currently working on this" | Label `wip` (optional — usually not worth tracking) |
-| "Waiting for review" | **`status: review`** |
-| "Decided not to do" | **`status: cancelled`** |
+| "Someone's actively on this" | **`status: in-progress`** (not the `wip` label) |
+| "Stuck on another issue/subtask" | **`status: blocked`** (not the `blocked` label) |
+| "Stuck on a human's answer" | **`status: input-needed`** (question inline) |
+| "Stuck on an external/third-party dependency" | Label `blocked-external` (still a label — outside the repo) |
+| "Waiting for sign-off" | **`status: review`** |
+| "Decided not to do" | **`status: dropped`** (human, with a comment) |
 
-The rule: status is for **lifecycle**; labels are for **cross-cutting state**.
+The rule: the lifecycle status is now the single source of truth for where a piece of
+work stands. Labels remain for genuinely cross-cutting tags (`bug`, `feature`, `docs`,
+`blocked-external`, …).
 
 ## See also
 
-- [Subtasks](./sub-docs/subtasks) — per-subtask state handling
+- [Design Philosophy](./design-philosophy) — why the label-vs-status doctrine was revised for in-progress/blocked
+- [Subtasks](./sub-docs/subtasks) — per-subtask status handling
 - [Agent Log](./sub-docs/agent-log) — what iterations capture and how they support review
-- [List View](./ui/list-view) — state tabs, review-debt promotion in the UI
+- [List View](./ui/list-view) — category tabs, review-debt promotion in the UI
 - [Using with AI](./using-with-ai) — the full agent operating manual
-- [Review and Close workflow](./workflows/review-and-close) — human's side of the handoff
+- [Review and Close workflow](./workflows/review-and-close) — the human's side of the handoff

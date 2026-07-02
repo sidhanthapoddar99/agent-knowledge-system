@@ -1,6 +1,6 @@
 ---
 title: 03 · Subtasks
-description: Atomic units of work with their own 4-state lifecycle
+description: Atomic units of work sharing the issue lifecycle (seven statuses, four categories)
 sidebar_position: 3
 ---
 
@@ -49,7 +49,7 @@ Rules:
 
 - The folder is a **label only**. No `subtask.md` / `index.md` body file convention to debate.
 - Each leaf is a regular subtask: own `state` / `done` frontmatter, own URL (`/<tracker>/<issue>/subtasks/<group>/<subgroup>/<slug>`), counted independently in the totals.
-- The `NNN_` prefix on the folder preserves ordering and is rendered as the group's number in the sidebar (e.g. "02. Implementation"). The group row shows a **done/total** count (e.g. `1/2`) — "done" = terminal states (closed + cancelled) — live-updated as states cycle; the section header shows the same for the whole issue, with an amber dot when anything sits in `review`.
+- The `NNN_` prefix on the folder preserves ordering and is rendered as the group's number in the sidebar (e.g. "02. Implementation"). The group row shows a **done/total** count (e.g. `1/2`) — "done" = the Closed category (`done` + `dropped`) — live-updated as statuses cycle; the section header shows the same for the whole issue, with an amber dot when anything sits in the Review category.
 - Group folders may ship an optional `settings.json` with at minimum a `title` field — overrides the slug-derived label.
   ```json
   // subtasks/02_implementation/settings.json
@@ -63,8 +63,7 @@ Rules:
 ```markdown
 ---
 title: "Issues layout — docs"
-state: review
-done: false
+status: review
 ---
 
 Absorbed from `2026-04-10-issues-layout/subtasks/06_documentation-and-skills.md`.
@@ -79,21 +78,29 @@ User-guide and dev-docs coverage for the issues content type.
 | Field | Type | Purpose |
 |---|---|---|
 | `title` | string | Display title. If absent, derived from the slug (`02_theme-system-docs` → `theme system docs`). |
-| `state` | `"open" \| "review" \| "closed" \| "cancelled"` | Canonical 4-state. Read first. |
-| `done` | bool | Legacy alias. `done: true` → `closed` if `state` absent. `done: false` → `open`. |
+| `status` | one of the seven lifecycle statuses | The subtask's lifecycle status — the **same field and vocabulary as issues**. |
 
-The loader reads `state` first. If `state` is missing or invalid, it falls back to `done`. If both are missing, the default is `open`.
+Subtasks share the issue lifecycle exactly: **one field name (`status`), one set of seven
+statuses.** (Historically subtasks used a separate `state:` field with a four-value set;
+that has been unified — `state:` is the legacy name and is auto-mapped with a
+migrate-me warning until you rename it.) If `status` is missing, the default is `open`.
 
-## The 4 states
+## The seven statuses (shared with issues)
 
-| State | Meaning | Typical transition |
-|---|---|---|
-| `open` | Not started, or in progress | Initial state when a subtask is created |
-| `review` | Work claims to be done; waiting for human verification | `open → review` when AI / author believes it's complete |
-| `closed` | Done, verified, shipped | `review → closed` by a human |
-| `cancelled` | Decided not to do | Any state → `cancelled` with reason in comment / agent-log |
+| Category | Status | Meaning | Typical transition |
+|---|---|---|---|
+| Not Started | `open` | Not started | Initial state when a subtask is created |
+| Not Started | `blocked` | Depends on another issue/subtask | Set when work can't proceed until another item lands |
+| In Progress | `in-progress` | Being worked now | Agent sets it automatically on pickup |
+| Review | `input-needed` | Stuck — needs a human answer (question written inline) | Set when the agent can't proceed without input |
+| Review | `review` | Claims done; awaiting sign-off | `→ review` when AI / author believes it's complete |
+| Closed | `done` | Verified, shipped | `review → done` by a human |
+| Closed | `dropped` | Decided not to do | `→ dropped` by a human, with a reason in a comment |
 
-Same semantics as issue-level status. See [Lifecycle and Review](../lifecycle-and-review) for the full model — especially the **review handoff** and **subtask-debt promotion** rules (a parent issue with any `review` subtasks surfaces on the Review tab even if its own status is still `open`).
+Same vocabulary as issue-level status. See [Lifecycle and Review](../lifecycle-and-review)
+for the full model — especially the **review handoff** and **review-debt promotion** rules
+(a parent issue with any subtask in the Review category surfaces on the Review tab even if
+its own status isn't).
 
 ## Body
 
@@ -110,7 +117,7 @@ Subtasks without a body are valid — the frontmatter alone is enough if the tit
 
 **On the detail page:**
 
-- **Overview tab** — subtasks surface as a checklist with state icons (`○ open`, `◐ review`, `● closed`, `✕ cancelled`). Click-through to jump to the full body in the Comprehensive tab.
+- **Overview tab** — subtasks surface as a checklist with status icons (`○ open`, `◐ in-progress`, `● review`, `✓ done`, `✕ dropped`, …). Click-through to jump to the full body in the Comprehensive tab.
 - **Comprehensive tab** — every subtask's full body is rendered inline, in sort order, each under its own heading. Heading IDs are prefixed (`#subtask-01-foo`) to prevent anchor collisions across subtasks.
 - **Sidebar** — links to each subtask with its state icon visible next to the title.
 
@@ -122,9 +129,9 @@ Three common paths:
 
 1. **Author writes it `open` → AI picks it up → marks `review` when done → human flips to `closed`.** Most common path.
 2. **Author writes it `open` → they do it themselves → mark `closed` directly.** Fine for solo work.
-3. **Author writes it `open` → discussion concludes it shouldn't happen → mark `cancelled` with a comment explaining why.** Leave the file in place — the audit trail is valuable.
+3. **Author writes it `open` → discussion concludes it shouldn't happen → a human marks it `dropped` with a comment explaining why.** Leave the file in place — the audit trail is valuable.
 
-There's a built-in endpoint for cycling states in the UI — `POST /__editor/subtask-toggle` — so clicking a subtask's state icon in the detail view progresses through `open → review → closed → cancelled → open`. Agents can also edit the frontmatter directly.
+There's a built-in endpoint for cycling statuses in the UI — `POST /__editor/subtask-toggle` — so clicking a subtask's status icon in the detail view progresses through the happy path `open → in-progress → review → done → open`. (The other statuses — `blocked`, `input-needed`, `dropped` — are set by editing the frontmatter.) Agents can also edit the frontmatter directly.
 
 See [Work an Issue](../workflows/work-an-issue) and [Review and Close](../workflows/review-and-close) for step-by-step guides.
 
@@ -142,10 +149,10 @@ The Comprehensive tab on the parent issue concatenates every subtask body with i
 
 - **Keep subtasks atomic.** If a subtask keeps accumulating new bullet points, it probably wants to be two subtasks.
 - **Order numerically, not by status.** Let state carry state. Ordering by number means the breakdown stays readable even as items close.
-- **Don't delete `cancelled` subtasks.** They're part of the audit trail — show what wasn't done and why.
+- **Don't delete `dropped` subtasks.** They're part of the audit trail — show what wasn't done and why.
 
 ## See also
 
-- [Lifecycle and Review](../lifecycle-and-review) — how the 4 states interact at issue + subtask level
+- [Lifecycle and Review](../lifecycle-and-review) — how the seven statuses interact at issue + subtask level
 - [Work an Issue](../workflows/work-an-issue) — adding subtasks, transitioning state
 - [Using with AI](../using-with-ai) — how agents are expected to handle subtasks

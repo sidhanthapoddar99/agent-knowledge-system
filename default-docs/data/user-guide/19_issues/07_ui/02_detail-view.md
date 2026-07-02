@@ -61,7 +61,7 @@ Panel switching is hash-addressable — `#comments`, `#comprehensive`, `#guide`,
 Each section lists its files as links to **their own URLs** (`/<issue>/notes/<name>`, `/<issue>/agent-log/<folder>/<file>`, …):
 
 - Rows render `NN` badge + clean label (prefix stripped, separators → spaces); an optional `color:` frontmatter tints the label (meaning documented in the issue's glossary).
-- **Subtasks** — state icon per row (`○` open · `◐` review · `●` closed · `✕` cancelled); group folders show a **done/total** count; the section header shows the issue-wide done/total with an amber dot when anything is in `review`.
+- **Subtasks** — status icon per row (`○` open · `◐` in-progress · `●` review · `✓` done · `✕` dropped, plus `blocked` / `input-needed`); group folders show a **done/total** count; the section header shows the issue-wide done/total with an amber dot when anything is in the Review category.
 - **Agent log** — activity folders render `NN <symbol> <name> … <count>` (the kind symbol's tooltip names it); inside, `0NN_` meta files pin badge-less on top and milestones show `#<iteration>` tinted by status (grey/blue/green/red).
 - **Agent memory** — `memory.md` pins first.
 - Ordering everywhere: bucket (agent-log meta first) → iteration → numeric prefix value → name. Ascending, one rule for all sections.
@@ -69,7 +69,7 @@ Each section lists its files as links to **their own URLs** (`/<issue>/notes/<na
 
 ## Interactions
 
-- **Subtask state cycling** — clicking a subtask's state icon cycles `open → review → closed → cancelled` (dev-mode editor endpoint writes the frontmatter); counts update live.
+- **Subtask status cycling** — clicking a subtask's status icon cycles the happy path `open → in-progress → review → done` (dev-mode editor endpoint writes the frontmatter); the other statuses (`blocked`, `input-needed`, `dropped`) are set by editing; counts update live.
 - **Tooltips** — one site-wide cursor-anchored tooltip: kind symbols and the review dot always show theirs; text tips appear only when the text is actually cropped.
 - **Sub-doc pages** — each has the same three-column shell with its own right-rail TOC; the sidebar keeps your place.
 

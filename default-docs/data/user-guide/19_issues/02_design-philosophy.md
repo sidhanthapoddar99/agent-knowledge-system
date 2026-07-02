@@ -34,9 +34,27 @@ The index sorts by `priority desc, updated desc`. That's the whole signal stack.
 
 Every issue folder is named `YYYY-MM-DD-<slug>`. The date IS the creation date — no separate `created` field, no possibility of disagreement. One source, parsed at load time.
 
-### Transient state is a label, not a status
+### Progress and blocking are statuses (a deliberate policy reversal)
 
-`open / review / closed / cancelled` are the only primary statuses. "Actively working on this" or "this is stuck" are conversations or **labels** (`wip`, `blocked`) — they stack with anything else and don't churn the audit trail.
+This tracker originally held a stricter line: the only primary statuses were
+`open / review / closed / cancelled`, and "actively working" / "stuck" were **labels**
+(`wip`, `blocked`), on the theory that transient state goes stale in a tracker field.
+
+That doctrine was **revised** (2026-07-02) for exactly two signals — in-progress and
+blocked — which are now first-class statuses. Two things forced the reversal:
+
+- **The old "in-progress" signal was derived from `assignees.length > 0`, and that never
+  matched practice.** Assigning someone doesn't mean work started; work often starts with
+  nobody assigned. A derived signal that lies is worse than an explicit one.
+- **For an AI-operated tracker, a fixed shared vocabulary matters more than field
+  minimalism.** Agents read a manual and key their behavior off status names; "the agent
+  is running" and "this is waiting on another item" are load-bearing enough to deserve
+  real statuses rather than optional labels that drift.
+
+The general principle still holds for *genuinely* cross-cutting tags — `bug`, `feature`,
+`docs`, `blocked-external` remain labels. What changed is that lifecycle position (now
+seven statuses in four categories) is the single source of truth for where work stands,
+and it is **fixed in framework code** rather than user-definable — see below.
 
 ### Composite work uses multi-select labels
 
@@ -48,20 +66,33 @@ When several issues form a bundle, link them in prose. A bundle that earns a str
 
 ## What we do have
 
-### Four-state status with `review` as a first-class state
+### Seven statuses in four categories, with Review as a first-class category
 
 ```
-open  →  review  →  closed
-            ↘
-              cancelled
+Not Started      In Progress    Review              Closed
+  open             in-progress    input-needed        done
+  blocked                         review              dropped
 ```
 
-The `review` state is the **missing primitive for AI-driven workflows**. Without it, you have two bad options:
+The **Review category** is the missing primitive for AI-driven workflows. Without a
+dedicated "a human needs to look at this" bucket, you have two bad options:
 
 1. **Over-trust the AI** — agent marks things done, silent breakage ships
 2. **Babysit every change** — no async leverage, you might as well do it yourself
 
-`review` is the third path: AI marks work as "I think this is done", the human's job becomes specifically *confirm or reject*. It's a deliberate handoff — the only way async AI work scales.
+Review is the third path, and it holds two signals: `review` ("I think this is done —
+confirm or reject") and `input-needed` ("I'm stuck on a question, answer inline"). The
+agent's ceiling is this category; `done`/`dropped` are human-only. It's a deliberate
+handoff — the only way async AI work scales.
+
+**The statuses and categories are fixed in framework code — not user-definable.** A
+tracker can override the colors but cannot add or rename statuses. This is a conscious
+departure from the tracker's usual "convention over enforcement" stance, made for one
+axis only: when an AI agent is the primary operator, everyone (the loader, the UI, the
+CLI, the skill manual, every agent) has to speak *exactly* the same lifecycle language.
+Letting each tracker invent its own status names would reintroduce the drift the fixed
+vocabulary exists to kill. Transitions between statuses remain unenforced guidance — it's
+the *set* that's fixed, not the *moves*.
 
 Full treatment in [Lifecycle and Review](./lifecycle-and-review).
 
@@ -73,13 +104,18 @@ This is what makes long-running AI work **auditable**. The human reviewing a `re
 
 See [Sub-Documents → agent-log](./sub-docs/agent-log).
 
-### Subtasks with their own 4-state
+### Subtasks share the issue status vocabulary
 
-An issue isn't a single unit of work — it's a collection. Each subtask has its own `open | review | closed | cancelled` state, written in the subtask file's own frontmatter. That means:
+An issue isn't a single unit of work — it's a collection. Each subtask carries its own
+`status` in the subtask file's frontmatter — the **same seven statuses** as issues, under
+the **same field name** (`status:`; subtasks used to use a separate `state:` field, now
+unified). That means:
 
-- Parent issue can be `open` while 3 of 5 subtasks are already `closed`
-- A subtask in `review` bubbles up — the parent issue shows "subtasks awaiting review" on the Review tab
-- AI can complete subtasks autonomously, parking each in `review` for human inspection, without ever flipping the parent to `closed`
+- Parent issue can be `open` while 3 of 5 subtasks are already `done`
+- A subtask in the Review category (`review` or `input-needed`) bubbles up — the parent
+  issue shows "subtasks awaiting review" on the Review tab
+- AI can complete subtasks autonomously, parking each in `review` for human inspection,
+  without ever flipping the parent to `done`
 
 See [Subtasks](./sub-docs/subtasks).
 
@@ -119,6 +155,6 @@ That's what this is.
 
 ## See also
 
-- [Lifecycle and Review](./lifecycle-and-review) — how the 4 states and review handoff work in practice
+- [Lifecycle and Review](./lifecycle-and-review) — how the seven statuses / four categories and the review handoff work in practice
 - [Sub-Documents → agent-log](./sub-docs/agent-log) — iteration discipline
 - [Using with AI](./using-with-ai) — the skill + agent workflows

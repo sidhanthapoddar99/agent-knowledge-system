@@ -29,12 +29,15 @@ Minimum viable:
   "label": "Bugs",
   "fields": {
     "status": {
-      "values": ["open", "review", "closed", "cancelled"],
+      "values": ["open", "blocked", "in-progress", "input-needed", "review", "done", "dropped"],
       "colors": {
-        "open":      "#888888",
-        "review":    "#f0c674",
-        "closed":    "#7ec699",
-        "cancelled": "#666666"
+        "open":         "#888888",
+        "blocked":      "#d1854f",
+        "in-progress":  "#61afef",
+        "input-needed": "#e8a54b",
+        "review":       "#f0c674",
+        "done":         "#7ec699",
+        "dropped":      "#c678dd"
       }
     },
     "priority": {
@@ -53,7 +56,7 @@ Minimum viable:
 
 ### Rules
 
-- **`status` must be exactly `open / review / closed / cancelled`.** The UI's state tabs and review handoff depend on this.
+- **The seven statuses are fixed in framework code** — `open / blocked / in-progress / input-needed / review / done / dropped`. You may override their colors but not the set: listing `values` is documentation only (the loader ignores custom values and hard-errors on an unknown status). The UI's category tabs and review handoff depend on this fixed vocabulary.
 - **Other fields are yours to design.** Pick values that match how you actually triage.
 - **Colors are optional** but useful — they drive badge fills on the list view.
 - **Don't over-specify up front.** It's easier to add values than to remove them once issues use them.
@@ -151,7 +154,7 @@ See [Navbar Configuration](/user-guide/configuration/navbar).
 ./start dev
 ```
 
-Navigate to the tracker's base URL (`/bugs`). You should see an empty list view with your vocabulary reflected in the filter dropdowns and state tabs.
+Navigate to the tracker's base URL (`/bugs`). You should see an empty list view — your vocabulary drives the filter dropdowns, and the fixed lifecycle categories drive the tabs across the top.
 
 Create a test issue:
 

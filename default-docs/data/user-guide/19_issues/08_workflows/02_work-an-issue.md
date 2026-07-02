@@ -1,12 +1,12 @@
 ---
 title: Work an Issue
-description: Adding subtasks, transitioning state, commenting, writing agent-log entries
+description: Adding subtasks, transitioning status, commenting, writing agent-log entries
 sidebar_position: 2
 ---
 
 # Work an Issue
 
-Everyday workflow for advancing an issue: picking it up, doing some work, updating state, writing audit trails. This page is written in a human/agent-agnostic voice — the mechanics are the same.
+Everyday workflow for advancing an issue: picking it up, doing some work, updating status, writing audit trails. This page is written in a human/agent-agnostic voice — the mechanics are the same.
 
 ## Pick up an issue
 
@@ -23,21 +23,21 @@ For agents, the planned `/issues` skill (see [Using with AI](../using-with-ai)) 
 
 Typical flow for working one atomic unit:
 
-1. Set the subtask `state: open` → your editor / tool of choice → implement the change
+1. Set the subtask `status: in-progress` → your editor / tool of choice → implement the change
 2. Write any evidence into an agent-log entry (if acting as an agent) or a comment (if human)
-3. Flip the subtask to `state: review`
+3. Flip the subtask to `status: review`
 
-### How to flip state
+### How to flip status
 
 Three ways:
 
-- **UI** — click the state icon in the detail-page sidebar or subtask checklist. Cycles `open → review → closed → cancelled → open`.
-- **Manual edit** — change `state:` in the subtask's frontmatter. Loader picks up the change on the next mtime invalidation.
-- **Planned CLI** (once helper scripts ship) — `node scripts/issues/set-state.mjs subtasks/01_foo.md review`
+- **UI** — click the status icon in the detail-page sidebar or subtask checklist. Cycles `open → in-progress → review → done` (the off-path statuses `blocked`, `input-needed`, and `dropped` are set by editing the file).
+- **Manual edit** — change `status:` in the subtask's frontmatter. Loader picks up the change on the next mtime invalidation.
+- **CLI** — `docs-guide issue set-state <issue-id> review --subtask 01` (or pass an explicit `…/subtasks/01_foo.md` path). Writes the `status` field; `--subtask` targets the subtask (never the issue).
 
 ### Key rule
 
-Agents: never mark a subtask `closed` directly from `open` in autonomous mode. Always go through `review`. **`closed` is a human transition.** Exception: if the work is trivially safe (typo fix, comment update, etc.) and a human has pre-authorised direct closure in the issue prompt.
+Agents: never mark a subtask `done` directly in autonomous mode — the agent ceiling is the **Review** category. Always go through `review`. **`done` is a human transition** (as is `dropped`, which also requires an explaining comment). Exception: if the work is trivially safe (typo fix, comment update, etc.) and a human has pre-authorised direct closure in the issue prompt.
 
 See [Lifecycle and Review](../lifecycle-and-review) for the full rule set.
 
@@ -100,7 +100,7 @@ Hand off for review — subtask 02 → `review`.
 Issues evolve. When work reveals a new atomic unit:
 
 1. Pick the next numeric prefix (or insert between existing ones — renumbering is fine)
-2. Create `subtasks/NN_<slug>.md` with `state: open`
+2. Create `subtasks/NN_<slug>.md` with `status: open`
 3. Add a quick comment or agent-log mentioning the new subtask so it's traceable
 
 ```
@@ -115,14 +115,14 @@ subtasks/
 
 When you (or an agent) thinks all meaningful work is done:
 
-1. All subtasks are `review` or `closed` (or `cancelled` with reasons)
+1. All subtasks are `review` or `done` (or `dropped` with reasons)
 2. Agent-log (or comment) captures what was shipped
 3. Flip the **issue-level** status: `open → review`
 4. Write a summary comment or agent-log entry: what landed, what evidence
 
 The issue now shows up on the Review tab (with subtask-debt promotion if `status` still says `open` but subtasks are `review`-flagged). See [List View](../ui/list-view) and [Review and Close](./review-and-close).
 
-## Cancelling work
+## Dropping work
 
 Legitimate when:
 - Scope changed and this is no longer relevant
@@ -130,12 +130,12 @@ Legitimate when:
 - Absorbed by a larger refactor
 - Turned out to be a misunderstanding
 
-To cancel:
-1. Write a comment or agent-log entry explaining why
-2. Set `status` (or subtask `state`) to `cancelled`
+To drop (a human-only transition):
+1. Write a comment or agent-log entry explaining why — `dropped` requires an explaining comment
+2. Set the issue (or subtask) `status` to `dropped`
 3. Leave the folder in place — the audit trail is useful
 
-Don't delete cancelled issues. `git` + filesystem = audit trail.
+Don't delete dropped issues. `git` + filesystem = audit trail.
 
 ## How `updated` is computed
 
@@ -143,7 +143,7 @@ The list view shows an Updated date for each issue, derived from git history —
 
 ## See also
 
-- [Lifecycle and Review](../lifecycle-and-review) — the full 4-state model
+- [Lifecycle and Review](../lifecycle-and-review) — the full seven-status / four-category model
 - [Review and Close](./review-and-close) — the human side of the handoff
 - [Using with AI](../using-with-ai) — agent-specific workflow
 - [Sub-Documents](../sub-docs/issue-md) — per-file-type conventions

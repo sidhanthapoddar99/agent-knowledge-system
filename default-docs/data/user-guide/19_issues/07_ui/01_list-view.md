@@ -1,6 +1,6 @@
 ---
 title: List View
-description: The index page — state tabs, filter chips, preset views, grouping, sort
+description: The index page — category tabs, filter chips, preset views, grouping, sort
 sidebar_position: 1
 ---
 
@@ -16,7 +16,7 @@ The list view renders at the tracker's base URL (e.g. `/todo`). It's the primary
 ├──────────────────────────────────────────────────────────────────┤
 │  High priority │ Blocked │ By component                          │  ← preset strip
 ├──────────────────────────────────────────────────────────────────┤
-│  Open (12)   Review (4)   Closed (24)   Cancelled (2)            │  ← state tabs
+│  Active  In Progress  Review  Not Started  Closed  All           │  ← category tabs
 ├──────────────────────────────────────────────────────────────────┤
 │  Search …    Priority ▾   Component ▾   Labels ▾   Assignee ▾    │  ← filter bar
 │                                                  Group ▾  Sort ▾ │
@@ -27,21 +27,21 @@ The list view renders at the tracker's base URL (e.g. `/todo`). It's the primary
 └──────────────────────────────────────────────────────────────────┘
 ```
 
-Four bars, top to bottom: **header**, **preset strip**, **state tabs**, **filter bar**. Then the result list.
+Four bars, top to bottom: **header**, **preset strip**, **category tabs**, **filter bar**. Then the result list.
 
-## State tabs
+## Category tabs
 
 ```
-Open (12)   Review (4)   Closed (24)   Cancelled (2)
+Active (18)   In Progress (5)   Review (4)   Not Started (9)   Closed (24)   All
 ```
 
-Four tabs, one per canonical state. Click to filter. Counts reflect the current filter set (changing a priority filter below recalculates the tab counts).
+Six tabs. Four map to the lifecycle **categories** — In Progress, Review, Not Started, Closed — plus **Active** (everything not Closed, the default) and **All**. Click to filter by category; each row still shows its own status as a colored badge. Counts reflect the current filter set (changing a priority filter below recalculates the tab counts).
 
 ### Subtask-debt promotion
 
-The **Review** tab isn't just issues with `status: review`. It also includes **issues with `status: open` whose subtasks include one or more in `review`**. See [Lifecycle and Review — subtask-debt promotion](../lifecycle-and-review).
+The **Review** tab isn't just issues whose own status is in the Review category (`input-needed` / `review`) — it's highlighted, and it also absorbs **review-debt**: active (non-closed) issues with one or more subtasks in the Review category. See [Lifecycle and Review — subtask-debt promotion](../lifecycle-and-review).
 
-This matters: it surfaces work waiting on a human even when the top-level status says "still open." The tab count often reads like:
+This matters: it surfaces work waiting on a human even when the issue's own status still sits in an earlier category. The tab count often reads like:
 
 ```
 Review (4 total — 2 with review subtasks)
@@ -49,7 +49,7 @@ Review (4 total — 2 with review subtasks)
 
 ### Default tab
 
-The default is **Open** — the active queue. Bookmark the base URL to land there. Adding `?state=review` to the URL jumps straight to the Review tab.
+The default is **Active** — everything not yet Closed. Bookmark the base URL to land there. Adding `?state=review` to the URL jumps straight to the Review tab.
 
 ## Preset views
 
@@ -62,7 +62,7 @@ One-click filter + group configurations, declared in the tracker's root `setting
 ```json
 "views": [
   { "name": "High priority", "filters": { "priority": ["high", "urgent"] } },
-  { "name": "Blocked",       "filters": { "labels": ["blocked", "blocked-external"] } },
+  { "name": "Blocked",       "filters": { "status": ["blocked"] } },
   { "name": "By component",  "group": "component" }
 ]
 ```
@@ -92,14 +92,14 @@ Multi-select per field. Chip colors come from the vocabulary's color declaration
 - **Within a field** — OR (`priority=high,urgent` matches either)
 - **Across fields** — AND (`priority=high AND component=docs`)
 
-#### Assignee — the in-progress shortcut
+#### Assignee filter
 
 The `assignee` row exposes two layers in the same dropdown:
 
-- Top — `assigned` / `unassigned`: coarse "is anybody on this?" Use these to scan for idle work or in-flight work without picking a specific person.
+- Top — `assigned` / `unassigned`: coarse "is anybody on this?" Use these to scan for idle work or owned work without picking a specific person.
 - Below the divider — per-person names from `authors[]`: fine "what is X working on?"
 
-There's no separate `in_progress` field — `assignees.length > 0` is the in-progress signal. See [`author` vs `assignees`](../settings/per-issue#author-vs-assignees) for the rationale.
+Assignees are just who's on the issue — nothing more. Progress is the explicit `in-progress` status, not a side effect of being assigned. See [`author` vs `assignees`](../settings/per-issue#author-vs-assignees).
 
 ### Group-by
 
@@ -171,4 +171,4 @@ A single button restores the default tab + no filters.
 
 - [Detail View](./detail-view) — what clicking through takes you to
 - [Vocabulary](../settings/vocabulary) — how preset views and enum colors are declared
-- [Lifecycle and Review](../lifecycle-and-review) — state tab semantics, review-debt promotion
+- [Lifecycle and Review](../lifecycle-and-review) — category tab semantics, review-debt promotion

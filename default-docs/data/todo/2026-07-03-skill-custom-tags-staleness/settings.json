@@ -1,0 +1,15 @@
+{
+  "title": "Stale custom-tags syntax in plugin skill writing references",
+  "description": "Both skills' writing references document a `:::callout` / `:::collapsible` / `:::tabs` directive syntax that has never existed in the framework — the real transformers use the HTML-tag form (`<callout>`, `<tabs>`, `<collapsible>`) and aren't wired into any parser pipeline anyway. Agents following the skill mass-produce wrong markup (45 files in one consumer migration). Fix the references in the plugin repo + installed cache.",
+  "status": "open",
+  "priority": "medium",
+  "component": [
+    "ai-plugin-and-docs"
+  ],
+  "labels": [
+    "bug",
+    "docs"
+  ],
+  "author": "claude",
+  "assignees": []
+}

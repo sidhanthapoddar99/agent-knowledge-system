@@ -1,0 +1,4 @@
+digraph G {
+  rankdir=LR;
+  "embed-test.dot" -> "diagram-graphviz div" -> "rendered SVG";
+}

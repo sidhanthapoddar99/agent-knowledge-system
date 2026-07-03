@@ -1,6 +1,6 @@
 ---
 title: "Remove custom-tags sections from both skill writing references"
-status: open
+status: review
 ---
 
 Per the native-markdown-only decision

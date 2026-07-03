@@ -22,9 +22,6 @@ Postprocessors run **after** HTML rendering to enhance the output.
  │                 │      │                 │     │ • internal-links │
  │                 │      │                 │     │ • external-links │
  └─────────────────┘      └─────────────────┘     └──────────────────┘
-                                                           │
-                                                           ▼
-                                                     Transformers
 ```
 
 ## Postprocessor Files

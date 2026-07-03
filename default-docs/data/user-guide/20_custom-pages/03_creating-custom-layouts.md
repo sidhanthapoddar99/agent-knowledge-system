@@ -288,7 +288,7 @@ import { loadFile } from '@loaders/data';
 ---
 ```
 
-Available aliases: `@layouts/`, `@loaders/`, `@parsers/`, `@styles/`, `@modules/`, `@hooks/`, `@custom-tags/`, `@ext-layouts/`.
+Available aliases: `@layouts/`, `@loaders/`, `@parsers/`, `@styles/`, `@modules/`, `@hooks/`, `@ext-layouts/`.
 
 Relative imports **inside** your layout folder work fine:
 

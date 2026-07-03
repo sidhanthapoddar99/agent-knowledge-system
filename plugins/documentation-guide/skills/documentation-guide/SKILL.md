@@ -17,7 +17,7 @@ Pick the reference file that matches the task. Read **only the one(s) you need**
 
 | If the task involves… | Domain | Read |
 |---|---|---|
-| Writing markdown, frontmatter, custom tags, asset embedding (across any content type) | writing | `references/writing.md` |
+| Writing markdown, frontmatter, callouts & diagrams, asset embedding (across any content type) | writing | `references/writing.md` |
 | Files under `data/<sidebar-driven-section>/` (e.g. `user-guide/`, `dev-docs/`) | docs-layout | `references/layouts/docs-layout.md` |
 | Files under `data/blog/` (flat `YYYY-MM-DD-<slug>.md`) | blog-layout | `references/layouts/blog-layout.md` |
 | Files under `data/todo/` or any issue tracker | issues | **the `doc-issues` skill** (self-contained — load it instead of a reference here) |

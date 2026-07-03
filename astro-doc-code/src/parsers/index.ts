@@ -4,7 +4,6 @@
  * A flexible content parsing system with:
  * - Preprocessors: Run before markdown rendering (asset embedding, etc.)
  * - Renderers: Convert markdown to HTML
- * - Transformers: Convert custom tags to semantic HTML
  * - Postprocessors: Run after HTML rendering (heading IDs, external links, etc.)
  * - Content-type parsers: Specialized logic for docs vs blogs
  */
@@ -29,28 +28,6 @@ export {
   type AssetEmbedOptions,
   type ProtectedContent,
 } from './preprocessors';
-
-// Transformers
-export {
-  TagTransformerRegistry,
-  createTransformerRegistry,
-  globalRegistry,
-  // Custom tags
-  createCalloutTransformer,
-  calloutTransformer,
-  type CalloutOptions,
-  type CalloutType,
-  createTabsTransformer,
-  createTabTransformer,
-  tabsTransformer,
-  tabTransformer,
-  type TabsOptions,
-  createCollapsibleTransformer,
-  collapsibleTransformer,
-  type CollapsibleOptions,
-  createCustomTagsRegistry,
-  getAllCustomTags,
-} from './transformers';
 
 // Renderers
 export {

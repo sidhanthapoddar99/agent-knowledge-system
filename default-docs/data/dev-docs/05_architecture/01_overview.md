@@ -30,7 +30,7 @@ This documentation framework is built on a modular architecture with five distin
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                          3. PARSER LAYER                                │
 │   ┌──────────────────────────────────────────────────────────────────┐  │
-│   │  Preprocessors  →  Renderer  →  Postprocessors  →  Transformers  │  │
+│   │        Preprocessors  →  Renderer  →  Postprocessors             │  │
 │   └──────────────────────────────────────────────────────────────────┘  │
 │   ┌──────────────────────────────────────────────────────────────────┐  │
 │   │         Content-Type Parsers (DocsParser, BlogParser)            │  │
@@ -80,7 +80,7 @@ When a user visits `/docs/getting-started/overview`:
 | **8-9** | Resolve `@data/docs` alias to path | Loaders |
 | **10-11** | Load markdown files, select parser | Loaders → Parser |
 | **12-13** | Run pipeline: preprocessors embed assets | Parser → User Space |
-| **14** | Pipeline completes: renderer + postprocessors + transformers | Parser |
+| **14** | Pipeline completes: renderer + postprocessors | Parser |
 | **15-16** | Resolve `@docs/default` to Layout component | Layout |
 | **17-18** | Compose BaseLayout with navbar, content, footer | Render + Layout |
 | **19-20** | Return static HTML to browser | Output → Browser |
@@ -129,9 +129,8 @@ Transforms markdown content through a configurable pipeline:
 |-----------|---------|
 | `core/` | Pipeline orchestration, BaseParser class |
 | `preprocessors/` | Asset embedding (`[[path]]`), code protection |
-| `renderers/` | Markdown to HTML (Marked) |
-| `postprocessors/` | Heading IDs, external link attributes |
-| `transformers/` | Custom tag transformation (`<callout>`, etc.) |
+| `renderers/` | Markdown to HTML (Marked + Shiki + diagrams) |
+| `postprocessors/` | Heading IDs, internal/external link rewriting |
 | `content-types/` | DocsParser, BlogParser (naming conventions) |
 
 See [Parser System](/docs/architecture/parser/overview) for details.
@@ -179,7 +178,6 @@ src/
 │   ├── core/          # Pipeline and base parser
 │   ├── preprocessors/ # Asset embedding
 │   ├── renderers/     # Markdown rendering
-│   ├── transformers/  # Custom tag transforms
 │   ├── postprocessors/# Heading IDs, links
 │   └── content-types/ # Docs/Blog parsers
 │
@@ -194,15 +192,10 @@ src/
 ├── pages/             # Layer 5: Route handling
 │   └── [...slug].astro
 │
-├── hooks/             # Shared state hooks
-│   ├── useSidebar.ts
-│   ├── useNavigation.ts
-│   └── useTheme.ts
-│
-└── custom-tags/       # Custom tag definitions
-    ├── callout.ts
-    ├── tabs.ts
-    └── collapsible.ts
+└── hooks/             # Shared state hooks
+    ├── useSidebar.ts
+    ├── useNavigation.ts
+    └── useTheme.ts
 ```
 
 ## Core Principles

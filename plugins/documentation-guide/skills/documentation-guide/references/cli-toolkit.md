@@ -63,6 +63,7 @@ Exit `0` clean / `1` problems found (CI-friendly). All support `--json`.
 | `docs-guide check config` | `site.yaml` / `navbar.yaml` / `footer.yaml` — required keys, `pages:`, alias resolution |
 | `docs-guide check section <folder>` | A docs section — `NN_` prefixes, `settings.json`, frontmatter `title:`, prefix collisions |
 | `docs-guide check issues` | The issue tracker — schema, vocabulary, subtask states, anatomy folders (brainstorm / agent-memory / agent-log activity grammar, `agentLogKinds`) (`--quiet`, `--strict`, `--tracker`). Use this on `data/todo/`, **not** `check section` |
+| `docs-guide check legacy-tags [root]` | Retired custom-tags syntax (`:::callout` / `<callout>` / `<tabs>` / `<collapsible>`) anywhere under a content root, each hit with its native replacement (GFM alert, `<details>`, flattened sections). Fenced code examples are skipped. Run it when touching pre-2026-07 content |
 | `docs-guide check skill-links` | Maintainer tool: relative links between the skill's `.md` files resolve |
 
 ---

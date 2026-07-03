@@ -5,6 +5,7 @@
  */
 
 import { Marked, type TokenizerAndRendererExtension } from 'marked';
+import markedAlert from 'marked-alert';
 import { createHighlighter, type Highlighter } from 'shiki';
 
 export interface MarkdownRendererOptions {
@@ -103,6 +104,9 @@ export async function createMarkdownRendererAsync(
     },
   });
 
+  // GFM alert blockquotes: > [!NOTE] / [!TIP] / [!IMPORTANT] / [!WARNING] / [!CAUTION]
+  instance.use(markedAlert());
+
   if (mergedOptions.extensions && mergedOptions.extensions.length > 0) {
     instance.use({ extensions: mergedOptions.extensions });
   }
@@ -140,6 +144,9 @@ export function createMarkdownRenderer(options: MarkdownRendererOptions = {}): (
     },
   });
 
+  // GFM alert blockquotes: > [!NOTE] / [!TIP] / [!IMPORTANT] / [!WARNING] / [!CAUTION]
+  instance.use(markedAlert());
+
   if (mergedOptions.extensions && mergedOptions.extensions.length > 0) {
     instance.use({ extensions: mergedOptions.extensions });
   }
@@ -160,6 +167,9 @@ export function createMarkedInstance(options: MarkdownRendererOptions = {}): Mar
     gfm: mergedOptions.gfm,
     breaks: mergedOptions.breaks,
   });
+
+  // GFM alert blockquotes: > [!NOTE] / [!TIP] / [!IMPORTANT] / [!WARNING] / [!CAUTION]
+  instance.use(markedAlert());
 
   if (mergedOptions.extensions && mergedOptions.extensions.length > 0) {
     instance.use({ extensions: mergedOptions.extensions });

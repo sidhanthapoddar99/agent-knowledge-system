@@ -164,6 +164,11 @@ export const MANIFEST = [
     ],
   },
   {
+    bin: 'docs-check-legacy-tags', group: 'check', verb: 'legacy-tags', category: 2, script: 'check-legacy-tags.mjs', runtime: 'mjs',
+    summary: 'Detect retired custom-tags syntax (:::callout, <callout>, …) with native replacements',
+    flags: [{ name: 'json', desc: 'structured findings' }],
+  },
+  {
     bin: 'docs-check-skill-links', group: 'check', verb: 'skill-links', category: 0, script: 'check-skill-links.mjs', runtime: 'mjs',
     summary: 'Maintainer tool: verify relative links between skill .md files resolve',
     flags: [{ name: 'json', desc: 'structured findings' }],

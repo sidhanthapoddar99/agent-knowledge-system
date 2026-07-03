@@ -56,10 +56,9 @@ src/
 ├── parsers/              # Modular content parsing pipeline
 │   ├── core/             # Base parser logic
 │   ├── content-types/    # docs, blog, issues content type handlers
-│   ├── preprocessors/    # Frontmatter extraction, custom tag expansion
-│   ├── renderers/        # Markdown → HTML (unified/remark/rehype)
-│   ├── transformers/     # AST transforms (heading extraction, link rewriting)
-│   └── postprocessors/   # Final HTML transforms
+│   ├── preprocessors/    # Frontmatter extraction, asset embedding, code-block protection
+│   ├── renderers/        # Markdown → HTML (marked + GFM alerts)
+│   └── postprocessors/   # Final HTML transforms (heading IDs, external links)
 │
 ├── layouts/              # Astro layout components (see "Layouts" section below)
 │   ├── BaseLayout.astro  # Root layout: theme CSS injection, dark mode, head meta
@@ -79,16 +78,14 @@ src/
 │   └── api/dev/          # Dev-only API (themes, editor)
 │
 ├── styles/               # Built-in default theme (theme.yaml + CSS)
-├── dev-tools/            # Astro dev-toolbar apps + shared server layer
-│   ├── server/           # Shared server-side: middleware · editor-store · yjs-sync · presence · metrics
-│   ├── editor/           # CodeMirror 6 live editor (mounted at /editor)
-│   ├── layout-selector/  # Layout & theme picker toolbar app
-│   ├── error-logger/     # Doc errors toolbar app
-│   ├── system-metrics/   # CPU / RAM toolbar app (3-dot overflow)
-│   ├── cache-inspector/  # Server in-memory cache viewer (3-dot overflow)
-│   └── integration.ts    # Astro integration wiring
-│
-└── custom-tags/          # Custom markdown tags (callouts, tabs, collapsible, etc.)
+└── dev-tools/            # Astro dev-toolbar apps + shared server layer
+    ├── server/           # Shared server-side: middleware · editor-store · yjs-sync · presence · metrics
+    ├── editor/           # CodeMirror 6 live editor (mounted at /editor)
+    ├── layout-selector/  # Layout & theme picker toolbar app
+    ├── error-logger/     # Doc errors toolbar app
+    ├── system-metrics/   # CPU / RAM toolbar app (3-dot overflow)
+    ├── cache-inspector/  # Server in-memory cache viewer (3-dot overflow)
+    └── integration.ts    # Astro integration wiring
 ```
 
 ## Data Directory

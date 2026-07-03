@@ -36,7 +36,8 @@ One exception: a small `body { … }` block at the top sets global background + 
 | Tables | `.markdown-content table`, `th`, `td` | `--color-border-default`, `--color-bg-tertiary`, `--ui-text-body`, `--spacing-sm` |
 | Images | `.markdown-content img` | `--border-radius-md`, `--shadow-sm` |
 | HR | `.markdown-content hr` | `--color-border-default`, `--spacing-xl` |
-| Callouts | `.markdown-content .callout` | `--color-info/warning/error/success`, `--spacing-md`, `--border-radius-md` |
+| Collapsible | `.markdown-content details`, `summary` | `--color-border-default`, `--color-bg-secondary`, `--spacing-md`, `--border-radius-md` |
+| Callouts (GFM alerts) | `.markdown-alert`, `.markdown-alert-{note,tip,important,warning,caution}`, `.markdown-alert-title` | `--color-info`, `--color-success`, `--color-brand-primary`, `--color-warning`, `--color-error`, `--spacing-*`, `--border-radius-md` |
 
 ## Key patterns
 

@@ -154,17 +154,6 @@ export interface FrontmatterSchema {
 }
 
 // ============================================
-// Tag Transformer
-// ============================================
-
-export interface TagTransformer {
-  /** The custom tag name (e.g., 'codeblock', 'callout') */
-  tag: string;
-  /** Transform the tag content and attributes to HTML */
-  transform(content: string, attrs: Record<string, string>): string;
-}
-
-// ============================================
 // Error Types
 // ============================================
 

@@ -94,7 +94,6 @@ File paths use alias notation for clarity:
 │   ┌──────────────────────────────────────┐                                  │
 │   │   For each markdown file:            │                                  │
 │   │   • Parse frontmatter                │                                  │
-│   │   • Process custom tags              │                                  │
 │   │   • Validate asset embeds            │                                  │
 │   │   • Collect any errors               │                                  │
 │   └──────────────────────────────────────┘                                  │

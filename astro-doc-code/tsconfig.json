@@ -7,7 +7,6 @@
       "@layouts/*": ["src/layouts/*"],
       "@loaders/*": ["src/loaders/*"],
       "@parsers/*": ["src/parsers/*"],
-      "@custom-tags/*": ["src/custom-tags/*"],
       "@hooks/*": ["src/hooks/*"],
       "@modules/*": ["src/modules/*"],
       "@styles/*": ["src/styles/*"],

@@ -44,7 +44,7 @@ The skill triages every non-tracker docs task to one of five domain references. 
 
 | Reference | Covers |
 |---|---|
-| `references/writing.md` | Markdown basics, frontmatter, custom tags, asset embedding |
+| `references/writing.md` | Markdown basics, frontmatter, callouts, asset embedding |
 | `references/layouts/docs-layout.md` | Docs folder structure, `NN_` prefixes, per-folder `settings.json`, sidebar generation |
 | `references/layouts/blog-layout.md` | Blog file naming (`YYYY-MM-DD-<slug>.md`), tags, index behaviour |
 | `references/settings-layout.md` | `site.yaml`, `navbar.yaml`, `footer.yaml`, `.env`, path aliases, themes |

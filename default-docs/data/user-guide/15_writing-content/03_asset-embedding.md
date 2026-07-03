@@ -40,15 +40,20 @@ Embed code files inside fenced code blocks:
 
 The `[[./assets/example.py]]` is replaced with the file's contents.
 
-### In Components
+### Inside a collapsible
 
-Use with custom components:
+Combine an embed with a native `<details>` block to make a long file expandable:
 
-```markdown
-<collapsible-code-block language="python" title="example.py">
+~~~markdown
+<details>
+<summary>example.py</summary>
+
+```python
 [[./assets/example.py]]
-</collapsible-code-block>
 ```
+
+</details>
+~~~
 
 ## Path Resolution
 
@@ -140,6 +145,10 @@ For images, use standard markdown or HTML:
 ![Alt text](./assets/diagram.png)
 <img src="./assets/diagram.png" alt="Diagram" />
 ```
+
+## The one extension pattern
+
+`[[path]]` is the single mechanism the framework extends for embeds. New embed types are added by recognising the **file extension** inside `[[...]]` — never by introducing new tag syntax. A future Excalidraw embed, for example, would render a `[[./diagram.excalidraw]]` reference as an interactive drawing purely from the `.excalidraw` extension. Whatever an embed needs, it rides on `[[path]]`.
 
 ## Best Practices
 

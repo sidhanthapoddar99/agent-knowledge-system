@@ -4,7 +4,7 @@ Cross-cutting rules for writing markdown content across content types (docs, blo
 
 **Canonical source of truth:** the framework's bundled `@root/default-docs/data/user-guide/15_writing-content/` — read those pages when this reference is unclear.
 
-> **Sync note:** the mechanics sections here (custom tags, assets, `[[path]]` embedding, code blocks) are mirrored in the `doc-issues` skill's `references/10_writing/10_writing.md` — when editing one, mirror the other.
+> **Sync note:** the mechanics sections here (callouts & collapsibles, assets, `[[path]]` embedding, code blocks) are mirrored in the `doc-issues` skill's `references/10_writing/10_writing.md` — when editing one, mirror the other.
 
 > **Status:** stub. The detailed spec is being authored under `2025-06-25-claude-skills/subtasks/03_writing-skill.md`. For now, this file captures the essentials.
 
@@ -15,7 +15,7 @@ Cross-cutting rules for writing markdown content across content types (docs, blo
 - **Frontmatter `title` is required** on every `.md` file. Builds fail without it.
 - **Description** is optional but recommended (used in meta tags + sidebar tooltips).
 - **`draft: true`** hides the page from the production build. Works on docs, blog, issues.
-- **Don't write MDX** — this project uses pure markdown (`.md`). Custom tags use a remark plugin, not MDX.
+- **Don't write MDX** — this project uses pure markdown (`.md`); rich content comes from native GFM extensions (alert callouts, `<details>`, fenced diagrams), not MDX components.
 
 ## Standard frontmatter
 
@@ -32,28 +32,40 @@ Per-content-type extras:
 - **blog** — `date` (YYYY-MM-DD), `author`, `tags`
 - **issues** — different schema (metadata in `settings.json`, per-subdoc frontmatter): see the `doc-issues` skill.
 
-## Custom tags
+## Rich content — native markdown
 
-Project-specific markdown extensions live in `astro-doc-code/src/custom-tags/`. Common ones:
+Everything rich is plain markdown — GFM plus a couple of native HTML/fence extensions. No project-specific tag syntax.
+
+**Callouts** — GFM alert blockquotes, five types: `NOTE`, `TIP`, `IMPORTANT`, `WARNING`, `CAUTION`.
 
 ```markdown
-:::callout{type="info"}
-Body of the callout.
-:::
-
-:::collapsible{title="Click to expand"}
-Hidden content.
-:::
-
-:::tabs
-- tab: First
-  content: ...
-- tab: Second
-  content: ...
-:::
+> [!NOTE]
+> Body of the callout. Nest normal markdown inside; the type sets the color + icon.
 ```
 
-For the full list and syntax, read `@root/default-docs/data/user-guide/15_writing-content/` (and grep the framework's `astro-doc-code/src/custom-tags/`).
+**Collapsible content** — native `<details>` / `<summary>`:
+
+```markdown
+<details>
+<summary>Click to expand</summary>
+
+Hidden content — markdown inside renders normally.
+
+</details>
+```
+
+**Diagrams** — fenced `mermaid` / `graphviz` blocks render in place:
+
+````markdown
+```mermaid
+flowchart LR
+  a --> b
+```
+````
+
+Keep diagram source in its own `.mmd` / `.dot` file and embed it inside the fence — see "Content embedding (`[[path]]`)" below.
+
+**Legacy content:** pages written before 2026-07 may carry retired tag syntax (`:::callout{…}` directives or `<callout>`/`<tabs>`/`<collapsible>` tags) — the framework never parses these; they render as raw text. When you touch such a page, run `docs-guide check legacy-tags <root>` and migrate the page as part of the edit (callout→GFM alert, collapsible→`<details>`, tabs→sequential `###` sections).
 
 ## Asset embedding
 
@@ -97,13 +109,18 @@ The power move: wrap it in a fenced block so the embedded content is treated as 
 ```
 ````
 
-**Embed inside a custom tag** (e.g. collapsible):
+**Embed inside a collapsible** (native `<details>`):
 
-```markdown
-<collapsible-code-block language="python" title="example.py">
+````markdown
+<details>
+<summary>example.py</summary>
+
+```python
 [[./assets/example.py]]
-</collapsible-code-block>
 ```
+
+</details>
+````
 
 Path resolution differs per content type — docs: relative to the file (`./assets/x.py`); blog: `assets/<post-slug>/<name>`; issues: relative to the file, bare name → `<same-folder>/assets/<name>`. **Inside a fenced block the path must be file-relative — start it with `./` or `../`**; bare names are deliberately skipped there so documentation examples don't expand (e.g. from an issue note in `notes/`, `[[../assets/flow.mmd]]` reaches the issue-root `assets/`). Escape with `\[[...]]` to render the brackets literally. Full rules + per-type examples: `@root/default-docs/data/user-guide/15_writing-content/03_asset-embedding.md`.
 
@@ -117,7 +134,7 @@ const x: number = 42;
 ```
 ````
 
-For long blocks, the `collapsible` custom tag wraps the block.
+For long blocks, wrap the fence in a native `<details>` (see "Rich content — native markdown").
 
 ## Cross-content-type concerns
 

@@ -31,7 +31,6 @@ src/
 │   ├── core/               # Base parser & pipeline
 │   ├── preprocessors/      # Run before markdown (asset embed)
 │   ├── renderers/          # Markdown → HTML (marked)
-│   ├── transformers/       # Custom tags (callout, tabs)
 │   ├── postprocessors/     # Run after HTML (heading IDs, links)
 │   └── content-types/      # Docs vs Blog parsing
 │

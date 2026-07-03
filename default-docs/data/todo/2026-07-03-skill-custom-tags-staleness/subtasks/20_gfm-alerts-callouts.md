@@ -1,6 +1,6 @@
 ---
 title: "GFM alerts — native callout support (> [!NOTE])"
-status: open
+status: review
 ---
 
 Decision settled 2026-07-03 (sidhantha): callouts use GitHub-flavored alert

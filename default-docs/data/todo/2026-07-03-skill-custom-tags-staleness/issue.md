@@ -53,6 +53,9 @@ The issue initially scoped only the snippet fix; the session's deliberation
 - `src/custom-tags/` is deleted and the build passes.
 - GFM alerts (`> [!NOTE]` et al. — settled "yes" 2026-07-03) render in all three
   content types with theme CSS, shipped before the docs describe them.
+- A legacy-content migration check exists (`subtasks/50`): `docs-guide check` can
+  detect retired tag syntax in any content root and suggest the native
+  replacement, and the skills tell agents to migrate on touch.
 
 ## Scope decisions
 

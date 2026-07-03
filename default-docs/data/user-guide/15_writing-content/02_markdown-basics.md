@@ -1,6 +1,6 @@
 ---
 title: Markdown Basics
-description: Standard markdown syntax and fenced-block rules
+description: Standard markdown syntax, callouts, collapsibles, and diagrams
 sidebar_position: 2
 ---
 
@@ -122,12 +122,99 @@ print("hello")
 > **Note:** Important information.
 ```
 
+## Callouts
+
+Callouts are **GFM alert** blockquotes — a blockquote whose first line is `[!TYPE]`. They render as coloured, labelled panels. Because they're just blockquotes, they degrade gracefully anywhere GFM alerts aren't understood.
+
+```markdown
+> [!NOTE]
+> Useful context the reader should know but can skip.
+
+> [!TIP]
+> A helpful suggestion or shortcut.
+
+> [!IMPORTANT]
+> Key information the reader must not miss.
+
+> [!WARNING]
+> A caveat that needs immediate attention to avoid a problem.
+
+> [!CAUTION]
+> Warns about a risky action or its consequences.
+```
+
+The five types and what they're for:
+
+| Type | Use it for |
+|------|------------|
+| `[!NOTE]` | Neutral context, asides, background |
+| `[!TIP]` | Advice, shortcuts, best-practice nudges |
+| `[!IMPORTANT]` | Information the reader must not miss |
+| `[!WARNING]` | Caveats that need attention to avoid trouble |
+| `[!CAUTION]` | Risky actions and their consequences |
+
+**Rules:** the marker (`> [!NOTE]`) goes on its own first line; every following body line stays inside the blockquote with `>`. The type is case-insensitive. Content spans multiple lines and supports normal markdown:
+
+```markdown
+> [!TIP]
+> You can use **bold**, `code`, and [links](/user-guide) inside a callout.
+>
+> Even multiple paragraphs.
+```
+
+## Collapsible Sections
+
+Use the native HTML `<details>` / `<summary>` elements for expandable content — no special syntax:
+
+```markdown
+<details>
+<summary>Click to expand</summary>
+
+Hidden content goes here. Markdown inside works — leave a blank line after
+`</summary>` so the body is parsed as markdown.
+
+</details>
+```
+
+Add the `open` attribute to have it expanded by default:
+
+```markdown
+<details open>
+<summary>Shown expanded</summary>
+
+Visible until the reader collapses it.
+
+</details>
+```
+
+## Diagrams
+
+Diagrams are authored as fenced code blocks with a `mermaid` or `graphviz` language tag. They render to SVG in the browser:
+
+````markdown
+```mermaid
+flowchart LR
+    A[Write markdown] --> B[Render] --> C[SVG diagram]
+```
+````
+
+````markdown
+```graphviz
+digraph { A -> B -> C }
+```
+````
+
+Keep the diagram source in the fenced block itself, or embed it from a file with the `[[path]]` syntax — see [Asset Embedding](./asset-embedding).
+
 ## Extended Features
 
 Beyond standard markdown, the system provides:
 
 | Feature | Description | Section |
 |---------|-------------|---------|
+| Callouts | `> [!NOTE]` GFM alert blockquotes | [above](#callouts) |
+| Collapsible | Native `<details><summary>` | [above](#collapsible-sections) |
+| Diagrams | Fenced ` ```mermaid ` / ` ```graphviz ` blocks | [above](#diagrams) |
 | Asset Embedding | `[[path]]` syntax for file inclusion | [Asset Embedding](./asset-embedding) |
 | Page Outline | Auto-generated table of contents | [Outline](./outline) |
 

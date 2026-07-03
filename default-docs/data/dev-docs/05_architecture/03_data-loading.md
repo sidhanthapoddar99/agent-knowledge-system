@@ -73,7 +73,7 @@ loadContent(dataPath, 'docs')
 │        │
 │        └─ For each file:
 │             parser.parse(file, dataPath)
-│             └─ Preprocessors → Renderer → Postprocessors → Transformers
+│             └─ Preprocessors → Renderer → Postprocessors
 │                Returns: LoadedContent { id, slug, content, headings, data, ... }
 │
 ├─ 4. sortContent(sort='position', order='asc')

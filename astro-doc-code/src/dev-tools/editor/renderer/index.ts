@@ -9,6 +9,7 @@
  */
 
 import { Marked } from 'marked';
+import markedAlert from 'marked-alert';
 import type { Highlighter } from 'shiki';
 import type { Disposable } from '../types.js';
 
@@ -104,6 +105,9 @@ function createMarkedInstance(highlighter: Highlighter | null): Marked {
       },
     },
   });
+
+  // GFM alert blockquotes: > [!NOTE] / [!TIP] / [!IMPORTANT] / [!WARNING] / [!CAUTION]
+  marked.use(markedAlert());
 
   return marked;
 }

@@ -22,7 +22,6 @@ flowchart TB
         PRE["Preprocessors<br/>asset-embed"]
         RENDER["Renderer<br/>Marked (MD→HTML)"]
         POST["Postprocessors<br/>heading-ids"]
-        TRANSFORM["Transformers<br/>custom tags"]
     end
 
     subgraph LayoutLayer["Layout Layer"]
@@ -62,8 +61,7 @@ flowchart TB
     PRE -->|"13"| ASSETS
     PRE --> RENDER
     RENDER --> POST
-    POST --> TRANSFORM
-    TRANSFORM -->|"14"| SLUG
+    POST -->|"14"| SLUG
     SLUG -->|"15"| RESOLVE
     RESOLVE -->|"16"| LAYOUT
     LAYOUT --> COMPONENTS

@@ -5,7 +5,7 @@ folder. Duplicates the shared markdown mechanics on purpose (skills load one at 
 time); the docs/blog flavour lives in the `documentation-guide` skill's
 `references/writing.md`.
 
-> **Sync note:** the *mechanics* sections here (custom tags, assets, `[[path]]`
+> **Sync note:** the *mechanics* sections here (callouts & collapsibles, assets, `[[path]]`
 > embedding, code blocks) mirror `documentation-guide/references/writing.md` — when
 > editing one, mirror the other.
 
@@ -26,7 +26,8 @@ each subdoc has its own small schema:
 - `draft: true` hides a file from the production build (works tracker-wide).
 - **Preserve `color:` when editing** — it's user-defined; document meanings in the
   issue's `glossary.md`, and check that glossary before interpreting colours.
-- Don't write MDX — pure markdown only; extensions come from custom tags.
+- Don't write MDX — pure markdown only; rich content comes from native GFM extensions
+  (alert callouts, `<details>`, fenced diagrams).
 
 ## Body conventions — write for cold pickup
 
@@ -56,27 +57,35 @@ context:
 - Ordering prefixes are **stripped from URL slugs** (`subtasks/020_impl/010_backend.md`
   → `…/subtasks/impl/backend`).
 
-## Custom tags
+## Callouts & collapsibles
 
-Project markdown extensions (from `astro-doc-code/src/custom-tags/`) work in issue
-content:
+Rich content in issue markdown is plain GFM — no project-specific tag syntax.
+
+**Callouts** — GFM alert blockquotes, five types (`NOTE`, `TIP`, `IMPORTANT`,
+`WARNING`, `CAUTION`). Handy for decision markers and gotchas the next agent must see:
 
 ```markdown
-:::callout{type="info"}
-Body of the callout.
-:::
-
-:::collapsible{title="Click to expand"}
-Hidden content.
-:::
-
-:::tabs
-- tab: First
-  content: ...
-- tab: Second
-  content: ...
-:::
+> [!WARNING]
+> This subtask blocks the release — don't close it until 20/30 land.
 ```
+
+**Collapsible content** — native `<details>` / `<summary>` (fold long logs, dumps,
+or embedded code so the issue stays scannable):
+
+```markdown
+<details>
+<summary>Full stack trace</summary>
+
+Hidden content — markdown inside renders normally.
+
+</details>
+```
+
+**Legacy content:** issue files written before 2026-07 may carry retired tag syntax
+(`:::callout{…}` or `<callout>`/`<tabs>`/`<collapsible>`) — never parsed, renders as
+raw text. When touching such a file, run `docs-guide check legacy-tags <tracker>`
+and migrate it as part of the edit (callout→GFM alert, collapsible→`<details>`,
+tabs→sequential `###` sections).
 
 ## Diagrams
 

@@ -92,7 +92,6 @@ By the time content reaches the layout:
 | Heading IDs | ✅ Done | `<h2>` → `<h2 id="slug">` |
 | Asset embedding | ✅ Done | `\[[./code.py]]` → `<pre><code>...</code></pre>` |
 | External links | ✅ Done | `<a>` gets `target="_blank"` |
-| Custom tags | ✅ Done | `<callout>` → styled HTML |
 | Code highlighting | ✅ Done | Syntax highlighted |
 
 ### Rendering Content

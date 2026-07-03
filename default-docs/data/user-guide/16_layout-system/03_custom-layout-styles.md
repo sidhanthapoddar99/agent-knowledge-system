@@ -170,7 +170,6 @@ import { loadFile } from '@loaders/data';
 | `@loaders/` | `src/loaders/` | Data loading (`loadContent`, `loadFile`, etc.) |
 | `@parsers/` | `src/parsers/` | Content parser entry points |
 | `@styles/` | `src/styles/` | Built-in theme CSS (for reference) |
-| `@custom-tags/` | `src/custom-tags/` | Custom markdown tag definitions |
 | `@modules/`, `@hooks/` | Various | Framework internals |
 | `@ext-layouts/` | Your extension dir | Cross-reference between your own extension layouts |
 

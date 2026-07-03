@@ -26,11 +26,12 @@ More works than the issue originally assumed:
   `[[file]]` asset-embed preprocessor inlines raw file content *inside code
   fences too*, so a ` ```mermaid ` fence containing `[[./assets/arch.mmd]]`
   renders the referenced file. Undocumented, but functional. **Verified by
-  build 2026-07-03** (live artifact: `notes/02_embed-verification.md`), with
-  one caveat: in-fence paths **must start with `./`** — bare names and
-  `../…` are deliberately skipped (`asset-embed.ts:154`, protects
-  documentation examples), so from an issue note it's
-  `[[./../assets/x.mmd]]`. Both embed subtasks closed on this basis.
+  build 2026-07-03** (live artifact: `notes/02_embed-verification.md`).
+  **Decided (sidhantha, 2026-07-03):** in-fence references are file-relative
+  — both `./` and `../` are allowed (framework patched in
+  `asset-embed.ts` the same day; originally `./`-only). Bare names stay
+  skipped inside fences so documentation examples don't expand. Both embed
+  subtasks closed on this basis.
 - **Excalidraw: nothing exists.** No dependency, no tag, no renderer — neither
   embed nor page. The old plan in `notes/01_excalidraw.md` assumed the full
   React editor; for display-only, `@excalidraw/utils` `exportToSvg()` can

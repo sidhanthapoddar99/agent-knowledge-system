@@ -1,73 +1,64 @@
 ---
-title: "Stale custom-tags syntax in plugin skill writing references"
+title: "Native-markdown-only — remove custom-tags references everywhere"
 ---
 
 # Goal
 
-Fix the custom-tags sections of both skills' writing references so they stop
-documenting a `:::` directive syntax that has never existed in the framework, and
-so they honestly describe the current rendering status of custom tags. The skill is
-the operating manual agents follow in good faith — a stale syntax example there
-gets mass-produced, not merely misread.
+Make the platform's authoring story **native markdown only** — remove every
+reference to custom tags from the plugin skills and the published docs, document the
+native system in their place, and retire the dormant transformer code. The skills
+and user-guide should not mention custom tags even as an absent feature.
+
+Decision and rationale: [brainstorm/01_discuss_native-markdown-only.md](brainstorm/01_discuss_native-markdown-only.md)
+— in short, the project has evolved from a documentation engine into an AI platform,
+AI authors write native markdown reliably and custom tag syntaxes are where they
+mass-produce errors.
 
 ## Context / background
 
-Discovered 2026-07-03 in a consumer-project session. The chain of events:
-
-1. The `doc-issues` skill's writing reference
-   (`references/10_writing/10_writing.md`, ~line 65) and the `documentation-guide`
-   skill's `references/writing.md` (~line 40) both show custom tags in a directive
-   form: `:::callout{type="info"}` … `:::` (same for `collapsible` and `tabs`).
-2. Following the skill, 24 migration agents wrote **45 files** in a consumer
-   project using that syntax.
-3. The framework has **no `:::` directive parser anywhere** — a grep of
-   `astro-doc-code/src/` for `:::` custom-tag handling returns nothing. The real
-   transformers use the HTML-tag form and live in `astro-doc-code/src/custom-tags/`:
-   `<callout type="warning" title="…">…</callout>`, `<tabs>`/`<tab>`,
-   `<collapsible>` (tag names confirmed in `callout.ts`, `tabs.ts:105,172`,
-   `collapsible.ts:36`).
-4. Deeper: even the correct HTML-tag syntax doesn't render today. The
-   `createCustomTagsRegistry()` in `src/custom-tags/index.ts` is **not wired into
-   any parser pipeline** — established when the user-guide custom-tags page was
-   deleted for exactly this reason
-   ([docs-phase-2 comment 004](../2026-04-19-docs-phase-2/comments/004_custom-tags-removed.md)).
-5. The skill references were evidently written against the intended/planned design
-   and never updated when the custom-tags work was parked — the same staleness the
-   framework caught and fixed in its own user-guide in April was never propagated
-   to the plugin skills.
+Opened 2026-07-03 after a consumer-project incident: both skills' writing references
+documented a `:::callout{…}` / `:::collapsible` / `:::tabs` directive syntax, 24
+migration agents followed it in good faith across **45 files** — and the framework
+has no `:::` parser at all. The real transformers (`astro-doc-code/src/custom-tags/`,
+HTML-tag form) exist but were never wired into any parser pipeline, a gap the
+framework's own user-guide had already caught in April
+([docs-phase-2 comment 004](../2026-04-19-docs-phase-2/comments/004_custom-tags-removed.md))
+without the fix ever reaching the plugin skills.
 
 Full audit trail (root cause + sweep for sibling staleness):
-`agent-log/010_au_stale-syntax-audit/`.
+`agent-log/010_au_stale-syntax-audit/`. The audit also verified: Mermaid/Graphviz
+claims in the skills are accurate (wired via `src/scripts/diagrams.ts`), the
+`[[path]]` embed preprocessor is wired into all three content types, and the
+repo-local plugin source is byte-identical to the installed cache `0.5.1`.
 
-**Related — distinct scope:**
+The issue initially scoped only the snippet fix; the session's deliberation
+("wire or remove?") escalated it into the native-markdown-only policy above.
 
-- [2026-04-20-custom-tags](../2026-04-20-custom-tags/issue.md) owns the *framework*
-  side: wiring the transformers into the pipeline, showcase, author-defined tags.
-  This issue owns the *skill/plugin prose* side only.
+**Related:**
+
+- [2026-04-20-custom-tags](../2026-04-20-custom-tags/issue.md) — its wire-up/showcase
+  premise is **reversed** by this decision (flagged there in comment 002); code
+  retirement is tracked here in `subtasks/30`, its final close-out is a human call.
 - [2026-06-22-updating-skills-and-documentation](../2026-06-22-updating-skills-and-documentation/issue.md)
-  (closed) was the general skill-maintenance batch; this staleness postdates it.
+  (closed) — the previous general skill-maintenance batch; this staleness postdates it.
 
 ## Done when…
 
-- Neither skill reference shows `:::` directive syntax for custom tags.
-- The snippets show the real `<callout>` / `<tabs>` / `<collapsible>` tag form
-  **with an explicit caveat** that the transformers are not yet wired into the
-  parser pipeline (rendering currently depends on consumer CSS workarounds), OR the
-  section is removed until wiring lands — mirroring the framework's own user-guide
-  decision.
-- The `writing.md` pointer sending readers to `user-guide/15_writing-content/` for
-  "the full list and syntax" of custom tags is corrected (that page was removed
-  2026-04-20; content preserved at
-  [2026-04-20-custom-tags/notes/01_original-user-doc.md](../2026-04-20-custom-tags/notes/01_original-user-doc.md)).
-- Edits land in **both** the repo-local plugin source (`plugins/documentation-guide/`)
-  and the installed cache (currently `0.5.1`) — they are identical today and must
-  stay in sync.
+- Neither skill mentions custom tags, `:::` directives, or `<callout>`-style syntax
+  anywhere; the native toolkit (blockquote callouts, `<details>`, fenced diagrams,
+  `[[path]]` embeds) is what the writing references teach. Edits land in **both**
+  the repo plugin source and the installed cache.
+- The user-guide carries a native-markdown writing reference and no custom-tags
+  mentions; dev-docs pipeline descriptions no longer list tag transformation.
+- `src/custom-tags/` is deleted and the build passes.
+- The GFM-alerts open point (brainstorm) is settled; if "yes", renderer support
+  ships before the docs describe it.
 
 ## Scope decisions
 
-- **In:** the two writing references, their user-guide pointers, repo + cache parity.
-- **Out:** wiring the transformers (2026-04-20-custom-tags), restoring the
-  user-guide page (same issue), and any consumer-project cleanup of the 45 files.
-- Mermaid/Graphviz claims in the same references were audited and are **accurate**
-  (wired client-side via `src/scripts/diagrams.ts` from `BaseLayout.astro`) — no
-  change there.
+- **In:** skill references (repo + cache), user-guide/dev-docs sweep, transformer
+  code retirement, the GFM-alerts call.
+- **Out:** consumer-project cleanup of the 45 `:::callout` files; any new embed
+  types (Excalidraw etc. extend `[[path]]` later — see
+  [2026-04-10-editor-diagrams](../2026-04-10-editor-diagrams/issue.md)'s embeds
+  subtasks); closing 2026-04-20-custom-tags (human-only).

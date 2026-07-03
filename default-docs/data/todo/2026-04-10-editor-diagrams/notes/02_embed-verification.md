@@ -23,26 +23,27 @@ flowchart LR
 digraph G { rankdir=LR; "```dot fence" -> "diagram-graphviz div" -> "SVG"; }
 ```
 
-## By reference — mermaid (`[[./../assets/embed-test.mmd]]` inside the fence)
+## By reference — mermaid (`[[../assets/embed-test.mmd]]` inside the fence)
 
 ```mermaid
-[[./../assets/embed-test.mmd]]
+[[../assets/embed-test.mmd]]
 ```
 
-## By reference — graphviz (`[[./../assets/embed-test.dot]]` inside the fence)
+## By reference — graphviz (`[[../assets/embed-test.dot]]` inside the fence)
 
 ```dot
-[[./../assets/embed-test.dot]]
+[[../assets/embed-test.dot]]
 ```
 
 Resolution rules (verified against `src/parsers/preprocessors/asset-embed.ts`
 and `src/parsers/content-types/issues.ts`):
 
-- **Inside a code fence, the path MUST start with `./`** — anything else
-  (bare names, `../…`) is deliberately skipped so documentation examples
-  don't get expanded (`asset-embed.ts:154`).
-- Paths resolve relative to the markdown file itself. From `issue.md`:
-  `[[./assets/name.mmd]]`. From a file in `notes/`:
-  `[[./../assets/name.mmd]]`. Same rule in docs/blog pages.
+- **Inside a code fence, the path must be file-relative: `./` or `../`.**
+  Bare names are deliberately skipped so documentation examples don't get
+  expanded (escape with `\[[…]]` when you need a literal). `../` support was
+  added 2026-07-03 (decided sidhantha) — resolution is always relative to the
+  markdown file's own location.
+- From `issue.md`: `[[./assets/name.mmd]]`. From a file in `notes/`:
+  `[[../assets/name.mmd]]`. Same rule in docs/blog pages.
 - The bare-name → `assets/` shorthand only applies *outside* fences (image
   embeds etc.), not to in-fence content embedding.

@@ -20,11 +20,12 @@ All paths relative to `astro-doc-code/`.
 - **Failure classes:** `.diagram-rendered` / `.diagram-error` on the div.
 - **Embed-by-reference already works** for mermaid/dot: the asset-embed
   preprocessor (`src/parsers/preprocessors/asset-embed.ts`) inlines `[[file]]`
-  content verbatim *including inside code fences*. **In-fence paths must
-  start with `./`** (`asset-embed.ts:154` skips bare names and `../…` to
-  protect documentation examples); the bare-name → `assets/` shorthand of the
-  issues content type applies only outside fences. Verified by build
-  2026-07-03 — artifact: `notes/02_embed-verification.md`.
+  content verbatim *including inside code fences*. **In-fence paths must be
+  file-relative — `./` or `../`** (bare names skipped in `asset-embed.ts` to
+  protect documentation examples; `../` allowed since the 2026-07-03 patch);
+  the bare-name → `assets/` shorthand of the issues content type applies only
+  outside fences. Verified by build 2026-07-03 — artifact:
+  `notes/02_embed-verification.md`.
 - **Docs glob:** `**/*.{md,mdx}` at `src/loaders/data.ts:139`; `XX_` prefix is
   enforced with a build error for files (`data.ts:~210`), folders without
   prefix sort at 999 (not excluded). **No explicit `assets/` exclusion

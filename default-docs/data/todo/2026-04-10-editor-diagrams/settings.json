@@ -1,7 +1,7 @@
 {
   "title": "Diagrams as native content (editor + first-class pages)",
   "description": "Two halves: (1) editor-pane preview & inline editing for Mermaid/Graphviz/Excalidraw; (2) .mmd/.dot/.excalidraw files with XX_ prefix render as first-class pages in docs sections, with optional meta.json sidecar for sidebar metadata.",
-  "status": "open",
+  "status": "in-progress",
   "priority": "medium",
   "component": ["components"],
   "labels": [

@@ -105,7 +105,7 @@ The power move: wrap it in a fenced block so the embedded content is treated as 
 </collapsible-code-block>
 ```
 
-Path resolution differs per content type — docs: relative to the file (`./assets/x.py`); blog: `assets/<post-slug>/<name>`; issues: relative to the file, bare name → `<folder>/assets/<name>`. Escape with `\[[...]]` to render the brackets literally. Full rules + per-type examples: `@root/default-docs/data/user-guide/15_writing-content/03_asset-embedding.md`.
+Path resolution differs per content type — docs: relative to the file (`./assets/x.py`); blog: `assets/<post-slug>/<name>`; issues: relative to the file, bare name → `<same-folder>/assets/<name>`. **Inside a fenced block the path must be file-relative — start it with `./` or `../`**; bare names are deliberately skipped there so documentation examples don't expand (e.g. from an issue note in `notes/`, `[[../assets/flow.mmd]]` reaches the issue-root `assets/`). Escape with `\[[...]]` to render the brackets literally. Full rules + per-type examples: `@root/default-docs/data/user-guide/15_writing-content/03_asset-embedding.md`.
 
 ## Code blocks
 

@@ -1,7 +1,7 @@
 {
-  "title": "Stale custom-tags syntax in plugin skill writing references",
-  "description": "Both skills' writing references document a `:::callout` / `:::collapsible` / `:::tabs` directive syntax that has never existed in the framework — the real transformers use the HTML-tag form (`<callout>`, `<tabs>`, `<collapsible>`) and aren't wired into any parser pipeline anyway. Agents following the skill mass-produce wrong markup (45 files in one consumer migration). Fix the references in the plugin repo + installed cache.",
-  "status": "open",
+  "title": "Native-markdown-only — remove custom-tags references everywhere",
+  "description": "Started as: both skills' writing references document a `:::callout` / `:::collapsible` / `:::tabs` syntax the framework never parses (45 wrong files in one consumer migration). Escalated to policy: the platform is native-markdown-only — remove every custom-tags reference from the skills and user-guide, document the native system (blockquote callouts, `<details>`, fenced diagrams, `[[path]]` embeds), and retire the dormant transformer code. Decision trail in brainstorm/01.",
+  "status": "in-progress",
   "priority": "medium",
   "component": [
     "ai-plugin-and-docs"

@@ -92,6 +92,11 @@ flowchart LR
 
 ASCII trees in plain fences are equally at home (folder shapes, layouts).
 
+Diagram source that shouldn't live inline belongs in the issue's `assets/` and is
+embedded by reference — a `[[./…]]`/`[[../…]]` inside the fence (see "Content
+embedding" below). `assets/` never appears in any sidebar, so this is the home for
+every diagram that doesn't need to be first-class.
+
 ## Assets
 
 - **Shared files**: project root `assets/`, served at `/assets/` — absolute paths:
@@ -118,8 +123,12 @@ stays the single source of truth:
 ```
 ````
 
-Issues path resolution: relative to the file; a bare name resolves to
-`<issue-folder>/assets/<name>`. Escape as `\[[...]]` for literal brackets. Full rules:
+Issues path resolution: always relative to the markdown file itself; a bare name
+resolves to `assets/` **next to that file** (issue-root `assets/` only from
+`issue.md`) and works only *outside* fences. **Inside a fenced block the path must
+start with `./` or `../`** — bare names are skipped there, so from `issue.md` write
+`[[./assets/flow.mmd]]`, and from a file in `notes/` write `[[../assets/flow.mmd]]`.
+Escape as `\[[...]]` for literal brackets. Full rules:
 `@root/default-docs/data/user-guide/15_writing-content/03_asset-embedding.md`.
 
 ## Ordering prefixes in the tracker

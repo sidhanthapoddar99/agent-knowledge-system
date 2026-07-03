@@ -20,11 +20,11 @@ by-reference forms both emit populated `.diagram-mermaid` divs; docs pages in
       `notes/02_embed-verification.md` (issues content type) and existing
       dev-docs pages (docs content type); blog shares the identical
       marked-renderer + BaseLayout pipeline.
-- [x] **Bless the canonical reference syntax** — fence + `[[./path.mmd]]`.
-      Caveat discovered in `asset-embed.ts:154`: inside a code fence the path
-      **must start with `./`** (bare names and `../…` are deliberately
-      skipped so documentation examples don't expand). Full rules recorded in
-      `notes/02_embed-verification.md`.
+- [x] **Bless the canonical reference syntax** — fence + a file-relative
+      path: `[[./path.mmd]]` or `[[../assets/path.mmd]]`. Bare names are
+      deliberately skipped in fences so documentation examples don't expand
+      (`asset-embed.ts`); `../` support added 2026-07-03 per sidhantha. Full
+      rules recorded in `notes/02_embed-verification.md`.
 - [x] **Error presentation** — folded into
       `subtasks/10_embeds/30_excalidraw.md` as a shared `.diagram-error`
       styling task for all three formats.

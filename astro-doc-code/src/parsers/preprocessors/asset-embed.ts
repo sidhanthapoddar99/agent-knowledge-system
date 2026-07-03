@@ -150,8 +150,13 @@ export function createAssetEmbedPreprocessor(options: AssetEmbedOptions = {}): P
           const offset = match7.index;
           const trimmedPath = assetPath.trim();
 
-          // Skip documentation examples (contain spaces, commas, or don't start with ./)
-          if (trimmedPath.includes(' ') || trimmedPath.includes(',') || !trimmedPath.startsWith('./')) {
+          // Skip documentation examples (contain spaces, commas, or aren't
+          // file-relative — only ./ and ../ paths embed inside fences)
+          if (
+            trimmedPath.includes(' ') ||
+            trimmedPath.includes(',') ||
+            !(trimmedPath.startsWith('./') || trimmedPath.startsWith('../'))
+          ) {
             continue;
           }
 

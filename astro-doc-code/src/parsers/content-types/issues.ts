@@ -15,6 +15,7 @@ import { headingIdsPostprocessor } from '../postprocessors/heading-ids';
 import { internalLinksPostprocessor } from '../postprocessors/internal-links';
 import { issueBodyLinksPostprocessor } from '../postprocessors/issue-body-links';
 import { assetSrcPostprocessor } from '../postprocessors/asset-src';
+import { excalidrawEmbedPostprocessor } from '../postprocessors/excalidraw-embed';
 import { externalLinksPostprocessor } from '../postprocessors/external-links';
 import { tableWrapPostprocessor } from '../postprocessors/table-wrap';
 
@@ -33,6 +34,8 @@ export class IssuesParser extends BaseContentParser {
       // Issues-only: re-root relative links in the root `issue.md` so they
       // survive the detail-page URL collapse (`<issue-id>/issue.md` → `/<issue-id>`).
       .addPostprocessor(issueBodyLinksPostprocessor)
+      // ![x](./assets/y.excalidraw) → client-rendered diagram placeholder
+      .addPostprocessor(excalidrawEmbedPostprocessor)
       // Shared: relative <img src> → absolute /content-assets/… URLs (content
       // folders aren't served at any browser-relative position).
       .addPostprocessor(assetSrcPostprocessor)

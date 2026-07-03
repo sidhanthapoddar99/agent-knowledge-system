@@ -22,8 +22,8 @@ Absorbed from `2025-06-25-components/subtasks/03_components-library.md` on 2026-
 - [ ] Component documentation with live examples
 - [ ] Test components across different themes
 
-## Notes
 
-The three ticked items are implemented in code but **not wired into any parser pipeline** — wiring lives in `2026-04-19-knowledge-graph-and-wiki-links/subtasks/01_unified-pipeline-and-graph.md` (hard dependency). Nothing in this subtask renders until that wiring lands.
-
-Badges and buttons are open questions — they may not belong as custom tags at all (could be pure CSS utility classes in the theme layer). Revisit when getting to them.
+> [!NOTE] 
+>The three ticked items are implemented in code but **not wired into any parser pipeline** — wiring lives in `2026-04-19-knowledge-graph-and-wiki-links/subtasks/01_unified-pipeline-and-graph.md` (hard dependency). Nothing in this subtask renders until that wiring lands.
+>
+>Badges and buttons are open questions — they may not belong as custom tags at all (could be pure CSS utility classes in the theme layer). Revisit when getting to them.

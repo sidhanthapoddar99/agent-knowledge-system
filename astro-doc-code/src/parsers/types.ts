@@ -7,7 +7,7 @@
 // ============================================
 
 export type ContentType = 'docs' | 'blog' | 'page';
-export type FileType = 'mdx' | 'md' | 'yaml' | 'json';
+export type FileType = 'mdx' | 'md' | 'yaml' | 'json' | 'diagram';
 
 // ============================================
 // Processing Context

@@ -75,6 +75,7 @@ Required in every docs folder. Minimal shape:
 | `collapsible` | boolean | `true` | Whether the sidebar group can be collapsed at all. `false` = a permanently-open section header (no toggle) |
 | `collapsed` | boolean | `false` | Initial sidebar state — `true` starts collapsed (only applies when `collapsible` is `true`) |
 | `nav_hide` | boolean | `false` | Hide from sidebar (page still accessible by URL) |
+| `allow_diagram_pages` | boolean | `true` | **Section root only.** `false` stops diagram files rendering as first-class pages in the section |
 
 ### Recommended collapse defaults (depth-based)
 
@@ -107,6 +108,30 @@ URL = section base + nested path (without prefixes):
 - → `/user-guide/getting-started/installation`
 
 The `NN_` prefixes are stripped when building URLs (any width, 2–5 digits).
+
+## Diagram pages — non-markdown pages
+
+A prefixed `.mmd` / `.mermaid` / `.dot` / `.gv` / `.excalidraw` file is a
+**first-class page** — same sidebar, same slug rules as markdown
+(`20_architecture.mmd` → `/…/architecture`). Rules:
+
+- **Title**: derives from the filename (strip prefix, title-case). Only when
+  that isn't enough, add a sidecar `XX_name.meta.json` next to the file
+  (`title` / `description` / `sidebar_label` / `sidebar_position` / `draft`;
+  `.jsonc` OK). Prefer good filenames over sidecars.
+- **Slug collisions** (`15_x.md` + `16_x.mmd` → same `/x`) render an explicit
+  error page + build error — rename one.
+- **No prefix → skipped with a warning** (treated as a stray working file,
+  not a page). Files under `assets/` are never scanned — embed-only diagrams
+  live there.
+- **Opt-out**: `"allow_diagram_pages": false` in the *section-root*
+  `settings.json`.
+- The outline column auto-hides (no headings); click zooms via lightbox;
+  excalidraw pages carry an *open file ↗* link to the raw scene.
+- **Embed vs page**: figure inside prose → embed from `assets/`
+  (see `writing.md`); the diagram IS the content → prefixed file as a page.
+- User-guide: `@root/default-docs/data/user-guide/15_writing-content/06_diagram-pages.md`;
+  all three types render live on `15_writing-content/07_diagram-showcase.md`.
 
 ## Outline (right rail)
 

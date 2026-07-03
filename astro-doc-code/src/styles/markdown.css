@@ -373,8 +373,24 @@ body {
 }
 
 .markdown-content .diagram-error {
-  color: var(--color-error, #e53e3e);
+  color: var(--color-error);
   font-style: italic;
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-error);
+  padding: var(--spacing-md);
+  font-family: var(--font-family-mono);
+  font-size: var(--ui-text-body);
+}
+
+.markdown-content .diagram-caption {
+  margin-top: var(--spacing-sm);
+  font-size: var(--ui-text-micro);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.markdown-content .diagram-caption a {
+  color: var(--color-text-muted);
 }
 
 .markdown-content .diagram svg {
@@ -386,6 +402,11 @@ body {
    fills/strokes are also flipped, not just theme defaults */
 [data-theme="dark"] .markdown-content .diagram-rendered {
   filter: invert(1) hue-rotate(180deg) brightness(0.95);
+}
+
+/* Counter-invert the caption so its text keeps the theme colors */
+[data-theme="dark"] .markdown-content .diagram-rendered .diagram-caption {
+  filter: invert(1) hue-rotate(180deg);
 }
 
 [data-theme="dark"] .lightbox-svg {

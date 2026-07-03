@@ -39,10 +39,17 @@ function contentRootFor(absPath: string): string | null {
   return null;
 }
 
-function rewriteSrc(src: string, context: ProcessContext): string | null {
+/**
+ * Resolve a relative colocated-file reference to its served
+ * `/content-assets/…` URL, or null when it isn't ours to rewrite
+ * (external, root-absolute, data:, alias, or outside every content root).
+ * Exported for processors that need the URL without an `<img>` tag
+ * (e.g. the excalidraw-embed postprocessor).
+ */
+export function resolveContentAssetUrl(src: string, context: ProcessContext): string | null {
   if (
     src.startsWith('http') || src.startsWith('//') || src.startsWith('/') ||
-    src.startsWith('data:') || src.startsWith('@')
+    src.startsWith('data:') || src.startsWith('@') || src.startsWith('#')
   ) {
     return null;
   }
@@ -54,15 +61,37 @@ function rewriteSrc(src: string, context: ProcessContext): string | null {
   return `${CONTENT_ASSETS_URL_PREFIX}/${rel}`;
 }
 
+// Page links (.md/.mdx, handled by internal-links) and extension-less hrefs
+// are never file links; everything else with a real extension is.
+const PAGE_EXTENSIONS = new Set(['.md', '.mdx']);
+
+function isColocatedFileHref(href: string): boolean {
+  const pathPart = href.split('#')[0].split('?')[0];
+  const ext = path.extname(pathPart);
+  return ext.length > 1 && !PAGE_EXTENSIONS.has(ext.toLowerCase());
+}
+
 export const assetSrcPostprocessor: Processor = {
   name: 'asset-src',
   process(content: string, context: ProcessContext): string {
-    return content.replace(
+    const rewritten = content.replace(
       /<img\s+([^>]*?)src\s*=\s*["']([^"']+)["']([^>]*)>/gi,
       (match, before, src, after) => {
-        const newSrc = rewriteSrc(src, context);
+        const newSrc = resolveContentAssetUrl(src, context);
         if (!newSrc) return match;
         return `<img ${before}src="${newSrc}"${after}>`;
+      }
+    );
+    // Plain links to colocated non-page files (`[Spec](./assets/api.pdf)`,
+    // `[Name](./assets/arch.excalidraw)`) — same rewrite, or the href 404s
+    // (pages don't render at their on-disk paths).
+    return rewritten.replace(
+      /<a\s+([^>]*?)href\s*=\s*["']([^"']+)["']([^>]*)>/gi,
+      (match, before, href, after) => {
+        if (!isColocatedFileHref(href)) return match;
+        const newHref = resolveContentAssetUrl(href, context);
+        if (!newHref) return match;
+        return `<a ${before}href="${newHref}"${after}>`;
       }
     );
   },

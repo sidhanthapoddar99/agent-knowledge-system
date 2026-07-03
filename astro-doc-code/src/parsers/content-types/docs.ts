@@ -17,6 +17,7 @@ import { assetEmbedPreprocessor } from '../preprocessors/asset-embed';
 import { headingIdsPostprocessor } from '../postprocessors/heading-ids';
 import { internalLinksPostprocessor } from '../postprocessors/internal-links';
 import { assetSrcPostprocessor } from '../postprocessors/asset-src';
+import { excalidrawEmbedPostprocessor } from '../postprocessors/excalidraw-embed';
 import { externalLinksPostprocessor } from '../postprocessors/external-links';
 import { tableWrapPostprocessor } from '../postprocessors/table-wrap';
 
@@ -29,6 +30,9 @@ export class DocsParser extends BaseContentParser {
       .addPreprocessor(assetEmbedPreprocessor)
       .addPostprocessor(headingIdsPostprocessor)
       .addPostprocessor(internalLinksPostprocessor)
+      // ![x](./assets/y.excalidraw) → client-rendered diagram placeholder
+      // (before asset-src: works on the author-written relative path)
+      .addPostprocessor(excalidrawEmbedPostprocessor)
       // Relative <img src> → absolute /content-assets/… URLs (content folders
       // aren't served at any browser-relative position).
       .addPostprocessor(assetSrcPostprocessor)

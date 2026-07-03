@@ -217,6 +217,11 @@ Beyond standard markdown, the system provides:
 | Diagrams | Fenced ` ```mermaid ` / ` ```graphviz ` blocks | [above](#diagrams) |
 | Asset Embedding | `[[path]]` syntax for file inclusion | [Asset Embedding](./asset-embedding) |
 | Page Outline | Auto-generated table of contents | [Outline](./outline) |
+| Diagram Pages | `.mmd` / `.dot` / `.excalidraw` files as pages | [Diagram Pages](./diagram-pages) |
+
+Markdown isn't the only page format: a diagram file with an `XX_` prefix
+renders as a first-class page in the sidebar — see
+[Diagram Pages](./diagram-pages).
 
 ## Best Practices
 

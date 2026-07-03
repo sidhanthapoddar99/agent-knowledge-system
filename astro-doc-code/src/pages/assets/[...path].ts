@@ -118,7 +118,9 @@ export const GET: APIRoute = async ({ params, request }) => {
     status: 200,
     headers: {
       'Content-Type': contentType,
-      'Cache-Control': 'public, max-age=31536000',
+      // Dev: always revalidate (ETag → cheap 304) so edits show on plain
+      // reload. Immutable long cache is for production only.
+      'Cache-Control': import.meta.env.DEV ? 'no-cache' : 'public, max-age=31536000',
       'ETag': etag,
       'Last-Modified': lastModified,
     },

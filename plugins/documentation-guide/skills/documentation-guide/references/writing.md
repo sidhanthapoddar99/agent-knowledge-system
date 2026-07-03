@@ -65,6 +65,15 @@ flowchart LR
 
 Keep diagram source in its own `.mmd` / `.dot` file and embed it inside the fence — see "Content embedding (`[[path]]`)" below.
 
+**Excalidraw** — image syntax embeds a scene read-only (fetched by reference, rendered as SVG client-side); a plain link deliberately stays a link to the raw file:
+
+```markdown
+![Architecture](./assets/arch.excalidraw)   ← embeds; alt = caption, click zooms, caption links to the file
+[Architecture](./assets/arch.excalidraw)    ← plain link, opens the raw scene
+```
+
+Never inline scene JSON — the `.excalidraw` file stays the single source of truth. A missing file fails the build (`asset-missing`); a malformed scene shows an error box in place. Dark mode inverts automatically.
+
 **Legacy content:** pages written before 2026-07 may carry retired tag syntax (`:::callout{…}` directives or `<callout>`/`<tabs>`/`<collapsible>` tags) — the framework never parses these; they render as raw text. When you touch such a page, run `docs-guide check legacy-tags <root>` and migrate the page as part of the edit (callout→GFM alert, collapsible→`<details>`, tabs→sequential `###` sections).
 
 ## Asset embedding
@@ -76,7 +85,7 @@ Two ways to reference images and downloadable files:
   ![Logo](/assets/logo.png)
   [Download the spec](/assets/specs/api-v1.pdf)
   ```
-- **Colocated files** sit next to the markdown that uses them (`./assets/flow.png`) — reference with a **relative** path. Works in docs, blog, and issues; the build rewrites the relative `<img src>` to `/content-assets/<path-relative-to-the-content-root>` (shared `asset-src` postprocessor + `/content-assets/[...path]` route). Colocated non-markdown files are never indexed into the sidebar.
+- **Colocated files** sit next to the markdown that uses them (`./assets/flow.png`) — reference with a **relative** path. Works in docs, blog, and issues; the build rewrites the relative `<img src>` **and relative `<a href>` links to colocated non-page files** (`[Spec](./assets/api.pdf)`) to `/content-assets/<path-relative-to-the-content-root>` (shared `asset-src` postprocessor + `/content-assets/[...path]` route). Colocated non-markdown files are never indexed into the sidebar.
   ```markdown
   ![Flow](./assets/flow.png)
   ```

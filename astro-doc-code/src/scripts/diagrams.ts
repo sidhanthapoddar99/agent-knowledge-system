@@ -12,8 +12,9 @@ let mermaidIdCounter = 0;
 async function initDiagrams() {
   const mermaidDivs = document.querySelectorAll<HTMLDivElement>('.diagram-mermaid:not(.diagram-rendered):not(.diagram-error)');
   const graphvizDivs = document.querySelectorAll<HTMLDivElement>('.diagram-graphviz:not(.diagram-rendered):not(.diagram-error)');
+  const excalidrawDivs = document.querySelectorAll<HTMLDivElement>('.diagram-excalidraw:not(.diagram-rendered):not(.diagram-error)');
 
-  if (mermaidDivs.length === 0 && graphvizDivs.length === 0) return;
+  if (mermaidDivs.length === 0 && graphvizDivs.length === 0 && excalidrawDivs.length === 0) return;
 
   const promises: Promise<void>[] = [];
 
@@ -23,6 +24,10 @@ async function initDiagrams() {
 
   if (graphvizDivs.length > 0) {
     promises.push(renderGraphviz(graphvizDivs));
+  }
+
+  if (excalidrawDivs.length > 0) {
+    promises.push(renderExcalidraw(excalidrawDivs));
   }
 
   await Promise.all(promises);
@@ -64,6 +69,57 @@ async function renderGraphviz(divs: NodeListOf<HTMLDivElement>) {
       div.classList.add('diagram-rendered');
     } catch (err) {
       console.error('Graphviz render error:', err);
+      div.classList.add('diagram-error');
+    }
+  }
+}
+
+async function renderExcalidraw(divs: NodeListOf<HTMLDivElement>) {
+  const { exportToSvg } = await import('@excalidraw/excalidraw');
+
+  for (const div of divs) {
+    const src = div.dataset.src;
+    try {
+      if (!src) throw new Error('missing data-src');
+      // no-cache: revalidate against the server ETag (cheap 304 when
+      // unchanged) so edited scenes show up on a plain reload
+      const res = await fetch(src, { cache: 'no-cache' });
+      if (!res.ok) throw new Error(`fetch failed (${res.status})`);
+      const scene = await res.json();
+
+      const svg = await exportToSvg({
+        elements: scene.elements ?? [],
+        appState: { ...(scene.appState ?? {}), exportBackground: true, viewBackgroundColor: '#ffffff' },
+        files: scene.files ?? null,
+      });
+
+      div.innerHTML = '';
+      div.appendChild(svg);
+
+      // Caption: title + link to the independently openable file. Clicks on
+      // the caption must not bubble into the lightbox zoom on the container.
+      const caption = document.createElement('div');
+      caption.className = 'diagram-caption';
+      const title = div.dataset.title;
+      if (title) {
+        const label = document.createElement('span');
+        label.textContent = title;
+        caption.appendChild(label);
+        caption.appendChild(document.createTextNode(' · '));
+      }
+      const openLink = document.createElement('a');
+      openLink.href = src;
+      openLink.target = '_blank';
+      openLink.rel = 'noopener';
+      openLink.textContent = 'open file ↗';
+      caption.appendChild(openLink);
+      caption.addEventListener('click', (e) => e.stopPropagation());
+      div.appendChild(caption);
+
+      div.classList.add('diagram-rendered');
+    } catch (err) {
+      console.error('Excalidraw render error:', err);
+      div.textContent = `Failed to render Excalidraw diagram${src ? `: ${src}` : ''}`;
       div.classList.add('diagram-error');
     }
   }

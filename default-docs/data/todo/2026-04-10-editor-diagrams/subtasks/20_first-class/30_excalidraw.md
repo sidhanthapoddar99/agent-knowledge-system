@@ -1,6 +1,6 @@
 ---
 title: "First-class excalidraw pages (read-only viewer)"
-status: open
+status: review
 ---
 
 `.excalidraw` files as docs pages, rendered read-only. Depends on the client
@@ -13,10 +13,17 @@ independently openable, scrollable view the embed's expand affordance links to.
 
 ## Tasks
 
-- [ ] **Register `.excalidraw`** in the widened docs scan + diagram content
-      handler (page body carries a reference/URL to the scene, not inline
-      JSON — consistent with the reference-based embed decision).
-- [ ] **Full-size viewer UX** — the page view should let a large canvas
-      breathe: scroll/pan, sensible max-width behaviour.
-- [ ] **Verify** sidecar metadata, slug/collision rules and sidebar placement
-      match the other formats.
+- [x] **Register `.excalidraw`** — registered in the diagram-page scan; the
+      page body carries `data-src` (served `/content-assets/…` URL), fetched
+      and rendered client-side — no inline JSON, consistent with the
+      reference-based embed decision.
+- [x] **Full-size viewer UX** — the outline column auto-hides (no headings)
+      so the canvas gets the content width; `.diagram` has `overflow-x:
+      auto` + `svg { max-width: 100% }`, and the lightbox click-to-zoom
+      provides the full-screen scrollable view. Browser-verified on the live
+      demo page.
+- [x] **Verify** — browser-verified 2026-07-03 with a live `.excalidraw`
+      page: filename-derived title in the sidebar, SVG rendered with caption
+      + open-file link. The scene now lives on the user-guide Diagram
+      Showcase (`user-guide/15_writing-content/07_diagram-showcase.md`) as
+      an embed demo.

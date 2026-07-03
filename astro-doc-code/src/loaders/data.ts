@@ -11,6 +11,7 @@ import path from 'path';
 import { glob } from 'glob';
 import { getParser } from '../parsers';
 import { parseOrderPrefix } from '../parsers/core/order-prefix';
+import { loadDiagramPages } from './diagram-pages';
 import {
   ParserError,
   type ContentType,
@@ -263,11 +264,21 @@ export async function loadContent(
     });
   }
 
+  // First-class diagram pages (.mmd/.dot/.excalidraw with XX_ prefix) —
+  // docs sections only, opt-out via `allow_diagram_pages: false` in the
+  // section root settings.json. Handles slug-collision errors in place.
+  let dependencyFiles: string[] = [];
+  if (contentType === 'docs') {
+    const diagramPages = await loadDiagramPages(absolutePath, content);
+    content.push(...diagramPages.entries);
+    dependencyFiles = diagramPages.dependencyFiles;
+  }
+
   // Sort content
   content = sortContent(content, sort, order);
 
   // Store in cache with file dependencies (for mtime-based validation)
-  cacheManager.setCache('content', cacheKey, content, files);
+  cacheManager.setCache('content', cacheKey, content, [...files, ...dependencyFiles]);
 
   // Filter drafts
   if (!includeDrafts) {

@@ -97,12 +97,14 @@ name-based skip.)
   renderer branch are new. Full lifecycle in
   `subtasks/10_embeds/30_excalidraw.md`.
 
-## Open — under discussion
+- **Decided (sidhantha, 2026-07-03): sidecar `XX_name.meta.json`, and only
+  when required.** Metadata for a non-markdown page lives in an optional
+  sibling `XX_name.meta.json` (title/description/position/draft); when the
+  filename alone reads well, no sidecar — the title derives from the
+  filename (strip prefix, title-case). Skills + user-guide docs must teach
+  this "name suffices, sidecar only when needed" framing.
 
-- **Sidecar metadata naming** — where do title/description/position for a
-  non-markdown page come from: sibling `XX_name.meta.json` vs inline entry in
-  the folder's `settings.json`? (Fallback either way: derive title from
-  filename.)
-- **Outline panel behaviour** on diagram pages (no headings): hide the right
-  "on this page" column and let the diagram use the width, or keep it for
-  layout consistency?
+- **Resolved (2026-07-03): outline panel hides itself on diagram pages.**
+  The docs layout already renders the outline only when
+  `headings.length > 0`; diagram pages have no headings, so the column
+  disappears and the diagram gets the width. No code was needed.

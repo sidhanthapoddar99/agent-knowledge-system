@@ -14,7 +14,7 @@ teach.
 
 ```mermaid
 flowchart LR
-  fence["```mermaid fence"] --> div[.diagram-mermaid div] --> svg[rendered SVG]
+  fence[mermaid fence] --> div[diagram-mermaid div] --> svg[rendered SVG]
 ```
 
 ## Inline fence — graphviz
@@ -35,8 +35,17 @@ digraph G { rankdir=LR; "```dot fence" -> "diagram-graphviz div" -> "SVG"; }
 [[../assets/embed-test.dot]]
 ```
 
-Resolution rules (verified against `src/parsers/preprocessors/asset-embed.ts`
-and `src/parsers/content-types/issues.ts`):
+## Excalidraw — image syntax embeds, plain link stays a link
+
+![Embed pipeline demo](../assets/embed-demo.excalidraw)
+
+The same file as a plain link (no embed, opens the raw file):
+[embed-demo.excalidraw](../assets/embed-demo.excalidraw)
+
+## Resolution rules
+
+Verified against `src/parsers/preprocessors/asset-embed.ts`
+and `src/parsers/content-types/issues.ts`:
 
 - **Inside a code fence, the path must be file-relative: `./` or `../`.**
   Bare names are deliberately skipped so documentation examples don't get

@@ -55,6 +55,26 @@ Combine an embed with a native `<details>` block to make a long file expandable:
 </details>
 ~~~
 
+### Diagram source
+
+Mermaid and Graphviz fences render as diagrams, so embedding a `.mmd` /
+`.dot` file inside the fence keeps the diagram source in its own
+version-controlled file:
+
+~~~markdown
+```mermaid
+[[./assets/flow.mmd]]
+```
+
+```dot
+[[./assets/graph.dot]]
+```
+~~~
+
+**Inside a fence the path must be file-relative — start it with `./` or
+`../`.** Bare names are deliberately skipped there so documentation examples
+don't get expanded.
+
 ## Path Resolution
 
 Path resolution differs per content type:
@@ -138,6 +158,7 @@ The `[[path]]` syntax embeds **file content** only:
 | Code files | `[[./assets/code.py]]` inside code block |
 | Text snippets | `[[./assets/snippet.txt]]` |
 | Config files | `[[./assets/config.yaml]]` inside code block |
+| Diagram source | `[[./assets/flow.mmd]]` inside a `mermaid`/`dot` fence |
 
 For images, use standard markdown or HTML:
 
@@ -146,9 +167,42 @@ For images, use standard markdown or HTML:
 <img src="./assets/diagram.png" alt="Diagram" />
 ```
 
-## The one extension pattern
+## Two embed mechanisms
 
-`[[path]]` is the single mechanism the framework extends for embeds. New embed types are added by recognising the **file extension** inside `[[...]]` — never by introducing new tag syntax. A future Excalidraw embed, for example, would render a `[[./diagram.excalidraw]]` reference as an interactive drawing purely from the `.excalidraw` extension. Whatever an embed needs, it rides on `[[path]]`.
+The framework has exactly two embed mechanisms, split by what "embedding"
+means for the file:
+
+- **`[[path]]` — raw text inlining.** The file's bytes replace the pattern
+  before markdown renders. Right for anything whose *source text* is the
+  content: code, config, and mermaid / graphviz diagram source inside a
+  fence.
+- **Image syntax — render-by-reference.** `![Alt](./path)` renders the
+  *resource* in place while the file stays independently served. Images use
+  it natively; **Excalidraw scenes** use it too:
+
+  ```markdown
+  ![Architecture](./assets/arch.excalidraw)
+  ```
+
+  The scene is fetched and rendered read-only as SVG. The alt text becomes a
+  caption with an *open file ↗* link, clicking the canvas zooms it
+  (lightbox), and dark mode inverts it automatically. A **plain link**
+  `[Architecture](./assets/arch.excalidraw)` deliberately stays a link — it
+  opens the raw file instead of embedding it.
+
+Relative links to any colocated non-page file (`[Spec](./assets/api.pdf)`)
+are rewritten to served URLs the same way image srcs are, so they work at
+any page depth.
+
+**Errors:** a missing referenced file fails the build with an
+`asset-missing` error pointing at the page and line; a file that exists but
+fails to render (bad diagram syntax, malformed scene JSON) shows a visible
+error box in place of the diagram.
+
+**Embed or page?** Embedding fits diagrams that are figures inside prose.
+When the diagram *is* the content, skip the wrapper entirely — a prefixed
+`.mmd` / `.dot` / `.excalidraw` file renders as a first-class sidebar page:
+see [Diagram Pages](./diagram-pages).
 
 ## Best Practices
 

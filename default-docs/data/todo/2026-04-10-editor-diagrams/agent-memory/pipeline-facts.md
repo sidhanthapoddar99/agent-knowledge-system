@@ -4,6 +4,21 @@ title: "Verified pipeline facts (code audit 2026-07-03)"
 
 # Diagram pipeline — verified facts
 
+- **Excalidraw rendering (shipped 2026-07-03):** `exportToSvg` from
+  `@excalidraw/excalidraw@0.18.1` (the `@excalidraw/utils` npm package is a
+  stale test release — never use it). Lazy chunk ≈624 KB gz, loads only on
+  pages with `.diagram-excalidraw` divs. Peer react/react-dom installed.
+  **clsx gotcha:** excalidraw pins `clsx@1.1.1` (CJS); without a direct
+  `clsx@^2.1.1` dependency it hoists over Astro's ESM clsx and breaks the
+  static build at the generate step ("Named export 'clsx' not found").
+  Headless runs log a harmless font-subset worker fallback error.
+- **Asset caching (fixed 2026-07-03):** `/content-assets/` and `/assets/`
+  routes send `Cache-Control: no-cache` in dev (ETag → 304), 1-year
+  immutable in prod; excalidraw `data-src` URLs carry an mtime `?v=` param
+  for prod cache-busting; `renderExcalidraw` fetches with
+  `cache: 'no-cache'`. Demo scenes: all three diagram types live on
+  `user-guide/15_writing-content/07_diagram-showcase.md`.
+
 All paths relative to `astro-doc-code/`.
 
 - **Fence → div:** `src/parsers/renderers/marked.ts:75` converts

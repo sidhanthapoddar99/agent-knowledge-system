@@ -106,12 +106,26 @@ embedded by reference — a `[[./…]]`/`[[../…]]` inside the fence (see "Cont
 embedding" below). `assets/` never appears in any sidebar, so this is the home for
 every diagram that doesn't need to be first-class.
 
+**Excalidraw** — image syntax embeds a scene read-only (fetched by reference,
+rendered as SVG client-side); a plain link deliberately stays a link to the raw
+file. Never inline scene JSON — the `.excalidraw` file is the source of truth:
+
+```markdown
+![Architecture](./assets/arch.excalidraw)   ← embeds; alt = caption, click zooms
+[Architecture](./assets/arch.excalidraw)    ← plain link, opens the raw scene
+```
+
+Missing file → build error (`asset-missing`); malformed scene → visible error box.
+Live demo: `2026-04-10-editor-diagrams/notes/02_embed-verification.md`.
+
 ## Assets
 
 - **Shared files**: project root `assets/`, served at `/assets/` — absolute paths:
   `![Flow](/assets/flow.png)`.
 - **Colocated files**: `<issue>/assets/` next to the markdown — relative paths:
-  `![Flow](./assets/flow.png)`. The build rewrites them to `/content-assets/…`;
+  `![Flow](./assets/flow.png)`. The build rewrites them to `/content-assets/…`
+  (relative `<a href>` links to colocated non-page files are rewritten the same
+  way, so `[raw file](./assets/x.excalidraw)` works at any page depth);
   colocated non-markdown files never appear in the sidebar.
 - **Never commit raw screenshots** — run `docs-guide img` on any image you add
   (resize, grayscale, webp, strip metadata) so figures stay ≈60–100 KB.

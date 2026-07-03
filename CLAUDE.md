@@ -115,6 +115,8 @@ default-docs/
     └── pages/            # Custom page data (YAML)
 ```
 
+**user-guide vs dev-docs — the audience split.** `user-guide/` teaches *how to use* the framework to author documentation: what a feature does for the writer, the syntax/config to use it, and live examples (e.g. how to embed an excalidraw scene in a page). `dev-docs/` documents *how the framework implements* it from an internal code perspective: which layers the feature touches, the pipeline stages, extension points, and design rationale (e.g. how the embed postprocessor + asset route + client renderer fit together). When shipping a feature, docs usually land on **both** sides — usage in user-guide, mechanism in dev-docs. A page that explains internals inside user-guide, or usage instructions inside dev-docs, is misfiled.
+
 ## Key Architecture Concepts
 
 **Path resolution**: `site.yaml` `paths:` section defines `@key` aliases (`@data`, `@assets`, `@themes`). User aliases are resolved to absolute paths at config load time. System aliases (`@docs`, `@blog`, `@issues`, `@custom`, `@navbar`, `@footer`) remain as layout references resolved at render time. **`@root`** is reserved and resolves to **the framework folder** (parent of `astro-doc-code/`, where `.env` and `default-docs/` live) — NOT the consumer's outer project. Usable both as a direct reference (`@root/default-docs/themes/foo.css`) and inside `paths:` values to compose user aliases against the framework folder (e.g. `default-docs: "@root/default-docs/data"`). Path-traversal escapes are rejected; only `@root` is allowed inside `paths:` values (other aliases are layout/theme concepts and user-to-user references are rejected to avoid ordering ambiguity).

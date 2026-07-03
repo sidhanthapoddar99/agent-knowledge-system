@@ -73,12 +73,6 @@ pages:
     layout: "@docs/default"
     data: "@data/dev-docs"
 
-  components:
-    base_url: "/components"
-    type: docs
-    layout: "@docs/default"
-    data: "@data/docs/components"
-
   # Issues tracker (Phase 1 testbed — throwaway data)
   issues-test:
     base_url: "/issues-test"

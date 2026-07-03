@@ -14,9 +14,6 @@ items:
   - label: "Dev Docs"
     href: "/dev-docs"
 
-  - label: "Components"
-    href: "/components"
-
   - label: "Todo"
     href: "/todo"
 

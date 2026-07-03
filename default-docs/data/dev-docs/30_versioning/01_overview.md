@@ -16,7 +16,7 @@ and a startup gate refuses to run any combination outside that range.
 
 | Anchor | Lives in | Meaning |
 |---|---|---|
-| **Content version** | `site.yaml → engine_version: "0.7.0"` | The engine version this content tree targets — bumped only after migrations run |
+| **Content version** | `site.yaml → engine_version: "0.1.2"` | The engine version this content tree targets — bumped only after migrations run |
 | **Engine version** | `src/loaders/engine-version.ts → ENGINE_VERSION` | What the engine currently is |
 | **Compatibility floor** | same file → `MIN_CONTENT_VERSION` | The **oldest content version that still works unmigrated** on this engine |
 

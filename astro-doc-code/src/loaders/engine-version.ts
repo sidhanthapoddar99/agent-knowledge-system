@@ -16,10 +16,10 @@
  */
 
 /** What this engine currently is. Major stays 0 while the project is in beta. */
-export const ENGINE_VERSION = '0.7.0';
+export const ENGINE_VERSION = '0.1.2';
 
 /** Oldest content version this engine still parses. */
-export const MIN_CONTENT_VERSION = '0.7.0';
+export const MIN_CONTENT_VERSION = '0.1.2';
 
 /** Content trees with no `engine_version` declaration predate the contract. */
 export const UNVERSIONED = '0.0.0';

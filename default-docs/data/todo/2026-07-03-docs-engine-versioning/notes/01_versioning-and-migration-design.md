@@ -18,9 +18,15 @@ compatibility gate** — a patch bump never changes content format by definition
 
 | Anchor | Lives in | Meaning |
 |---|---|---|
-| Content version | `site.yaml → engine_version: "0.7.0"` (top-level, sibling of `theme`) | The engine version this content tree targets — bumped by running migrations |
-| Engine version | `astro-doc-code/src/loaders/engine-version.ts → ENGINE_VERSION` | What the engine currently is (`0.7.0` at introduction; `package.json`'s `1.0.0` is a dead placeholder) |
+| Content version | `site.yaml → engine_version: "0.1.2"` (top-level, sibling of `theme`) | The engine version this content tree targets — bumped by running migrations |
+| Engine version | `astro-doc-code/src/loaders/engine-version.ts → ENGINE_VERSION` | What the engine currently is (`0.1.2` — re-anchored from the informal "v0.7 lifecycle" naming on 2026-07-03, sidhantha; `package.json`'s `1.0.0` is a dead placeholder) |
 | Compatibility floor | same file → `MIN_CONTENT_VERSION` | Oldest content version this engine still parses. Starts equal to `ENGINE_VERSION`; raised only when a release actually breaks format |
+
+> **Re-anchor (2026-07-03, sidhantha):** the contract launched anchored at
+> `0.1.2`, not the informal `0.7.0` lifecycle number first drafted — the beta
+> scale starts low. The three historical migrations were renamed onto the new
+> scale: `0.1.0_done-to-state` · `0.1.1_state-to-status` ·
+> `0.1.2_root-settings-schema`.
 
 **Missing `engine_version` ⇒ `0.0.0`.** Every pre-contract project trips the gate
 exactly once, migrates, and is on the contract thereafter.
@@ -47,9 +53,9 @@ alike:
 ```
 <repo-root>/migration/
 ├── README.md                    # convention, one screen
-├── 0.5.0_done-to-state.py       # <to-version>_<statement>.py
-├── 0.6.0_state-to-status.py
-└── 0.7.0_root-settings-schema.py
+├── 0.1.0_done-to-state.py       # <to-version>_<statement>.py
+├── 0.1.1_state-to-status.py
+└── 0.1.2_root-settings-schema.py
 ```
 
 - **Named by the version they bring content TO**; a statement after the
@@ -59,9 +65,7 @@ alike:
 - Script contract unchanged from the 2026-06-22 convention: stdlib-only Python,
   self-documenting docstring, **detect** pass + **`--dry-run`** + **idempotent
   migrate**.
-- The three existing plugin scripts move here (mapping: done-to-state → 0.5.0,
-  state-to-status → 0.6.0, root-settings-schema → 0.7.0 — the lifecycle versions
-  those changes shipped in). The plugin's `migration/` folder is removed, repo
+- The three existing plugin scripts move here (mapping: done-to-state → 0.1.0, state-to-status → 0.1.1, root-settings-schema → 0.1.2 — the historical lifecycle steps on the re-anchored beta scale). The plugin's `migration/` folder is removed, repo
   and cache.
 
 ## Ownership split — engine vs skill

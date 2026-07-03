@@ -12,9 +12,10 @@ engine's format. They live at the **repo root**:
 ```
 <repo-root>/migration/
 ├── README.md                    # the convention, one screen
-├── 0.5.0_done-to-state.py
-├── 0.6.0_state-to-status.py
-└── 0.7.0_root-settings-schema.py
+├── 0.1.0_done-to-state.py
+├── 0.1.1_state-to-status.py
+├── 0.1.2_legacy-custom-tags.py
+└── 0.1.2_root-settings-schema.py
 ```
 
 ## Why the repo root
@@ -31,18 +32,38 @@ now carries only the operating manual, `references/doc-migration.md`.)
 to**, then a short statement:
 
 ```
-0.6.0_state-to-status.py     ← migrates content TO the 0.6.0 format
+0.1.1_state-to-status.py     ← migrates content TO the 0.1.1 format
 ```
 
 Version order **is** execution order — that's what the gate's instruction
 chains on. Authoring dates live inside each script's docstring: provenance, not
 ordering.
 
+## Types of migrations — anything that changes what authors write
+
+A migration is not just a frontmatter rename. **Any change to what valid
+content looks like ships as a migration script** — and the non-obvious classes
+are the ones that get skipped:
+
+| Type | What changed | Shipped example |
+|---|---|---|
+| **Frontmatter / field** | A field renamed, retyped, or removed | `0.1.0_done-to-state.py`, `0.1.1_state-to-status.py` |
+| **Settings schema** | Structure of a `settings.json(c)` | `0.1.2_root-settings-schema.py` |
+| **Content syntax** | The *authoring syntax itself* — markup constructs retired or replaced in page bodies | `0.1.2_legacy-custom-tags.py` (`:::callout` / `<callout>` / `<tabs>` / `<collapsible>` → GFM alerts, `<details>`, `###` sections) |
+
+Content-syntax migrations are the easiest to forget — the old markup often
+doesn't *error*, it just renders wrong or as raw text, silently. If a release
+retires or replaces a syntax that existing pages may contain, that release owes
+a syntax migration script, same contract as any other (detect + `--dry-run` +
+idempotent migrate) plus one extra rule: be **mention-aware** — fenced code
+examples, inline code spans, and frontmatter that merely *talk about* the old
+syntax are mentions, not usage, and must be skipped.
+
 ## The chain rule
 
 When the gate reports *content targets X, engine is Y*, the upgrade runs
-**every script with a version in `(X, Y]`, ascending** — going 0.5 → 0.7 means
-running everything above 0.5 up to and including 0.7, not just the newest
+**every script with a version in `(X, Y]`, ascending** — going 0.0.5 → 0.1.2 means
+running everything above 0.0.5 up to and including 0.1.2, not just the newest
 script. This is also how good-to-have migrations (which never moved the floor —
 see [Minimum Version](./minimum-version)) eventually reach older trees: the
 next breaking chain sweeps them up.

@@ -15,7 +15,7 @@ misread an older content format.
 `site.yaml` carries one top-level key:
 
 ```yaml
-engine_version: "0.7.0"
+engine_version: "0.1.2"
 ```
 
 - Format is `N.N.N` (major stays `0` while the project is in beta). Only
@@ -34,19 +34,19 @@ hard stops:
 **Content too old:**
 
 ```
-This content targets engine 0.5.0, but this engine is 0.7.0 and supports content
-0.7.0 or newer. The content must be migrated from 0.5.0 to 0.7.0 — ask your AI to
+This content targets engine 0.0.5, but this engine is 0.1.2 and supports content
+0.1.2 or newer. The content must be migrated from 0.0.5 to 0.1.2 — ask your AI to
 do it: the migration scripts live in migration/ at the repo root, named by the
-version they bring content to. Run each script between 0.5.0 and 0.7.0 in version
+version they bring content to. Run each script between 0.0.5 and 0.1.2 in version
 order (detect pass, then --dry-run, then migrate), verify with docs-guide check,
-then set engine_version: "0.7.0" in site.yaml.
+then set engine_version: "0.1.2" in site.yaml.
 ```
 
 **Content too new** (engine behind the content):
 
 ```
-This content targets engine 0.9.0, but this engine is only 0.7.0. Update the
-framework to 0.9.0 or newer (./start offers the update when the upstream is
+This content targets engine 0.2.0, but this engine is only 0.1.2. Update the
+framework to 0.2.0 or newer (./start offers the update when the upstream is
 ahead), or check upgrade options for your install.
 ```
 
@@ -58,7 +58,7 @@ everything it needs to perform the migration.
 Migration scripts live at the **repo root** under `migration/`, shipped with the
 engine itself — updating the framework always brings exactly the migrations that
 engine needs. Naming is `<to-version>_<statement>.py` (e.g.
-`0.6.0_state-to-status.py`); version order is execution order.
+`0.1.1_state-to-status.py`); version order is execution order.
 
 The flow:
 

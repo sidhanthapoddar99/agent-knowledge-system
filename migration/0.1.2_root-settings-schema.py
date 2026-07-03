@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Migrate a tracker-root settings file to the v0.7.0 vocabulary schema.
+"""Migrate a tracker-root settings file to the v0.1.2 vocabulary schema.
 
 Authored: 2026-07-03. Brings content to the engine version in this filename.
 
@@ -284,7 +284,7 @@ def cmd_guide(path: Path) -> int:
         print("    move it in; the comment may stay too.)")
 
     if not any_work:
-        print(f"root-settings-schema: {f} is already on the v0.7.0 schema — nothing to do.")
+        print(f"root-settings-schema: {f} is already on the v0.1.2 schema — nothing to do.")
     return 0
 
 
@@ -307,12 +307,12 @@ def cmd_verify(path: Path) -> int:
         for p in problems:
             print(f"  ✗ {p}")
         return 1
-    print(f"root-settings-schema: clean — {f} is on the v0.7.0 schema.")
+    print(f"root-settings-schema: clean — {f} is on the v0.1.2 schema.")
     return 0
 
 
 def main(argv: list[str]) -> int:
-    parser = argparse.ArgumentParser(description="Migrate a tracker root to the v0.7.0 vocabulary schema (detect/guide/verify).")
+    parser = argparse.ArgumentParser(description="Migrate a tracker root to the v0.1.2 vocabulary schema (detect/guide/verify).")
     sub = parser.add_subparsers(dest="command", required=True)
     for name in ("detect", "guide", "verify"):
         p = sub.add_parser(name)

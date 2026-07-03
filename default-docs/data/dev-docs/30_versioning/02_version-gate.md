@@ -44,19 +44,19 @@ the correct form. Only major.minor are compared — patch never gates.
 **Content too old:**
 
 ```
-This content targets engine 0.5.0, but this engine is 0.7.0 and supports content
-0.7.0 or newer. The content must be migrated from 0.5.0 to 0.7.0 — ask your AI to
+This content targets engine 0.0.5, but this engine is 0.1.2 and supports content
+0.1.2 or newer. The content must be migrated from 0.0.5 to 0.1.2 — ask your AI to
 do it: the migration scripts live in migration/ at the repo root, named by the
-version they bring content to. Run each script between 0.5.0 and 0.7.0 in version
+version they bring content to. Run each script between 0.0.5 and 0.1.2 in version
 order (detect pass, then --dry-run, then migrate), verify with docs-guide check,
-then set engine_version: "0.7.0" in site.yaml.
+then set engine_version: "0.1.2" in site.yaml.
 ```
 
 **Content too new:**
 
 ```
-This content targets engine 0.9.0, but this engine is only 0.7.0. Update the
-framework to 0.9.0 or newer (./start offers the update when the upstream is
+This content targets engine 0.2.0, but this engine is only 0.1.2. Update the
+framework to 0.2.0 or newer (./start offers the update when the upstream is
 ahead), or check upgrade options for your install.
 ```
 

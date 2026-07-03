@@ -7,8 +7,11 @@ sidebar_position: 5
 # Authoring Migrations
 
 Every engine change that alters the content format ships with a migration
-script — **the change does not exist until its script does.** This page is the
-maintainer's authoring guide.
+script — **the change does not exist until its script does.** That covers all
+three migration types (frontmatter/field, settings schema, **content syntax**
+— see [Migrations § Types](./migrations)); the syntax class is the one
+historically skipped, so check for it explicitly. This page is the maintainer's
+authoring guide.
 
 ## The script contract
 
@@ -24,7 +27,7 @@ maintainer's authoring guide.
     and is **idempotent** — re-running after success finds zero instances and
     is a no-op.
 
-`0.6.0_state-to-status.py` is the reference shape for the detect / dry-run /
+`0.1.1_state-to-status.py` is the reference shape for the detect / dry-run /
 verify mode set.
 
 ## Skeleton
@@ -38,9 +41,9 @@ Authored: YYYY-MM-DD. Brings content to the engine version in this filename.
 <Why the format changed, what exactly is rewritten, edge cases.>
 
 Usage:
-    python3 migration/0.8.0_example.py <content-root>            # detect
-    python3 migration/0.8.0_example.py <content-root> --dry-run  # preview
-    python3 migration/0.8.0_example.py <content-root> --migrate  # apply
+    python3 migration/0.2.0_example.py <content-root>            # detect
+    python3 migration/0.2.0_example.py <content-root> --dry-run  # preview
+    python3 migration/0.2.0_example.py <content-root> --migrate  # apply
 """
 ```
 

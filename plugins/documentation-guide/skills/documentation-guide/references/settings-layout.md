@@ -77,7 +77,7 @@ site:
 # The engine hard-stops when content is outside its supported range; missing →
 # treated as 0.0.0. After running repo-root migration/ scripts, bump to match
 # the engine. See references/doc-migration.md for the upgrade flow.
-engine_version: "0.7.0"
+engine_version: "0.1.2"
 
 # 3b. Vite dev server
 server:

@@ -86,7 +86,7 @@ site:
   description: "Modern documentation built with Astro"
 
 # Engine version this content targets — see Configuration → Versioning & Migrations
-engine_version: "0.7.0"
+engine_version: "0.1.2"
 
 # Directory paths (relative to this config directory, or absolute)
 paths:

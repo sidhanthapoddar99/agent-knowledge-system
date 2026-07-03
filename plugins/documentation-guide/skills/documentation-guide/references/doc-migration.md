@@ -29,7 +29,7 @@ When the gate reports *content targets X, engine is Y*, the **only** legitimate 
 
 The chain, in full — no skipping, no sampling:
 
-1. Enumerate **every** script in `migration/` with a version in `(X, Y]` — migrating 0.5 → 0.7 means checking *all* scripts above 0.5 up to and including 0.7, not just the newest one.
+1. Enumerate **every** script in `migration/` with a version in `(X, Y]` — migrating 0.0.5 → 0.1.2 means checking *all* scripts above 0.0.5 up to and including 0.1.2, not just the newest one.
 2. For each, ascending, run its **detect** pass first (read-only, always safe). A detect that finds zero instances is a **passed check, not a skipped script** — note it and continue.
 3. Where detect finds instances: `--dry-run`, show the user the count + affected files, get the go-ahead, migrate, then **re-run detect and confirm zero** — that re-run is the migration test.
 4. Verify the whole tree: `docs-guide check issues` / `check section …` clean, and a build passes.

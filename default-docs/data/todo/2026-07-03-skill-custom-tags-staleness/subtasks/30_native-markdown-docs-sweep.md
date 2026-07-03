@@ -1,6 +1,6 @@
 ---
 title: "User-guide sweep — remove tag references, document the native-markdown system"
-status: review
+status: done
 ---
 
 The published docs must match the native-markdown-only policy

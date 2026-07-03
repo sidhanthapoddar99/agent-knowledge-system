@@ -1,6 +1,6 @@
 ---
 title: "Migration check — detect legacy custom-tags usage in content"
-status: in-progress
+status: done
 ---
 
 Content written before the native-markdown-only decision may still carry the retired

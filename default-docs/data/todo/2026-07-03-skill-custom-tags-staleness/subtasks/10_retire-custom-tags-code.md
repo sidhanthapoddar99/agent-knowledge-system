@@ -1,6 +1,6 @@
 ---
 title: "Retire the custom-tags transformer code from the framework"
-status: review
+status: done
 ---
 
 With the native-markdown-only decision

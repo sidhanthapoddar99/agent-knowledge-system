@@ -35,11 +35,6 @@ The chain, in full — no skipping, no sampling:
 4. Verify the whole tree: `docs-guide check issues` / `check section …` clean, and a build passes.
 5. **Only now** set `engine_version: "Y"` in `site.yaml`. The bump is the last step, never the first.
 
-## How to author one
+## Migration structure
 
-A migration script ships **two capabilities in one file**:
-
-1. **Detect** — given a section or issue folder (recursing into subfolders), scan markdown frontmatter and report *whether* migration is needed and *how many* / *where* (file + line number) the legacy instances are. This answers "does this need migrating, and how big is it?" before changing anything.
-2. **Migrate** — apply the fix to frontmatter, supporting a **`--dry-run`** that reports what *would* change without writing. Make it **idempotent**: re-running after a successful migrate finds zero instances and is a no-op.
-
-Author it pure-stdlib, run the detect pass first, dry-run the migrate, then apply — and re-run detect to confirm zero. Put the run instructions in the docstring so the next reader needs nothing but the file.
+Every script is self-documenting — **read its module docstring carefully before running it**: the docstring states exactly what gets migrated, why the format changed, how to run each mode, and any extra steps or edge cases beyond the automated rewrite. The standardized script structure itself (subcommands, function families, contract, shipping checklist) is detailed in dev-docs **Versioning → Authoring Migrations** (`default-docs/data/dev-docs/30_versioning/05_authoring-migrations.md`).

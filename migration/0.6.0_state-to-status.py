@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Migrate the lifecycle field to the unified `status` vocabulary.
 
+Authored: 2026-07-02. Brings content to the engine version in this filename.
+
 Two coordinated renames land in this single pass (decided 2026-07-02, see the
 tracker issue `2026-07-02-issue-lifecycle-and-creation-rules`, ground truth
 `notes/01_lifecycle-vocabulary.md`):

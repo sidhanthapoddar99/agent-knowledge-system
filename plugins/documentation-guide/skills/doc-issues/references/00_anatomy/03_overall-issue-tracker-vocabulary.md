@@ -21,7 +21,7 @@ The tracker-root settings file defines the enum values every issue draws from:
 }
 ```
 
-When creating an issue, **all enum values must come from this vocabulary**. To add a new value to `component` / `labels` / `priority`, edit the tracker settings file first (add both the `values` entry **and**, for `component`/`labels`, its `descriptions` entry), then use it. **`status` is the exception:** its seven values are fixed in framework code and cannot be extended per-tracker — there is **no `fields.status` block** (adding one is a hard error at startup and fails `docs-guide check issues`), and the only override is colors, via a top-level `statusColors` map (keys a subset of the seven). An unknown status value is a hard error, not a new value. Migration helper for an old `fields.status` block: `migration/2026-07-03_root-settings-schema.py` (covers both the colours reshape and the required descriptions below).
+When creating an issue, **all enum values must come from this vocabulary**. To add a new value to `component` / `labels` / `priority`, edit the tracker settings file first (add both the `values` entry **and**, for `component`/`labels`, its `descriptions` entry), then use it. **`status` is the exception:** its seven values are fixed in framework code and cannot be extended per-tracker — there is **no `fields.status` block** (adding one is a hard error at startup and fails `docs-guide check issues`), and the only override is colors, via a top-level `statusColors` map (keys a subset of the seven). An unknown status value is a hard error, not a new value. An old `fields.status` block is migration territory: the documentation-template's repo-root `migration/` scripts cover the reshape (and the required descriptions below) — run the migration chain per the `documentation-guide` skill's `doc-migration.md`, don't hand-edit.
 
 ## Prefer `settings.jsonc` for the root vocabulary — annotate the meanings
 
@@ -52,7 +52,7 @@ Any `settings.json` in the project (tracker root, per-issue, or docs folders) ma
 }
 ```
 
-Keep the descriptions accurate as the taxonomy evolves — a stale gloss is worse than none. To backfill them on an older tracker, run `migration/2026-07-03_root-settings-schema.py`. **Prefer `.jsonc` for the root** so you can still annotate structure/rationale with comments; `settings.jsonc` is a strict superset of JSON, so a plain `.json` file is valid too — the meanings live in the `descriptions` data either way.
+Keep the descriptions accurate as the taxonomy evolves — a stale gloss is worse than none. To backfill them on an older tracker, run the repo-root `migration/` chain — its detect passes find every missing description. **Prefer `.jsonc` for the root** so you can still annotate structure/rationale with comments; `settings.jsonc` is a strict superset of JSON, so a plain `.json` file is valid too — the meanings live in the `descriptions` data either way.
 
 ## Three vocabulary layers
 

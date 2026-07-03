@@ -38,3 +38,12 @@ All paths relative to `astro-doc-code/`.
   (`src/parsers/content-types/issues.ts:52`).
 - **Dark mode:** CSS invert + hue-rotate filter on diagram divs, not
   renderer-level theming.
+- **Custom tags are GONE (2026-07):** `src/custom-tags/` removed; rich
+  content is native GFM (alerts, `<details>`, fences). Never design against
+  `:::tag{…}` syntax. Renderer is marked + GFM alerts.
+- **`asset-src` postprocessor is extension-agnostic:** rewrites ANY relative
+  `<img src>` (not just images, not keyed to `assets/` folder name) to
+  `/content-assets/<path-rel-to-content-root>`;
+  `src/pages/content-assets/[...path].ts` serves + statically builds any
+  colocated file (except markdown/settings). This is what makes
+  `![x](./assets/arch.excalidraw)` embeds nearly free.

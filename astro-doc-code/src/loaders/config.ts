@@ -7,6 +7,7 @@ import yaml from 'js-yaml';
 import { paths, getConfigPath } from './paths';
 import { resolveAssetUrl, resolveAliasPath } from './alias';
 import { resolveThemeName } from './theme';
+import { assertContentVersionSupported } from './engine-version';
 import cacheManager from './cache-manager';
 
 // ============================================
@@ -46,6 +47,7 @@ export interface EditorSettings {
 
 export interface SiteConfig {
   site: SiteMetadata;
+  engine_version?: string;  // Engine version this content targets (N.N.N); missing → 0.0.0, gated on load
   theme?: string;  // Absolute path after loading (resolved from theme name like "default")
   theme_paths?: string[];  // Directories to scan for user themes (resolved to absolute paths)
   logo?: SiteLogo;
@@ -163,6 +165,11 @@ export function loadSiteConfig(): SiteConfig {
     cacheManager.setCache('config', 'site', { config: defaults, themePaths: [] }, []);
     return defaults;
   }
+
+  // Version gate: content outside this engine's supported range is a hard stop
+  // (missing engine_version → 0.0.0). Runs before any resolution work so the
+  // error is the first and only thing the user sees.
+  assertContentVersionSupported(config.engine_version);
 
   // Resolve asset URLs in logo config
   if (config.logo) {

@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Migrate a tracker-root settings file to the v0.7.0 vocabulary schema.
 
+Authored: 2026-07-03. Brings content to the engine version in this filename.
+
 Decided 2026-07-03 (tracker issue `2026-07-02-issue-lifecycle-and-creation-rules`,
 subtasks 11 + 12). ONE transition of the tracker-root `settings.json(c)` with two
 facets — both are checked and guided here because they touch the same file, ship

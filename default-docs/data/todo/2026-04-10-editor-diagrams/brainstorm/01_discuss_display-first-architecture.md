@@ -88,6 +88,15 @@ name-based skip.)
   `settings.json`. Issue `notes/` stay `.md`-only; the tracker's diagram needs
   are covered by embeds referencing `assets/`, which stays hidden regardless.
 
+- **Decided (sidhantha, 2026-07-03): excalidraw embed grammar is native
+  markdown image syntax.** `![Name](./assets/arch.excalidraw)` embeds
+  (alt = caption); `[Name](./…)` stays a plain link to the raw file. Rides
+  entirely on shipped machinery: `asset-src` already rewrites any-extension
+  relative `<img src>` to served `/content-assets/…` URLs, so only a
+  postprocessor branch (`img[.excalidraw]` → placeholder div) and a client
+  renderer branch are new. Full lifecycle in
+  `subtasks/10_embeds/30_excalidraw.md`.
+
 ## Open — under discussion
 
 - **Sidecar metadata naming** — where do title/description/position for a

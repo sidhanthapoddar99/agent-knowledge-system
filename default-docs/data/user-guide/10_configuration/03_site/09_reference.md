@@ -48,6 +48,7 @@ interface EditorSettings {
 
 interface SiteConfig {
   site: SiteMetadata;
+  engine_version?: string;    // Engine version this content targets (N.N.N); missing → 0.0.0, gated on load
   paths?: Record<string, string>;   // Named directory paths → @key aliases
   server?: ServerConfig;      // Vite server configuration
   theme?: string;             // Theme name (e.g., "default", "minimal")
@@ -83,6 +84,9 @@ site:
   name: "My Docs"
   title: "My Documentation"
   description: "Modern documentation built with Astro"
+
+# Engine version this content targets — see Configuration → Versioning & Migrations
+engine_version: "0.7.0"
 
 # Directory paths (relative to this config directory, or absolute)
 paths:

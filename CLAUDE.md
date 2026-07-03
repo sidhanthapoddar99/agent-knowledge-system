@@ -28,6 +28,7 @@ The plugin's skills carry the full operating manual, including the `docs-guide` 
 ├── start                    # Bash wrapper — `./start dev | build | preview`
 ├── astro-doc-code/          # Framework code (src/, package.json, astro.config.mjs, tsconfig.json, bun.lock)
 ├── default-docs/            # User content (data, config, themes, assets)
+├── migration/               # Content-format migrations, version-named `<to-version>_<statement>.py`
 ├── plugins/                 # Repo-local plugin sources (e.g. documentation-guide)
 ├── .claude/, .claude-plugin/, .mcp.json
 ├── .env, .env.example
@@ -119,6 +120,8 @@ default-docs/
 **Path resolution**: `site.yaml` `paths:` section defines `@key` aliases (`@data`, `@assets`, `@themes`). User aliases are resolved to absolute paths at config load time. System aliases (`@docs`, `@blog`, `@issues`, `@custom`, `@navbar`, `@footer`) remain as layout references resolved at render time. **`@root`** is reserved and resolves to **the framework folder** (parent of `astro-doc-code/`, where `.env` and `default-docs/` live) — NOT the consumer's outer project. Usable both as a direct reference (`@root/default-docs/themes/foo.css`) and inside `paths:` values to compose user aliases against the framework folder (e.g. `default-docs: "@root/default-docs/data"`). Path-traversal escapes are rejected; only `@root` is allowed inside `paths:` values (other aliases are layout/theme concepts and user-to-user references are rejected to avoid ordering ambiguity).
 
 **Two operating modes**: *Consumer mode* — framework folder is a subfolder of the user's project (`<user-project>/documentation-template/`), `.env` lives inside it with `CONFIG_DIR=../config` reaching up to the user's content. *Dogfood / framework-dev mode* — framework repo IS the project (this repo), `CONFIG_DIR=./default-docs/config` points at the bundled config. Same code path either way; only `CONFIG_DIR` and the active content location differ. The consumer never edits `default-docs/` — that's the framework's own bundle (its docs, testbed, and source of defaults).
+
+**Version contract**: content declares the engine version it targets in `site.yaml → engine_version: "N.N.N"` (missing → `0.0.0`); the engine carries `ENGINE_VERSION` + `MIN_CONTENT_VERSION` in `src/loaders/engine-version.ts`, and `loadSiteConfig()` hard-stops on content outside `[floor, engine]` — it never starts. Migrations live at repo-root `migration/` (`<to-version>_<statement>.py`, version order = execution order). Two non-negotiables: **never bump `engine_version` past the gate** — run the full migration chain first (every script in the range, detect → dry-run → migrate → re-detect; a zero-hit detect is a passed check, not a skipped script) — and **the floor moves only on breaking changes** (`MIN_CONTENT_VERSION` means "oldest content that still works unmigrated", not "newest migration available"). The full discipline — gate mechanics, the breaking vs good-to-have floor decision, authoring + shipping checklist — is documented in **dev-docs `30_versioning/`** (consumer view: user-guide `10_configuration/07_versioning.md`); the skill's `doc-migration.md` carries the AI operating protocol. Read those rather than re-deriving here.
 
 **Theme resolution**: `site.yaml` `theme: "name"` specifies the active theme by name. `theme_paths: ["@themes"]` lists directories to scan for user themes. `resolveThemeName()` scans those directories during `loadSiteConfig()` and resolves to an absolute path. Theme inheritance (`extends` in `theme.yaml`) uses `@theme/` aliases resolved at theme load time.
 
@@ -249,3 +252,4 @@ If you're inside `astro-doc-code/`, `bun run dev` / `bun run build` / `bun run p
 6. **No hardcoded colors/fonts/spacing** in layouts — consume the declared theme contract (see "Theming" above)
 7. **Split large layout files** at ~400 lines into `parts/` subcomponents; client JS in a single `client.ts`
 8. **Issues** use folder-per-item (`YYYY-MM-DD-<slug>/`) with `settings.json` for metadata; vocabulary in the tracker's root `settings.json`
+9. **`engine_version` in `site.yaml`** — content outside the engine's supported range is a hard startup error (see "Version contract" above); after any migration, bump it to the engine's version

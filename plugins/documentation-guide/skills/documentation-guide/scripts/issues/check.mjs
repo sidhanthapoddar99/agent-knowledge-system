@@ -136,12 +136,12 @@ reportDrift('<root>/settings.json (fields)', unknownKeys(vocab?.fields, TRACKER_
 // `statusColors` map, validated against the fixed vocabulary — a colour for a
 // status that doesn't exist is a typo, not an override.
 if (vocab?.fields?.status) {
-  errors.push(`<root>/settings.json: remove \`fields.status\` — statuses are fixed in code; override colours via a top-level \`statusColors\` map instead (plugins/documentation-guide/skills/documentation-guide/migration/2026-07-03_root-settings-schema.py)`);
+  errors.push(`<root>/settings.json: remove \`fields.status\` — statuses are fixed in code; override colours via a top-level \`statusColors\` map instead (covered by a repo-root migration/ script — run the migration chain)`);
 }
 if (vocab?.statusColors && typeof vocab.statusColors === 'object') {
   for (const key of Object.keys(vocab.statusColors)) {
     if (!STATUSES.includes(key)) {
-      errors.push(`<root>/settings.json: \`statusColors.${key}\` is not a valid status (${STATUSES.join('|')}) — a colour for a status that doesn't exist is a typo (plugins/documentation-guide/skills/documentation-guide/migration/2026-07-03_root-settings-schema.py flags this via \`detect\`)`);
+      errors.push(`<root>/settings.json: \`statusColors.${key}\` is not a valid status (${STATUSES.join('|')}) — a colour for a status that doesn't exist is a typo (a repo-root migration/ script flags this via its detect pass — run the migration chain)`);
     }
   }
 }
@@ -153,7 +153,7 @@ for (const field of ['component', 'labels']) {
   const descriptions = (def.descriptions && typeof def.descriptions === 'object') ? def.descriptions : {};
   const missing = def.values.filter((v) => typeof descriptions[v] !== 'string' || descriptions[v].trim() === '');
   if (missing.length > 0) {
-    errors.push(`<root>/settings.json: \`fields.${field}\` — missing description(s) for: ${missing.join(', ')}. Add a \`descriptions\` map alongside \`values\` (plugins/documentation-guide/skills/documentation-guide/migration/2026-07-03_root-settings-schema.py)`);
+    errors.push(`<root>/settings.json: \`fields.${field}\` — missing description(s) for: ${missing.join(', ')}. Add a \`descriptions\` map alongside \`values\` (covered by a repo-root migration/ script — run the migration chain)`);
   }
 }
 

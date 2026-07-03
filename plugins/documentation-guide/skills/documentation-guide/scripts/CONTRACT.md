@@ -98,7 +98,7 @@ Two homes, one rule:
 - **One-shot, dated data migration → `migration/YYYY-MM-DD_<name>.py`.** Run
   directly by explicit path (`bun`/`python3 …/migration/<file>`), **not** a manifest
   entry and **not** on PATH. Must be idempotent with `detect` / `locate` / `migrate`
-  / `verify` modes (see `2026-07-02_state-to-status.py` for the reference shape) and
+  / `verify` modes (see the repo-root `migration/` scripts for the reference shape) and
   is kept in place afterwards as the historical record of that change.
 
 The line between them is *durable capability* vs *tied to one specific data change

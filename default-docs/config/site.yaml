@@ -4,6 +4,11 @@ site:
   title: "My Documentation"
   description: "Modern documentation built with Astro"
 
+# Engine version this content targets (N.N.N). The engine refuses to run content
+# outside its supported range — after running migrations (repo-root migration/),
+# bump this to the engine's version. Missing → treated as 0.0.0.
+engine_version: "0.7.0"
+
 # Vite Server Configuration
 server:
   # Set to true to allow all hosts, or provide a list of specific hosts

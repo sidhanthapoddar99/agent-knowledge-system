@@ -73,6 +73,12 @@ site:
   title: "My Documentation"
   description: "Modern documentation built with Astro"
 
+# 3a½. Version contract — engine version this content targets (N.N.N).
+# The engine hard-stops when content is outside its supported range; missing →
+# treated as 0.0.0. After running repo-root migration/ scripts, bump to match
+# the engine. See references/doc-migration.md for the upgrade flow.
+engine_version: "0.7.0"
+
 # 3b. Vite dev server
 server:
   allowedHosts: true                       # true | array of host patterns

@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Migrate the legacy `done:` subtask frontmatter field to canonical `state:`.
 
+Authored: 2026-06-22. Brings content to the engine version in this filename.
+
 The documentation-template issue tracker once carried a boolean `done:` field on
 subtask markdown frontmatter alongside the 4-state `state:` field
 (`open | review | closed | cancelled`). `state:` is now the sole source of truth:

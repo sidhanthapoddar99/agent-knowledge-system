@@ -1,6 +1,6 @@
 ---
 title: "Document first-class diagram pages in the user-guide"
-status: review
+status: done
 ---
 
 User-guide updates so authors know diagrams can be pages *or* embeds and which

@@ -1,6 +1,6 @@
 ---
 title: "First-class excalidraw pages (read-only viewer)"
-status: review
+status: done
 ---
 
 `.excalidraw` files as docs pages, rendered read-only. Depends on the client

@@ -1,6 +1,6 @@
 ---
 title: "First-class mermaid pages (+ shared loader foundation)"
-status: review
+status: done
 ---
 
 `.mmd` / `.mermaid` files with the `XX_` prefix render as first-class docs

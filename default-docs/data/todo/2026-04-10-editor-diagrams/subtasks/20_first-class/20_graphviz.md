@@ -1,6 +1,6 @@
 ---
 title: "First-class graphviz pages"
-status: review
+status: done
 ---
 
 Extend the first-class foundation built in

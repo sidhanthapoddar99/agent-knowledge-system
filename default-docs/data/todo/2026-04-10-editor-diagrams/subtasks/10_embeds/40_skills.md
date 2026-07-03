@@ -1,6 +1,6 @@
 ---
 title: "Skills updates for diagram embeds"
-status: review
+status: done
 ---
 
 Once the three embed subtasks in this group settle the syntax, the plugin

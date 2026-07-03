@@ -1,6 +1,6 @@
 ---
 title: "Research: tools/MCPs for creating & viewing diagrams without raw reads"
-status: review
+status: done
 ---
 
 Research the ecosystem before building anything under

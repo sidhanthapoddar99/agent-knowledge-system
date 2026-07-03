@@ -151,6 +151,14 @@ Per-file rules (enforced in the loader):
   content cache's dependency files, so editing either invalidates the
   section in dev exactly like editing a markdown file.
 
+The issue tracker has its own variant: `src/loaders/issues.ts` accepts
+diagram files in `notes/`, `brainstorm/`, `agent-memory/`, and `agent-log/`
+via the shared `diagramContainerHtml()` helper — the file becomes a
+first-class supporting doc with its own URL, no `XX_` prefix requirement
+(prefixes are optional by convention there). Subtasks and comments stay
+markdown-only: a subtask is a status-bearing checklist item and a comment
+is a dated log entry — diagrams embed into their bodies from `assets/`.
+
 Consumer-facing view of the same feature: user-guide
 `15_writing-content/06_diagram-pages.md`.
 

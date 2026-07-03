@@ -4,6 +4,16 @@ title: "Verified pipeline facts (code audit 2026-07-03)"
 
 # Diagram pipeline — verified facts
 
+- **First-class diagram docs in the tracker (shipped 2026-07-04):**
+  `issues.ts` accepts `['.md', ...DIAGRAM_EXTENSIONS]` in
+  notes/brainstorm/agent-memory (`readFreeformDocs`) AND agent-log
+  (`readAgentLogs`, meta fields null for diagram entries); body built by
+  the shared `diagramContainerHtml()` exported from `diagram-pages.ts`;
+  cache signature stats diagram files via `isTrackedDocFile()`. No prefix
+  requirement. **Deliberately excluded: subtasks (status-bearing) and
+  comments (dated log entries)** — embed from `assets/` there. Demo:
+  this issue's `notes/04_first-class-demo.excalidraw`.
+
 - **Excalidraw rendering (shipped 2026-07-03):** `exportToSvg` from
   `@excalidraw/excalidraw@0.18.1` (the `@excalidraw/utils` npm package is a
   stale test release — never use it). Lazy chunk ≈624 KB gz, loads only on

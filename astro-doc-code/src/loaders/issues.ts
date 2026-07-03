@@ -38,6 +38,7 @@ import { createIssuesParser } from '../parsers/content-types/issues';
 import { getIssueDate } from './issue-dates';
 import { parseOrderPrefixLoose } from '../parsers/core/order-prefix';
 import { readSettings, statSettingsMtime, resolveSettingsPath } from './settings-file';
+import { diagramContainerHtml, DIAGRAM_EXTENSIONS } from './diagram-pages';
 import {
   type IssueStatus,
   type CategoryId,
@@ -309,6 +310,13 @@ function statMtime(p: string): number {
   }
 }
 
+/** Files whose mtime feeds the issues cache signature — markdown plus
+ *  first-class diagram files (notes/brainstorm accept both). */
+function isTrackedDocFile(name: string): boolean {
+  const lower = name.toLowerCase();
+  return lower.endsWith('.md') || DIAGRAM_EXTENSIONS.some((ext) => lower.endsWith(ext));
+}
+
 function computeSignature(dataPath: string): number {
   let sig = statSettingsMtime(dataPath);
   sig += statMtime(dataPath); // folder listing changes
@@ -338,7 +346,7 @@ function computeSignature(dataPath: string): number {
         const items = fs.readdirSync(subDir, { withFileTypes: true });
         for (const item of items) {
           const abs = path.join(subDir, item.name);
-          if (item.isFile() && item.name.endsWith('.md')) {
+          if (item.isFile() && isTrackedDocFile(item.name)) {
             sig += statMtime(abs);
           } else if (item.isDirectory() && allowsNesting) {
             sig += statMtime(abs);
@@ -347,14 +355,14 @@ function computeSignature(dataPath: string): number {
             try {
               for (const inner of fs.readdirSync(abs, { withFileTypes: true })) {
                 const innerAbs = path.join(abs, inner.name);
-                if (inner.isFile() && inner.name.endsWith('.md')) {
+                if (inner.isFile() && isTrackedDocFile(inner.name)) {
                   sig += statMtime(innerAbs);
                 } else if (inner.isDirectory()) {
                   sig += statMtime(innerAbs);
                   sig += statSettingsMtime(innerAbs);
                   try {
                     for (const f of fs.readdirSync(innerAbs)) {
-                      if (f.endsWith('.md')) sig += statMtime(path.join(innerAbs, f));
+                      if (isTrackedDocFile(f)) sig += statMtime(path.join(innerAbs, f));
                     }
                   } catch { /* empty leaf */ }
                 }
@@ -654,6 +662,7 @@ async function walkTwoLevels<T>(
   issueId: string,
   subName: string,
   onFile: (abs: string, groupPath: string[], fallbackSeq: number) => Promise<T>,
+  extensions: string[] = ['.md'],
 ): Promise<T[]> {
   if (!fs.existsSync(rootDir)) return [];
   const out: T[] = [];
@@ -664,7 +673,7 @@ async function walkTwoLevels<T>(
     catch { return; }
 
     const files = entries
-      .filter((e) => e.isFile() && e.name.endsWith('.md'))
+      .filter((e) => e.isFile() && extensions.some((ext) => e.name.toLowerCase().endsWith(ext)))
       .map((e) => e.name)
       .sort();
     let i = 0;
@@ -698,6 +707,21 @@ async function readFreeformDocs(
   subName: string,
 ): Promise<IssueNote[]> {
   return walkTwoLevels(dir, issueId, subName, async (abs, groupPath) => {
+    // Diagram files (.mmd/.dot/.excalidraw/…) are first-class docs too: the
+    // body is the same `.diagram` container embeds emit, rendered
+    // client-side — mirrors first-class diagram pages in docs sections.
+    const diagram = diagramContainerHtml(abs);
+    if (diagram !== null) {
+      return {
+        name: path.basename(abs, path.extname(abs)),
+        filePath: abs,
+        relativePath: path.relative(dataPath, abs),
+        groupPath,
+        color: null,
+        html: diagram,
+      };
+    }
+
     let fm: { color?: string } = {};
     try { fm = matter(fs.readFileSync(abs, 'utf-8')).data as typeof fm; } catch {}
     return {
@@ -708,7 +732,7 @@ async function readFreeformDocs(
       color: typeof fm.color === 'string' && fm.color.length > 0 ? fm.color : null,
       html: await renderMarkdown(abs, dataPath),
     };
-  });
+  }, ['.md', ...DIAGRAM_EXTENSIONS]);
 }
 
 async function readAgentLogs(
@@ -717,6 +741,26 @@ async function readAgentLogs(
   issueId: string,
 ): Promise<IssueAgentLog[]> {
   return walkTwoLevels(logsDir, issueId, 'agent-log', async (abs, groupPath, fallbackSeq) => {
+    // Diagram files are first-class log entries too (same rule as notes/
+    // brainstorm); they carry no frontmatter, so meta fields stay null.
+    const diagram = diagramContainerHtml(abs);
+    if (diagram !== null) {
+      const base = path.basename(abs, path.extname(abs));
+      return {
+        name: base,
+        sequence: parseOrderPrefixLoose(base).position ?? fallbackSeq,
+        iteration: null,
+        agent: null,
+        status: null,
+        date: null,
+        groupPath,
+        filePath: abs,
+        relativePath: path.relative(dataPath, abs),
+        color: null,
+        html: diagram,
+      };
+    }
+
     const base = path.basename(abs).replace(/\.md$/, '');
     const sequence = parseOrderPrefixLoose(base).position ?? fallbackSeq;
     let fm: { iteration?: number; agent?: string; status?: string; date?: unknown; color?: string } = {};
@@ -734,7 +778,7 @@ async function readAgentLogs(
       color: typeof fm.color === 'string' && fm.color.length > 0 ? fm.color : null,
       html: await renderMarkdown(abs, dataPath),
     };
-  });
+  }, ['.md', ...DIAGRAM_EXTENSIONS]);
 }
 
 /** Convert a folder slug ("02_impl-and-polish") into a human label ("impl and polish"). */

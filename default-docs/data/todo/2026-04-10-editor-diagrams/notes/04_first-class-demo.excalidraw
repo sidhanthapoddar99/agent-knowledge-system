@@ -1,0 +1,91 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "documentation-template",
+  "elements": [
+    {
+      "id": "note-file", "type": "rectangle", "x": 40, "y": 120, "width": 240, "height": 80,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "#d0ebff", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": { "type": 3 }, "seed": 101, "versionNonce": 101,
+      "isDeleted": false, "boundElements": [{ "id": "note-file-label", "type": "text" }],
+      "updated": 1, "link": null, "locked": false, "version": 1
+    },
+    {
+      "id": "note-file-label", "type": "text", "x": 60, "y": 148, "width": 200, "height": 24,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 102, "versionNonce": 102,
+      "isDeleted": false, "boundElements": [], "updated": 1, "link": null, "locked": false,
+      "version": 1, "text": "notes/04_demo.excalidraw", "fontSize": 16, "fontFamily": 3,
+      "textAlign": "center", "verticalAlign": "middle", "containerId": "note-file",
+      "originalText": "notes/04_demo.excalidraw", "lineHeight": 1.25, "baseline": 18
+    },
+    {
+      "id": "loader", "type": "rectangle", "x": 380, "y": 120, "width": 240, "height": 80,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "#fff3bf", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": { "type": 3 }, "seed": 103, "versionNonce": 103,
+      "isDeleted": false, "boundElements": [{ "id": "loader-label", "type": "text" }],
+      "updated": 1, "link": null, "locked": false, "version": 1
+    },
+    {
+      "id": "loader-label", "type": "text", "x": 400, "y": 148, "width": 200, "height": 24,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 104, "versionNonce": 104,
+      "isDeleted": false, "boundElements": [], "updated": 1, "link": null, "locked": false,
+      "version": 1, "text": "issues loader", "fontSize": 16, "fontFamily": 3,
+      "textAlign": "center", "verticalAlign": "middle", "containerId": "loader",
+      "originalText": "issues loader", "lineHeight": 1.25, "baseline": 18
+    },
+    {
+      "id": "page", "type": "rectangle", "x": 720, "y": 120, "width": 240, "height": 80,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "#d3f9d8", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": { "type": 3 }, "seed": 105, "versionNonce": 105,
+      "isDeleted": false, "boundElements": [{ "id": "page-label", "type": "text" }],
+      "updated": 1, "link": null, "locked": false, "version": 1
+    },
+    {
+      "id": "page-label", "type": "text", "x": 740, "y": 148, "width": 200, "height": 24,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 106, "versionNonce": 106,
+      "isDeleted": false, "boundElements": [], "updated": 1, "link": null, "locked": false,
+      "version": 1, "text": "first-class note", "fontSize": 16, "fontFamily": 3,
+      "textAlign": "center", "verticalAlign": "middle", "containerId": "page",
+      "originalText": "first-class note", "lineHeight": 1.25, "baseline": 18
+    },
+    {
+      "id": "arrow-1", "type": "arrow", "x": 290, "y": 160, "width": 80, "height": 0,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": { "type": 2 }, "seed": 107, "versionNonce": 107,
+      "isDeleted": false, "boundElements": [], "updated": 1, "link": null, "locked": false,
+      "version": 1, "points": [[0, 0], [80, 0]], "lastCommittedPoint": null,
+      "startBinding": null, "endBinding": null, "startArrowhead": null, "endArrowhead": "arrow"
+    },
+    {
+      "id": "arrow-2", "type": "arrow", "x": 630, "y": 160, "width": 80, "height": 0,
+      "angle": 0, "strokeColor": "#1e1e1e", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": { "type": 2 }, "seed": 108, "versionNonce": 108,
+      "isDeleted": false, "boundElements": [], "updated": 1, "link": null, "locked": false,
+      "version": 1, "points": [[0, 0], [80, 0]], "lastCommittedPoint": null,
+      "startBinding": null, "endBinding": null, "startArrowhead": null, "endArrowhead": "arrow"
+    },
+    {
+      "id": "caption", "type": "text", "x": 40, "y": 40, "width": 920, "height": 30,
+      "angle": 0, "strokeColor": "#1971c2", "backgroundColor": "transparent", "fillStyle": "solid",
+      "strokeWidth": 2, "strokeStyle": "solid", "roughness": 1, "opacity": 100,
+      "groupIds": [], "frameId": null, "roundness": null, "seed": 109, "versionNonce": 109,
+      "isDeleted": false, "boundElements": [], "updated": 1, "link": null, "locked": false,
+      "version": 1, "text": "Demo: an .excalidraw file living directly in this issue's notes/ — no markdown wrapper", "fontSize": 20, "fontFamily": 3,
+      "textAlign": "left", "verticalAlign": "top", "containerId": null,
+      "originalText": "Demo: an .excalidraw file living directly in this issue's notes/ — no markdown wrapper", "lineHeight": 1.25, "baseline": 24
+    }
+  ],
+  "appState": { "gridSize": null, "viewBackgroundColor": "#ffffff" },
+  "files": {}
+}

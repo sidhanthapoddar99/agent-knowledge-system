@@ -1,6 +1,6 @@
 ---
 title: "Skills updates for first-class diagram pages"
-status: review
+status: done
 ---
 
 Teach the plugin skills the first-class path once the group's coding subtasks

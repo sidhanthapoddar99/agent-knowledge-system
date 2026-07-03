@@ -43,6 +43,33 @@ const DIAGRAM_KINDS: Record<string, 'mermaid' | 'graphviz' | 'excalidraw'> = {
 
 export const DIAGRAM_PAGE_GLOB = '**/*.{mmd,mermaid,dot,gv,excalidraw}';
 
+/** Lowercase diagram file extensions, dot included (`.mmd`, …). */
+export const DIAGRAM_EXTENSIONS = Object.keys(DIAGRAM_KINDS);
+
+/**
+ * Build the client-rendered `.diagram` container for a diagram file — the
+ * same container the embed postprocessor emits (mermaid/graphviz inline
+ * their escaped source; excalidraw carries a `data-src` URL with an mtime
+ * `?v=` cache-buster). Returns null when the extension isn't a diagram
+ * type. `title` defaults to the prefix-stripped, title-cased filename.
+ */
+export function diagramContainerHtml(file: string, title?: string): string | null {
+  const kind = DIAGRAM_KINDS[path.extname(file).toLowerCase()];
+  if (!kind) return null;
+
+  if (kind === 'excalidraw') {
+    const context = { fileDir: path.dirname(file) } as ProcessContext;
+    const url = resolveContentAssetUrl(`./${path.basename(file)}`, context);
+    const basename = path.basename(file, path.extname(file));
+    const caption = title ?? titleFromCleanName(parseOrderPrefix(basename).cleanName);
+    const version = Math.floor(fs.statSync(file).mtimeMs);
+    return `<div class="diagram diagram-excalidraw" data-src="${escapeHtml(url ? `${url}?v=${version}` : '')}" data-title="${escapeHtml(caption)}"></div>`;
+  }
+
+  const source = fs.readFileSync(file, 'utf-8');
+  return `<div class="diagram diagram-${kind}">${escapeHtml(source)}</div>`;
+}
+
 interface DiagramMeta {
   title?: string;
   description?: string;
@@ -137,18 +164,7 @@ export async function loadDiagramPages(
       : {};
     if (fs.existsSync(sidecarPath)) dependencyFiles.push(sidecarPath);
 
-    let html: string;
-    if (kind === 'excalidraw') {
-      const context = { fileDir: path.dirname(file) } as ProcessContext;
-      const url = resolveContentAssetUrl(`./${path.basename(file)}`, context);
-      const title = meta.title ?? titleFromCleanName(cleanName);
-      // mtime version param busts long-lived browser/CDN caches on change
-      const version = Math.floor(fs.statSync(file).mtimeMs);
-      html = `<div class="diagram diagram-excalidraw" data-src="${escapeHtml(url ? `${url}?v=${version}` : '')}" data-title="${escapeHtml(title)}"></div>`;
-    } else {
-      const source = fs.readFileSync(file, 'utf-8');
-      html = `<div class="diagram diagram-${kind}">${escapeHtml(source)}</div>`;
-    }
+    const html = diagramContainerHtml(file, meta.title ?? titleFromCleanName(cleanName))!;
 
     const slug = diagramSlug(relativePath);
     entries.push({

@@ -1,6 +1,6 @@
 ---
 title: "Document diagram embeds in the user-guide"
-status: review
+status: done
 ---
 
 User-facing docs for the embeds path. Depends on the syntax blessed by the

@@ -1,6 +1,6 @@
 ---
 title: "Excalidraw embeds — reference-based read-only renderer"
-status: review
+status: done
 ---
 
 The real coding lift of the embeds group: no excalidraw support exists at all

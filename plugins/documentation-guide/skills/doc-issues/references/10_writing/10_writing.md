@@ -100,6 +100,15 @@ embedded by reference — a `[[./…]]`/`[[../…]]` inside the fence (see "Cont
 embedding" below). `assets/` never appears in any sidebar — it's the home for
 every diagram an issue embeds or links.
 
+A diagram file can also **be a supporting doc itself**: drop a `.mmd` / `.dot` /
+`.excalidraw` file directly into `notes/`, `brainstorm/`, `agent-memory/`, or
+`agent-log/` (no markdown wrapper) and it renders as a first-class entry — own
+sidebar item, own URL, rendered client-side like any embed. Consistent with
+first-class diagram pages in docs sections. Use this when the diagram *is* the
+doc; keep embed-only diagrams in `assets/`. **Subtasks are the exception**:
+a subtask is a status-bearing checklist item, so it stays markdown — embed a
+diagram into a subtask body from `assets/` instead.
+
 **Excalidraw** — image syntax embeds a scene read-only (fetched by reference,
 rendered as SVG client-side); a plain link deliberately stays a link to the raw
 file. Never inline scene JSON — the `.excalidraw` file is the source of truth:

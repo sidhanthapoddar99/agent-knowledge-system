@@ -406,6 +406,15 @@ function readJson<T>(filePath: string): T | null {
   return readSettings<T>(filePath);
 }
 
+/** Normalize a frontmatter `date` value to a YYYY-MM-DD string. YAML parses an
+ *  unquoted `date: 2026-07-03` into a JS Date (UTC midnight), so format via
+ *  toISOString — local-time formatting would shift the day in UTC-negative zones. */
+function fmDateString(value: unknown): string | null {
+  if (typeof value === 'string' && value.length > 0) return value;
+  if (value instanceof Date && !isNaN(value.getTime())) return value.toISOString().slice(0, 10);
+  return null;
+}
+
 /** Hard-error message when a `component`/`labels` value lacks a description.
  *  Descriptions are human-authored meaning surfaced in the tracker Guide, so a
  *  missing one is a hole we refuse to render silently. */
@@ -505,9 +514,9 @@ function readComments(commentsDir: string): IssueComment[] {
     }
     if (!author || !date) {
       try {
-        const fm = matter(fs.readFileSync(abs, 'utf-8')).data as { author?: string; date?: string };
+        const fm = matter(fs.readFileSync(abs, 'utf-8')).data as { author?: string; date?: unknown };
         if (!author && typeof fm.author === 'string') author = fm.author;
-        if (!date && typeof fm.date === 'string') date = fm.date;
+        if (!date) date = fmDateString(fm.date);
       } catch {
         /* malformed frontmatter — keep nulls */
       }
@@ -710,7 +719,7 @@ async function readAgentLogs(
   return walkTwoLevels(logsDir, issueId, 'agent-log', async (abs, groupPath, fallbackSeq) => {
     const base = path.basename(abs).replace(/\.md$/, '');
     const sequence = parseOrderPrefixLoose(base).position ?? fallbackSeq;
-    let fm: { iteration?: number; agent?: string; status?: string; date?: string; color?: string } = {};
+    let fm: { iteration?: number; agent?: string; status?: string; date?: unknown; color?: string } = {};
     try { fm = matter(fs.readFileSync(abs, 'utf-8')).data as typeof fm; } catch {}
     return {
       name: base,
@@ -718,7 +727,7 @@ async function readAgentLogs(
       iteration: typeof fm.iteration === 'number' ? fm.iteration : null,
       agent: fm.agent || null,
       status: fm.status || null,
-      date: fm.date || null,
+      date: fmDateString(fm.date),
       groupPath,
       filePath: abs,
       relativePath: path.relative(dataPath, abs),

@@ -37,8 +37,8 @@ The issue initially scoped only the snippet fix; the session's deliberation
 **Related:**
 
 - [2026-04-20-custom-tags](../2026-04-20-custom-tags/issue.md) — its wire-up/showcase
-  premise is **reversed** by this decision (flagged there in comment 002); code
-  retirement is tracked here in `subtasks/30`, its final close-out is a human call.
+  premise was **reversed** by this decision and the issue dropped (comment 002
+  there); code retirement is tracked here in `subtasks/10`.
 - [2026-06-22-updating-skills-and-documentation](../2026-06-22-updating-skills-and-documentation/issue.md)
   (closed) — the previous general skill-maintenance batch; this staleness postdates it.
 
@@ -51,13 +51,13 @@ The issue initially scoped only the snippet fix; the session's deliberation
 - The user-guide carries a native-markdown writing reference and no custom-tags
   mentions; dev-docs pipeline descriptions no longer list tag transformation.
 - `src/custom-tags/` is deleted and the build passes.
-- The GFM-alerts open point (brainstorm) is settled; if "yes", renderer support
-  ships before the docs describe it.
+- GFM alerts (`> [!NOTE]` et al. — settled "yes" 2026-07-03) render in all three
+  content types with theme CSS, shipped before the docs describe them.
 
 ## Scope decisions
 
 - **In:** skill references (repo + cache), user-guide/dev-docs sweep, transformer
-  code retirement, the GFM-alerts call.
+  code retirement, GFM-alerts renderer + theme support.
 - **Out:** consumer-project cleanup of the 45 `:::callout` files; any new embed
   types (Excalidraw etc. extend `[[path]]` later — see
   [2026-04-10-editor-diagrams](../2026-04-10-editor-diagrams/issue.md)'s embeds

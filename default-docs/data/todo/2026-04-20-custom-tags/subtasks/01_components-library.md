@@ -1,7 +1,13 @@
 ---
 title: "UI components library"
-status: open
+status: dropped
 ---
+
+> **Dropped 2026-07-03** (sidhantha) — superseded by the native-markdown-only decision
+> ([2026-07-03-skill-custom-tags-staleness/brainstorm/01](../../2026-07-03-skill-custom-tags-staleness/brainstorm/01_discuss_native-markdown-only.md)):
+> the custom-tag components this library would showcase are being retired, not wired.
+> The badges/buttons fragment is deliberately let go entirely — chrome-like elements
+> don't belong in authored markdown on an AI-first platform.
 
 Absorbed from `2025-06-25-components/subtasks/03_components-library.md` on 2026-04-20. Scope: the built-in custom tags (callout / tabs / collapsible) and related UI primitives (badges, buttons), plus the showcase / live-examples / theme-testing work.
 

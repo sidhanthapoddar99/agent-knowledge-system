@@ -1,7 +1,7 @@
 {
   "title": "Custom tags — wire-up, showcase, and author-defined tags",
   "description": "Custom-tag transformers (callout / tabs / collapsible) exist in code but are not wired into any parser pipeline, so they render as raw HTML today. This issue tracks wiring, the components showcase, theme-testing, and design for author-defined tags.",
-  "status": "open",
+  "status": "dropped",
   "priority": "medium",
   "component": [
     "components"

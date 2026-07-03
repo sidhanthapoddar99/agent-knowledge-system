@@ -2,7 +2,7 @@
 title: "Native-markdown-only — retire custom tags entirely"
 ---
 
-> **Resolved →** subtasks/10–30 (decision settled in-session 2026-07-03; subtasks execute it)
+> **Resolved →** subtasks/10–40 (decision settled in-session 2026-07-03; subtasks execute it in prefix order)
 
 # Native-markdown-only — retire custom tags entirely
 
@@ -50,7 +50,10 @@ absent feature — the concept simply isn't part of the platform's vocabulary.
 
 ## Open point (small)
 
+> **Settled 2026-07-03 (sidhantha): yes** — callouts use GFM alerts (`> [!NOTE]`
+> etc.). Renderer + theme support ships as `subtasks/20_gfm-alerts-callouts.md`,
+> before the docs (30) and skills (40) describe the syntax.
+
 Whether "native markdown" includes **GFM alerts** (`> [!NOTE]`) for callouts — they
 are ecosystem-standard, degrade gracefully as plain blockquotes, and `marked` has an
-off-the-shelf plugin — or whether plain blockquotes are enough. Decide when writing
-the native-markdown reference (subtask 20); nothing else depends on it.
+off-the-shelf plugin — or whether plain blockquotes are enough.

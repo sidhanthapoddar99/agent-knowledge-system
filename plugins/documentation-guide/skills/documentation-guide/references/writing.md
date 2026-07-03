@@ -74,8 +74,6 @@ Keep diagram source in its own `.mmd` / `.dot` file and embed it inside the fenc
 
 Never inline scene JSON — the `.excalidraw` file stays the single source of truth. A missing file fails the build (`asset-missing`); a malformed scene shows an error box in place. Dark mode inverts automatically.
 
-**Legacy content:** pages written before 2026-07 may carry retired tag syntax (`:::callout{…}` directives or `<callout>`/`<tabs>`/`<collapsible>` tags) — the framework never parses these; they render as raw text. When you touch such a page, run `docs-guide check legacy-tags <root>` and migrate the page as part of the edit (callout→GFM alert, collapsible→`<details>`, tabs→sequential `###` sections).
-
 ## Asset embedding
 
 Two ways to reference images and downloadable files:

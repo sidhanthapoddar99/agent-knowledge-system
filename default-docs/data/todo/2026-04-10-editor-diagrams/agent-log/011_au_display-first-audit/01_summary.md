@@ -39,9 +39,19 @@ summary/edit` (MCPs are canvas-bound, not file-based; format is trivially
 editable JSON), adopt headless exporters + `mmdc`.
 `subtasks/40_tooling/20_diagram-tooling-research.md` → review.
 
+**Fix pass (2026-07-04, review feedback):** triage item 2 closed — the six
+dev-docs gaps are written (post-processing sections for all four missing
+postprocessors + an "adding a new embed type" recipe; data-loading diagram
+pages section; diagrams-script excalidraw coverage), the skill now shows
+the meta.json structure, all history narration is purged from the skills,
+and CLAUDE.md gained the audience-split + lean-skills rules. Build green.
+Still open: code findings (item 1) and user-guide audience moves (item 3).
+
 ## Milestones
 
 - `101_docs-audit.md` — Haiku fleet: user-guide clean, dev-docs gap list,
   audience-split flags.
 - `102_skills-code-audit.md` — skills clean; code findings ranked.
 - `103_tooling-research.md` — build-vs-adopt verdict, graduated to notes.
+- `104_gap-fixes.md` — dev-docs internals written, skills de-historied,
+  CLAUDE.md rules added.

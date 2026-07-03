@@ -33,7 +33,7 @@ interface LoadedContent {
   data: ContentData;    // Frontmatter fields
   filePath: string;     // Absolute path to source file
   relativePath: string; // Path relative to the content directory
-  fileType: FileType;   // 'md' | 'mdx' | 'yaml' | 'json'
+  fileType: FileType;   // 'md' | 'mdx' | 'yaml' | 'json' | 'diagram'
 }
 
 interface Heading {
@@ -105,6 +105,54 @@ interface LoadOptions {
 | `date` | `data.date` (ISO string) | `2024-01-15` → sorted by time |
 | `title` | `data.title` (localeCompare) | Alphabetical by title |
 | `alphabetical` | Same as `title` | Alias for `title` |
+
+## Diagram Pages — Non-Markdown Content in the Same Flow
+
+For the `docs` content type only, `loadContent()` runs a **second scan**
+after the markdown glob: `loadDiagramPages()` in `src/loaders/diagram-pages.ts`
+picks up prefixed diagram files and merges them into the same result array.
+
+```
+loadContent(dataPath, 'docs')
+│
+├─ glob('**/*.{md,mdx}')                    → markdown LoadedContent
+├─ loadDiagramPages(dataPath, content)
+│    ├─ glob('**/*.{mmd,mermaid,dot,gv,excalidraw}', ignore: '**/assets/**')
+│    ├─ DIAGRAM_KINDS: .mmd/.mermaid → mermaid · .dot/.gv → graphviz
+│    │                 .excalidraw → excalidraw
+│    └─ each file → LoadedContent { fileType: 'diagram', … }
+└─ merged + sorted together → one array, one sidebar
+```
+
+The design trick: a diagram page's `content` is the **same
+`<div class="diagram diagram-<kind>">` container the embed postprocessor
+emits** — so the client script, lightbox, and dark mode that already serve
+embeds render the page with zero new machinery. Mermaid/graphviz pages
+inline their (escaped) source into the div; excalidraw pages carry a
+`data-src` URL (+ `?v=<mtimeMs>`) and fetch the scene client-side, keeping
+the file as the single source of truth.
+
+Per-file rules (enforced in the loader):
+
+- **`XX_` prefix required** — a diagram file without one is skipped with a
+  *warning* (a stray working file), unlike markdown's hard error.
+- **`assets/` never scanned** — the glob's explicit ignore; embed-only
+  diagrams are invisible to routing by construction.
+- **Title** — filename (strip prefix, title-case), overridable by an
+  optional sibling `XX_name.meta.json` sidecar (`title`, `description`,
+  `sidebar_label`, `sidebar_position`, `draft`; `.jsonc` accepted) read via
+  the same `readSettings` used for `settings.json`.
+- **Slug collisions** — a diagram slug that collides with a markdown page
+  (or another diagram) mutates the surviving entry into an explicit error
+  box and reports a build error; extra diagram entries are dropped.
+- **Opt-out** — `"allow_diagram_pages": false` in the *section-root*
+  `settings.json` disables the scan for that section.
+- **Cache** — diagram sources **and** their sidecars are appended to the
+  content cache's dependency files, so editing either invalidates the
+  section in dev exactly like editing a markdown file.
+
+Consumer-facing view of the same feature: user-guide
+`15_writing-content/06_diagram-pages.md`.
 
 ## loadFile — Single File Load
 

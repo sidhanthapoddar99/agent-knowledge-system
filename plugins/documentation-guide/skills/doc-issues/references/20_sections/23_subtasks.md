@@ -15,8 +15,7 @@ Body — describe the work in enough detail that someone (or an agent) can pick 
 
 `status` uses the **same seven-status vocabulary as issue `status`** — one shared field
 name, one shared set (see [03_overall-issue-tracker-vocabulary.md](../00_anatomy/03_overall-issue-tracker-vocabulary.md)) — tracked independently per
-subtask. (Subtasks used to carry a separate `state:` field; it's been unified to `status:`.
-The legacy `state:` is auto-mapped with a migrate-me warning until renamed.)
+subtask.
 
 A subtask may live at the root of `subtasks/`, or inside one or two levels of grouping folders (`subtasks/020_implementation/010_backend.md`, `subtasks/020_implementation/020_polish/010_styles.md`). **The folder is a label only** — no folder body file. Folders use the same numbering as leaves and sort interleaved with them. In the sidebar a group folder shows **done/total** (the Closed category — `done`/`dropped` — counts as done); the section header carries the same count plus an amber review-dot when any subtask sits in the Review category (`review` or `input-needed`).
 

@@ -116,9 +116,21 @@ A prefixed `.mmd` / `.mermaid` / `.dot` / `.gv` / `.excalidraw` file is a
 (`20_architecture.mmd` → `/…/architecture`). Rules:
 
 - **Title**: derives from the filename (strip prefix, title-case). Only when
-  that isn't enough, add a sidecar `XX_name.meta.json` next to the file
-  (`title` / `description` / `sidebar_label` / `sidebar_position` / `draft`;
-  `.jsonc` OK). Prefer good filenames over sidecars.
+  that isn't enough, add a sidecar `XX_name.meta.json` next to the file —
+  the frontmatter equivalent for non-markdown pages. Prefer good filenames
+  over sidecars. All fields optional, `.jsonc` (comments, trailing commas)
+  accepted:
+
+  ```json
+  // 20_architecture.meta.json — sibling of 20_architecture.mmd
+  {
+    "title": "System Architecture",
+    "description": "High-level component diagram",
+    "sidebar_label": "Architecture",
+    "sidebar_position": 3,
+    "draft": false
+  }
+  ```
 - **Slug collisions** (`15_x.md` + `16_x.mmd` → same `/x`) render an explicit
   error page + build error — rename one.
 - **No prefix → skipped with a warning** (treated as a stray working file,

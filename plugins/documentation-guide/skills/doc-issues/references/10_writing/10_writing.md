@@ -81,12 +81,6 @@ Hidden content — markdown inside renders normally.
 </details>
 ```
 
-**Legacy content:** issue files written before 2026-07 may carry retired tag syntax
-(`:::callout{…}` or `<callout>`/`<tabs>`/`<collapsible>`) — never parsed, renders as
-raw text. When touching such a file, run `docs-guide check legacy-tags <tracker>`
-and migrate it as part of the edit (callout→GFM alert, collapsible→`<details>`,
-tabs→sequential `###` sections).
-
 ## Diagrams
 
 Mermaid and Graphviz fenced blocks render across the tracker — use one whenever it
@@ -103,8 +97,8 @@ ASCII trees in plain fences are equally at home (folder shapes, layouts).
 
 Diagram source that shouldn't live inline belongs in the issue's `assets/` and is
 embedded by reference — a `[[./…]]`/`[[../…]]` inside the fence (see "Content
-embedding" below). `assets/` never appears in any sidebar, so this is the home for
-every diagram that doesn't need to be first-class.
+embedding" below). `assets/` never appears in any sidebar — it's the home for
+every diagram an issue embeds or links.
 
 **Excalidraw** — image syntax embeds a scene read-only (fetched by reference,
 rendered as SVG client-side); a plain link deliberately stays a link to the raw

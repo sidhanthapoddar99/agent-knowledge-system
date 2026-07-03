@@ -1,7 +1,7 @@
 {
   "title": "Documentation ↔ engine versioning structure + root-owned migrations",
   "description": "Give content and engine an explicit version contract: site.yaml declares the engine version the content targets (N.N.N, missing → 0.0.0), the engine carries its current version + a backward-compatibility floor, and a startup gate hard-stops with migration instructions when content is too old (or too new). Migration scripts move from the plugin to the repo root migration/ folder and become version-named instead of date-named; the skill keeps the operating manual but points at the root. Design: notes/01.",
-  "status": "in-progress",
+  "status": "done",
   "priority": "high",
   "component": [
     "architecture"

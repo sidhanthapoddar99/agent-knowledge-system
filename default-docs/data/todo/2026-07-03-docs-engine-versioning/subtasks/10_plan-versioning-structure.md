@@ -1,6 +1,6 @@
 ---
 title: "Understand + pin the documentation/engine versioning structure"
-status: review
+status: done
 ---
 
 Map how migration works today (skill-owned scripts inside the plugin, no version

@@ -20,6 +20,11 @@ authoring guide.
 - **Self-documenting.** The module docstring is the runbook: what the change
   is, why it happened, exactly how to run the script, and the authoring date.
   Nothing else enumerates migrations — the docstring is the source of truth.
+  It is also the home for **manual migration steps**: if any part of the
+  change cannot be automated safely (edge cases needing human judgement,
+  follow-up actions beyond the rewrite), the docstring details exactly what to
+  do by hand — a clean `verify` proves the automated part only, so a manual
+  step that isn't in the docstring effectively doesn't exist.
 - **Detect + migrate in one file:**
   - *Detect* (default or explicit mode): read-only; report whether migration is
     needed and where — file + line for every legacy instance.

@@ -37,4 +37,10 @@ The chain, in full — no skipping, no sampling:
 
 ## Migration structure
 
-Every script is self-documenting — **read its module docstring carefully before running it**: the docstring states exactly what gets migrated, why the format changed, how to run each mode, and any extra steps or edge cases beyond the automated rewrite. The standardized script structure itself (subcommands, function families, contract, shipping checklist) is detailed in dev-docs **Versioning → Authoring Migrations** (`default-docs/data/dev-docs/30_versioning/05_authoring-migrations.md`).
+Every script follows one standardized shape, so once you know it you can run any of them:
+
+- **Subcommands**: `detect` (summary counts — does this need migrating, how big?) · `locate` (every instance, file + line) · `migrate [--dry-run]` (apply, or preview without writing) · `verify` (assert clean after migrating; exits non-zero if legacy remains — newer scripts may exit-code `detect` instead of shipping a separate `verify`).
+- **Two function families** inside: read-only test/detect functions and writing fix functions. `verify` reuses the same detection core the migration is judged against, so migrate → verify exit 0 proves the tree is clean.
+- **A detailed module docstring** on top. **Read it carefully before running the script**: it states exactly what gets migrated, why the format changed, how to run each mode — and, crucially, **any manual migration steps** the script cannot automate (edge cases needing human judgement, follow-up actions beyond the rewrite). A clean `verify` proves the automated part only; the docstring is where the rest of the procedure lives.
+
+Writing a *new* migration happens in framework-maintenance sessions, not through this skill — the authoring contract and shipping checklist are in dev-docs **Versioning → Authoring Migrations** (`default-docs/data/dev-docs/30_versioning/05_authoring-migrations.md`).

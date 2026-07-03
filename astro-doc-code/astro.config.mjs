@@ -124,7 +124,6 @@ export default defineConfig({
         '@layouts': path.resolve(__dirname, './src/layouts'),
         '@loaders': path.resolve(__dirname, './src/loaders'),
         '@parsers': path.resolve(__dirname, './src/parsers'),
-        '@custom-tags': path.resolve(__dirname, './src/custom-tags'),
         '@hooks': path.resolve(__dirname, './src/hooks'),
         '@modules': path.resolve(__dirname, './src/modules'),
         '@styles': path.resolve(__dirname, './src/styles'),

@@ -96,11 +96,39 @@ if (Get-Command bun -ErrorAction SilentlyContinue) {
 }
 Write-Host "[start] runner: $Runner"
 
-# 2. Install if node_modules is missing
+# 2. Install if node_modules is missing OR the dependency manifests changed
+#    since the last install. Stamp a hash of package.json + the runner's
+#    lockfile into node_modules after each install; a mismatch (e.g. after
+#    pulling a commit that adds a dependency) triggers a re-install. Mirrors
+#    ./start (bash). Without this, a stale node_modules silently misses
+#    newly-added deps until a build fails to resolve the import.
+$Stamp = 'node_modules/.start-deps-stamp'
+switch ($Runner) {
+  'bun' { $Lockfile = 'bun.lock' }
+  'npm' { $Lockfile = 'package-lock.json' }
+  default { $Lockfile = $null }
+}
+
+function Get-DepsHash {
+  # Hash package.json + the runner's lockfile (whichever exist) into one digest.
+  $files = @('package.json', $Lockfile) | Where-Object { $_ -and (Test-Path $_) }
+  $parts = foreach ($f in $files) { (Get-FileHash -Path $f -Algorithm SHA256).Hash }
+  $bytes = [System.Text.Encoding]::UTF8.GetBytes(($parts -join ''))
+  $sha   = [System.Security.Cryptography.SHA256]::Create()
+  ($sha.ComputeHash($bytes) | ForEach-Object { $_.ToString('x2') }) -join ''
+}
+
+$needInstall = $null
 if (-not (Test-Path 'node_modules')) {
-  Write-Host "[start] node_modules missing - running '$Runner install'..."
+  $needInstall = 'node_modules missing'
+} elseif (-not (Test-Path $Stamp) -or ((Get-Content -Raw $Stamp).Trim() -ne (Get-DepsHash))) {
+  $needInstall = 'dependency manifest changed since last install'
+}
+if ($needInstall) {
+  Write-Host "[start] $needInstall - running '$Runner install'..."
   & $Runner install
   if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+  Set-Content -Path $Stamp -Value (Get-DepsHash) -NoNewline
 }
 
 # Explicit script — skip preflight, just forward

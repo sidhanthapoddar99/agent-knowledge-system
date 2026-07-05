@@ -10,7 +10,8 @@
 # Preflight steps when invoked with no args:
 #   0. Update check — fetch upstream; if behind, prompt Y/n to fast-forward pull.
 #   1. Pick a runner — prefer bun, fall back to npm.
-#   2. Install dependencies if node_modules is missing.
+#   2. Install dependencies if node_modules is missing OR the lockfile /
+#      package.json changed since the last install (stamped hash mismatch).
 #   3. Run the production build to catch errors before launching dev.
 #   4. Start the dev server.
 #
@@ -106,10 +107,43 @@ else
 fi
 echo "[start] runner: $RUNNER"
 
-# 2. Install if node_modules is missing
+# 2. Install if node_modules is missing OR the dependency manifests changed
+#    since the last install. We stamp a hash of package.json + the runner's
+#    lockfile into node_modules after each install; a mismatch (e.g. after
+#    pulling a commit that adds a dependency) triggers a re-install. Without
+#    this, a stale node_modules silently misses newly-added deps until a build
+#    fails to resolve the import.
+STAMP="node_modules/.start-deps-stamp"
+case "$RUNNER" in
+  bun) LOCKFILE="bun.lock" ;;
+  npm) LOCKFILE="package-lock.json" ;;
+esac
+
+deps_hash() {
+  # Hash package.json + the runner's lockfile (whichever exist). Portable
+  # across sha256sum (Linux) / shasum (macOS) / cksum (last resort).
+  local files=()
+  [ -f package.json ] && files+=(package.json)
+  [ -f "$LOCKFILE" ] && files+=("$LOCKFILE")
+  if command -v sha256sum >/dev/null 2>&1; then
+    cat "${files[@]}" | sha256sum | cut -d' ' -f1
+  elif command -v shasum >/dev/null 2>&1; then
+    cat "${files[@]}" | shasum -a 256 | cut -d' ' -f1
+  else
+    cat "${files[@]}" | cksum | cut -d' ' -f1
+  fi
+}
+
+NEED_INSTALL=""
 if [ ! -d node_modules ]; then
-  echo "[start] node_modules missing — running '$INSTALL'..."
+  NEED_INSTALL="node_modules missing"
+elif [ ! -f "$STAMP" ] || [ "$(cat "$STAMP")" != "$(deps_hash)" ]; then
+  NEED_INSTALL="dependency manifest changed since last install"
+fi
+if [ -n "$NEED_INSTALL" ]; then
+  echo "[start] $NEED_INSTALL — running '$INSTALL'..."
   $INSTALL
+  deps_hash > "$STAMP"
 fi
 
 # Explicit script — skip preflight, just forward

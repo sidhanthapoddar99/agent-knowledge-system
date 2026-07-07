@@ -1,6 +1,6 @@
 ---
 title: "Reserved /artifacts/<path> route — full-page artifact view"
-status: review
+status: done
 ---
 
 ## Goal

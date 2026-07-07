@@ -72,3 +72,21 @@ proposed: a "Variation-set / options-explorer artifacts" section in
 Optional deepening (user action): export 1–2 reference artifacts into this
 issue's `assets/` for a direct fidelity comparison against what the skill
 describes.
+
+## Linked artifacts
+
+Artifacts produced by agents in this repo so far (all served at
+`/artifacts/<path>`; the reference set above has no linkable URLs from here —
+it lives in sidhantha's claude.ai account):
+
+- [../notes/03_planning-overview.html](../notes/03_planning-overview.html) —
+  this issue's planning overview (self mode; the tracker-rendering fixture).
+- `default-docs/data/user-guide/15_writing-content/10_design-system-demo.html`
+  — the docs showcase demo (self mode).
+- `default-docs/data/user-guide/15_writing-content/11_site-theme-demo.html`
+  — the site-theme-mode demo (site mode).
+- [../brainstorm/10_variation-comparison/](../brainstorm/10_variation-comparison/)
+  — **the live gap demonstration**: `mobile-nav-options.html`, built by a
+  cold Sonnet agent following ONLY the current skill (the audit's failing
+  executor profile, run for real), plus the delta write-up comparing it
+  against the reference pattern's signature qualities.

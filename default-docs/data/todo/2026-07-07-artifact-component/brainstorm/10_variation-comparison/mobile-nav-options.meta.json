@@ -1,0 +1,60 @@
+{
+  "title": "Mobile Navigation — Five Options",
+  "description": "Interactive comparison of five mobile navigation patterns (bottom tab bar, hamburger drawer, expandable FAB menu, tab bar + more overflow, edge-swipe drawer) for the team to review and pick from.",
+  "sidebar_label": "Mobile Nav Options",
+  "embed_height": "full",
+  "artifact": {
+    "purpose": "Let the team compare five mobile navigation patterns interactively and cast a pick with rationale before the next release's nav is locked in.",
+    "type": "showcase",
+    "theme": "self",
+    "palette": {
+      "light": {
+        "bg": "#f6f5f2",
+        "surface": "#ffffff",
+        "surface-2": "#efece6",
+        "ink": "#1e2a2f",
+        "muted": "#62706f",
+        "border": "#d9d4c9",
+        "accent": "#2f5d62",
+        "accent-soft": "#e2eceb",
+        "pro": "#2f7d5b",
+        "pro-soft": "#e4f1ea",
+        "con": "#b3542f",
+        "con-soft": "#f7e9e0"
+      },
+      "dark": {
+        "bg": "#14181a",
+        "surface": "#1c2224",
+        "surface-2": "#232a2c",
+        "ink": "#eef2f1",
+        "muted": "#9aa7a6",
+        "border": "#2c3436",
+        "accent": "#7cc2b9",
+        "accent-soft": "#223231",
+        "pro": "#6fbf96",
+        "pro-soft": "#1d2b25",
+        "con": "#e2986a",
+        "con-soft": "#2d241d"
+      }
+    },
+    "data": {
+      "options": [
+        "Bottom tab bar",
+        "Hamburger side drawer",
+        "Expandable FAB menu",
+        "Tab bar + \"More\" overflow",
+        "Top bar + edge-swipe drawer"
+      ],
+      "source": "Interaction-design knowledge, curated per-option for this app's decision (no external dataset)"
+    },
+    "interactions": [
+      "tab strip switches which of the 5 patterns is shown",
+      "each phone mockup is a live, working rebuild of the pattern (tap/drag to open/close menus, switch active destination)",
+      "per-option 'Vote for this option' toggle, persisted to localStorage",
+      "rationale textarea, persisted to localStorage",
+      "'Copy vote summary' writes pick + rationale to the clipboard for sharing outside the artifact",
+      "local theme toggle for standalone viewing, independent of the engine's own dark/light toggle"
+    ],
+    "sources": ["Team request: compare 5 mobile nav options interactively for a pick"]
+  }
+}

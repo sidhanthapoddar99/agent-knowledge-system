@@ -1,6 +1,6 @@
 ---
 title: "Site-theme mode — host-theme injection for artifacts + theme-tokens CLI"
-status: review
+status: done
 ---
 
 Scope extension accepted by sidhantha (2026-07-07). Full deliberation and the

@@ -1,6 +1,6 @@
 ---
 title: "Render artifacts inside the issue tracker (notes/, brainstorm/)"
-status: review
+status: done
 ---
 
 Scope extension accepted by sidhantha (2026-07-07, during first live testing):

@@ -35,7 +35,7 @@ validate_palette.js), plugin bumped to 0.5.5, cache parity byte-identical.
 `guide.ts` legend updated. **Docs:** user-guide `08_artifact-pages.md` +
 `09_artifact-showcase.md` (live demo `10_design-system-demo.html` + sidecar);
 dev-docs mechanism page. **Provenance:** integrity manifest
-`notes/04_upstream-integrity-manifest.json` (sha256 per tmp_skills file).
+`assets/upstream-integrity-manifest.json` (sha256 per tmp_skills file).
 
 **Verification: 6 findings, all fixed** — 1 critical (dataviz references were
 near-verbatim upstream text → genuinely re-expressed, rewrite stance upheld),

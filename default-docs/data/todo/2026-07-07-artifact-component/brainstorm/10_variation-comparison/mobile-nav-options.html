@@ -1,0 +1,879 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mobile Navigation — Five Options</title>
+<style>
+  :root {
+    --bg: #f6f5f2;
+    --surface: #ffffff;
+    --surface-2: #efece6;
+    --ink: #1e2a2f;
+    --muted: #62706f;
+    --border: #d9d4c9;
+    --accent: #2f5d62;
+    --accent-ink: #ffffff;
+    --accent-soft: #e2eceb;
+    --pro: #2f7d5b;
+    --pro-soft: #e4f1ea;
+    --con: #b3542f;
+    --con-soft: #f7e9e0;
+    --focus: #2f5d62;
+    --shadow: 0 12px 28px -16px rgba(30, 42, 47, 0.35);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14181a;
+      --surface: #1c2224;
+      --surface-2: #232a2c;
+      --ink: #eef2f1;
+      --muted: #9aa7a6;
+      --border: #2c3436;
+      --accent: #7cc2b9;
+      --accent-ink: #0b1213;
+      --accent-soft: #223231;
+      --pro: #6fbf96;
+      --pro-soft: #1d2b25;
+      --con: #e2986a;
+      --con-soft: #2d241d;
+      --focus: #7cc2b9;
+      --shadow: 0 12px 28px -14px rgba(0, 0, 0, 0.55);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #f6f5f2; --surface: #ffffff; --surface-2: #efece6; --ink: #1e2a2f;
+    --muted: #62706f; --border: #d9d4c9; --accent: #2f5d62; --accent-ink: #ffffff;
+    --accent-soft: #e2eceb; --pro: #2f7d5b; --pro-soft: #e4f1ea; --con: #b3542f;
+    --con-soft: #f7e9e0; --focus: #2f5d62; --shadow: 0 12px 28px -16px rgba(30,42,47,.35);
+  }
+  :root[data-theme="dark"] {
+    --bg: #14181a; --surface: #1c2224; --surface-2: #232a2c; --ink: #eef2f1;
+    --muted: #9aa7a6; --border: #2c3436; --accent: #7cc2b9; --accent-ink: #0b1213;
+    --accent-soft: #223231; --pro: #6fbf96; --pro-soft: #1d2b25; --con: #e2986a;
+    --con-soft: #2d241d; --focus: #7cc2b9; --shadow: 0 12px 28px -14px rgba(0,0,0,.55);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
+
+  a, button { font-family: inherit; }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+  .wrap { max-width: 960px; margin: 0 auto; padding: 28px 20px 64px; }
+
+  header.page-head { padding-bottom: 20px; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
+  .eyebrow {
+    text-transform: uppercase; letter-spacing: 0.08em; font-size: 12px;
+    color: var(--muted); font-weight: 600; margin: 0 0 8px;
+  }
+  h1 { font-size: clamp(22px, 3vw, 30px); margin: 0 0 10px; text-wrap: balance; letter-spacing: -0.01em; }
+  .lede { color: var(--muted); margin: 0 0 16px; max-width: 62ch; }
+  .head-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+  .theme-toggle {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--surface); border: 1px solid var(--border); color: var(--ink);
+    border-radius: 999px; padding: 6px 12px; font-size: 13px; cursor: pointer;
+    box-shadow: var(--shadow);
+  }
+  .theme-toggle:hover { border-color: var(--accent); }
+
+  .vote-status {
+    font-size: 13px; color: var(--muted); background: var(--surface);
+    border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px;
+    display: flex; align-items: center; gap: 8px; white-space: nowrap;
+  }
+  .vote-status strong { color: var(--ink); }
+  .vote-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex: none; }
+  .vote-dot.active { background: var(--pro); }
+
+  /* option tabs */
+  .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  .tab {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--surface); border: 1px solid var(--border); color: var(--ink);
+    border-radius: 999px; padding: 8px 14px 8px 8px; cursor: pointer; font-size: 14px;
+    transition: border-color 150ms ease, background 150ms ease;
+  }
+  .tab .num {
+    width: 22px; height: 22px; border-radius: 50%; background: var(--surface-2);
+    color: var(--muted); display: grid; place-items: center; font-size: 12px; font-weight: 700;
+    flex: none;
+  }
+  .tab[aria-selected="true"] { border-color: var(--accent); background: var(--accent-soft); }
+  .tab[aria-selected="true"] .num { background: var(--accent); color: var(--accent-ink); }
+  .tab:hover { border-color: var(--accent); }
+  .tab .picked-mark { color: var(--pro); font-weight: 700; font-size: 12px; display: none; }
+  .tab.is-picked .picked-mark { display: inline; }
+
+  /* stage */
+  .stage {
+    display: grid; grid-template-columns: 220px 1fr; gap: 28px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+    padding: 24px; box-shadow: var(--shadow);
+  }
+  @media (max-width: 640px) {
+    .stage { grid-template-columns: 1fr; }
+  }
+
+  /* phone mockup */
+  .phone-col { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .phone {
+    width: 200px; height: 400px; border-radius: 26px; background: var(--surface-2);
+    border: 1px solid var(--border); padding: 8px; position: relative; overflow: hidden;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.02);
+  }
+  .phone .notch {
+    position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+    width: 56px; height: 6px; border-radius: 4px; background: var(--border); z-index: 5;
+  }
+  .screen {
+    width: 100%; height: 100%; border-radius: 18px; background: var(--bg);
+    position: relative; overflow: hidden; display: flex; flex-direction: column;
+  }
+  .screen-content {
+    flex: 1; padding: 22px 12px 8px; overflow: hidden;
+  }
+  .fake-line { height: 8px; border-radius: 4px; background: var(--border); margin-bottom: 8px; }
+  .fake-line.w60 { width: 60%; } .fake-line.w80 { width: 80%; } .fake-line.w40 { width: 40%; }
+  .fake-card {
+    border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin-bottom: 8px; background: var(--surface);
+  }
+  .screen-title { font-size: 11px; font-weight: 700; color: var(--muted); margin: 0 0 10px; text-transform: uppercase; letter-spacing: .04em; }
+
+  .try-hint { font-size: 12px; color: var(--muted); text-align: center; }
+  .try-hint .mono { background: var(--surface-2); border-radius: 4px; padding: 1px 5px; }
+
+  /* generic bottom tab bar */
+  .tabbar {
+    display: flex; border-top: 1px solid var(--border); background: var(--surface); flex: none;
+  }
+  .tabbar-item {
+    flex: 1; border: none; background: none; padding: 8px 2px 10px; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--muted);
+  }
+  .tabbar-item .ic { width: 16px; height: 16px; border-radius: 4px; background: currentColor; opacity: .35; }
+  .tabbar-item span { font-size: 9px; font-weight: 600; }
+  .tabbar-item.active { color: var(--accent); }
+  .tabbar-item.active .ic { opacity: 1; }
+
+  /* top app bar */
+  .appbar {
+    position: absolute; top: 0; left: 0; right: 0; height: 34px;
+    display: flex; align-items: center; justify-content: space-between; padding: 0 10px;
+    background: var(--surface); border-bottom: 1px solid var(--border); z-index: 3;
+  }
+  .icon-btn {
+    width: 22px; height: 22px; border-radius: 6px; border: none; background: none; cursor: pointer;
+    display: grid; place-items: center; color: var(--ink);
+  }
+  .icon-btn .bars { width: 14px; height: 10px; display: flex; flex-direction: column; justify-content: space-between; }
+  .icon-btn .bars span { display: block; height: 2px; background: currentColor; border-radius: 1px; }
+
+  /* drawer overlay */
+  .drawer-scrim {
+    position: absolute; inset: 0; background: rgba(20,24,26,0.35); opacity: 0; pointer-events: none;
+    transition: opacity 200ms ease; z-index: 6;
+  }
+  .drawer-scrim.open { opacity: 1; pointer-events: auto; }
+  .drawer {
+    position: absolute; top: 0; bottom: 0; left: 0; width: 68%; background: var(--surface);
+    transform: translateX(-100%); transition: transform 220ms ease; z-index: 7;
+    padding: 40px 12px 12px; border-right: 1px solid var(--border);
+  }
+  .drawer.open { transform: translateX(0); }
+  .drawer-item {
+    padding: 8px 6px; border-radius: 6px; font-size: 12px; color: var(--ink); cursor: pointer;
+  }
+  .drawer-item.active { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+
+  /* FAB + fan menu */
+  .fab-wrap { position: absolute; right: 12px; bottom: 12px; z-index: 6; }
+  .fab {
+    width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: var(--accent-ink);
+    border: none; font-size: 20px; cursor: pointer; box-shadow: var(--shadow); line-height: 1;
+    transition: transform 200ms ease;
+  }
+  .fab.open { transform: rotate(45deg); }
+  .fan-item {
+    position: absolute; right: 4px; width: 32px; height: 32px; border-radius: 50%;
+    background: var(--surface); border: 1px solid var(--border); color: var(--ink);
+    display: grid; place-items: center; font-size: 12px; opacity: 0; transform: translateY(0) scale(.6);
+    transition: transform 220ms ease, opacity 220ms ease; pointer-events: none;
+  }
+  .fan-item.open { opacity: 1; pointer-events: auto; }
+  .fan-item:nth-child(1).open { transform: translateY(-52px) scale(1); }
+  .fan-item:nth-child(2).open { transform: translateY(-96px) scale(1); }
+  .fan-item:nth-child(3).open { transform: translateY(-140px) scale(1); }
+
+  /* bottom sheet (tab bar + more) */
+  .sheet-scrim { position: absolute; inset: 0; background: rgba(20,24,26,.35); opacity: 0; pointer-events: none; transition: opacity 200ms ease; z-index: 6; }
+  .sheet-scrim.open { opacity: 1; pointer-events: auto; }
+  .sheet {
+    position: absolute; left: 0; right: 0; bottom: 0; background: var(--surface);
+    border-top: 1px solid var(--border); border-radius: 14px 14px 0 0; padding: 12px;
+    transform: translateY(100%); transition: transform 220ms ease; z-index: 7;
+  }
+  .sheet.open { transform: translateY(0); }
+  .sheet-handle { width: 32px; height: 4px; border-radius: 2px; background: var(--border); margin: 0 auto 10px; }
+  .sheet-item { padding: 8px 4px; font-size: 12px; border-radius: 6px; cursor: pointer; }
+  .sheet-item.active { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+
+  /* edge-swipe hint */
+  .edge-handle {
+    position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+    width: 5px; height: 46px; border-radius: 0 6px 6px 0; background: var(--accent);
+    opacity: .6; cursor: grab; z-index: 4;
+  }
+
+  /* info column */
+  .info h2 { margin: 0 0 4px; font-size: 18px; }
+  .info .role { color: var(--muted); font-size: 13px; margin: 0 0 14px; }
+  .how { margin: 0 0 16px; padding-left: 18px; font-size: 14px; color: var(--ink); }
+  .how li { margin-bottom: 4px; }
+
+  .pc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+  @media (max-width: 520px) { .pc-grid { grid-template-columns: 1fr; } }
+  .pc-col h3 {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .05em; margin: 0 0 8px;
+  }
+  .pc-col.pro h3 { color: var(--pro); }
+  .pc-col.con h3 { color: var(--con); }
+  .pc-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .pc-col li {
+    font-size: 13px; padding: 8px 10px; border-radius: 8px; line-height: 1.4;
+  }
+  .pc-col.pro li { background: var(--pro-soft); }
+  .pc-col.con li { background: var(--con-soft); }
+
+  .best-for {
+    font-size: 13px; background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 12px; margin-bottom: 18px;
+  }
+  .best-for strong { color: var(--accent); }
+
+  .vote-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .btn {
+    border: 1px solid var(--border); background: var(--surface); color: var(--ink);
+    border-radius: 8px; padding: 9px 14px; font-size: 14px; cursor: pointer;
+    transition: border-color 150ms ease, background 150ms ease;
+  }
+  .btn:hover { border-color: var(--accent); }
+  .btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .btn.primary.is-active::before { content: "✓ "; }
+  .btn.ghost { background: none; }
+  .btn:disabled { opacity: .5; cursor: default; }
+
+  /* comparison table */
+  .compare { margin-top: 32px; }
+  .compare h2 { font-size: 16px; margin: 0 0 4px; }
+  .compare .sub { color: var(--muted); font-size: 13px; margin: 0 0 12px; }
+  .table-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; }
+  table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 13px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  thead th { background: var(--surface-2); color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .03em; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody th { font-weight: 600; }
+  td.current { color: var(--accent); font-weight: 700; }
+
+  /* rationale + share */
+  .rationale {
+    margin-top: 28px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px; box-shadow: var(--shadow);
+  }
+  .rationale h2 { font-size: 16px; margin: 0 0 4px; }
+  .rationale .sub { color: var(--muted); font-size: 13px; margin: 0 0 14px; }
+  textarea {
+    width: 100%; min-height: 72px; resize: vertical; border-radius: 10px; border: 1px solid var(--border);
+    background: var(--bg); color: var(--ink); padding: 10px 12px; font: inherit; font-size: 14px;
+  }
+  .rationale-actions { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; align-items: center; }
+  .copy-feedback { font-size: 13px; color: var(--pro); opacity: 0; transition: opacity 150ms ease; }
+  .copy-feedback.show { opacity: 1; }
+
+  footer.note {
+    margin-top: 28px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--border);
+    padding-top: 14px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="page-head">
+    <div class="head-row">
+      <div>
+        <p class="eyebrow">Design decision · Mobile navigation</p>
+        <h1>Five patterns for getting around the app on a phone</h1>
+        <p class="lede">
+          A working comparison for the team to pick the primary navigation pattern for the
+          next mobile release. Each option below is a small, interactive rebuild of the
+          real pattern — tap through it, weigh the trade-offs, then cast your pick at the
+          bottom.
+        </p>
+      </div>
+      <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle color theme">
+        <span id="themeIcon">◐</span> <span id="themeLabel">Theme</span>
+      </button>
+    </div>
+    <div class="vote-status" id="voteStatus">
+      <span class="vote-dot" id="voteDot"></span>
+      <span id="voteStatusText">No pick yet — open an option and vote below.</span>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Navigation pattern options"></nav>
+
+  <section class="stage">
+    <div class="phone-col">
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="screen" id="screen"></div>
+      </div>
+      <p class="try-hint" id="tryHint">Tap inside the screen to try it.</p>
+    </div>
+    <div class="info" id="info"></div>
+  </section>
+
+  <section class="compare">
+    <h2>At a glance</h2>
+    <p class="sub">Qualitative read, not a scoring system — use it to jog memory while you decide.</p>
+    <div class="table-scroll">
+      <table id="compareTable"></table>
+    </div>
+  </section>
+
+  <section class="rationale">
+    <h2>Your pick, with reasoning</h2>
+    <p class="sub">Optional — add why, then copy it into the team thread or the issue comment.</p>
+    <textarea id="rationaleBox" placeholder="e.g. Bottom tab bar keeps our 4 core destinations one thumb-tap away, and we don't have enough top-level sections to need an overflow yet."></textarea>
+    <div class="rationale-actions">
+      <button type="button" class="btn primary" id="copyBtn">Copy vote summary</button>
+      <button type="button" class="btn ghost" id="resetBtn">Clear my pick</button>
+      <span class="copy-feedback" id="copyFeedback">Copied to clipboard.</span>
+    </div>
+  </section>
+
+  <footer class="note">
+    Self-contained comparison artifact — the pick and rationale are stored only in this
+    browser (<span class="mono">localStorage</span>), so use "Copy vote summary" to bring
+    your decision back to the team rather than relying on a shared tally.
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var OPTIONS = [
+    {
+      id: "tabbar",
+      name: "Bottom tab bar",
+      role: "Persistent 4-item bar, always on screen",
+      how: [
+        "3–5 top-level destinations sit in a bar fixed to the bottom edge.",
+        "One tap switches the whole screen — no intermediate menu.",
+        "The active destination stays visually marked at all times."
+      ],
+      pros: [
+        "Always visible — nothing to open before you can navigate",
+        "One tap to any destination, no hidden steps",
+        "Sits in the natural thumb zone on large phones"
+      ],
+      cons: [
+        "Hard ceiling around 5 items before labels get cramped",
+        "Permanently spends ~50px of vertical space on every screen",
+        "No room for hierarchy — every item reads as equally important"
+      ],
+      bestFor: "A small, flat set of top-level destinations (3–5) that are used constantly.",
+      compare: { items: "3–5", discoverability: "High", reach: "High", buildEffort: "Low" },
+      render: renderTabbar
+    },
+    {
+      id: "drawer",
+      name: "Hamburger side drawer",
+      role: "Off-canvas list, opened from a top-left icon",
+      how: [
+        "A menu icon in the top app bar opens a panel that slides in from the left.",
+        "The panel lists every destination, scrollable if the list is long.",
+        "Tapping an item or the scrim outside closes the drawer."
+      ],
+      pros: [
+        "Scales to a long, growing list of destinations without redesign",
+        "Keeps the main screen completely clean when closed",
+        "Familiar pattern — most users have seen it before"
+      ],
+      cons: [
+        "Hidden by default — measurably lowers discovery of what's inside",
+        "Icon sits top-left, awkward to reach one-handed on big phones",
+        "Adds a tap-and-wait step in front of every navigation action"
+      ],
+      bestFor: "Many destinations, or ones used rarely enough that hiding them is fine.",
+      compare: { items: "Unlimited", discoverability: "Low", reach: "Low", buildEffort: "Medium" },
+      render: renderDrawer
+    },
+    {
+      id: "fab",
+      name: "Expandable FAB menu",
+      role: "A floating action button that fans out shortcuts",
+      how: [
+        "A single round button floats in the bottom-right corner.",
+        "Tapping it fans 2–4 shortcut actions out above it.",
+        "Tapping the button again (now rotated into a close icon) collapses it."
+      ],
+      pros: [
+        "Puts the highest-priority action right under the thumb",
+        "Costs almost no permanent screen space when collapsed",
+        "Reads as modern and feels satisfying to use"
+      ],
+      cons: [
+        "Unconventional for full navigation — usually expected to be shortcuts, not the primary nav",
+        "First-time users often need a beat to learn what it does",
+        "The fan can visually collide with content near the bottom edge"
+      ],
+      bestFor: "A handful of quick actions layered on top of a different primary nav — not a full replacement.",
+      compare: { items: "2–4", discoverability: "Medium", reach: "High", buildEffort: "Medium" },
+      render: renderFab
+    },
+    {
+      id: "tabmore",
+      name: "Tab bar + “More” overflow",
+      role: "Bottom bar for the top 4, everything else in a sheet",
+      how: [
+        "The bar shows your top 3–4 destinations plus a fixed “More” tab.",
+        "“More” opens a bottom sheet listing the remaining destinations.",
+        "Picking an overflow item closes the sheet and switches the screen."
+      ],
+      pros: [
+        "Keeps the most-used destinations exactly as reachable as a plain tab bar",
+        "Scales past 5 items without redesigning the primary bar",
+        "One consistent pattern instead of choosing per-screen"
+      ],
+      cons: [
+        "Whatever lands in “More” quietly gets a usage penalty",
+        "Two navigation surfaces to keep in sync as the product grows",
+        "Deciding what's “top 4” becomes an ongoing product argument"
+      ],
+      bestFor: "More destinations than a bare tab bar can hold, but a few are clearly used the most.",
+      compare: { items: "4 + overflow", discoverability: "Medium", reach: "High", buildEffort: "Medium" },
+      render: renderTabMore
+    },
+    {
+      id: "edge",
+      name: "Top bar + edge-swipe drawer",
+      role: "Full-height content, drawer opened by a swipe from the edge",
+      how: [
+        "A slim top app bar carries the screen title and a menu icon.",
+        "Dragging in from the very left edge — or tapping the icon — reveals the drawer.",
+        "Releasing past a threshold snaps the drawer fully open; short drags snap back."
+      ],
+      pros: [
+        "Leaves the whole screen free for content the rest of the time",
+        "Power users get a fast, low-friction way to switch sections",
+        "Pairs well with content-heavy or media-heavy screens"
+      ],
+      cons: [
+        "Gesture has near-zero discoverability for new users",
+        "Left-edge swipe directly competes with iOS's system back gesture",
+        "Awkward or unreachable for anyone who can't perform an accurate edge drag"
+      ],
+      bestFor: "Content-first apps where screen real estate matters more than instant nav access.",
+      compare: { items: "Unlimited", discoverability: "Low", reach: "Medium", buildEffort: "High" },
+      render: renderEdge
+    }
+  ];
+
+  var state = {
+    activeTab: OPTIONS[0].id,
+    vote: null,
+    rationale: ""
+  };
+
+  try {
+    state.vote = localStorage.getItem("mobilenav-vote") || null;
+    state.rationale = localStorage.getItem("mobilenav-rationale") || "";
+  } catch (e) { /* storage unavailable — degrade to session-only state */ }
+
+  var els = {
+    tabs: document.getElementById("tabs"),
+    screen: document.getElementById("screen"),
+    info: document.getElementById("info"),
+    tryHint: document.getElementById("tryHint"),
+    voteStatusText: document.getElementById("voteStatusText"),
+    voteDot: document.getElementById("voteDot"),
+    compareTable: document.getElementById("compareTable"),
+    rationaleBox: document.getElementById("rationaleBox"),
+    copyBtn: document.getElementById("copyBtn"),
+    resetBtn: document.getElementById("resetBtn"),
+    copyFeedback: document.getElementById("copyFeedback")
+  };
+
+  function optionById(id) {
+    for (var i = 0; i < OPTIONS.length; i++) if (OPTIONS[i].id === id) return OPTIONS[i];
+    return OPTIONS[0];
+  }
+
+  function saveVote() {
+    try {
+      if (state.vote) localStorage.setItem("mobilenav-vote", state.vote);
+      else localStorage.removeItem("mobilenav-vote");
+      localStorage.setItem("mobilenav-rationale", state.rationale || "");
+    } catch (e) { /* ignore */ }
+  }
+
+  function renderTabs() {
+    els.tabs.innerHTML = "";
+    OPTIONS.forEach(function (opt, i) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "tab" + (opt.id === state.vote ? " is-picked" : "");
+      btn.setAttribute("role", "tab");
+      btn.setAttribute("aria-selected", opt.id === state.activeTab ? "true" : "false");
+      btn.innerHTML =
+        '<span class="num">' + (i + 1) + '</span>' +
+        '<span>' + opt.name + '</span>' +
+        '<span class="picked-mark">✓ your pick</span>';
+      btn.addEventListener("click", function () {
+        state.activeTab = opt.id;
+        renderAll();
+      });
+      els.tabs.appendChild(btn);
+    });
+  }
+
+  function renderInfo(opt) {
+    var picked = state.vote === opt.id;
+    els.info.innerHTML =
+      '<h2>' + opt.name + '</h2>' +
+      '<p class="role">' + opt.role + '</p>' +
+      '<ul class="how">' + opt.how.map(function (h) { return "<li>" + h + "</li>"; }).join("") + '</ul>' +
+      '<div class="pc-grid">' +
+        '<div class="pc-col pro"><h3>Pros</h3><ul>' + opt.pros.map(function (p) { return "<li>" + p + "</li>"; }).join("") + '</ul></div>' +
+        '<div class="pc-col con"><h3>Cons</h3><ul>' + opt.cons.map(function (c) { return "<li>" + c + "</li>"; }).join("") + '</ul></div>' +
+      '</div>' +
+      '<p class="best-for"><strong>Best for:</strong> ' + opt.bestFor + '</p>' +
+      '<div class="vote-row">' +
+        '<button type="button" class="btn primary' + (picked ? ' is-active' : '') + '" id="voteBtn">' +
+          (picked ? 'This is your pick' : 'Vote for this option') +
+        '</button>' +
+      '</div>';
+
+    document.getElementById("voteBtn").addEventListener("click", function () {
+      state.vote = picked ? null : opt.id;
+      saveVote();
+      renderAll();
+    });
+  }
+
+  function renderCompareTable() {
+    var rows = [
+      ["Item count it handles", "items"],
+      ["Discoverability", "discoverability"],
+      ["Thumb reach", "reach"],
+      ["Build effort", "buildEffort"]
+    ];
+    var head = "<thead><tr><th>" + rows.map(function () { return ""; }).join("") + "</th>" +
+      OPTIONS.map(function (o, i) { return "<th>" + (i + 1) + ". " + o.name + "</th>"; }).join("") + "</tr></thead>";
+    var body = "<tbody>" + rows.map(function (r) {
+      return "<tr><th>" + r[0] + "</th>" + OPTIONS.map(function (o) {
+        var cls = o.id === state.activeTab ? " current" : "";
+        return "<td class=\"" + cls.trim() + "\">" + o.compare[r[1]] + "</td>";
+      }).join("") + "</tr>";
+    }).join("") + "</tbody>";
+    els.compareTable.innerHTML = head + body;
+  }
+
+  function renderVoteStatus() {
+    if (state.vote) {
+      els.voteStatusText.innerHTML = "Current pick: <strong>" + optionById(state.vote).name + "</strong>";
+      els.voteDot.className = "vote-dot active";
+    } else {
+      els.voteStatusText.textContent = "No pick yet — open an option and vote below.";
+      els.voteDot.className = "vote-dot";
+    }
+  }
+
+  function renderAll() {
+    var opt = optionById(state.activeTab);
+    renderTabs();
+    renderInfo(opt);
+    renderVoteStatus();
+    renderCompareTable();
+    els.screen.innerHTML = "";
+    els.tryHint.textContent = opt.tryHint || "Tap inside the screen to try it.";
+    opt.render(els.screen);
+  }
+
+  /* ---------- demo builders ---------- */
+
+  function baseContent(title) {
+    var d = document.createElement("div");
+    d.className = "screen-content";
+    d.innerHTML =
+      '<p class="screen-title">' + title + '</p>' +
+      '<div class="fake-line w60"></div><div class="fake-line w80"></div><div class="fake-line w40"></div>' +
+      '<div class="fake-card"><div class="fake-line w80" style="margin-bottom:0"></div></div>' +
+      '<div class="fake-card"><div class="fake-line w60" style="margin-bottom:0"></div></div>';
+    return d;
+  }
+
+  function renderTabbar(screen) {
+    var items = ["Home", "Search", "Saved", "Profile"];
+    var active = 0;
+    var content = baseContent(items[active]);
+    var bar = document.createElement("div");
+    bar.className = "tabbar";
+    items.forEach(function (label, i) {
+      var b = document.createElement("button");
+      b.className = "tabbar-item" + (i === active ? " active" : "");
+      b.innerHTML = '<span class="ic"></span><span>' + label + '</span>';
+      b.addEventListener("click", function () {
+        active = i;
+        Array.prototype.forEach.call(bar.children, function (c, ci) {
+          c.classList.toggle("active", ci === i);
+        });
+        content.querySelector(".screen-title").textContent = items[i];
+      });
+      bar.appendChild(b);
+    });
+    screen.appendChild(content);
+    screen.appendChild(bar);
+  }
+
+  function renderDrawer(screen) {
+    var items = ["Home", "Search", "Saved", "Profile", "Settings", "Help"];
+    var active = 0;
+    var appbar = document.createElement("div");
+    appbar.className = "appbar";
+    appbar.innerHTML = '<button class="icon-btn" id="hamBtn" aria-label="Open menu"><span class="bars"><span></span><span></span><span></span></span></button><strong style="font-size:11px">' + items[active] + '</strong><span style="width:22px"></span>';
+    var content = baseContent(items[active]);
+    content.style.paddingTop = "40px";
+    var scrim = document.createElement("div"); scrim.className = "drawer-scrim";
+    var drawer = document.createElement("div"); drawer.className = "drawer";
+    drawer.innerHTML = items.map(function (it, i) {
+      return '<div class="drawer-item' + (i === active ? ' active' : '') + '" data-i="' + i + '">' + it + '</div>';
+    }).join("");
+
+    function setOpen(open) {
+      scrim.classList.toggle("open", open);
+      drawer.classList.toggle("open", open);
+    }
+    appbar.querySelector("#hamBtn").addEventListener("click", function () { setOpen(true); });
+    scrim.addEventListener("click", function () { setOpen(false); });
+    drawer.addEventListener("click", function (e) {
+      var t = e.target.closest(".drawer-item");
+      if (!t) return;
+      active = Number(t.getAttribute("data-i"));
+      Array.prototype.forEach.call(drawer.children, function (c, ci) { c.classList.toggle("active", ci === active); });
+      content.querySelector(".screen-title").textContent = items[active];
+      appbar.querySelector("strong").textContent = items[active];
+      setOpen(false);
+    });
+
+    screen.appendChild(appbar);
+    screen.appendChild(content);
+    screen.appendChild(scrim);
+    screen.appendChild(drawer);
+  }
+
+  function renderFab(screen) {
+    var content = baseContent("Home");
+    var wrap = document.createElement("div");
+    wrap.className = "fab-wrap";
+    var actions = ["＋", "✎", "⇪"];
+    var items = actions.map(function (a) {
+      var d = document.createElement("div");
+      d.className = "fan-item";
+      d.textContent = a;
+      return d;
+    });
+    var fab = document.createElement("button");
+    fab.className = "fab";
+    fab.textContent = "+";
+    fab.setAttribute("aria-label", "Open quick actions");
+    var open = false;
+    fab.addEventListener("click", function () {
+      open = !open;
+      fab.classList.toggle("open", open);
+      items.forEach(function (it) { it.classList.toggle("open", open); });
+    });
+    items.forEach(function (it) { wrap.appendChild(it); });
+    wrap.appendChild(fab);
+    screen.appendChild(content);
+    screen.appendChild(wrap);
+  }
+
+  function renderTabMore(screen) {
+    var primary = ["Home", "Search", "Saved"];
+    var overflow = ["Profile", "Settings", "Help", "About"];
+    var active = "Home";
+    var content = baseContent(active);
+    var bar = document.createElement("div");
+    bar.className = "tabbar";
+    var scrim = document.createElement("div"); scrim.className = "sheet-scrim";
+    var sheet = document.createElement("div"); sheet.className = "sheet";
+    sheet.innerHTML = '<div class="sheet-handle"></div>' + overflow.map(function (o) {
+      return '<div class="sheet-item" data-o="' + o + '">' + o + '</div>';
+    }).join("");
+
+    function setOpen(open) {
+      scrim.classList.toggle("open", open);
+      sheet.classList.toggle("open", open);
+    }
+    function setActive(label, fromOverflow) {
+      active = label;
+      content.querySelector(".screen-title").textContent = label;
+      Array.prototype.forEach.call(bar.children, function (c) {
+        c.classList.toggle("active", !fromOverflow && c.dataset.label === label);
+        if (c.dataset.label === "More") c.classList.toggle("active", !!fromOverflow);
+      });
+    }
+
+    primary.concat(["More"]).forEach(function (label) {
+      var b = document.createElement("button");
+      b.className = "tabbar-item" + (label === active ? " active" : "");
+      b.dataset.label = label;
+      b.innerHTML = '<span class="ic"></span><span>' + label + '</span>';
+      b.addEventListener("click", function () {
+        if (label === "More") { setOpen(true); return; }
+        setActive(label, false);
+      });
+      bar.appendChild(b);
+    });
+
+    scrim.addEventListener("click", function () { setOpen(false); });
+    sheet.addEventListener("click", function (e) {
+      var t = e.target.closest(".sheet-item");
+      if (!t) return;
+      setActive(t.dataset.o, true);
+      setOpen(false);
+    });
+
+    screen.appendChild(content);
+    screen.appendChild(bar);
+    screen.appendChild(scrim);
+    screen.appendChild(sheet);
+  }
+
+  function renderEdge(screen) {
+    var items = ["Home", "Search", "Saved", "Profile", "Settings"];
+    var active = 0;
+    var appbar = document.createElement("div");
+    appbar.className = "appbar";
+    appbar.innerHTML = '<button class="icon-btn" id="edgeMenuBtn" aria-label="Open menu"><span class="bars"><span></span><span></span><span></span></span></button><strong style="font-size:11px">' + items[active] + '</strong><span style="width:22px"></span>';
+    var content = baseContent(items[active]);
+    content.style.paddingTop = "40px";
+    var handle = document.createElement("div");
+    handle.className = "edge-handle";
+    handle.title = "Drag from here, or tap the menu icon";
+    var scrim = document.createElement("div"); scrim.className = "drawer-scrim";
+    var drawer = document.createElement("div"); drawer.className = "drawer";
+    drawer.innerHTML = items.map(function (it, i) {
+      return '<div class="drawer-item' + (i === active ? ' active' : '') + '" data-i="' + i + '">' + it + '</div>';
+    }).join("");
+
+    function setOpen(open) {
+      scrim.classList.toggle("open", open);
+      drawer.classList.toggle("open", open);
+    }
+    appbar.querySelector("#edgeMenuBtn").addEventListener("click", function () { setOpen(true); });
+    handle.addEventListener("click", function () { setOpen(true); });
+    scrim.addEventListener("click", function () { setOpen(false); });
+    drawer.addEventListener("click", function (e) {
+      var t = e.target.closest(".drawer-item");
+      if (!t) return;
+      active = Number(t.getAttribute("data-i"));
+      Array.prototype.forEach.call(drawer.children, function (c, ci) { c.classList.toggle("active", ci === active); });
+      content.querySelector(".screen-title").textContent = items[active];
+      appbar.querySelector("strong").textContent = items[active];
+      setOpen(false);
+    });
+
+    screen.appendChild(appbar);
+    screen.appendChild(content);
+    screen.appendChild(handle);
+    screen.appendChild(scrim);
+    screen.appendChild(drawer);
+  }
+
+  /* ---------- rationale + copy ---------- */
+
+  els.rationaleBox.value = state.rationale;
+  els.rationaleBox.addEventListener("input", function () {
+    state.rationale = els.rationaleBox.value;
+    saveVote();
+  });
+
+  els.resetBtn.addEventListener("click", function () {
+    state.vote = null;
+    state.rationale = "";
+    els.rationaleBox.value = "";
+    saveVote();
+    renderAll();
+  });
+
+  els.copyBtn.addEventListener("click", function () {
+    var opt = state.vote ? optionById(state.vote) : null;
+    var lines = [
+      "Mobile navigation vote",
+      opt ? "Pick: " + opt.name : "Pick: (none selected yet)",
+      opt ? "Best for: " + opt.bestFor : "",
+      state.rationale ? "Rationale: " + state.rationale : ""
+    ].filter(Boolean);
+    var text = lines.join("\n");
+    var done = function () {
+      els.copyFeedback.classList.add("show");
+      setTimeout(function () { els.copyFeedback.classList.remove("show"); }, 1800);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function () { fallbackCopy(text, done); });
+    } else {
+      fallbackCopy(text, done);
+    }
+  });
+
+  function fallbackCopy(text, cb) {
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); } catch (e) { /* ignore */ }
+    document.body.removeChild(ta);
+    cb();
+  }
+
+  /* ---------- theme toggle (local convenience; the engine drives data-theme when embedded) ---------- */
+
+  var themeBtn = document.getElementById("themeToggle");
+  var themeIcon = document.getElementById("themeIcon");
+  themeBtn.addEventListener("click", function () {
+    var root = document.documentElement;
+    var current = root.getAttribute("data-theme");
+    var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    var effectiveDark = current ? current === "dark" : prefersDark;
+    var next = effectiveDark ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    themeIcon.textContent = next === "dark" ? "◑" : "◐";
+  });
+
+  renderAll();
+})();
+</script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 ---
 title: "Author the converged artifact-authoring skill (SKILL.md + references + scripts)"
-status: review
+status: done
 ---
 
 ## Goal

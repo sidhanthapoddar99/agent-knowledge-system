@@ -1,6 +1,6 @@
 ---
 title: "Reserved-URL guard — reject a docs section base URL of 'artifacts'"
-status: review
+status: done
 ---
 
 ## Goal

@@ -1,6 +1,6 @@
 ---
 title: "First-class artifact component — scan, sidebar, sidecar, embedded render"
-status: review
+status: done
 ---
 
 ## Goal

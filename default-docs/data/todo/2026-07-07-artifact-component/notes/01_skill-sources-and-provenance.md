@@ -86,7 +86,7 @@ table. Every shipped file names its source(s), and every source is accounted for
 | `references/dataviz/{00_overview,choosing-a-form,color-formula,marks-and-anatomy,interaction,components,anti-patterns}.md` | **dataviz** (form heuristic, four-jobs/six-checks color formula, mark specs, interaction, anti-pattern catalog) | **re-expressed** in our own prose |
 | `references/dataviz/palette.md` | **dataviz** `palette.md` *structure*, re-derived from this framework's theme contract | rewritten / re-instanced |
 | `scripts/validate_palette.js` | **dataviz** | **VERBATIM** — the one deliberate carve-out (a functional tool, carried with a provenance header) |
-| `references/PROVENANCE.md`, `notes/04_upstream-integrity-manifest.json` | **ours** | authored metadata |
+| `references/PROVENANCE.md`, `notes/../assets/upstream-integrity-manifest.json` | **ours** | authored metadata |
 
 **Verbatim-ness as shipped — the guarantee holds file-for-file.** The only file
 carried verbatim from a source is `scripts/validate_palette.js` (code, tool). Every
@@ -191,7 +191,7 @@ brainstorm's licensing section). Options weighed:
    the public mirror (which already shows drift). The manifest records both hashes
    and this caveat.
 4. **Commit, under this issue, an integrity manifest** — now shipped at
-   [`04_upstream-integrity-manifest.json`](./04_upstream-integrity-manifest.json)
+   [`../assets/upstream-integrity-manifest.json`](./../assets/upstream-integrity-manifest.json)
    (alongside this note), recording, per source file: `sha256`,
    byte-exact-vs-transcribed flag, capture date (2026-07-07), upstream coordinate
    (CC v2.1.202 for built-ins; the pinned SHA for frontend-design), and the
@@ -252,3 +252,22 @@ rewrite) is what lets an adapted, rewritten skill still track an upstream it doe
 not fork. Lose the baseline and every future sync degrades into re-reading both
 skills and guessing what moved — which is precisely the failure this note, and
 the durable-preservation recommendation, exist to prevent.
+
+> Preservation decision (sidhantha, 2026-07-08): no off-machine backup —
+> `tmp_skills/` stays gitignored and machine-local. See the red note
+> [04_tmp-skills-baseline-do-not-delete.md](04_tmp-skills-baseline-do-not-delete.md)
+> and the re-capture manual in dev-docs
+> `20_development/07_artifact-skill-provenance.md`.
+
+---
+
+## The integrity manifest (embedded)
+
+The manifest lives at
+[`assets/upstream-integrity-manifest.json`](../assets/upstream-integrity-manifest.json)
+and is embedded below — the committed, publishable half of the baseline record
+(hashes and coordinates only, never source text):
+
+```json
+[[../assets/upstream-integrity-manifest.json]]
+```

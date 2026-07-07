@@ -1,6 +1,6 @@
 ---
 title: "Skills integration — teach documentation-guide, doc-issues, and guide.ts about artifacts"
-status: review
+status: done
 ---
 
 ## Goal

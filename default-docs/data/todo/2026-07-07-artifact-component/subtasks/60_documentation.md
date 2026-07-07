@@ -1,6 +1,6 @@
 ---
 title: "Documentation — user-guide (author/embed) + dev-docs (mechanism/route/rationale)"
-status: review
+status: done
 ---
 
 ## Goal

@@ -1,6 +1,6 @@
 ---
 title: "Upstream provenance — keep the source map true and document the fold-in protocol"
-status: review
+status: done
 ---
 
 ## Goal
@@ -90,7 +90,7 @@ procedure.
 ## Status note (2026-07-07)
 
 The committable deliverable — the **integrity manifest** — is shipped and verified
-at [`../notes/04_upstream-integrity-manifest.json`](../notes/04_upstream-integrity-manifest.json):
+at [`../assets/upstream-integrity-manifest.json`](../assets/upstream-integrity-manifest.json):
 per-file `sha256` for all 39 files under `tmp_skills/`, byte-exact-vs-transcribed
 flags, capture date, upstream coordinates, and convergence destinations. Every
 hash re-verified against disk; the JSON parses and covers the tree with no

@@ -1,6 +1,6 @@
 ---
 title: "Fable review — skill coherence and idea-capture"
-status: review
+status: done
 ---
 
 Requested by sidhantha (2026-07-07): after all implementation lands, a

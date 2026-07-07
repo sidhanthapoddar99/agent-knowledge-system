@@ -16,6 +16,15 @@
      and any extra viewport space falls on the outside (centred trio). */
   max-width: calc(var(--sidebar-width) + var(--max-width-secondary) + var(--outline-width));
   margin: 0 auto;
+}
+
+/* Artifact sub-doc view: the TOC rail is dead chrome (an artifact has no
+   headings), so the layout drops to two columns and the embed claims the
+   outline column's width. Overall cluster max-width is unchanged — the
+   centre column simply gains the rail's share. Breakpoint rules below
+   still apply (they collapse columns for every variant). */
+.issue-layout--artifact {
+  grid-template-columns: var(--sidebar-width) 1fr;
   padding: 0 var(--spacing-sm);
 }
 
@@ -143,6 +152,15 @@
   position: relative;
 }
 .issue-sidebar__kind svg { display: block; }
+/* Type marker for a first-class `.html` artifact sub-doc (notes/brainstorm) —
+   a subtle trailing embed glyph that sets it apart from a markdown note. */
+.issue-sidebar__doctype {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-text-muted);
+}
+.issue-sidebar__doctype svg { display: block; }
 
 /* [data-tip] tooltips are site-wide: src/scripts/tooltip.ts + .ui-tooltip in
    src/styles/element.css (wired in BaseLayout). */

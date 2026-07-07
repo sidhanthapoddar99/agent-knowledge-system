@@ -26,8 +26,9 @@
 import fs from 'fs';
 import path from 'path';
 import { glob } from 'glob';
-import { addError, addWarning } from './cache';
+import { addWarning } from './cache';
 import { readSettings } from './settings-file';
+import { resolveSlugCollisions } from './first-class-page';
 import { parseOrderPrefix } from '../parsers/core/order-prefix';
 import { resolveContentAssetUrl } from '../parsers/postprocessors/asset-src';
 import type { LoadedContent } from '../parsers/types';
@@ -186,31 +187,11 @@ export async function loadDiagramPages(
     });
   }
 
-  // Slug collisions — across diagram entries and against markdown pages.
-  // The surviving entry renders an explicit collision error at that slug.
-  const bySlug = new Map<string, LoadedContent[]>();
-  for (const item of [...existingContent, ...entries]) {
-    const list = bySlug.get(item.slug) ?? [];
-    list.push(item);
-    bySlug.set(item.slug, list);
-  }
-  const dropped = new Set<LoadedContent>();
-  for (const [slug, items] of bySlug) {
-    if (items.length < 2) continue;
-    const paths = items.map((i) => i.relativePath);
-    addError({
-      file: paths[0],
-      type: 'config',
-      message: `Slug collision at "/${slug}": ${paths.join(', ')}`,
-      suggestion: 'Rename one of the files — pages cannot share a URL',
-    });
-    items[0].content = collisionHtml(slug, paths);
-    items[0].headings = [];
-    for (const extra of items.slice(1)) dropped.add(extra);
-  }
-
+  // Slug collisions — across diagram entries and against markdown pages, via
+  // the shared pool/pass so diagrams and artifacts can't silently claim the
+  // same URL. The surviving entry renders an explicit collision error.
   return {
-    entries: entries.filter((e) => !dropped.has(e)),
+    entries: resolveSlugCollisions(existingContent, entries, collisionHtml),
     dependencyFiles,
   };
 }

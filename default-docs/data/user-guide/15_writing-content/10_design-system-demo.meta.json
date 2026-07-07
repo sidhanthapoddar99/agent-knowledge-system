@@ -1,0 +1,26 @@
+{
+  "title": "Design System Demo",
+  "description": "A miniature design system — color tokens, a type scale, and three components — rendered as a self-contained artifact that honors the host theme.",
+  "sidebar_label": "Design System Demo",
+  "sidebar_position": 10,
+  "embed_height": "full",
+  "artifact": {
+    "purpose": "Demonstrate the artifact content type in production docs: a self-contained HTML page that embeds in the content area, opens full-page at /artifacts/<path>, and follows the site's light/dark theme.",
+    "type": "design-system",
+    "theme": "self",
+    "palette": {
+      "light": { "bg": "#f6f7f9", "surface": "#ffffff", "ink": "#1a2230", "accent": "#2f6f6a", "good": "#2f7d54", "warn": "#9a6a10", "info": "#2b5f95" },
+      "dark":  { "bg": "#10151b", "surface": "#182029", "ink": "#e7edf3", "accent": "#5bb6ad", "good": "#48b47a", "warn": "#d3a24a", "info": "#62a2df" }
+    },
+    "typography": {
+      "sans": "system-ui humanist stack — headings and prose",
+      "mono": "ui-monospace stack — eyebrows, tags, badges"
+    },
+    "data": "No external data — a fixed set of tokens, a four-step type scale, and three demo components (buttons, badges, cards).",
+    "interactions": "Honors data-theme propagated by the host frame on load and on every site theme toggle; has its own toggle for the full-page view; falls back to prefers-color-scheme with no host.",
+    "sources": [
+      "default-docs/data/user-guide/15_writing-content/08_artifact-pages.md"
+    ],
+    "embed_height": "full"
+  }
+}

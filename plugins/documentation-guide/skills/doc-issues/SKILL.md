@@ -26,6 +26,16 @@ tracker lives at `data/todo/`; a project may have several, all with the same sha
 >
 > The `docs-guide` CLI is shared by both skills; the full command reference is the
 > sibling's [`cli-toolkit.md`](../documentation-guide/references/cli-toolkit.md).
+>
+> **Sibling skill — `artifact-authoring`.** Building an HTML **artifact** to support an
+> issue's thinking — a design-system draft or a data dashboard argued out in a
+> `brainstorm/`, an explainer promoted to `notes/` — is *that* skill's job (treatment,
+> dual-theme discipline, the dataviz procedure + palette validator, design-system flows).
+> Load it for the **build**; this skill keeps the *tracker* concern: where the artifact
+> lives and how it's referenced — a `.html` artifact in `notes/` or `brainstorm/` renders
+> **embedded** as a first-class sub-doc (iframe + open-full-page, theme-synced) in the
+> issue view (see [10_writing.md](references/10_writing/10_writing.md) and
+> [22_notes.md](references/20_sections/22_notes.md#first-class-artifacts--diagrams)).
 
 **Canonical source of truth:** the framework's bundled user-guide at
 `@root/default-docs/data/user-guide/19_issues/` — when this skill is unclear or stale,

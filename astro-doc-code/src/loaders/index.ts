@@ -25,6 +25,7 @@ export {
   resolvePageUrl,
   processCopyright,
   validateRoutes,
+  RESERVED_BASE_URLS,
   type SiteConfig,
   type SiteMetadata,
   type PageConfig,

@@ -76,6 +76,7 @@ Required in every docs folder. Minimal shape:
 | `collapsed` | boolean | `false` | Initial sidebar state — `true` starts collapsed (only applies when `collapsible` is `true`) |
 | `nav_hide` | boolean | `false` | Hide from sidebar (page still accessible by URL) |
 | `allow_diagram_pages` | boolean | `true` | **Section root only.** `false` stops diagram files rendering as first-class pages in the section |
+| `allow_artifact_pages` | boolean | `true` | **Section root only.** `false` stops `.html` artifact files rendering as first-class pages in the section |
 
 ### Recommended collapse defaults (depth-based)
 
@@ -144,6 +145,54 @@ A prefixed `.mmd` / `.mermaid` / `.dot` / `.gv` / `.excalidraw` file is a
   (see `writing.md`); the diagram IS the content → prefixed file as a page.
 - User-guide: `@root/default-docs/data/user-guide/15_writing-content/06_diagram-pages.md`;
   all three types render live on `15_writing-content/07_diagram-showcase.md`.
+
+## Artifact pages — self-contained HTML pages
+
+A prefixed `.html` file (a **self-contained** report, dashboard, chart, or
+design-system showcase) is a **first-class page** — same sidebar, same slug
+rules as markdown (`20_dashboard.html` → `/…/dashboard`). It renders **embedded
+in the content area**: the page body becomes an iframe that fills the column,
+the sidebar stays, and the outline rail auto-hides (an artifact has no
+headings). Rules:
+
+- **Title**: derives from the filename (strip prefix, title-case). Only when
+  that isn't enough — or to make the artifact legible to an AI agent without it
+  parsing the markup — add a sidecar `NN_name.meta.json` (`.jsonc` accepted).
+  Nothing is injected into the `.html`, so the artifact stays a pristine,
+  independently-openable document. The rendering fields mirror the diagram
+  sidecar (`title`, `description`, `sidebar_label`, `sidebar_position`,
+  `draft`), plus `embed_height` (`"full"` default | a CSS length | an aspect
+  like `"16/9"`) and an opaque **`artifact:` block** of declared values
+  (`purpose`, `type`, `theme`, `palette`, `data`, …) the framework passes
+  through untouched:
+
+  ```jsonc
+  // 20_dashboard.meta.json — sibling of 20_dashboard.html
+  {
+    "title": "Q3 Dashboard",
+    "description": "Revenue + retention at a glance",
+    "embed_height": "full",
+    "artifact": { "purpose": "…", "type": "dashboard", "theme": "adopts-site" }
+  }
+  ```
+- **Full-page route**: every artifact opens at its own reserved URL,
+  **`/artifacts/<path-from-content-root>`** — full viewport, its own `<head>`,
+  bookmarkable and shareable. The embed's hover controls are *Open full page ↗*
+  (primary, this URL) and *Expand* (secondary, grow in place; `Esc` closes).
+  Because `/artifacts` is claimed by this route, **`artifacts` is a reserved
+  section base URL** (see `settings-layout.md`).
+- **Slug collisions** (`15_x.md` + `16_x.html` → same `/x`) render an explicit
+  error page + build error — rename one.
+- **No prefix → skipped with a warning** (assumed a stray export). Files under
+  `assets/` are never scanned — embed-only / fetch-target `.html` lives there.
+- **Opt-out**: `"allow_artifact_pages": false` in the *section-root*
+  `settings.json`.
+- **Trust**: an artifact runs **unsandboxed as first-party content** on the site
+  origin — never paste untrusted third-party HTML in as an artifact.
+- **Building one** — design, dual-theme discipline, dataviz, the palette
+  validator, design-system flows — is the **`artifact-authoring` skill's** job;
+  this reference covers only where the file lives and how it's configured.
+- User-guide: `@root/default-docs/data/user-guide/15_writing-content/08_artifact-pages.md`.
 
 ## Outline (right rail)
 

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en" data-theme-default>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mini design system — artifact demo</title>
+<style>
+  /* ---- Tokens: light ---- */
+  :root {
+    --bg: #f6f7f9;
+    --surface: #ffffff;
+    --surface-2: #eef1f4;
+    --border: #dbe0e6;
+    --ink: #1a2230;
+    --ink-2: #4c5766;
+    --muted: #6b7683;
+    --accent: #2f6f6a;
+    --accent-ink: #ffffff;
+    --accent-soft: #dcecea;
+    --good: #2f7d54;
+    --warn: #9a6a10;
+    --info: #2b5f95;
+    --radius: 10px;
+    --radius-sm: 6px;
+    --shadow: 0 1px 2px rgba(20, 30, 40, .05), 0 6px 16px rgba(20, 30, 40, .06);
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    color-scheme: light;
+  }
+  /* ---- Tokens: dark (designed, not inverted) ---- */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #10151b; --surface: #182029; --surface-2: #212b35; --border: #2a3540;
+      --ink: #e7edf3; --ink-2: #aab6c2; --muted: #7f8b98;
+      --accent: #5bb6ad; --accent-ink: #08120f; --accent-soft: #14312e;
+      --good: #48b47a; --warn: #d3a24a; --info: #62a2df;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 20px rgba(0,0,0,.3);
+      color-scheme: dark;
+    }
+  }
+  /* ---- Explicit toggle wins in both directions ---- */
+  :root[data-theme="dark"] {
+    --bg: #10151b; --surface: #182029; --surface-2: #212b35; --border: #2a3540;
+    --ink: #e7edf3; --ink-2: #aab6c2; --muted: #7f8b98;
+    --accent: #5bb6ad; --accent-ink: #08120f; --accent-soft: #14312e;
+    --good: #48b47a; --warn: #d3a24a; --info: #62a2df;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 20px rgba(0,0,0,.3);
+    color-scheme: dark;
+  }
+  :root[data-theme="light"] {
+    --bg: #f6f7f9; --surface: #ffffff; --surface-2: #eef1f4; --border: #dbe0e6;
+    --ink: #1a2230; --ink-2: #4c5766; --muted: #6b7683;
+    --accent: #2f6f6a; --accent-ink: #ffffff; --accent-soft: #dcecea;
+    --good: #2f7d54; --warn: #9a6a10; --info: #2b5f95;
+    --shadow: 0 1px 2px rgba(20,30,40,.05), 0 6px 16px rgba(20,30,40,.06);
+    color-scheme: light;
+  }
+
+  * , *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: var(--sans); line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color .25s ease, color .25s ease;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 2rem 1.5rem 3rem; }
+
+  header.top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 2rem; }
+  .eyebrow { font-family: var(--mono); font-size: .6875rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 0 0 .5rem; }
+  h1 { font-size: clamp(1.5rem, 1.1rem + 1.8vw, 2rem); font-weight: 650; letter-spacing: -.015em; margin: 0 0 .4rem; line-height: 1.15; }
+  .lede { color: var(--ink-2); max-width: 52ch; margin: 0; font-size: .95rem; }
+
+  .toggle {
+    flex: none; display: inline-flex; align-items: center; gap: .45em;
+    font-family: var(--mono); font-size: .75rem; color: var(--ink-2);
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 100px; padding: .4em .8em; cursor: pointer;
+    transition: border-color .2s ease, color .2s ease;
+  }
+  .toggle:hover { border-color: var(--accent); color: var(--ink); }
+  .toggle .sun { display: inline; } .toggle .moon { display: none; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) .toggle .sun { display: none; }
+    :root:not([data-theme]) .toggle .moon { display: inline; }
+  }
+  :root[data-theme="dark"] .toggle .sun { display: none; }
+  :root[data-theme="dark"] .toggle .moon { display: inline; }
+  :root[data-theme="light"] .toggle .sun { display: inline; }
+  :root[data-theme="light"] .toggle .moon { display: none; }
+
+  section { margin-top: 2.25rem; }
+  h2 { font-size: .8125rem; font-family: var(--mono); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 0 0 1rem; padding-bottom: .5rem; border-bottom: 1px solid var(--border); }
+
+  /* palette */
+  .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr)); gap: .75rem; }
+  .swatch { border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; background: var(--surface); }
+  .swatch .chip { height: 3rem; }
+  .swatch .meta { padding: .5rem .6rem; font-family: var(--mono); font-size: .6875rem; color: var(--ink-2); }
+  .swatch .meta b { display: block; color: var(--ink); font-weight: 600; letter-spacing: .01em; }
+
+  /* type scale */
+  .type-row { display: flex; align-items: baseline; gap: 1rem; padding: .5rem 0; border-bottom: 1px dashed var(--border); }
+  .type-row:last-child { border-bottom: 0; }
+  .type-row .tag { font-family: var(--mono); font-size: .6875rem; color: var(--muted); width: 3rem; flex: none; }
+  .s-1 { font-size: 1.6rem; font-weight: 650; letter-spacing: -.01em; }
+  .s-2 { font-size: 1.15rem; font-weight: 600; }
+  .s-3 { font-size: .95rem; }
+  .s-4 { font-size: .8125rem; color: var(--ink-2); }
+
+  /* components */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: 1rem; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.1rem; box-shadow: var(--shadow); }
+  .card h3 { margin: 0 0 .35rem; font-size: .95rem; font-weight: 600; }
+  .card p { margin: 0 0 .9rem; color: var(--ink-2); font-size: .85rem; }
+
+  .btns { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+  .btn { font: inherit; font-size: .8125rem; font-weight: 600; padding: .5em 1em; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); color: var(--ink); cursor: pointer; transition: border-color .15s, background .15s, color .15s; }
+  .btn:hover { border-color: var(--accent); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .btn.primary:hover { filter: brightness(1.06); }
+  .btn.ghost { background: transparent; }
+
+  .badges { display: flex; flex-wrap: wrap; gap: .4rem; }
+  .badge { font-family: var(--mono); font-size: .6875rem; padding: .25em .6em; border-radius: 100px; border: 1px solid var(--border); background: var(--surface-2); color: var(--ink-2); display: inline-flex; align-items: center; gap: .4em; }
+  .badge::before { content: ""; width: .5em; height: .5em; border-radius: 50%; background: var(--muted); }
+  .badge.good::before { background: var(--good); } .badge.good { color: var(--good); }
+  .badge.warn::before { background: var(--warn); } .badge.warn { color: var(--warn); }
+  .badge.info::before { background: var(--info); } .badge.info { color: var(--info); }
+
+  footer { margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid var(--border); font-family: var(--mono); font-size: .6875rem; color: var(--muted); }
+
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: var(--radius-sm); }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="top">
+    <div>
+      <p class="eyebrow">Artifact demo · design system</p>
+      <h1>A miniature design system</h1>
+      <p class="lede">A self-contained HTML artifact — tokens, a type scale, and three components — that honors the host theme. Toggle the site's light/dark and this frame follows.</p>
+    </div>
+    <button class="toggle" type="button" id="tg" aria-label="Toggle theme">
+      <span class="sun" aria-hidden="true">☀</span><span class="moon" aria-hidden="true">☾</span>
+      <span>theme</span>
+    </button>
+  </header>
+
+  <section>
+    <h2>Color tokens</h2>
+    <div class="swatches">
+      <div class="swatch"><div class="chip" style="background:var(--accent)"></div><div class="meta"><b>accent</b>brand</div></div>
+      <div class="swatch"><div class="chip" style="background:var(--surface-2)"></div><div class="meta"><b>surface-2</b>raised</div></div>
+      <div class="swatch"><div class="chip" style="background:var(--good)"></div><div class="meta"><b>good</b>success</div></div>
+      <div class="swatch"><div class="chip" style="background:var(--warn)"></div><div class="meta"><b>warn</b>warning</div></div>
+      <div class="swatch"><div class="chip" style="background:var(--info)"></div><div class="meta"><b>info</b>info</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Type scale</h2>
+    <div class="type-row"><span class="tag">s1</span><span class="s-1">The quick brown fox</span></div>
+    <div class="type-row"><span class="tag">s2</span><span class="s-2">The quick brown fox jumps</span></div>
+    <div class="type-row"><span class="tag">s3</span><span class="s-3">The quick brown fox jumps over the lazy dog</span></div>
+    <div class="type-row"><span class="tag">s4</span><span class="s-4">The quick brown fox jumps over the lazy dog — meta line</span></div>
+  </section>
+
+  <section>
+    <h2>Components</h2>
+    <div class="cards">
+      <div class="card">
+        <h3>Buttons</h3>
+        <p>Primary, default, and ghost — one accent token drives them all.</p>
+        <div class="btns">
+          <button class="btn primary">Primary</button>
+          <button class="btn">Default</button>
+          <button class="btn ghost">Ghost</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Status badges</h3>
+        <p>Micro labels keyed to the status token trio.</p>
+        <div class="badges">
+          <span class="badge good">passing</span>
+          <span class="badge warn">review</span>
+          <span class="badge info">draft</span>
+          <span class="badge">neutral</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>Self-contained artifact · no external requests · honors data-theme + prefers-color-scheme</footer>
+</main>
+
+<script>
+  (function () {
+    var root = document.documentElement;
+    function cur() {
+      var s = root.getAttribute('data-theme');
+      if (s === 'dark' || s === 'light') return s;
+      return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    document.getElementById('tg').addEventListener('click', function () {
+      root.setAttribute('data-theme', cur() === 'dark' ? 'light' : 'dark');
+    });
+  })();
+</script>
+</body>
+</html>

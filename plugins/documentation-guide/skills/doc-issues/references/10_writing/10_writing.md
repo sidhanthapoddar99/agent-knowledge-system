@@ -121,6 +121,29 @@ file. Never inline scene JSON — the `.excalidraw` file is the source of truth:
 Missing file → build error (`asset-missing`); malformed scene → visible error box.
 Live demo: `2026-04-10-editor-diagrams/notes/02_embed-verification.md`.
 
+## Artifacts
+
+Artifacts — self-contained `.html` pages (reports, dashboards, design-system
+showcases) — are built with the **`artifact-authoring` skill**; the tracker
+concern is only *where they live and how they're referenced*. An artifact
+authored to support an issue's thinking — a brand/design-system draft, a
+dashboard behind a decision — can live right in the issue's `brainstorm/` or
+`notes/` folder, versioned with the deliberation.
+
+Reference it from prose by its **full-page URL**: the reserved
+`/artifacts/<path-from-content-root>` route serves any `.html` under any content
+folder — the tracker included — full-viewport and shareable, e.g.
+`/artifacts/todo/<issue>/notes/20_brand-draft.html` (the path keeps the `NN_`
+prefix and `.html`). Give it an optional companion same-name
+`.meta.json` / `.meta.jsonc` sidecar declaring `purpose` / `type` / `palette` so
+the trade-off discussion can cite those values without anyone parsing the HTML.
+
+Unlike a first-class diagram file, an artifact is a **linked, full-page
+document**, not an embedded sidebar entry. When a design system settles from
+in-flux draft to canon, promote it outward to a **published docs section**,
+where artifacts become first-class embedded pages (`documentation-guide` +
+`artifact-authoring` territory).
+
 ## Assets
 
 - **Shared files**: project root `assets/`, served at `/assets/` — absolute paths:

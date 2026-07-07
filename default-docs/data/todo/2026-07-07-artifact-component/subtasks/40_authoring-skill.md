@@ -1,6 +1,6 @@
 ---
 title: "Author the converged artifact-authoring skill (SKILL.md + references + scripts)"
-status: open
+status: review
 ---
 
 ## Goal
@@ -73,7 +73,7 @@ contents and §4's merge decisions.)*
 
 ### Scaffold + frontmatter
 
-- [ ] **Scaffold the skill folder** `plugins/documentation-guide/skills/artifact-authoring/`
+- [x] **Scaffold the skill folder** `plugins/documentation-guide/skills/artifact-authoring/`
       with `SKILL.md`, `references/`, `scripts/`. Write YAML frontmatter
       (`name`, `description`, `license`) with a `description` tuned for
       triggering on artifact-building intent (building/designing an HTML artifact,
@@ -84,14 +84,14 @@ contents and §4's merge decisions.)*
 
 ### SKILL.md body — one task per section
 
-- [ ] **§0 Triage / calibrate the treatment.** Port artifact-design's "read the
+- [x] **§0 Triage / calibrate the treatment.** Port artifact-design's "read the
       request first" (utilitarian vs editorial) nearly verbatim — the best single
       idea across the four sources. Fold frontend-design's Purpose/Tone/
       Differentiation questions in as the *editorial-branch* prompts. Recalibrate
       altitude for a docs repo: the utilitarian branch dominates (embedded
       explainers, dashboards); editorial = standalone showcase artifacts.
 
-- [ ] **§1 Honor the host design system first.** This is *stronger* here than on
+- [x] **§1 Honor the host design system first.** This is *stronger* here than on
       claude.ai because the framework has a real, mandatory theme contract. Write
       a **conventions section per design-sync's rules**: enumerate the actual
       token vocabulary (real `--color-*`, `--spacing-*`, the two-tier
@@ -105,14 +105,14 @@ contents and §4's merge decisions.)*
       lives** — unless the artifact deliberately commits to its own visual world
       (poster, game), the single-theme escape hatch generalized.
 
-- [ ] **§2 Fundamentals for every artifact.** Port wholesale from artifact-design
+- [x] **§2 Fundamentals for every artifact.** Port wholesale from artifact-design
       (subject-grounding, hue-biased neutrals, layout-does-the-spacing with
       flex/grid + `gap`, `overflow-x: auto` for wide content, `tabular-nums`,
       build-cleanly / focus states / `prefers-reduced-motion`, CSS-specificity
       hygiene, copy-as-design-material, structure-is-information). No platform
       coupling here — minimal rewrite.
 
-- [ ] **§3 Anti-generic rules (merge).** Base = artifact-design's cliché list
+- [x] **§3 Anti-generic rules (merge).** Base = artifact-design's cliché list
       (warm-cream + serif + terracotta; near-black + acid-green; purple-blue
       gradient hero; Inter/Space Grotesk "safe" defaults; emoji section markers;
       everything centered; `rounded-lg`; accent rails) **plus** its "user's words
@@ -121,7 +121,7 @@ contents and §4's merge decisions.)*
       editorial branch, gated by restraint. Drop the duplicate "match complexity
       to the vision" paragraph (keep artifact-design's).
 
-- [ ] **§4 Both-themes discipline (keep doctrine, rewrite the signal).** Keep
+- [x] **§4 Both-themes discipline (keep doctrine, rewrite the signal).** Keep
       token-level theming, "dark is *selected* not inverted," single-theme as a
       deliberate commitment. Rewrite the *mechanism* for our target: the artifact
       keeps the identical robust pattern (tokens on `:root`, `@media
@@ -132,7 +132,7 @@ contents and §4's merge decisions.)*
       are (or are not) injected into the iframe so authors know whether to consume
       or merely derive from them.
 
-- [ ] **§5 Typography.** Port artifact-design's pairing guidance (65ch measure,
+- [x] **§5 Typography.** Port artifact-design's pairing guidance (65ch measure,
       type scale, `text-wrap: balance`, letter-spaced uppercase labels,
       display+body pairing). **Rewrite the font-delivery sentence**: replace
       "inline the face as a `@font-face` data URI (CSP workaround)" with "ship
@@ -141,17 +141,17 @@ contents and §4's merge decisions.)*
       font looks "fine" at a glance; check the computed font, not the vibe
       (design-sync's `[FONT_MISSING]` lesson as prose).
 
-- [ ] **§6 When it's a UI / dashboard → route into dataviz.** Keep
+- [x] **§6 When it's a UI / dashboard → route into dataviz.** Keep
       artifact-design's "when it's a UI, not a document" paragraph as the
       *router* (summary before detail, state encoded in form, semantic color ≠
       accent) and **delete its chart specifics** to avoid drift — the chart detail
       lives in the dataviz reference (next group).
 
-- [ ] **§7 Process — plan before code.** Port artifact-design's pre-code plan
+- [x] **§7 Process — plan before code.** Port artifact-design's pre-code plan
       (4–6 named hex, 2+ type roles, one-sentence layout concept) plus the
       editorial review-for-genericness step.
 
-- [ ] **§8 Verify before publishing.** This is design-sync's unique
+- [x] **§8 Verify before publishing.** This is design-sync's unique
       contribution, stripped of harness. Rewrite the verify *target*: run
       `./start dev`, load the `/artifacts/<path>` full-page URL **and** an
       embedding docs page, check **both themes** and **both viewports** (embed
@@ -162,13 +162,13 @@ contents and §4's merge decisions.)*
       honored), **Plausible** (real content, never `foo`/`test`). Note the
       optional Playwright MCP tools for screenshots.
 
-- [ ] **§9 Realistic content rule.** One short shared rule from artifact-design
+- [x] **§9 Realistic content rule.** One short shared rule from artifact-design
       ("real content, never lorem") + design-sync ("curate before inventing;
       never `foo`/`test`; canonical example + variant sweep + static states").
 
 ### references/ (the deep material — keep out of SKILL.md to keep it lean)
 
-- [ ] **`references/dataviz.md`** (or a small folder) — port the dataviz
+- [x] **`references/dataviz.md`** (or a small folder) — port the dataviz
       procedure, non-negotiables, and anti-pattern catalog. Rewrite `palette.md`
       as **our** instance: derive surfaces from `--color-bg-*`, ink from
       `--color-text-*`, and status from `--color-success/warning/error/info`;
@@ -177,13 +177,13 @@ contents and §4's merge decisions.)*
       Make the theme contract authoritative for surfaces/ink (single source of
       truth) so it never double-declares with the docs theme.
 
-- [ ] **`references/design-system.md`** — the design-sync doctrine as prose: the
+- [x] **`references/design-system.md`** — the design-sync doctrine as prose: the
       anatomy of a design system as a consumable contract (tokens + fonts +
       component/pattern inventory + conventions doc + where-truth-lives
       pointers), the conventions-authoring rules, and the Styled/Complete/
       Plausible rubric with render-check habit.
 
-- [ ] **`references/publishing.md`** — **our layer**, greenfield. Where artifacts
+- [x] **`references/publishing.md`** — **our layer**, greenfield. Where artifacts
       live (an `NN_.html` in a docs section, or in a tracker `brainstorm/`/
       `notes/` folder); the `NN_` prefix rule and whether artifacts are exempt
       like assets (state the rule the `10` loader actually implements); the
@@ -196,7 +196,7 @@ contents and §4's merge decisions.)*
       offline-archive rationale); CDN fonts are a documented, discouraged opt-out.
       Design for the **embed width** first, test at both sizes.
 
-- [ ] **`references/brand-and-design-systems.md`** — the flows the user
+- [x] **`references/brand-and-design-systems.md`** — the flows the user
       explicitly wants: authoring a design system *inside an issue's `brainstorm/`
       folder*, and publishing one as a *dedicated docs section* full of artifacts
       plus commentary documents that carry explicit values (so an agent reads the
@@ -204,7 +204,7 @@ contents and §4's merge decisions.)*
 
 ### scripts/
 
-- [ ] **Bundle `scripts/validate_palette.js`** from `dataviz/scripts/` — the
+- [x] **Bundle `scripts/validate_palette.js`** from `dataviz/scripts/` — the
       dependency-free ES-module palette validator (CLI **and** in-page
       `data-palette` modes, runs under bun/node). Document both invocations in the
       dataviz reference. **Drop the `.py` twin** (redundant under bun) but note in
@@ -214,14 +214,14 @@ contents and §4's merge decisions.)*
       [`../brainstorm/02_discuss_authoring-skill-design.md`](../brainstorm/02_discuss_authoring-skill-design.md)
       §9).
 
-- [ ] **Provenance stub.** Add a short provenance pointer in the skill (header
+- [x] **Provenance stub.** Add a short provenance pointer in the skill (header
       comment or a `references/PROVENANCE.md`) linking to
       [`../notes/01_skill-sources-and-provenance.md`](../notes/01_skill-sources-and-provenance.md);
       the full map + fold-in protocol is owned by `70`.
 
 ### Verification
 
-- [ ] **Trigger + self-test verification.** Confirm the skill triggers on a
+- [x] **Trigger + self-test verification.** Confirm the skill triggers on a
       cold "build me a dashboard artifact / design system for this project"
       prompt (and does **not** steal docs-writing or tracker prompts from the
       sibling skills). Run the palette validator under bun (`node`/`bun
@@ -232,3 +232,38 @@ contents and §4's merge decisions.)*
       `astro-doc-code/src/styles/theme.yaml` (the design-sync
       validate-names-against-reality rule applied to our own skill). Confirm the
       installed-cache mirror is byte-identical to the repo-local source.
+
+## Landed (2026-07-07) — status review
+
+Skill authored at `plugins/documentation-guide/skills/artifact-authoring/`
+(`SKILL.md` + 4 references + a `dataviz/` sub-folder of 8 files + a bundled
+`scripts/validate_palette.js` + `references/PROVENANCE.md`), mirrored byte-identical
+into the installed cache at `…/documentation-guide/0.5.4/skills/artifact-authoring/`.
+Plugin `plugin.json` description and `README.md` now enumerate **3 skills**.
+
+**Two placement reconciliations** (the brainstorm §3 TOC is the authority for
+source→section mapping, so where the task's file list and §3 differed, §3 won):
+
+1. The task's `references/design-fundamentals.md` split of `SKILL.md` §§2/3/5/6/7/9
+   was applied — those sections live in `references/design-fundamentals.md`, not
+   inline; `SKILL.md` keeps only the load-bearing inline core (§0 calibrate, §1 honor
+   theme, the both-themes + self-containment non-negotiables, the verify gate), per §3.
+2. The task listed `references/design-system.md` **and**
+   `references/brand-and-design-systems.md` separately; §3 consolidates both into one
+   `references/design-systems.md` (doctrine + the two homes + the rubric). Shipped as one.
+
+**Open cross-subtask dependencies the skill documents but does not decide** (flagged
+for review / coordination):
+
+- **Theme-CSS-into-iframe** (brainstorm §5 / `20_route`): whether `--color-*` resolve
+  inside the artifact iframe. `publishing.md` teaches the always-safe self-defined
+  pattern and marks the adopts-site variable set as "finalized by the route layer —
+  verify before relying." Update the one availability sentence once `20_route` lands.
+- **Version bump**: `plugin.json` stays at `0.5.4`; the skill was mirrored into the
+  active `0.5.4` cache to preserve repo/cache parity. The semver bump is left to
+  coordinate with `50_skills-integration` (both land as one release), per this
+  subtask's note.
+- The sidecar `artifact:` reserved-key list (brainstorm Thread B, left open for this
+  skill) is finalized in `publishing.md` → *The metadata sidecar contract*
+  (`purpose` · `type` · `theme` · `palette` · `data` · `interactions` · `sources` ·
+  `embed_height`, block open for extras). `10_component` owns the filename mechanics.

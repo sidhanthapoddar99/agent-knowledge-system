@@ -4,6 +4,7 @@
  * Renders in standalone mode (one doc owns the DOM) or as a hidden panel
  * co-hosted under DetailBody (legacy).
  */
+import path from 'path';
 import type { IssueNote } from '@loaders/issues';
 import type { TocEntry } from '../../server/toc';
 import { notePanelKey, brainstormPanelKey, agentMemoryPanelKey } from '../../server/helpers';
@@ -18,7 +19,10 @@ interface Props {
 }
 
 const { note: n, standalone = false, prefix = 'notes' } = Astro.props;
-const pathDisplay = [prefix, ...n.groupPath, `${n.name}.md`].join('/');
+// Use the real on-disk filename so the path label carries the true extension
+// (`.md`, `.html` for an artifact, `.mmd`/… for a diagram) rather than assuming
+// markdown.
+const pathDisplay = [prefix, ...n.groupPath, path.basename(n.filePath)].join('/');
 const panelKey = prefix === 'brainstorm' ? brainstormPanelKey(n)
   : prefix === 'agent-memory' ? agentMemoryPanelKey(n)
   : notePanelKey(n);

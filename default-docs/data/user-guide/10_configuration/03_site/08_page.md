@@ -207,18 +207,61 @@ const blogConfig = getPage('blog');
 const blogUrl = resolvePageUrl('blog'); // "/blog"
 ```
 
+## Reserved base URLs
+
+A handful of URL segments are claimed by built-in serving and system routes, so
+a section's `base_url` **may not** be any of them:
+
+| Reserved | Claimed by |
+|---|---|
+| `artifacts` | the `/artifacts/<path>` route that serves full-page HTML [artifacts](../../writing-content/artifact-pages) |
+| `assets` | the `/assets/<path>` static-asset route |
+| `content-assets` | the `/content-assets/<path>` route that serves colocated content files |
+| `api` | the `/api/*` dev endpoints |
+| `editor` | the `/editor` live-editor route |
+
+These static routes win over the `[...slug]` catch-all by route priority, so a
+section that claimed one would be silently shadowed — its pages simply
+unreachable, with no error. To prevent that, the framework **hard-fails config
+load** if any `base_url` normalizes to a reserved segment — it stops dev, build,
+and preview alike (the same style as a missing theme or a failed version gate),
+so the mistake surfaces immediately rather than as a mysterious 404.
+
+```yaml
+pages:
+  design-system:
+    base_url: "/artifacts"   # ✗ reserved — config load fails
+    type: docs
+    layout: "@docs/default"
+    data: "@data/design-system"
+```
+
+```
+[CONFIG ERROR] Page "design-system" uses base_url "/artifacts", which is
+reserved by the built-in /artifacts/<path> route that serves full-page HTML
+artifacts. Rename this section's base_url to a non-reserved value in site.yaml.
+Reserved base URLs: artifacts, assets, content-assets, api, editor.
+```
+
+The fix is always the same: pick a non-reserved `base_url` (e.g.
+`/design-system`, `/reports`).
+
 ## Route Validation
 
-The system validates routes at build time:
+Beyond the reserved-segment check above, config load also rejects **overlapping
+routes** — two sections where one `base_url` is a path-prefix of the other
+(`/docs` and `/docs/api`), which would make the nested one unreachable. The root
+route `/` is exempt. Both checks run in `validateRoutes()` and hard-throw before
+the config is cached or reaches the router:
 
 ```typescript
 import { validateRoutes, getPages } from '@loaders/config';
 
 const errors = validateRoutes(getPages());
-// Returns errors for overlapping routes (except /)
+// [] when valid; strings for overlapping routes and reserved base URLs otherwise
 ```
 
-Example error:
+Example overlap error:
 ```
-Overlapping routes: "docs" (/docs) and "api" (/docs/api)
+Overlapping routes: "docs" (/docs) and "nested" (/docs/nested)
 ```

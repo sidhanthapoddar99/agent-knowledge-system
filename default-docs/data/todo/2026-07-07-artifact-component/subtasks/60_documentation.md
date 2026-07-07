@@ -1,6 +1,6 @@
 ---
 title: "Documentation — user-guide (author/embed) + dev-docs (mechanism/route/rationale)"
-status: open
+status: review
 ---
 
 ## Goal
@@ -38,7 +38,7 @@ reserved-word list as the guard (`30`) and the skills (`50`).
 
 ## Tasks
 
-- [ ] **user-guide: authoring artifacts page.** Create
+- [x] **user-guide: authoring artifacts page.** DONE — `15_writing-content/08_artifact-pages.md`. Create
       `user-guide/15_writing-content/08_artifact-pages.md` (or the next free
       gap-spaced prefix). Cover: dropping an `NN_.html` file into a docs section;
       what happens (sidebar entry, embed fills the content area, chrome stays,
@@ -51,7 +51,7 @@ reserved-word list as the guard (`30`) and the skills (`50`).
       `artifact-authoring` skill for *building* artifacts well. Done when an author
       can create and embed an artifact from this page alone.
 
-- [ ] **user-guide: reserved-URL limitation.** In
+- [x] **user-guide: reserved-URL limitation.** DONE — added "Reserved base URLs" section + enriched "Route Validation" in `10_configuration/03_site/08_page.md` (list matches `RESERVED_BASE_URLS`). In
       `user-guide/10_configuration/` (the base-URL / settings page), document that
       a docs section's `base_url` may not be `artifacts` (nor the other reserved
       words `assets`, `content-assets`, `api`, `editor`), that config load
@@ -59,13 +59,13 @@ reserved-word list as the guard (`30`) and the skills (`50`).
       route). Match the list to the `30` code and the `50` skills. Done when the
       limitation is discoverable where authors choose base URLs.
 
-- [ ] **user-guide (optional): showcase page.** Consider an
+- [x] **user-guide (optional): showcase page.** DONE — `09_artifact-showcase.md` + a self-authored live demo artifact `10_design-system-demo.html` (+ `.meta.json` sidecar). Verified rendering embedded (light+dark) and full-page. Consider an
       `09_artifact-showcase.md` peer to `07_diagram-showcase.md` that embeds a
       real demo artifact, exercising the client render in production docs (the
       diagram showcase is the pattern). Done when a live artifact renders inside a
       published docs page.
 
-- [ ] **dev-docs: loader mechanism.** Extend
+- [x] **dev-docs: loader mechanism.** DONE — "Artifact Pages" subsection in `05_architecture/03_data-loading.md` (scan, shared collision pool, dependencyFiles concat, sidecar shape, opt-out; real file/line refs). Extend
       `dev-docs/05_architecture/03_data-loading.md` (or add a sibling) documenting
       `loaders/artifact-pages.ts`: the `**/*.html` scan, `assets/` exclusion, the
       `NN_` skip-with-warning policy, `allow_artifact_pages` opt-out, the sidecar
@@ -73,7 +73,7 @@ reserved-word list as the guard (`30`) and the skills (`50`).
       alongside markdown and diagrams in `data.ts`. Reference real files/lines.
       Done when a framework dev can trace an `.html` file to a rendered page.
 
-- [ ] **dev-docs: the route.** Extend
+- [x] **dev-docs: the route.** DONE — "The Reserved Artifact Route" + "Reserved Base URLs" sections in `05_architecture/02_routing.md` (static-segment priority, scoped `text/html` MIME, `isInternalSlug`, cache-buster handshake, `validateRoutes` guard). Extend
       `dev-docs/05_architecture/02_routing.md` documenting the reserved
       `src/pages/artifacts/[...path].ts` serving route: static-segment priority
       over the `[...slug]` catch-all, the scoped `text/html` MIME decision (and
@@ -81,7 +81,7 @@ reserved-word list as the guard (`30`) and the skills (`50`).
       `isInternalSlug` reservation, and the caching/cache-buster handshake. Done
       when the route's design is explained with its trade-offs.
 
-- [ ] **dev-docs: render/embed integration + rationale.** Document the embed
+- [x] **dev-docs: render/embed integration + rationale.** DONE — new `15_scripts/12_artifacts.md` (embed container, `scripts/artifacts.ts`, theme handshake + why-no-invert, expand, CSS, extension points, "Design rationale" with issue link) + updated `15_scripts/05_overview.md`. Document the embed
       container HTML, the `scripts/artifacts.ts` client renderer, the
       theme-propagation-into-iframe approach (and why the diagram dark-mode invert
       is deliberately *not* applied to artifacts), and the extension points.
@@ -91,7 +91,7 @@ reserved-word list as the guard (`30`) and the skills (`50`).
       under `../notes/`. Done when the rationale is captured on the dev side, not
       just in the tracker.
 
-- [ ] **Verification.** Run `docs-guide check section` on both
+- [x] **Verification.** DONE — `docs-guide check section` = 0 errors on all 4 touched sections (2 expected non-md-file warnings on the demo `.html`/`.meta.json` are subtask 50's scope). `bun run build` = 755 pages green; full-page route emits byte-identical. Dev server + headless browser: embedded demo fills the content column (sidebar stays, outline auto-hides), open-full-page URL correct, both light + dark verified (embedded follows the site via `data-theme`; full-page via `prefers-color-scheme`), demo is self-contained; every cross-link resolves (fixed `page` slug + em-dash anchor against built heading IDs). Audience split intact. Run `docs-guide check section` on both
       `user-guide/15_writing-content` and the touched `dev-docs` sections — zero
       errors (frontmatter, prefixes, links). Run `./start build` and navigate the
       new pages in `preview`; confirm the showcase artifact renders and every

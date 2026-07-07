@@ -24,7 +24,7 @@ export type ErrorType =
   | 'theme-invalid-manifest'
   | 'theme-circular-extends';
 
-export type WarningType = 'missing-description' | 'missing-image' | 'deprecated' | 'draft';
+export type WarningType = 'missing-description' | 'missing-image' | 'deprecated' | 'draft' | 'config';
 
 export interface ContentError {
   file: string;

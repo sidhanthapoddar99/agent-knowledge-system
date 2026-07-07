@@ -1,0 +1,290 @@
+{
+  "_about": "Integrity manifest for the four design skills captured into repo-root tmp_skills/ and converged into the planned `artifact-authoring` skill. This file is authored metadata (per-file hashes + upstream coordinates + convergence map) and is SAFE TO PUBLISH. The verbatim upstream text is deliberately NOT committed to this public repo. This is the publishable half of recommendation (c) in the companion note; the frozen baseline text is preserved privately (a USER action item). Diff a future re-capture against these hashes to detect upstream drift.",
+  "manifest_version": 1,
+  "capture_date": "2026-07-07",
+  "generated": "2026-07-07",
+  "hash_algorithm": "sha256",
+  "companion_note": "notes/01_skill-sources-and-provenance.md",
+  "baseline_home": "PRIVATE — the verbatim tmp_skills/ snapshot is preserved outside this public repo (private/internal archive), outside `git clean`'s reach. tmp_skills/ is untracked in this repo (its own `.gitignore` is `**`). Preserving that private copy is a USER action; an agent cannot perform it.",
+  "authorship": "All four sources are Anthropic-authored. The converged skill REWRITES/ADAPTS them for this repo's file-based publish target; it never pastes them verbatim. This manifest records only our own metadata (hashes, coordinates, destinations), never upstream text. The fold-in protocol (companion note) preserves that boundary: upstream deltas are re-expressed into our sections, not copied.",
+  "convergence_target": {
+    "skill": "plugins/documentation-guide/skills/artifact-authoring/ (+ mirrored installed cache per the plugin repo/cache parity rule)",
+    "status": "RECONCILED (2026-07-07) — subtask 40 shipped plugins/documentation-guide/skills/artifact-authoring/ (mirrored byte-identically into the installed cache). The authoritative file-for-file shipped map is the 'Reconciliation — the shipped map' table in the companion note (notes/01). The per-source `convergence_destination` strings below are the PRE-IMPLEMENTATION PLAN and are superseded where they differ from what shipped — notably: the dataviz chapter shipped as a references/dataviz/ DIRECTORY (00_overview + choosing-a-form/color-formula/marks-and-anatomy/interaction/components/anti-patterns + a theme-derived palette.md), not a single references/dataviz.md; the design-sync doctrine shipped as references/design-systems.md (plural); and the artifact-design spine split across SKILL.md §0–§3 plus references/design-fundamentals.md. Verbatim-ness as shipped: scripts/validate_palette.js is the ONLY verbatim carve-out — all prose, the dataviz references included, is re-expressed in our own words (verified during reconciliation at 1–10% six-gram overlap against the frozen baseline)."
+  },
+  "flag_legend": {
+    "byte-exact": "Copied byte-for-byte from the on-disk skill payload (built-in deeper files + sub-skill SKILL.md from the bundled-skills extraction; frontend-design from the plugin-marketplace cache). The sha256 IS a cryptographic baseline for these files.",
+    "transcribed": "The built-in top-level SKILL.md body rendered from an in-session Skill-tool load and transcribed. The harness strips YAML frontmatter on load, so these files carry no name:/description: frontmatter and whitespace may be normalized. Content-faithful but NOT a cryptographic baseline — diff these textually at paragraph level, not by hash.",
+    "local-scaffold": "Authored by us as repo scaffolding, not captured upstream content. Not part of any upstream baseline."
+  },
+  "sources": {
+    "artifact-design": {
+      "class": "claude-code-builtin",
+      "upstream_coordinate": "Claude Code v2.1.202 built-in skill (\"Artifact Design\")",
+      "recapture_method": "In-session Skill-tool load; SKILL.md body transcribed (frontmatter stripped by harness). On a new CC version, re-run the load + transcribe.",
+      "convergence_destination": "artifact-authoring SKILL.md spine: §0 calibrate treatment, §1 honor-the-host, §2 fundamentals, §3 anti-generic list + user's-words override, §4 both-themes discipline, §5 typography, §6 UI/dashboard router, §7 process, §9 realistic-content. claude.ai specifics (font-as-data-URI CSP workaround, viewer data-theme contract) DROPPED and rewritten for our publish target.",
+      "files": [
+        {
+          "path": "tmp_skills/artifact-design/SKILL.md",
+          "sha256": "1bae5b0d92cc4265dcc6f4d18e846f7a84dac0972f62f7d222656455fdbe8352",
+          "flag": "transcribed"
+        }
+      ]
+    },
+    "dataviz": {
+      "class": "claude-code-builtin",
+      "upstream_coordinate": "Claude Code v2.1.202 built-in skill (\"Data Visualization\")",
+      "recapture_method": "Two-channel: SKILL.md body transcribed from an in-session load; references/ + scripts/ copied byte-for-byte from the bundled-skills extraction dir (this session: /tmp/claude-1000/bundled-skills/).",
+      "convergence_destination": "The chart chapter → references/dataviz.md (7-step form→color→validate procedure, non-negotiables, anti-pattern catalog). palette.md becomes our theme-derived instance. scripts/validate_palette.js bundled to the skill's scripts/. scripts/validate_palette.py DROPPED (redundant .py twin under bun) — recorded here as a conscious omission.",
+      "files": [
+        {
+          "path": "tmp_skills/dataviz/SKILL.md",
+          "sha256": "8fd13286998a94d8eec3e03631543da1b2f7548f7a61fad265d154dbb3a09cc4",
+          "flag": "transcribed"
+        },
+        {
+          "path": "tmp_skills/dataviz/references/anti-patterns.md",
+          "sha256": "7b86f69396309b66d504e60099e26570c0662dc22845612b455bae818e2a7c51",
+          "flag": "byte-exact"
+        },
+        {
+          "path": "tmp_skills/dataviz/references/choosing-a-form.md",
+          "sha256": "f247ee746a998f0530dab80af4f13f2c7b7c48d5bab7e8c3fe2208fcf6b741fb",
+          "flag": "byte-exact"
+        },
+        {
+          "path": "tmp_skills/dataviz/references/color-formula.md",
+          "sha256": "d83d92ca27205b3a3eeef137cf9b7e4819afe1ba930e852ef11e899b1a2ef30b",
+          "flag": "byte-exact"
+        },
+        {
+          "path": "tmp_skills/dataviz/references/components.md",
+          "sha256": "74c87feb016f2d39c01adf4e0f74219c1dacd9cba159e4242c744b37c647f144",
+          "flag": "byte-exact"
+        },
+        {
+          "path": "tmp_skills/dataviz/references/interaction.md",
+          "sha256": "42f8447d67887cfc5c11c7b730967da75ef56983d7873cf24fd6e787c3f55db3",
+          "flag": "byte-exact"
+        },
+        {
+          "path": "tmp_skills/dataviz/references/marks-and-anatomy.md",
+          "sha256": "a99151f896db345baa63b7c2229c442cdb5de95be74e268869c416fe94a190fa",
+          "flag": "byte-exact"
+        },
+        {
+          "path": "tmp_skills/dataviz/references/palette.md",
+          "sha256": "d746c40ad53c3d1e53a8ac1ff7e1769e79d67915e33c3c39881023542f922214",
+          "flag": "byte-exact"
+        },
+        {
+          "path": "tmp_skills/dataviz/scripts/validate_palette.js",
+          "sha256": "3ad9e56aea074c3c976476f04e4ab371a158d0c3f0c88f158c4610491df72d2b",
+          "flag": "byte-exact",
+          "note": "BUNDLED into the converged skill's scripts/."
+        },
+        {
+          "path": "tmp_skills/dataviz/scripts/validate_palette.py",
+          "sha256": "a04290a91109d1cfdf4cf59dec76070887cd4cf960a3163844f6e19d0b26e9d1",
+          "flag": "byte-exact",
+          "note": "DROPPED — redundant .py twin of validate_palette.js; recorded as a conscious omission, not an oversight. Exists upstream."
+        }
+      ]
+    },
+    "design-sync": {
+      "class": "claude-code-builtin",
+      "upstream_coordinate": "Claude Code v2.1.202 built-in skill (\"Sync a design system to claude.ai/design\")",
+      "recapture_method": "Two-channel: top-level SKILL.md body transcribed from an in-session load; the two sub-skills (storybook/, non-storybook/), lib/, and top-level *.mjs drivers copied byte-for-byte from the bundled-skills extraction dir.",
+      "convergence_destination": "DOCTRINE ONLY → references/design-system.md (what a design system is as a consumable contract, write-conventions-for-a-guessing-agent rule, validate-names-against-built-artifacts rule, absolute Styled/Complete/Plausible rubric). The ENTIRE claude.ai/design upload pipeline — lib/, storybook/, non-storybook/ harness, *.mjs drivers (esbuild/ts-morph/Playwright machinery) — is DROPPED and NOT bundled. Recorded here as a conscious omission.",
+      "files": [
+        {
+          "path": "tmp_skills/design-sync/SKILL.md",
+          "sha256": "db4c6c768a5c79772f82bb6b5cb1029e63524ac2f4c6fc0d3611af32eb44f1a3",
+          "flag": "transcribed"
+        },
+        {
+          "path": "tmp_skills/design-sync/non-storybook/SKILL.md",
+          "sha256": "25d65f7889bb376a578e1b2bdebd845ef0f05cf530dbac399dbb3503b9a45af6",
+          "flag": "byte-exact",
+          "note": "DROPPED (machinery)."
+        },
+        {
+          "path": "tmp_skills/design-sync/storybook/SKILL.md",
+          "sha256": "7a3c348d75f810578b532e72ba7bb689a98b95586149313a32d100445339f556",
+          "flag": "byte-exact",
+          "note": "DROPPED (machinery)."
+        },
+        {
+          "path": "tmp_skills/design-sync/lib/bundle.mjs",
+          "sha256": "c0f82f1a9f14d4a65d5d68146a7d593895f2cf8d9683f12b9715e9fc0a2c6db6",
+          "flag": "byte-exact",
+          "note": "DROPPED (machinery)."
+        },
+        {
+          "path": "tmp_skills/design-sync/lib/common.mjs",
+          "sha256": "5399836cce8c3921f21f5db97e30e245ed816f8aec3536b1a6f090f46ff3fad5",
+          "flag": "byte-exact",
+          "note": "DROPPED (machinery)."
+        },
+        {
+          "path": "tmp_skills/design-sync/lib/css-fallback.mjs",
+          "sha256": "e68c1c9da29aee6e253943be0093a016b0225888926085c8898c6780ca7f4a66",
+          "flag": "byte-exact",
+          "note": "DROPPED (machinery)."
+        },
+        {
+          "path": "tmp_skills/design-sync/lib/css.mjs",
+          "sha256": "9699b9a2689d219275390c9c1e9ed9a539c54fe493b601c503fa182ea7a043c2",
+          "flag": "byte-exact",
+          "note": "DROPPED (machinery)."
+        },
+        {
+          "path": "tmp_skills/design-sync/lib/detect.mjs",
+          "sha256": "ae4e5357631762764d54a70f3b57138e3bb1e5d44021a7c2443443bc0e2e7c55",
+          "flag": "byte-exact",
+          "note": "DROPPED (machinery)."
+        },
+        {
+          "path": "tmp_skills/design-sync/lib/docs.mjs",
+          "sha256": "bb0465b065d9f29722a9453c869b70c73f85337b748d1be28800e2999be4626e",
+          "flag": "byte-exact",
+          "note": "DROPPED (machinery)."
+        },
+        {
+          "path": "tmp_skills/design-sync/lib/dts.mjs",
+          "sha256": "4b8ad35236d194f240b6afc7ffb54c0e649817b53e52f3c2e4a96fc0c13df3df",
+          "flag": "byte-exact",
+          "note": "DROPPED (machinery)."
+        },
+        {
+          "path": "tmp_skills/design-sync/lib/emit.mjs",
+          "sha256": "62432b687c4825a12da3805e9557d0c3be2b5c5ee1b7f9722307d291b991fe21",
+          "flag": "byte-exact",
+          "note": "DROPPED (machinery)."
+        },
+        {
+          "path": "tmp_skills/design-sync/lib/preview-gen-storybook.mjs",
+          "sha256": "04b6f1812fb38abf597691144853353533ff6e8f21b323a7fb7d1641f4ba1a02",
+          "flag": "byte-exact",
+          "note": "DROPPED (machinery)."
+        },
+        {
+          "path": "tmp_skills/design-sync/lib/preview-rebuild.mjs",
+          "sha256": "3d57fddf3f6402e69a92e4522c0ae39201a57462800a66b9895926c40de600b7",
+          "flag": "byte-exact",
+          "note": "DROPPED (machinery)."
+        },
+        {
+          "path": "tmp_skills/design-sync/lib/previews.mjs",
+          "sha256": "4811484166c7a893ae834cc50e68a7d2e5f729a4a04044660852668ba884e647",
+          "flag": "byte-exact",
+          "note": "DROPPED (machinery)."
+        },
+        {
+          "path": "tmp_skills/design-sync/lib/remote-diff.mjs",
+          "sha256": "f005aca4a477e494251eff61ba45eb3fdeffabe6a4062fcc55b3151b105abfe6",
+          "flag": "byte-exact",
+          "note": "DROPPED (machinery)."
+        },
+        {
+          "path": "tmp_skills/design-sync/lib/source-kit.mjs",
+          "sha256": "cde0b35624a0a3865a3a6bdd9b95ca1cda15b99743bcf1ddf26f3ed05666f1e9",
+          "flag": "byte-exact",
+          "note": "DROPPED (machinery)."
+        },
+        {
+          "path": "tmp_skills/design-sync/lib/source-storybook.mjs",
+          "sha256": "77affac0f185ac3b1fab92855ee913f87dcc2520b4c4e08dd10e942aa424124e",
+          "flag": "byte-exact",
+          "note": "DROPPED (machinery)."
+        },
+        {
+          "path": "tmp_skills/design-sync/lib/story-imports.mjs",
+          "sha256": "fea081f78c252944f6022713b540ef6df92e8942c85e57386b303217f88bba95",
+          "flag": "byte-exact",
+          "note": "DROPPED (machinery)."
+        },
+        {
+          "path": "tmp_skills/design-sync/lib/sync-hashes.mjs",
+          "sha256": "6d347ad5400f36349d0767abe2a4d23de6f067368fa86e19b9e581c81aa530a0",
+          "flag": "byte-exact",
+          "note": "DROPPED (machinery)."
+        },
+        {
+          "path": "tmp_skills/design-sync/package-build.mjs",
+          "sha256": "ee521be3524eab261149f25a7fffa032af099fb56f163319f393b0619cb9fb2d",
+          "flag": "byte-exact",
+          "note": "DROPPED (machinery)."
+        },
+        {
+          "path": "tmp_skills/design-sync/package-capture.mjs",
+          "sha256": "180feee911b1e8c2f8c7ad4155470e64292f7c9d3bd876d967ae540babd53cb5",
+          "flag": "byte-exact",
+          "note": "DROPPED (machinery)."
+        },
+        {
+          "path": "tmp_skills/design-sync/package-validate.mjs",
+          "sha256": "63447dfe85ae204436467ae7b83a2b81ee0f3d9e9417610da88057896ba30181",
+          "flag": "byte-exact",
+          "note": "DROPPED (machinery)."
+        },
+        {
+          "path": "tmp_skills/design-sync/resync.mjs",
+          "sha256": "6f865a56c700445ec73802e43c40628f5d057b519c24b09fab4aa91b33d8382e",
+          "flag": "byte-exact",
+          "note": "DROPPED (machinery)."
+        },
+        {
+          "path": "tmp_skills/design-sync/storybook/compare.mjs",
+          "sha256": "03aee2718e6e7715ad2b35e8bf57b722f894430089e72e78601595539babdd25",
+          "flag": "byte-exact",
+          "note": "DROPPED (machinery)."
+        },
+        {
+          "path": "tmp_skills/design-sync/storybook/http-serve.mjs",
+          "sha256": "ccc3b4acfad0bfeb097ca92c2ee9550fbc5230a963830d14f916ccfc0547e6af",
+          "flag": "byte-exact",
+          "note": "DROPPED (machinery)."
+        },
+        {
+          "path": "tmp_skills/design-sync/storybook/probe.mjs",
+          "sha256": "6ead68c0e1012231fb95664197e2a0153d59661322ef12e639d296725f32896c",
+          "flag": "byte-exact",
+          "note": "DROPPED (machinery)."
+        }
+      ]
+    },
+    "frontend-design": {
+      "class": "plugin-marketplace",
+      "upstream_coordinate": {
+        "product": "Official Anthropic plugin (installed plugin-marketplace cache) — captured verbatim with frontmatter.",
+        "public_mirror_repo": "anthropics/skills",
+        "public_mirror_path": "skills/frontend-design/SKILL.md",
+        "pinned_repo_head_sha": "9d2f1ae187231d8199c64b5b762e1bdf2244733d",
+        "file_last_commit_sha": "2235be7c60b551f5de82ade908fd3816455afcda",
+        "file_last_commit_date": "2026-06-09T19:33:41Z",
+        "pinned_on": "2026-07-07",
+        "pin_method": "gh api (git ls-remote HEAD + tree + commits?path=)"
+      },
+      "recapture_method": "Re-fetch anthropics/skills at HEAD and read skills/frontend-design/SKILL.md; note the new commit SHA. No harness version involved. NOTE: for a true baseline diff, compare against the privately preserved captured copy (sha below), NOT against the public mirror — they already diverge (see divergence_caveat).",
+      "convergence_destination": "Mostly subsumed by artifact-design. SALVAGED into the anti-generic merge (editorial branch only, gated by restraint): the tone menu (brutalist/art-deco/editorial-magazine/…), 'vary across generations / never converge on one face', and the texture/background idea list; plus the Purpose/Tone/Differentiation prompts folded into §0's editorial branch. The uncalibrated 'BOLD / UNFORGETTABLE' framing is DROPPED.",
+      "divergence_caveat": "Our captured copy (sha256 d39adf3a…, 4274 bytes, from the installed plugin-marketplace cache) is NOT byte-identical to the current public GitHub HEAD blob (sha256 1608ea77fbb6fc30d13a97d12cfa8ebf31358d40f0dd97beed24829d6b3f45dd, 8260 bytes — a substantially rewritten/expanded revision). The mirror file's last change (2026-06-09) PREDATES our 2026-07-07 capture, so the plugin-cache release we captured was already lagging the public mirror at capture time. Consequence: the pinned repo SHA is a re-FETCH coordinate, not a reproduction of our baseline. The three-way-diff baseline for frontend-design is our privately preserved captured copy (d39adf3a…); a re-capture must be diffed against THAT, and the public mirror already shows drift that will surface on the first fold-in.",
+      "files": [
+        {
+          "path": "tmp_skills/frontend-design/SKILL.md",
+          "sha256": "d39adf3a983de7dafc75991590d54f091755f7e4163d5a5ed085ecd719157184",
+          "flag": "byte-exact",
+          "note": "Verbatim WITH frontmatter (name, description, license: Complete terms in LICENSE.txt). Captured from the plugin-marketplace cache; see divergence_caveat — differs from the current public mirror."
+        }
+      ]
+    }
+  },
+  "non_source_files": [
+    {
+      "path": "tmp_skills/.gitignore",
+      "sha256": "983987033f0e117011e531dc33ad9bb15290bba41a414d830fb5cbdbcda2ff17",
+      "flag": "local-scaffold",
+      "note": "Our own file: a single `**` that makes git ignore the whole tmp_skills/ tree. Not captured upstream; not part of any baseline. Listed for a complete inventory."
+    }
+  ],
+  "recapture_diff_protocol": "See companion note notes/01_skill-sources-and-provenance.md §'Upstream update protocol'. In short: (1) re-capture per source class — built-ins on a new Claude Code version via the two-channel load+extract; frontend-design by re-fetching anthropics/skills at HEAD (for frontend-design, diff against the privately preserved captured copy, not the public mirror). (2) Diff the re-capture against these hashes — a sha256 mismatch on a byte-exact file flags a change instantly; transcribed SKILL.md bodies are diffed textually. (3) Triage each delta against the convergence map. (4) Fold accepted changes in by REWRITING our sections (never paste). (5) Advance the baseline: re-hash and update this manifest to the new versions."
+}

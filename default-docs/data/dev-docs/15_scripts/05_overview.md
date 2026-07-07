@@ -23,6 +23,7 @@ Preprocessors → Renderer → Postprocessors
   ▼
 Static HTML served to browser ──────────────▶ Scripts enhance the DOM
                                                • diagrams.ts  → renders SVGs
+                                               • artifacts.ts → embeds .html artifacts
                                                • lightbox.ts  → pan/zoom viewer
                                                • code-labels.ts → copy buttons
 ```
@@ -34,6 +35,7 @@ Scripts are **not** part of the parser pipeline. The pipeline produces static HT
 | Script | Purpose | Loads Libraries |
 |--------|---------|-----------------|
 | `diagrams.ts` | Renders mermaid/graphviz code blocks into SVG diagrams | Yes (lazy) |
+| `artifacts.ts` | Embeds first-class `.html` artifact pages as a same-origin iframe, propagates the theme, adds open-full-page + expand | No |
 | `lightbox.ts` | Full-screen pan/zoom viewer for images and rendered diagrams, with a copy/download dropdown and an inline hover toolbar (pan/zoom engine in `panzoom.ts`, actions + menu in `diagram-actions.ts`) | No |
 | `code-labels.ts` | Language label + copy-to-clipboard on code blocks | No |
 
@@ -43,6 +45,7 @@ All scripts are included in `BaseLayout.astro`:
 
 ```astro
 <script src="../scripts/diagrams.ts"></script>
+<script src="../scripts/artifacts.ts"></script>
 <script src="../scripts/lightbox.ts"></script>
 <script src="../scripts/code-labels.ts"></script>
 ```

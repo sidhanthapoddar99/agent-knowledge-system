@@ -33,7 +33,7 @@ interface LoadedContent {
   data: ContentData;    // Frontmatter fields
   filePath: string;     // Absolute path to source file
   relativePath: string; // Path relative to the content directory
-  fileType: FileType;   // 'md' | 'mdx' | 'yaml' | 'json' | 'diagram'
+  fileType: FileType;   // 'md' | 'mdx' | 'yaml' | 'json' | 'diagram' | 'artifact'
 }
 
 interface Heading {
@@ -161,6 +161,101 @@ is a dated log entry — diagrams embed into their bodies from `assets/`.
 
 Consumer-facing view of the same feature: user-guide
 `15_writing-content/06_diagram-pages.md`.
+
+## Artifact Pages — the Same Seam, a Second Time
+
+First-class **artifacts** (`.html` files — reports, dashboards, design-system
+showcases) plug into the identical seam. `loadContent()` for the `docs` type
+runs a **third scan** after the diagram push:
+`loadArtifactPages()` in `src/loaders/artifact-pages.ts`
+(`data.ts:279-284`). The design intent is that an artifact is **additive** — it
+introduces no new content type, no new layout, no new route table entry. It is a
+`LoadedContent` like any other, so the same sort, cache, draft filter, sidebar
+builder, and `Body.astro` render path carry it with zero new machinery.
+
+```
+loadContent(dataPath, 'docs')
+│
+├─ glob('**/*.{md,mdx}')                       → markdown LoadedContent
+├─ loadDiagramPages(dataPath, content)         → diagram entries (pushed)
+├─ loadArtifactPages(dataPath, content)        → artifact entries
+│    ├─ glob('**/*.html', ignore: '**/assets/**')
+│    ├─ each file → artifactContainerHtml(): a by-reference
+│    │              <div class="artifact artifact-html" data-src="/artifacts/<path>?v=<mtime>">
+│    └─ each entry → LoadedContent { fileType: 'artifact', headings: [], … }
+└─ merged + sorted together → one array, one sidebar
+```
+
+The render trick is the diagram trick again: an artifact page's `content` is a
+container `<div>`, and the BaseLayout client script (`scripts/artifacts.ts`)
+turns it into an `<iframe>` at runtime — see
+[Artifacts Script](/dev-docs/scripts/artifacts). Because the artifact carries
+`headings: []`, the outline column auto-hides and the artifact gets the full
+content width.
+
+Per-file rules mirror diagram pages exactly:
+
+- **`NN_` prefix required** — a prefix-less `.html` is skipped with a *warning*
+  (`artifact-pages.ts:189-198`), not the hard error markdown gets: a stray
+  `.html` export is a common working file.
+- **`assets/` never scanned** — embed-only / working `.html` files live there.
+- **Title** — filename (strip prefix, title-case), overridable by an optional
+  sibling `NN_name.meta.json` / `.meta.jsonc` sidecar read via the same
+  `readSettings`. See [Sidecar shape](#sidecar-shape) below.
+- **Opt-out** — `"allow_artifact_pages": false` in the *section-root*
+  `settings.json`.
+
+Two integration details the loader gets right where a naive clone would not:
+
+- **One shared collision pool.** The scan runs *after* the diagram push and is
+  handed the already-augmented `content`, so its slug-collision pass sees
+  markdown **and** diagram entries — a `05_x.html` clashing with a `05_x.md` or
+  a `05_x.mmd` is caught. The pass itself lives in
+  `resolveSlugCollisions()` (`src/loaders/first-class-page.ts`), a small shared
+  helper both the diagram and artifact scanners call, so there is **one**
+  collision implementation over **one** pool (only the error-box HTML differs,
+  passed in as a factory).
+- **`dependencyFiles` is concatenated, not overwritten.**
+  `data.ts:284` does `[...diagramPages.dependencyFiles, ...artifactPages.dependencyFiles]`
+  — a second loader that *assigned* would drop the first's dependencies and
+  artifact edits wouldn't bust the section cache. Each scanner pushes the
+  artifact source **and** whichever sidecar form (`.json` / `.jsonc`) actually
+  exists (`artifact-pages.ts:206-212`) — the artifact loader deliberately does
+  **not** repeat the diagram loader's bug of pushing only the `.json` form.
+
+### Sidecar shape
+
+The sidecar is a **hybrid**: typed rendering fields the loader consumes, plus an
+opaque passthrough block it never parses.
+
+```typescript
+interface ArtifactMeta {
+  // Rendering fields — consumed by the loader, same as the diagram sidecar
+  title?: string;
+  description?: string;
+  sidebar_label?: string;
+  sidebar_position?: number;
+  draft?: boolean;
+  // Rendering override (Thread C) — "full" (default) | CSS length | "n/m" aspect | px number
+  embed_height?: number | string;
+  // Opaque AI-legibility block — stored on entry.data.artifact untouched,
+  // never parsed by the engine; its key conventions belong to the
+  // artifact-authoring skill (purpose, palette, key data, …).
+  artifact?: Record<string, unknown>;
+}
+```
+
+The split keeps the engine's typed surface tiny and stable while giving agents a
+predictable place to read an artifact's declared purpose/palette/data without
+parsing a several-hundred-line HTML file. `embed_height` translates to an inline
+container style (`embedHeightStyle()`, `artifact-pages.ts:117-124`); everything
+under `artifact:` is passed straight through onto `entry.data.artifact`.
+
+Consumer-facing view: user-guide `15_writing-content/08_artifact-pages.md` and
+the live `09_artifact-showcase.md`. The route that serves the iframe `src` and
+the reserved-URL guard are in [Routing System](/dev-docs/architecture/routing);
+the client renderer, theme handshake, and full design rationale are in
+[Artifacts Script](/dev-docs/scripts/artifacts).
 
 ## loadFile — Single File Load
 

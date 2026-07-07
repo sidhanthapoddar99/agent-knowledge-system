@@ -470,6 +470,131 @@ body {
   background: #fff;
 }
 
+/* Artifact embeds — first-class .html pages rendered as a same-origin iframe
+   that fills the content column. The iframe + affordance bar are created at
+   runtime (see scripts/artifacts.ts), so these selectors must live in this
+   global stylesheet (they never carry Astro's scoped data-cid). Dark mode is
+   propagated INTO the iframe via data-theme — never the diagram invert filter,
+   which would wreck an artifact's images and brand colors. */
+.markdown-content .artifact {
+  position: relative;
+  width: 100%;
+  /* Viewport-fill default at 90%: content column minus the navbar and its own
+     top + bottom padding, scaled to keep a sliver of following content visible
+     as a scroll cue. A sidecar embed_height overrides this via inline style. */
+  height: calc((100vh - var(--navbar-height) - 2 * var(--spacing-xl)) * 0.9);
+  /* Usable-minimum floor for short viewports, kept root-relative (scales with the
+     user's font size / zoom) rather than a hardcoded pixel value. */
+  min-height: 24rem;
+  margin: var(--spacing-lg) 0;
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+}
+
+.markdown-content .artifact-frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background-color: var(--color-bg-primary);
+}
+
+/* Hover affordance bar (open full page + expand) */
+.markdown-content .artifact-tools {
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+  display: flex;
+  gap: var(--spacing-xs);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+  z-index: 1;
+}
+
+.markdown-content .artifact:hover .artifact-tools,
+.markdown-content .artifact-tools:focus-within {
+  opacity: 1;
+}
+
+.markdown-content .artifact-tool {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-family: var(--font-family-base);
+  font-size: var(--ui-text-micro);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--color-text-secondary);
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  text-decoration: none;
+  transition: color var(--transition-fast), border-color var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+.markdown-content .artifact-tool:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-brand-primary);
+}
+
+/* Primary affordance reads as primary via brand color + fill on hover */
+.markdown-content .artifact-open {
+  color: var(--color-brand-primary);
+  border-color: var(--color-brand-primary);
+}
+
+.markdown-content .artifact-open:hover {
+  color: var(--color-bg-primary);
+  background-color: var(--color-brand-primary);
+}
+
+/* Secondary in-place expand: fixed full-viewport overlay */
+.markdown-content .artifact.artifact-expanded {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  min-height: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  z-index: 9998;
+}
+
+body.artifact-expanded-lock {
+  overflow: hidden;
+}
+
+/* Error chrome (missing src, failed load, or slug collision) — auto height so
+   it overrides the fixed-fill .artifact height; ordered after so it wins the
+   equal-specificity tie. */
+.markdown-content .artifact-error {
+  display: block;
+  height: auto;
+  min-height: 0;
+  padding: var(--spacing-md);
+  color: var(--color-error);
+  font-style: italic;
+  font-family: var(--font-family-mono);
+  font-size: var(--ui-text-body);
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-error);
+  border-radius: var(--border-radius-md);
+}
+
+.markdown-content .artifact-error code {
+  font-style: normal;
+}
+
+.markdown-content .artifact-error ul {
+  margin: var(--spacing-sm) 0 0;
+}
+
 /* Lightbox overlay — full-screen pan/zoom viewer.
    Chrome floats over a dimmed backdrop, so it uses fixed light-on-dark
    colors (like the previous close button) rather than theme variables. */

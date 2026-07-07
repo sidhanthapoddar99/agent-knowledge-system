@@ -179,6 +179,8 @@ Active deliberation — the *process* of deciding what to do.
 - Name files \`NN_<kind>_<slug>.md\` — the kind is a **full word**, and optional:
   \`research\` · \`explore\` · \`idea\` · \`discuss\` (open list — any word that fits).
 - A folder = **one** multi-file brainstorm; a flat file = one thought.
+- A **\`.html\` artifact** or diagram file dropped here renders **embedded** too
+  (same first-class treatment as in **Notes**) — handy for a visual option-sketch.
 - When resolved, mark it at the top — \`> **Resolved →** <target>\` — and distill
   the conclusion into **Notes**. The trail stays as the *why*.
 - No machinery: no codes, no icons, no registration — just the naming convention.
@@ -189,6 +191,10 @@ Finalized output + durable references — what we *know*.
 
 - Plain \`NN_<slug>.md\` — the numbering is the author's **curated reading
   order**, not a timeline.
+- A **\`.html\` artifact** — or a diagram file (\`.excalidraw\`/\`.mmd\`/…) —
+  dropped here renders **embedded** as a first-class sub-doc: the artifact
+  shows in an iframe with an open-full-page link (the same treatment docs
+  sections give it), and an optional \`<name>.meta.json\` sidecar sets its title.
 - Content arrives by **graduation** from a resolved brainstorm, or fully formed
   (references, how-tos, link dumps).
 - Should be **stable** — a note that keeps changing is a brainstorm wearing the

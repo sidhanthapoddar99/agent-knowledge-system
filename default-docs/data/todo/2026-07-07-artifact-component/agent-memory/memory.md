@@ -31,6 +31,17 @@ title: "Agent memory — artifact component"
 - Planning content authored via the ultracode workflow in
   `agent-log/010_wf_artifact-planning/` (complete 2026-07-07 — 11 files,
   verified + fixed, validator clean).
+- **Tracker artifact rendering (subtask 80, done→review):** `.html` in an issue's
+  `notes/`/`brainstorm/` renders first-class via a **loader-only** change — no
+  issues-layout JS. `issues.ts readFreeformDocs` gates `.html` to those two
+  folders (by `subName`) and emits the shared `artifactContainerHtml()` from
+  `artifact-pages.ts`; the note then rides the global `BaseLayout`
+  `scripts/artifacts.ts` + global `.artifact` CSS — that's why the theme
+  handshake / open-full-page / expand all "just work". New `IssueNote.docType`
+  drives the `SubdocTree` embed-glyph type marker; `NotePage` path label now uses
+  the real filename (fixes diagrams too). `isTrackedDocFile` counts `.html` +
+  `.meta.json`/`.meta.jsonc` for the cache signature. Scope is deliberately
+  notes/brainstorm only (never root, `assets/`, or `agent-memory/`).
 
 ## Settled during planning (cite notes/02 + brainstorms)
 
@@ -55,3 +66,31 @@ title: "Agent memory — artifact component"
   once the harness moves on); commit only a sha256 integrity manifest
   (subtask 70). Actual serving header for content-assets is
   `public, max-age=31536000` (no `immutable`).
+
+## Settled during subtask 90 (site-theme mode)
+
+- **Mode vocabulary is `site` / `self`** (was documented as `adopts-site` /
+  `self-world`). Engine normalizes: only `"site"` → inject; everything else
+  (`self`, legacy `self-world`, unknown, absent) → `self`. Field lives inside the
+  opaque sidecar `artifact:` block as `artifact.theme`; the ROUTE reads it via
+  `readArtifactThemeMode()` (exported from `loaders/artifact-pages.ts`); the loader
+  keeps the block opaque.
+- **Injection point is the START of `<head>`, not before `</head>`** — an artifact's
+  own content can contain a literal `</head>` (code sample); matching the opening
+  tag is robust + theme-first cascade. Injects `getThemeCSS(getTheme())` (full merged
+  output, same as BaseLayout) + an attribute-only dark-mode init mirroring BaseLayout.
+- **Site-mode ETag = sha1 content-hash of the injected body** (not size+mtime), so a
+  theme swap (mtime unchanged) or a `self`↔`site` flip busts it. `self` mode keeps
+  the exact `"size-mtimeMs"` ETag and byte-identical serving (the subtask-20 contract
+  now scopes to `self` only).
+- **CLI: `docs-guide theme tokens [name] [--json]`** (`scripts/theme/tokens.mjs`, THEME
+  group) mirrors engine theme resolution in pure Node and prints var→value light+dark;
+  resolves `var()` chains. Self-test must run from the REPO (needs a reachable `.env`);
+  running it from the plugin cache fails the `--json` checks (no `.env` up that tree)
+  — not a defect.
+- **Plugin parity target: cache `0.5.4`** — `docs-guide` on PATH resolves there and it
+  is byte-identical to repo source (repo `plugin.json` says 0.5.5 but no 0.5.5 cache
+  dir exists). Mirror every touched plugin file into 0.5.4.
+- **theme.yaml ↔ skill coupling** recorded in repo CLAUDE.md theming section: the
+  artifact-authoring skill carries the `required_variables` names inline (standalone
+  independence); changing them requires updating the skill (repo + cache) same-change.

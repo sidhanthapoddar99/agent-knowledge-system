@@ -1,0 +1,229 @@
+# Publishing artifacts in this framework
+
+This is the adaptation layer — how an artifact is *published, themed, and delivered*
+in a documentation-template project. The loader/route/sidebar mechanics themselves
+belong to the framework (the artifact component and the `/artifacts` route); this
+file teaches the **authoring** side of that same model. Everywhere a habit from
+claude.ai artifact design would apply, the framework's mechanism replaces it.
+
+## Where an artifact lives
+
+An artifact is an `.html` file in one of two homes:
+
+- **A docs section** — an `NN_`-prefixed `.html` beside the markdown pages
+  (`data/<section>/NN_name.html`). It is a *first-class page*, so it takes a numeric
+  prefix like any page and appears in the sidebar in prefix order. This is unlike an
+  embed-only asset in an `assets/` folder, which stays unprefixed and is never
+  scanned into the sidebar — put working or embed-only `.html` there.
+- **A tracker folder** — an `.html` inside an issue's `brainstorm/`, `notes/`, or a
+  subtask context. A thinking-artifact that lives beside the deliberation that
+  produced it, versioned with the issue.
+
+**Prefix policy.** A docs-section artifact needs the `NN_` prefix to sort in the
+sidebar; a *missing* prefix is a **warning, not a hard error** (stray `.html`
+exports are common working files — the loader downgrades rather than failing the
+build, unlike a prefix-less markdown page which is a hard error). Files under
+`assets/` are ignored by the scan entirely. When the filename alone reads well, the
+title derives from the prefix-stripped, title-cased name and no sidecar is needed.
+
+**Update = edit the file + rebuild.** There is no version picker, no
+redeploy-same-URL ceremony. You edit the `.html`, rebuild, and the change ships;
+history lives in git, not in the artifact.
+
+## A complete document, not a fragment
+
+This is the highest-value correction to carry from any claude.ai artifact habit. A
+claude.ai artifact is a `<body>` fragment the host wraps in a skeleton. **An
+artifact here is the opposite: you author the complete document** —
+`<!doctype html>`, `<html>`, `<head>` (with `<meta charset>`, viewport, `<title>`,
+your `<style>`), and `<body>`. Nothing is injected around it. Write the whole file.
+
+## The `/artifacts/<path>` route and the embed
+
+The dedicated URL is the primitive, and the embed is built on top of it:
+
+- **Full-page route.** Every artifact is served full-viewport at
+  `/artifacts/<path-to-the-file>` — a real, bookmarkable, shareable URL. Link it,
+  paste it into an issue, send it to a teammate; it survives outside any page that
+  embeds it.
+- **Embed.** In a docs section the artifact renders in an iframe whose `src` is that
+  same route (with a `?v=<mtime>` cache-buster so a rebuild isn't frozen behind a
+  long cache). The iframe fills the content column; the navigational sidebar stays,
+  and the outline/TOC rail auto-hides (an artifact has no headings, so there is
+  nothing to list — it hands that width to the artifact).
+- **Affordances.** The embed's primary control is an **open-full-page** link to the
+  route (a plain `<a href>` — trivial and complete). A lightweight in-place expand
+  may exist as a secondary, optional affordance; the open-full-page link is the one
+  that always ships.
+
+**Design for the embed width first.** The primary viewport is a doc content column,
+roughly **700–900px wide**, not a full browser window. Compose for that, and let it
+scale up to the full-page view. Always test **both** sizes. Wide content
+(`overflow-x: auto` on its own container) must never make the page body scroll
+sideways.
+
+**Embed height.** The default is a viewport-relative fill — the embed fills the
+content area, matching the "replaces the central content area" experience. A short
+report can override this via the sidecar's `artifact.embed_height` (`"full"`
+default, an explicit pixel value, or an aspect ratio). The full-page route always
+renders true full-viewport regardless.
+
+## Consuming the host theme — the two modes
+
+The sidecar's `artifact.theme` selects the mode, and the `/artifacts` route acts on
+it. It never applies a blanket `invert()` filter (that would wreck images and brand
+color).
+
+- **`site` — the route injects the host theme.** When the sidecar declares
+  `theme: "site"`, the route rewrites the served HTML to include the site's *resolved*
+  theme CSS (the theme loader's merged output — the same stylesheet the docs chrome
+  gets) at the top of `<head>`, for **both** the embed and the full-page view. So the
+  `--color-*`, `--ui-text-*`, `--content-*`, `--spacing-*` … variables **do resolve
+  inside the artifact** — reference them directly
+  (`background: var(--color-bg-primary)`); no verification dance, no local palette. The
+  route also stamps `data-theme` (full-page reads `localStorage` then
+  `prefers-color-scheme`, exactly like the chrome; the embed mirrors the parent site's
+  attribute on load and on every toggle), so light/dark flips with no reload. Query the
+  live values with **`docs-guide theme tokens --json`** (variable→value for light and
+  dark) when you need them — e.g. to validate a chart palette against the real surfaces.
+- **`self` — served untouched.** Nothing is injected; you own the whole theme system
+  inside the HTML. Design **both** light and dark (the pattern below), deriving values
+  from the theme contract where you want kinship but committing to your own world where
+  that is the point.
+
+**The neutral fallback layer (site mode).** A `site`-mode artifact defines *no* palette
+— but a reader may open the raw file outside the engine (`file://`, emailed), where no
+CSS is injected. Guard that one case by writing each consumed token with a **minimal
+neutral fallback**: `var(--color-bg-primary, #fff)`, `var(--color-text-primary, #111)`.
+Inside the engine the injected value always wins; the fallback only renders with no
+host. This is **not** the layouts no-fallback violation — that rule protects layouts,
+where the var must always resolve; here injection overrides the fallback in situ.
+
+**The self-mode dual-theme pattern.** Define tokens on `:root`, redefine under the
+media query, and again under the attribute so the site toggle wins both ways:
+
+```html
+<style>
+  :root { /* light — values derived from --color-* / --content-* */
+    --bg: #fafafa; --surface: #f5f5f5; --ink: #1a1a1a;
+    --muted: #737373; --accent: #2563eb; --good: #16a34a; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0a0a0a; --surface: #171717; --ink: #fafafa;
+      --muted: #737373; --accent: #3b82f6; --good: #22c55e; }
+  }
+  /* the site toggle wins in both directions */
+  :root[data-theme="light"] { --bg: #fafafa; --surface: #f5f5f5; --ink: #1a1a1a;
+    --muted: #737373; --accent: #2563eb; --good: #16a34a; }
+  :root[data-theme="dark"]  { --bg: #0a0a0a; --surface: #171717; --ink: #fafafa;
+    --muted: #737373; --accent: #3b82f6; --good: #22c55e; }
+  body { background: var(--bg); color: var(--ink); }
+  /* style everything through the tokens — never inside the media query directly */
+</style>
+```
+
+**Validate every token you name.** The full contract is
+`astro-doc-code/src/styles/theme.yaml → required_variables`, realised in `color.css`
+and `font.css` (and enumerated inline in the skill's §1). A name that isn't in the
+contract (e.g. `var(--color-accent, #7aa2f7)`) never resolves, freezes its fallback,
+and silently kills dark/light. Never invent a variable name with an inline hex
+fallback — the *only* sanctioned fallback is the neutral out-of-engine layer above.
+Full token vocabulary:
+
+| Purpose | Tokens |
+|---|---|
+| Backgrounds | `--color-bg-primary` / `-secondary` / `-tertiary` |
+| Text | `--color-text-primary` / `-secondary` / `-muted` |
+| Borders | `--color-border-default` / `-light` |
+| Brand | `--color-brand-primary` / `-secondary` |
+| Status | `--color-success` / `-warning` / `-error` / `-info` |
+| UI type | `--ui-text-micro` / `-body` / `-title` |
+| Content type | `--content-body` / `-h1`…`-h6` / `-code` |
+| Display type | `--display-sm` / `-md` / `-lg` (marketing surfaces only) |
+| Spacing | `--spacing-xs` / `-sm` / `-md` / `-lg` / `-xl` |
+| Radius | `--border-radius-sm` / `-md` / `-lg` |
+| Shadow / motion | `--shadow-sm` / `-md` / `-lg`; `--transition-fast` / `-normal` |
+
+## Self-containment and the CDN stance
+
+There is no platform CSP forcing self-containment here — an iframe served from the
+docs site *can* technically reach a CDN. So self-containment is a **policy**, and
+the policy is: **self-contained, with a repo-relative relaxation.**
+
+- All CSS and JS **inline**.
+- Images: repo assets (the framework already serves `/assets/`) or data URIs.
+- Fonts: `.woff2` under repo assets, referenced relatively (see below).
+- **No external scripts, ever.** An artifact runs *unsandboxed as first-party
+  content* on the site's own origin (authored in the repo, reviewed in git, trusted
+  like any page). An external script is an XSS / supply-chain surface inside your own
+  docs origin; a dead external font or script silently takes an old artifact down on
+  an offline mirror or intranet deploy. This is the ergonomic win over claude.ai's
+  data-URI-everything requirement: the repo *is* the bundle, so repo-relative
+  references are fine — but the network boundary is hard.
+
+A team that consciously wants CDN fonts documents that as a discouraged opt-out; if
+enforcement is ever needed, the path is a real CSP header on the `/artifacts` route
+— noted as an option, not a requirement. **Trust note:** because an artifact runs
+with site-origin privileges, never paste untrusted third-party HTML into a section.
+
+## Fonts
+
+Ship the face as `.woff2` under the repo assets and `@font-face` it with a relative
+`url()`; do not link a webfont CDN. The failure mode to guard against: a missing or
+CDN-blocked font falls back *silently* — the page still renders, so it looks fine at
+a glance. Catch it by checking the **computed** font in devtools, not by eye (this is
+the design-sync `[FONT_MISSING]` lesson). If a `.woff2` isn't available, prefer a
+well-chosen system stack over a CDN link.
+
+## The metadata sidecar contract
+
+An artifact takes an optional same-name JSON sidecar — `<NN_name>.meta.json` (or
+`.meta.jsonc`) — never frontmatter injected into the `.html` (that would corrupt a
+standalone document). It mirrors the first-class *diagram* sidecar and adds an
+AI-legibility block. Two layers:
+
+**1. Rendering fields (typed, consumed by the loader):**
+
+| Field | Role |
+|---|---|
+| `title` | Page + sidebar title (falls back to the prefix-stripped filename) |
+| `description` | Meta description / listing subtitle |
+| `sidebar_label` | Short sidebar label if the title is long |
+| `sidebar_position` | Manual ordering override |
+| `draft` | Exclude from the built sidebar |
+
+**2. The `artifact:` block (declared values — so an agent need not parse the HTML).**
+The loader treats this block as opaque passthrough; **this skill owns its
+conventions.** The standard reserved keys — always write these, always read these:
+
+| Key | Meaning |
+|---|---|
+| `purpose` | One sentence: what the artifact is for and who reads it |
+| `type` | `report` \| `dashboard` \| `dataviz` \| `design-system` \| `showcase` |
+| `theme` | `site` (route injects the host theme) \| `self` (served untouched — default; legacy `self-world` reads as `self`) |
+| `palette` | The hex actually used, `{ light: {…}, dark: {…} }` — the exact list you'd feed the palette validator |
+| `data` | For dashboards/charts: the key figures, or the source the artifact visualizes, in structured form |
+| `interactions` | Notable interactive behaviors (optional list) |
+| `sources` | Where the declared values came from (issue docs, files, URLs) |
+| `embed_height` | `"full"` (default) \| a pixel value \| an aspect ratio |
+
+The block is **open for additional declared values** — a report may add `sections`,
+`decisions`, `key_facts`; a specimen may add `typography`. Keep the standard keys
+present and add extras freely.
+
+**Optional but strongly encouraged** for ordinary artifacts; **mandatory for
+design-system artifacts** (see `design-systems.md`), where "an agent reads the
+declaration, not the HTML" is the entire point. **Validate-names rule:** every hex
+in `palette` and every value you declare must actually appear in the artifact — a
+declaration that lies is worse than none, and the verify gate checks it.
+
+A worked sidecar example (paired with a real artifact) lives at this issue's
+`notes/03_planning-overview.meta.json`.
+
+## The reserved `/artifacts` base URL
+
+Because `/artifacts` is claimed by the full-page route, **no docs section may use
+`artifacts` as its `base_url`.** This is rejected at config load time with a hard,
+actionable error — it stops dev, build, and preview alike. The guard covers the full
+reserved set: **`artifacts`, `assets`, `content-assets`, `api`, `editor`.** If you
+are creating or renaming a section (e.g. a published design system), pick a base URL
+outside that set.

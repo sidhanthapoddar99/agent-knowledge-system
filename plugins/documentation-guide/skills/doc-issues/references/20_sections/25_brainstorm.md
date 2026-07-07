@@ -34,6 +34,11 @@ brainstorm/
   stays flat. Both are first-class siblings, ordered by prefix.
 - **Intra-issue only.** Deliberation spanning multiple issues stays as separate issues
   linked via `Related:` — brainstorm is the within-an-issue version of that activity.
+- **Not just markdown.** A `.html` artifact or a diagram file (`.excalidraw`/`.mmd`/…)
+  dropped here renders **embedded** as a first-class sub-doc — an iframe with an
+  open-full-page link for artifacts — exactly as in `notes/` (see
+  [22_notes.md](22_notes.md#first-class-artifacts--diagrams)). Handy for a visual
+  option-sketch mid-deliberation.
 
 ## Graduation — the one piece of process
 

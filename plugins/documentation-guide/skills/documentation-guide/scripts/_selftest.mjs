@@ -44,7 +44,7 @@ const RUNTIME = (() => {
 // from the real command set. A command is `--json`-smoke-tested only if it
 // declares a --json flag AND takes no required positional (list / review-queue);
 // other --json commands need fixtures, tested elsewhere.
-const NO_REQUIRED_ARG = new Set(['docs-list', 'docs-review-queue', 'docs-doc-list', 'docs-blog-list']);
+const NO_REQUIRED_ARG = new Set(['docs-list', 'docs-review-queue', 'docs-doc-list', 'docs-blog-list', 'docs-theme-tokens']);
 const COMMANDS = MANIFEST.map((c) => ({
   name: c.bin,
   json: c.flags.some((f) => f.name === 'json') && NO_REQUIRED_ARG.has(c.bin),

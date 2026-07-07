@@ -188,6 +188,9 @@ entries.sort((a, b) => {
       const num = leafNum(item);
       const statusMod = logStatusModifier(item);
       const color = (item as { color?: string | null }).color ?? null;
+      // Type marker: an `.html` artifact (notes/brainstorm) gets a small embed
+      // glyph so it's distinguishable from a markdown note at a glance.
+      const isArtifact = (item as { docType?: string }).docType === 'artifact';
       return (
         <a
           href={leafHref(item)}
@@ -197,6 +200,11 @@ entries.sort((a, b) => {
         >
           {num && <span class={`issue-sidebar__num ${statusMod}`}>{num}</span>}
           <span class="issue-sidebar__label" style={color ? `color: ${color}` : undefined}>{label}</span>
+          {isArtifact && (
+            <span class="issue-sidebar__doctype" data-tip="Artifact" data-tip-always aria-label="Artifact">
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="10" rx="1.5"/><path d="M2 6.5h12"/></svg>
+            </span>
+          )}
         </a>
       );
     }

@@ -68,6 +68,60 @@ for it (see the protocol below).
 
 ---
 
+## Reconciliation — the shipped map (post-implementation, 2026-07-07)
+
+Subtask `40` has shipped `plugins/documentation-guide/skills/artifact-authoring/`
+(mirrored byte-identically into the installed cache). This is the file-for-file
+map of **what actually shipped**, replacing the pre-implementation plan — the
+manifest's per-source `convergence_destination` strings were written against the
+plan (a single `dataviz.md`, a `design-system.md`) and are superseded by this
+table. Every shipped file names its source(s), and every source is accounted for.
+
+| Shipped file | Source(s) | Nature as shipped |
+|---|---|---|
+| `SKILL.md` (§0 calibrate · §1 honor-the-host · §2 both-themes + self-contained · §3 verify gate; triage table; Provenance footer) | **artifact-design** spine | rewritten to our publish target |
+| `references/design-fundamentals.md` | **artifact-design** (fundamentals, anti-generic, typography, process, UI-vs-document router) + **frontend-design** salvage (tone menu, "vary across generations", texture/background ideas — editorial branch only) | rewritten / salvaged |
+| `references/publishing.md` | **ours** (the framework publish mechanism — sidecar, `/artifacts` route, embed, theme handshake, self-containment); the both-themes/host-first discipline echoes artifact-design | authored |
+| `references/design-systems.md` | **design-sync** doctrine only (design-system-as-consumable-contract, write-conventions-for-a-guessing-agent, the Styled/Complete/Plausible rubric) — the entire claude.ai upload pipeline dropped | rewritten |
+| `references/dataviz/{00_overview,choosing-a-form,color-formula,marks-and-anatomy,interaction,components,anti-patterns}.md` | **dataviz** (form heuristic, four-jobs/six-checks color formula, mark specs, interaction, anti-pattern catalog) | **re-expressed** in our own prose |
+| `references/dataviz/palette.md` | **dataviz** `palette.md` *structure*, re-derived from this framework's theme contract | rewritten / re-instanced |
+| `scripts/validate_palette.js` | **dataviz** | **VERBATIM** — the one deliberate carve-out (a functional tool, carried with a provenance header) |
+| `references/PROVENANCE.md`, `notes/04_upstream-integrity-manifest.json` | **ours** | authored metadata |
+
+**Verbatim-ness as shipped — the guarantee holds file-for-file.** The only file
+carried verbatim from a source is `scripts/validate_palette.js` (code, tool). Every
+prose file — `SKILL.md` and all seven references, the dataviz set included — is
+re-expressed in our own words. This was *verified*, not assumed, during this
+reconciliation: the seven `references/dataviz/*.md` files were diffed against their
+frozen `tmp_skills/dataviz/references/` baseline and measured at **1–10% six-gram
+shingle overlap** (the residual being unavoidable technical vocabulary — spec
+numbers, the literal validator command, chart-type names), confirming genuine
+re-expression rather than a pasted copy. The `PROVENANCE.md` claim ("the one
+deliberate verbatim exception is `validate_palette.js`") and this note's
+"adapt and rewrite" stance are therefore true as shipped.
+
+**Dropped-but-exists-upstream (conscious omissions, not oversights):**
+`validate_palette.py` (a redundant `.py` twin of the bundled `.js`); the entire
+design-sync claude.ai upload pipeline (`lib/`, `storybook/`, `non-storybook/`, the
+`*.mjs` drivers); and claude.ai-specific artifact-design mechanics (the
+font-as-data-URI CSP workaround, the viewer `data-theme` contract) — each rewritten
+for our file-based publish target or left out entirely. All are flagged in the
+integrity manifest.
+
+**Verification of the reconciliation (subtask `70`).** Cross-check passed: every
+shipped `SKILL.md` section and reference file above names its source(s); all four
+sources (artifact-design, dataviz, design-sync, frontend-design) have their
+contributions accounted for, with nothing claimed that isn't present and nothing
+shipped without provenance. The `tmp_skills/` home is as described — untracked in
+this public repo, the integrity manifest (`notes/04`) committed as the publishable
+half, the verbatim baseline a private USER preservation item. The fold-in
+protocol's re-capture→diff steps have now been dry-run against **two** sources: the
+frontend-design public re-fetch (recorded below) and this dataviz baseline diff —
+both executable, both surfaced a real delta (frontend-design's public-mirror drift;
+the dataviz re-expression measured above).
+
+---
+
 ## `tmp_skills/` is the frozen baseline
 
 `tmp_skills/` is the point-in-time snapshot that makes a **three-way diff**
@@ -121,18 +175,37 @@ brainstorm's licensing section). Options weighed:
    private archive), because the built-in half is version-locked and otherwise
    unrecoverable. This is the actual three-way-diff baseline.
 3. **Pin `frontend-design` to a specific `anthropics/skills` commit SHA** in the
-   manifest — it is publicly re-fetchable, so it does not depend on the private
-   archive; the SHA *is* its baseline.
-4. **Commit, under this issue, an integrity manifest** (recommended path:
-   `2026-07-07-artifact-component/notes/` alongside this file, or the issue's
-   `assets/`) recording, per source file: `sha256`, byte-exact-vs-transcribed,
-   capture date, upstream coordinate (CC version for built-ins; the pinned SHA
-   for frontend-design), and convergence destination. That manifest is the
-   publishable, durable half of the record; this prose note is its companion.
+   manifest — it is publicly re-fetchable. **Pinned 2026-07-07** (via `gh api`):
+   repo HEAD `9d2f1ae187231d8199c64b5b762e1bdf2244733d`, file
+   `skills/frontend-design/SKILL.md` last changed at
+   `2235be7c60b551f5de82ade908fd3816455afcda` (2026-06-09). **Caveat discovered
+   during implementation:** the public mirror is **not** byte-identical to what we
+   captured — our copy came from the installed plugin-marketplace cache (`sha256
+   d39adf3a…`, 4274 B) and the current GitHub HEAD blob is a substantially
+   rewritten, expanded revision (`sha256 1608ea77…`, 8260 B). Because the mirror
+   file's last change (2026-06-09) *predates* our 2026-07-07 capture, the
+   plugin-cache release we captured was already lagging the public mirror. So the
+   SHA is a re-*fetch* coordinate, **not** a reproduction of our baseline — the
+   real three-way-diff baseline for frontend-design is still the privately
+   preserved captured copy, and a future re-capture must diff against *that*, not
+   the public mirror (which already shows drift). The manifest records both hashes
+   and this caveat.
+4. **Commit, under this issue, an integrity manifest** — now shipped at
+   [`04_upstream-integrity-manifest.json`](./04_upstream-integrity-manifest.json)
+   (alongside this note), recording, per source file: `sha256`,
+   byte-exact-vs-transcribed flag, capture date (2026-07-07), upstream coordinate
+   (CC v2.1.202 for built-ins; the pinned SHA for frontend-design), and the
+   convergence destination in the planned `artifact-authoring` skill. It covers
+   all 39 files under `tmp_skills/` (every recorded hash re-verified against disk),
+   flags the dropped-but-exists-upstream items (`validate_palette.py`, the entire
+   design-sync machinery) as conscious omissions, and carries the fold-in protocol
+   in machine-readable form. That manifest is the publishable, durable half of the
+   record; this prose note is its companion.
 
 The net effect: the public repo carries *what came from where and how to verify
 it*; the verbatim baseline lives privately where it survives clean checkouts; and
-frontend-design's baseline is a public SHA anyone can re-fetch.
+frontend-design's public SHA is a re-fetch coordinate that must be diffed against
+the private baseline, not assumed equal to it.
 
 ---
 

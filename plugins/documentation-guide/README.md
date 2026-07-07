@@ -2,7 +2,7 @@
 
 Claude Code plugin for the [documentation-template](https://github.com/sidhanthapoddar99/documentation-template) framework. Ships:
 
-- **2 skills** — `documentation-guide` (operating manual for docs / blog / config / writing / themes — triages to domain-specific reference files) and `doc-issues` (the complete, self-contained issue-tracker skill: anatomy, creation rules, subtasks, brainstorms, agent-logs, agent-memory, the dump — also fires on the execution verbs audit / refactor / loop / discuss)
+- **3 skills** — `documentation-guide` (operating manual for docs / blog / config / writing / themes — triages to domain-specific reference files), `doc-issues` (the complete, self-contained issue-tracker skill: anatomy, creation rules, subtasks, brainstorms, agent-logs, agent-memory, the dump — also fires on the execution verbs audit / refactor / loop / discuss), and `artifact-authoring` (building self-contained HTML artifacts — reports, dashboards, data visualizations, design systems — as `.html` content files served at `/artifacts`, with a `.meta.json` sidecar; bundles a palette validator)
 - **The `docs-guide` CLI** — one dispatcher on `PATH`; every operation is `docs-guide <group> <verb>` (issue tracker, validators, docs+blog content, git metadata, cross-content `find`, link-aware `move`, `img`). Discover with `docs-guide help`
 - **2 slash commands** — `/docs-init` (bootstrap a new docs project from zero) and `/docs-add-section` (scaffold a new top-level section)
 
@@ -54,6 +54,7 @@ Computes the next `NN_` prefix, scaffolds `settings.json` + `01_overview.md`, an
 |---|---|
 | Docs/blog/config skill | `skills/documentation-guide/SKILL.md` (+ reference files in `references/`) |
 | Issue-tracker skill | `skills/doc-issues/SKILL.md` (+ ~20 reference files in `references/`) |
+| Artifact-authoring skill | `skills/artifact-authoring/SKILL.md` (+ `references/` incl. a `dataviz/` sub-folder, and a bundled `scripts/validate_palette.js`) |
 | CLI entrypoint | `bin/docs-guide` (bash) + `bin/docs-guide.cmd` (Windows) |
 | CLI dispatcher | `skills/documentation-guide/scripts/cli.mjs` — the `<group> <verb>` → script map |
 | 2 slash commands | `commands/docs-init.md`, `commands/docs-add-section.md` |

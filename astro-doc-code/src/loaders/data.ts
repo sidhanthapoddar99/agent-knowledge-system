@@ -12,6 +12,7 @@ import { glob } from 'glob';
 import { getParser } from '../parsers';
 import { parseOrderPrefix } from '../parsers/core/order-prefix';
 import { loadDiagramPages } from './diagram-pages';
+import { loadArtifactPages } from './artifact-pages';
 import {
   ParserError,
   type ContentType,
@@ -264,14 +265,23 @@ export async function loadContent(
     });
   }
 
-  // First-class diagram pages (.mmd/.dot/.excalidraw with XX_ prefix) —
-  // docs sections only, opt-out via `allow_diagram_pages: false` in the
-  // section root settings.json. Handles slug-collision errors in place.
+  // First-class non-markdown pages (docs sections only) — diagram files
+  // (.mmd/.dot/.excalidraw) then artifact files (.html), each with an NN_
+  // prefix; opt-out via `allow_diagram_pages` / `allow_artifact_pages: false`
+  // in the section root settings.json. Handles slug-collision errors in place.
+  //
+  // Sequencing matters: the artifact scan runs AFTER the diagram push and is
+  // handed the already-augmented `content`, so all three scanners (markdown,
+  // diagram, artifact) resolve collisions against one shared pool. And the two
+  // loaders' dependency lists are CONCATENATED — a second loader must not
+  // overwrite `dependencyFiles`, or artifact edits wouldn't bust the cache.
   let dependencyFiles: string[] = [];
   if (contentType === 'docs') {
     const diagramPages = await loadDiagramPages(absolutePath, content);
     content.push(...diagramPages.entries);
-    dependencyFiles = diagramPages.dependencyFiles;
+    const artifactPages = await loadArtifactPages(absolutePath, content);
+    content.push(...artifactPages.entries);
+    dependencyFiles = [...diagramPages.dependencyFiles, ...artifactPages.dependencyFiles];
   }
 
   // Sort content

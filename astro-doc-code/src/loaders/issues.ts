@@ -39,6 +39,7 @@ import { getIssueDate } from './issue-dates';
 import { parseOrderPrefixLoose } from '../parsers/core/order-prefix';
 import { readSettings, statSettingsMtime, resolveSettingsPath } from './settings-file';
 import { diagramContainerHtml, DIAGRAM_EXTENSIONS } from './diagram-pages';
+import { artifactContainerHtml } from './artifact-pages';
 import {
   type IssueStatus,
   type CategoryId,
@@ -109,6 +110,13 @@ export interface IssueNote {
   /** Optional CSS color (named, hex, etc.) from frontmatter. Tints only
    *  the sidebar icon for this entry. User-defined semantics. */
   color: string | null;
+  /** Which kind of source file backs this entry — drives the sidebar type
+   *  marker and how the body renders. `markdown` renders parsed markdown;
+   *  `diagram` and `artifact` render a by-reference embed container that the
+   *  BaseLayout client scripts turn into a live render / iframe. `artifact`
+   *  (a first-class `.html` file) is accepted in `notes/` and `brainstorm/`
+   *  only. */
+  docType: 'markdown' | 'diagram' | 'artifact';
   /** Rendered HTML */
   html: string;
 }
@@ -310,11 +318,19 @@ function statMtime(p: string): number {
   }
 }
 
-/** Files whose mtime feeds the issues cache signature — markdown plus
- *  first-class diagram files (notes/brainstorm accept both). */
+/** Files whose mtime feeds the issues cache signature — markdown, first-class
+ *  diagram files, and first-class `.html` artifacts plus their optional
+ *  `.meta.json` / `.meta.jsonc` sidecars (so a sidecar-only title edit still
+ *  busts the cache). notes/brainstorm accept all of these. */
 function isTrackedDocFile(name: string): boolean {
   const lower = name.toLowerCase();
-  return lower.endsWith('.md') || DIAGRAM_EXTENSIONS.some((ext) => lower.endsWith(ext));
+  return (
+    lower.endsWith('.md') ||
+    lower.endsWith('.html') ||
+    lower.endsWith('.meta.json') ||
+    lower.endsWith('.meta.jsonc') ||
+    DIAGRAM_EXTENSIONS.some((ext) => lower.endsWith(ext))
+  );
 }
 
 function computeSignature(dataPath: string): number {
@@ -700,13 +716,56 @@ async function walkTwoLevels<T>(
   return out;
 }
 
+/** Optional sidecar for a tracker `.html` artifact — the same contract the docs
+ *  artifact loader honours. `readJson` prefers a `.meta.jsonc` sibling. */
+interface ArtifactSidecar {
+  title?: string;
+  description?: string;
+  embed_height?: number | string;
+  artifact?: Record<string, unknown>;
+}
+
+/** Read an artifact's `<name>.meta.json` / `.meta.jsonc` sidecar (absent → {}). */
+function readArtifactMeta(file: string): ArtifactSidecar {
+  const base = path.basename(file, path.extname(file));
+  const metaPath = path.join(path.dirname(file), `${base}.meta.json`);
+  return readJson<ArtifactSidecar>(metaPath) ?? {};
+}
+
 async function readFreeformDocs(
   dir: string,
   dataPath: string,
   issueId: string,
   subName: string,
 ): Promise<IssueNote[]> {
-  return walkTwoLevels(dir, issueId, subName, async (abs, groupPath) => {
+  // First-class `.html` artifacts are supporting docs in notes/ and brainstorm/
+  // only — the tracker's design-thinking folders. agent-memory stays markdown +
+  // diagrams (no artifact embed there).
+  const allowArtifacts = subName === 'notes' || subName === 'brainstorm';
+  const extensions = allowArtifacts
+    ? ['.md', '.html', ...DIAGRAM_EXTENSIONS]
+    : ['.md', ...DIAGRAM_EXTENSIONS];
+
+  const docs = await walkTwoLevels(dir, issueId, subName, async (abs, groupPath) => {
+    // First-class artifact (.html): the body is the same by-reference `.artifact`
+    // container the docs layout emits — the BaseLayout client script turns it
+    // into an <iframe> onto the /artifacts/<path> route with the open-full-page
+    // + expand affordances and the theme handshake. Title comes from an optional
+    // `.meta.json`/`.meta.jsonc` sidecar, else the (prefix-stripped) filename.
+    if (allowArtifacts && path.extname(abs).toLowerCase() === '.html') {
+      const meta = readArtifactMeta(abs);
+      const embedHeight = meta.embed_height ?? (meta.artifact?.embed_height as number | string | undefined);
+      return {
+        name: path.basename(abs, path.extname(abs)),
+        filePath: abs,
+        relativePath: path.relative(dataPath, abs),
+        groupPath,
+        color: null,
+        docType: 'artifact' as const,
+        html: artifactContainerHtml(abs, meta.title, embedHeight),
+      };
+    }
+
     // Diagram files (.mmd/.dot/.excalidraw/…) are first-class docs too: the
     // body is the same `.diagram` container embeds emit, rendered
     // client-side — mirrors first-class diagram pages in docs sections.
@@ -718,6 +777,7 @@ async function readFreeformDocs(
         relativePath: path.relative(dataPath, abs),
         groupPath,
         color: null,
+        docType: 'diagram' as const,
         html: diagram,
       };
     }
@@ -730,9 +790,36 @@ async function readFreeformDocs(
       relativePath: path.relative(dataPath, abs),
       groupPath,
       color: typeof fm.color === 'string' && fm.color.length > 0 ? fm.color : null,
+      docType: 'markdown' as const,
       html: await renderMarkdown(abs, dataPath),
     };
-  }, ['.md', ...DIAGRAM_EXTENSIONS]);
+  }, extensions);
+
+  // Same-basename collision guard — parity with the docs-side first-class-page
+  // slug-collision pass (loaders/first-class-page.ts resolveSlugCollisions).
+  // Two supporting docs in one folder whose names differ only by extension
+  // (03_plan.html + 03_plan.md, or 03_plan.md + 03_plan.mmd) all reduce to the
+  // same extension-less route (helpers.ts noteUrl → note.name), so one silently
+  // shadows the other in the sidebar and detail view. The docs loader renders an
+  // explicit collision page there; the tracker treats it as a contrived
+  // authoring slip and surfaces it loudly rather than picking a silent winner.
+  const byRoute = new Map<string, IssueNote[]>();
+  for (const doc of docs) {
+    const key = [...doc.groupPath, doc.name].join('/');
+    const list = byRoute.get(key) ?? [];
+    list.push(doc);
+    byRoute.set(key, list);
+  }
+  for (const [key, colliding] of byRoute) {
+    if (colliding.length < 2) continue;
+    const names = colliding.map((d) => path.basename(d.filePath)).join(', ');
+    console.warn(
+      `[issues] "${issueId}": ${subName}/${key} is claimed by ${colliding.length} files (${names}) — ` +
+        `they resolve to the same URL; rename all but one so it doesn't silently shadow the others.`,
+    );
+  }
+
+  return docs;
 }
 
 async function readAgentLogs(

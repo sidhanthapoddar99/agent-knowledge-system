@@ -47,7 +47,16 @@ export type RouteResolution =
 
 /** Internal prefixes that `[...slug].astro` should never render. */
 function isInternalSlug(slug: string): boolean {
-  return slug.startsWith('api/') || slug === 'api' || slug.startsWith('_') || slug === 'editor';
+  return (
+    slug.startsWith('api/') || slug === 'api' ||
+    slug.startsWith('_') ||
+    slug === 'editor' ||
+    // The reserved full-page artifact route (src/pages/artifacts/[...path].ts)
+    // owns /artifacts/... — never let the page matcher try to render it in
+    // dev/SSR. (The reserved-base-URL guard in config.ts blocks a section from
+    // claiming these, so the shadowing is defence in depth.)
+    slug === 'artifacts' || slug.startsWith('artifacts/')
+  );
 }
 
 export async function matchServerRoute(

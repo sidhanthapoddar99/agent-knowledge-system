@@ -250,6 +250,15 @@ export const MANIFEST = [
     ],
   },
 
+  // ---- theme (group: theme, category 2) ------------------------------------
+  {
+    bin: 'docs-theme-tokens', group: 'theme', verb: 'tokens', category: 2, script: 'theme/tokens.mjs', runtime: 'mjs',
+    summary: 'Resolve the active (or a named) theme → variable→value map for light + dark',
+    flags: [
+      { name: 'json', desc: 'structured { theme, light, dark } map for agents' },
+    ],
+  },
+
   // ---- cross-content (top-level, category 1) -------------------------------
   {
     bin: 'docs-find', group: null, verb: 'find', category: 1, script: 'find.mjs', runtime: 'mjs',

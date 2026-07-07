@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Docs Coverage — site-theme artifact</title>
+    <style>
+      /*
+        SITE-MODE artifact. It declares `artifact.theme: "site"` in its sidecar,
+        so the /artifacts route injects the host theme's CSS before </head> — the
+        --color-*, --ui-text-*, --spacing-* … variables below resolve to the live
+        theme, in both light and dark, in the embed and full-page.
+
+        It defines NO theme of its own. The only local layer is the neutral
+        fallback baked into each var(--token, fallback): those fallbacks are inert
+        inside the engine (the injected token always wins) and only render when the
+        file is opened out-of-engine (raw file://, emailed) with no injection. This
+        is the sanctioned site-mode fallback layer, not a layout token violation.
+      */
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: var(--font-family-base, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif);
+        font-size: var(--ui-text-body, 0.875rem);
+        color: var(--color-text-primary, #1a1a1a);
+        background: var(--color-bg-primary, #fafafa);
+        line-height: var(--line-height-base, 1.6);
+      }
+      .wrap {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: var(--spacing-xl, 2rem) var(--spacing-lg, 1.5rem);
+      }
+      header { margin-bottom: var(--spacing-xl, 2rem); }
+      .eyebrow {
+        font-family: var(--font-family-mono, ui-monospace, monospace);
+        font-size: var(--ui-text-micro, 0.75rem);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--color-text-muted, #737373);
+        margin: 0 0 var(--spacing-xs, 0.25rem);
+      }
+      h1 {
+        font-size: var(--content-h2, 1.25rem);
+        margin: 0 0 var(--spacing-xs, 0.25rem);
+        color: var(--color-text-primary, #1a1a1a);
+      }
+      .lede { margin: 0; color: var(--color-text-secondary, #525252); max-width: 60ch; }
+
+      .tiles {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: var(--spacing-md, 1rem);
+        margin-bottom: var(--spacing-xl, 2rem);
+      }
+      .tile {
+        background: var(--color-bg-secondary, #f5f5f5);
+        border: 1px solid var(--color-border-default, #e5e5e5);
+        border-radius: var(--border-radius-lg, 0.75rem);
+        padding: var(--spacing-md, 1rem);
+      }
+      .tile .n {
+        font-size: var(--ui-text-title, 1.5rem);
+        font-weight: 600;
+        color: var(--color-brand-primary, #2563eb);
+      }
+      .tile .k {
+        font-family: var(--font-family-mono, ui-monospace, monospace);
+        font-size: var(--ui-text-micro, 0.75rem);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-text-muted, #737373);
+        margin-top: var(--spacing-xs, 0.25rem);
+      }
+
+      section { margin-bottom: var(--spacing-xl, 2rem); }
+      h2 {
+        font-size: var(--ui-text-body, 0.875rem);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-text-secondary, #525252);
+        margin: 0 0 var(--spacing-md, 1rem);
+      }
+
+      .bars { display: flex; flex-direction: column; gap: var(--spacing-sm, 0.5rem); }
+      .row { display: grid; grid-template-columns: 130px 1fr 40px; align-items: center; gap: var(--spacing-sm, 0.5rem); }
+      .row .label { color: var(--color-text-secondary, #525252); }
+      .track {
+        background: var(--color-bg-tertiary, #eeeeee);
+        border-radius: var(--border-radius-full, 9999px);
+        height: 12px;
+        overflow: hidden;
+      }
+      .fill { height: 100%; border-radius: var(--border-radius-full, 9999px); }
+      .fill.a { background: var(--color-brand-primary, #2563eb); }
+      .fill.b { background: var(--color-info, #0891b2); }
+      .fill.c { background: var(--color-success, #16a34a); }
+      .fill.d { background: var(--color-warning, #ca8a04); }
+      .row .val {
+        font-family: var(--font-family-mono, ui-monospace, monospace);
+        font-size: var(--ui-text-micro, 0.75rem);
+        color: var(--color-text-muted, #737373);
+        text-align: right;
+      }
+
+      table { width: 100%; border-collapse: collapse; }
+      th, td {
+        text-align: left;
+        padding: var(--spacing-sm, 0.5rem) var(--spacing-md, 1rem);
+        border-bottom: 1px solid var(--color-border-light, #f0f0f0);
+      }
+      thead th {
+        background: var(--color-bg-tertiary, #eeeeee);
+        font-size: var(--ui-text-micro, 0.75rem);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-text-muted, #737373);
+      }
+      .pill {
+        display: inline-block;
+        font-family: var(--font-family-mono, ui-monospace, monospace);
+        font-size: var(--ui-text-micro, 0.75rem);
+        padding: 2px 8px;
+        border-radius: var(--border-radius-full, 9999px);
+        border: 1px solid var(--color-border-default, #e5e5e5);
+        color: var(--color-text-secondary, #525252);
+      }
+      footer {
+        color: var(--color-text-muted, #737373);
+        font-size: var(--ui-text-micro, 0.75rem);
+        border-top: 1px solid var(--color-border-light, #f0f0f0);
+        padding-top: var(--spacing-md, 1rem);
+      }
+      code { font-family: var(--font-family-mono, ui-monospace, monospace); }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <p class="eyebrow">Site-theme artifact · data representation</p>
+        <h1>Content coverage at a glance</h1>
+        <p class="lede">
+          A data-representation artifact that inherits the host theme. Toggle the
+          site between light and dark — every surface here re-colors with the docs
+          chrome, because it consumes the theme tokens rather than inventing a
+          palette.
+        </p>
+      </header>
+
+      <div class="tiles">
+        <div class="tile"><div class="n">2</div><div class="k">Doc sets</div></div>
+        <div class="tile"><div class="n">9</div><div class="k">Sections</div></div>
+        <div class="tile"><div class="n">2</div><div class="k">Themes</div></div>
+        <div class="tile"><div class="n">3</div><div class="k">Content types</div></div>
+      </div>
+
+      <section>
+        <h2>Pages by section (user-guide)</h2>
+        <div class="bars">
+          <div class="row">
+            <span class="label">Writing content</span>
+            <span class="track"><span class="fill a" style="width:100%"></span></span>
+            <span class="val">11</span>
+          </div>
+          <div class="row">
+            <span class="label">Configuration</span>
+            <span class="track"><span class="fill b" style="width:64%"></span></span>
+            <span class="val">7</span>
+          </div>
+          <div class="row">
+            <span class="label">Getting started</span>
+            <span class="track"><span class="fill c" style="width:45%"></span></span>
+            <span class="val">5</span>
+          </div>
+          <div class="row">
+            <span class="label">Themes</span>
+            <span class="track"><span class="fill d" style="width:36%"></span></span>
+            <span class="val">4</span>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Content types</h2>
+        <table>
+          <thead>
+            <tr><th>Type</th><th>Route</th><th>Body source</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Docs</td><td><code>/user-guide/&lt;slug&gt;</code></td><td><span class="pill">markdown</span></td></tr>
+            <tr><td>Blog</td><td><code>/blog</code></td><td><span class="pill">markdown</span></td></tr>
+            <tr><td>Artifact</td><td><code>/artifacts/&lt;path&gt;</code></td><td><span class="pill">html</span></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <footer>
+        Rendered with the live theme via <code>artifact.theme: "site"</code>. Values are
+        illustrative. No colors are defined here — only host tokens are consumed.
+      </footer>
+    </div>
+  </body>
+</html>

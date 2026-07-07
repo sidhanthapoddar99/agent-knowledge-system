@@ -39,6 +39,13 @@ const subtaskDone = issue.subtasks.filter((s) => TERMINAL.includes(s.status)).le
 const subtaskReview = issue.subtasks.filter((s) => s.category === 'review').length;
 const statusColors = vocabulary.fields?.status?.colors || {};
 
+// Artifact sub-docs get the full content width: an artifact has no headings,
+// so the TOC rail would be dead chrome — hide it and let the embed claim the
+// outline column (the tracker twin of the docs outline auto-hide).
+const isArtifactDoc =
+  (subDoc.kind === 'note' && subDoc.note.docType === 'artifact') ||
+  (subDoc.kind === 'brainstorm' && subDoc.brainstorm.docType === 'artifact');
+
 let activeKey: string;
 let toc;
 if (subDoc.kind === 'subtask') {
@@ -59,7 +66,7 @@ if (subDoc.kind === 'subtask') {
 }
 ---
 
-<div class="issue-layout">
+<div class:list={['issue-layout', { 'issue-layout--artifact': isArtifactDoc }]}>
   <DetailSidebar
     baseUrl={baseUrl}
     issue={issue}
@@ -94,7 +101,7 @@ if (subDoc.kind === 'subtask') {
     )}
   </main>
 
-  <SubDocMetaSidebar toc={toc} />
+  {!isArtifactDoc && <SubDocMetaSidebar toc={toc} />}
 </div>
 
 <script is:inline type="application/json" id="subtask-state-icons" set:html={JSON.stringify(allStateIcons())} />

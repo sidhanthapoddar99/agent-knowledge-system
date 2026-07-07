@@ -178,6 +178,8 @@ A **layout** is a folder under `src/layouts/<type>/<style>/` that renders pages 
 
 **Do not** reach for hex codes, arbitrary `rem` font sizes, or invented variable names. If something feels missing from the contract, propose adding it to `theme.yaml` before inventing a private name.
 
+**Coupling — `theme.yaml` ↔ artifact-authoring skill.** The `documentation-guide` plugin's `artifact-authoring` skill carries an **inline copy** of the `required_variables` vocabulary in its text (SKILL.md §1 "inline variable contract"), so `site`-mode artifacts have the token names even if the plugin is ever distributed standalone with no theme CSS on disk. That inline list is coupled to this contract: **any change to `theme.yaml → required_variables` (add / rename / remove) must update the skill's inline variable section in the same change — both the repo source (`plugins/documentation-guide/skills/artifact-authoring/SKILL.md`) and the installed cache** (mirror byte-identically). The live *values* are served by `docs-guide theme tokens --json`; only the *names* are duplicated inline.
+
 ### Where themes live
 
 - **Built-in default theme**: `src/styles/` — `theme.yaml` (contract), `color.css`, `font.css`, `element.css`, `markdown.css`, etc.

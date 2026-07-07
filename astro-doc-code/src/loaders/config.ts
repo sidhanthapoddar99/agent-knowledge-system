@@ -215,6 +215,18 @@ export function loadSiteConfig(): SiteConfig {
     }
   }
 
+  // Route guard: reject reserved base URLs (and overlapping routes) before the
+  // config is cached or reaches the router. A reserved-base-URL clash is a
+  // config-level error, so it hard-stops startup — the same style as the
+  // missing-theme throw and the version gate — stopping dev, build, and preview
+  // alike, rather than surfacing as a dismissable content warning.
+  if (config.pages) {
+    const routeErrors = validateRoutes(config.pages);
+    if (routeErrors.length > 0) {
+      throw new Error(routeErrors.join('\n\n'));
+    }
+  }
+
   // Cache with dependency on site.yaml (include resolvedThemePaths for side-effect replay)
   cacheManager.setCache('config', 'site', { config, themePaths: resolvedThemePaths }, [getConfigPath('site.yaml')]);
 
@@ -349,7 +361,30 @@ export function processCopyright(copyright: string): string {
 }
 
 /**
- * Validate route configuration (no overlapping routes except /)
+ * Route segments claimed by built-in serving / system routes. A docs section
+ * whose `base_url` normalizes to one of these is silently shadowed — the static
+ * segment beats the `[...slug]` catch-all by route priority, so the section's
+ * pages become unreachable with no error. `validateRoutes()` turns that into a
+ * hard config-load failure. Single source of truth; keep in sync with the
+ * user-guide/dev-docs limitation and the skills.
+ */
+export const RESERVED_BASE_URLS = ['artifacts', 'assets', 'content-assets', 'api', 'editor'] as const;
+
+/** Why each reserved segment is claimed — surfaced in the config-error message. */
+const RESERVED_BASE_URL_REASONS: Record<string, string> = {
+  artifacts: 'the built-in /artifacts/<path> route that serves full-page HTML artifacts',
+  assets: 'the built-in /assets/<path> static-asset route',
+  'content-assets': 'the built-in /content-assets/<path> route that serves colocated content files',
+  api: 'the built-in /api/* dev endpoints',
+  editor: 'the built-in /editor live-editor route',
+};
+
+/**
+ * Validate route configuration: no overlapping routes (except `/`) and no
+ * section claiming a reserved built-in route segment. Returns a list of
+ * human-readable error strings (empty = valid). Called from `loadSiteConfig()`,
+ * which hard-throws on any error before the config is cached or reaches the
+ * router.
  */
 export function validateRoutes(pages: Record<string, PageConfig>): string[] {
   const errors: string[] = [];
@@ -377,6 +412,23 @@ export function validateRoutes(pages: Record<string, PageConfig>): string[] {
           `Overlapping routes: "${routeA.name}" (${routeA.url}) and "${routeB.name}" (${routeB.url})`
         );
       }
+    }
+  }
+
+  // Reserved-segment check: a section base_url must never collide with a
+  // built-in route segment. Normalize exactly like the router does at
+  // route-match.ts (strip a leading slash; also drop a trailing one) and
+  // compare for equality against the reserved set.
+  const reserved: readonly string[] = RESERVED_BASE_URLS;
+  for (const { name, url } of routes) {
+    const normalized = url.replace(/^\//, '').replace(/\/$/, '');
+    if (reserved.includes(normalized)) {
+      const reason = RESERVED_BASE_URL_REASONS[normalized] ?? 'a built-in route';
+      errors.push(
+        `[CONFIG ERROR] Page "${name}" uses base_url "${url}", which is reserved by ` +
+        `${reason}. Rename this section's base_url to a non-reserved value in site.yaml. ` +
+        `Reserved base URLs: ${RESERVED_BASE_URLS.join(', ')}.`
+      );
     }
   }
 

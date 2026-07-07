@@ -1,0 +1,25 @@
+{
+  "title": "Site-Theme Demo",
+  "description": "A data-representation artifact that inherits the host site theme — declares artifact.theme \"site\", consumes theme tokens, defines no palette of its own.",
+  "sidebar_label": "Site-Theme Demo",
+  "sidebar_position": 11,
+  "embed_height": "full",
+  "artifact": {
+    "purpose": "Demonstrate site mode: a content-coverage dashboard that inherits the host theme via route injection, re-coloring with the docs chrome in both light and dark instead of owning a palette.",
+    "type": "dashboard",
+    "theme": "site",
+    "consumes": {
+      "backgrounds": ["--color-bg-primary", "--color-bg-secondary", "--color-bg-tertiary"],
+      "text": ["--color-text-primary", "--color-text-secondary", "--color-text-muted"],
+      "borders": ["--color-border-default", "--color-border-light"],
+      "series": ["--color-brand-primary", "--color-info", "--color-success", "--color-warning"],
+      "type": ["--ui-text-micro", "--ui-text-body", "--ui-text-title", "--content-h2", "--font-family-base", "--font-family-mono"],
+      "space": ["--spacing-xs", "--spacing-sm", "--spacing-md", "--spacing-lg", "--spacing-xl", "--border-radius-lg", "--border-radius-full"]
+    },
+    "data": "Illustrative counts — doc sets, sections, themes, content types, and pages-per-section for the user-guide. No external data.",
+    "interactions": "Re-themes live with the site: the route injects the resolved theme CSS and stamps data-theme; no local palette to go stale.",
+    "sources": [
+      "default-docs/data/user-guide/15_writing-content/08_artifact-pages.md"
+    ]
+  }
+}

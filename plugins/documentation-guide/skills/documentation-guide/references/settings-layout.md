@@ -193,6 +193,9 @@ pages:
 | `layout` | string | `@<type>/<style>` — see "Layout" section below |
 | `data` | string | Folder for `docs` / `issues` / `blog`; YAML file for `custom` |
 
+> [!IMPORTANT]
+> **Reserved base URLs.** A handful of base URLs are claimed by built-in routes and **may not** be used as a section `base_url` — `artifacts`, `assets`, `content-assets`, `api`, `editor` (compared with or without a leading/trailing slash). `loadSiteConfig()` **hard-fails at config load** (dev, build, and preview alike) with an actionable error naming the clash, so a section can never shadow-fight a serving route. `artifacts` in particular backs the full-page artifact route (`/artifacts/<path>` — see `references/layouts/docs-layout.md`). Rename the section to any non-reserved value.
+
 **Choosing a layout** — every type has a `default` style; some have alternatives:
 
 | Type | Available styles | Located at |

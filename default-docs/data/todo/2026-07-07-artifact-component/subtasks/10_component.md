@@ -1,6 +1,6 @@
 ---
 title: "First-class artifact component — scan, sidebar, sidecar, embedded render"
-status: open
+status: review
 ---
 
 ## Goal
@@ -69,7 +69,7 @@ recorded in the settled-decisions note under `../notes/`.
 
 ## Tasks
 
-- [ ] **Extend the `FileType` union.** Add `'artifact'` to
+- [x] **Extend the `FileType` union.** Add `'artifact'` to
       `src/parsers/types.ts:10`. Grep for exhaustive `switch`/`===` checks on
       the `FileType` union — the real consumers are the `switch (fileType)` in
       `src/parsers/core/base-parser.ts:255` and the type mapping in
@@ -79,7 +79,7 @@ recorded in the settled-decisions note under `../notes/`.
       `.md`/`.html`/…, not the `FileType` union, so it is unaffected by this
       change.) Done when `bun run build` typechecks clean.
 
-- [ ] **Create `src/loaders/artifact-pages.ts`** as a structural clone of
+- [x] **Create `src/loaders/artifact-pages.ts`** as a structural clone of
       `diagram-pages.ts`. Glob `**/*.html` with `{ ignore: '**/assets/**' }`;
       parse the `NN_` prefix with the shared `parseOrderPrefix`; **skip files
       without a prefix with a warning, not a hard throw** (stray `.html` exports
@@ -92,7 +92,7 @@ recorded in the settled-decisions note under `../notes/`.
       folder containing `05_demo.html` yields one entry with the right slug and
       empty headings.
 
-- [ ] **Load the metadata sidecar.** Optional same-name `<NN_name>.meta.json` /
+- [x] **Load the metadata sidecar.** Optional same-name `<NN_name>.meta.json` /
       `<NN_name>.meta.jsonc` sibling — the naming settled in
       [`../notes/02_settled-decisions.md`](../notes/02_settled-decisions.md) and
       matching the diagram twin (`${basename}.meta.json` at
@@ -110,7 +110,7 @@ recorded in the settled-decisions note under `../notes/`.
       invalidates the cache — push whichever form actually exists. Done when
       editing a `.meta.jsonc` sidecar in dev re-renders the page.
 
-- [ ] **Emit the embed container.** Write `artifactContainerHtml()` mirroring the
+- [x] **Emit the embed container.** Write `artifactContainerHtml()` mirroring the
       excalidraw by-reference form: `<div class="artifact artifact-html"
       data-src="/artifacts/<rel>?v=<mtimeMs>" data-title="…"></div>`. The URL is
       the reserved route from [`20_route.md`](./20_route.md); the `?v=<mtimeMs>`
@@ -121,7 +121,7 @@ recorded in the settled-decisions note under `../notes/`.
       prefix. Done when the emitted string points at a URL the route in `20`
       actually serves.
 
-- [ ] **Wire the loader into `data.ts`, sharing one collision pool.** Call
+- [x] **Wire the loader into `data.ts`, sharing one collision pool.** Call
       `loadArtifactPages(absolutePath, content)` **after** the diagram push at
       `data.ts:273`, passing the already-collected markdown **and** diagram
       entries so all three scanners resolve slug collisions against one pool
@@ -134,7 +134,7 @@ recorded in the settled-decisions note under `../notes/`.
       `05_foo.html` + `05_foo.md` collision renders an explicit collision error
       at that slug (not a silent winner).
 
-- [ ] **Create the client renderer `src/scripts/artifacts.ts`** and register it
+- [x] **Create the client renderer `src/scripts/artifacts.ts`** and register it
       in `BaseLayout.astro` beside the diagram script (~`:139`). It queries
       `.artifact-html:not(.artifact-rendered)`, creates an `<iframe>` with the
       `data-src`, handles `load`/`error` states, and adds the **"open full page"**
@@ -151,7 +151,7 @@ recorded in the settled-decisions note under `../notes/`.
       `src/scripts/lightbox.ts`). Done when clicking a sidebar artifact shows the
       iframe filling the content column with a working "open full page" button.
 
-- [ ] **Style `.artifact` in `markdown.css`** (global scope so runtime-created
+- [x] **Style `.artifact` in `markdown.css`** (global scope so runtime-created
       iframes are covered). The artifact fills the content column: `width: 100%`
       and a viewport-relative height (e.g. `calc(100vh - <navbar>)`), tokens per
       the theme contract (no hardcoded colors/sizes — CLAUDE.md Theming). Add
@@ -159,7 +159,7 @@ recorded in the settled-decisions note under `../notes/`.
       when the embed fills the area cleanly in both light and dark themes at a
       typical docs content width.
 
-- [ ] **Verification.** Drop a real `NN_demo.html` (a small self-contained page
+- [x] **Verification.** Drop a real `NN_demo.html` (a small self-contained page
       that honors `data-theme`) plus a same-name `.meta.json` sidecar under an
       existing docs section (e.g. `default-docs/data/dev-docs/15_scripts/`). Run
       `./start dev` and confirm: (1) the artifact shows in the sidebar in
@@ -170,3 +170,44 @@ recorded in the settled-decisions note under `../notes/`.
       `.meta.jsonc` sidecar live-updates. Then `bun run build` and confirm the page is
       emitted. Finally run `docs-guide check section` on that section — zero new
       errors.
+
+## Implementation record (status → review)
+
+**Files created (framework):**
+- `astro-doc-code/src/loaders/artifact-pages.ts` — the artifact scanner (clone of
+  `diagram-pages.ts`): `**/*.html` glob with `assets/` ignore, `NN_` prefix
+  (missing → warning, not throw), `allow_artifact_pages: false` opt-out,
+  `.meta.json`/`.meta.jsonc` sidecar, `artifactContainerHtml()`, `embed_height`
+  override, opaque `artifact:` passthrough onto `entry.data`.
+- `astro-doc-code/src/loaders/first-class-page.ts` — shared `resolveSlugCollisions()`
+  (Thread A recommendation): one collision pool / one implementation for both the
+  diagram and artifact scanners. `diagram-pages.ts` refactored to call it (its own
+  error styling preserved via a factory arg).
+- `astro-doc-code/src/scripts/artifacts.ts` — client renderer: builds the same-origin
+  iframe, open-full-page (primary, clean route URL) + in-place expand (secondary),
+  `data-theme` propagation into the iframe on load + re-sync via a `data-theme`
+  MutationObserver (no invert filter). Registered in `BaseLayout.astro`.
+
+**Files changed (framework):** `parsers/types.ts` (`FileType` += `'artifact'`),
+`loaders/data.ts` (artifact scan after diagram push — shared pool, concatenated
+`dependencyFiles`), `loaders/diagram-pages.ts` (uses the shared helper; the diagram
+`.meta.jsonc` dependency-tracking bug is NOT replicated in the artifact loader),
+`loaders/cache.ts` (`WarningType` += `'config'` — makes both loaders type-clean;
+the shipped diagram loader had the same latent tsc error), `styles/markdown.css`
+(global `.artifact` chrome — viewport-fill height via `calc(100vh - navbar - 2·xl)`,
+tokens only), `layouts/BaseLayout.astro` (register `scripts/artifacts.ts`).
+
+**Verified (dev :3099 + prod build):** demo artifact copied into
+`user-guide/15_writing-content/` → sidebar entry with sidecar title, iframe fills
+content column, **no** outline column, open-full-page → clean `/artifacts/<path>`
+(target `_blank`), `data-theme` propagates into the same-origin iframe in BOTH themes
+and re-syncs on toggle (headless screenshots + `iframe.contentDocument` probe),
+`.meta.jsonc` edit live-updates the title (cache-dep fix confirmed), deliberate
+`.html`+`.md` collision renders an explicit error naming both files. Prod build green
+(752 pages with demo, 751 after removal); tsc: my files clean (27 remaining errors all
+pre-existing in untouched files). Demo removed; dev server killed. Nothing committed.
+
+**Handoff to subtask 50 (skills-integration):** `docs-guide check section` warns
+"non-md file in docs folder" on the artifact `.html` + `.meta.jsonc` (0 errors). The
+CLI checker isn't artifact-aware yet — teaching it to recognize `NN_`-prefixed `.html`
++ `.meta` sidecars belongs to subtask 50.

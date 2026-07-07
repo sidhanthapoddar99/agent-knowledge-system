@@ -35,7 +35,7 @@ Unlike docs — where 2-digit is the near-universal default — **the issue trac
 
 **Gap-number** either width (step 10, or 5 for denser sets) so a new subtask slots *between* two existing ones without renumbering: drop `015_` between `010_` and `020_`.
 
-**Separator:** `_` is canonical; the loader also tolerates a legacy `-` (`00-foo`) in existing folders — prefer `_` for anything new.
+**Separator:** `_` is canonical; the loader also tolerates `-` (`00-foo`) — prefer `_` for anything new.
 
 ## How to write a subtask — readable at cold pickup
 

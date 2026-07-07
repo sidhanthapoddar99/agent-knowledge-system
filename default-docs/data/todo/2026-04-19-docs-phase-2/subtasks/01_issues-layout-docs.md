@@ -1,7 +1,15 @@
 ---
 title: "Issues layout — docs"
-status: open
+status: in-progress
 ---
+
+> [!NOTE]
+> **Status `in-progress` as of 2026-07-08.** The user-guide half
+> (`19_issues/`) shipped in full (checklist below). The dev-docs half is not
+> started — and its planned home has moved: dev-docs layout docs live under
+> **`dev-docs/10_layouts/`** today, so the new section belongs there (e.g.
+> `10_layouts/05_issues-layout/`), not the ~~`15_layout-system/09_issues-layout/`~~
+> path written below. Verified in `agent-log/010_au_subtask-completion-audit/`.
 
 Absorbed from `2026-04-10-issues-layout/subtasks/06_documentation-and-skills.md`. User-guide and dev-docs coverage for the **issues** content type.
 
@@ -28,7 +36,7 @@ Restructured from the original flat 6-file plan into 10 top-level entries (3 sub
 - [x] `09_using-with-ai.md` — `/issues` skill (planned) · mental model · 4 rules · helper scripts (planned)
 - [x] `10_setup-new-tracker.md` — vocabulary design · site.yaml mount · multiple trackers
 
-## Dev docs — `15_layout-system/09_issues-layout/` (new)
+## Dev docs — ~~`15_layout-system/09_issues-layout/`~~ `10_layouts/` (new section, not started)
 
 - [ ] `01_overview.md`
 - [ ] `02_data-interface.md` — folder-per-item, `settings.json`, vocabulary

@@ -23,8 +23,8 @@ theme's surfaces.
 
 ## How to consume these values
 
-Inside an HTML chart, declare the slots the chart actually uses as CSS custom
-properties in a local `<style>` block, and let the chart body reference *roles* —
+Inside an HTML chart, declare the slots the chart actually uses as CSS variables
+inside the chart's own `<style>` block, and let the chart body reference *roles* —
 never raw hex scattered through the markup — so a light/dark swap happens in exactly
 one place. The surface and ink entries below are the theme's own (spelled out here for
 a `self`-mode chart; in `site` mode skip the copies and use the `--color-*` tokens
@@ -69,9 +69,9 @@ for the dark surface — it is not a second palette.
 
 - **Light, on `#f5f5f5`:** the worst adjacent CVD ΔE comes out at **24.2** —
   comfortably past the ≥12 target. Four slots land under 3:1 contrast against the
-  light surface — aqua (2.58), yellow (1.99), magenta (2.47), orange (2.94) — which
-  triggers the **relief rule**: those series need visible direct labels or the table
-  view.
+  light surface — aqua (2.58), yellow (1.99), magenta (2.47), orange (2.94) — putting
+  them in the validator's **relief** band: those series owe visible direct labels or
+  the table view.
 - **Dark, on `#171717`:** the worst adjacent CVD ΔE is **10.3**, inside the floor
   band — so once a dark-mode chart carries four or more series, back it with direct
   labels or texture. Contrast is clean: all eight slots clear 3:1 on the dark surface.
@@ -97,8 +97,8 @@ as its own independent one-hue ramp.
 
 Use the whole 100→700 span for **sequential** encoding — continuous magnitude in
 heatmaps and choropleths — where the palest step stands for "almost nothing" and is
-permitted to melt into the surface. An **ordinal** ramp (discrete ordered marks:
-funnel stages, tiers; checked with `--ordinal`) is stricter: its surface-nearest step
+permitted to melt into the surface. A ramp used **ordinally** — discrete, ordered
+marks such as funnel stages or tiers (checked with `--ordinal`) — is stricter: its surface-nearest step
 still owes 2:1 contrast, and **on this framework's surfaces that floor sits one step
 darker than the dataviz default** — on light `#f5f5f5` begin no paler than **step
 300** (`#6da7ec`, 2.30:1; step 250 only manages 1.94:1 here), and on dark `#171717`

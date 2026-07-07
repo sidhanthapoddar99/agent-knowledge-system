@@ -60,7 +60,7 @@ inventory of known failure modes. Matching any entry means the chart is wrong.
 ## Invariants — no design system changes these
 
 - **Categorical hues are dealt in a frozen order and never wrapped around.** A ninth
-  hue is never minted; series nine folds into "Other", becomes a small-multiples
+  hue is never minted; series nine gets swept into "Other", becomes a small-multiples
   facet, or picks up a second encoding channel.
 - **One axis per plot.** Two y-scales on one chart is banned outright; measures on
   different scales become two charts, small multiples, or get indexed to a shared

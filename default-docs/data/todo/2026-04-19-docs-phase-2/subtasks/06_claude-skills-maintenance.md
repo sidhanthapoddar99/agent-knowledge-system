@@ -1,9 +1,20 @@
 ---
 title: "Claude skills — catalogue maintenance"
-status: review
+status: done
 ---
 
-Keep the user-guide Claude-skills page in sync with the actually-installed skill set. The authoritative list lives at `user-guide/05_getting-started/05_claude-skills.md` as a single four-column table (**Skill / Command / Use for / Triggers on**).
+> [!NOTE]
+> **Moved — status `done` as of 2026-07-08.** The catalogue page
+> (`05_claude-skills.md`) is in sync, but reality moved out from under the
+> format described below: skills now ship via the **`documentation-guide`
+> plugin** (2 skills — `documentation-guide` + `doc-issues` — plus the
+> `docs-guide` CLI), not `.claude/skills/`; the planned standalone `issues`
+> skill was **folded into `doc-issues`**; and the page was rewritten around the
+> plugin + marketplace install, dropping the four-column-table / decision-tree
+> layout. The per-skill checklist below describes the retired page structure.
+> Verified in `agent-log/010_au_subtask-completion-audit/`.
+
+Keep the user-guide Claude-skills page in sync with the actually-installed skill set. The authoritative list lives at `user-guide/05_getting-started/05_claude-skills.md` ~~as a single four-column table (**Skill / Command / Use for / Triggers on**)~~ — now structured around the plugin.
 
 ## Trigger conditions
 
@@ -28,7 +39,7 @@ For every skill added, update:
 
 These are already in the tracker and will need rows when they land:
 
-- [ ] `issues` — Claude skill for navigating the issue tracker (scope lives in `2025-06-25-claude-skills/subtasks/02_issues-skill.md`).
+- [x] ~~`issues` — Claude skill for navigating the issue tracker (scope lives in `2025-06-25-claude-skills/subtasks/02_issues-skill.md`)~~ — folded into `doc-issues`; the page documents this explicitly.
 
 ## Cross-reference
 

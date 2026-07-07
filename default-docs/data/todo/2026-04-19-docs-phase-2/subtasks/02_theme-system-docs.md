@@ -1,19 +1,30 @@
 ---
 title: "Theme system — docs"
-status: open
+status: in-progress
 ---
+
+> [!NOTE]
+> **Moved — status `in-progress` as of 2026-07-08.** The user-guide half
+> shipped under **`25_themes/`** (the section was never renumbered to
+> `45_themes/`), consolidated rather than split per file: the whole token
+> contract lives in `25_themes/04_tokens/01_overview.md`, the layout-author
+> rules in `25_themes/10_rules-for-layout-authors.md`, and theme creation in
+> `25_themes/06_creating-themes/` (see subtask 05). **Still to do: the entire
+> dev-docs `theme-system` section** — it doesn't exist (current dev-docs
+> numbering would place it as a new section, not `40_`). Verified in
+> `agent-log/010_au_subtask-completion-audit/`.
 
 Absorbed from `2026-04-10-theme-system-refactor/subtasks/02_documentation.md`. Covers the two-tier token contract for both audiences.
 
-## User guide — `45_themes/` (renumbered from `20_themes/`)
+## User guide — ~~`45_themes/`~~ `25_themes/` ✅ shipped (consolidated)
 
-- [ ] `04_tokens/01_overview.md` — primitive vs semantic split
-- [ ] `04_tokens/02_primitive-tokens.md` — `--font-size-*` scale, raw palette
-- [ ] `04_tokens/03_semantic-ui-tokens.md` — `--ui-text-*` 3 tiers (micro / body / title)
-- [ ] `04_tokens/04_semantic-content-tokens.md` — 7 content tokens (`--content-body`, `--content-h1..h6`, `--content-code`)
-- [ ] `04_tokens/05_display-tokens.md` — 3 display tiers (marketing surfaces only)
-- [ ] `07_rules.md` — **consume semantic, never primitive** (no `--font-size-*` in layouts, no invented names, no hardcoded fallbacks)
-- [ ] `03_creating-themes.md` — satisfying `required_variables`, `extends: "@theme/default"` inheritance (author view)
+- [x] `04_tokens/01_overview.md` — primitive vs semantic split
+- [x] ~~`04_tokens/02_primitive-tokens.md`~~ — consolidated into `04_tokens/01_overview.md`
+- [x] ~~`04_tokens/03_semantic-ui-tokens.md`~~ — consolidated into `04_tokens/01_overview.md`
+- [x] ~~`04_tokens/04_semantic-content-tokens.md`~~ — consolidated into `04_tokens/01_overview.md`
+- [x] ~~`04_tokens/05_display-tokens.md`~~ — consolidated into `04_tokens/01_overview.md`
+- [x] ~~`07_rules.md`~~ `10_rules-for-layout-authors.md` — **consume semantic, never primitive** (no `--font-size-*` in layouts, no invented names, no hardcoded fallbacks)
+- [x] ~~`03_creating-themes.md`~~ `06_creating-themes/` — satisfying `required_variables`, `extends: "@theme/default"` inheritance (author view; see subtask 05)
 
 ## Dev docs — `40_theme-system/` (new section)
 

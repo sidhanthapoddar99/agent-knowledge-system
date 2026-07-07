@@ -67,9 +67,9 @@ to design — a plan deserves the same craft as a landing page — but which
   well-composed page is never the wrong answer.
 - **Editorial (the exception — a standalone showcase).** A brand-guideline landing
   surface, a poster-like specimen, an interactive toy meant to be kept or shared.
-  Here the client has already rejected templated proposals and is paying for a
-  distinctive point of view — make opinionated calls and take one real aesthetic
-  risk where it serves the work. Before writing code, ask the
+  Here the client has already turned down the templated options and wants a
+  designer with a stance — commit to strong choices, and let one genuine aesthetic
+  gamble land where the work can carry it. Before writing code, ask the
   frontend-design questions: **Purpose** (what job, whose eyes), **Tone** (pick a
   concrete direction — see the tone menu in `design-fundamentals.md`),
   **Differentiation** (the one thing a reader will remember).
@@ -197,9 +197,9 @@ theme, the CDN policy, font delivery) is in `references/publishing.md`; the rule
   first-party content on the site's own origin (an external script is an
   XSS/supply-chain surface *inside your docs*), and docs get deployed to intranets,
   offline mirrors, and long-lived archives where a dead CDN silently takes the
-  artifact down. CDN fonts are a documented, discouraged opt-out only. Wide content
-  (tables, code, diagrams) gets `overflow-x: auto` on its own container — the page
-  body must never scroll sideways.
+  artifact down. CDN fonts are a documented, discouraged opt-out only. Anything wider
+  than the column — a table, a code block, a diagram — scrolls inside its own
+  `overflow-x: auto` wrapper; the page body itself never scrolls sideways.
 
 ## §3 · Verify before publishing — the gate
 

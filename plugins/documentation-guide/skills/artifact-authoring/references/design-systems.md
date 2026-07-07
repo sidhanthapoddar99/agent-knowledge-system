@@ -71,25 +71,27 @@ this system, many times, and **cannot follow guidance that isn't there**. It won
 run your build or read your source unless you point at it; it gets the prose and the
 artifacts. So:
 
-- **Every sentence passes one test: *could the reader act on this without
-  guessing?*** "Follow the design system's conventions" fails — delete it and write
-  the actual convention. Name the token and the agent uses the token; leave the
-  vocabulary unnamed and it invents its own.
+- **Hold every sentence to a single standard: *can the reader do something with
+  it, with zero guesswork?*** A line like "follow the design system's conventions"
+  flunks — cut it and spell the convention out. When you name the token, the agent
+  uses that token; when the vocabulary goes unnamed, the agent makes one up.
 - **Teach *this* system's idiom with its real vocabulary.** A token system gets the
   `var(--*)` pattern with the real names (this framework's `--color-*`,
   `--ui-text-*`, `--content-*`, `--spacing-*`); a utility-class system gets a compact
-  family table with real class names; a prop/theme system gets "style via props" with
-  the props that carry the design language. Never import an idiom the system doesn't
-  have.
+  family table with real class names; a prop/theme system gets prop-based styling
+  documented through the specific props that express the design language. Don't
+  graft on an idiom that isn't native to the system.
 - **Name where the truth lives.** Point at the real source files the agent should
   read before styling (`theme.yaml`, `color.css`, `font.css`, and any per-component
-  page) — an agent that reads the real files beats any summary.
+  page) — an agent working from the actual files will always outperform one working
+  from a paraphrase.
 - **Include one idiomatic build snippet.** A short, real example that composes the
   system correctly — adapt one you've already rendered, so it's code you know works.
 - **Validate every named thing against what actually ships.** A conventions file
-  that names tokens/classes/components which don't exist is *worse than none* — the
-  reader trusts it, writes vocabulary that doesn't resolve, and ships silently
-  unstyled output. Before shipping: every token you enumerate must exist in
+  that lists tokens, classes, or components with no real counterpart does *more
+  damage than no file at all* — the reader takes it at face value, builds with
+  vocabulary that resolves to nothing, and the output goes out unstyled with no
+  error raised. Before shipping: every token you enumerate must exist in
   `theme.yaml` / the CSS; every component you name must exist as an artifact or
   documented part. Verifies in neither → fix the name or cut it.
 

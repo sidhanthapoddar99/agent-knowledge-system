@@ -1,11 +1,19 @@
 ---
 title: "Editor V2 — docs (DEFERRED)"
-status: review
+status: done
 ---
+
+> [!NOTE]
+> **Moved — status `done` as of 2026-07-08.** The page did not land at the
+> planned `dev-docs/30_dev-toolkits/05_live-editor.md`; it lives at
+> **`dev-docs/20_development/06_live-editor.md`**, and it's a full page (CM6
+> editor, Yjs CRDT sync, SSE presence, `editor.presence.*` config, source-file
+> map) — well beyond the placeholder this phase required. The deferred
+> deep-scope checklist below is largely absorbed by that page already.
 
 Absorbed-reference for `2026-04-10-editor-core/subtasks/06_editor-v2-documentation.md`.
 
-> **Deferred.** The live editor is a large enough surface that it warrants its own consolidated docs pass, separate from the phase-2 IA restructure. Tracked here for visibility only — do not start work against this subtask until the IA restructure subtasks land and the live-editor module is stable. A placeholder page at `dev-docs/30_dev-toolkits/05_live-editor.md` is enough for this phase.
+> **Deferred.** The live editor is a large enough surface that it warrants its own consolidated docs pass, separate from the phase-2 IA restructure. Tracked here for visibility only — do not start work against this subtask until the IA restructure subtasks land and the live-editor module is stable. A placeholder page at ~~`dev-docs/30_dev-toolkits/05_live-editor.md`~~ (landed at `dev-docs/20_development/06_live-editor.md`) is enough for this phase.
 
 ## Scope (for when this gets picked up)
 
@@ -13,4 +21,4 @@ Absorbed-reference for `2026-04-10-editor-core/subtasks/06_editor-v2-documentati
 - [ ] Dev-docs reflecting the `src/dev-tools/editor/` client structure + `src/dev-tools/server/` backend
 - [ ] README-level setup / usage guide for running the editor in dev
 - [ ] Config surface (`editor.presence.*` timing knobs in `site.yaml`)
-- [ ] Placeholder page only at `dev-docs/30_dev-toolkits/05_live-editor.md` during this phase — full rewrite follows
+- [x] Placeholder page only at ~~`dev-docs/30_dev-toolkits/05_live-editor.md`~~ `dev-docs/20_development/06_live-editor.md` during this phase — full rewrite follows

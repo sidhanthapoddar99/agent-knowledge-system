@@ -1,6 +1,6 @@
 ---
 title: "Fable review — skill coherence and idea-capture"
-status: in-progress
+status: review
 ---
 
 Requested by sidhantha (2026-07-07): after all implementation lands, a
@@ -47,13 +47,17 @@ findings; it does not edit. What to apply gets decided with the user.
       contradicting PROVENANCE.md; docs-layout.md teaches the broken
       `"adopts-site"` value; variable-list drift vs theme.yaml; stale/deictic
       sidecar example; history narrations; guide.ts misattribution.)*
-- [ ] Triage findings with sidhantha; apply accepted ones (repo + cache
+- [x] Triage findings with sidhantha; apply accepted ones (repo + cache
       parity maintained). *(Accepted 2026-07-08: fix all, with genuine
       rewrite for the verbatim-prose finding per the settled
       rewrite-never-paste decision. Fix run:
       [../agent-log/050_wf_audit-fixes/](../agent-log/050_wf_audit-fixes/),
       Fable-model agents.)*
-- [ ] Record the outcome (agent-log milestone + tick here).
+- [x] Record the outcome (agent-log milestone + tick here).
+      *(Complete — [../agent-log/050_wf_audit-fixes/01_summary.md](../agent-log/050_wf_audit-fixes/01_summary.md):
+      all 6 audit findings + 5 verifier residuals fixed; 8-shingle overlap
+      down to ≤2.7% technical-constants-only; PROVENANCE.md claims now true;
+      self-test green; cache parity zero-diff.)*
 
 Related follow-up audit: [100_variation-capability-audit.md](100_variation-capability-audit.md)
 — does the skill carry enough intent for the multi-variation interactive

@@ -103,8 +103,10 @@ full-viewport regardless):
 Beyond rendering, the sidecar carries an **`artifact:` block** — an explicit,
 machine-readable description of what the artifact *is* and *shows*, so an agent
 (or a reviewer skimming the tracker) can understand it without reading a
-several-hundred-line HTML file. The framework treats this block as opaque: it
-stores it untouched and never parses it. Its keys are an authoring convention:
+several-hundred-line HTML file. The framework treats this block as opaque
+passthrough — with one exception: it reads `artifact.theme` from inside it to
+select the theme mode. Everything else is stored untouched, never parsed. Its
+keys are an authoring convention:
 
 ```jsonc
 {
@@ -119,14 +121,13 @@ stores it untouched and never parses it. Its keys are an authoring convention:
     },
     "data": "Tokens, type scale, and three components — no external data.",
     "interactions": "Honors data-theme propagated by the host; falls back to prefers-color-scheme full-page.",
-    "sources": ["default-docs/data/user-guide/15_writing-content/08_artifact-pages.md"],
-    "embed_height": "full"
+    "sources": ["default-docs/data/user-guide/15_writing-content/08_artifact-pages.md"]
   }
 }
 ```
 
 Common keys are `purpose`, `type`, `theme`, `palette`, `data`, `interactions`,
-`sources`, and `embed_height` — write the ones that apply and add your own. For
+and `sources` — write the ones that apply and add your own. For
 the full authoring conventions (and how to build an artifact that reads as
 designed rather than generic), see the **`artifact-authoring` skill**, which
 owns this contract.

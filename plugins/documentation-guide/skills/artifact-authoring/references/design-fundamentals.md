@@ -54,12 +54,13 @@ choice was made.
 AI-produced design keeps collapsing into the same few looks. When the user names a
 visual direction, **deliver that direction verbatim — their words outrank every
 rule here, even when what they name sits on this list.** When no direction is
-given, don't spend that freedom reproducing one of these:
+given, don't burn that latitude reproducing one of these:
 
 - a cream ground (`#F4F1EA`) under a serif display face, accented in terracotta
 - a near-black page rescued by one acid-green or vermilion highlight
 - a hero washing purple into blue over a white page
 - Inter or Space Grotesk picked as the "safe" face
+- a broadsheet look — hairline rules over dense text columns
 - sections flagged with emoji
 - center-aligning the entire page
 - `rounded-lg` applied to everything indiscriminately

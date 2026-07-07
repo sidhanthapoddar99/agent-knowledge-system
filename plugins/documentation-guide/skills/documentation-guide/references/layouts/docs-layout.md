@@ -29,7 +29,7 @@ user-guide/
 └── ...
 ```
 
-**Prefix width is 2–5 digits**, ordered by **numeric value** (the validator rejects 1-digit and 6+; `_` separator required). Width and numeric-value sort come from **one shared parser** (`parsers/core/order-prefix.ts`, mirrored in the plugin's `scripts/_order-prefix.mjs`), used by both the docs loader and the issue tracker. Docs use the strict `_` separator; the issue tracker also tolerates a legacy `-` (one grammar — the separator is the only knob). Because order is by value, widths coexist: `05_` (=5), `010_` (=10), `110_` (=110) all sort correctly, so you can widen a single folder without touching its siblings.
+**Prefix width is 2–5 digits**, ordered by **numeric value** (the validator rejects 1-digit and 6+; `_` separator required). Width and numeric-value sort come from **one shared parser** (`parsers/core/order-prefix.ts`, mirrored in the plugin's `scripts/_order-prefix.mjs`), used by both the docs loader and the issue tracker. Docs use the strict `_` separator; the issue tracker also tolerates `-` as a separator (one grammar — the separator is the only knob). Because order is by value, widths coexist: `05_` (=5), `010_` (=10), `110_` (=110) all sort correctly, so you can widen a single folder without touching its siblings.
 
 **Width is a tier, not a free choice:**
 

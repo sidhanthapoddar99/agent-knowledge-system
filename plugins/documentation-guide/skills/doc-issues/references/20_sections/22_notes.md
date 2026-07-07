@@ -35,7 +35,7 @@ A note doesn't have to be markdown. Drop a self-contained **`.html` artifact** �
 
 ## Numbering — optional
 
-A numeric prefix is **optional** for notes (folders *and* files). When you do number them, `NN_` and `NNN_` are both good conventions, using the same shared ordering-prefix grammar as the rest of the project (2–5 digits, ordered by numeric value, `_` canonical / legacy `-` tolerated — see the `documentation-guide` skill's `references/layouts/docs-layout.md`).
+A numeric prefix is **optional** for notes (folders *and* files). When you do number them, `NN_` and `NNN_` are both good conventions, using the same shared ordering-prefix grammar as the rest of the project (2–5 digits, ordered by numeric value, `_` canonical / `-` tolerated — see the `documentation-guide` skill's `references/layouts/docs-layout.md`).
 
 - **Gap-number** when a fixed reading order matters: `010_context.md`, `020_design.md`, `030_decision.md` — leaving room to slot `015_` between.
 - **Leave unprefixed** when order doesn't matter — the loader builds the tree from whatever it finds.

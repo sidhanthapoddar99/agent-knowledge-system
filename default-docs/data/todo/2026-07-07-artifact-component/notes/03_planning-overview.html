@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en" data-theme-default>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Artifacts as first-class content — planning overview</title>
+<style>
+  /* ---- Tokens: light ground, cool slate biased toward the teal accent ---- */
+  :root {
+    --bg: #f3f5f7;
+    --surface: #ffffff;
+    --surface-2: #e9edf1;
+    --border: #d8dee4;
+    --border-light: #e7ebef;
+    --text-primary: #1b2632;
+    --text-secondary: #4a5764;
+    --text-muted: #5e6b76;
+    --accent: #0f6d84;
+    --accent-strong: #0b5568;
+    --accent-soft: #dcecf1;
+    --success: #1a7f5a;
+    --warning: #b4771f;
+    --info: #2a6da3;
+    --shadow: 0 1px 2px rgba(16, 30, 40, 0.05), 0 4px 14px rgba(16, 30, 40, 0.05);
+    --focus: #0f6d84;
+
+    --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Code", Menlo, Consolas, monospace;
+
+    --t-label: 0.6875rem;   /* 11px mono eyebrows */
+    --t-micro: 0.75rem;     /* 12px chips / meta */
+    --t-ui: 0.875rem;       /* 14px UI body */
+    --t-read: 0.9375rem;    /* 15px prose */
+    --t-h3: 1.0625rem;
+    --t-h2: 1.375rem;
+    --t-title: clamp(1.65rem, 1.1rem + 2.4vw, 2.3rem);
+
+    --sp-1: 0.25rem;
+    --sp-2: 0.5rem;
+    --sp-3: 0.75rem;
+    --sp-4: 1rem;
+    --sp-5: 1.5rem;
+    --sp-6: 2rem;
+    --sp-7: 3rem;
+
+    --radius-sm: 5px;
+    --radius: 9px;
+    --radius-lg: 14px;
+
+    color-scheme: light;
+  }
+
+  /* ---- Tokens: dark ground, designed (not inverted) — deeper teal-slate ---- */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #12171c;
+      --surface: #1a2128;
+      --surface-2: #222c34;
+      --border: #2c3742;
+      --border-light: #232c34;
+      --text-primary: #e6ecf1;
+      --text-secondary: #a7b4c0;
+      --text-muted: #818e9a;
+      --accent: #4bb8d4;
+      --accent-strong: #74cfe6;
+      --accent-soft: #16323b;
+      --success: #3fb985;
+      --warning: #d69a3c;
+      --info: #5aa9e0;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 6px 18px rgba(0, 0, 0, 0.28);
+      --focus: #6fd0e8;
+      color-scheme: dark;
+    }
+  }
+
+  /* Explicit toggle wins over the media query in both directions */
+  :root[data-theme="dark"] {
+    --bg: #12171c;
+    --surface: #1a2128;
+    --surface-2: #222c34;
+    --border: #2c3742;
+    --border-light: #232c34;
+    --text-primary: #e6ecf1;
+    --text-secondary: #a7b4c0;
+    --text-muted: #818e9a;
+    --accent: #4bb8d4;
+    --accent-strong: #74cfe6;
+    --accent-soft: #16323b;
+    --success: #3fb985;
+    --warning: #d69a3c;
+    --info: #5aa9e0;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 6px 18px rgba(0, 0, 0, 0.28);
+    --focus: #6fd0e8;
+    color-scheme: dark;
+  }
+  :root[data-theme="light"] {
+    --bg: #f3f5f7;
+    --surface: #ffffff;
+    --surface-2: #e9edf1;
+    --border: #d8dee4;
+    --border-light: #e7ebef;
+    --text-primary: #1b2632;
+    --text-secondary: #4a5764;
+    --text-muted: #5e6b76;
+    --accent: #0f6d84;
+    --accent-strong: #0b5568;
+    --accent-soft: #dcecf1;
+    --success: #1a7f5a;
+    --warning: #b4771f;
+    --info: #2a6da3;
+    --shadow: 0 1px 2px rgba(16, 30, 40, 0.05), 0 4px 14px rgba(16, 30, 40, 0.05);
+    --focus: #0f6d84;
+    color-scheme: light;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: var(--t-read);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  .page {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: var(--sp-6) var(--sp-5) var(--sp-7);
+  }
+
+  /* ---- shared type devices ---- */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--t-label);
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: 0 0 var(--sp-3);
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+  }
+  .eyebrow::before {
+    content: "";
+    width: 1.4rem;
+    height: 1px;
+    background: var(--accent);
+    display: inline-block;
+  }
+
+  h1, h2, h3 { font-family: var(--font-sans); text-wrap: balance; margin: 0; }
+  a { color: var(--accent); }
+
+  .mono { font-family: var(--font-mono); }
+  code, .code {
+    font-family: var(--font-mono);
+    font-size: 0.88em;
+    background: var(--surface-2);
+    color: var(--text-primary);
+    padding: 0.1em 0.4em;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-light);
+  }
+
+  /* ---- Header ---- */
+  .masthead {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--sp-4);
+    margin-bottom: var(--sp-6);
+  }
+  .masthead .lede { max-width: 44rem; }
+  h1 {
+    font-size: var(--t-title);
+    font-weight: 640;
+    letter-spacing: -0.015em;
+    line-height: 1.12;
+    margin-bottom: var(--sp-4);
+  }
+  h1 .accent { color: var(--accent); }
+  .thesis {
+    font-size: var(--t-read);
+    color: var(--text-secondary);
+    max-width: 60ch;
+    margin: 0 0 var(--sp-4);
+  }
+
+  .chips { display: flex; flex-wrap: wrap; gap: var(--sp-2); align-items: center; }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    font-family: var(--font-mono);
+    font-size: var(--t-micro);
+    padding: 0.28em 0.6em;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-secondary);
+  }
+  .chip .dot { width: 0.5em; height: 0.5em; border-radius: 50%; background: var(--text-muted); }
+  .chip[data-status] .dot { background: var(--success); }
+  .chip[data-priority] .dot { background: var(--warning); }
+  .chip[data-component] .dot { background: var(--info); }
+  .chip .k { color: var(--text-muted); }
+
+  /* ---- theme toggle ---- */
+  .toggle {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    font-family: var(--font-mono);
+    font-size: var(--t-micro);
+    color: var(--text-secondary);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 0.4em 0.8em;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+  .toggle:hover { border-color: var(--accent); color: var(--text-primary); }
+  .toggle .glyph { width: 1em; height: 1em; }
+  /* Icon shows the CURRENT theme: sun in light, moon in dark. */
+  .toggle .sun { display: inline-block; }
+  .toggle .moon { display: none; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) .toggle .sun { display: none; }
+    :root:not([data-theme]) .toggle .moon { display: inline-block; }
+  }
+  :root[data-theme="dark"] .toggle .sun { display: none; }
+  :root[data-theme="dark"] .toggle .moon { display: inline-block; }
+  :root[data-theme="light"] .toggle .sun { display: inline-block; }
+  :root[data-theme="light"] .toggle .moon { display: none; }
+
+  /* ---- section scaffold ---- */
+  section { margin-top: var(--sp-7); }
+  .section-head { margin-bottom: var(--sp-5); }
+  h2 { font-size: var(--t-h2); font-weight: 620; letter-spacing: -0.01em; }
+  .section-intro {
+    color: var(--text-secondary);
+    font-size: var(--t-read);
+    max-width: 64ch;
+    margin: var(--sp-3) 0 0;
+  }
+
+  /* ---- Vision: two mechanism tiles ---- */
+  .vision-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+    gap: var(--sp-4);
+  }
+  .mechanism {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--sp-5);
+    box-shadow: var(--shadow);
+  }
+  .mechanism .role {
+    font-family: var(--font-mono);
+    font-size: var(--t-label);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 var(--sp-3);
+  }
+  .mechanism h3 { font-size: var(--t-h3); font-weight: 600; margin-bottom: var(--sp-2); }
+  .mechanism p { margin: 0; color: var(--text-secondary); font-size: var(--t-ui); }
+  .mechanism .route {
+    display: inline-block;
+    margin-top: var(--sp-3);
+    font-family: var(--font-mono);
+    font-size: var(--t-micro);
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    padding: 0.25em 0.55em;
+  }
+  .primitive-note {
+    margin-top: var(--sp-4);
+    padding: var(--sp-3) var(--sp-4);
+    border-left: 2px solid var(--accent);
+    background: var(--surface-2);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    color: var(--text-secondary);
+    font-size: var(--t-ui);
+  }
+  .primitive-note strong { color: var(--text-primary); font-weight: 600; }
+
+  /* ---- Settled decisions grid ---- */
+  .decisions {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 16.5rem), 1fr));
+    gap: var(--sp-3);
+  }
+  .decision {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: var(--sp-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+  }
+  .decision .no {
+    font-family: var(--font-mono);
+    font-size: var(--t-micro);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .decision h3 {
+    font-size: var(--t-ui);
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.35;
+  }
+  .decision p { margin: 0; font-size: var(--t-ui); color: var(--text-secondary); line-height: 1.5; }
+
+  /* ---- Convergence map ---- */
+  .converge { display: grid; gap: var(--sp-4); }
+  .sources {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15.5rem), 1fr));
+    gap: var(--sp-3);
+  }
+  .source {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: var(--sp-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+    position: relative;
+  }
+  .source .name { font-family: var(--font-mono); font-weight: 600; font-size: var(--t-ui); color: var(--text-primary); }
+  .source .tags { display: flex; flex-wrap: wrap; gap: var(--sp-1); }
+  .tag {
+    font-family: var(--font-mono);
+    font-size: var(--t-label);
+    letter-spacing: 0.02em;
+    padding: 0.2em 0.5em;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-light);
+    background: var(--surface-2);
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+  .tag[data-origin="builtin"] { color: var(--info); }
+  .tag[data-origin="plugin"] { color: var(--warning); }
+  .tag[data-fidelity] { color: var(--text-muted); }
+  .source .gives { margin: 0; font-size: var(--t-ui); color: var(--text-secondary); line-height: 1.5; }
+  .source .gives .lead { color: var(--text-primary); font-weight: 600; }
+
+  .funnel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sp-1);
+    color: var(--text-muted);
+  }
+  .funnel .arrow { color: var(--accent); font-size: 1.1rem; line-height: 1; }
+  .funnel .verb {
+    font-family: var(--font-mono);
+    font-size: var(--t-label);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .target {
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-lg);
+    padding: var(--sp-5);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-4);
+  }
+  .target .id {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: var(--t-h3);
+    color: var(--accent-strong);
+  }
+  .target .desc { font-size: var(--t-ui); color: var(--text-secondary); max-width: 40ch; margin: var(--sp-1) 0 0; }
+  .target .make { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+  .make .part {
+    font-family: var(--font-mono);
+    font-size: var(--t-micro);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.3em 0.6em;
+    color: var(--text-primary);
+  }
+
+  /* ---- Subtask plan ---- */
+  .buildorder {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-2);
+    font-family: var(--font-mono);
+    font-size: var(--t-micro);
+    color: var(--text-secondary);
+    background: var(--surface-2);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    padding: var(--sp-3) var(--sp-4);
+    margin-top: var(--sp-4);
+  }
+  .buildorder .k { color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; font-size: var(--t-label); }
+  .buildorder .step { color: var(--accent); font-weight: 600; }
+  .buildorder .sep { color: var(--text-muted); }
+
+  .subtasks-scroll { overflow-x: auto; margin-top: var(--sp-4); }
+  .subtasks {
+    width: 100%;
+    min-width: 34rem;
+    border-collapse: collapse;
+    font-size: var(--t-ui);
+  }
+  .subtasks th {
+    text-align: left;
+    font-family: var(--font-mono);
+    font-size: var(--t-label);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 500;
+    padding: 0 var(--sp-3) var(--sp-3);
+    border-bottom: 1px solid var(--border);
+  }
+  .subtasks td {
+    padding: var(--sp-3);
+    border-bottom: 1px solid var(--border-light);
+    vertical-align: top;
+    color: var(--text-secondary);
+  }
+  .subtasks tr:last-child td { border-bottom: none; }
+  .subtasks .id { font-family: var(--font-mono); color: var(--accent); font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .subtasks .name { color: var(--text-primary); font-weight: 600; white-space: nowrap; }
+  .subtasks .scope { min-width: 18rem; }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    font-family: var(--font-mono);
+    font-size: var(--t-micro);
+    padding: 0.2em 0.55em;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-secondary);
+  }
+  .pill .dot { width: 0.5em; height: 0.5em; border-radius: 50%; background: var(--success); }
+
+  /* ---- footer ---- */
+  footer {
+    margin-top: var(--sp-7);
+    padding-top: var(--sp-5);
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: var(--t-micro);
+    font-family: var(--font-mono);
+    line-height: 1.7;
+  }
+  footer .src { color: var(--text-secondary); }
+
+  /* ---- focus + motion ---- */
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+<main class="page">
+
+  <!-- ============ HEADER ============ -->
+  <header class="masthead">
+    <div class="lede">
+      <h1>Artifacts as a <span class="accent">first-class</span> content type</h1>
+      <p class="thesis">
+        Self-contained HTML pages embed in the docs content area and open full-page
+        at a reserved <span class="code">/artifacts/&lt;path&gt;</span> route — with the
+        URL as the primitive the embed is built on, not an afterthought.
+      </p>
+      <div class="chips" aria-label="Issue metadata">
+        <span class="chip" data-status><span class="dot"></span><span class="k">status</span>&nbsp;open</span>
+        <span class="chip" data-priority><span class="dot"></span><span class="k">priority</span>&nbsp;high</span>
+        <span class="chip" data-component><span class="dot"></span><span class="k">component</span>&nbsp;components</span>
+        <span class="chip"><span class="k">label</span>&nbsp;feature</span>
+      </div>
+    </div>
+    <button class="toggle" type="button" id="theme-toggle" aria-label="Toggle color theme">
+      <span class="glyph sun" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </span>
+      <span class="glyph moon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </span>
+      <span class="label">theme</span>
+    </button>
+  </header>
+
+  <!-- ============ VISION ============ -->
+  <section aria-labelledby="vision-h">
+    <div class="section-head">
+      <p class="eyebrow">The vision</p>
+      <h2 id="vision-h">One artifact, two surfaces — the URL underneath both</h2>
+      <p class="section-intro">
+        An <span class="code">NN_</span>-prefixed <span class="code">.html</span> file appears in
+        the sidebar like any page. It renders two ways, and the second is the foundation of the first.
+      </p>
+    </div>
+    <div class="vision-grid">
+      <div class="mechanism">
+        <p class="role">Embedded</p>
+        <h3>In the content area</h3>
+        <p>Selecting the artifact replaces the central content column with the embedded page
+           (an iframe). The navigational sidebar stays; the outline column, having no headings
+           to list, collapses and hands its width over.</p>
+      </div>
+      <div class="mechanism">
+        <p class="role">Full page</p>
+        <h3>Its own reserved route</h3>
+        <p>An "open full page" affordance navigates to a route where the artifact <em>is</em> the
+           page — full viewport, bookmarkable, shareable.</p>
+        <span class="route">/artifacts/&lt;path-to-artifact&gt;</span>
+      </div>
+    </div>
+    <p class="primitive-note">
+      <strong>URL as the primitive.</strong> The embed's iframe needs a <span class="code">src</span>
+      regardless, and that <span class="code">src</span> <em>is</em> the route — so the route is the
+      dependency the embed is built on, not an alternative to it. It also sidesteps the Fullscreen
+      API's weaknesses: a real URL is linkable, escapable, and durable.
+    </p>
+  </section>
+
+  <!-- ============ SETTLED DECISIONS ============ -->
+  <section aria-labelledby="dec-h">
+    <div class="section-head">
+      <p class="eyebrow">Settled decisions</p>
+      <h2 id="dec-h">Six choices pinned for the implementer</h2>
+      <p class="section-intro">
+        The finalized record a downstream implementer cites — each fixed on 2026-07-07, each with
+        its rationale attached so it survives a cold read.
+      </p>
+    </div>
+    <div class="decisions">
+      <article class="decision">
+        <span class="no">01</span>
+        <h3>The dedicated URL is the primitive</h3>
+        <p><span class="code">/artifacts/&lt;path&gt;</span> is the primary full-view mechanism; the
+           in-content embed is built on top of it because the iframe's <span class="code">src</span>
+           is that route.</p>
+      </article>
+      <article class="decision">
+        <span class="no">02</span>
+        <h3>Embed affordances</h3>
+        <p>"Open full page" is the primary control — a plain <span class="code">&lt;a href&gt;</span>
+           to the route. An in-place expand may exist as a secondary, optional affordance.</p>
+      </article>
+      <article class="decision">
+        <span class="no">03</span>
+        <h3>Metadata in a <span class="mono">.meta.json</span> sidecar</h3>
+        <p>Same-name sidecar (never injected frontmatter) keeps the HTML a pristine standalone
+           document — and carries explicit declared values so an agent skips parsing the markup.</p>
+      </article>
+      <article class="decision">
+        <span class="no">04</span>
+        <h3>Reserved-URL set, guarded at config load</h3>
+        <p>No section may use <span class="code">artifacts</span> as a base URL — nor
+           <span class="code">assets</span>, <span class="code">content-assets</span>,
+           <span class="code">api</span>, <span class="code">editor</span>. A hard throw, not a warning.</p>
+      </article>
+      <article class="decision">
+        <span class="no">05</span>
+        <h3>First-party trust boundary</h3>
+        <p>Artifacts serve same-origin and run unsandboxed as first-party content.
+           <span class="code">text/html</span> is scoped to the route, deliberately kept out of the
+           shared MIME map.</p>
+      </article>
+      <article class="decision">
+        <span class="no">06</span>
+        <h3>"Chrome stays" means sidebar-only</h3>
+        <p>An artifact has no headings, so the TOC column would be dead chrome. The sidebar stays;
+           the outline collapses and its width goes to the artifact.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ CONVERGENCE MAP ============ -->
+  <section aria-labelledby="conv-h">
+    <div class="section-head">
+      <p class="eyebrow">Four-source convergence</p>
+      <h2 id="conv-h">Four captured skills rewritten into one</h2>
+      <p class="section-intro">
+        The authoring workstream converges four design skills — captured to
+        <span class="code">tmp_skills/</span> on 2026-07-07 — into a new in-repo skill. Sources are
+        <em>adapted and rewritten</em>, never pasted; the frozen snapshot is what makes a future
+        upstream diff possible.
+      </p>
+    </div>
+
+    <div class="converge">
+      <div class="sources">
+        <article class="source">
+          <span class="name">artifact-design</span>
+          <div class="tags">
+            <span class="tag" data-origin="builtin">CC v2.1.202 built-in</span>
+            <span class="tag" data-fidelity>transcribed</span>
+          </div>
+          <p class="gives"><span class="lead">The spine.</span> Treatment calibration, honor-the-host,
+             fundamentals, anti-generic clichés, both-themes tokens, typography, process, the UI router.</p>
+        </article>
+        <article class="source">
+          <span class="name">dataviz</span>
+          <div class="tags">
+            <span class="tag" data-origin="builtin">CC v2.1.202 built-in</span>
+            <span class="tag" data-fidelity>byte-exact refs</span>
+          </div>
+          <p class="gives"><span class="lead">The chart chapter.</span> The whole form→color→validate
+             procedure and anti-pattern catalog; the <span class="code">validate_palette.js</span> tool
+             bundled as-is.</p>
+        </article>
+        <article class="source">
+          <span class="name">design-sync</span>
+          <div class="tags">
+            <span class="tag" data-origin="builtin">CC v2.1.202 built-in</span>
+            <span class="tag" data-fidelity>byte-exact machinery</span>
+          </div>
+          <p class="gives"><span class="lead">The doctrine.</span> Design-system anatomy,
+             conventions-authoring rules, and the Styled / Complete / Plausible rubric — pipeline dropped.</p>
+        </article>
+        <article class="source">
+          <span class="name">frontend-design</span>
+          <div class="tags">
+            <span class="tag" data-origin="plugin">plugin marketplace</span>
+            <span class="tag" data-fidelity>verbatim + license</span>
+          </div>
+          <p class="gives"><span class="lead">The editorial salvage.</span> The tone menu, "vary across
+             generations," and the texture ideas — into the editorial branch only, gated by restraint.</p>
+        </article>
+      </div>
+
+      <div class="funnel" aria-hidden="true">
+        <span class="verb">converge into</span>
+        <span class="arrow">&#9660;</span>
+      </div>
+
+      <div class="target">
+        <div>
+          <span class="id">artifact-authoring</span>
+          <p class="desc">A third self-contained skill beside <span class="mono">documentation-guide</span>
+             and <span class="mono">doc-issues</span> — teaches an agent to build artifacts well.</p>
+        </div>
+        <div class="make">
+          <span class="part">SKILL.md</span>
+          <span class="part">references/</span>
+          <span class="part">scripts/</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SUBTASK PLAN ============ -->
+  <section aria-labelledby="plan-h">
+    <div class="section-head">
+      <p class="eyebrow">The plan</p>
+      <h2 id="plan-h">Seven workstreams</h2>
+      <p class="section-intro">
+        This issue plans; the code lands through subtasks. All seven are open.
+      </p>
+    </div>
+
+    <div class="subtasks-scroll">
+      <table class="subtasks">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Workstream</th>
+            <th scope="col">Scope</th>
+            <th scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="id">10</td>
+            <td class="name">component</td>
+            <td class="scope">The load-bearing scan: <span class="code">.html</span> in the sidebar, sidecar read, embedded iframe render.</td>
+            <td><span class="pill"><span class="dot"></span>open</span></td>
+          </tr>
+          <tr>
+            <td class="id">20</td>
+            <td class="name">route</td>
+            <td class="scope">The reserved <span class="code">/artifacts/&lt;path&gt;</span> full-page serving route — the primitive underneath.</td>
+            <td><span class="pill"><span class="dot"></span>open</span></td>
+          </tr>
+          <tr>
+            <td class="id">30</td>
+            <td class="name">reserved-url-guard</td>
+            <td class="scope">Config-load validation that rejects a reserved <span class="code">base_url</span> with a hard, actionable error.</td>
+            <td><span class="pill"><span class="dot"></span>open</span></td>
+          </tr>
+          <tr>
+            <td class="id">40</td>
+            <td class="name">authoring-skill</td>
+            <td class="scope">The converged <span class="mono">artifact-authoring</span> skill, written in full — the largest workstream.</td>
+            <td><span class="pill"><span class="dot"></span>open</span></td>
+          </tr>
+          <tr>
+            <td class="id">50</td>
+            <td class="name">skills-integration</td>
+            <td class="scope">Teach <span class="mono">documentation-guide</span>, <span class="mono">doc-issues</span>, and <span class="mono">guide.ts</span> the new type and limitation.</td>
+            <td><span class="pill"><span class="dot"></span>open</span></td>
+          </tr>
+          <tr>
+            <td class="id">60</td>
+            <td class="name">documentation</td>
+            <td class="scope">User-guide (authoring/usage) and dev-docs (mechanism) pages — both sides of the audience split.</td>
+            <td><span class="pill"><span class="dot"></span>open</span></td>
+          </tr>
+          <tr>
+            <td class="id">70</td>
+            <td class="name">upstream-provenance</td>
+            <td class="scope">Keep the source map true and document the re-capture → diff → fold-in protocol.</td>
+            <td><span class="pill"><span class="dot"></span>open</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="buildorder">
+      <span class="k">Suggested build order</span>
+      <span class="step">20</span><span class="sep">&rarr;</span>
+      <span class="step">10</span><span class="sep">&rarr;</span>
+      <span class="step">30</span><span class="sep">&rarr;</span>
+      <span class="step">40</span><span class="sep">&rarr;</span>
+      <span class="step">50 / 60</span><span class="sep">&rarr;</span>
+      <span class="step">70</span>
+    </p>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer>
+    <div>Generated 2026-07-07 from the issue's planning docs.</div>
+    <div class="src">Sources: <span class="mono">issue.md</span> &middot; <span class="mono">notes/01</span>, <span class="mono">notes/02</span> &middot; <span class="mono">brainstorm/01</span>, <span class="mono">brainstorm/02</span> &middot; <span class="mono">subtasks/10&ndash;70</span> — all in this issue folder.</div>
+    <div>The first artifact authored under the conventions this issue settles. No fabricated data.</div>
+  </footer>
+
+</main>
+
+<script>
+  (function () {
+    var root = document.documentElement;
+    var btn = document.getElementById('theme-toggle');
+    function current() {
+      var set = root.getAttribute('data-theme');
+      if (set === 'dark' || set === 'light') return set;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    btn.addEventListener('click', function () {
+      var next = current() === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      btn.setAttribute('aria-pressed', String(next === 'dark'));
+    });
+  })();
+</script>
+</body>
+</html>

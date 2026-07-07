@@ -1,0 +1,92 @@
+{
+  "title": "Artifacts as first-class content — planning overview",
+  "description": "A scannable visual summary of the artifact-component issue: the embed + reserved-route vision, six settled decisions, the four-source skill convergence, and the seven-workstream plan.",
+  "artifact": {
+    "purpose": "Give a reviewer or AI agent a one-screen, scannable overview of the artifact-component issue's planning — the vision, the settled decisions, the skill-convergence map, and the subtask plan — without opening the underlying issue docs.",
+    "type": "report",
+    "theme": "self-world",
+    "palette": {
+      "light": {
+        "bg": "#f3f5f7",
+        "surface": "#ffffff",
+        "surface-2": "#e9edf1",
+        "border": "#d8dee4",
+        "text-primary": "#1b2632",
+        "text-secondary": "#4a5764",
+        "text-muted": "#5e6b76",
+        "accent": "#0f6d84",
+        "accent-strong": "#0b5568",
+        "accent-soft": "#dcecf1",
+        "success": "#1a7f5a",
+        "warning": "#b4771f",
+        "info": "#2a6da3"
+      },
+      "dark": {
+        "bg": "#12171c",
+        "surface": "#1a2128",
+        "surface-2": "#222c34",
+        "border": "#2c3742",
+        "text-primary": "#e6ecf1",
+        "text-secondary": "#a7b4c0",
+        "text-muted": "#818e9a",
+        "accent": "#4bb8d4",
+        "accent-strong": "#74cfe6",
+        "accent-soft": "#16323b",
+        "success": "#3fb985",
+        "warning": "#d69a3c",
+        "info": "#5aa9e0"
+      }
+    },
+    "typography": {
+      "sans": "system-ui humanist stack — headings and prose",
+      "mono": "ui-monospace stack — eyebrows, chips, ids, routes, source names (the structural voice)"
+    },
+    "sections": [
+      "Header — issue title, thesis, status/priority/component chips, theme toggle",
+      "The vision — embedded content-area render + /artifacts/<path> full-page route, URL-as-primitive",
+      "Settled decisions — the six pinned choices with one-line rationales",
+      "Four-source convergence — the four captured skills flowing into artifact-authoring",
+      "Subtask plan — the seven workstreams 10->70 with status pills and the suggested build order",
+      "Footer — provenance line"
+    ],
+    "key_facts": {
+      "settled_decisions": 6,
+      "subtasks": 7,
+      "subtask_ids": ["10_component", "20_route", "30_reserved-url-guard", "40_authoring-skill", "50_skills-integration", "60_documentation", "70_upstream-provenance"],
+      "all_subtasks_status": "open",
+      "suggested_build_order": ["20", "10", "30", "40", "50/60", "70"],
+      "converged_sources": 4,
+      "source_names": ["artifact-design", "dataviz", "design-sync", "frontend-design"],
+      "converges_into": "artifact-authoring",
+      "reserved_base_urls": ["artifacts", "assets", "content-assets", "api", "editor"],
+      "full_page_route": "/artifacts/<path>",
+      "sidecar_convention": "<name>.meta.json / <name>.meta.jsonc"
+    },
+    "decisions": [
+      "The dedicated /artifacts/<path> URL is the primitive; the embed is built on top of it (the iframe's src IS the route).",
+      "Embed affordances: open-full-page is primary (a plain <a href>), in-place expand is a secondary optional affordance.",
+      "Metadata lives in a same-name .meta.json/.meta.jsonc sidecar, not injected frontmatter, keeping the HTML pristine and AI-legible.",
+      "A reserved-base-URL set (artifacts, assets, content-assets, api, editor) is rejected at config load with a hard throw.",
+      "Artifacts serve same-origin and run unsandboxed as first-party content; text/html is scoped to the route, not the shared MIME map.",
+      "'Chrome stays' resolves to sidebar-only: an artifact has no headings, so the TOC column collapses and hands its width to the artifact."
+    ],
+    "sources": {
+      "summarizes": [
+        "issue.md",
+        "notes/01_skill-sources-and-provenance.md",
+        "notes/02_settled-decisions.md",
+        "brainstorm/01_discuss_component-and-route-architecture.md",
+        "brainstorm/02_discuss_authoring-skill-design.md",
+        "subtasks/10_component.md",
+        "subtasks/20_route.md",
+        "subtasks/30_reserved-url-guard.md",
+        "subtasks/40_authoring-skill.md",
+        "subtasks/50_skills-integration.md",
+        "subtasks/60_documentation.md",
+        "subtasks/70_upstream-provenance.md"
+      ],
+      "generated": "2026-07-07",
+      "note": "Every value here is drawn from the listed issue planning docs; nothing is fabricated."
+    }
+  }
+}

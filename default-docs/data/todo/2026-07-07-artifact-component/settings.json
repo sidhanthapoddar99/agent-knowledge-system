@@ -1,0 +1,12 @@
+{
+  "title": "Artifacts (HTML) as first-class content (component + route + authoring skill)",
+  "description": "Self-contained HTML artifacts become a first-class content type: NN_-prefixed .html files render embedded in the docs content area (sidebar + TOC chrome intact) with a same-name .json metadata sidecar, a reserved /artifacts/<path> route opens the full-page view, and a new in-repo authoring skill — converged from four captured design skills (artifact-design, dataviz, design-sync, frontend-design) — teaches how to build, publish, and maintain artifacts, brand systems, and design systems inside the docs and the tracker.",
+  "status": "open",
+  "priority": "high",
+  "component": ["components"],
+  "labels": [
+    "feature"
+  ],
+  "author": "sidhantha",
+  "assignees": []
+}

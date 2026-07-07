@@ -4,7 +4,7 @@
   "artifact": {
     "purpose": "Give a reviewer or AI agent a one-screen, scannable overview of the artifact-component issue's planning — the vision, the settled decisions, the skill-convergence map, and the subtask plan — without opening the underlying issue docs.",
     "type": "report",
-    "theme": "self-world",
+    "theme": "self",
     "palette": {
       "light": {
         "bg": "#f3f5f7",

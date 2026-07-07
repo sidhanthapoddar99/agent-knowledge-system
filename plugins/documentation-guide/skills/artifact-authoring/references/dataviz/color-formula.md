@@ -1,9 +1,9 @@
 # Color formula
 
-Nobody hand-picks chart color here. Each color in a chart is doing precisely one of
-four jobs, and a palette becomes legal only once it survives the checks. Those checks
+Nobody hand-picks chart color here. Each color in a chart holds down precisely one
+job out of four; no palette is legal until it survives the checks. Those checks
 are the actual deliverable: they're what let you swap a palette safely, and what let
-this one method drive any design system's ramps.
+this one method drive the ramps of any design system.
 
 ## The four jobs
 
@@ -62,33 +62,34 @@ as a `<script type="module">`; there it pulls `data-palette` off `<body>` and du
 `console.table`.
 
 Every computable check (2–5) comes back PASS / WARN / FAIL, with the worst CVD pair
-called out. A run exits 0 when nothing hard-FAILs — the two WARN bands (CVD 8–12, and
-sub-3:1 contrast relief) still exit 0 but each demands a secondary encoding; any FAIL
-exits 1. Do a run per mode (`--mode dark --surface "#171717"`), and tack on
+called out. A run exits 0 when nothing hard-FAILs — the two WARN bands (CVD landing in
+8–12, and contrast relieved below 3:1) exit 0 as well, though each demands a secondary
+encoding; any FAIL exits 1. Do a run per mode (`--mode dark --surface "#171717"`), and tack on
 `--pairs all` for scatter/bubble/map/small-multiples. An **ordinal** ramp goes through
 `--ordinal`, which swaps in the ramp checks: monotone L, adjacent ΔL ≥ 0.06, a
 light-end contrast of ≥ 2.0:1, and one hue throughout.
 
 That CVD WARN (8–12) only passes when a secondary encoding backs it — direct labels,
-gaps, or texture. The contrast WARN can't be waved off: it obligates a relief channel
-(a visible direct label or the table view), and a sub-3:1 fill shipped with neither is
-a plain fail.
+gaps, or texture. The contrast WARN can't be waved off: it forces a relief channel
+open (a visible direct label or the table view), and a sub-3:1 fill shipped with
+neither is a plain fail.
 
 **What's in and out of scope.** The six checks judge a *categorical* palette — series
 identity. They say nothing about a lone status or text color, or about a sequential
-ramp. To vet a single status/text color, run a WCAG *text*-contrast check instead
-(4.5:1 for body text, 3:1 for large); the script exposes `contrast(a, b)` for exactly
-that. To vet a sequential/diverging ramp, verify lightness monotonicity along the
-ramp, not adjacency CVD — point the categorical validator at a sequential ramp and it
-**FAILs on purpose** (the ramp covers the whole band with tightly spaced steps). That's
-the expected result; leave a good ramp alone rather than bending it to pass.
+ramp. Vet a single status/text color with a WCAG *text*-contrast check instead
+(4.5:1 for body text, 3:1 for large); the script exports `contrast(a, b)` for
+precisely this case. Vet a sequential/diverging ramp by confirming its lightness
+climbs monotonically, rather than by adjacency CVD — point the categorical validator
+at a sequential ramp and it **FAILs on purpose** (the ramp covers the whole band with
+tightly spaced steps). That's the expected result; leave a good ramp alone rather than
+bending it to pass.
 
 ## Snap-to-passing (any design system)
 
 Starting from a system's ramps and the order you want:
 
-1. Per slot, grab the step whose OKLCH L falls inside the mode's band while keeping
-   C above the floor.
+1. Per slot, take whichever step lands its OKLCH L inside the mode's band while
+   keeping C above the floor.
 2. Validate. Anywhere an adjacent pair lands under ΔE 12, shift one slot by a single
    step — same hue, new lightness — and validate again.
 3. Keep going until the tightest adjacent pair sits above the floor. Function intact,
@@ -97,7 +98,7 @@ Starting from a system's ramps and the order you want:
 ## Themes (slot order)
 
 Which slot goes where is its own named decision — a *theme* — layered onto the same
-hues under the same six checks. Each surface picks one theme and locks it; two themes
+hues under identical checks. Each surface picks one theme and locks it; two themes
 never share a dashboard. When a system hasn't chosen an order yet, resist guessing:
 list the candidate orderings, validate each, and keep whichever pushes the *smallest
 adjacent* CVD ΔE the highest.
@@ -106,8 +107,8 @@ adjacent* CVD ΔE the highest.
 
 Status stands apart from the theme entirely. It's a compact fixed scale — good →
 warning → serious → critical — carrying reserved meaning, set on steps held clear of
-the categorical slots, and always shown with an icon + label. When a series itself
-*means* good or bad (error rate, pass/fail) it takes status tokens; when it's just
-"the fourth series" it takes categorical — one chart never mixes the two. The precise
+the categorical slots, and always shown with an icon + label. A series whose meaning
+*is* good-or-bad (error rate, pass/fail) draws from status tokens; a series that is
+merely fourth in line draws from categorical — one chart never mixes the two. The precise
 steps, mapped to the framework's `--color-success` / `-warning` / `-error` / `-info`,
 are in [`palette.md`](palette.md).

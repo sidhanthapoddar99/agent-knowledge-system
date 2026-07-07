@@ -172,7 +172,7 @@ headings). Rules:
     "title": "Q3 Dashboard",
     "description": "Revenue + retention at a glance",
     "embed_height": "full",
-    "artifact": { "purpose": "…", "type": "dashboard", "theme": "adopts-site" }
+    "artifact": { "purpose": "…", "type": "dashboard", "theme": "site" }
   }
   ```
 - **Full-page route**: every artifact opens at its own reserved URL,

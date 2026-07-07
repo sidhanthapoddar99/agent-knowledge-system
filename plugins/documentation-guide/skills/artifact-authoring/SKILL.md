@@ -108,7 +108,7 @@ not taste.
 
 Set it explicitly in the sidecar — `"artifact": { "theme": "site" }` or
 `"theme": "self"`. **Default is `self`** (safest for an artifact that could arrive
-from anywhere; the legacy `"self-world"` value reads as `self`). Declaring `site` is
+from anywhere; any unrecognized value reads as `self`). Declaring `site` is
 the opt-in to inheritance.
 
 ### Mode-choice doctrine — decided by the artifact's *subject*
@@ -137,9 +137,10 @@ here in the skill on purpose:** (1) `site`-mode authoring needs the names at han
 (2) `self`-mode artifacts sometimes override injected CSS, and overriding needs the
 names; (3) **independence** — if this plugin is ever distributed standalone, with no
 theme CSS on disk to read, this list is the only source of the names. The *values*
-are a query, not a constant: run **`docs-guide theme tokens --json`** for the live
-variable→value map (light + dark) of the active theme — feed it the surfaces to
-validate a chart palette against. The names:
+are a query, not a constant: run **`docs-guide theme tokens --json`** (the
+`docs-guide` CLI ships with the sibling `documentation-guide` skill — see its
+`references/cli-toolkit.md`) for the live variable→value map (light + dark) of the
+active theme — feed it the surfaces to validate a chart palette against. The names:
 
 - **Backgrounds** `--color-bg-primary` / `-secondary` / `-tertiary`
 - **Text** `--color-text-primary` / `-secondary` / `-muted`
@@ -147,12 +148,13 @@ validate a chart palette against. The names:
 - **Brand** `--color-brand-primary` / `-secondary`
 - **Status** `--color-success` / `-warning` / `-error` / `-info`
 - **Type — semantic UI** `--ui-text-micro` / `-body` / `-title`; **content**
-  `--content-body` / `-h1`…`-h6` / `-code`; **display** `--display-sm` / `-md` /
-  `-lg` (marketing surfaces only). Consume these, not the primitive `--font-size-*`
-  scale.
-- **Font family** `--font-family-base` / `-mono`
+  `--content-body` / `-h1`…`-h6` / `-code`. Consume these, not the primitive
+  `--font-size-*` scale. **Display** `--display-sm` / `-md` / `-lg` (marketing
+  surfaces only) are default-theme extras, not part of the required contract.
+- **Font family / rhythm** `--font-family-base` / `-mono`; `--line-height-base`
 - **Spacing** `--spacing-xs` / `-sm` / `-md` / `-lg` / `-xl`
-- **Radius** `--border-radius-sm` / `-md` / `-lg` (+ `--border-radius-full` for pills)
+- **Radius** `--border-radius-sm` / `-md` / `-lg` (`--border-radius-full` for pills
+  is a default-theme extra, not part of the required contract)
 - **Shadow / motion** `--shadow-sm` / `-md` / `-lg`; `--transition-fast` / `-normal`
 
 > **Coupling:** this list mirrors `theme.yaml → required_variables`. If those change

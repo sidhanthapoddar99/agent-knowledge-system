@@ -64,9 +64,9 @@ sideways.
 
 **Embed height.** The default is a viewport-relative fill — the embed fills the
 content area, matching the "replaces the central content area" experience. A short
-report can override this via the sidecar's `artifact.embed_height` (`"full"`
-default, an explicit pixel value, or an aspect ratio). The full-page route always
-renders true full-viewport regardless.
+report can override this via the sidecar's **top-level** `embed_height` field
+(`"full"` default, an explicit pixel value, or an aspect ratio). The full-page
+route always renders true full-viewport regardless.
 
 ## Consuming the host theme — the two modes
 
@@ -127,21 +127,9 @@ and `font.css` (and enumerated inline in the skill's §1). A name that isn't in 
 contract (e.g. `var(--color-accent, #7aa2f7)`) never resolves, freezes its fallback,
 and silently kills dark/light. Never invent a variable name with an inline hex
 fallback — the *only* sanctioned fallback is the neutral out-of-engine layer above.
-Full token vocabulary:
-
-| Purpose | Tokens |
-|---|---|
-| Backgrounds | `--color-bg-primary` / `-secondary` / `-tertiary` |
-| Text | `--color-text-primary` / `-secondary` / `-muted` |
-| Borders | `--color-border-default` / `-light` |
-| Brand | `--color-brand-primary` / `-secondary` |
-| Status | `--color-success` / `-warning` / `-error` / `-info` |
-| UI type | `--ui-text-micro` / `-body` / `-title` |
-| Content type | `--content-body` / `-h1`…`-h6` / `-code` |
-| Display type | `--display-sm` / `-md` / `-lg` (marketing surfaces only) |
-| Spacing | `--spacing-xs` / `-sm` / `-md` / `-lg` / `-xl` |
-| Radius | `--border-radius-sm` / `-md` / `-lg` |
-| Shadow / motion | `--shadow-sm` / `-md` / `-lg`; `--transition-fast` / `-normal` |
+The full token vocabulary is enumerated **once**, in the skill's §1 ("The inline
+variable contract" in `SKILL.md`) — consult that canonical list rather than a
+second copy here.
 
 ## Self-containment and the CDN stance
 
@@ -190,21 +178,23 @@ AI-legibility block. Two layers:
 | `sidebar_label` | Short sidebar label if the title is long |
 | `sidebar_position` | Manual ordering override |
 | `draft` | Exclude from the built sidebar |
+| `embed_height` | Embed sizing: `"full"` (default) \| a pixel value \| an aspect ratio |
 
 **2. The `artifact:` block (declared values — so an agent need not parse the HTML).**
-The loader treats this block as opaque passthrough; **this skill owns its
-conventions.** The standard reserved keys — always write these, always read these:
+The loader treats this block as opaque passthrough — with one exception: the
+framework reads `artifact.theme` from inside it to select the theme mode.
+Everything else passes through untouched; **this skill owns its conventions.**
+The standard reserved keys — always write these, always read these:
 
 | Key | Meaning |
 |---|---|
 | `purpose` | One sentence: what the artifact is for and who reads it |
 | `type` | `report` \| `dashboard` \| `dataviz` \| `design-system` \| `showcase` |
-| `theme` | `site` (route injects the host theme) \| `self` (served untouched — default; legacy `self-world` reads as `self`) |
+| `theme` | `site` (route injects the host theme) \| `self` (served untouched — default; any unrecognized value reads as `self`) |
 | `palette` | The hex actually used, `{ light: {…}, dark: {…} }` — the exact list you'd feed the palette validator |
 | `data` | For dashboards/charts: the key figures, or the source the artifact visualizes, in structured form |
 | `interactions` | Notable interactive behaviors (optional list) |
 | `sources` | Where the declared values came from (issue docs, files, URLs) |
-| `embed_height` | `"full"` (default) \| a pixel value \| an aspect ratio |
 
 The block is **open for additional declared values** — a report may add `sections`,
 `decisions`, `key_facts`; a specimen may add `typography`. Keep the standard keys
@@ -216,8 +206,30 @@ declaration, not the HTML" is the entire point. **Validate-names rule:** every h
 in `palette` and every value you declare must actually appear in the artifact — a
 declaration that lies is worse than none, and the verify gate checks it.
 
-A worked sidecar example (paired with a real artifact) lives at this issue's
-`notes/03_planning-overview.meta.json`.
+A canonical sidecar, in full:
+
+```jsonc
+// 20_coverage-dashboard.meta.jsonc — sibling of 20_coverage-dashboard.html
+{
+  "title": "Coverage Dashboard",
+  "description": "Test-coverage trends per package, updated each release",
+  "sidebar_label": "Coverage",
+  "embed_height": "full",            // top-level: "full" | "640px" | "16/9"
+  "artifact": {
+    "purpose": "Give maintainers a one-screen read of coverage per package.",
+    "type": "dashboard",
+    "theme": "site",                 // "site" | "self" (default; unrecognized → self)
+    "data": { "packages": 12, "overall": "84%", "source": "coverage/summary.json" },
+    "interactions": ["hover tooltips on bars", "per-package drill-down"],
+    "sources": ["coverage/summary.json"]
+  }
+}
+```
+
+Two live examples ship in the framework's own docs (paired with real artifacts):
+`default-docs/data/user-guide/15_writing-content/10_design-system-demo.meta.json`
+(`self` mode, declared palette) and `11_site-theme-demo.meta.json` (`site` mode,
+declared consumed tokens).
 
 ## The reserved `/artifacts` base URL
 

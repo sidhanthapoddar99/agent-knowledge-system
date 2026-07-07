@@ -1,6 +1,6 @@
 ---
 title: "Editor V2 — docs (DEFERRED)"
-status: open
+status: review
 ---
 
 Absorbed-reference for `2026-04-10-editor-core/subtasks/06_editor-v2-documentation.md`.

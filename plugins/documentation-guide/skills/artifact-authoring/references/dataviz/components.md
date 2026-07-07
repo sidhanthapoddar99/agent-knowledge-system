@@ -1,51 +1,57 @@
-# Components — the pieces a chart is made of
+# Components — the chart's part list
 
-Every chart is assembled from a small kit of parts, built in plain HTML/SVG. Tier 0
-is the ground the rest mounts on; Tier 1 is the handful of charts people actually
-ask for; Tier 2 rounds out the kit; and the System tier is the portable machinery —
-which is, in effect, this reference set itself.
+Charts here aren't monoliths; each assembles from a small kit of parts, all written
+as plain HTML/SVG. The ground everything else stands on is Tier 0. Tier 1 covers the
+handful of chart types that account for most requests. Tier 2 holds the rest of the
+kit. The System tier is the portable machinery — effectively this reference set
+itself.
 
 ## Tier 0 — the foundation
 
-- **Color roles.** The eight categorical hues (each in a light and dark value),
-  the sequential ramps, the diverging pairs, the four status colors, the
-  de-emphasis / "Other" gray, and the grayscale furniture the chart is drawn on
-  (axis, grid, label, surface). Declare them as CSS custom properties at the top of
-  the file — see [`palette.md`](palette.md).
-- **Texture fill.** One directional hand-drawn fill plus its 45° / 135° rotations,
-  held in reserve as the backup identity channel.
-- **Chart container.** A `<figure>` (or a card `<div>`) that carries responsive
-  sizing, the title/caption, and the **table-view toggle** — the accessible twin
-  every chart owes. **Any fixed height must include the x-axis band** (plot height
-  *plus* axis labels), or the card grows a nested vertical scrollbar; better still,
-  let the container size to its content.
-- **The read-out parts** — a **legend** (click-to-isolate, swatches that show the
-  texture), a **tooltip**, the **axis**, and the **data label**.
+- **Color roles.** Eight categorical hues (light and dark value each), the sequential
+  ramps, the diverging pairs, four status colors, a de-emphasis / "Other" gray, and
+  the grayscale furniture a chart sits on — axis, grid, label, surface. All of them
+  live as CSS custom properties declared at the top of the file — see
+  [`palette.md`](palette.md).
+- **Texture fill.** A single directional hand-drawn fill with its 45° / 135°
+  rotations, kept in reserve as the fallback identity channel.
+- **Chart container.** A `<figure>` (or card `<div>`) owning three things: responsive
+  sizing, the title/caption, and the **table-view toggle** — the accessible twin every
+  chart owes its readers. If the container has a fixed height, that height **must
+  cover the x-axis band too** (plot *plus* tick labels); get this wrong and the card
+  sprouts a nested vertical scrollbar. Letting the container size itself to content is
+  safer still.
+- **The read-out parts:** a **legend** (click-to-isolate, with swatches that show the
+  texture when it's active), a **tooltip**, the **axis**, and the **data label**.
 
-## Tier 1 — the charts people ask for
+## Tier 1 — what gets asked for most
 
-- **Bar chart** — grouped and stacked, thin bars by default, horizontal or vertical.
-- **Line chart** — multi-series, an optional soft-fill area variant, markers for
-  accessibility.
-- **Stat tile** — value, delta, and an optional sparkline (the figure contract).
-- **Meter / progress track** — built on same-hue ramp tracks.
+- **Bar chart.** Grouped and stacked variants, horizontal and vertical, thin bars as
+  the default.
+- **Line chart.** Multi-series, with an optional soft-fill area variant and
+  accessibility markers.
+- **Stat tile.** Value + delta + optional sparkline, per the figure contract.
+- **Meter / progress track.** The unfilled track is a lighter step of the fill's own
+  ramp.
 
-## Tier 2 — rounding out the kit
+## Tier 2 — the rest of the kit
 
-- **Area chart** (stacked, with a line drawn on the band edge) · **sparkline** ·
+- **Area chart** (stacked; the band edge doubles as the line) · **sparkline** ·
   **heatmap**
-- **Scale legend** (sequential / diverging) · **filter / time-range controls** ·
-  **empty state**
+- **Scale legend** for sequential / diverging encodings · **filter and time-range
+  controls** · **empty state**
 
-## System tier — the parts that become the skill
+## System tier — the machinery that became the skill
 
-- **The checks validator** — [`../../scripts/validate_palette.js`](../../scripts/validate_palette.js).
-- **The theming engine** — snaps a design system's ramps onto passing values
+- **The palette validator** —
+  [`../../scripts/validate_palette.js`](../../scripts/validate_palette.js).
+- **The theming engine** — snaps any design system's ramps onto passing values
   ([`color-formula.md`](color-formula.md)).
-- **The form heuristic** — picks the type, or rules out a chart entirely
+- **The form heuristic** — chooses the type, or vetoes the chart
   ([`choosing-a-form.md`](choosing-a-form.md)).
-- **The table-view generator** — the WCAG-clean equivalent of any chart.
+- **The table-view generator** — every chart's WCAG-clean equivalent.
 
-A few standing calls: part-to-whole is served by the stacked bar, so the donut stays
-deprioritized; small multiples is a layout applied *over* these parts, not a part of
-its own; and scatter graduates into Tier 2 the day scatter-heavy surfaces show up.
+Standing decisions worth knowing: the stacked bar owns part-to-whole, which keeps the
+donut deprioritized; small multiples is *layout* draped over these parts rather than
+a part itself; and scatter earns a Tier 2 seat only if scatter-heavy surfaces actually
+arrive.

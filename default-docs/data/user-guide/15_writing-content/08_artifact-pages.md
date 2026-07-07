@@ -159,8 +159,8 @@ An artifact picks one of two theme modes with the `artifact.theme` sidecar field
   theme is the thing under discussion, so it stays self-contained and portable, even
   if it happens to resemble the current site theme.
 
-Set it in the `artifact:` block — `"theme": "site"` or `"theme": "self"`. Omit it and
-you get `self`; the older value `"self-world"` is read as `self`.
+Set it in the `artifact:` block — `"theme": "site"` or `"theme": "self"`. Omit it —
+or write any unrecognized value — and you get `self`.
 
 **Site mode** — consume the tokens, with a plain neutral fallback so the file still
 reads if someone opens it outside the site (where nothing is injected):

@@ -1,6 +1,6 @@
 ---
 title: "Claude skills — catalogue maintenance"
-status: open
+status: review
 ---
 
 Keep the user-guide Claude-skills page in sync with the actually-installed skill set. The authoritative list lives at `user-guide/05_getting-started/05_claude-skills.md` as a single four-column table (**Skill / Command / Use for / Triggers on**).

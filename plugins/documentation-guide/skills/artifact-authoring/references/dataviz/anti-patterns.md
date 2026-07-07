@@ -13,9 +13,9 @@ against Sessions when one runs 0–30k and the other 0–800k and reviewers call
 to =100 at t0 and keep them on a **single** axis.
 
 **❌ Colors assigned by live rank, so a filter repaints the survivors.** Drop one
-series and everyone left shifts hue — the reader who memorized "Acme is blue" is now
-reading a lie. ✅ Pin each hue to its entity rather than its row position; survivors
-never change color.
+series and everyone left shifts hue — whoever memorized "Acme is blue" is being lied
+to now. ✅ Pin each hue to its entity rather than its row position; survivors never
+change color.
 
 **❌ Reaching past eight hues, by cycling or by generating a new one.** The ninth slot
 can't be told apart from an existing one under color-vision deficiency, and it voids
@@ -66,11 +66,12 @@ table alongside the chart — beyond ~7 bins, neighboring classes stop separatin
 
 **❌ Fat saturated blocks, weighty gridlines, no whitespace.** At any real size it
 comes across as shouting, even juvenile. ✅ Thin marks, a recessive hairline grid and
-axes, and room to breathe; keep saturated fills to small marks and accents, never big
-blocks.
+axes, and room to breathe; saturation belongs to small marks and accents — big blocks
+get none.
 
 **❌ Dashing the gridlines or axis rules.** A dash signals "forecast" or "threshold",
-which a plain grid is not. ✅ Draw them solid, a hairline, one shade off the surface.
+which a plain grid is not. ✅ Draw them solid: hairlines, a single shade away from the
+surface.
 
 **❌ Printing a value on every point.** It reads as static and nobody parses it. ✅
 Carry identity with a legend for ≥2 series, and direct-label only the points that earn
@@ -82,8 +83,8 @@ surface gap, and give overlapping markers a 2px surface ring.
 
 **❌ A label that a small bar or segment clips or overflows** — `overflow: hidden`
 trimming the leading or trailing characters included. ✅ Only place a label inside when
-it clears its padding; when it doesn't, push it past the bar's end or hand it to the
-tooltip/legend — the value survives in the table view either way.
+it clears its padding; when it doesn't, push it past the bar's end or delegate it to
+tooltip or legend — the table view keeps the value either way.
 
 **❌ Fixing a container's height so it excludes the axis band.** The plot slots in but
 the tick labels don't, and the card grows a hairline nested scrollbar. ✅ Include the
@@ -105,15 +106,15 @@ ordered when it sits on a value scale.
 ## Interaction & accessibility
 
 **❌ Locking a value behind its tooltip as the sole way to read it.** ✅ Tooltips are
-additive and never gates: the value is also reachable via a direct label or the table
-view, and keyboard focus mirrors hover.
+additive and never gates: the value stays reachable through a direct label or the
+table view, and keyboard focus mirrors hover.
 
 **❌ Hover targets you have to spear** — an 8px scatter dot demanding a dead-center
 hit. ✅ Extend the target through the 2px gap to a ~24px floor; for crowded scatter,
 lay down a nearest-point / Voronoi layer.
 
-**❌ Filters scoped to a single chart, or parked inside a chart card.** ✅ One filter
-row sitting above everything it governs, with every chart redrawing on the same slice.
+**❌ Filters scoped to a single chart, or parked within a chart's card.** ✅ A single
+filter row above all it governs, with every chart redrawing on the same slice.
 
 **❌ A skeleton that flashes on refetch.** ✅ Keep the prior render up at lowered
 opacity so nothing jumps.

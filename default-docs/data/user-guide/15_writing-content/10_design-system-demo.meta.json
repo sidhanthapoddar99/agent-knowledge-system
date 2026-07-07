@@ -20,7 +20,6 @@
     "interactions": "Honors data-theme propagated by the host frame on load and on every site theme toggle; has its own toggle for the full-page view; falls back to prefers-color-scheme with no host.",
     "sources": [
       "default-docs/data/user-guide/15_writing-content/08_artifact-pages.md"
-    ],
-    "embed_height": "full"
+    ]
   }
 }

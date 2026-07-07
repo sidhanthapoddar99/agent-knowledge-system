@@ -86,7 +86,7 @@ These apply across all domains. Reference files don't repeat them — they assum
 > - **Uniform contract:** every command takes `--help`/`-h` (→ stdout, exit 0) and `--json` where it returns data; exit codes `0` ok · `1` no-result/handled-error · `2` usage.
 > - **Full command + option reference:** [`references/cli-toolkit.md`](references/cli-toolkit.md) — every group, command, and flag.
 >
-> **Legacy `docs-<name>` scripts are retired.** Earlier versions exposed flat binaries (`docs-list`, `docs-check-blog`, …); everything is now `docs-guide <group> <verb>`. If you encounter old `docs-<name>` invocations in a project's `CLAUDE.md`, agent memory, or scripts, **update them to the `docs-guide` form (and remove the stale references)** as you go.
+> **`docs-guide` is the only entrypoint** — flat `docs-<name>` binaries (`docs-list`, `docs-check-blog`, …) do not exist. If a project's `CLAUDE.md`, agent memory, or scripts invoke one, **rewrite it to the `docs-guide <group> <verb>` form** as you go.
 
 **Searching across content — use `docs-guide find`, not the `Grep` tool**, for a string anywhere across all content types at once. Tracker-specific searching (schema-aware `docs-guide issue list`) is covered by the `doc-issues` skill.
 

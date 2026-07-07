@@ -38,8 +38,23 @@ findings; it does not edit. What to apply gets decided with the user.
 
 ## Tasks
 
-- [ ] Run the Fable review agent with the brief above (read-only; findings
+- [x] Run the Fable review agent with the brief above (read-only; findings
       report ranked by severity).
+      *(Ran 2026-07-08. Verdict: "close to canonical — ready after three
+      fixes." Full results recorded in
+      [../agent-log/040_au_fable-skill-audit/01_summary.md](../agent-log/040_au_fable-skill-audit/01_summary.md).
+      Headline: dataviz references still ~70–82% near-verbatim upstream text
+      contradicting PROVENANCE.md; docs-layout.md teaches the broken
+      `"adopts-site"` value; variable-list drift vs theme.yaml; stale/deictic
+      sidecar example; history narrations; guide.ts misattribution.)*
 - [ ] Triage findings with sidhantha; apply accepted ones (repo + cache
-      parity maintained).
+      parity maintained). *(Accepted 2026-07-08: fix all, with genuine
+      rewrite for the verbatim-prose finding per the settled
+      rewrite-never-paste decision. Fix run:
+      [../agent-log/050_wf_audit-fixes/](../agent-log/050_wf_audit-fixes/),
+      Fable-model agents.)*
 - [ ] Record the outcome (agent-log milestone + tick here).
+
+Related follow-up audit: [100_variation-capability-audit.md](100_variation-capability-audit.md)
+— does the skill carry enough intent for the multi-variation interactive
+design-option artifact pattern.

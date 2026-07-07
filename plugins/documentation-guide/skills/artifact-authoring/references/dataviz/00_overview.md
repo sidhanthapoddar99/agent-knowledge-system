@@ -1,107 +1,116 @@
 # Data visualization — the procedure
 
-Load this the moment an artifact has a chart, a stat tile, a meter, or any plotted
-data. A chart is **read by people and drawn by you**, so this turns "make it look
-good" into a procedure with checks — the result is right by construction, not by
-taste.
+Open this file the moment an artifact acquires plotted data of any kind — a chart, a
+stat tile, a meter. People read charts; you draw them. That asymmetry is why this
+reference replaces "make it look good" with an ordered procedure plus machine checks:
+correctness gets built in up front instead of judged afterward.
 
-**The method is design-system-agnostic.** The procedure, the form heuristic, the
-checks, and the mark specs don't depend on any one palette. A design system only
-supplies *parameters* — its ramps, a categorical order, a diverging pair, a status
-palette, its surfaces. The reference instance for *this* framework — surfaces and
-ink derived from the theme contract, with a validated categorical/sequential/
-diverging set — is [`palette.md`](palette.md). To retarget, read that file's
-structure and swap its values; touch nothing else.
+**Nothing in the method belongs to any one design system.** The step order, the form
+heuristic, the checks, and the mark specs hold no matter whose palette is in play — a
+design system contributes only *parameters*: ramps, an order for the categorical
+hues, a diverging pair, a status set, its surfaces. For *this* framework the filled-in parameter file is
+[`palette.md`](palette.md) — surfaces and ink read off the theme contract, joined to a
+validated categorical/sequential/diverging set. Retargeting means editing that one
+file's values; everything else stays untouched.
 
-> The one habit that matters most: **color is computable, so compute it.** Never
-> eyeball whether a palette is colorblind-safe — run
-> [`../../scripts/validate_palette.js`](../../scripts/validate_palette.js).
+> If a single habit survives from this page: **palette safety is arithmetic, so do the
+> arithmetic.** Whether a palette survives color-vision deficiency is never a judgment
+> call by eye — it is the question
+> [`../../scripts/validate_palette.js`](../../scripts/validate_palette.js) exists to
+> answer.
 
-## The procedure — in order
+## Seven steps, in this order
 
-Color comes **last**. Most bad charts pick color first.
+Color arrives **last**. Charts usually go wrong because color arrived first.
 
-1. **Pick the form.** What is the data's job — magnitude, identity, polarity, a
-   single headline, change over time? The job picks the type, and sometimes the
-   right answer is *not a chart* (a stat tile or a hero number). →
-   [`choosing-a-form.md`](choosing-a-form.md)
-2. **Assign color by the job it does.** Categorical (identity), sequential
-   (magnitude), diverging (polarity), or status (state) — each has one rule. Assign
-   categorical hues in a fixed order, never cycled. → [`color-formula.md`](color-formula.md)
-3. **Validate the palette — run the script, don't reason about ΔE.**
-   `node ../../scripts/validate_palette.js "<hex,hex,…>" --mode light` (or load it as
-   a `<script type="module">` in the chart's own page, where it reads `data-palette`
-   off `<body>` and logs a `console.table`). It reports the lightness band, the
-   chroma floor, adjacent-pair CVD separation, and contrast. Fix any FAIL before
-   continuing, then re-run `--mode dark` against the dark surface.
-4. **Apply the mark specs and spacers.** Thin marks, 4px rounded data-ends anchored
-   to the baseline, 2px lines, ≥8px markers, a 2px surface gap between touching
-   fills, a 2px surface ring on overlapping marks, selective direct labels. →
-   [`marks-and-anatomy.md`](marks-and-anatomy.md)
-5. **Add the hover layer — by default.** An HTML/SVG chart *is* interactive: ship a
-   crosshair + tooltip on line/area and a per-mark tooltip on bar/dot/cell. Only a
-   bare stat tile skips it. → [`interaction.md`](interaction.md)
-6. **Final accessibility pass.** For ≥2 series a legend is always present, and ≤4
-   are also direct-labeled, so identity is never color-alone; a table view exists;
-   dark mode is **selected** (its own steps from the same ramps, validated against
-   the dark surface — never an auto-flip); texture is available for the CVD / print /
-   forced-colors case.
-7. **Render it and look at it.** The validator checks color, not layout — open or
-   screenshot the output and eyeball it for label collisions, geometry, and overflow
-   before calling it done.
+1. **Settle the form.** Ask what job the data does for the reader — magnitude?
+   identity? polarity? one headline figure? movement over time? The job selects the
+   type, and occasionally it rules out a chart altogether (a stat tile or a hero
+   number instead). → [`choosing-a-form.md`](choosing-a-form.md)
+2. **Give every color a job.** Identity → categorical; magnitude → sequential;
+   polarity → diverging; state → status. Each job carries exactly one rule — and
+   categorical hues are dealt in a frozen order, never wrapped around. →
+   [`color-formula.md`](color-formula.md)
+3. **Put the palette through the validator — no hand-reasoning about ΔE.**
+   `node ../../scripts/validate_palette.js "<hex,hex,…>" --mode light` — or embed it
+   in the chart's own page as a `<script type="module">`, where it picks up
+   `data-palette` from `<body>` and prints a `console.table`. It scores the lightness
+   band, the chroma floor, adjacent-pair CVD separation, and contrast. Clear every
+   FAIL, then repeat with `--mode dark` against the dark surface.
+4. **Draw to the mark specs.** Slim marks; 4px rounding at the data end with a square
+   baseline; 2px line strokes; markers no smaller than 8px; a 2px band of surface
+   color wherever fills touch and a 2px surface ring wherever marks overlap; labels
+   placed sparingly. → [`marks-and-anatomy.md`](marks-and-anatomy.md)
+5. **Wire up hover as standard equipment.** HTML/SVG output is interactive by nature:
+   line and area charts carry a crosshair with a tooltip, bar/dot/cell charts carry
+   per-mark tooltips. The bare stat tile is the lone exception. →
+   [`interaction.md`](interaction.md)
+6. **Close with the accessibility sweep.** At two or more series the legend is
+   non-optional, and up to four series also get direct labels — identity never rides
+   on color alone. A table view exists. Dark mode is a **choice**: fresh steps off the
+   same ramps, validated on the dark surface, never a mechanical flip. Texture stands
+   by for the CVD / print / forced-colors case.
+7. **Open the render and use your eyes.** Layout sits outside the validator's remit —
+   screenshot or open the output and hunt for colliding labels, broken geometry, and
+   overflow before declaring the chart done.
 
-Then check the result against [`anti-patterns.md`](anti-patterns.md) — the catalog
-of what goes wrong. If your chart matches an entry, it's wrong.
+Finish by holding the result against [`anti-patterns.md`](anti-patterns.md) — the
+inventory of known failure modes. Matching any entry means the chart is wrong.
 
-## Non-negotiables (true in every design system)
+## Invariants — no design system changes these
 
-- **Assign categorical hues in a fixed order, never cycled.** A 9th series is never a
-  generated hue — fold it into "Other," small multiples, or a composite encoding.
-- **One axis.** Never a dual-axis chart (two y-scales). Two measures of different
-  scale → two charts, small multiples, or index both to a common base. *(The #1
-  chart mistake — see anti-patterns.)*
-- **Color follows the entity, never its rank.** A filter that changes the series
-  count must not repaint the survivors.
-- **Sequential = one hue, light → dark. Diverging = two hues + a neutral gray
-  midpoint.** Never a rainbow; never a hue at the diverging midpoint.
-- **Run the validator before shipping any categorical palette.** CVD ≥ 12 is the
-  target; 8–12 is a floor that is legal only *with* a secondary encoding. A contrast
-  WARN obligates visible labels or a table view — it is not dismissable.
-- **Thin marks; a legend always present for ≥2 series (none for one); selective
-  direct labels (never a number on every point); recessive grid/axes.**
-- **Text wears text tokens, never the series color** — values, labels, and legends
-  stay in primary/secondary/muted ink; the colored mark beside them carries identity.
-- **Status colors are reserved** (good/warning/serious/critical) and never reused for
-  "series 4"; they always ship with an icon + label, never color alone.
+- **Categorical hues are dealt in a frozen order and never wrapped around.** A ninth
+  hue is never minted; series nine folds into "Other", becomes a small-multiples
+  facet, or picks up a second encoding channel.
+- **One axis per plot.** Two y-scales on one chart is banned outright; measures on
+  different scales become two charts, small multiples, or get indexed to a shared
+  base. *(Anti-patterns opens with this — it's the single most frequent chart error.)*
+- **A hue belongs to its entity, not its position.** Filtering series away must leave
+  the survivors' colors exactly where they were.
+- **Magnitude = a single hue stepped light → dark; polarity = two opposing hues
+  meeting at a neutral gray middle.** Rainbows are out, and the center of a diverging
+  scale is never a hue.
+- **No categorical palette ships unvalidated.** The CVD target is ≥ 12; the 8–12 band
+  is tolerable only when a secondary encoding rides along. A contrast WARN creates an
+  obligation — visible labels or the table view — not a judgment call.
+- **Slim marks; a legend whenever series ≥ 2 (never for one); labels rationed, never
+  one per point; grid and axes kept quiet.**
+- **Type is inked with text tokens, never with a series hue** — values, labels, and
+  legend text stay in primary/secondary/muted ink while a colored mark alongside does
+  the identifying.
+- **The status scale is off-limits to ordinary series** — good/warning/serious/
+  critical keep their reserved meaning, and always travel with an icon + label rather
+  than color alone.
 
-## Plugging in a design system
+## What a design system plugs in
 
-The method is invariant; only these parameters change per system. The reference
-instance — every value filled in from the theme contract — is [`palette.md`](palette.md).
+Only the parameters below vary between systems; the machinery doesn't.
+[`palette.md`](palette.md) is the worked example, every row filled from the theme
+contract.
 
-| Parameter | What the system supplies |
+| Parameter | What the system contributes |
 |---|---|
-| **Ramps** | the hue scales (named steps) the palette draws from |
-| **Categorical order** | the fixed hue order (a named theme); default + alternates |
-| **Sequential hue** | the default single hue for magnitude |
-| **Diverging pair** | two warm/cool poles + a neutral midpoint |
-| **Status palette** | good / warning / serious / critical, steps distinct from categorical |
-| **Texture fill** | one directional fill, at 45° / 135° |
-| **Surfaces** | light & dark chart-surface colors (the validator needs these) |
-| **Filter controls** | date-range & dimension controls (behaviour in `interaction.md`) |
+| **Ramps** | the named-step hue scales the palette is built from |
+| **Categorical order** | the frozen hue sequence (a named theme), plus any alternates |
+| **Sequential hue** | the single default hue that encodes magnitude |
+| **Diverging pair** | a warm/cool pole pair with a neutral middle |
+| **Status palette** | good / warning / serious / critical, on steps kept apart from the categorical slots |
+| **Texture fill** | one directional fill, applied at 45° / 135° |
+| **Surfaces** | the light and dark chart surfaces (validator inputs) |
+| **Filter controls** | date-range and dimension pickers (behaviour spec: `interaction.md`) |
 
-To onboard a system: fill those rows, feed its ramps to the validator, and let it
-snap each slot to the nearest passing step. Structure and rules stay as written.
+Onboarding a system: fill the rows, run its ramps through the validator, and snap
+every slot to the nearest step that passes. Nothing structural moves.
 
 ## Reference files
 
-| File | What it answers |
+| File | Question it settles |
 |---|---|
-| [`choosing-a-form.md`](choosing-a-form.md) | Which chart type — or is it even a chart? |
-| [`color-formula.md`](color-formula.md) | The four jobs, the six checks, snap-to-passing |
-| [`marks-and-anatomy.md`](marks-and-anatomy.md) | Mark specs, spacers, labels, figures, the hero number |
-| [`interaction.md`](interaction.md) | Tooltips & hover, filters & time ranges |
-| [`components.md`](components.md) | The pieces a chart is made of — build each in plain HTML |
-| [`anti-patterns.md`](anti-patterns.md) | **What goes wrong — check every chart against this** |
-| [`palette.md`](palette.md) | **The reference palette instance** — every parameter, filled in from the theme |
-| [`../../scripts/validate_palette.js`](../../scripts/validate_palette.js) | The runnable checks (run it; don't eyeball) |
+| [`choosing-a-form.md`](choosing-a-form.md) | picking the type — or ruling out a chart entirely |
+| [`color-formula.md`](color-formula.md) | the four color jobs, the checks, snapping to a passing step |
+| [`marks-and-anatomy.md`](marks-and-anatomy.md) | mark specs, the two spacers, labels, figures, the hero number |
+| [`interaction.md`](interaction.md) | hover + tooltips, filters + time ranges |
+| [`components.md`](components.md) | the part list a chart assembles from, each in plain HTML |
+| [`anti-patterns.md`](anti-patterns.md) | **the failure catalog — audit every chart against it** |
+| [`palette.md`](palette.md) | **the filled-in parameter file** — this framework's instance |
+| [`../../scripts/validate_palette.js`](../../scripts/validate_palette.js) | the executable checks (never judged by eye) |

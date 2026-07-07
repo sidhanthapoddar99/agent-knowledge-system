@@ -9,6 +9,7 @@
 import type { Issue, IssueSubtask } from '@loaders/issues';
 import type { GuideHeading } from '../../guide';
 import { stateIconSvg } from '../../server/state-icon';
+import { STATUS_LABELS } from '@loaders/issue-status';
 import { pad, subtaskPanelKey } from '../../server/helpers';
 
 interface Props {
@@ -81,7 +82,7 @@ const subtaskTotal = sortedSubtasks.length;
                 data-subtask-key={panelKey}
                 data-tip={s.title}
               >
-                <span class="issue-meta-index__icon" data-state-icon>
+                <span class="issue-meta-index__icon" data-state-icon data-tip={STATUS_LABELS[s.status]} data-tip-always aria-label={STATUS_LABELS[s.status]}>
                   <Fragment set:html={stateIconSvg(s.status)} />
                 </span>
                 {s.sequence !== null && <span class="issue-meta-index__num">{pad(s.sequence)}</span>}

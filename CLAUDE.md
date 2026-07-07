@@ -157,6 +157,10 @@ A **layout** is a folder under `src/layouts/<type>/<style>/` that renders pages 
 5. **CSS scoping gotcha**: elements created at runtime via `innerHTML` / `createElement` don't receive Astro's `data-astro-cid-*` attribute, so scoped selectors skip them. For styles that target dynamic nodes, wrap them in `:global(.classname) { … }`.
 6. **Register routing**: add globs + a branch in `src/pages/[...slug].astro` (for new types) and add the alias (`@<type>`) in `src/loaders/alias.ts`.
 
+### UX standards
+
+Every layout surface follows the framework's UX standards — truncation-only tooltips (`data-tip`, with `data-tip-always` for icons/symbols), file-type glyphs that mark only the non-markdown exception, status color exclusively through the theme status variables, hierarchy from weight/position rather than size, passive glanceable status marks, and keeping `data-tip`/`aria-label` in step when client code swaps state. The rules with rationale and file map live in **dev-docs `05_architecture/05_layout-internals/08_ux-standards.md`** — read it before adding chrome to any layout; don't re-derive or re-document the rules here.
+
 ## Theming
 
 **All CSS in layouts MUST consume declared theme variables — no invented names, no hardcoded fallbacks.** The full contract lives in `src/styles/theme.yaml → required_variables`. The cheat sheet:

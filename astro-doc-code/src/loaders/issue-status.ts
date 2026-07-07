@@ -62,6 +62,17 @@ export const LEGACY_STATUS_MAP: Record<string, IssueStatus> = {
   cancelled: 'dropped',
 };
 
+/** Human display label per status — used by badges and status-icon tooltips. */
+export const STATUS_LABELS: Record<IssueStatus, string> = {
+  open: 'Open',
+  blocked: 'Blocked',
+  'in-progress': 'In Progress',
+  'input-needed': 'Input Needed',
+  review: 'Review',
+  done: 'Done',
+  dropped: 'Dropped',
+};
+
 /** One-line meaning per status — the fixed vocabulary's built-in legend, shared
  *  by the tracker Guide modal (and available to `guide.ts`) so the glosses are
  *  declared once alongside the statuses they describe. */

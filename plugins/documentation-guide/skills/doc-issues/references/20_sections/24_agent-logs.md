@@ -55,6 +55,12 @@ code degrades gracefully: no symbol, name keeps the code.
 
 ## Milestone shape
 
+**The frontmatter below is required on every milestone, written at creation time —
+not optional metadata.** `iteration` is what renders the `#N` badge; a milestone
+without it is malformed (the validator warns). `status` uses the **milestone**
+vocabulary — `not-started | in-progress | success | failed` — never the subtask
+vocabulary (`done` on a milestone is wrong).
+
 ```markdown
 ---
 iteration: 1            # → shown as "#1"; independent of the 101_ filename prefix
@@ -113,14 +119,98 @@ total, regardless of subtask count** — logs are not synced to subtasks. One en
 tiny step buries the signal; each milestone should stand alone as a summary a human
 can skim months later.
 
-## Add an entry — write the file directly
+### The mapping unit — what one milestone corresponds to, per kind
 
-1. Pick or create the activity folder: `ls <issue>/agent-log/` → next `NNN_` value →
-   `NNN_<code>_<name>/`. Write `00_goal.md` (and `02_task_list.md` for a live run).
-2. Find the next milestone prefix inside it (`101_`, `102_`, …).
-3. Write the milestone with the Write tool using the shape above — real headings,
-   bullets, evidence.
-4. When the run wraps, write `01_summary.md`.
+The two failure modes are symmetric: logging every step buries the signal, but
+squashing a whole multi-phase run into a single milestone loses the iteration
+points entirely. What "one milestone" means depends on the kind:
+
+| Kind | One milestone = | Notes |
+|---|---|---|
+| `wf` workflow | one top-level phase | build / verify / fix each get their own milestone; a trailing audit-and-fix phase is its own; a phase with 5 sub-agents is still **one** milestone — agent counts and per-stream detail go as bullets under Approach/Result |
+| `lp` loop (large iterations) | one loop iteration | 1:1 mapping |
+| `lp` loop (small/rapid) | several iterations rolled up | consolidation threshold is case-by-case; a rolled-up milestone still gets one `iteration:` number |
+| `au` audit | one stage: sweep → findings → fixes | fixes milestone omitted when the audit is read-only |
+| `rf` refactor | one structural move | each Result proves behaviour preserved (tests/build green) |
+| `it` iteration burst | one coherent chunk of the burst | mechanical bursts belong in a subtask checklist instead |
+
+`iteration:` counts sequentially within the activity (1, 2, 3…), independent of
+the `101_` file prefix — the prefix orders on disk, the frontmatter drives the badge.
+
+### Reference tree — the default shape per kind
+
+**A default, not a straitjacket.** Match this shape unless the run has a reason
+not to; what's non-negotiable is only the invariants (milestone frontmatter, one
+milestone per mapping unit, summary at wrap). Meta files beyond `00_goal.md` are
+add-as-needed; names and counts flex with the run.
+
+```
+agent-log/
+├── 010_wf_feature-build/               ← workflow: 1 milestone per top-level phase
+│   ├── 00_goal.md   01_summary.md   02_task_list.md
+│   ├── 101_research.md                  phase 1 — sub-agents as bullets inside     #1
+│   ├── 102_build.md                     phase 2                                    #2
+│   ├── 103_verify.md                    phase 3 — findings listed                  #3
+│   └── 104_fix.md                       phase 4 — fixes against #3                 #4
+├── 020_lp_harden-loader/               ← loop, large iterations: 1:1
+│   ├── 00_goal.md   01_summary.md   02_task_list.md
+│   ├── 101_baseline.md                                                              #1
+│   └── 102_edge-cases.md                exit condition met                          #2
+├── 030_lp_lint-sweep/                  ← loop, rapid rounds: rolled up
+│   ├── 00_goal.md   01_summary.md
+│   ├── 101_bulk-cleanup.md              round → outcome table inside                #1
+│   └── 102_convergence.md                                                           #2
+├── 040_au_consistency-audit/           ← audit: sweep → findings → fixes
+│   ├── 00_goal.md   01_summary.md
+│   ├── 101_sweep.md                                                                #1
+│   ├── 102_findings.md                  verdicts with evidence                     #2
+│   └── 103_fixes.md                     omit when read-only                        #3
+├── 050_rf_extract-shared-loader/       ← refactor: 1 milestone per structural move
+│   ├── 00_goal.md   01_summary.md   02_task_list.md
+│   ├── 101_extract-core.md              + behaviour-preserved evidence             #1
+│   └── 102_migrate-callers.md                                                      #2
+└── 060_it_polish-burst/                ← iteration burst: 1 per coherent chunk
+    ├── 00_goal.md   01_summary.md
+    ├── 101_theme-desync-fix.md                                                     #1
+    └── 102_full-width-view.md                                                      #2
+```
+
+(`#N` = that file carries `iteration: N` frontmatter.)
+
+**Name milestones by what the chunk did, never by its number** — no
+`iteration-1-…` / `rounds-3-7-…` filenames. The `1NN_` prefix orders on disk and
+`iteration:` renders the `#N` badge; a number in the name is triple redundancy.
+Which rounds a rolled-up milestone covers belongs inside the file, not in its name.
+
+## The run rhythm — scaffold, stub, update, wrap
+
+The default lifecycle for a live run. It's a rhythm, not a ritual — collapse
+steps when the run is small (a burst logged after the fact is fine); what must
+survive any adaptation is the invariants: full milestone frontmatter, one
+milestone per mapping unit, summary at wrap.
+
+1. **Scaffold before starting.** `ls <issue>/agent-log/` → next `NNN_` value →
+   create `NNN_<code>_<name>/` with `00_goal.md` (what triggered the run, what
+   "done" looks like) — and `02_task_list.md` when there's live state to track.
+2. **Stub the milestone when its unit begins** — a phase kicks off, a loop
+   iteration starts: write the `1NN_` file with full frontmatter,
+   `status: in-progress`, and a couple of lines on what it's attempting. Now the
+   badge shows live state, and a dead session still leaves a trace on disk.
+3. **Update it when the unit completes** — flip `status` to `success`/`failed`,
+   fill in Approach / Result (with evidence) / Next. Never one file for the
+   whole run at the end.
+4. **Wrap with `01_summary.md`** — every run, no exceptions; an activity that
+   ends without a summary is unfinished bookkeeping.
+
+### Rich outputs graduate to `notes/` — link, don't inline
+
+A milestone records *how it went*; it is not the home for the deliverable
+itself. When a run produces something dense and durable — an architecture
+write-up, a settled design, a diagram, an HTML artifact (dashboard, visual
+explainer — built with the **artifact-authoring** sibling skill) — put it in
+`notes/` (or `brainstorm/` if still in flux) and have the milestone link to it.
+Rule of thumb: if a section outgrows its bullets, it's a note wearing a
+milestone's hat.
 
 ### Optional one-liner convenience
 

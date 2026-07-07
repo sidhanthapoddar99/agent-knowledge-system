@@ -96,13 +96,28 @@
 
 /* Sidebar links */
 .sidebar__link {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
   padding: 0 var(--spacing-md);
   font-size: var(--ui-text-body);
   color: var(--color-text-secondary);
   text-decoration: none;
   border-radius: var(--border-radius-sm);
   transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.sidebar__link-label {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Trailing type glyph for non-markdown pages (diagram, artifact) — markdown is
+   the default and stays unmarked. Monochrome: color is reserved for status. */
+.sidebar__link-doctype {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--color-text-muted);
 }
 
 .sidebar__link:hover {

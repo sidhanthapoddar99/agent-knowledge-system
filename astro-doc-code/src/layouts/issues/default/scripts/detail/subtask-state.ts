@@ -6,7 +6,7 @@
  * change persists to settings.json. Failed POSTs roll back the UI.
  */
 import { CYCLE, TERMINAL, readIcons, type IssueStatus } from './types';
-import { categoryOf, isValidStatus } from '@loaders/issue-status';
+import { categoryOf, isValidStatus, STATUS_LABELS } from '@loaders/issue-status';
 
 const ICONS = readIcons();
 
@@ -25,6 +25,15 @@ function setStateOn(el: HTMLElement | null, state: IssueStatus) {
   el.className = el.className.replace(/\bstate-[a-z-]+\b/g, '').trim() + ` state-${state}`;
 }
 
+/** Keep a status icon's tooltip/label in step with its swapped glyph. */
+function setIconTip(el: HTMLElement | null, state: IssueStatus) {
+  if (!el) return;
+  if (el.hasAttribute('data-tip')) el.setAttribute('data-tip', STATUS_LABELS[state]);
+  if (el.hasAttribute('aria-label') && !el.getAttribute('aria-label')?.includes('cycle')) {
+    el.setAttribute('aria-label', STATUS_LABELS[state]);
+  }
+}
+
 function applySubtaskState(key: string, state: IssueStatus) {
   const isDone = TERMINAL.includes(state);
 
@@ -36,6 +45,7 @@ function applySubtaskState(key: string, state: IssueStatus) {
   if (overviewBtn) {
     overviewBtn.dataset.state = state;
     overviewBtn.innerHTML = ICONS[state];
+    setIconTip(overviewBtn, state);
   }
 
   const compItem = document.querySelector<HTMLElement>(
@@ -46,6 +56,7 @@ function applySubtaskState(key: string, state: IssueStatus) {
   if (compBtn) {
     compBtn.dataset.state = state;
     compBtn.innerHTML = ICONS[state];
+    setIconTip(compBtn, state);
   }
   const compPill = compItem?.querySelector<HTMLElement>('.issue-comprehensive__pill');
   if (compPill) compPill.textContent = state;
@@ -66,7 +77,10 @@ function applySubtaskState(key: string, state: IssueStatus) {
     sideBtn.dataset.state = state;
     sideBtn.classList.toggle('is-done', isDone);
     const icon = sideBtn.querySelector<HTMLElement>('[data-state-icon]');
-    if (icon) icon.innerHTML = ICONS[state];
+    if (icon) {
+      icon.innerHTML = ICONS[state];
+      setIconTip(icon, state);
+    }
   }
 
   const indexLink = document.querySelector<HTMLElement>(
@@ -74,7 +88,10 @@ function applySubtaskState(key: string, state: IssueStatus) {
   );
   setStateOn(indexLink, state);
   const indexIcon = indexLink?.querySelector<HTMLElement>('[data-state-icon]');
-  if (indexIcon) indexIcon.innerHTML = ICONS[state];
+  if (indexIcon) {
+    indexIcon.innerHTML = ICONS[state];
+    setIconTip(indexIcon, state);
+  }
 
   updateOverviewProgress();
   updateSidebarSubtasksCount();

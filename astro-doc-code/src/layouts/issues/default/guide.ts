@@ -17,8 +17,13 @@
  * Claude Code plugin is installed.
  */
 import { renderMarkdown } from '@parsers/renderers';
-import { CATEGORIES, STATUSES, type AgentLogKind } from '@loaders/issues';
+import {
+  CATEGORIES, STATUSES, STATUS_LABELS, STATUS_DESCRIPTIONS,
+  type AgentLogKind, type IssueStatus,
+} from '@loaders/issues';
 import { agentLogIcon } from './server/agent-log-icons';
+import { stateIconSvg } from './server/state-icon';
+import { fileTypeIcon } from '../../file-type-icons';
 
 export interface GuideHeading {
   /** Element id in the rendered HTML (`guide-<slug>`). */
@@ -52,6 +57,34 @@ function lifecycleLine(): string {
   return CATEGORIES.map(
     (c) => `*${c.label}* ${c.statuses.map((s) => `\`${s}\``).join('·')}`,
   ).join(' · ');
+}
+
+/** Sidebar tint per status — mirrors the `detail.css` rules (info=in-progress,
+ *  warning=Review category, success/error=Closed; Not Started stays neutral). */
+const STATUS_TINTS: Record<IssueStatus, string> = {
+  open: 'var(--color-text-muted)',
+  blocked: 'var(--color-text-muted)',
+  'in-progress': 'var(--color-info)',
+  'input-needed': 'var(--color-warning)',
+  review: 'var(--color-warning)',
+  done: 'var(--color-success)',
+  dropped: 'var(--color-error)',
+};
+
+/** Generated island: the status-icon legend, built from `stateIconSvg` + the
+ *  code constants so symbol, colour, and gloss can never drift from the UI. */
+function statusTable(): string {
+  const rows = STATUSES.map((s) => {
+    const icon = `<span style="color:${STATUS_TINTS[s]};display:inline-flex;vertical-align:-2px">${stateIconSvg(s)}</span>`;
+    return `| ${icon} | \`${s}\` | ${STATUS_LABELS[s]} | ${STATUS_DESCRIPTIONS[s]} |`;
+  }).join('\n');
+  return `| | Status | Label | Meaning |\n|---|---|---|---|\n${rows}`;
+}
+
+/** Inline type glyph (diagram / artifact) for legend prose. */
+function typeGlyph(type: string): string {
+  const icon = fileTypeIcon(type);
+  return icon ? `<span style="display:inline-flex;vertical-align:-1px">${icon.svg}</span>` : '';
 }
 
 function guideMarkdown(kinds: Record<string, AgentLogKind>): string {
@@ -122,7 +155,9 @@ ${kindsTable(kinds)}
   - **Meta files first** — \`00_goal.md\`, \`01_summary.md\`, \`02_task_list.md\`.
     A standard-but-**open** set: add more \`0NN_\` files, omit what's not needed.
   - **Milestones** — \`MNN_<name>.md\` (M ≥ 1), shown as **#\\<iteration\\>**.
-    A milestone is a substantial completed chunk (~3–6 per activity), not a step.
+    A milestone is a substantial completed chunk (~3–6 per activity), not a step —
+    per kind: one per workflow phase · loop iteration (roll up rapid rounds) ·
+    audit stage · refactor move · burst chunk.
   - Keep **failed** milestones — they're signal.
 - The \`#N\` badge is tinted by \`status\`: grey not-started · blue in-progress ·
   green success · red failed.
@@ -150,6 +185,10 @@ The plan — the *what* (agent-log records the *how*).
   Agents auto-set \`in-progress\`, hand off at \`review\` (or \`input-needed\` with the
   question inline); \`done\`/\`dropped\` are human-only. Terminal (done) = the Closed
   category. The UI filters by category; the badge shows the status.
+- Status icons — shown on every subtask surface; hover any icon for its name:
+
+${statusTable()}
+
 - Surfaces: sidebar tree · **Comprehensive** panel (all subtasks, one page) ·
   right-rail index · the overview progress bar.
 - Frontmatter:
@@ -195,6 +234,9 @@ Finalized output + durable references — what we *know*.
   dropped here renders **embedded** as a first-class sub-doc: the artifact
   shows in an iframe with an open-full-page link (the same treatment docs
   sections give it), and an optional \`<name>.meta.json\` sidecar sets its title.
+- Non-markdown sub-docs carry a trailing **type glyph** in the sidebar —
+  ${typeGlyph('diagram')} diagram · ${typeGlyph('artifact')} artifact — hover
+  names the type. Markdown is the default and stays unmarked.
 - Content arrives by **graduation** from a resolved brainstorm, or fully formed
   (references, how-tos, link dumps).
 - Should be **stable** — a note that keeps changing is a brainstorm wearing the

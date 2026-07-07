@@ -7,6 +7,7 @@
  */
 import type { Issue, IssueSubtask } from '@loaders/issues';
 import { stateIconSvg } from '../../server/state-icon';
+import { STATUS_LABELS } from '@loaders/issue-status';
 import { pad, subtaskUrl, subtaskPanelKey } from '../../server/helpers';
 
 interface Props {
@@ -51,6 +52,8 @@ const pct = (n: number) => (subtaskTotal ? (n / subtaskTotal) * 100 : 0);
           class="issue-overview-subtasks__state"
           aria-label={`Subtask state: ${s.status}. Click to cycle.`}
           data-state={s.status}
+          data-tip={STATUS_LABELS[s.status]}
+          data-tip-always
         >
           <Fragment set:html={stateIconSvg(s.status)} />
         </button>

@@ -29,7 +29,6 @@ A note doesn't have to be markdown. Drop a self-contained **`.html` artifact** �
 
 - **Title** comes from an optional same-name **`<name>.meta.json`** (or `.meta.jsonc`) sidecar — the frontmatter equivalent for a non-markdown file; without one it derives from the filename. Nothing is injected into the `.html`, so the artifact stays a pristine, independently-openable document.
 - **Scope: `notes/` and `brainstorm/` only** — the tracker's design-thinking folders. Not the issue root, not `assets/`, not `agent-memory/`.
-- The sidebar shows a small **type marker** on an artifact row so it reads apart from a markdown note.
 - No `NN_` prefix is required (numbering stays optional for notes — see below); an artifact participates in the issue's `updated` derivation and caching like any `.md` sibling.
 - Author artifacts self-contained (inline CSS/JS, `data:` images); they run **unsandboxed as first-party content**, so never paste untrusted third-party HTML. For the full authoring contract, see the **`artifact-authoring` skill**.
 

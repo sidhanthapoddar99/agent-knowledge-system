@@ -11,6 +11,7 @@
  */
 import type { IssueSubtask } from '@loaders/issues';
 import { stateIconSvg } from '../../server/state-icon';
+import { STATUS_LABELS } from '@loaders/issue-status';
 import {
   pad, TERMINAL, subtaskUrl, subtaskPanelKey,
   type SubtaskGroupNode,
@@ -89,7 +90,7 @@ function containsActive(n: SubtaskGroupNode): boolean {
           aria-current={isActive ? 'page' : undefined}
           data-tip={s.title}
         >
-          <span class="issue-sidebar__check" aria-hidden="true" data-state-icon>
+          <span class="issue-sidebar__check" aria-label={STATUS_LABELS[s.status]} data-state-icon data-tip={STATUS_LABELS[s.status]} data-tip-always>
             <Fragment set:html={stateIconSvg(s.status)} />
           </span>
           {s.sequence !== null && <span class="issue-sidebar__num">{pad(s.sequence)}</span>}

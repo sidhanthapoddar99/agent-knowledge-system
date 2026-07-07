@@ -38,6 +38,7 @@ Scripts are **not** part of the parser pipeline. The pipeline produces static HT
 | `artifacts.ts` | Embeds first-class `.html` artifact pages as a same-origin iframe, propagates the theme, adds open-full-page + expand | No |
 | `lightbox.ts` | Full-screen pan/zoom viewer for images and rendered diagrams, with a copy/download dropdown and an inline hover toolbar (pan/zoom engine in `panzoom.ts`, actions + menu in `diagram-actions.ts`) | No |
 | `code-labels.ts` | Language label + copy-to-clipboard on code blocks | No |
+| `tooltip.ts` | Site-wide cursor-anchored tooltip for any `data-tip` element — shows only when the text is actually cropped, unless `data-tip-always` opts in | No |
 
 ## How Scripts Are Loaded
 
@@ -48,6 +49,7 @@ All scripts are included in `BaseLayout.astro`:
 <script src="../scripts/artifacts.ts"></script>
 <script src="../scripts/lightbox.ts"></script>
 <script src="../scripts/code-labels.ts"></script>
+<script src="../scripts/tooltip.ts"></script>
 ```
 
 Astro processes `<script>` tags as modules — they are bundled, deferred, and tree-shaken. The DOM is already parsed when they execute.

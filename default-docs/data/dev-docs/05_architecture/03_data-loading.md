@@ -252,7 +252,7 @@ container style (`embedHeightStyle()`, `artifact-pages.ts:117-124`); everything
 under `artifact:` is passed straight through onto `entry.data.artifact`.
 
 Consumer-facing view: user-guide `15_writing-content/08_artifact-pages.md` and
-the live `09_artifact-showcase.md`. The route that serves the iframe `src` and
+the live `20_examples/02_artifact-showcase.md`. The route that serves the iframe `src` and
 the reserved-URL guard are in [Routing System](/dev-docs/architecture/routing);
 the client renderer, theme handshake, and full design rationale are in
 [Artifacts Script](/dev-docs/scripts/artifacts).

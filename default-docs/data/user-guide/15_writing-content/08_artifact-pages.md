@@ -13,7 +13,7 @@ and it becomes a **first-class page**, exactly like a diagram file: it appears
 in the sidebar, gets a URL, and routes like a markdown page. The whole document
 is the content — no markdown wrapper needed.
 
-See one live on the [Artifact Showcase](./artifact-showcase) page.
+See one live on the [Artifact Showcase](./examples/artifact-showcase) page.
 
 ## Drop in a file
 
@@ -22,13 +22,16 @@ Give the file an `NN_` position prefix and place it anywhere in a docs section
 
 ```
 15_writing-content/
-├── 08_artifact-pages.md          → this page
-├── 09_artifact-showcase.md       → /user-guide/writing-content/artifact-showcase
-└── 10_design-system-demo.html    → /user-guide/writing-content/design-system-demo
+├── 08_artifact-pages.md              → this page
+└── 20_examples/
+    ├── 02_artifact-showcase.md       → /user-guide/writing-content/examples/artifact-showcase
+    └── 03_design-system-demo.html    → /user-guide/writing-content/examples/design-system-demo
 ```
 
 The slug strips the prefix and the `.html` extension, same as markdown. That is
-all it takes — the file is now in the sidebar.
+all it takes — the file is now in the sidebar, where it carries a small
+trailing **type glyph** (hover names it) marking it as an artifact — markdown
+is the default and stays unmarked.
 
 ## What happens when you open it
 
@@ -47,7 +50,7 @@ Hovering the embed reveals two controls:
   you can link it from another page, paste it into an issue, or send it to a
   teammate. (`<path>` is the file's location relative to its content root, so the
   `NN_` prefixes and `.html` are kept — e.g.
-  `/artifacts/user-guide/15_writing-content/10_design-system-demo.html` — not the
+  `/artifacts/user-guide/15_writing-content/20_examples/03_design-system-demo.html` — not the
   clean docs slug.)
 - **Expand** (secondary) — grows the embed to fill the viewport in place,
   without navigating, so you keep your scroll position in the docs page. Press
@@ -56,7 +59,7 @@ Hovering the embed reveals two controls:
 ## Titles — the name usually suffices
 
 With no metadata, the page title derives from the filename:
-`10_design-system-demo.html` → **Design System Demo**. Name the file well and
+`03_design-system-demo.html` → **Design System Demo**. Name the file well and
 you are done.
 
 ## The metadata sidecar
@@ -69,7 +72,7 @@ injected into the `.html` file itself, so the artifact stays a pristine,
 independently-openable document.
 
 > [!NOTE]
-> The `.meta.` infix matters: a bare `10_design-system-demo.json` would collide
+> The `.meta.` infix matters: a bare `03_design-system-demo.json` would collide
 > with a data file the artifact itself might fetch. Always use the `.meta.json`
 > / `.meta.jsonc` form.
 
@@ -78,7 +81,7 @@ independently-openable document.
 These control how the page appears — all optional:
 
 ```jsonc
-// 10_design-system-demo.meta.json — sibling of 10_design-system-demo.html
+// 03_design-system-demo.meta.json — sibling of 03_design-system-demo.html
 {
   "title": "Design System Demo",
   "description": "A miniature design system — tokens, type scale, components.",
@@ -195,7 +198,7 @@ The framework **never** applies the diagram dark-mode invert filter to an artifa
 inverting arbitrary HTML would wreck its images and brand colors — so honoring the
 theme is the artifact's own job. For the full authoring doctrine — including why any
 UI/UX design is always `self` — see the **`artifact-authoring` skill**. Both modes
-run live on the [Artifact Showcase](./artifact-showcase): a `self` design system and a
+run live on the [Artifact Showcase](./examples/artifact-showcase): a `self` design system and a
 `site` dashboard.
 
 ## In the issue tracker

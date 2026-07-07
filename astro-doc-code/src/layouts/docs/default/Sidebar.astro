@@ -5,6 +5,7 @@
  */
 
 import type { SidebarSection, SidebarItem, SidebarNode } from '@/hooks/useSidebar';
+import { fileTypeIcon } from '../../file-type-icons';
 
 interface Props {
   nodes: SidebarNode[];  // Mixed: items (root files) + sections (folders)
@@ -51,7 +52,10 @@ function shouldBeExpanded(section: SidebarSection): boolean {
           aria-current={isActive(node.href) ? 'page' : undefined}
           data-tip={node.title}
         >
-          {node.title}
+          <span class="sidebar__link-label">{node.title}</span>
+          {fileTypeIcon(node.fileType) && (
+            <span class="sidebar__link-doctype" data-tip={fileTypeIcon(node.fileType)!.label} data-tip-always aria-label={fileTypeIcon(node.fileType)!.label} set:html={fileTypeIcon(node.fileType)!.svg} />
+          )}
         </a>
       ) : (
         /* Section (folder with children) */
@@ -88,7 +92,10 @@ function shouldBeExpanded(section: SidebarSection): boolean {
                         aria-current={isActive(child.href) ? 'page' : undefined}
                         data-tip={child.title}
                       >
-                        {child.title}
+                        <span class="sidebar__link-label">{child.title}</span>
+                        {fileTypeIcon(child.fileType) && (
+                          <span class="sidebar__link-doctype" data-tip={fileTypeIcon(child.fileType)!.label} data-tip-always aria-label={fileTypeIcon(child.fileType)!.label} set:html={fileTypeIcon(child.fileType)!.svg} />
+                        )}
                       </a>
                     </li>
                   ) : (
@@ -122,7 +129,10 @@ function shouldBeExpanded(section: SidebarSection): boolean {
                                   aria-current={isActive(subChild.href) ? 'page' : undefined}
                                   data-tip={subChild.title}
                                 >
-                                  {subChild.title}
+                                  <span class="sidebar__link-label">{subChild.title}</span>
+                                  {fileTypeIcon(subChild.fileType) && (
+                                    <span class="sidebar__link-doctype" data-tip={fileTypeIcon(subChild.fileType)!.label} data-tip-always aria-label={fileTypeIcon(subChild.fileType)!.label} set:html={fileTypeIcon(subChild.fileType)!.svg} />
+                                  )}
                                 </a>
                               </li>
                             ) : null

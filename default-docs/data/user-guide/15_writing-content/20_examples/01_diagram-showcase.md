@@ -8,9 +8,9 @@ sidebar_position: 7
 
 Every diagram type the framework renders, live on one page. The source for
 each example is shown right below it. See
-[Markdown Basics](./markdown-basics) for fence syntax,
-[Asset Embedding](./asset-embedding) for by-reference embeds, and
-[Diagram Pages](./diagram-pages) for diagrams as standalone pages.
+[Markdown Basics](../markdown-basics) for fence syntax,
+[Asset Embedding](../asset-embedding) for by-reference embeds, and
+[Diagram Pages](../diagram-pages) for diagrams as standalone pages.
 
 ## Mermaid
 
@@ -54,17 +54,17 @@ digraph G {
 
 ## Excalidraw
 
-![Diagram showcase scene](./assets/diagram-showcase.excalidraw)
+![Diagram showcase scene](../assets/diagram-showcase.excalidraw)
 
 Source — image syntax embeds the scene read-only (click to open the viewer;
 the caption links to the raw file):
 
 ```markdown
-![Diagram showcase scene](./assets/diagram-showcase.excalidraw)
+![Diagram showcase scene](../assets/diagram-showcase.excalidraw)
 ```
 
 A plain link deliberately stays a link instead of embedding:
-[the same scene as a link](./assets/diagram-showcase.excalidraw).
+[the same scene as a link](../assets/diagram-showcase.excalidraw).
 
 ## Keeping diagram source in its own file
 

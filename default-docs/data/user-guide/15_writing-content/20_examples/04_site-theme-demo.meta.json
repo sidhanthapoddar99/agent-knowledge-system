@@ -2,7 +2,7 @@
   "title": "Site-Theme Demo",
   "description": "A data-representation artifact that inherits the host site theme — declares artifact.theme \"site\", consumes theme tokens, defines no palette of its own.",
   "sidebar_label": "Site-Theme Demo",
-  "sidebar_position": 11,
+  "sidebar_position": 4,
   "embed_height": "full",
   "artifact": {
     "purpose": "Demonstrate site mode: a content-coverage dashboard that inherits the host theme via route injection, re-coloring with the docs chrome in both light and dark instead of owning a palette.",

@@ -20,8 +20,8 @@ export function stateIconSvg(status: IssueStatus): string {
       // half-filled circle — actively being worked
       return '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 2a6 6 0 010 12z" fill="currentColor" stroke="none"/></svg>';
     case 'input-needed':
-      // question mark — needs a human answer to proceed
-      return '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M6.4 6.2a1.6 1.6 0 113.1.5c0 1-1.5 1.3-1.5 2.3" stroke-linecap="round"/><circle cx="8" cy="11.2" r="0.6" fill="currentColor" stroke="none"/></svg>';
+      // bare question mark (no enclosing circle, drawn near full-height) — needs a human answer to proceed
+      return '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 5.2a3 3 0 115.8 1c-.5 1.4-2.3 1.7-2.3 3.6"/><circle cx="8.4" cy="13.1" r="0.9" fill="currentColor" stroke="none"/></svg>';
     case 'review':
       // filled circle — awaiting review
       return '<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="4"/></svg>';

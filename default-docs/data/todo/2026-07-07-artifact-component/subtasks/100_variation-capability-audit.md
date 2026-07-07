@@ -1,6 +1,6 @@
 ---
 title: "Audit — can the skill guide agents to multi-variation design-option artifacts?"
-status: review
+status: done
 ---
 
 Requested by sidhantha (2026-07-08). The single most-loved real-world use of

@@ -29,6 +29,9 @@ export interface SidebarItem {
   href: string;
   slug: string;
   position: number;
+  /** Content file type (`md`, `diagram`, `artifact`, …) — drives the trailing
+   *  type glyph in the sidebar; markdown is the default and stays unmarked. */
+  fileType?: string;
 }
 
 export interface SidebarSection {
@@ -221,6 +224,7 @@ export function buildSidebarTree(
       href: `${basePath}/${item.slug}`,
       slug: item.slug,
       position: item.data.sidebar_position ?? 999,
+      fileType: item.fileType,
     });
   }
 
@@ -271,6 +275,7 @@ function nodeToSection(node: TreeNode, basePath: string): SidebarSection {
       href: `${basePath}/${item.slug}`,
       slug: item.slug,
       position: item.data.sidebar_position ?? 999,
+      fileType: item.fileType,
     });
   }
 

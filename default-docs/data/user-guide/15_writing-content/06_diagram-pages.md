@@ -11,8 +11,12 @@ A diagram file that follows the `XX_` prefix convention renders as a
 exactly like a markdown page. For note-taking and knowledge-base use, a
 diagram often *is* the page; no markdown wrapper needed.
 
+In the sidebar, diagram pages carry a small trailing **type glyph** (hover
+names it) so they're distinguishable from markdown pages at a glance —
+markdown is the default and stays unmarked.
+
 All three types rendering live (as embeds) are on the
-[Diagram Showcase](./diagram-showcase) page.
+[Diagram Showcase](./examples/diagram-showcase) page.
 
 ## Supported formats
 

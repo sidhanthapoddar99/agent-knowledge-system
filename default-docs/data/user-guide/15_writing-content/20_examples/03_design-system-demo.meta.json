@@ -2,7 +2,7 @@
   "title": "Design System Demo",
   "description": "A miniature design system — color tokens, a type scale, and three components — rendered as a self-contained artifact that honors the host theme.",
   "sidebar_label": "Design System Demo",
-  "sidebar_position": 10,
+  "sidebar_position": 3,
   "embed_height": "full",
   "artifact": {
     "purpose": "Demonstrate the artifact content type in production docs: a self-contained HTML page that embeds in the content area, opens full-page at /artifacts/<path>, and follows the site's light/dark theme.",

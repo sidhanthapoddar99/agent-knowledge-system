@@ -1,6 +1,6 @@
 ---
 title: "doc-issues skill — agent-log milestones don't get structured (iteration frontmatter, phase granularity)"
-status: open
+status: review
 ---
 
 Observed on the artifact-component runs (`2026-07-07-artifact-component/agent-log/`,
@@ -40,15 +40,21 @@ skill text (repo source `plugins/documentation-guide/skills/doc-issues/` **and**
 the installed cache, mirrored byte-identically) plus the bundled `guide.ts` legend
 if its wording contributed.
 
-- [ ] Audit recent agent-log activities across the tracker for the same gaps
-      (missing `iteration`/`agent`/`date`, wrong status vocabulary, one-milestone
-      workflows, missing `01_summary.md`).
-- [ ] Discuss + settle the per-kind granularity defaults above (wf phases as
-      iterations; lp consolidation thresholds) — likely a short `discuss`
-      brainstorm on this issue first.
-- [ ] Strengthen `24_agent-logs.md` (and SKILL.md's executing-work section) so the
+- [x] Audit recent agent-log activities across the tracker for the same gaps —
+      12 pre-existing milestones affected (`2026-04-10-editor-diagrams`
+      `010_lp_*`/`011_au_*`, `2026-07-07-artifact-component` all three `wf`
+      activities): all `status: done`, no `iteration:`. Catalogued in
+      `agent-log/020_it_agent-log-skill-strengthening/101`; left as-is
+      (append-only), metadata-only backfill optional.
+- [x] Discuss + settle the per-kind granularity defaults — settled 2026-07-08 in
+      `notes/02_agent-log-activity-structure.md` (reference file tree + per-kind
+      mapping-unit table); the skill review executes against that note.
+- [x] Strengthen `24_agent-logs.md` (and SKILL.md's executing-work section) so the
       milestone frontmatter + granularity rules are unmissable at write time;
-      mirror to the installed cache; sync `guide.ts` if needed.
+      mirror to the installed cache; sync `guide.ts` if needed — done 2026-07-08:
+      frontmatter-required warning + per-kind mapping-unit table in both files,
+      cache mirrored (`diff -rq` identical), `guide.ts` one-line legend, build
+      green. See `agent-log/020_it_agent-log-skill-strengthening/`.
 - [ ] Verify on the next real run: milestones carry `iteration`/`agent`/`status`
       from the correct vocabulary, one milestone per workflow phase, summary
       written at wrap.

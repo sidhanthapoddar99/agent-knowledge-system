@@ -44,6 +44,8 @@ Restructured from the original flat 6-file plan into 10 top-level entries (3 sub
 - [ ] `04_sub-doc-urls.md` — subtasks / notes / agent-log routes, legacy-hash redirect
 - [ ] `05_conventions.md` — `<script type="application/json">` config pattern, `:global()` gotcha for JS-rendered nodes
 
+Related: `2026-07-08-ux-standards` ships the sidebar icon/tooltip/status-icon vocabulary and a dev-docs UX-standards page — the components page here should reference that vocabulary (SubdocTree glyphs, `state-icon.ts`, the tooltip contract) rather than re-document it.
+
 ## Out of scope for this subtask
 
 - Claude skill `.claude/skills/issues.md` — separate workstream, lives under the source subtask's "Skill content" section.

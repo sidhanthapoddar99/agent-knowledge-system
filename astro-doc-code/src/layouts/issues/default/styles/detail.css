@@ -180,6 +180,8 @@
   line-height: 1.5;
   font-family: var(--font-family-mono);
 }
+.issue-sidebar__item[data-state='in-progress'] .issue-sidebar__check { color: var(--color-info); }
+.issue-sidebar__item[data-state='input-needed'] .issue-sidebar__check { color: var(--color-warning); }
 .issue-sidebar__item[data-state='review'] .issue-sidebar__check { color: var(--color-warning); }
 .issue-sidebar__item[data-state='done'] .issue-sidebar__check { color: var(--color-success); }
 .issue-sidebar__item[data-state='dropped'] .issue-sidebar__check { color: var(--color-error); }
@@ -364,6 +366,8 @@
   border-radius: 3px;
 }
 .issue-overview-subtasks__state:hover { background: color-mix(in srgb, var(--color-border-default) 40%, transparent); }
+.issue-overview-subtasks__state[data-state='in-progress'] { color: var(--color-info); }
+.issue-overview-subtasks__state[data-state='input-needed'] { color: var(--color-warning); }
 .issue-overview-subtasks__state[data-state='review'] { color: var(--color-warning); }
 .issue-overview-subtasks__state[data-state='done'] { color: var(--color-success); }
 .issue-overview-subtasks__state[data-state='dropped'] { color: var(--color-error); }
@@ -459,6 +463,8 @@
   border-radius: 3px;
 }
 .issue-comprehensive__state:hover { background: color-mix(in srgb, var(--color-border-default) 40%, transparent); }
+.issue-comprehensive__state[data-state='in-progress'] { color: var(--color-info); }
+.issue-comprehensive__state[data-state='input-needed'] { color: var(--color-warning); }
 .issue-comprehensive__state[data-state='review'] { color: var(--color-warning); }
 .issue-comprehensive__state[data-state='done'] { color: var(--color-success); }
 .issue-comprehensive__state[data-state='dropped'] { color: var(--color-error); }
@@ -613,7 +619,7 @@
 }
 .issue-log__chip--status.is-success { color: var(--color-success); background: color-mix(in srgb, var(--color-success) 15%, transparent); }
 .issue-log__chip--status.is-failed { color: var(--color-error); background: color-mix(in srgb, var(--color-error) 15%, transparent); }
-.issue-log__chip--status.is-in-progress { color: var(--color-warning); background: color-mix(in srgb, var(--color-warning) 15%, transparent); }
+.issue-log__chip--status.is-in-progress { color: var(--color-info); background: color-mix(in srgb, var(--color-info) 15%, transparent); }
 
 /* ===== Right meta (swappable TOC panels) ===== */
 .issue-meta {
@@ -659,6 +665,8 @@
   background: color-mix(in srgb, var(--color-border-default) 35%, transparent);
   color: var(--color-text-primary);
 }
+.issue-meta-index__link.state-in-progress .issue-meta-index__icon { color: var(--color-info); }
+.issue-meta-index__link.state-input-needed .issue-meta-index__icon { color: var(--color-warning); }
 .issue-meta-index__link.state-review .issue-meta-index__icon { color: var(--color-warning); }
 .issue-meta-index__link.state-done .issue-meta-index__icon { color: var(--color-success); }
 .issue-meta-index__link.state-dropped .issue-meta-index__icon { color: var(--color-error); }

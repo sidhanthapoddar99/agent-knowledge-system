@@ -8,15 +8,15 @@ sidebar_position: 9
 
 Two real artifacts live in this section, one for each **theme mode**. Open them from
 the sidebar and you are looking at the artifact type running in production docs. See
-[Artifact Pages](./artifact-pages) for the authoring rules and [Diagram
+[Artifact Pages](../artifact-pages) for the authoring rules and [Diagram
 Showcase](./diagram-showcase) for the diagram equivalent.
 
 ## Two modes, side by side
 
-- **[Design System Demo](./design-system-demo) — `theme: "self"`.** A miniature design
+- **[Design System Demo](../design-system-demo) — `theme: "self"`.** A miniature design
   system that owns its palette. It carries its own light and dark theme inside the
   HTML; the framework serves it untouched. Its *subject is a look*, so it must own it.
-- **[Site-Theme Demo](./site-theme-demo) — `theme: "site"`.** A content-coverage
+- **[Site-Theme Demo](../site-theme-demo) — `theme: "site"`.** A content-coverage
   dashboard that inherits the host theme. It defines no colors — the framework injects
   the site's theme CSS — so it re-colors with the docs the instant you switch themes.
 
@@ -47,4 +47,4 @@ HTML. The self demo's:
 [[./10_design-system-demo.meta.json]]
 ```
 
-For the field-by-field contract, see [Artifact Pages](./artifact-pages#the-metadata-sidecar).
+For the field-by-field contract, see [Artifact Pages](../artifact-pages#the-metadata-sidecar).

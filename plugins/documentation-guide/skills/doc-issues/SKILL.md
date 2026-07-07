@@ -150,6 +150,20 @@ meta files, then `MNN_` milestone files (`101_…`, `102_…`).
 - **Log milestones, not steps** (~3–6 per activity), keep failed ones, **write files
   directly** with real `## Goal / Approach / Result / Next` headings — never funnel a
   multi-line body through `--body "…"`.
+- **One milestone per natural unit of the kind** — `wf`: one per top-level phase
+  (build / verify / fix each get their own — never one file for the whole run);
+  `lp`: one per iteration (roll up small/rapid rounds); `au`: sweep → findings →
+  fixes; `rf`: one per structural move; `it`: one per coherent chunk. Sub-steps are
+  bullets inside a milestone, never their own files. **Default rhythm** (flex it,
+  keep the invariants): scaffold folder + goal before starting → stub the milestone
+  `in-progress` when its unit begins → update to `success`/`failed` with results on
+  completion. Dense deliverables a run produces (architecture write-ups, diagrams,
+  HTML artifacts via the **artifact-authoring** skill) graduate to `notes/` —
+  the milestone links to them, never inlines them.
+- **Milestone frontmatter is required, not optional:** `iteration:` (drives the `#N`
+  badge, counts 1, 2, 3… within the activity), `agent:`, `date:`, and `status:` from
+  `not-started | in-progress | success | failed` — never the subtask vocabulary
+  (`done` on a milestone is wrong). And **`01_summary.md` at wrap, every run**.
 - **Every file — goal, summary, task-list, milestone, subtask — is structured,
   context-setting prose, never a bare dump.** Even a single-line thought gets a
   couple of explanatory sentences a cold reader can follow.

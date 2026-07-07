@@ -13,7 +13,7 @@ Renders `mermaid`, `dot`, and `graphviz` fenced code blocks and `.excalidraw` re
 ## How It Works
 
 1. The markdown renderer (`marked.ts`) converts diagram code blocks into `<div class="diagram diagram-{type}">` containers with the raw source text; the excalidraw-embed postprocessor emits the same container with a `data-src` URL instead of inline source
-2. This script finds those containers and renders them into SVGs using the appropriate library
+2. This script finds those containers and renders them into SVGs using the appropriate library. For Mermaid/Graphviz the original fence text is preserved on the container as `data-diagram-source` before rendering — the lightbox reads it for its *copy source* action. Mermaid is initialized with `htmlLabels: false` (pure `<text>` labels, no `<foreignObject>`) so exported SVGs stay self-contained and rasterizable — foreignObject taints the canvas in Chromium, which would break the lightbox *copy as image* action
 
 ```
 Build time:    ```mermaid ... ```           →  <div class="diagram diagram-mermaid">source</div>

@@ -68,7 +68,7 @@ Keep diagram source in its own `.mmd` / `.dot` file and embed it inside the fenc
 **Excalidraw** — image syntax embeds a scene read-only (fetched by reference, rendered as SVG client-side); a plain link deliberately stays a link to the raw file:
 
 ```markdown
-![Architecture](./assets/arch.excalidraw)   ← embeds; alt = caption, click zooms, caption links to the file
+![Architecture](./assets/arch.excalidraw)   ← embeds; alt = caption, click opens the pan/zoom viewer, caption links to the file
 [Architecture](./assets/arch.excalidraw)    ← plain link, opens the raw scene
 ```
 

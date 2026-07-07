@@ -66,7 +66,11 @@ All fields are optional; `.jsonc` (comments, trailing commas) works too.
 
 - The **outline column hides itself** (diagram pages have no headings), so
   the canvas gets the full content width.
-- **Click zooms** the rendered diagram into a full-screen lightbox.
+- **Click opens** the rendered diagram in a full-screen viewer — wheel/pinch
+  zoom, drag to pan, double-click to zoom, and a copy button (PNG by
+  default) with a dropdown: copy as PNG light/dark, copy source, download
+  PNG / SVG / source. Diagram text is selectable, and clicking a label
+  copies it. Hovering the inline diagram shows the same toolbar plus expand.
 - Excalidraw pages show a caption with an *open file ↗* link to the raw
   `.excalidraw` scene — the file stays independently openable and editable.
 - **Dark mode** inverts diagrams automatically.

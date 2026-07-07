@@ -23,7 +23,7 @@ Preprocessors → Renderer → Postprocessors
   ▼
 Static HTML served to browser ──────────────▶ Scripts enhance the DOM
                                                • diagrams.ts  → renders SVGs
-                                               • lightbox.ts  → click-to-zoom
+                                               • lightbox.ts  → pan/zoom viewer
                                                • code-labels.ts → copy buttons
 ```
 
@@ -34,7 +34,7 @@ Scripts are **not** part of the parser pipeline. The pipeline produces static HT
 | Script | Purpose | Loads Libraries |
 |--------|---------|-----------------|
 | `diagrams.ts` | Renders mermaid/graphviz code blocks into SVG diagrams | Yes (lazy) |
-| `lightbox.ts` | Click-to-expand overlay for images and rendered diagrams | No |
+| `lightbox.ts` | Full-screen pan/zoom viewer for images and rendered diagrams, with a copy/download dropdown and an inline hover toolbar (pan/zoom engine in `panzoom.ts`, actions + menu in `diagram-actions.ts`) | No |
 | `code-labels.ts` | Language label + copy-to-clipboard on code blocks | No |
 
 ## How Scripts Are Loaded

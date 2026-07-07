@@ -358,6 +358,7 @@ body {
 
 /* Diagram containers */
 .markdown-content .diagram {
+  position: relative;
   text-align: center;
   margin: var(--spacing-lg) 0;
   padding: var(--spacing-md);
@@ -365,6 +366,60 @@ body {
   border-radius: var(--border-radius-md);
   border: 1px solid var(--color-border-light);
   overflow-x: auto;
+}
+
+/* Diagram text is real text — keep it selectable/copyable */
+.markdown-content .diagram svg text,
+.markdown-content .diagram svg tspan,
+.markdown-content .diagram svg foreignObject,
+.markdown-content .diagram svg foreignObject * {
+  user-select: text;
+  -webkit-user-select: text;
+  cursor: text;
+}
+
+/* Hover toolbar (expand + copy source) — nodes are created at runtime,
+   so selectors must be :global-safe (this file is global CSS already) */
+.markdown-content .diagram-tools {
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+  display: flex;
+  gap: var(--spacing-xs);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+  z-index: 1;
+}
+
+.markdown-content .diagram:hover .diagram-tools,
+.markdown-content .diagram-tools:focus-within {
+  opacity: 1;
+}
+
+.markdown-content .diagram-tool-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--ui-text-body);
+  line-height: 1;
+  cursor: pointer;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.markdown-content .diagram-tool-btn:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-brand-primary);
+}
+
+.markdown-content .diagram-tool-caret {
+  width: 18px;
 }
 
 .markdown-content .diagram-rendered {
@@ -404,8 +459,9 @@ body {
   filter: invert(1) hue-rotate(180deg) brightness(0.95);
 }
 
-/* Counter-invert the caption so its text keeps the theme colors */
-[data-theme="dark"] .markdown-content .diagram-rendered .diagram-caption {
+/* Counter-invert the caption and hover toolbar so they keep theme colors */
+[data-theme="dark"] .markdown-content .diagram-rendered .diagram-caption,
+[data-theme="dark"] .markdown-content .diagram-rendered .diagram-tools {
   filter: invert(1) hue-rotate(180deg);
 }
 
@@ -414,21 +470,19 @@ body {
   background: #fff;
 }
 
-/* Lightbox overlay */
+/* Lightbox overlay — full-screen pan/zoom viewer.
+   Chrome floats over a dimmed backdrop, so it uses fixed light-on-dark
+   colors (like the previous close button) rather than theme variables. */
 .lightbox-overlay {
   position: fixed;
   inset: 0;
   z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.2s ease, visibility 0.2s ease;
-  cursor: zoom-out;
 }
 
 .lightbox-overlay.lightbox-open {
@@ -436,53 +490,177 @@ body {
   visibility: visible;
 }
 
-.lightbox-close {
+/* Stage: the pan/zoom viewport */
+.lightbox-stage {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: none;
-  border: none;
-  color: #fff;
-  /* Close glyph — rendered as display icon, folds to the theme's largest scale tier */
-  font-size: var(--font-size-4xl);
-  line-height: 1;
-  cursor: pointer;
-  opacity: 0.7;
-  transition: opacity 0.15s ease;
-  z-index: 1;
+  inset: 0;
+  overflow: hidden;
+  touch-action: none;
+  cursor: grab;
+  /* Panning must not start a text selection; SVG text opts back in below */
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-.lightbox-close:hover {
-  opacity: 1;
+.lightbox-stage.panzoom-dragging {
+  cursor: grabbing;
 }
 
-.lightbox-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  max-width: 90vw;
-  max-height: 90vh;
-  transform: scale(0.95);
-  transition: transform 0.2s ease;
+/* Canvas: the transformed element (translate + scale from panzoom.ts) */
+.lightbox-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  will-change: transform;
 }
 
-.lightbox-open .lightbox-content {
-  transform: scale(1);
+.lightbox-canvas img,
+.lightbox-canvas svg {
+  display: block;
 }
 
 .lightbox-img {
-  max-width: 90vw;
-  max-height: 90vh;
-  object-fit: contain;
-  border-radius: var(--border-radius-md);
+  border-radius: var(--border-radius-sm);
 }
 
 .lightbox-svg {
-  max-width: 90vw;
-  max-height: 90vh;
-  background: var(--color-bg-primary, #fff);
+  background: #fff;
+  border-radius: var(--border-radius-sm);
+}
+
+.lightbox-svg text,
+.lightbox-svg tspan,
+.lightbox-svg foreignObject,
+.lightbox-svg foreignObject * {
+  user-select: text;
+  -webkit-user-select: text;
+  cursor: text;
+}
+
+/* Toolbar */
+.lightbox-toolbar {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  display: flex;
+  gap: var(--spacing-sm);
+  z-index: 1;
+}
+
+.lightbox-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  background: rgba(20, 20, 20, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: var(--border-radius-md);
-  padding: 1rem;
+}
+
+.lightbox-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 var(--spacing-xs);
+  background: none;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  color: rgba(255, 255, 255, 0.75);
+  font-family: var(--font-family-base);
+  font-size: var(--ui-text-body);
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.lightbox-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.lightbox-btn[hidden] {
+  display: none;
+}
+
+.lightbox-zoom-label {
+  min-width: 3.2em;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.75);
+  font-family: var(--font-family-mono);
+  font-size: var(--ui-text-micro);
+  cursor: pointer;
+}
+
+.lightbox-caret {
+  min-width: 20px;
+  padding: 0 2px;
+}
+
+/* Copy/download dropdown — fixed-position, appended to <body> so it never
+   clips inside scrollable diagram containers; shared by the viewer toolbar
+   and the inline hover toolbar */
+.copy-menu {
+  position: fixed;
+  z-index: 10001;
+  display: flex;
+  flex-direction: column;
+  min-width: 180px;
+  padding: var(--spacing-xs);
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-lg);
+}
+
+.copy-menu-item {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: none;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-base);
+  font-size: var(--ui-text-body);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.copy-menu-item:hover {
+  background-color: var(--color-bg-tertiary);
+}
+
+.copy-menu-sep {
+  height: 1px;
+  margin: var(--spacing-xs) 0;
+  background-color: var(--color-border-light);
+}
+
+/* Toast (copy feedback) */
+.lightbox-toast {
+  position: fixed;
+  bottom: var(--spacing-xl);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: var(--spacing-xs) var(--spacing-md);
+  background: rgba(20, 20, 20, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--border-radius-full);
+  color: #fff;
+  font-size: var(--ui-text-body);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  z-index: 10000;
+  pointer-events: none;
+}
+
+.lightbox-toast.lightbox-toast-visible {
+  opacity: 1;
+  visibility: visible;
 }
 
 /* =================================

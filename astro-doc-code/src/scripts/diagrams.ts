@@ -43,12 +43,20 @@ async function renderMermaid(divs: NodeListOf<HTMLDivElement>) {
     startOnLoad: false,
     theme: 'default',
     securityLevel: 'loose',
+    // Pure-SVG labels (no <foreignObject>): keeps exported/downloaded SVGs
+    // self-contained and rasterizable — foreignObject taints the canvas in
+    // Chromium, breaking the lightbox "copy as image" action
+    htmlLabels: false,
+    flowchart: { htmlLabels: false },
   });
 
   for (const div of divs) {
     try {
       const id = `mermaid-${mermaidIdCounter++}`;
-      const { svg } = await mermaid.render(id, div.textContent || '');
+      const source = div.textContent || '';
+      // Keep the source around for the lightbox/toolbar "copy source" action
+      div.dataset.diagramSource = source;
+      const { svg } = await mermaid.render(id, source);
       div.innerHTML = svg;
       div.classList.add('diagram-rendered');
     } catch (err) {
@@ -64,7 +72,10 @@ async function renderGraphviz(divs: NodeListOf<HTMLDivElement>) {
 
   for (const div of divs) {
     try {
-      const svg = graphviz.layout(div.textContent || '', 'svg', 'dot');
+      const source = div.textContent || '';
+      // Keep the source around for the lightbox/toolbar "copy source" action
+      div.dataset.diagramSource = source;
+      const svg = graphviz.layout(source, 'svg', 'dot');
       div.innerHTML = svg;
       div.classList.add('diagram-rendered');
     } catch (err) {

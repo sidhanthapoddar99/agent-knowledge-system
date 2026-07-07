@@ -56,8 +56,8 @@ digraph G {
 
 ![Diagram showcase scene](./assets/diagram-showcase.excalidraw)
 
-Source — image syntax embeds the scene read-only (click to zoom; the caption
-links to the raw file):
+Source — image syntax embeds the scene read-only (click to open the viewer;
+the caption links to the raw file):
 
 ```markdown
 ![Diagram showcase scene](./assets/diagram-showcase.excalidraw)
@@ -76,6 +76,21 @@ reference inside the fence, and the file stays the single source of truth:
 [[./assets/flow.mmd]]
 ```
 ~~~
+
+## Interacting with diagrams
+
+Every rendered diagram (and every image) on this page is interactive:
+
+- **Click** a diagram or image to open it in a full-screen viewer — mouse
+  wheel or pinch to zoom, drag to pan, double-click to zoom in, `+`/`-`/`0`
+  for keyboard zoom, `Escape` to close.
+- **Hover** a diagram to reveal its toolbar: expand, plus a copy button —
+  click copies the diagram as a PNG, and its ▾ menu offers copy as PNG
+  (light or dark), copy source, and download as PNG / SVG / source file.
+- **Diagram text is real text** — select and copy it inline or in the
+  viewer; in the viewer, clicking a label copies it to the clipboard.
+- The viewer toolbar carries the same **copy menu** and can open the
+  original file.
 
 Dark mode inverts all of the above automatically. Diagrams that fail to
 render show an error box in place; a missing referenced file fails the

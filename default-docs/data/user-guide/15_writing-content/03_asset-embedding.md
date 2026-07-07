@@ -185,8 +185,8 @@ means for the file:
   ```
 
   The scene is fetched and rendered read-only as SVG. The alt text becomes a
-  caption with an *open file ↗* link, clicking the canvas zooms it
-  (lightbox), and dark mode inverts it automatically. A **plain link**
+  caption with an *open file ↗* link, clicking the canvas opens it in the
+  full-screen pan/zoom viewer, and dark mode inverts it automatically. A **plain link**
   `[Architecture](./assets/arch.excalidraw)` deliberately stays a link — it
   opens the raw file instead of embedding it.
 

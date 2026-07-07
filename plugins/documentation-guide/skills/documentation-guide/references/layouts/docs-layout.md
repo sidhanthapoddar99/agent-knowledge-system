@@ -138,7 +138,7 @@ A prefixed `.mmd` / `.mermaid` / `.dot` / `.gv` / `.excalidraw` file is a
   live there.
 - **Opt-out**: `"allow_diagram_pages": false` in the *section-root*
   `settings.json`.
-- The outline column auto-hides (no headings); click zooms via lightbox;
+- The outline column auto-hides (no headings); click opens the pan/zoom lightbox viewer;
   excalidraw pages carry an *open file ↗* link to the raw scene.
 - **Embed vs page**: figure inside prose → embed from `assets/`
   (see `writing.md`); the diagram IS the content → prefixed file as a page.

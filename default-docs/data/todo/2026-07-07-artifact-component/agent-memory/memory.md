@@ -31,6 +31,18 @@ title: "Agent memory — artifact component"
 - Planning content authored via the ultracode workflow in
   `agent-log/010_wf_artifact-planning/` (complete 2026-07-07 — 11 files,
   verified + fixed, validator clean).
+- **Variation-set doctrine shipped (2026-07-08, subtask 100 → review):** the
+  options-explorer pattern is now written into the skill
+  (`design-systems.md` section + SKILL triage/§0/§1/§3 hooks + `variation-set`
+  sidecar type). Also settled: sidecar = design memory (read before touching,
+  update in the same change as any HTML edit — anti-drift is the agent's
+  duty), and self-mode artifacts should reuse the contract's token *names*
+  with their own values (free to add beyond). Full record:
+  `agent-log/070_it_skill-sharpening/`; settled decisions appended to
+  `notes/02_settled-decisions.md`. Cache mirror target is
+  `~/.claude/plugins/cache/sids-plugin-marketplace/documentation-guide/0.5.4/`
+  (the only cache dir with `artifact-authoring`, though repo plugin.json says
+  0.5.5).
 - **Tracker artifact rendering (subtask 80, done→review):** `.html` in an issue's
   `notes/`/`brainstorm/` renders first-class via a **loader-only** change — no
   issues-layout JS. `issues.ts readFreeformDocs` gates `.html` to those two

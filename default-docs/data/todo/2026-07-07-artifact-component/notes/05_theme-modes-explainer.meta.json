@@ -1,0 +1,49 @@
+{
+  "title": "How artifacts get their colors",
+  "description": "Explanatory diagram of the artifact pipeline and its two theme modes — the file-to-embed flow, the site/self decision, where colors come from, and the verify gate. A live theme:\"site\" example: ambient chrome is injected, diagram strokes are local elemental color.",
+  "sidebar_label": "Theme Modes Explainer",
+  "artifact": {
+    "purpose": "Give a reader or AI agent a one-page, diagrammed explanation of how this framework's artifact feature is scanned, embedded, routed, and themed — without reading the loader/route/script source.",
+    "type": "report",
+    "theme": "site",
+    "interactions": "none — static explanatory diagram; re-themes live only via the site's own light/dark toggle (no artifact-local JS)",
+    "sources": [
+      "astro-doc-code/src/loaders/artifact-pages.ts",
+      "astro-doc-code/src/pages/artifacts/[...path].ts",
+      "astro-doc-code/src/scripts/artifacts.ts"
+    ],
+    "consumed_tokens": [
+      "--color-bg-primary",
+      "--color-bg-secondary",
+      "--color-bg-tertiary",
+      "--color-text-primary",
+      "--color-text-secondary",
+      "--color-text-muted",
+      "--color-border-default",
+      "--color-border-light",
+      "--content-h1",
+      "--content-h2",
+      "--ui-text-body",
+      "--ui-text-micro",
+      "--font-family-base",
+      "--font-family-mono",
+      "--line-height-base",
+      "--spacing-xs",
+      "--spacing-sm",
+      "--spacing-md",
+      "--spacing-lg",
+      "--spacing-xl",
+      "--border-radius-sm",
+      "--border-radius-md",
+      "--border-radius-full",
+      "--shadow-sm"
+    ],
+    "elemental": {
+      "note": "Local diagram-content color only (flow arrows, branch markers, connector accents) — never used for backgrounds, text, borders, or spacing, which stay on the injected tokens above. Chosen at mid-lightness so each holds against both the light surface (#fafafa) and the dark surface (#0a0a0a) of the active theme.",
+      "el-flow": "#6366f1",
+      "el-site": "#8b5cf6",
+      "el-self": "#e11d48",
+      "el-neutral": "#64748b"
+    }
+  }
+}

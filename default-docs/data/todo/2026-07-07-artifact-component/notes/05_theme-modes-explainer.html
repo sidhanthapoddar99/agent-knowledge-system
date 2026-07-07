@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>How artifacts get their colors</title>
+    <style>
+      /*
+        SITE-MODE artifact. Sidecar declares artifact.theme: "site", so the
+        /artifacts route injects the resolved host theme CSS at the start of
+        <head> and stamps data-theme — every var(--color-*), --ui-text-*,
+        --spacing-* … below resolves to the live theme, in light and dark, in
+        the embed and full-page. No ambient palette is defined here.
+
+        The one sanctioned exception: --el-* below are LOCAL ELEMENTAL colors
+        for diagram content only (flow arrows, node accents, branch markers)
+        — never for backgrounds/text/borders/spacing, which stay injected.
+        Neutral fallbacks (var(--token, #hex)) only render out-of-engine
+        (raw file://, emailed) — inside the engine the injection always wins.
+      */
+      :root {
+        --el-flow: #6366f1;    /* pipeline / flow arrows, decision borders */
+        --el-site: #8b5cf6;    /* "theme: site" branch marker */
+        --el-self: #e11d48;    /* "theme: self" branch marker */
+        --el-neutral: #64748b; /* structural / inactive connectors */
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: var(--font-family-base, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif);
+        font-size: var(--ui-text-body, 0.875rem);
+        line-height: var(--line-height-base, 1.6);
+        color: var(--color-text-primary, #1a1a1a);
+        background: var(--color-bg-primary, #fafafa);
+      }
+      code, .mono {
+        font-family: var(--font-family-mono, ui-monospace, "SF Mono", Consolas, monospace);
+      }
+      .wrap {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: var(--spacing-xl, 2rem) var(--spacing-lg, 1.5rem) var(--spacing-xl, 2rem);
+      }
+
+      /* ---------- header ---------- */
+      header { margin-bottom: var(--spacing-xl, 2rem); }
+      .eyebrow {
+        margin: 0 0 var(--spacing-xs, 0.25rem);
+        font-family: var(--font-family-mono, ui-monospace, monospace);
+        font-size: var(--ui-text-micro, 0.75rem);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--color-text-muted, #737373);
+      }
+      h1 {
+        margin: 0 0 var(--spacing-sm, 0.5rem);
+        font-size: var(--content-h1, 1.5rem);
+        color: var(--color-text-primary, #1a1a1a);
+      }
+      .lede {
+        margin: 0;
+        max-width: 62ch;
+        color: var(--color-text-secondary, #525252);
+      }
+
+      /* ---------- legend ---------- */
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-md, 1rem);
+        margin-top: var(--spacing-md, 1rem);
+        padding: var(--spacing-sm, 0.5rem) var(--spacing-md, 1rem);
+        border: 1px solid var(--color-border-light, #f0f0f0);
+        border-radius: var(--border-radius-md, 0.5rem);
+        background: var(--color-bg-secondary, #f5f5f5);
+      }
+      .legend-item { display: flex; align-items: center; gap: 0.4rem; }
+      .swatch { width: 10px; height: 10px; border-radius: var(--border-radius-sm, 0.25rem); flex: 0 0 auto; }
+      .legend-item .label {
+        font-size: var(--ui-text-micro, 0.75rem);
+        color: var(--color-text-secondary, #525252);
+      }
+
+      /* ---------- panels ---------- */
+      .panel {
+        margin-top: var(--spacing-xl, 2rem);
+        padding-top: var(--spacing-xl, 2rem);
+        border-top: 1px solid var(--color-border-default, #e5e5e5);
+      }
+      .panel-eyebrow {
+        margin: 0 0 var(--spacing-xs, 0.25rem);
+        font-family: var(--font-family-mono, ui-monospace, monospace);
+        font-size: var(--ui-text-micro, 0.75rem);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--color-text-muted, #737373);
+      }
+      .panel h2 {
+        margin: 0 0 var(--spacing-sm, 0.5rem);
+        font-size: var(--content-h2, 1.25rem);
+        color: var(--color-text-primary, #1a1a1a);
+      }
+      .panel-note {
+        margin: 0 0 var(--spacing-lg, 1.5rem);
+        max-width: 68ch;
+        color: var(--color-text-secondary, #525252);
+      }
+      .scroll-x { overflow-x: auto; padding-bottom: var(--spacing-xs, 0.25rem); }
+
+      /* ---------- panel 1: pipeline flow ---------- */
+      .flow-row {
+        display: flex;
+        align-items: stretch;
+        gap: var(--spacing-sm, 0.5rem);
+        min-width: max-content;
+      }
+      .node {
+        flex: 0 0 auto;
+        width: 168px;
+        border: 1px solid var(--color-border-default, #e5e5e5);
+        border-radius: var(--border-radius-md, 0.5rem);
+        background: var(--color-bg-secondary, #f5f5f5);
+        box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
+        padding: var(--spacing-sm, 0.5rem) var(--spacing-md, 1rem);
+      }
+      .node-title {
+        font-weight: 600;
+        color: var(--color-text-primary, #1a1a1a);
+        margin-bottom: 0.2rem;
+      }
+      .node-src {
+        font-size: var(--ui-text-micro, 0.75rem);
+        color: var(--el-flow);
+        margin-bottom: var(--spacing-xs, 0.25rem);
+        word-break: break-word;
+      }
+      .node-desc {
+        font-size: var(--ui-text-micro, 0.75rem);
+        color: var(--color-text-muted, #737373);
+      }
+      .arrow {
+        flex: 0 0 auto;
+        align-self: center;
+        width: 28px;
+        text-align: center;
+        color: var(--el-flow);
+        font-size: 1.1rem;
+        line-height: 1;
+      }
+      .flow-caption {
+        margin-top: var(--spacing-md, 1rem);
+        padding: var(--spacing-sm, 0.5rem) var(--spacing-md, 1rem);
+        border-left: 3px solid var(--el-flow);
+        background: var(--color-bg-tertiary, #eeeeee);
+        border-radius: 0 var(--border-radius-sm, 0.25rem) var(--border-radius-sm, 0.25rem) 0;
+        font-size: var(--ui-text-body, 0.875rem);
+        color: var(--color-text-secondary, #525252);
+      }
+
+      /* ---------- panel 2 + 3: decision + branches ---------- */
+      .decision-box {
+        margin: 0 auto var(--spacing-md, 1rem);
+        max-width: 420px;
+        text-align: center;
+        padding: var(--spacing-sm, 0.5rem) var(--spacing-md, 1rem);
+        border: 2px solid var(--el-flow);
+        border-radius: var(--border-radius-md, 0.5rem);
+        background: var(--color-bg-secondary, #f5f5f5);
+        font-weight: 600;
+        color: var(--color-text-primary, #1a1a1a);
+      }
+      .decision-box .mono { font-weight: 400; color: var(--el-flow); }
+      .stem {
+        width: 2px;
+        height: 18px;
+        margin: 0 auto;
+        background: var(--el-flow);
+        opacity: 0.6;
+      }
+      .branches {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-lg, 1.5rem);
+        justify-content: center;
+      }
+      .branch {
+        flex: 1 1 280px;
+        max-width: 380px;
+        border: 1px solid var(--color-border-default, #e5e5e5);
+        border-radius: var(--border-radius-md, 0.5rem);
+        background: var(--color-bg-secondary, #f5f5f5);
+        padding: var(--spacing-md, 1rem);
+      }
+      .chip {
+        display: inline-block;
+        margin-bottom: var(--spacing-sm, 0.5rem);
+        padding: 2px 10px;
+        border-radius: var(--border-radius-full, 9999px);
+        font-family: var(--font-family-mono, ui-monospace, monospace);
+        font-size: var(--ui-text-micro, 0.75rem);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        border: 1.5px solid currentColor;
+      }
+      .chip.site { color: var(--el-site); }
+      .chip.self { color: var(--el-self); }
+      .steps {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-sm, 0.5rem);
+      }
+      .steps li {
+        position: relative;
+        padding-left: 1rem;
+        font-size: var(--ui-text-body, 0.875rem);
+        color: var(--color-text-secondary, #525252);
+      }
+      .branch.site .steps li::before,
+      .sub-branch.site::before {
+        background: var(--el-site);
+      }
+      .branch.self .steps li::before {
+        background: var(--el-self);
+      }
+      .steps li::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0.45em;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+      }
+      .steps li code { color: var(--color-text-primary, #1a1a1a); }
+
+      .sub-branch {
+        position: relative;
+        margin-top: var(--spacing-md, 1rem);
+        padding: var(--spacing-sm, 0.5rem) var(--spacing-md, 1rem) var(--spacing-sm, 0.5rem) var(--spacing-md, 1rem);
+        border-left: 3px solid var(--el-neutral);
+        background: var(--color-bg-tertiary, #eeeeee);
+        border-radius: 0 var(--border-radius-sm, 0.25rem) var(--border-radius-sm, 0.25rem) 0;
+        font-size: var(--ui-text-body, 0.875rem);
+        color: var(--color-text-secondary, #525252);
+      }
+      .sub-branch .sub-label {
+        display: block;
+        font-family: var(--font-family-mono, ui-monospace, monospace);
+        font-size: var(--ui-text-micro, 0.75rem);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--el-neutral);
+        margin-bottom: 0.3rem;
+      }
+
+      .token-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+        margin: var(--spacing-sm, 0.5rem) 0;
+      }
+      .token {
+        font-family: var(--font-family-mono, ui-monospace, monospace);
+        font-size: var(--ui-text-micro, 0.75rem);
+        padding: 1px 7px;
+        border-radius: var(--border-radius-sm, 0.25rem);
+        border: 1px solid var(--color-border-default, #e5e5e5);
+        background: var(--color-bg-primary, #fafafa);
+        color: var(--color-text-secondary, #525252);
+      }
+
+      /* ---------- panel 4: verify gate strip ---------- */
+      .gate-strip {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-sm, 0.5rem);
+      }
+      .gate-chip {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: var(--spacing-xs, 0.25rem) var(--spacing-md, 1rem);
+        border: 1px solid var(--color-border-default, #e5e5e5);
+        border-radius: var(--border-radius-full, 9999px);
+        background: var(--color-bg-secondary, #f5f5f5);
+        font-size: var(--ui-text-body, 0.875rem);
+        color: var(--color-text-secondary, #525252);
+      }
+      .gate-chip .n {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--el-flow);
+        color: #fff;
+        font-size: var(--ui-text-micro, 0.75rem);
+        font-weight: 600;
+        flex: 0 0 auto;
+      }
+
+      footer {
+        margin-top: var(--spacing-xl, 2rem);
+        padding-top: var(--spacing-md, 1rem);
+        border-top: 1px solid var(--color-border-light, #f0f0f0);
+        font-size: var(--ui-text-micro, 0.75rem);
+        color: var(--color-text-muted, #737373);
+      }
+      footer code { color: var(--color-text-secondary, #525252); }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <p class="eyebrow">Site-theme artifact &middot; explanatory diagram</p>
+        <h1>How artifacts get their colors</h1>
+        <p class="lede">
+          Every <code>.html</code> artifact in this framework travels the same
+          pipeline and picks one of two theme modes. This page diagrams that
+          system — and is itself a live <code>theme: "site"</code> example: its
+          backgrounds, text, borders and spacing all consume the injected host
+          theme; only the diagram strokes below (flow arrows, branch markers)
+          are local elemental color.
+        </p>
+        <div class="legend">
+          <div class="legend-item"><span class="swatch" style="background:var(--el-flow)"></span><span class="label">flow — pipeline / decision</span></div>
+          <div class="legend-item"><span class="swatch" style="background:var(--el-site)"></span><span class="label">site — theme: site branch</span></div>
+          <div class="legend-item"><span class="swatch" style="background:var(--el-self)"></span><span class="label">self — theme: self branch</span></div>
+          <div class="legend-item"><span class="swatch" style="background:var(--el-neutral)"></span><span class="label">neutral — structural note</span></div>
+        </div>
+      </header>
+
+      <section class="panel" id="pipeline">
+        <p class="panel-eyebrow">1 &middot; The pipeline</p>
+        <h2>From file on disk to a live embed</h2>
+        <p class="panel-note">
+          An artifact is any <code>NN_</code>-prefixed <code>.html</code> file in a docs
+          section, or inside an issue's <code>brainstorm/</code> / <code>notes/</code>
+          folder — this page lives at the latter.
+        </p>
+        <div class="scroll-x">
+          <div class="flow-row">
+            <div class="node">
+              <div class="node-title">NN_name.html</div>
+              <div class="node-src">notes/ or brainstorm/</div>
+              <div class="node-desc">A first-class content file, numeric-prefixed like any page.</div>
+            </div>
+            <div class="arrow">&#8594;</div>
+            <div class="node">
+              <div class="node-title">Loader scans it</div>
+              <div class="node-src">artifact-pages.ts</div>
+              <div class="node-desc"><code>loadArtifactPages()</code> globs <code>**/*.html</code>, reads the <code>NN_</code> prefix, loads the sidecar.</div>
+            </div>
+            <div class="arrow">&#8594;</div>
+            <div class="node">
+              <div class="node-title">Sidebar entry + embed</div>
+              <div class="node-src">artifactContainerHtml()</div>
+              <div class="node-desc">Emits a placeholder <code>div</code>; the client turns it into an <code>&lt;iframe&gt;</code>.</div>
+            </div>
+            <div class="arrow">&#8594;</div>
+            <div class="node">
+              <div class="node-title">/artifacts/&lt;path&gt;</div>
+              <div class="node-src">[...path].ts route</div>
+              <div class="node-desc">Serves the file — the route the iframe's <code>src</code> points at.</div>
+            </div>
+          </div>
+        </div>
+        <p class="flow-caption">
+          Full-page and embed are the same URL: the iframe's <code>src</code> (with a
+          <code>?v=&lt;mtime&gt;</code> cache-buster) and the embed's "Open full page &#8599;"
+          link both resolve to <code>/artifacts/&lt;path&gt;</code> — the route is the
+          primitive, the embed is built on top of it.
+        </p>
+      </section>
+
+      <section class="panel" id="modes">
+        <p class="panel-eyebrow">2 &middot; Two theme modes</p>
+        <h2>What the sidecar's <code class="mono">artifact.theme</code> decides</h2>
+        <p class="panel-note">
+          Every sidecar declares one of two modes. The route reads it once, per
+          request, and branches before a byte is served.
+        </p>
+        <div class="decision-box">sidecar <span class="mono">artifact.theme</span></div>
+        <div class="stem"></div>
+        <div class="branches">
+          <div class="branch site">
+            <span class="chip site">theme: site</span>
+            <ul class="steps">
+              <li>Route injects the site's <em>resolved</em> theme CSS at the start of <code>&lt;head&gt;</code>, via <code>getThemeCSS(getTheme())</code>, plus a dark-mode init script.</li>
+              <li>Route stamps <code>data-theme</code>; the artifact consumes <code>var(--color-*)</code> tokens directly — no local palette.</li>
+              <li>Re-themes live: <code>scripts/artifacts.ts</code> watches the parent's <code>data-theme</code> attribute and mirrors it onto the embed's <code>iframe.contentDocument</code> on every toggle.</li>
+            </ul>
+          </div>
+          <div class="branch self">
+            <span class="chip self">theme: self (default)</span>
+            <ul class="steps">
+              <li>Route serves the file byte-for-byte, untouched — nothing injected.</li>
+              <li>The artifact carries its own dual-theme system: <code>:root</code>, <code>@media (prefers-color-scheme: dark)</code>, and <code>:root[data-theme]</code> overrides.</li>
+              <li>The site toggle still wins: the embed still receives the mirrored <code>data-theme</code> attribute, so the artifact's own <code>[data-theme]</code> selectors respond.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="colors">
+        <p class="panel-eyebrow">3 &middot; Where colors come from</p>
+        <h2>A decision by the artifact's subject</h2>
+        <p class="panel-note">
+          The mode choice isn't stylistic — it follows what the artifact
+          <em>is</em>: a page that shows data inherits the host; a page whose
+          subject is a look owns its own.
+        </p>
+        <div class="decision-box">What is the artifact's subject?</div>
+        <div class="stem"></div>
+        <div class="branches">
+          <div class="branch site">
+            <span class="chip site">explanatory / data &rarr; site</span>
+            <p style="margin:0 0 0.4rem 0;">Consumes the injected vocabulary, each with a neutral fallback:</p>
+            <div class="token-row">
+              <span class="token">--color-bg-primary</span>
+              <span class="token">--color-text-primary</span>
+              <span class="token">--color-border-default</span>
+              <span class="token">--spacing-md</span>
+              <span class="token">--ui-text-body</span>
+            </div>
+            <div class="sub-branch site">
+              <span class="sub-label">needs a color the contract lacks?</span>
+              Diagram strokes, node fills, series hues &mdash; add them <strong>locally in the HTML</strong>.
+              Ambient (bg / text / border / spacing) stays injected. This page's own
+              <code>--el-flow</code> / <code>--el-site</code> / <code>--el-self</code> /
+              <code>--el-neutral</code> are exactly that exception.
+            </div>
+          </div>
+          <div class="branch self">
+            <span class="chip self">design / UI-UX &rarr; self</span>
+            <p style="margin:0 0 0.4rem 0;">Owns its values on <code>:root</code> + dark overrides. Contract
+            <em>names</em> preferred over invented ones:</p>
+            <div class="token-row">
+              <span class="token">--color-bg-primary</span>
+              <span class="token">--color-text-primary</span>
+              <span class="token">--color-brand-primary</span>
+            </div>
+            <p style="margin:0.4rem 0 0 0;">A new name only when the role goes beyond the contract's
+            scope &mdash; e.g. <code>--color-accent-soft</code>.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="gate">
+        <p class="panel-eyebrow">4 &middot; The verify gate</p>
+        <h2>Five checks before an artifact ships</h2>
+        <p class="panel-note">Run in order, every time — the full rubric lives in the artifact-authoring skill.</p>
+        <div class="gate-strip">
+          <div class="gate-chip"><span class="n">1</span> Styled</div>
+          <div class="gate-chip"><span class="n">2</span> Complete</div>
+          <div class="gate-chip"><span class="n">3</span> Plausible</div>
+          <div class="gate-chip"><span class="n">4</span> Operable</div>
+          <div class="gate-chip"><span class="n">5</span> Sidecar honesty</div>
+        </div>
+      </section>
+
+      <footer>
+        Diagrammed from <code>astro-doc-code/src/loaders/artifact-pages.ts</code>,
+        <code>astro-doc-code/src/pages/artifacts/[...path].ts</code> and
+        <code>astro-doc-code/src/scripts/artifacts.ts</code>. Rendered live via
+        <code>artifact.theme: "site"</code> &mdash; toggle the docs site to see every
+        surface here re-color; only the four elemental hues in the legend stay fixed.
+      </footer>
+    </div>
+  </body>
+</html>

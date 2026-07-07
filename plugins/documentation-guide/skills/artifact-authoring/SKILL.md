@@ -1,6 +1,6 @@
 ---
 name: artifact-authoring
-description: Use this skill to BUILD a self-contained HTML artifact as a content file in a documentation-template project — a report page, dashboard, data visualization, design-system swatch / type-specimen / component gallery, or brand-guideline showcase — published as an `NN_`-prefixed `.html` page in a docs section (the `/artifacts` content type) or inside a tracker `brainstorm/` / `notes/` folder, with an optional `.meta.json` sidecar. Covers treatment calibration, honoring the host theme contract, dual-theme + self-containment discipline, the chart/dataviz procedure and the palette validator, design-system authoring flows, and the pre-publish verify gate. Trigger eagerly whenever the user asks to build / design / generate an artifact, an HTML report, a dashboard, a chart, a data viz, a design system, or a brand guideline for THIS project. This is NOT about claude.ai Artifacts (the built-in `Artifact` tool / gallery); it is about HTML files served at `/artifacts` in a documentation-template repo. For writing markdown docs pages use the documentation-guide skill; for issue-tracker structure use doc-issues.
+description: Use this skill to BUILD a self-contained HTML artifact as a content file in a documentation-template project — a report page, dashboard, data visualization, design-system swatch / type-specimen / component gallery, a variation set comparing N design options of one UI element, or a brand-guideline showcase — published as an `NN_`-prefixed `.html` page in a docs section (the `/artifacts` content type) or inside a tracker `brainstorm/` / `notes/` folder, with an optional `.meta.json` sidecar. Covers treatment calibration, honoring the host theme contract, dual-theme + self-containment discipline, the chart/dataviz procedure and the palette validator, design-system authoring flows, the variation-set / options-explorer pattern, and the pre-publish verify gate. Trigger eagerly whenever the user asks to build / design / generate an artifact, an HTML report, a dashboard, a chart, a data viz, a design system, a set of design options / variations to compare or pick from, or a brand guideline for THIS project. This is NOT about claude.ai Artifacts (the built-in `Artifact` tool / gallery); it is about HTML files served at `/artifacts` in a documentation-template repo. For writing markdown docs pages use the documentation-guide skill; for issue-tracker structure use doc-issues.
 license: Complete terms in the documentation-guide plugin LICENSE file.
 ---
 
@@ -35,8 +35,11 @@ chrome plus full-page at their own URL.
 - **AI-legible through a sidecar.** An optional same-name `.meta.json` / `.meta.jsonc`
   carries the rendering fields (title, description, sidebar label/position, draft)
   **plus** an `artifact:` block of *declared values* — purpose, palette, key data —
-  so an agent understands the artifact without parsing its HTML. Contract in
-  `references/publishing.md`.
+  so an agent understands the artifact without parsing its HTML. **Use it in both
+  directions: read the sidecar before touching an existing artifact (or building a
+  companion meant to match it), and update it in the same change as any HTML edit** —
+  it is design memory for the next agent, and it only works while it stays true.
+  Contract in `references/publishing.md` ("The sidecar is design memory").
 
 ## Triage — which reference to read
 
@@ -48,6 +51,7 @@ Read only the one(s) the task needs; they are independent.
 | Where the `.html` lives, the sidecar contract, the `/artifacts` route + embed, the two theme modes (`site` / `self`) + the injection mechanism, self-containment / CDN policy, font delivery, embed-width sizing, the host theme-token vocabulary | [`references/publishing.md`](references/publishing.md) |
 | It's a chart / dashboard / any data visualization — the form → color → validate procedure, mark specs, interaction, anti-patterns, the palette instance | [`references/dataviz/00_overview.md`](references/dataviz/00_overview.md) |
 | Authoring a whole design system / brand guideline (in an issue `brainstorm/` or as a published docs section), the conventions-authoring doctrine, and the Styled / Complete / Plausible verify rubric | [`references/design-systems.md`](references/design-systems.md) |
+| Comparing N design variations of one element / screen to pick one — an options explorer (one artifact, working options, shared fixture) | [`references/design-systems.md`](references/design-systems.md) → "Variation-set / options-explorer artifacts" |
 | Where the converged source skills came from (upstream sync) | [`references/PROVENANCE.md`](references/PROVENANCE.md) |
 
 The four sections below are **not optional reading** — they govern what every
@@ -73,6 +77,12 @@ to design — a plan deserves the same craft as a landing page — but which
   frontend-design questions: **Purpose** (what job, whose eyes), **Tone** (pick a
   concrete direction — see the tone menu in `design-fundamentals.md`),
   **Differentiation** (the one thing a reader will remember).
+- **Decision tooling (a variation set / options explorer).** N design options of
+  one element, built to pick one — this calibrates as *editorial per option*: the
+  don't-over-design governor does **not** apply to the options themselves, each of
+  which must read as a shippable design; only the chrome around them (switcher,
+  comparison table) stays utilitarian. See `design-systems.md` → "Variation-set /
+  options-explorer artifacts".
 
 When unsure, lean utilitarian: an over-composed page is occasionally wrong, a
 clean one never is. The editorial process (the review-for-genericness step, the
@@ -124,7 +134,8 @@ the opt-in to inheritance.
   target application's intended theme is similar or identical to the docs engine's
   current theme.** Inheriting there would let a future site-theme change silently
   rewrite the very design being deliberated. Write the theme inside the HTML;
-  declare `self`.
+  declare `self`. (A variation set — N options of one element, `design-systems.md`
+  — is the canonical case.)
 
 When the artifact *shows data*, lean `site`; when it *is a design*, it is always
 `self`.
@@ -161,6 +172,17 @@ active theme — feed it the surfaces to validate a chart palette against. The n
 > (add / rename / remove), this section must change in the same edit — repo source
 > **and** installed cache. (Recorded in the repo CLAUDE.md theming section.)
 
+**Self-mode naming preference.** A `self`-mode artifact owns its *values* but
+should reuse this contract's *names* for every role the contract already covers
+(`--color-bg-primary`, `--color-text-primary`, `--color-border-default`, …)
+rather than inventing parallel ones (`--bg`, `--ink`). Extra names are allowed
+**only when the role genuinely goes beyond the contract's scope** — no existing
+token covers it (`--color-accent-soft`, `--color-pro`, `--color-con`); check
+the list above first, and never mint a new name for a role a contract token
+already expresses. Nothing is injected in `self` mode, so there is no
+collision — and shared names keep every artifact's CSS and sidecar legible to
+the next agent at zero cost.
+
 **Validate every token you name** against the contract (or the CLI verb). A name that
 isn't in it — e.g. `var(--color-accent, #7aa2f7)` — never resolves, freezes its
 fallback, and silently kills dark/light: the design-sync validate-names rule applied
@@ -172,14 +194,17 @@ Two rules an artifact must never miss. Full mechanism (who injects, who stamps t
 theme, the CDN policy, font delivery) is in `references/publishing.md`; the rules:
 
 - **Theme correctly for your mode; dark is *selected*, not inverted.**
-  - **`site` mode:** consume the injected tokens and **define no palette**. Carry
-    only a *minimal neutral fallback layer* for the out-of-engine case — write each
-    consumed token as `var(--color-bg-primary, #fff)` so a raw `file://` open (no
+  - **`site` mode:** consume the injected tokens and **define no ambient palette**.
+    Carry only a *minimal neutral fallback layer* for the out-of-engine case — write
+    each consumed token as `var(--color-bg-primary, #fff)` so a raw `file://` open (no
     injection) still renders neutrally. This does **not** violate the layouts
     no-fallback rule: that rule protects *layouts*, where a var must always resolve;
     here the route's injected CSS overrides the fallback in situ and the fallback
     only serves the no-host case. Don't redefine `--color-*` yourself — let the
-    injected CSS win.
+    injected CSS win. One exception: **local elemental colors** for diagram/chart
+    *content* (series hues, strokes, node fills) the contract doesn't carry may be
+    defined in the HTML — backgrounds/text/borders stay injected, and the elemental
+    values must hold on both surfaces (`publishing.md` → "Local elemental colors").
   - **`self` mode:** design **both** themes and give the second the same care as the
     first. Define the palette on `:root`, redefine the tokens under
     `@media (prefers-color-scheme: dark)`, and again under `:root[data-theme="dark"]`
@@ -223,11 +248,16 @@ Not optional reading; run this before you call an artifact done. Full rubric in
 4. **Plausible.** Real content throughout — never `foo` / `test` / lorem. Curate
    real values before inventing; a design system shows a canonical example plus a
    variant sweep and its static states.
-5. **Sidecar honesty.** Every hex, token, or consumed variable the `.meta.json`
+5. **Operable.** For anything interactive — above all a variation set — exercise
+   every option's interactions in the rendered page: tap, drag, toggle each one.
+   A static mock passes Styled / Complete / Plausible and still fails the
+   pattern; interactivity is verified by *doing*, not by reading the JS.
+6. **Sidecar honesty.** Every hex, token, or consumed variable the `.meta.json`
    `artifact:` block *declares* actually appears in the HTML, and the declared
    `theme` (`site` / `self`) matches how the artifact is really built. A declared
    value that lies is worse than none — the whole point is that an agent trusts it
-   without reading the HTML.
+   without reading the HTML. This holds after every later edit too: updating the
+   artifact means updating the sidecar in the same change.
 
 ## Provenance
 

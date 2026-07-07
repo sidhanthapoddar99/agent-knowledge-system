@@ -47,7 +47,10 @@ beside the deliberation that produced them, versioned with the issue. Because
 design-system brainstorm ships **multiple** artifact options with commentary and a
 recommendation, not one polished result:
 
-- Keep each option a self-contained artifact.
+- Keep each option a self-contained artifact **when the options are competing
+  systems** — whole palettes, brand directions, full visual worlds. When the
+  options are N variations of *one element or screen*, do the opposite: one
+  artifact holding all of them — see the variation-set section below.
 - Declare each option's `palette` / `purpose` in its sidecar, so the trade-off
   discussion can cite *declared values* rather than re-reading each HTML.
 - Promote the chosen direction outward (to Home B) only once it's settled.
@@ -62,6 +65,74 @@ do/don't. The commentary is the reborn "conventions document": an agent consumin
 the system reads the *commentary's* declared values and **never has to parse an
 artifact's HTML**. (Pick a base URL outside the reserved set — not `artifacts` — see
 `publishing.md`.)
+
+## Variation-set / options-explorer artifacts — one element, N workable options
+
+The decision pattern: **one artifact carrying 4–10 labeled design variations of
+a single UI element or screen** — a mobile nav five ways, an action-button
+placement four ways, a panel's glass treatments — built so reviewers can *feel*
+each option working and pick one. This is not Home A's multiple-artifacts rule
+(that covers competing whole systems): variations of one element always ship as
+**one artifact with N options inside it** — separate files kill side-by-side
+comparison and would duplicate the shared fixture N times.
+
+Four qualities define the pattern; each is a requirement, not a flourish:
+
+1. **N labeled options with decision furniture.** Every option gets a real name
+   ("Bottom tab bar", never "Option 3"), a one-line identity, and its
+   trade-offs (pros/cons, "best for"). Structure by count: **2–3** → all
+   visible at once, stacked or side by side; **4–6** → a switcher (tab strip /
+   numbered rail) over one stage; **7–10** → a switcher with the selection
+   persisted (`localStorage`) so a reviewer's place survives reloads.
+2. **Operable, not mocked.** Whatever behavior an option proposes must actually
+   work in the artifact — buttons press, drawers open, states toggle,
+   transitions play. A static picture of an interactive element fails the
+   pattern even when it looks perfect. (The verify gate exercises this —
+   SKILL.md §3.)
+3. **A shared, realistic fixture.** All options render inside the *same* host
+   frame — the same phone, app shell, or page — so they compare like-for-like.
+   And the fixture must look like a **real product**: real screen names, real
+   content, the host app's type and color world. Greeked skeleton bars and
+   placeholder boxes sink the comparison — a reviewer should squint and see
+   *their app* wearing each option. This is the quality even otherwise-good
+   runs miss; spend explicit effort here.
+4. **Built for the "which one?" moment.** Carry an at-a-glance comparison strip
+   or table; mark a recommendation when you have one; optionally offer a pick
+   affordance (a vote / selection control with a rationale field, persisted
+   locally, with a copy-out). The decision itself graduates to the issue's
+   notes / comments once made — the artifact is where the decision gets *made*,
+   not where it is archived.
+
+**Treatment override: the don't-over-design governor does not apply here.**
+This is decision tooling — each option must reach "could be the shipped
+design", because the polish *is* what the reviewer is judging. Keep the chrome
+around the options (switcher, comparison table, vote box) utilitarian; spend
+the craft on the options themselves.
+
+**Theme is `self`** (mode-choice doctrine — the options' look is the subject);
+per SKILL §1's naming preference, reuse the host contract's token *names* for
+overlapping roles, adding your own only for roles beyond the contract's scope.
+**Sidecar:** declare
+`type: "variation-set"` with the `options` list, plus `recommendation` /
+`decision` when they exist — contract in `publishing.md`.
+
+A worked skeleton (the shape, not markup to copy):
+
+```html
+<body>
+  <header><!-- what's being decided, in one line + option count --></header>
+  <nav class="switcher"><!-- one tab per option, real names --></nav>
+  <main class="stage">
+    <!-- ONE shared fixture: the host app's screen with realistic content.
+         Switching options swaps ONLY the element under decision, and its
+         interactions genuinely run (tap, drag, toggle, navigate). -->
+  </main>
+  <section class="verdict">
+    <!-- per-option pros/cons + "best for" · at-a-glance table ·
+         recommendation · vote + rationale (localStorage) + copy-summary -->
+  </section>
+</body>
+```
 
 ## Writing conventions an agent can act on
 

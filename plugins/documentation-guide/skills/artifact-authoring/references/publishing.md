@@ -99,24 +99,48 @@ Inside the engine the injected value always wins; the fallback only renders with
 host. This is **not** the layouts no-fallback violation — that rule protects layouts,
 where the var must always resolve; here injection overrides the fallback in situ.
 
+**Local elemental colors (site mode) — the one exception to "no palette".** An
+explanatory diagram or chart in `site` mode often needs colors the contract does
+not carry: series hues, arrow strokes, node fills, connector lines. Those are the
+diagram's *content*, not its chrome — define them directly in the HTML (local
+custom properties or inline values). Everything **ambient stays injected**:
+backgrounds, text, borders, and spacing keep consuming the tokens, so the
+artifact still re-themes with the site. Two duties come with the exception: pick
+elemental colors that hold on **both** injected surfaces (query the real values
+with `docs-guide theme tokens --json`; a chart palette additionally passes the
+dataviz validator against both surfaces), and declare them in the sidecar like
+any other value.
+
 **The self-mode dual-theme pattern.** Define tokens on `:root`, redefine under the
-media query, and again under the attribute so the site toggle wins both ways:
+media query, and again under the attribute so the site toggle wins both ways.
+Prefer the host contract's token *names* with your own values (SKILL §1's naming
+preference — invented short names like `--bg` / `--ink` still work, but cost the
+next agent legibility); add a name of your own **only when the role goes beyond
+the contract's scope** and no existing token expresses it:
 
 ```html
 <style>
-  :root { /* light — values derived from --color-* / --content-* */
-    --bg: #fafafa; --surface: #f5f5f5; --ink: #1a1a1a;
-    --muted: #737373; --accent: #2563eb; --good: #16a34a; }
+  :root { /* light — own values, the contract's names */
+    --color-bg-primary: #fafafa; --color-bg-secondary: #f5f5f5;
+    --color-text-primary: #1a1a1a; --color-text-muted: #737373;
+    --color-brand-primary: #2563eb; --color-success: #16a34a;
+    --color-accent-soft: #dbeafe; /* beyond the contract's scope — only then add */ }
   @media (prefers-color-scheme: dark) {
-    :root { --bg: #0a0a0a; --surface: #171717; --ink: #fafafa;
-      --muted: #737373; --accent: #3b82f6; --good: #22c55e; }
+    :root { --color-bg-primary: #0a0a0a; --color-bg-secondary: #171717;
+      --color-text-primary: #fafafa; --color-text-muted: #737373;
+      --color-brand-primary: #3b82f6; --color-success: #22c55e;
+      --color-accent-soft: #1e3a5f; }
   }
   /* the site toggle wins in both directions */
-  :root[data-theme="light"] { --bg: #fafafa; --surface: #f5f5f5; --ink: #1a1a1a;
-    --muted: #737373; --accent: #2563eb; --good: #16a34a; }
-  :root[data-theme="dark"]  { --bg: #0a0a0a; --surface: #171717; --ink: #fafafa;
-    --muted: #737373; --accent: #3b82f6; --good: #22c55e; }
-  body { background: var(--bg); color: var(--ink); }
+  :root[data-theme="light"] { --color-bg-primary: #fafafa; --color-bg-secondary: #f5f5f5;
+    --color-text-primary: #1a1a1a; --color-text-muted: #737373;
+    --color-brand-primary: #2563eb; --color-success: #16a34a;
+    --color-accent-soft: #dbeafe; }
+  :root[data-theme="dark"]  { --color-bg-primary: #0a0a0a; --color-bg-secondary: #171717;
+    --color-text-primary: #fafafa; --color-text-muted: #737373;
+    --color-brand-primary: #3b82f6; --color-success: #22c55e;
+    --color-accent-soft: #1e3a5f; }
+  body { background: var(--color-bg-primary); color: var(--color-text-primary); }
   /* style everything through the tokens — never inside the media query directly */
 </style>
 ```
@@ -189,7 +213,7 @@ The standard reserved keys — always write these, always read these:
 | Key | Meaning |
 |---|---|
 | `purpose` | One sentence: what the artifact is for and who reads it |
-| `type` | `report` \| `dashboard` \| `dataviz` \| `design-system` \| `showcase` |
+| `type` | `report` \| `dashboard` \| `dataviz` \| `design-system` \| `showcase` \| `variation-set` |
 | `theme` | `site` (route injects the host theme) \| `self` (served untouched — default; any unrecognized value reads as `self`) |
 | `palette` | The hex actually used, `{ light: {…}, dark: {…} }` — the exact list you'd feed the palette validator |
 | `data` | For dashboards/charts: the key figures, or the source the artifact visualizes, in structured form |
@@ -200,11 +224,27 @@ The block is **open for additional declared values** — a report may add `secti
 `decisions`, `key_facts`; a specimen may add `typography`. Keep the standard keys
 present and add extras freely.
 
+**Variation-set keys** (when `type: "variation-set"` — the options-explorer
+pattern in `design-systems.md`): `options` — the option names, in display order
+(required); `recommendation` — the recommended option, when one is marked;
+`decision` — the settled pick once the team decides (add it when the decision
+lands, and mirror the decision itself into the issue's notes / comments).
+
 **Optional but strongly encouraged** for ordinary artifacts; **mandatory for
 design-system artifacts** (see `design-systems.md`), where "an agent reads the
 declaration, not the HTML" is the entire point. **Validate-names rule:** every hex
 in `palette` and every value you declare must actually appear in the artifact — a
 declaration that lies is worse than none, and the verify gate checks it.
+
+**The sidecar is design memory — read before, update after.** The declared block
+exists so the *next* agent can extend an artifact, or build a companion meant to
+match it, from ~40 lines of JSON instead of parsing the HTML: whenever you touch
+an existing artifact, read its sidecar first, and reuse its declared palette /
+typography for anything in the same family. The duty that keeps this working:
+**every edit to the `.html` updates the sidecar in the same change.** On this
+platform agents perform the edits — no human pass will catch a stale
+declaration — so a drifted sidecar stays wrong until it actively misleads
+someone. The verify gate (SKILL §3) treats a lying sidecar as worse than none.
 
 A canonical sidecar, in full:
 

@@ -1,0 +1,12 @@
+{
+  "title": "UX standards — sidebar file-type icons, status icon polish, and the standards doc",
+  "description": "Codify the issue-layout QoL patterns as project-wide UX standards and extend them: file-type icons (diagram, HTML artifact — markdown stays unmarked) on the right side of both the docs sidebar and the issues sub-doc tree with hover tooltips; complete the subtask status icon set (blue --color-info half-circle for in-progress, verify blocked); legend into the Guide panel + user-guide; a dev-docs UX-standards page referenced from CLAUDE.md.",
+  "status": "open",
+  "priority": "medium",
+  "component": ["layout-general"],
+  "labels": [
+    "feature"
+  ],
+  "author": "sidhantha",
+  "assignees": []
+}

@@ -133,6 +133,45 @@ must state that an artifact runs with site-origin privileges, so authors never
 paste untrusted third-party HTML into a section. Full deliberation: brainstorm
 Thread D.
 
+## Decided — the variation-set pattern is skill doctrine
+
+**Decided (sidhantha, 2026-07-08):** the variation-set / options-explorer
+pattern — **one artifact carrying 4–10 labeled, genuinely operable design
+variations of a single UI element, inside a shared realistic fixture, built to
+pick one** — is written into the authoring skill as a first-class pattern
+(`references/design-systems.md` section + SKILL.md triage/§0/§1/§3 hooks +
+`type: "variation-set"` sidecar keys). Emphasis follows the live-test delta
+([../brainstorm/10_variation-comparison/01_delta-analysis.md](../brainstorm/10_variation-comparison/01_delta-analysis.md)):
+the shared-fixture realism and the "could be the shipped design" polish bar are
+the qualities even a good run misses, and the don't-over-design governor does
+not apply to the options themselves. Audit + acceptance trail: subtask 100 and
+`agent-log/060`/`070`.
+
+## Decided — the sidecar is design memory; keeping it true is the agent's duty
+
+**Decided (sidhantha, 2026-07-08):** the `artifact:` declaration block stays —
+and is promoted, not merely tolerated: its purpose is that the next agent can
+extend an artifact or build a design-consistent companion from ~40 lines of
+JSON without parsing the HTML. Two duties make it work, both now stated in the
+skill: **read the sidecar before touching an existing artifact**, and **update
+it in the same change as any HTML edit**. Rationale: this platform is
+agents-first — agents perform the edits, humans get observability — so no
+human pass will catch a drifted declaration; the drift guard must be the
+agent's own discipline (a future `docs-guide` check remains an option if drift
+ever bites).
+
+## Decided — self-mode token naming preference
+
+**Decided (sidhantha, 2026-07-08):** a `self`-mode artifact owns its *values*
+but should reuse the host theme contract's token *names* for roles the
+contract already covers (`--color-bg-primary`, `--color-text-primary`, …)
+rather than inventing parallel vocabularies (`--bg`, `--ink`); it is free to
+add names for roles the contract lacks (`--color-accent-soft`, `--color-pro`).
+A preference, not a hard rule — invented names still render fine — but shared
+names keep every artifact's CSS and sidecar legible to the next agent. Origin:
+the sidecar-provenance check in
+[../agent-log/060_au_variation-capability/03_sidecar-provenance-check.md](../agent-log/060_au_variation-capability/03_sidecar-provenance-check.md).
+
 ## Still-open threads (resolve in subtasks, cite the brainstorm)
 
 These are **not** settled and must be resolved in their subtasks — see

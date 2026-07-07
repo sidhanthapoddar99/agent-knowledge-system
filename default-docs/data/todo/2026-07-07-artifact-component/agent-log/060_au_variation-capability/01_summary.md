@@ -73,3 +73,14 @@ Awaiting triage with sidhantha on subtask
 [100](../../subtasks/100_variation-capability-audit.md). If accepted, author
 after the `050_wf_audit-fixes` run lands (same files in flight), repo + cache
 parity.
+
+## Outcome (2026-07-08)
+
+Accepted by sidhantha in full, with three additions from his live-test review
+(self-mode token vocabulary preference, sidecar-as-design-memory surfacing,
+the anti-drift duty) plus a README agents-first note. Authored the same day —
+execution record in [../070_it_skill-sharpening/](../070_it_skill-sharpening/).
+The follow-up provenance check that produced the vocabulary item is
+[03_sidecar-provenance-check.md](03_sidecar-provenance-check.md); the live
+cold-Sonnet demonstration and its delta write-up are in
+[../../brainstorm/10_variation-comparison/](../../brainstorm/10_variation-comparison/).

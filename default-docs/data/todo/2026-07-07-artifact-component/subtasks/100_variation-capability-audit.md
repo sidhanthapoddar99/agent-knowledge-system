@@ -1,6 +1,6 @@
 ---
 title: "Audit — can the skill guide agents to multi-variation design-option artifacts?"
-status: open
+status: review
 ---
 
 Requested by sidhantha (2026-07-08). The single most-loved real-world use of
@@ -40,7 +40,9 @@ one-artifact-N-variations structure, shared fixture) are unwritten, and the
 verify gate is interaction-blind (a static mock passes clean). Remedy
 proposed: a "Variation-set / options-explorer artifacts" section in
 `references/design-systems.md` + triage row + verify-gate line + sidecar
-`variation-set` type. Awaiting sidhantha's go-ahead below.
+`variation-set` type. **Accepted by sidhantha 2026-07-08** (with three additions
+from his live-test review) and authored the same day — execution record in
+[../agent-log/070_it_skill-sharpening/](../agent-log/070_it_skill-sharpening/).
 
 ## Tasks
 
@@ -59,15 +61,37 @@ proposed: a "Variation-set / options-explorer artifacts" section in
       placed per the skill's lean-triage shape. If none: record that the
       existing sections compose to cover it, with the citation trail.
       *(Delivered — see the audit summary's "Recommended remedy".)*
-- [ ] **Author the section on acceptance** — the design-systems.md
+- [x] **Author the section on acceptance** — the design-systems.md
       variation-set section + the four hooks (triage row, §1 cross-link,
       §3 interaction-exercise gate line, §0 treatment note) + sidecar
       `variation-set` type/keys in publishing.md; worked skeleton included;
       repo + cache parity; AFTER the 050 fix run lands (same files).
-- [ ] **Record + link** — findings in
-      [../agent-log/060_au_variation-capability/](../agent-log/060_au_variation-capability/);
-      triage with sidhantha; any accepted skill addition becomes its own
-      task here (repo + cache parity).
+      *(Shipped 2026-07-08 — emphasis shifted per the live-test delta onto the
+      shared-fixture realism + shippable-polish bar; a Home-A cross-link fixes
+      the per-option-files misreading at its source.)*
+- [x] **Sharpening items from the live-test review** (sidhantha, 2026-07-08 —
+      all shipped with the section, repo + cache parity):
+      - *Self-mode token vocabulary preference* — a self-mode artifact should
+        reuse the host contract's token **names** (own values) for overlapping
+        roles, free to add names beyond it → SKILL §1 + the publishing.md
+        pattern snippet now demonstrates contract names.
+      - *Sidecar-as-design-memory, surfaced as marketed* — the skill now tells
+        agents explicitly to READ the sidecar before touching an existing
+        artifact (or building a companion) and to build design-consistent work
+        from its ~40 lines of declared values → SKILL "What an artifact is
+        here" + publishing.md "The sidecar is design memory".
+      - *Anti-drift duty* — every `.html` edit updates the sidecar in the same
+        change (agents are the editors on this platform; nobody else catches a
+        stale declaration) → publishing.md + SKILL §3 gate item 6.
+      - *README note* — the platform is agents-first, humans in the loop;
+        tracker = observability surface; docs serve a dual readership →
+        `README.md` "Built for agents, observable by humans".
+- [x] **Record + link** — findings in
+      [../agent-log/060_au_variation-capability/](../agent-log/060_au_variation-capability/)
+      (incl. the follow-up sidecar-provenance check that produced the
+      vocabulary item); execution in
+      [../agent-log/070_it_skill-sharpening/](../agent-log/070_it_skill-sharpening/);
+      triaged and accepted with sidhantha 2026-07-08.
 
 Optional deepening (user action): export 1–2 reference artifacts into this
 issue's `assets/` for a direct fidelity comparison against what the skill
@@ -90,3 +114,7 @@ it lives in sidhantha's claude.ai account):
   cold Sonnet agent following ONLY the current skill (the audit's failing
   executor profile, run for real), plus the delta write-up comparing it
   against the reference pattern's signature qualities.
+- [../notes/05_theme-modes-explainer.html](../notes/05_theme-modes-explainer.html)
+  — "How artifacts get their colors" (**site mode** — the live demonstration
+  of injection + the local-elemental-colors exception; built by a cold Sonnet
+  agent from the *sharpened* skill, post-acceptance).

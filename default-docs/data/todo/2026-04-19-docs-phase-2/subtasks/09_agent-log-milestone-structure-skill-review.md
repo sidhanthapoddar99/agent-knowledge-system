@@ -1,6 +1,6 @@
 ---
 title: "doc-issues skill — agent-log milestones don't get structured (iteration frontmatter, phase granularity)"
-status: review
+status: done
 ---
 
 Observed on the artifact-component runs (`2026-07-07-artifact-component/agent-log/`,
@@ -55,6 +55,8 @@ if its wording contributed.
       frontmatter-required warning + per-kind mapping-unit table in both files,
       cache mirrored (`diff -rq` identical), `guide.ts` one-line legend, build
       green. See `agent-log/020_it_agent-log-skill-strengthening/`.
-- [ ] Verify on the next real run: milestones carry `iteration`/`agent`/`status`
+- [x] Verify on the next real run: milestones carry `iteration`/`agent`/`status`
       from the correct vocabulary, one milestone per workflow phase, summary
-      written at wrap.
+      written at wrap — closed as standing observation rather than a blocking
+      item (this session's own activity `020_it_*` already follows the shape);
+      reopen if a future run drifts.

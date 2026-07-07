@@ -1,0 +1,30 @@
+digraph theme_resolution {
+    rankdir=LR;
+    node [shape=box, style=rounded, fontname="Helvetica"];
+
+    subgraph cluster_config {
+        label="site.yaml";
+        style=dashed;
+        theme_field [label="theme: \"my-theme\""];
+        theme_paths [label="theme_paths: [\"@themes\"]"];
+    }
+
+    subgraph cluster_disk {
+        label="default-docs/themes/";
+        style=dashed;
+        my_theme [label="my-theme/theme.yaml"];
+        parent [label="@theme/default\n(built-in src/styles/)"];
+    }
+
+    resolve [label="resolveThemeName()", shape=ellipse];
+    merge [label="CSS merge\n(parent first, child overrides)", shape=ellipse];
+    page [label="BaseLayout <head>\ninjected theme CSS", shape=box, style="rounded,bold"];
+
+    theme_field -> resolve;
+    theme_paths -> resolve;
+    resolve -> my_theme [label="scan + match"];
+    my_theme -> parent [label="extends", style=dashed];
+    parent -> merge;
+    my_theme -> merge;
+    merge -> page;
+}

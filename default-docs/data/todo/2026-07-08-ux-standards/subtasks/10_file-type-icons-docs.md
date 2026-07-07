@@ -1,6 +1,6 @@
 ---
 title: "File-type icons in the docs sidebar"
-status: review
+status: done
 ---
 
 Extend the issues-layout file-type-icon pattern to the docs sidebar: leaf rows that are *not* markdown get a small monochrome trailing icon naming their kind. Markdown is the default and stays unmarked. Images are out of scope (embed-only, never sidebar pages — see the issue's scope decisions).

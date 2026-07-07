@@ -1,0 +1,31 @@
+flowchart TD
+    subgraph disk["On disk"]
+        MD["10_page.md"]
+        MMD["20_flow.mmd"]
+        DOT["30_graph.dot"]
+        EXC["40_scene.excalidraw"]
+        HTML["50_report.html"]
+    end
+
+    subgraph loaders["Loaders"]
+        DATA["data.ts<br/>markdown loader"]
+        DIAG["diagram-pages.ts<br/>first-class diagrams"]
+        ART["artifact-pages.ts<br/>first-class artifacts"]
+    end
+
+    subgraph sidebar["Docs sidebar"]
+        ROW1["Page"]
+        ROW2["Flow ⿴"]
+        ROW3["Graph ⿴"]
+        ROW4["Scene ⿴"]
+        ROW5["Report ⿻"]
+    end
+
+    MD --> DATA --> ROW1
+    MMD --> DIAG --> ROW2
+    DOT --> DIAG --> ROW3
+    EXC --> DIAG --> ROW4
+    HTML --> ART --> ROW5
+
+    ROW2 -.->|"hover: Diagram"| TIP(["ui-tooltip"])
+    ROW5 -.->|"hover: Artifact"| TIP

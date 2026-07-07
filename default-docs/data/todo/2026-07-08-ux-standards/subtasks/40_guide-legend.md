@@ -1,6 +1,6 @@
 ---
 title: "Symbol legend into the Guide panel and user-guide"
-status: review
+status: done
 ---
 
 Users should be able to decode every sidebar symbol without guessing. Add the status + file-type symbol legend where users look for it — and only there: the issue Guide panel and the user-guide. The dev-docs page (subtask `50_ux-standards-doc.md`) carries rationale and mechanism, not a duplicate legend (decided sidhantha, 2026-07-08).

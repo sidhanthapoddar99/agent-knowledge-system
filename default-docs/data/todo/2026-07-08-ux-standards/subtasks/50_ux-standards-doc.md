@@ -1,6 +1,6 @@
 ---
 title: "Dev-docs UX-standards page + tooltip.ts script page + CLAUDE.md pointer"
-status: review
+status: done
 ---
 
 Capture the design rules behind these QoL patterns as a durable **UX standards** page in dev-docs — written as rules with the shipped features as examples, not a changelog of nice changes — and make `CLAUDE.md` point to it (the same pattern versioning uses with `30_versioning/`).

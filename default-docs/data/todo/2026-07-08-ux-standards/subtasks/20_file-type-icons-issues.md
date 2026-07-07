@@ -1,6 +1,6 @@
 ---
 title: "Unify the file-type icon vocabulary in the issues sub-doc tree"
-status: review
+status: done
 ---
 
 The issues sub-doc tree (`src/layouts/issues/default/parts/detail/SubdocTree.astro`) already renders a trailing glyph — but only for HTML artifacts (`docType === 'artifact'`, styled by `.issue-sidebar__doctype` in `styles/detail.css`). First-class diagram files in `notes/` / `brainstorm/` currently get no marker. Bring the tree up to the same icon vocabulary as the docs sidebar (subtask `10_file-type-icons-docs.md`) so both surfaces read identically.

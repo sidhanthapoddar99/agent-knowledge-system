@@ -1,6 +1,6 @@
 ---
 title: "Complete the subtask status icon set (blue in-progress, verify blocked, hover tooltips)"
-status: review
+status: done
 ---
 
 Finish the subtask status symbol vocabulary in the issues layout. Current state (rendered by `stateIconSvg()` used in `src/layouts/issues/default/parts/detail/SubtaskTree.astro`, colored in `styles/detail.css`): not-started grey checkbox ✔ done, done green tick ✔ done, dropped red cross ✔ done, review yellow dot ✔ done. Missing / unverified:

@@ -62,11 +62,15 @@ scale up to the full-page view. Always test **both** sizes. Wide content
 (`overflow-x: auto` on its own container) must never make the page body scroll
 sideways.
 
-**Embed height.** The default is a viewport-relative fill — the embed fills the
-content area, matching the "replaces the central content area" experience. A short
-report can override this via the sidecar's **top-level** `embed_height` field
-(`"full"` default, an explicit pixel value, or an aspect ratio). The full-page
-route always renders true full-viewport regardless.
+**Embed height.** By default the embed sizes itself to the artifact's intrinsic
+content height and scrolls **with the page**, like any other document — no nested
+scrollbar. A sidecar **top-level** `embed_height` (an explicit pixel value or an
+aspect ratio) opts into a fixed box with its own inner scroll instead. The
+full-page route always renders true full-viewport regardless. One mechanism note:
+viewport-height floors (`min-height: 100vh` on `body`/`html`) are neutralized in
+the embed — there the viewport *is* the content height, so a vh floor only fights
+the fit — while the full-page view keeps them, so writing one for full-page
+centering is fine.
 
 ## Consuming the host theme — the two modes
 

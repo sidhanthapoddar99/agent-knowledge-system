@@ -19,6 +19,23 @@
 
 const RENDERED = 'artifact-rendered';
 
+// Inline stroke icons (currentColor) so the affordances read as controls, not
+// text links. Kept tiny and geometric to sit inside the pill toolbar.
+const ICON_OPEN =
+  '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>';
+const ICON_EXPAND =
+  '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>';
+const ICON_CLOSE =
+  '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+
+/** Swap the expand button between its two states (icon + label + aria). */
+function setExpandUi(button: HTMLButtonElement, expanded: boolean): void {
+  button.innerHTML =
+    (expanded ? ICON_CLOSE : ICON_EXPAND) +
+    `<span>${expanded ? 'Close' : 'Expand'}</span>`;
+  button.setAttribute('aria-expanded', String(expanded));
+}
+
 /**
  * The site's effective theme. The site is purely attribute-driven: the head
  * script in BaseLayout stamps `data-theme="dark"` whenever dark resolves
@@ -52,12 +69,92 @@ function syncAllThemes(): void {
   for (const iframe of iframes) applyTheme(iframe);
 }
 
+/**
+ * Content-height embedding — the artifact scrolls with the PAGE, like every
+ * other document, instead of living in a fixed box with a nested scrollbar.
+ * Same-origin lets us read the artifact document's real height; a
+ * ResizeObserver inside the iframe keeps the embed in sync when interactive
+ * content reflows (tabs, expanders, viewport-width changes). A sidecar
+ * embed_height override (inline height / aspect-ratio emitted by the loader)
+ * opts back into the fixed box and is never touched.
+ */
+function hasDeclaredSize(container: HTMLElement): boolean {
+  return (
+    !('artifactFit' in container.dataset) &&
+    Boolean(container.style.height || container.style.aspectRatio)
+  );
+}
+
+function fitToContent(container: HTMLElement, iframe: HTMLIFrameElement): void {
+  // Never fight the expand overlay (its 100vh is the point).
+  if (container.classList.contains('artifact-expanded')) return;
+  try {
+    const doc = iframe.contentDocument;
+    const win = iframe.contentWindow;
+    if (!doc?.documentElement) return;
+    const de = doc.documentElement;
+    // Neutralize viewport-height floors (min-height:100vh bodies are the
+    // common artifact pattern). In the embed they are self-defeating: vh
+    // includes the horizontal scrollbar's gutter, so such a floor overflows
+    // by exactly the scrollbar's thickness and pins a vertical scrollbar no
+    // container height can cure (growing the container grows 100vh equally).
+    // The full-page view is a separate document and keeps the author's value.
+    de.style.minHeight = '0';
+    if (doc.body) doc.body.style.minHeight = '0';
+    // A horizontal scrollbar inside the artifact (zoom, narrow windows) eats
+    // its thickness from the inner viewport; add it back or the content
+    // overflows by exactly that much and spawns a pointless vertical
+    // scrollbar. clientHeight excludes it, innerHeight includes it (0 on
+    // overlay-scrollbar platforms). Measured at the live size, pre-collapse.
+    const hScrollbar = win ? Math.max(0, win.innerHeight - de.clientHeight) : 0;
+    // Measure with the inner viewport collapsed to 0 so viewport-relative
+    // sizing (min-height:100vh bodies, vh sections) contributes nothing —
+    // scrollHeight is max(content, viewport), so measuring at the height we
+    // just set feeds our own value back and grows forever. Collapse + restore
+    // happen in one task: nothing paints, and both ResizeObserver and inner
+    // resize events sample at frame time, so the transient state is invisible.
+    iframe.style.height = '0px';
+    const content = Math.ceil(Math.max(de.scrollHeight, doc.body?.scrollHeight ?? 0));
+    iframe.style.height = '';
+    // scrollHeight/clientHeight/innerHeight are all integer-rounded reads of
+    // fractional layout (site-injected CSS especially lands on fractional
+    // line heights). When the horizontal scrollbar's thickness joins the sum,
+    // the rounding errors stack and can come up 1–2px short — enough to spawn
+    // a 1px vertical scrollbar. Two invisible pixels of slack absorb it.
+    const h = content + hScrollbar + (hScrollbar > 0 ? 2 : 0);
+    if (h > 0 && Math.abs(h - container.getBoundingClientRect().height) > 1) {
+      container.style.height = `${h}px`;
+      container.dataset.artifactFit = '1';
+    }
+  } catch {
+    /* cross-origin or not yet navigable — the CSS placeholder height holds */
+  }
+}
+
+function observeContent(container: HTMLElement, iframe: HTMLIFrameElement): void {
+  try {
+    const doc = iframe.contentDocument;
+    if (!doc?.documentElement) return;
+    const ro = new ResizeObserver(() => fitToContent(container, iframe));
+    ro.observe(doc.documentElement);
+    if (doc.body) ro.observe(doc.body);
+    // Width changes (zoom, window resize, sidebar collapse) reach the embed as
+    // container resizes; observing from the parent side means our own height
+    // writes converge in one extra no-op pass instead of echoing.
+    const parentRo = new ResizeObserver(() => fitToContent(container, iframe));
+    parentRo.observe(container);
+  } catch {
+    /* same failure surface as fitToContent */
+  }
+}
+
 function renderArtifact(container: HTMLElement): void {
   const src = container.dataset.src;
   const title = container.dataset.title || 'Artifact';
 
   if (!src) {
     container.classList.add('artifact-error');
+    container.style.height = ''; // error chrome is auto-height
     container.textContent = 'Artifact is missing its source URL.';
     return;
   }
@@ -75,9 +172,14 @@ function renderArtifact(container: HTMLElement): void {
   iframe.addEventListener('load', () => {
     iframes.add(iframe);
     applyTheme(iframe);
+    if (!hasDeclaredSize(container)) {
+      fitToContent(container, iframe);
+      observeContent(container, iframe);
+    }
   });
   iframe.addEventListener('error', () => {
     container.classList.add('artifact-error');
+    container.style.height = ''; // error chrome is auto-height
     container.textContent = `Failed to load artifact: ${fullPageUrl}`;
   });
   container.appendChild(iframe);
@@ -91,14 +193,15 @@ function renderArtifact(container: HTMLElement): void {
   open.href = fullPageUrl;
   open.target = '_blank';
   open.rel = 'noopener';
-  open.textContent = 'Open full page ↗';
+  open.innerHTML = `${ICON_OPEN}<span>Full page</span>`; // static markup only
+  open.title = 'Open full page in a new tab';
+  open.setAttribute('aria-label', 'Open full page in a new tab');
   tools.appendChild(open);
 
   const expand = document.createElement('button');
   expand.type = 'button';
   expand.className = 'artifact-tool artifact-expand';
-  expand.textContent = 'Expand';
-  expand.setAttribute('aria-expanded', 'false');
+  setExpandUi(expand, false);
   expand.addEventListener('click', () => toggleExpand(container, expand));
   tools.appendChild(expand);
 
@@ -110,8 +213,12 @@ function renderArtifact(container: HTMLElement): void {
 function toggleExpand(container: HTMLElement, button: HTMLButtonElement): void {
   const expanded = container.classList.toggle('artifact-expanded');
   document.body.classList.toggle('artifact-expanded-lock', expanded);
-  button.textContent = expanded ? 'Close' : 'Expand';
-  button.setAttribute('aria-expanded', String(expanded));
+  setExpandUi(button, expanded);
+  // Collapsing returns to the in-flow embed; re-sync it to current content.
+  if (!expanded) {
+    const iframe = container.querySelector<HTMLIFrameElement>('.artifact-frame');
+    if (iframe && !hasDeclaredSize(container)) fitToContent(container, iframe);
+  }
 }
 
 function closeAnyExpanded(): void {
@@ -120,10 +227,7 @@ function closeAnyExpanded(): void {
   open.classList.remove('artifact-expanded');
   document.body.classList.remove('artifact-expanded-lock');
   const button = open.querySelector<HTMLButtonElement>('.artifact-expand');
-  if (button) {
-    button.textContent = 'Expand';
-    button.setAttribute('aria-expanded', 'false');
-  }
+  if (button) setExpandUi(button, false);
 }
 
 function initArtifacts(): void {

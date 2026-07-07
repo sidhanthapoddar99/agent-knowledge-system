@@ -1,7 +1,7 @@
 {
   "title": "Documentation update — phase 2",
   "description": "Bring user-guide and dev-docs up to date with phase-2 work: dev-tools rename, issues layout, Editor V2 (Yjs CRDT), system-metrics + cache-inspector toolbar apps, presence manager, two-tier theme token model.",
-  "status": "open",
+  "status": "in-progress",
   "priority": "high",
   "component": [
     "ai-plugin-and-docs"

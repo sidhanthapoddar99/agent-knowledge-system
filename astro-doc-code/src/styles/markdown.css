@@ -479,13 +479,13 @@ body {
 .markdown-content .artifact {
   position: relative;
   width: 100%;
-  /* Viewport-fill default at 90%: content column minus the navbar and its own
-     top + bottom padding, scaled to keep a sliver of following content visible
-     as a scroll cue. A sidecar embed_height overrides this via inline style. */
-  height: calc((100vh - var(--navbar-height) - 2 * var(--spacing-xl)) * 0.9);
-  /* Usable-minimum floor for short viewports, kept root-relative (scales with the
-     user's font size / zoom) rather than a hardcoded pixel value. */
-  min-height: 24rem;
+  /* Loading placeholder only. At runtime scripts/artifacts.ts sizes the embed
+     to the artifact's full content height (and tracks it with a
+     ResizeObserver), so the artifact scrolls with the page like any other
+     document — no nested scrollbar. A sidecar embed_height arrives as an
+     inline style and opts back into a fixed box. Definite height (not
+     min-height) so the iframe's 100% resolves before the first fit. */
+  height: 24rem;
   margin: var(--spacing-lg) 0;
   background-color: var(--color-bg-secondary);
   border-radius: var(--border-radius-lg);
@@ -501,50 +501,77 @@ body {
 }
 
 /* Hover affordance bar (open full page + expand) */
+/* One floating pill holding both affordances — reveals with a soft drop-in on
+   hover/focus. Segments share the surface; a hairline divider separates them. */
 .markdown-content .artifact-tools {
   position: absolute;
   top: var(--spacing-sm);
   right: var(--spacing-sm);
   display: flex;
-  gap: var(--spacing-xs);
+  align-items: stretch;
+  overflow: hidden;
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--border-radius-full, 999px);
+  box-shadow: var(--shadow-md);
   opacity: 0;
-  transition: opacity var(--transition-fast);
+  transform: translateY(-4px);
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
   z-index: 1;
 }
 
 .markdown-content .artifact:hover .artifact-tools,
 .markdown-content .artifact-tools:focus-within {
   opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .markdown-content .artifact-tools {
+    transform: none;
+    transition: opacity var(--transition-fast);
+  }
 }
 
 .markdown-content .artifact-tool {
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-xs);
-  padding: var(--spacing-xs) var(--spacing-sm);
+  padding: var(--spacing-xs) var(--spacing-md);
   font-family: var(--font-family-base);
   font-size: var(--ui-text-micro);
   font-weight: 600;
   line-height: 1;
   color: var(--color-text-secondary);
-  background-color: var(--color-bg-secondary);
-  border: 1px solid var(--color-border-default);
-  border-radius: var(--border-radius-sm);
+  background-color: transparent;
+  border: 0;
   cursor: pointer;
   text-decoration: none;
-  transition: color var(--transition-fast), border-color var(--transition-fast),
-    background-color var(--transition-fast);
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.markdown-content .artifact-tool + .artifact-tool {
+  border-left: 1px solid var(--color-border-light);
+}
+
+.markdown-content .artifact-tool svg {
+  display: block;
+  flex: none;
 }
 
 .markdown-content .artifact-tool:hover {
   color: var(--color-text-primary);
-  border-color: var(--color-brand-primary);
+  background-color: var(--color-bg-tertiary);
+}
+
+.markdown-content .artifact-tool:focus-visible {
+  outline: 2px solid var(--color-brand-primary);
+  outline-offset: -2px;
 }
 
 /* Primary affordance reads as primary via brand color + fill on hover */
 .markdown-content .artifact-open {
   color: var(--color-brand-primary);
-  border-color: var(--color-brand-primary);
 }
 
 .markdown-content .artifact-open:hover {
@@ -556,8 +583,9 @@ body {
 .markdown-content .artifact.artifact-expanded {
   position: fixed;
   inset: 0;
-  width: 100vw;
-  height: 100vh;
+  /* !important: the runtime-measured inline height must not beat the overlay */
+  width: 100vw !important;
+  height: 100vh !important;
   min-height: 0;
   margin: 0;
   border: 0;

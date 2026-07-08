@@ -9,7 +9,7 @@ The plugin itself takes the new identity: folder `plugins/agent-ks`,
 ([10](10_tool-and-skill-rename.md)) because it has external blast radius: the
 marketplace repo entry ([80](80_marketplace-repo-update.md)), every consumer's
 `enabledPlugins` key, the cache path, and all install instructions
-(`/plugin install …`) across README, user-guide, and `/docs-init`.
+(`/plugin install …`) across README, user-guide, and `/agent-ks-init`.
 
 ## Tasks
 

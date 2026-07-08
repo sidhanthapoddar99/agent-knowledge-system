@@ -2,7 +2,7 @@
 
 **agent-knowledge-system** — a knowledge + task system designed for AI consumers, with human-readable docs as a first-class output. Astro-based engine with modular layouts, YAML configuration, and live editing via Yjs CRDT.
 
-> **Legacy naming (rebrand, 2026-07):** formerly *documentation-template*, with plugin `documentation-guide` (install key `documentation-guide@sids-plugin-marketplace`), CLI `docs-guide`, and skills `documentation-guide` / `doc-issues` / `artifact-authoring`. Those names survive only in tracker history and old commits — never use them in new work; current names are plugin `agent-ks` (key `agent-ks@sids-plugin-marketplace`), CLI `agent-ks`, and skills `agent-ks-docs` / `agent-ks-issues` / `agent-ks-artifacts`. Delete this note once the repo move + archive (issue `2026-04-26-project-rebrand`) is fully settled.
+> **Legacy naming (rebrand, 2026-07):** formerly *documentation-template*, with plugin `documentation-guide` (install key `documentation-guide@sids-plugin-marketplace`), CLI `docs-guide`, skills `documentation-guide` / `doc-issues` / `artifact-authoring`, and slash commands `/docs-init` / `/docs-add-section` / `/docs-quick-idea-note`. Those names survive only in tracker history and old commits — never use them in new work; current names are plugin `agent-ks` (key `agent-ks@sids-plugin-marketplace`), CLI `agent-ks`, skills `agent-ks-docs` / `agent-ks-issues` / `agent-ks-artifacts`, and slash commands `/agent-ks-init` / `/agent-ks-add-section` / `/agent-ks-quick-idea-note`. Delete this note once the repo move + archive (issue `2026-04-26-project-rebrand`) is fully settled.
 
 ## Skills + tooling
 
@@ -18,12 +18,13 @@ The plugin's skills carry the full operating manual, including the `agent-ks` CL
 
 **Tracker mental model.** This tracker is comprehensive memory of thought-work for AI-augmented development. Each issue is a folder capturing one coherent unit of *thinking + execution* — deliberate (`brainstorm/`) → write down (`notes/`) → plan (`subtasks/`) → execute (`agent-log/`), with flat `comments/` as the evolution log and `agent-memory/` as AI working state. Ordering is `priority desc, updated desc`; `updated` is derived from git history (most recent commit touching anything under the folder). `created` comes from the folder slug. Best-practices: exactly one `component` per issue — tag by center of gravity even for cross-cutting work (hint-warned by validator when >1); AI-handoff-bound issues should declare ≥1 subtask; a thought earns a full issue only if you can name its component and first subtask in one breath (otherwise: subtask, brainstorm entry, or dump — see the `agent-ks-issues` skill). **Don't add scheduling, release-bucket, or single-type fields without an explicit policy reversal** — they rot under continuous AI-driven shipping. Full framing: `default-docs/data/user-guide/19_issues/01_overview.md` and `02_design-philosophy.md`.
 
-**2 slash commands** for project-level scaffolding:
+**3 slash commands**:
 
 | Command | Use |
 |---|---|
-| `/docs-init` | Bootstrap a new agent-knowledge-system project from zero — interactive: scope (whole repo vs subfolder) → site name → first section → writes `config/`, `data/`, starter page, patches `CLAUDE.md`. Prints framework-clone command at the end. |
-| `/docs-add-section [name]` | Scaffold a new top-level section under `data/` — auto-computes next `NN_` prefix, creates `settings.json` + starter page, optionally registers in `site.yaml`. |
+| `/agent-ks-init` | Bootstrap a new agent-knowledge-system project from zero — interactive: scope (whole repo vs subfolder) → site name → first section → writes `config/`, `data/`, starter page, patches `CLAUDE.md`. Prints framework-clone command at the end. |
+| `/agent-ks-add-section [name]` | Scaffold a new top-level section under `data/` — auto-computes next `NN_` prefix, creates `settings.json` + starter page, optionally registers in `site.yaml`. |
+| `/agent-ks-quick-idea-note [idea]` | Capture an ad-hoc idea / half-formed issue into the issue dump — writes a subtask entry into the right dump issue, no folder ceremony. |
 
 ## Repository Layout
 

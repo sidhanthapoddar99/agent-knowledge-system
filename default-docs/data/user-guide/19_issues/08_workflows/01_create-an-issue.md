@@ -35,7 +35,7 @@ Route it instead:
   *shipped work* stays, closed with a supersession comment.
 - **A dump entry** — an unhomed half-formed thought goes to a **dump issue**
   (component `issue-dump`; each entry a subtask). Capture with
-  `/docs-quick-idea-note`. A dump entry graduates to a real issue exactly when it
+  `/agent-ks-quick-idea-note`. A dump entry graduates to a real issue exactly when it
   passes the litmus test — and is then **deleted from the dump**, not ticked off.
 
 If the thought passes the test, continue below.

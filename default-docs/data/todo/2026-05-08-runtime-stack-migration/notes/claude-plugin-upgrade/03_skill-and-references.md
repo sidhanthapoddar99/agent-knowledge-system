@@ -82,12 +82,12 @@ The "skills + tooling" overview prose at the top of CLAUDE.md updates to reflect
 
 ## Slash commands
 
-`/docs-init` and `/docs-add-section` stay. Their internal scripts may be rewritten to call `doc-engine` instead of running `.mjs` scripts directly, but the user-facing surface (the slash command + its prompts) is identical.
+`/agent-ks-init` and `/agent-ks-add-section` stay. Their internal scripts may be rewritten to call `doc-engine` instead of running `.mjs` scripts directly, but the user-facing surface (the slash command + its prompts) is identical.
 
 If `doc-engine init` and `doc-engine docs add-section` exist as proper subcommands, the slash commands could become thin wrappers:
 
 ```markdown
-# .claude/commands/docs-init.md
+# .claude/commands/agent-ks-init.md
 Run `doc-engine init` interactively in the user's current directory. Pass through prompts.
 ```
 

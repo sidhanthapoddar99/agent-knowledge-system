@@ -4,7 +4,7 @@ allowed-tools: Read, Write, Edit, Bash
 argument-hint: [section-name]
 ---
 
-You are running the `/docs-add-section` slash command from the `agent-ks` plugin.
+You are running the `/agent-ks-add-section` slash command from the `agent-ks` plugin.
 
 # Goal
 
@@ -38,7 +38,7 @@ pages:
 
 Find the docs project root by looking for `config/site.yaml` (or fall back to `default-docs/config/site.yaml` for the legacy layout) walking up from the current working directory. If neither is found:
 
-> No agent-knowledge-system project detected here (no `config/site.yaml` found walking up). Run `/docs-init` first to scaffold a project.
+> No agent-knowledge-system project detected here (no `config/site.yaml` found walking up). Run `/agent-ks-init` first to scaffold a project.
 
 Stop.
 

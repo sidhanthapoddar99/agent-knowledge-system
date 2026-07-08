@@ -34,7 +34,7 @@ push to the new repo, full history preserved.
 ## Decision: attack clone cost, not history — shallow clone for consumers
 
 Consumers installing the framework in many projects don't need history at all.
-The install path (the `/docs-init` printed clone command, README + user-guide
+The install path (the `/agent-ks-init` printed clone command, README + user-guide
 quick-starts — [90](../subtasks/90_install-script-links.md)) moves to:
 
 ```

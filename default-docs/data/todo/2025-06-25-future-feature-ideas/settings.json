@@ -1,6 +1,6 @@
 {
   "title": "Dump: future features & ideas",
-  "description": "Issue dump for unhomed feature ideas, grouped by category as subtasks. Entries graduate to real issues (promote + delete), never tick off. Capture via /docs-quick-idea-note.",
+  "description": "Issue dump for unhomed feature ideas, grouped by category as subtasks. Entries graduate to real issues (promote + delete), never tick off. Capture via /agent-ks-quick-idea-note.",
   "status": "open",
   "priority": "low",
   "component": [

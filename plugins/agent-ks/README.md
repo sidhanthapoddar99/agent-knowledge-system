@@ -4,7 +4,7 @@ Claude Code plugin for the [agent-knowledge-system](https://github.com/sidhantha
 
 - **3 skills** — `agent-ks-docs` (operating manual for docs / blog / config / writing / themes — triages to domain-specific reference files), `agent-ks-issues` (the complete, self-contained issue-tracker skill: anatomy, creation rules, subtasks, brainstorms, agent-logs, agent-memory, the dump — also fires on the execution verbs audit / refactor / loop / discuss), and `agent-ks-artifacts` (building self-contained HTML artifacts — reports, dashboards, data visualizations, design systems — as `.html` content files served at `/artifacts`, with a `.meta.json` sidecar; bundles a palette validator)
 - **The `agent-ks` CLI** — one dispatcher on `PATH`; every operation is `agent-ks <group> <verb>` (issue tracker, validators, docs+blog content, git metadata, cross-content `find`, link-aware `move`, `img`). Discover with `agent-ks help`
-- **2 slash commands** — `/docs-init` (bootstrap a new docs project from zero) and `/docs-add-section` (scaffold a new top-level section)
+- **3 slash commands** — `/agent-ks-init` (bootstrap a new docs project from zero), `/agent-ks-add-section` (scaffold a new top-level section), and `/agent-ks-quick-idea-note` (capture an ad-hoc idea into the issue dump)
 
 The skills teach Claude Code how to navigate agent-knowledge-system (an Astro-based engine): the project's `data/` content layout, frontmatter conventions, the folder-per-issue tracker, `site.yaml` configuration, custom themes, and more. Each task is triaged to a domain-specific reference file rather than dumping everything into one long prompt.
 
@@ -35,7 +35,7 @@ The skills trigger automatically whenever you work on docs (agent-ks-docs) or th
 In a fresh directory:
 
 ```
-/docs-init
+/agent-ks-init
 ```
 
 Walks you through scope (whole repo vs subfolder), site name, and first section name; scaffolds `config/`, `data/`, starter page, and patches `CLAUDE.md`. Prints the framework-clone command at the end.
@@ -43,7 +43,7 @@ Walks you through scope (whole repo vs subfolder), site name, and first section 
 To add another top-level section to an existing project:
 
 ```
-/docs-add-section [name]
+/agent-ks-add-section [name]
 ```
 
 Computes the next `NN_` prefix, scaffolds `settings.json` + `01_overview.md`, and (optionally) registers the section in `config/site.yaml`.
@@ -57,7 +57,7 @@ Computes the next `NN_` prefix, scaffolds `settings.json` + `01_overview.md`, an
 | Artifacts skill | `skills/agent-ks-artifacts/SKILL.md` (+ `references/` incl. a `dataviz/` sub-folder, and a bundled `scripts/validate_palette.js`) |
 | CLI entrypoint | `bin/agent-ks` (bash) + `bin/agent-ks.cmd` (Windows) |
 | CLI dispatcher | `skills/agent-ks-docs/scripts/cli.mjs` — the `<group> <verb>` → script map |
-| 2 slash commands | `commands/docs-init.md`, `commands/docs-add-section.md` |
+| 3 slash commands | `commands/agent-ks-init.md`, `commands/agent-ks-add-section.md`, `commands/agent-ks-quick-idea-note.md` |
 | Helper scripts | `skills/agent-ks-docs/scripts/{issues,blog,config,docs}/*.mjs` (the dispatcher routes to these) |
 
 ## Requirements

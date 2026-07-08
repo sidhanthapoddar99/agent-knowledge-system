@@ -13,7 +13,7 @@ documentation site with five top-level sections: **Home**, **Docs**, **Issues**,
 
 ## Layout once copied
 
-`/docs-init` rsyncs everything in this template to the user's chosen root **except the template's own README.md** (this file — it's documentation about the template itself, not part of the scaffold).
+`/agent-ks-init` rsyncs everything in this template to the user's chosen root **except the template's own README.md** (this file — it's documentation about the template itself, not part of the scaffold).
 
 ```
 <user-project>/
@@ -54,7 +54,7 @@ content with zero setup.
 - **Branding (logo, favicon)** — drop replacements into `assets/`, then update
   paths in `site.yaml → logo:`.
 - **Add a section** — see the User Guide page on adding sections (or run
-  `/docs-add-section`).
+  `/agent-ks-add-section`).
 - **Custom theme** — create a folder under `themes/<name>/` with a `theme.yaml`
   (typically `extends: "@theme/default"`) and any CSS overrides; switch via
   `theme: "<name>"` in `site.yaml`.

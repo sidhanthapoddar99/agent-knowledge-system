@@ -4,7 +4,7 @@ status: review
 ---
 
 Every place an installation path bakes in the old repo URL must move to the
-new one: the framework-clone command `/docs-init` prints at the end of
+new one: the framework-clone command `/agent-ks-init` prints at the end of
 scaffolding, the clone commands in user-guide installation pages and the root
 README quick-start, and any future `install.sh` (the issue's original scope
 item 7 — install domain — stays open until the CLI-tool distribution ships).
@@ -17,7 +17,7 @@ Framework-dev instructions keep full clones.
 
 ## Tasks
 
-- [x] `/docs-init` printed clone command → new repo URL, `--depth 1`
+- [x] `/agent-ks-init` printed clone command → new repo URL, `--depth 1`
       (landed with the [70](70_github-urls-and-branding.md) sweep, 2026-07-08).
 - [x] README + user-guide quick-start clone commands: consumer clones
       (README consumer mode, installation.md, init-and-template, storage page,

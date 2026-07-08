@@ -16,22 +16,22 @@ The fastest path is via the Claude Code plugin distributed through [`sids-plugin
 /plugin marketplace add sidhanthapoddar99/sids-plugin-marketplace
 /plugin install agent-ks@sids-plugin-marketplace
 /reload-plugins
-/docs-init
+/agent-ks-init
 ```
 
-`/docs-init` walks you through site name, first section, and patches `CLAUDE.md`. At the end it prints the framework-clone command tailored to your scope choice. Open `http://localhost:4321` and you have a docs site.
+`/agent-ks-init` walks you through site name, first section, and patches `CLAUDE.md`. At the end it prints the framework-clone command tailored to your scope choice. Open `http://localhost:4321` and you have a docs site.
 
 ## What's in the plugin
 
 | Surface | Use it for |
 |---|---|
 | **Skills (3)** — `agent-ks-docs`, `agent-ks-issues`, `agent-ks-artifacts` | Trigger automatically on docs/blog/config work, issue-tracker work, and HTML-artifact building respectively. Each triages to domain-specific reference files. |
-| **Slash commands** — `/docs-init`, `/docs-add-section` | Bootstrap a new project; add a top-level section. Both interactive. |
+| **Slash commands** — `/agent-ks-init`, `/agent-ks-add-section` | Bootstrap a new project; add a top-level section. Both interactive. |
 | **CLI** — one `agent-ks` entrypoint on `PATH` | 28 commands as `agent-ks <group> <verb>` — issue tracker (`agent-ks issue …`), validators (`agent-ks check …`), docs/blog content, git metadata, cross-content search. Discover with `agent-ks help`. |
 
 The `agent-ks` entrypoint lands on your `$PATH` automatically after install — no path configuration. Pass `--help` to any command for the full flag list.
 
-## Manual setup (without `/docs-init`)
+## Manual setup (without `/agent-ks-init`)
 
 The framework supports two operating modes — pick the one that matches your situation.
 
@@ -43,7 +43,7 @@ You have a project (a repo, a folder, anything) and you want docs alongside your
 cd <your-project>
 git clone --depth 1 https://github.com/sidhanthapoddar99/agent-knowledge-system.git
 # Author your config/, data/, assets/, themes/ at the project root
-# (or run /docs-init to scaffold them from the bundled template).
+# (or run /agent-ks-init to scaffold them from the bundled template).
 cd agent-knowledge-system
 echo "CONFIG_DIR=../config" > .env
 ./start                            # http://localhost:4321
@@ -116,7 +116,7 @@ The plugin in `plugins/agent-ks/` is distributed via [`sids-plugin-marketplace`]
 
 ## What's coming
 
-The framework currently ships via `git clone`. A planned refactor (`2026-04-25-framework-as-npm-package` issue) packages it as a published `bun add agent-knowledge-system` dependency, so each consumer becomes a thin shell over the engine instead of a full clone. Once that lands, `/docs-init` will install the engine via npm/bun instead of asking you to clone.
+The framework currently ships via `git clone`. A planned refactor (`2026-04-25-framework-as-npm-package` issue) packages it as a published `bun add agent-knowledge-system` dependency, so each consumer becomes a thin shell over the engine instead of a full clone. Once that lands, `/agent-ks-init` will install the engine via npm/bun instead of asking you to clone.
 
 ## License
 

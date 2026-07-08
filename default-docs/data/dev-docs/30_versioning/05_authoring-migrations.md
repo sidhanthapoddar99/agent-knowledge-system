@@ -96,7 +96,7 @@ Usage:
 6. **Document**: docstring complete; user-guide versioning page and CLAUDE.md
    contract paragraph still accurate; this section updated if the mechanics
    changed.
-7. `site.yaml` in the dogfood config and the `/docs-init` template bump their
+7. `site.yaml` in the dogfood config and the `/agent-ks-init` template bump their
    `engine_version` to match.
 
 > [!TIP]

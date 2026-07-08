@@ -9,7 +9,7 @@ aren't lost without paying full-issue ceremony for each one.
 
 - **Each entry is a subtask** (currently grouped by category — content, navigation,
   visuals, social, performance, analytics, dev tooling).
-- **Capture** new entries via `/docs-quick-idea-note` (or by hand: next `NN_`
+- **Capture** new entries via `/agent-ks-quick-idea-note` (or by hand: next `NN_`
   subtask, a couple of context-setting sentences — never a bare fragment).
 - **Graduation = promote and delete.** When an entry can name its component and
   first subtask, it becomes a real issue and the entry is **deleted from here** —

@@ -1,11 +1,11 @@
 ---
 title: Init and the Starter Template
-description: How `/docs-init` scaffolds a new project from the bundled starter template — what gets copied, what gets substituted, what to do next.
+description: How `/agent-ks-init` scaffolds a new project from the bundled starter template — what gets copied, what gets substituted, what to do next.
 ---
 
 # Init and the Starter Template
 
-The `/docs-init` slash command (shipped by the `agent-ks` plugin) bootstraps a new docs project by copying a **bundled starter template** into your chosen directory and substituting your site name / description / repo URL into the copied files.
+The `/agent-ks-init` slash command (shipped by the `agent-ks` plugin) bootstraps a new docs project by copying a **bundled starter template** into your chosen directory and substituting your site name / description / repo URL into the copied files.
 
 The result is a working five-section site (Home / Docs / Issues / Blog / User Guide) you can immediately `./start dev` and customise from there.
 
@@ -44,10 +44,10 @@ The five sections are pre-wired:
 
 The **User Guide** section points at the framework's bundled docs (the page you're reading right now). You get the framework's own user-guide alongside your content out of the box. Drop the `user-guide:` block from `config/site.yaml` and the matching navbar entry to remove it later.
 
-## What `/docs-init` does
+## What `/agent-ks-init` does
 
 ```
-/docs-init
+/agent-ks-init
 ```
 
 Walks you through five short questions (the last is optional) then copies + substitutes the template:
@@ -66,7 +66,7 @@ Then it:
 4. **Patches `CLAUDE.md`** at your project root so future Claude Code sessions know the layout, the active skill, and the build commands
 5. **Prints the framework-clone command** — init does NOT clone the framework for you (network operation, license/fork preference)
 
-## What `/docs-init` deliberately doesn't do
+## What `/agent-ks-init` deliberately doesn't do
 
 - **Doesn't clone the framework.** Cloning is a network operation with a fork/license decision the user owns. Init prints the exact clone command at the end.
 - **Doesn't write `.env`.** `.env` lives inside the framework folder which doesn't exist yet. The post-clone step creates it (`echo "CONFIG_DIR=../config" > .env`).
@@ -84,7 +84,7 @@ Then it:
 
 # 1. Scaffold your content folders
 cd <your-project>
-/docs-init                                 # answer prompts; gets you config/, data/, assets/, themes/
+/agent-ks-init                                 # answer prompts; gets you config/, data/, assets/, themes/
 
 # 2. Clone the framework as a sibling
 git clone --depth 1 https://github.com/sidhanthapoddar99/agent-knowledge-system.git
@@ -99,7 +99,7 @@ echo "CONFIG_DIR=../config" > .env
 
 After step 4, the site is live at `http://localhost:4321` showing your customised "My Docs" homepage.
 
-## Manual scaffold (without `/docs-init`)
+## Manual scaffold (without `/agent-ks-init`)
 
 If you'd rather not run the slash command — for example, you're scripting the install or want to inspect the template before copying — the bundle is at `<plugin-install>/template/`. You still need the plugin marketplace added (the marketplace add is what installs the bundle to disk), but you can skip the slash command and copy by hand:
 
@@ -130,9 +130,9 @@ cd agent-knowledge-system
 ./start
 ```
 
-The `/docs-init` flow automates steps 1–3 and adds the `CLAUDE.md` patch.
+The `/agent-ks-init` flow automates steps 1–3 and adds the `CLAUDE.md` patch.
 
-> **Why the template lives in the plugin and not in the framework clone:** the plugin is the canonical distribution point for new-project tooling. Keeping it there avoids two copies drifting and means `/docs-init` works without any framework clone on disk. The framework clone (`agent-knowledge-system/`) is what your *running* docs site needs; the plugin is what your *first-time setup* needs.
+> **Why the template lives in the plugin and not in the framework clone:** the plugin is the canonical distribution point for new-project tooling. Keeping it there avoids two copies drifting and means `/agent-ks-init` works without any framework clone on disk. The framework clone (`agent-knowledge-system/`) is what your *running* docs site needs; the plugin is what your *first-time setup* needs.
 
 ## What gets substituted
 
@@ -153,7 +153,7 @@ The template is the **starting point**, not the final shape. Common follow-ups:
 
 - **Replace the Astro placeholder logos** — swap files in `assets/` and update `config/site.yaml → logo:` paths
 - **Change the theme** — set `theme: "<name>"` in `site.yaml`; framework themes (`full-width`, `minimal`) are already in the scan path via `@root/default-docs/themes`
-- **Add another section** — `/docs-add-section` (or hand-roll: see [Data Structure](./04_data-structure))
+- **Add another section** — `/agent-ks-add-section` (or hand-roll: see [Data Structure](./04_data-structure))
 - **Drop a section you don't need** — remove the `pages:` entry in `site.yaml` and the navbar item; delete the `data/<section>/` folder
 - **Hide the framework's User Guide** — drop the `user-guide:` block from `config/site.yaml → pages:` and the matching `navbar.yaml` entry
 

@@ -38,7 +38,7 @@ Because `@data/`, `@assets/`, and `@themes/` are pointed wherever `site.yaml` sa
 
 ## Recommended layout (consumer mode)
 
-After running `/docs-init`, your project looks like this:
+After running `/agent-ks-init`, your project looks like this:
 
 ```
 your-docs-folder/                # YOUR project root

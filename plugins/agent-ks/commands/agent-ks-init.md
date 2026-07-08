@@ -4,7 +4,7 @@ allowed-tools: Read, Write, Edit, Bash
 argument-hint: (no arguments — fully interactive)
 ---
 
-You are running the `/docs-init` slash command from the `agent-ks` plugin.
+You are running the `/agent-ks-init` slash command from the `agent-ks` plugin.
 
 # Goal
 
@@ -52,7 +52,7 @@ test -f ./default-docs/config/site.yaml && echo "default-docs/config/site.yaml e
 ```
 
 If **any** of these prints, stop:
-> Looks like docs are already initialised here (`<path-found>` exists). Use `/docs-add-section` to add a new section, or remove the existing structure first.
+> Looks like docs are already initialised here (`<path-found>` exists). Use `/agent-ks-add-section` to add a new section, or remove the existing structure first.
 
 If none exist, continue.
 
@@ -192,7 +192,7 @@ To customise:
   • Site identity     → config/site.yaml
   • Navbar / footer   → config/{navbar,footer}.yaml
   • Branding (logos)  → drop replacements into assets/, then update site.yaml → logo:
-  • Add a section     → /docs-add-section
+  • Add a section     → /agent-ks-add-section
   • New theme         → themes/<name>/theme.yaml (extends: "@theme/default")
 
 The User Guide section already points at the framework's bundled documentation
@@ -242,7 +242,7 @@ This project uses the `agent-ks` Claude Code plugin. It ships:
 
 - **Skills (3)** — `agent-ks-docs` (docs/blog/config/writing; routes to domain-specific reference files), `agent-ks-issues` (issue tracker), `agent-ks-artifacts` (HTML artifacts); each triggers automatically on its domain
 - **CLI on PATH** — one `agent-ks` entrypoint; every operation is `agent-ks <group> <verb>` (issue tracker: `agent-ks issue …`, validators: `agent-ks check …`, content: `agent-ks doc/blog …`, plus `find`, `move`, `img`). Discover with `agent-ks help`
-- **Slash commands** — `/docs-init`, `/docs-add-section`
+- **Slash commands** — `/agent-ks-init`, `/agent-ks-add-section`
 
 Install (per workstation, one-time):
 
@@ -255,7 +255,7 @@ Install (per workstation, one-time):
 ### Adding content
 
 - **New page in existing section** — create `data/<section>/<NN>_<slug>.md` with `title:` frontmatter. `NN_` is the next numeric prefix in the section (2–5 digits, sorted by value — generally 2-digit and gap-spaced).
-- **New top-level section** — run `/docs-add-section` (creates `data/<name>/`, `settings.json`, starter page; optionally registers in `site.yaml`)
+- **New top-level section** — run `/agent-ks-add-section` (creates `data/<name>/`, `settings.json`, starter page; optionally registers in `site.yaml`)
 - **Validate before commit** — `agent-ks check config` and `agent-ks check section <chosen_root>/data/<section>` flag missing `settings.json`, missing frontmatter, prefix collisions
 ````
 

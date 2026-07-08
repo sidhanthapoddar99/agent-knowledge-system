@@ -6,7 +6,7 @@ status: review
 Once the new repo exists ([60](60_new-repo.md)): every URL and brand string
 that points at `sidhanthapoddar99/documentation-template` moves to the new
 repo — `plugin.json` `homepage`/`repository`, root README badges/links,
-user-guide installation pages, dev-docs marketplace pages, `/docs-init`'s
+user-guide installation pages, dev-docs marketplace pages, `/agent-ks-init`'s
 printed clone command, and any `site.yaml`/footer links.
 
 ## Tasks
@@ -16,7 +16,7 @@ printed clone command, and any `site.yaml`/footer links.
       checkouts at `git remote set-url`), navbar.yaml GitHub link, user-guide
       installation / init-and-template / storage pages (consumer clone
       commands also gained `--depth 1` per [90](90_install-script-links.md)),
-      settings-layout reference, plugin README, `/docs-init` printed clone
+      settings-layout reference, plugin README, `/agent-ks-init` printed clone
       command. Submodule example URL included.
 - [x] `plugin.json` homepage/repository fields → new repo (cache re-mirrored,
       identity pin kept).
@@ -26,7 +26,7 @@ printed clone command, and any `site.yaml`/footer links.
       description moved to the new name. Functional pieces made
       back-compatible: `_env.mjs` consumer-convention probe checks
       `agent-knowledge-system/` first, then legacy `documentation-template/`
-      spots; `/docs-init` pre-flight tests both folder names. The
+      spots; `/agent-ks-init` pre-flight tests both folder names. The
       `agent-ks-issues` skill description now says "agent-knowledge-system
       issue tracker".
 - [x] **Update the scripts as well** — `start` / `start.ps1` / `start.cmd`

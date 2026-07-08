@@ -108,8 +108,8 @@ plugins/agent-ks/
 ├── plugin.json
 ├── README.md
 ├── commands/                   ← slash commands
-│   ├── docs-init.md
-│   └── docs-add-section.md
+│   ├── agent-ks-init.md
+│   └── agent-ks-add-section.md
 └── skills/
     └── agent-ks-docs/
         ├── SKILL.md            ← updated

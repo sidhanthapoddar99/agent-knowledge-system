@@ -26,7 +26,7 @@ Now your project looks like:
 
 ```
 your-docs-folder/
-├── config/                       # YOUR content (created in Step 3 or via /docs-init)
+├── config/                       # YOUR content (created in Step 3 or via /agent-ks-init)
 ├── data/
 ├── assets/
 ├── themes/
@@ -72,9 +72,9 @@ This installs:
 
 - 3 skills (`agent-ks-docs` / `agent-ks-issues` / `agent-ks-artifacts`) that trigger automatically on docs, tracker, and artifact work
 - A single `agent-ks` CLI on `$PATH` — every operation is a `agent-ks <group> <verb>` subcommand (run `agent-ks help` to list them all)
-- 2 slash commands — `/docs-init` to bootstrap a new project from zero, `/docs-add-section` to add a top-level section to an existing one
+- 2 slash commands — `/agent-ks-init` to bootstrap a new project from zero, `/agent-ks-add-section` to add a top-level section to an existing one
 
-For a fresh project that hasn't been scaffolded yet, the easiest entry point is to run `/docs-init` after installing — it walks you through site name + first section and writes everything for you. Skip the rest of this Installation page if you go that route.
+For a fresh project that hasn't been scaffolded yet, the easiest entry point is to run `/agent-ks-init` after installing — it walks you through site name + first section and writes everything for you. Skip the rest of this Installation page if you go that route.
 
 For full details (skill internals, wrapper inventory, update flow, scope behaviour), see [Claude Code Plugin](./05_claude-skills.md).
 

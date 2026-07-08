@@ -9,7 +9,7 @@ This template ships its own **Claude Code plugin** — `agent-ks` — that teach
 
 - **3 skills** — `agent-ks-docs` (triages every docs/blog/config/writing task to a domain-specific reference), `agent-ks-issues` (the complete, self-contained issue-tracker skill — anatomy, rules, agent-logs, agent-memory, and the execution verbs), and `agent-ks-artifacts` (building self-contained HTML artifacts — reports, dashboards, data viz, design systems — served at `/artifacts`)
 - **28 CLI commands** auto-added to `$PATH` — issue tracker, validators, docs/blog content, git metadata, and cross-content search (one `agent-ks` entrypoint; every operation is a `agent-ks <group> <verb>` subcommand)
-- **2 slash commands** for project-level scaffolding (`/docs-init`, `/docs-add-section`)
+- **3 slash commands** (`/agent-ks-init`, `/agent-ks-add-section`, `/agent-ks-quick-idea-note`)
 
 You install it from a marketplace once and Claude Code picks it up across every project on your machine. The plugin is distributed via [`sids-plugin-marketplace`](https://github.com/sidhanthapoddar99/sids-plugin-marketplace).
 
@@ -68,8 +68,8 @@ Two commands ship inside the plugin for project-level scaffolding:
 
 | Command | Use it for |
 |---|---|
-| `/docs-init` | **Bootstrap a new docs project from zero.** Walks you through scope (whole repo vs subfolder), site name/title/description, and the first section name. Writes `config/`, `data/`, the starter page, and patches `CLAUDE.md` at the repo root. Prints the framework-clone command at the end. |
-| `/docs-add-section [name]` | **Add a new top-level section** to an existing docs project. Validates the name, creates `data/<name>/settings.json` + `01_overview.md`, and (optionally) appends a `pages:` entry to `config/site.yaml`. |
+| `/agent-ks-init` | **Bootstrap a new docs project from zero.** Walks you through scope (whole repo vs subfolder), site name/title/description, and the first section name. Writes `config/`, `data/`, the starter page, and patches `CLAUDE.md` at the repo root. Prints the framework-clone command at the end. |
+| `/agent-ks-add-section [name]` | **Add a new top-level section** to an existing docs project. Validates the name, creates `data/<name>/settings.json` + `01_overview.md`, and (optionally) appends a `pages:` entry to `config/site.yaml`. |
 
 Typical first-time flow in a fresh directory:
 
@@ -77,7 +77,7 @@ Typical first-time flow in a fresh directory:
 /plugin marketplace add sidhanthapoddar99/sids-plugin-marketplace
 /plugin install agent-ks@sids-plugin-marketplace
 /reload-plugins
-/docs-init
+/agent-ks-init
 ```
 
 Then follow the printed instructions to clone the framework engine and run `./start` from the repo root.
@@ -149,8 +149,8 @@ You almost always describe the task in natural language and let the skill route 
 |---|---|
 | Write a new doc page | Skill triggers automatically; just edit |
 | Add / change frontmatter | Skill triggers automatically |
-| Bootstrap a new docs project | `/docs-init` |
-| Add a new top-level section | `/docs-add-section` |
+| Bootstrap a new docs project | `/agent-ks-init` |
+| Add a new top-level section | `/agent-ks-add-section` |
 | Discover what commands/flags exist | `agent-ks help` (`agent-ks help <cmd>`, `agent-ks help --json`) |
 | Find issues by priority / status / search | `agent-ks issue list` |
 | Find a string across **all** content types | `agent-ks find` |
@@ -189,7 +189,7 @@ Plugin files are cached **once** at user level, regardless of which scope (user 
 ├── .claude-plugin/plugin.json
 ├── README.md
 ├── bin/                  ← auto-added to $PATH at session start
-├── commands/             ← /docs-init, /docs-add-section
+├── commands/             ← /agent-ks-init, /agent-ks-add-section
 └── skills/
     ├── agent-ks-docs/
     │   ├── SKILL.md

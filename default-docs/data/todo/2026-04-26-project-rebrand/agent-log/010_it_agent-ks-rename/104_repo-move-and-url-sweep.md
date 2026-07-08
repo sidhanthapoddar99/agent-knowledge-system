@@ -45,3 +45,15 @@ subtask 90's `--depth 1` decision since they share the same lines.
 70's one open item: the npm-fallback red warning in `start` (behavioral).
 Then 80 (marketplace entry → new repo + `agent-ks` name), 100 (`./start`
 origin self-migration in the old repo's final commit), 110 (archive).
+
+## Addendum (same day) — slash-command rename
+
+Sidhantha flagged the last old-brand surface: the slash commands. Renamed
+`/docs-init` → `/agent-ks-init`, `/docs-add-section` → `/agent-ks-add-section`,
+`/docs-quick-idea-note` → `/agent-ks-quick-idea-note` (files under
+`plugins/agent-ks/commands/`, name = filename). Swept every reference across
+CLAUDE.md (legacy note now records old + new command names), README, plugin
+README/plugin.json, user-guide, dev-docs, and active tracker issues. Fixed the
+pre-existing undercount along the way: catalogs said "2 slash commands" but
+`/agent-ks-quick-idea-note` ships too — all counts now say 3 and list it.
+Cache re-mirrored (commands/ renamed there as well); build + skill-links green.

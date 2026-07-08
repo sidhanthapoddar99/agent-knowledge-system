@@ -16,8 +16,8 @@ The plugin lives at `plugins/agent-ks/` and contains:
 2. **One dispatcher shim** in `bin/` — `agent-ks` (+ `.cmd` twin) — which execs `cli.mjs` via `bun` (node fallback); ~28 commands resolve as `agent-ks <group> <verb>` from a manifest (`_manifest.mjs`).
 
 3. **2 slash commands**:
-   - `/docs-init` — bootstrap a new agent-knowledge-system project
-   - `/docs-add-section` — scaffold a new top-level section
+   - `/agent-ks-init` — bootstrap a new agent-knowledge-system project
+   - `/agent-ks-add-section` — scaffold a new top-level section
 
 4. **Reference files** under each skill's `references/`.
 
@@ -33,7 +33,7 @@ The plugin lives at `plugins/agent-ks/` and contains:
 | Claude Code adds `bin/` to PATH | Still does (for slash commands) but the shim is gone | No-op once the shim is deleted |
 | `.mjs` scripts under `skills/.../scripts/` | Deleted; logic ported to Go | Single source of truth |
 | Reference files | **Unchanged** in content; minor command renames inline | Spec doesn't change, command syntax does |
-| 2 slash commands (`/docs-init`, `/docs-add-section`) | Stay as slash commands; can call `doc-engine` internally | These are user-facing chat commands, not CLI |
+| 2 slash commands (`/agent-ks-init`, `/agent-ks-add-section`) | Stay as slash commands; can call `doc-engine` internally | These are user-facing chat commands, not CLI |
 | SKILL.md triage logic | Updated to mention `doc-engine ...` instead of `agent-ks ...` | Same triage decisions, new commands |
 
 > The dispatcher consolidation (2026-06, CLI-toolkit issue) already collapsed the

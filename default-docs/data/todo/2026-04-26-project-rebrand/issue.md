@@ -42,7 +42,7 @@ High-level scope, to be expanded into subtasks:
 2. **Plugin namespace** — `documentation-guide` → `<new-name>-guide` or similar; affects `.claude-plugin/marketplace.json`, `plugins/` folder, plugin.json metadata
 3. **CLI wrapper names** — `docs-list` → `<prefix>-list` (or `nks-list` if `nks` is the chosen prefix); affects `plugins/<name>/bin/`, all skill-reference docs
 4. **Skill names** — `documentation-guide` skill → `<new-name>-guide` skill
-5. **Slash commands** — `/docs-init`, `/docs-add-section` → updated prefixes
+5. **Slash commands** — `/agent-ks-init`, `/agent-ks-add-section` → updated prefixes
 6. **Docs sweep** — every reference to "documentation-template" / "docs framework" in user-guide, dev-docs, CLAUDE.md, README, plugin references, in-code error messages, comments
 7. **Install / domain** — when CLI tool ships (`2026-04-26-framework-as-cli-tool`), `https://<domain>/install.sh` needs a stable domain that matches the brand
 8. **CLI binary name** — placeholder `astro-doc` becomes the real name

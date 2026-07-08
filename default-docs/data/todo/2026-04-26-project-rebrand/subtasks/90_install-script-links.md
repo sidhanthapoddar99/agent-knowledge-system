@@ -25,5 +25,14 @@ Framework-dev instructions keep full clones.
       README dogfood mode stays full (history needed for tracker dates).
 - [x] Swept — zero `git clone …documentation-template` strings remain on live
       surfaces (legacy note, migration docstrings, and closed issues excepted).
+- [x] **Script-side enforcement** (sidhantha: "shouldn't it be part of the
+      script itself?", 2026-07-08): `./start` + `start.ps1` now run a
+      `shallow_check` after the update check — consumer-mode clones
+      (CONFIG_DIR resolves outside the framework folder) with full history
+      get a one-time y/N offer to shrink in place (`git fetch --depth 1` +
+      reflog expire + gc). Guards: TTY-only, skips dogfood / dirty / diverged
+      / already-shallow, decline writes `.git/.start-shallow-declined` so it
+      never nags. Sandbox-tested: convert (3 commits → 1, shallow=true),
+      decline-marker, and dogfood-skip paths all green.
 - [ ] Future `install.sh` (blocked on the CLI-tool distribution shipping) uses
       the new URL + shallow clone from day one.

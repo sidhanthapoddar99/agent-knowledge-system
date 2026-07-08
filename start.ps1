@@ -67,6 +67,61 @@ function Update-Check {
 
 Update-Check
 
+# 0b. Shallow check — consumer clones don't need git history (the tracker's
+#     git-derived dates are a framework-dev concern). If this is a consumer-
+#     mode clone (CONFIG_DIR points outside the framework folder) with full
+#     history, offer a one-time in-place shrink to a shallow clone. Mirrors
+#     ./start (bash); same skip conditions.
+function Shallow-Check {
+  if ($env:START_SKIP_UPDATE_CHECK -eq '1') { return }
+  if ([Console]::IsInputRedirected) { return }
+  if (-not (Get-Command git -ErrorAction SilentlyContinue)) { return }
+  & git -C $Dir rev-parse --git-dir 2>$null | Out-Null
+  if ($LASTEXITCODE -ne 0) { return }
+  $isShallow = & git -C $Dir rev-parse --is-shallow-repository 2>$null
+  if ($isShallow -ne 'false') { return }
+  if (Test-Path (Join-Path $Dir '.git/.start-shallow-declined')) { return }
+
+  # Consumer mode iff CONFIG_DIR resolves outside the framework folder.
+  $envFile = Join-Path $Dir '.env'
+  if (-not (Test-Path $envFile)) { return }
+  $configLine = (Get-Content $envFile | Where-Object { $_ -match '^CONFIG_DIR=' } | Select-Object -Last 1)
+  if (-not $configLine) { return }
+  $configDir = ($configLine -replace '^CONFIG_DIR=', '').Trim('"', "'")
+  try { $resolved = (Resolve-Path (Join-Path $Dir $configDir) -ErrorAction Stop).Path } catch { return }
+  if ($resolved.StartsWith((Resolve-Path $Dir).Path + [IO.Path]::DirectorySeparatorChar)) { return }  # dogfood
+
+  # Same safety rails as the update check.
+  & git -C $Dir diff --quiet; if ($LASTEXITCODE -ne 0) { return }
+  & git -C $Dir diff --cached --quiet; if ($LASTEXITCODE -ne 0) { return }
+  $upstream = & git -C $Dir rev-parse --abbrev-ref --symbolic-full-name '@{u}' 2>$null
+  if ($LASTEXITCODE -ne 0 -or -not $upstream) { return }
+  $localSha = & git -C $Dir rev-parse HEAD
+  $upstreamSha = & git -C $Dir rev-parse '@{u}' 2>$null
+  if ($LASTEXITCODE -ne 0 -or $localSha -ne $upstreamSha) { return }
+
+  $size = '{0:N0} MB' -f ((Get-ChildItem -Recurse -Force (Join-Path $Dir '.git') | Measure-Object -Property Length -Sum).Sum / 1MB)
+  Write-Host "[start] consumer-mode clone with full git history detected (.git = $size)"
+  Write-Host "[start] a vendored framework doesn't need history - shallow keeps only the current commit"
+  $reply = Read-Host "[start] shrink to a shallow clone now? [y/N]"
+  if ($reply -match '^(?i)(y|yes)$') {
+    & git -C $Dir fetch --depth 1 --quiet 2>$null
+    if ($LASTEXITCODE -eq 0) {
+      & git -C $Dir reflog expire --expire=now --all 2>$null
+      & git -C $Dir gc --prune=now --quiet 2>$null
+      $size = '{0:N0} MB' -f ((Get-ChildItem -Recurse -Force (Join-Path $Dir '.git') | Measure-Object -Property Length -Sum).Sum / 1MB)
+      Write-Host "[start] done - .git is now $size (future pulls stay shallow)"
+    } else {
+      Write-Host "[start] shallow fetch failed - leaving the clone as-is"
+    }
+  } else {
+    Write-Host "[start] keeping full history (won't ask again - delete .git/.start-shallow-declined to re-enable)"
+    New-Item -ItemType File -Path (Join-Path $Dir '.git/.start-shallow-declined') -Force | Out-Null
+  }
+}
+
+Shallow-Check
+
 Set-Location (Join-Path $Dir 'astro-doc-code')
 
 $scriptArgs = @($args)

@@ -28,6 +28,8 @@ git clone --depth 1 https://github.com/sidhanthapoddar99/agent-knowledge-system.
 
 This stays ~10 MB no matter how long the framework's history grows. The `./start` update check still works — `git pull` deepens the clone as needed when you accept an update.
 
+Forgot the flag? No problem — **`./start` detects a full-history clone in consumer mode and offers to shrink it in place** (one `y` and it converts to shallow, keeping only the current commit). Framework-dev clones are never offered the shrink, and declining is remembered.
+
 Use a full clone only if you're contributing to the framework itself (the framework's own issue tracker derives its `updated` dates from git history, so development clones need the history).
 
 ## node_modules is shared across projects — if you use Bun

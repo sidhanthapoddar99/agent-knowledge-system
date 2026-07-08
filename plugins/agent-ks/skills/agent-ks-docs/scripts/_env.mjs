@@ -16,7 +16,7 @@
  *   2. Walk up from the script (and from cwd) looking for `.env`,
  *      then read CONFIG_DIR from it. content root = parent of resolved CONFIG_DIR.
  *   3. Downward probe from cwd at the consumer-mode convention spots
- *      (<cwd>/docs/documentation-template/.env, <cwd>/documentation-template/.env)
+ *      (<cwd>/docs/agent-knowledge-system/.env, <cwd>/agent-knowledge-system/.env (+ legacy documentation-template spots))
  *      — covers running from a consumer repo root, where the framework folder
  *      (and its .env) lives *below* cwd and the upward walk can never see it.
  *
@@ -45,6 +45,9 @@ export function findEnvFile(startDir) {
  */
 export function findEnvConsumerConvention(cwd) {
   const spots = [
+    path.join('docs', 'agent-knowledge-system'),
+    'agent-knowledge-system',
+    // legacy clone-dir name — consumers who vendored before the rebrand
     path.join('docs', 'documentation-template'),
     'documentation-template',
   ];
@@ -101,7 +104,8 @@ export function resolveProjectContext(searchStart) {
   if (!envPath) {
     throw new Error(
       'No .env found walking up from script or cwd, nor at the consumer-mode\n' +
-      '  convention spots (<cwd>/docs/documentation-template/.env, <cwd>/documentation-template/.env).\n' +
+  '  convention spots (<cwd>/docs/agent-knowledge-system/.env, <cwd>/agent-knowledge-system/.env,\n' +
+  '  or the legacy documentation-template equivalents).\n' +
       '  Set DOCS_PROJECT_ROOT or pass --tracker / a positional path explicitly.\n' +
       '  Plugin scripts read CONFIG_DIR from the framework\'s .env to derive the content root —\n' +
       '  no hardcoded folder names.'

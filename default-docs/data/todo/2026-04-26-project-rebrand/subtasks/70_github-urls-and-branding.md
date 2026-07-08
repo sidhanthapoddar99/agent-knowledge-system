@@ -1,6 +1,6 @@
 ---
 title: "GitHub URLs + branding sweep"
-status: open
+status: in-progress
 ---
 
 Once the new repo exists ([60](60_new-repo.md)): every URL and brand string
@@ -11,17 +11,28 @@ printed clone command, and any `site.yaml`/footer links.
 
 ## Tasks
 
-- [ ] Grep live surfaces for `documentation-template` GitHub URLs; replace with
-      the new repo URL.
-- [ ] `plugin.json` homepage/repository fields.
-- [ ] README + docs branding strings (titles, descriptions) consistent with
-      the agent-knowledge-system positioning (overlaps
-      [20](20_project-and-docs-update.md) — coordinate, don't duplicate).
-- [ ] **Update the scripts as well** — `start` / `start.ps1` / `start.cmd`
-      (the update check's upstream remote assumptions, any echoed URLs or
-      old-name strings), `/docs-init` and `/docs-add-section` command bodies,
-      and CLI script strings under `skills/agent-ks-docs/scripts/` that name
-      the repo.
+- [x] Grep live surfaces for `documentation-template` GitHub URLs; replaced
+      with the new repo URL (2026-07-08) — README (banner now points old
+      checkouts at `git remote set-url`), navbar.yaml GitHub link, user-guide
+      installation / init-and-template / storage pages (consumer clone
+      commands also gained `--depth 1` per [90](90_install-script-links.md)),
+      settings-layout reference, plugin README, `/docs-init` printed clone
+      command. Submodule example URL included.
+- [x] `plugin.json` homepage/repository fields → new repo (cache re-mirrored,
+      identity pin kept).
+- [x] README + docs branding strings, **plus the folder-name literal sweep**:
+      the clone directory is now `agent-knowledge-system/`, so every
+      instructional `cd documentation-template` / layout diagram / mode
+      description moved to the new name. Functional pieces made
+      back-compatible: `_env.mjs` consumer-convention probe checks
+      `agent-knowledge-system/` first, then legacy `documentation-template/`
+      spots; `/docs-init` pre-flight tests both folder names. The
+      `agent-ks-issues` skill description now says "agent-knowledge-system
+      issue tracker".
+- [x] **Update the scripts as well** — `start` / `start.ps1` / `start.cmd`
+      carry no repo-name strings (verified by grep; the update check works
+      off the git remote, not a hardcoded URL). CLI scripts: `_env.mjs` was
+      the only one naming the folder — updated with legacy fallback.
 - [ ] **npm-fallback replication warning in `start`** (behavioral, all three
       ports): when bun is NOT on PATH and the script is about to fall back to
       npm, print a **red warning** that npm gives every project its own full

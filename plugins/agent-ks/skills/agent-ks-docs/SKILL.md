@@ -5,9 +5,9 @@ description: Use this skill for ANY non-tracker content work in an agent-knowled
 
 # Documentation skill
 
-Operating manual for working in an agent-knowledge-system project (Astro-based engine). The project's content + config live under the user's `data/` and `config/` folders and render through Astro layouts shipped inside the `documentation-template/` framework folder. The framework's *own* bundled docs (the canonical user-guide for the framework itself) live at `documentation-template/default-docs/data/user-guide/` — read those when this skill is unclear.
+Operating manual for working in an agent-knowledge-system project (Astro-based engine). The project's content + config live under the user's `data/` and `config/` folders and render through Astro layouts shipped inside the `agent-knowledge-system/` framework folder. The framework's *own* bundled docs (the canonical user-guide for the framework itself) live at `agent-knowledge-system/default-docs/data/user-guide/` — read those when this skill is unclear.
 
-> **Two modes.** *Consumer mode* (the default) — the framework is a subfolder of the user's project (`<project>/documentation-template/`) and the user's content lives at the project root (`config/`, `data/`, `assets/`, `themes/` next to the framework folder). *Dogfood mode* — the framework repo *is* the project; content lives under `default-docs/`. The scripts derive the actual location from `.env` (`CONFIG_DIR`), so this skill describes paths relative to **the user's content folders** and the underlying scripts handle both modes. Where this skill says `data/`, the script resolves to `<project>/data/` (consumer) or `<framework>/default-docs/data/` (dogfood).
+> **Two modes.** *Consumer mode* (the default) — the framework is a subfolder of the user's project (`<project>/agent-knowledge-system/`) and the user's content lives at the project root (`config/`, `data/`, `assets/`, `themes/` next to the framework folder). *Dogfood mode* — the framework repo *is* the project; content lives under `default-docs/`. The scripts derive the actual location from `.env` (`CONFIG_DIR`), so this skill describes paths relative to **the user's content folders** and the underlying scripts handle both modes. Where this skill says `data/`, the script resolves to `<project>/data/` (consumer) or `<framework>/default-docs/data/` (dogfood).
 
 > **Sibling skill — `agent-ks-issues`.** This plugin also ships a self-contained `agent-ks-issues` skill that owns the **entire issue-tracker domain** — issues, subtasks, comments, brainstorms, notes, agent-logs, agent-memory, the tracker vocabulary, the issues dump, and the execution verbs (audit / refactor / loop / discuss) against a tracked issue. For any work under `data/todo/` (or another tracker), load that skill; this one covers everything else.
 
@@ -46,7 +46,7 @@ Cross-cutting tasks read multiple references. Example: *"add a new docs section 
 ├── assets/                       ← static assets served at /assets/
 ├── themes/                       ← optional custom themes
 ├── layouts/                      ← optional custom layouts (with LAYOUT_EXT_DIR set)
-└── documentation-template/       ← FRAMEWORK FOLDER — don't edit
+└── agent-knowledge-system/       ← FRAMEWORK FOLDER — don't edit
     ├── start                     ← bash wrapper: `./start [dev|build|preview|<script>]`
     ├── .env                      ← CONFIG_DIR=../config (consumer) or ./default-docs/config (dogfood)
     ├── astro-doc-code/           ← framework code (src/, package.json, astro.config.mjs)
@@ -55,9 +55,9 @@ Cross-cutting tasks read multiple references. Example: *"add a new docs section 
     └── plugins/                  ← repo-local plugins (e.g. agent-ks)
 ```
 
-**Dogfood mode** — the framework repo *is* the project; the structure above collapses (no outer wrapper). Content lives under `documentation-template/default-docs/` and `CONFIG_DIR=./default-docs/config`. Same code path either way; only `CONFIG_DIR` differs.
+**Dogfood mode** — the framework repo *is* the project; the structure above collapses (no outer wrapper). Content lives under `agent-knowledge-system/default-docs/` and `CONFIG_DIR=./default-docs/config`. Same code path either way; only `CONFIG_DIR` differs.
 
-**The most important rule:** the framework's bundled user-guide at `documentation-template/default-docs/data/user-guide/` is the **canonical source of truth** for everything this skill describes. When this skill is unclear, ambiguous, or stale, the user-guide wins. Each reference file points to its corresponding user-guide section.
+**The most important rule:** the framework's bundled user-guide at `agent-knowledge-system/default-docs/data/user-guide/` is the **canonical source of truth** for everything this skill describes. When this skill is unclear, ambiguous, or stale, the user-guide wins. Each reference file points to its corresponding user-guide section.
 
 ## Read `data/README.md` first
 

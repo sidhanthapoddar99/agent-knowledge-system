@@ -32,7 +32,7 @@ documentation site with five top-level sections: **Home**, **Docs**, **Issues**,
                           # via @root/default-docs/themes — see site.yaml theme_paths)
 ```
 
-**`.env` is NOT written by init** — it lives inside the framework folder (`<user-project>/documentation-template/.env`) which doesn't exist yet at this point. The init flow's printed next-step instructions tell the user to clone the framework next, then `echo "CONFIG_DIR=../config" > documentation-template/.env`. That's why `.env.example` in this template is for reference only — the post-clone step writes the *real* `.env` directly, with the consumer-mode value (`CONFIG_DIR=../config`).
+**`.env` is NOT written by init** — it lives inside the framework folder (`<user-project>/agent-knowledge-system/.env`) which doesn't exist yet at this point. The init flow's printed next-step instructions tell the user to clone the framework next, then `echo "CONFIG_DIR=../config" > agent-knowledge-system/.env`. That's why `.env.example` in this template is for reference only — the post-clone step writes the *real* `.env` directly, with the consumer-mode value (`CONFIG_DIR=../config`).
 
 ## Sections explained
 

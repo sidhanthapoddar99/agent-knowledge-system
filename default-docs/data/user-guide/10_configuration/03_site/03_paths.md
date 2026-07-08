@@ -22,7 +22,7 @@ paths:
 
 **Paths are relative to the config directory** (where `site.yaml` lives). Absolute paths are also supported.
 
-> **How this differs from `.env`:** `CONFIG_DIR` in `.env` is relative to **the framework folder** (where `.env` lives — `documentation-template/`). Paths in `site.yaml`'s `paths:` section are relative to the **config directory** (where `site.yaml` lives). Consumer-mode example: with `CONFIG_DIR=../config` (which puts the config dir at `<your-project>/config/`) and `data: "../data"`, the data directory resolves to `<your-project>/data/`. Dogfood-mode example: with `CONFIG_DIR=./default-docs/config` and `data: "../data"`, it resolves to `<framework-folder>/default-docs/data/`.
+> **How this differs from `.env`:** `CONFIG_DIR` in `.env` is relative to **the framework folder** (where `.env` lives — `agent-knowledge-system/`). Paths in `site.yaml`'s `paths:` section are relative to the **config directory** (where `site.yaml` lives). Consumer-mode example: with `CONFIG_DIR=../config` (which puts the config dir at `<your-project>/config/`) and `data: "../data"`, the data directory resolves to `<your-project>/data/`. Dogfood-mode example: with `CONFIG_DIR=./default-docs/config` and `data: "../data"`, it resolves to `<framework-folder>/default-docs/data/`.
 
 ## Multiple Directories
 

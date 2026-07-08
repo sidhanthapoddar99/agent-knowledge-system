@@ -47,7 +47,7 @@ your-docs-folder/                # YOUR project root
 ├── assets/                      # ← YOU EDIT — logos, images served at /assets/
 ├── themes/                      # ← YOU EDIT — custom themes (optional)
 │
-└── documentation-template/      # the framework — added as a clone or git submodule
+└── agent-knowledge-system/      # the framework — added as a clone or git submodule
     ├── .env                     #   CONFIG_DIR=../config (reaches up to YOUR config/)
     ├── start                    #   ./start dev | build | preview
     ├── astro-doc-code/          #   framework source — don't touch
@@ -68,7 +68,7 @@ your-docs-folder/                # YOUR project root
 If you're working *on the framework itself* (not consuming it), the layout collapses — you don't need a wrapping project, the framework repo IS your project root and you edit `default-docs/` directly:
 
 ```
-documentation-template/          # the framework repo (you cloned this)
+agent-knowledge-system/          # the framework repo (you cloned this)
 ├── .env                         #   CONFIG_DIR=./default-docs/config
 ├── start
 ├── astro-doc-code/

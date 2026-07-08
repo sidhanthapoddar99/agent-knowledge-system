@@ -23,7 +23,7 @@ So the download is roughly **16 MB** (or ~10 MB shallow), and the big numbers yo
 As a consumer you don't need the framework's git history. Clone shallow:
 
 ```bash
-git clone --depth 1 https://github.com/sidhanthapoddar99/documentation-template.git
+git clone --depth 1 https://github.com/sidhanthapoddar99/agent-knowledge-system.git
 ```
 
 This stays ~10 MB no matter how long the framework's history grows. The `./start` update check still works — `git pull` deepens the clone as needed when you accept an update.

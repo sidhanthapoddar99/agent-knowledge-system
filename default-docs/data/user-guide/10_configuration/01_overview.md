@@ -32,10 +32,10 @@ your-docs-folder/
 ├── layouts/          # External layouts (LAYOUT_EXT_DIR=../layouts, optional)
 │   └── docs/default/ # Custom doc layouts, etc.
 │
-└── documentation-template/   # the framework (don't edit)
+└── agent-knowledge-system/   # the framework (don't edit)
 ```
 
-In *dogfood mode* (working on the framework itself), the same folders live under `documentation-template/default-docs/` instead, and `CONFIG_DIR=./default-docs/config`. See [Environment Variables](./env) for the two-mode model.
+In *dogfood mode* (working on the framework itself), the same folders live under `agent-knowledge-system/default-docs/` instead, and `CONFIG_DIR=./default-docs/config`. See [Environment Variables](./env) for the two-mode model.
 
 ## Configuration Files
 

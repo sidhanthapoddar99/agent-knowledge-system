@@ -78,7 +78,7 @@ Each content type has its own layout alias, pointing at a folder under `src/layo
 
 ### Framework Root Alias (system, reserved)
 
-`@root` resolves to **the framework folder** — specifically, the parent of `astro-doc-code/`, which is also where `.env` and `default-docs/` live. In consumer mode that's `documentation-template/` (a subfolder of your project); in dogfood mode it happens to be your project root because the framework repo *is* the project. Either way, `@root` always points at the framework folder, never at the consumer's outer project.
+`@root` resolves to **the framework folder** — specifically, the parent of `astro-doc-code/`, which is also where `.env` and `default-docs/` live. In consumer mode that's `agent-knowledge-system/` (a subfolder of your project); in dogfood mode it happens to be your project root because the framework repo *is* the project. Either way, `@root` always points at the framework folder, never at the consumer's outer project.
 
 This is what you want when reaching the framework's bundled content — themes, the user-guide, the init template, etc. all live under `@root/default-docs/...`.
 
@@ -194,7 +194,7 @@ Aliases are configured in two places, each with different path relativity:
 
 | Setting | File | Relative To |
 |---------|------|-------------|
-| `CONFIG_DIR` | `.env` | **Framework folder** (where `.env` lives — `documentation-template/`) |
+| `CONFIG_DIR` | `.env` | **Framework folder** (where `.env` lives — `agent-knowledge-system/`) |
 | `paths:` entries | `site.yaml` | **Config directory** (where `site.yaml` lives) |
 
 Absolute paths work in both places.
@@ -202,7 +202,7 @@ Absolute paths work in both places.
 **Consumer mode** — your content folders sit beside the framework folder:
 
 ```env
-# documentation-template/.env — CONFIG_DIR points up to your config/
+# agent-knowledge-system/.env — CONFIG_DIR points up to your config/
 CONFIG_DIR=../config
 ```
 

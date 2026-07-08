@@ -50,7 +50,7 @@ The skill triages every non-tracker docs task to one of five domain references. 
 | `references/settings-layout.md` | `site.yaml`, `navbar.yaml`, `footer.yaml`, `.env`, path aliases, themes |
 | `references/images.md` | Image optimization before committing |
 
-The skill triggers automatically whenever you work on docs in a project that uses this framework (i.e. one where the `documentation-template/` folder is present, or you're inside it). You don't have to invoke it explicitly. For the issue tracker it hands off to `agent-ks-issues`; for building HTML artifacts, to `agent-ks-artifacts`.
+The skill triggers automatically whenever you work on docs in a project that uses this framework (i.e. one where the `agent-knowledge-system/` folder is present, or you're inside it). You don't have to invoke it explicitly. For the issue tracker it hands off to `agent-ks-issues`; for building HTML artifacts, to `agent-ks-artifacts`.
 
 ## Skill — `agent-ks-issues`
 

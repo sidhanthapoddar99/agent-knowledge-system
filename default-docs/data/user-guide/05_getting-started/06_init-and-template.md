@@ -71,7 +71,7 @@ Then it:
 - **Doesn't clone the framework.** Cloning is a network operation with a fork/license decision the user owns. Init prints the exact clone command at the end.
 - **Doesn't write `.env`.** `.env` lives inside the framework folder which doesn't exist yet. The post-clone step creates it (`echo "CONFIG_DIR=../config" > .env`).
 - **Doesn't write any framework files** (`astro-doc-code/`, `default-docs/`, `start`, etc.). Those arrive with the framework clone.
-- **Doesn't replace your existing files.** Pre-flight aborts if `./config/site.yaml` or `./documentation-template/` already exists.
+- **Doesn't replace your existing files.** Pre-flight aborts if `./config/site.yaml` or `./agent-knowledge-system/` already exists.
 
 ## The complete first-time flow
 
@@ -87,8 +87,8 @@ cd <your-project>
 /docs-init                                 # answer prompts; gets you config/, data/, assets/, themes/
 
 # 2. Clone the framework as a sibling
-git clone https://github.com/sidhanthapoddar99/documentation-template.git
-cd documentation-template
+git clone --depth 1 https://github.com/sidhanthapoddar99/agent-knowledge-system.git
+cd agent-knowledge-system
 
 # 3. Wire .env to point at your content
 echo "CONFIG_DIR=../config" > .env
@@ -122,17 +122,17 @@ rsync -a --exclude='README.md' "$TEMPLATE/" ./
 #    "Modern documentation built with Astro", "your-org/your-repo" across config/ and data/pages/).
 
 # 4. Clone the framework as a sibling and wire .env.
-git clone https://github.com/sidhanthapoddar99/documentation-template.git
-echo "CONFIG_DIR=../config" > documentation-template/.env
+git clone --depth 1 https://github.com/sidhanthapoddar99/agent-knowledge-system.git
+echo "CONFIG_DIR=../config" > agent-knowledge-system/.env
 
 # 5. Run.
-cd documentation-template
+cd agent-knowledge-system
 ./start
 ```
 
 The `/docs-init` flow automates steps 1–3 and adds the `CLAUDE.md` patch.
 
-> **Why the template lives in the plugin and not in the framework clone:** the plugin is the canonical distribution point for new-project tooling. Keeping it there avoids two copies drifting and means `/docs-init` works without any framework clone on disk. The framework clone (`documentation-template/`) is what your *running* docs site needs; the plugin is what your *first-time setup* needs.
+> **Why the template lives in the plugin and not in the framework clone:** the plugin is the canonical distribution point for new-project tooling. Keeping it there avoids two copies drifting and means `/docs-init` works without any framework clone on disk. The framework clone (`agent-knowledge-system/`) is what your *running* docs site needs; the plugin is what your *first-time setup* needs.
 
 ## What gets substituted
 

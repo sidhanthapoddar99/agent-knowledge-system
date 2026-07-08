@@ -22,7 +22,7 @@ Site chrome, routing, theming, aliases. Everything *above* the per-content-type 
 ├── assets/                                ← static assets served at /assets/
 ├── themes/                                ← OPTIONAL — your custom themes
 ├── layouts/                               ← OPTIONAL — your custom layouts
-└── documentation-template/                ← FRAMEWORK FOLDER — don't edit
+└── agent-knowledge-system/                ← FRAMEWORK FOLDER — don't edit
     ├── start                              ← bash wrapper: `./start [dev|build|preview]`
     ├── .env                               ← CONFIG_DIR=../config (consumer mode)
     ├── astro-doc-code/                    ← framework code
@@ -30,13 +30,13 @@ Site chrome, routing, theming, aliases. Everything *above* the per-content-type 
     └── plugins/                           ← repo-local plugins
 ```
 
-**Dogfood mode** — the framework repo *is* the project; content lives under `documentation-template/default-docs/`, `.env` has `CONFIG_DIR=./default-docs/config`. Same code path, only `CONFIG_DIR` differs.
+**Dogfood mode** — the framework repo *is* the project; content lives under `agent-knowledge-system/default-docs/`, `.env` has `CONFIG_DIR=./default-docs/config`. Same code path, only `CONFIG_DIR` differs.
 
 Clone the framework into a project:
 ```bash
 # Inside your project root:
-git clone https://github.com/sidhanthapoddar99/documentation-template.git
-cd documentation-template
+git clone --depth 1 https://github.com/sidhanthapoddar99/agent-knowledge-system.git
+cd agent-knowledge-system
 ./start          # preflight: pick bun (else npm) → install if needed → sanity build → dev
 ```
 
@@ -44,7 +44,7 @@ cd documentation-template
 
 ## 2. `.env` — the bootstrap layer
 
-The framework reads exactly one thing from `.env`: where to find `config/`. Everything else lives in the YAML files inside that config dir. **`.env` lives inside the framework folder** (`documentation-template/.env`, not inside `astro-doc-code/`). Paths are relative to the framework folder.
+The framework reads exactly one thing from `.env`: where to find `config/`. Everything else lives in the YAML files inside that config dir. **`.env` lives inside the framework folder** (`agent-knowledge-system/.env`, not inside `astro-doc-code/`). Paths are relative to the framework folder.
 
 ```bash
 # Consumer mode — config sits beside the framework folder
@@ -223,7 +223,7 @@ items:
   - label: "Blog"
     href: "/blog"
   - label: "GitHub"
-    href: "https://github.com/sidhanthapoddar99/documentation-template"
+    href: "https://github.com/sidhanthapoddar99/agent-knowledge-system"
 ```
 
 | Field | Type | Notes |
@@ -304,7 +304,7 @@ social:
 | `@footer/<style>` | `astro-doc-code/src/layouts/footer/<style>/` | `footer.yaml → layout` |
 | `@ext-layouts` | `LAYOUT_EXT_DIR` from `.env` | for user-shipped layouts (overrides built-ins by name) |
 | `@theme/<name>` | a theme folder | inside `theme.yaml → extends:` |
-| `@root/<sub>` | the framework folder + `<sub>` (i.e. the framework's install location on disk — `documentation-template/` in consumer mode, the repo root in dogfood mode) | reaching the framework's bundled content (`@root/default-docs/...`); path-traversal blocked. **NOT the consumer's outer project root** — see §2 (".env — the bootstrap layer") for the two-mode model |
+| `@root/<sub>` | the framework folder + `<sub>` (i.e. the framework's install location on disk — `agent-knowledge-system/` in consumer mode, the repo root in dogfood mode) | reaching the framework's bundled content (`@root/default-docs/...`); path-traversal blocked. **NOT the consumer's outer project root** — see §2 (".env — the bootstrap layer") for the two-mode model |
 
 **User-defined aliases** — declared in `site.yaml → paths:`:
 

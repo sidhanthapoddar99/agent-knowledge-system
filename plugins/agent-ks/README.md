@@ -1,6 +1,6 @@
 # agent-ks
 
-Claude Code plugin for the [documentation-template](https://github.com/sidhanthapoddar99/documentation-template) framework. Ships:
+Claude Code plugin for the [agent-knowledge-system](https://github.com/sidhanthapoddar99/agent-knowledge-system) framework. Ships:
 
 - **3 skills** — `agent-ks-docs` (operating manual for docs / blog / config / writing / themes — triages to domain-specific reference files), `agent-ks-issues` (the complete, self-contained issue-tracker skill: anatomy, creation rules, subtasks, brainstorms, agent-logs, agent-memory, the dump — also fires on the execution verbs audit / refactor / loop / discuss), and `agent-ks-artifacts` (building self-contained HTML artifacts — reports, dashboards, data visualizations, design systems — as `.html` content files served at `/artifacts`, with a `.meta.json` sidecar; bundles a palette validator)
 - **The `agent-ks` CLI** — one dispatcher on `PATH`; every operation is `agent-ks <group> <verb>` (issue tracker, validators, docs+blog content, git metadata, cross-content `find`, link-aware `move`, `img`). Discover with `agent-ks help`
@@ -28,7 +28,7 @@ agent-ks check config             # validate site.yaml / navbar.yaml / footer.ya
 agent-ks check section ./data/user-guide
 ```
 
-The skills trigger automatically whenever you work on docs (agent-ks-docs) or the issue tracker (agent-ks-issues) in an agent-knowledge-system project (i.e. one with a `documentation-template/` framework folder, with `.env`'s `CONFIG_DIR` pointing at the project's config).
+The skills trigger automatically whenever you work on docs (agent-ks-docs) or the issue tracker (agent-ks-issues) in an agent-knowledge-system project (i.e. one with a `agent-knowledge-system/` framework folder, with `.env`'s `CONFIG_DIR` pointing at the project's config).
 
 ## Bootstrap a new project
 
@@ -62,7 +62,7 @@ Computes the next `NN_` prefix, scaffolds `settings.json` + `01_overview.md`, an
 
 ## Requirements
 
-- A agent-knowledge-system-shaped project (the `documentation-template/` framework folder cloned somewhere, with `.env`'s `CONFIG_DIR` pointing at the project's `config/`)
+- A agent-knowledge-system-shaped project (the `agent-knowledge-system/` framework folder cloned somewhere, with `.env`'s `CONFIG_DIR` pointing at the project's `config/`)
 - `bun` preferred for running the helpers and the framework; `npm` / `node` work as fallbacks
 
 ## License

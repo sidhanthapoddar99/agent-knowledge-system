@@ -38,10 +38,10 @@ mkdir -p layouts
 
 ### 2. Set `LAYOUT_EXT_DIR` in `.env`
 
-`.env` lives inside the framework folder (`documentation-template/`), so the path is relative to *that*. In consumer mode `../layouts` reaches up to your project root:
+`.env` lives inside the framework folder (`agent-knowledge-system/`), so the path is relative to *that*. In consumer mode `../layouts` reaches up to your project root:
 
 ```env
-# .env (inside documentation-template/)
+# .env (inside agent-knowledge-system/)
 LAYOUT_EXT_DIR=../layouts
 ```
 

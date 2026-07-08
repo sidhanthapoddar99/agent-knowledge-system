@@ -25,14 +25,14 @@ The template ships **5 sections wired up**: Home (`/`), Docs (`/docs`), Issues (
 ├── assets/                        ← logos, images (served at /assets/)
 ├── themes/                        ← (empty — for custom themes)
 ├── .gitignore
-└── documentation-template/        ← framework folder — cloned by the user AFTER init
+└── agent-knowledge-system/        ← framework folder — cloned by the user AFTER init
     ├── .env                       ← CONFIG_DIR=../config (created post-clone)
     ├── start                      ← bash wrapper
     ├── astro-doc-code/            ← framework code
     └── default-docs/              ← framework's bundled docs (the User Guide section reads from here)
 ```
 
-The framework folder (`documentation-template/`) lives **inside** the user's project root as a sibling of `config/` and `data/`. The user's content is OUTSIDE the framework folder — this is the consumer-mode architecture. `.env` lives inside the framework folder with `CONFIG_DIR=../config` to reach back up to the content.
+The framework folder (`agent-knowledge-system/`) lives **inside** the user's project root as a sibling of `config/` and `data/`. The user's content is OUTSIDE the framework folder — this is the consumer-mode architecture. `.env` lives inside the framework folder with `CONFIG_DIR=../config` to reach back up to the content.
 
 A patched `CLAUDE.md` at the project root tells future Claude Code sessions the layout, the active skill, and the build commands.
 
@@ -46,7 +46,8 @@ Check the current working directory for evidence of an existing docs project:
 
 ```bash
 test -f ./config/site.yaml && echo "config/site.yaml exists"
-test -d ./documentation-template && echo "documentation-template/ exists"
+test -d ./agent-knowledge-system && echo "agent-knowledge-system/ exists"
+test -d ./documentation-template && echo "documentation-template/ exists (legacy framework clone)"
 test -f ./default-docs/config/site.yaml && echo "default-docs/config/site.yaml exists (legacy/dogfood layout)"
 ```
 
@@ -118,7 +119,7 @@ Will copy template (5 sections — Home/Docs/Issues/Blog/User Guide) into <absol
 Will patch CLAUDE.md at <chosen_root>/CLAUDE.md (created if absent).
 
 Will print clone + .env setup instructions for the framework engine at the end
-(the framework gets cloned INTO <chosen_root>/documentation-template/ as a subfolder).
+(the framework gets cloned INTO <chosen_root>/agent-knowledge-system/ as a subfolder).
 
 Proceed?
 ```
@@ -179,8 +180,8 @@ End with a concrete next-actions block:
 Next step — clone the framework alongside your content:
 
   cd <chosen_root>
-  git clone https://github.com/sidhanthapoddar99/documentation-template.git
-  cd documentation-template
+  git clone --depth 1 https://github.com/sidhanthapoddar99/agent-knowledge-system.git
+  cd agent-knowledge-system
   echo "CONFIG_DIR=../config" > .env
   ./start                  # preflight: pick bun (else npm) → install if needed → sanity build → dev
 
@@ -219,11 +220,11 @@ This project uses the **agent-knowledge-system** framework. The docs site lives 
 - **Config** — `<chosen_root>/config/{site,navbar,footer}.yaml`
 - **Assets** — `<chosen_root>/assets/` (served at `/assets/`)
 - **Themes** — `<chosen_root>/themes/` (custom themes; framework themes auto-available via `@root/default-docs/themes`)
-- **Framework** — `<chosen_root>/documentation-template/` (cloned separately — don't edit, treat as a vendored dependency)
+- **Framework** — `<chosen_root>/agent-knowledge-system/` (cloned separately — don't edit, treat as a vendored dependency)
 
 ### Build commands
 
-From `<chosen_root>/documentation-template/`:
+From `<chosen_root>/agent-knowledge-system/`:
 
 ```bash
 ./start            # preflight: pick bun (else npm) → install → sanity build → dev
@@ -233,7 +234,7 @@ From `<chosen_root>/documentation-template/`:
 ./start clean      # wipe .astro/, dist/, node_modules/.vite/
 ```
 
-The framework reads `.env` from `documentation-template/.env`. Default for consumer mode: `CONFIG_DIR=../config` (points back up to `<chosen_root>/config/`).
+The framework reads `.env` from `agent-knowledge-system/.env`. Default for consumer mode: `CONFIG_DIR=../config` (points back up to `<chosen_root>/config/`).
 
 ### Tooling — `agent-ks` plugin
 

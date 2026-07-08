@@ -6,7 +6,7 @@ sidebar_position: 2
 
 # Environment Variables
 
-Environment variables configure the bootstrap path and server settings. **`.env` lives inside the framework folder** (`documentation-template/.env`), not at your project root — it ships with the framework.
+Environment variables configure the bootstrap path and server settings. **`.env` lives inside the framework folder** (`agent-knowledge-system/.env`), not at your project root — it ships with the framework.
 
 > **Note:** Directory paths for data, assets, and themes are configured in `site.yaml`'s `paths:` section, not in `.env`. Only `CONFIG_DIR` (and optionally `LAYOUT_EXT_DIR`) lives in `.env`. See [Site Configuration](./site) for details.
 
@@ -36,7 +36,7 @@ CONFIG_DIR=./default-docs/config
 
 All other content directory paths (`data`, `assets`, `themes`) are defined in `site.yaml`'s `paths:` section.
 
-> **Path relativity rule:** `CONFIG_DIR` in `.env` is relative to the **framework folder** (where `.env` lives — `documentation-template/`, **not** `astro-doc-code/` where `astro.config.mjs` sits). Paths in `site.yaml`'s `paths:` section are relative to the **config directory** (where `site.yaml` lives). Absolute paths work in both places. Internally the framework calls the parent of `astro-doc-code/` the *project root* — that's `documentation-template/` itself, NOT the consumer's outer project. The `@root` alias resolves to that project root, so `@root/default-docs/...` always reaches the framework's bundled content.
+> **Path relativity rule:** `CONFIG_DIR` in `.env` is relative to the **framework folder** (where `.env` lives — `agent-knowledge-system/`, **not** `astro-doc-code/` where `astro.config.mjs` sits). Paths in `site.yaml`'s `paths:` section are relative to the **config directory** (where `site.yaml` lives). Absolute paths work in both places. Internally the framework calls the parent of `astro-doc-code/` the *project root* — that's `agent-knowledge-system/` itself, NOT the consumer's outer project. The `@root` alias resolves to that project root, so `@root/default-docs/...` always reaches the framework's bundled content.
 
 ### External Layouts
 

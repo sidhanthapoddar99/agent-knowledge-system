@@ -18,7 +18,7 @@ Together they support the working model that's actually emerging: **AI + small t
 
 ## Separation of Concerns
 
-Your content sits at *your* project root. The framework ships as a single subfolder (`documentation-template/`) that contains all of its own files — code, bundled docs, `.env`, the `start` wrapper, plugins. You only edit what's at your project root.
+Your content sits at *your* project root. The framework ships as a single subfolder (`agent-knowledge-system/`) that contains all of its own files — code, bundled docs, `.env`, the `start` wrapper, plugins. You only edit what's at your project root.
 
 ```
 your-docs-folder/                  # YOUR project root
@@ -27,7 +27,7 @@ your-docs-folder/                  # YOUR project root
 ├── assets/                        # ← YOU EDIT — logos, images
 ├── themes/                        # ← YOU EDIT — custom themes (optional)
 │
-└── documentation-template/        # the framework — clone or git submodule, self-contained
+└── agent-knowledge-system/        # the framework — clone or git submodule, self-contained
     ├── .env                       #   CONFIG_DIR=../config (reaches UP to YOUR config/)
     ├── start                      #   ./start dev | build | preview
     ├── astro-doc-code/            #   framework source — don't touch

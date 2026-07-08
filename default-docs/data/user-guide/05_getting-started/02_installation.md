@@ -19,7 +19,7 @@ The framework ships as a self-contained folder you drop *inside* your docs proje
 
 ```bash
 cd your-docs-folder/                                          # or wherever your docs live
-git clone https://github.com/sidhanthapoddar99/documentation-template.git
+git clone --depth 1 https://github.com/sidhanthapoddar99/agent-knowledge-system.git
 ```
 
 Now your project looks like:
@@ -30,7 +30,7 @@ your-docs-folder/
 ├── data/
 ├── assets/
 ├── themes/
-└── documentation-template/       # the framework, just cloned
+└── agent-knowledge-system/       # the framework, just cloned
     ├── .env.example
     ├── start
     ├── astro-doc-code/
@@ -38,14 +38,14 @@ your-docs-folder/
     └── plugins/
 ```
 
-If you'd rather track the framework as a submodule (so updates pull cleanly), substitute `git submodule add https://github.com/.../documentation-template.git` for the plain clone.
+If you'd rather track the framework as a submodule (so updates pull cleanly), substitute `git submodule add https://github.com/.../agent-knowledge-system.git` for the plain clone.
 
 ## Step 2: Install Dependencies
 
 The framework ships a `./start` wrapper at its root that handles dependency install, build sanity check, and dev launch in one go.
 
 ```bash
-cd documentation-template/
+cd agent-knowledge-system/
 ./start
 ```
 
@@ -80,7 +80,7 @@ For full details (skill internals, wrapper inventory, update flow, scope behavio
 
 ## Step 3: Environment Setup
 
-From inside `documentation-template/`, create your `.env`:
+From inside `agent-knowledge-system/`, create your `.env`:
 
 ```bash
 cp .env.example .env
@@ -103,7 +103,7 @@ Directory paths for content, assets, and themes are configured in `site.yaml`'s 
 
 ## Step 4: Start Development
 
-From `documentation-template/`:
+From `agent-knowledge-system/`:
 
 ```bash
 ./start dev
@@ -120,7 +120,7 @@ You should see:
 
 ## Available Commands
 
-Run from inside `documentation-template/` via the `./start` wrapper:
+Run from inside `agent-knowledge-system/` via the `./start` wrapper:
 
 | Command | Description |
 |---------|-------------|
@@ -143,7 +143,7 @@ The server automatically finds an available port. Check terminal output for the 
 ### Module Not Found Errors
 
 ```bash
-# From inside documentation-template/
+# From inside agent-knowledge-system/
 rm -rf astro-doc-code/node_modules astro-doc-code/bun.lockb
 ./start          # re-runs preflight (install + build + dev)
 ```

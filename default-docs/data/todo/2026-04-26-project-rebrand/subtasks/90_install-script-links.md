@@ -1,6 +1,6 @@
 ---
 title: "Installation scripts — update git links"
-status: open
+status: review
 ---
 
 Every place an installation path bakes in the old repo URL must move to the
@@ -17,8 +17,13 @@ Framework-dev instructions keep full clones.
 
 ## Tasks
 
-- [ ] `/docs-init` printed clone command → new repo URL, `--depth 1`.
-- [ ] README + user-guide quick-start clone commands (shallow for consumer
-      installs; full clone noted for contributors).
-- [ ] Sweep for any remaining `git clone …documentation-template` strings on
-      live surfaces.
+- [x] `/docs-init` printed clone command → new repo URL, `--depth 1`
+      (landed with the [70](70_github-urls-and-branding.md) sweep, 2026-07-08).
+- [x] README + user-guide quick-start clone commands: consumer clones
+      (README consumer mode, installation.md, init-and-template, storage page,
+      settings-layout reference) are `--depth 1`; the framework-dev clone in
+      README dogfood mode stays full (history needed for tracker dates).
+- [x] Swept — zero `git clone …documentation-template` strings remain on live
+      surfaces (legacy note, migration docstrings, and closed issues excepted).
+- [ ] Future `install.sh` (blocked on the CLI-tool distribution shipping) uses
+      the new URL + shallow clone from day one.

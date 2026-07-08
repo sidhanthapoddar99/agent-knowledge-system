@@ -2,7 +2,7 @@
 
 A **knowledge + task system designed for AI consumers**, with human-readable docs as a first-class output — modular Astro layouts, YAML configuration, a folder-per-issue tracker, and live editing via Yjs CRDT. Ships its own Claude Code plugin (skills + the `agent-ks` CLI) so agents operate the whole system natively.
 
-> **Rebrand in progress** — formerly *documentation-template*. The GitHub repo, framework folder name, and clone URLs below still carry the old name until the repo move lands (tracked in `2026-04-26-project-rebrand`).
+> Formerly *documentation-template* — that repo is retired and being archived (tracked in `2026-04-26-project-rebrand`). If you have an old checkout, point your remote here: `git remote set-url origin https://github.com/sidhanthapoddar99/agent-knowledge-system.git`.
 
 ## Built for agents, observable by humans
 
@@ -37,27 +37,27 @@ The framework supports two operating modes — pick the one that matches your si
 
 ### Consumer mode (recommended for new projects)
 
-You have a project (a repo, a folder, anything) and you want docs alongside your code or content. Clone the framework as a **subfolder** named `documentation-template/`, write your own `config/`/`data/`/`assets/`/`themes/` next to it at the project root, and point `.env` (inside the framework folder) back up to your content.
+You have a project (a repo, a folder, anything) and you want docs alongside your code or content. Clone the framework as a **subfolder** named `agent-knowledge-system/`, write your own `config/`/`data/`/`assets/`/`themes/` next to it at the project root, and point `.env` (inside the framework folder) back up to your content.
 
 ```bash
 cd <your-project>
-git clone https://github.com/sidhanthapoddar99/documentation-template.git
+git clone --depth 1 https://github.com/sidhanthapoddar99/agent-knowledge-system.git
 # Author your config/, data/, assets/, themes/ at the project root
 # (or run /docs-init to scaffold them from the bundled template).
-cd documentation-template
+cd agent-knowledge-system
 echo "CONFIG_DIR=../config" > .env
 ./start                            # http://localhost:4321
 ```
 
-The framework folder is treated as a vendored dependency — you don't edit anything inside `documentation-template/`. Your content lives outside it.
+The framework folder is treated as a vendored dependency — you don't edit anything inside `agent-knowledge-system/`. Your content lives outside it.
 
 ### Dogfood / framework-dev mode (working *on* the framework itself)
 
 This is what running this repo directly does — you're hacking on the framework, with `default-docs/` doubling as both the framework's own docs and the testbed:
 
 ```bash
-git clone https://github.com/sidhanthapoddar99/documentation-template.git
-cd documentation-template
+git clone https://github.com/sidhanthapoddar99/agent-knowledge-system.git
+cd agent-knowledge-system
 cp .env.example .env               # CONFIG_DIR=./default-docs/config (dogfood default)
 ./start
 ```
@@ -66,7 +66,7 @@ cp .env.example .env               # CONFIG_DIR=./default-docs/config (dogfood d
 
 On native Windows (cmd / PowerShell), use `.\start.cmd` with the same arguments — it runs `start.ps1`, a full port of the bash wrapper. The leading `.\` matters: bare `start` is a cmd built-in. Git Bash and WSL use `./start` as-is.
 
-For a deeper walkthrough (folder layout, what each path means, when to use which mode), see the user-guide: [Installation](https://github.com/sidhanthapoddar99/documentation-template/blob/main/default-docs/data/user-guide/05_getting-started/02_installation.md), [Environment Variables](https://github.com/sidhanthapoddar99/documentation-template/blob/main/default-docs/data/user-guide/10_configuration/02_env.md), [Init and the Starter Template](https://github.com/sidhanthapoddar99/documentation-template/blob/main/default-docs/data/user-guide/05_getting-started/06_init-and-template.md).
+For a deeper walkthrough (folder layout, what each path means, when to use which mode), see the user-guide: [Installation](https://github.com/sidhanthapoddar99/agent-knowledge-system/blob/main/default-docs/data/user-guide/05_getting-started/02_installation.md), [Environment Variables](https://github.com/sidhanthapoddar99/agent-knowledge-system/blob/main/default-docs/data/user-guide/10_configuration/02_env.md), [Init and the Starter Template](https://github.com/sidhanthapoddar99/agent-knowledge-system/blob/main/default-docs/data/user-guide/05_getting-started/06_init-and-template.md).
 
 ## Build commands
 
@@ -87,7 +87,7 @@ Inside `astro-doc-code/`, the usual `bun run dev` / `bun run build` / `bun run p
 ## What's inside the repo
 
 ```
-documentation-template/                 ← THIS repo (= framework folder)
+agent-knowledge-system/                 ← THIS repo (= framework folder)
 ├── start                               ← bash entrypoint (preflight + dev/build/preview/clean)
 ├── .env, .env.example                  ← bootstrap (CONFIG_DIR points at the active config dir)
 ├── plugins/

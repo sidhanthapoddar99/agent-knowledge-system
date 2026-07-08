@@ -4,9 +4,15 @@
 reference material. The *product*, defined by contrast with `brainstorm/`: brainstorm
 is *what we're figuring out*, notes are *what we know*. Content arrives by
 **graduating** out of a resolved brainstorm (the conclusion distilled, the trail left
-behind with a `**Resolved →**` marker) or fully formed (a spec, a how-to, a link
-dump). Once here it should be **stable** — a note that keeps changing is a brainstorm
-wearing the wrong hat; demote it back (see [25_brainstorm.md](25_brainstorm.md)).
+behind with a `**Resolved →**` marker), fully formed (a spec, a how-to, a link
+dump), or **out of an executing run** — research, evidence, rationale, or a
+plan/contract produced inside a workflow or loop that a decision or downstream work
+rests on (see the persistence rule in [24_agent-logs.md](24_agent-logs.md)). The
+inclusive test for whether something is a note: would a future reader need it to
+answer *"why did we do it this way?"* or to execute against it? Then it belongs
+here, not in a transcript or prompt. Once here it should be **stable** — a note
+that keeps changing is a brainstorm wearing the wrong hat; demote it back (see
+[25_brainstorm.md](25_brainstorm.md)).
 
 ## Shape
 

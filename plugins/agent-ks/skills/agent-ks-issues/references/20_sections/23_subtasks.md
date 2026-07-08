@@ -37,14 +37,29 @@ Unlike docs — where 2-digit is the near-universal default — **the issue trac
 
 **Separator:** `_` is canonical; the loader also tolerates `-` (`00-foo`) — prefer `_` for anything new.
 
-## How to write a subtask — readable at cold pickup
+## How to write a subtask — a self-sufficient work order
 
 A subtask should read without prior context — the next agent (or a human reviewer)
-picks it up cold. **Never a bare dump**: even a one-line task gets a sentence or two
-of context-setting (what triggered it, what it serves, where the surrounding work
-lives) before the checklist.
+picks it up cold. **The test: hand it to a competent human who has none of your
+session context. Could they build the right thing?** If they'd have to ask "but what
+exactly?", the subtask isn't written yet. **Never a bare dump, and never a one-liner
+scope marker**: even a one-line task gets a sentence or two of context-setting (what
+triggered it, what it serves, where the surrounding work lives) before the checklist.
+
+The standard shape for a substantive subtask:
 
 - **A short intro** saying what this subtask is and why it exists.
+- **Deliverables** — concrete and enumerable: which endpoints/components/behaviours,
+  with the semantics that matter (not "build user management" but *which* actions,
+  *what* they return, *what* gets recorded).
+- **A "Done when" block** — the acceptance criteria that make `review` verifiable.
+- **Links to the material that scopes it** — the settled notes, brainstorm
+  conclusions, design/brand guidelines, or contract note this work executes against.
+  A subtask whose real spec lives in a conversation, a workflow prompt, or an agent's
+  head is unscoped; put the spec in `notes/` and link it.
+
+Formatting conventions:
+
 - **Checkboxes with a bolded lead**, then the explanation — what / where / how, with
   concrete paths and examples: `- [ ] **Move the loader.** \`src/loaders/x.ts\` → …`.
 - **`##` groups** when the list outgrows a flat sequence.
@@ -67,7 +82,7 @@ activity instead (see [24_agent-logs.md](24_agent-logs.md)); when ambiguous, ask
    - Inside a sub-phase → `<issue>/subtasks/NN_<group>/NN_<subgroup>/NN_<slug>.md` (deepest the loader accepts)
 3. Find the next prefix in the target folder: `ls <target-folder>/` → use the next gap-spaced value. Folders and leaves share the numbering at each level (they sort interleaved).
 4. Write the file with the standard frontmatter (`title`, `status: open`).
-5. Body: enough detail to pick up cold; if a related issue/subtask turned up in the duplicate check, link to it in a "Related:" line.
+5. Body: the full work-order shape above (intro, deliverables, "Done when", links to the scoping material) — enough detail to pick up cold; if a related issue/subtask turned up in the duplicate check, link to it in a "Related:" line.
 
 ## Update a subtask status
 

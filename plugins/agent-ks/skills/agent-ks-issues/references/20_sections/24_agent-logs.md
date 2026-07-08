@@ -212,6 +212,44 @@ explainer — built with the **agent-ks-artifacts** sibling skill) — put it in
 Rule of thumb: if a section outgrows its bullets, it's a note wearing a
 milestone's hat.
 
+### Nothing durable stays trapped in the run — persist as you produce
+
+The run itself — its transcript, its prompts, an orchestrated agent's return
+value — is **ephemeral**; the tracker is the durable memory. Anything produced
+or discovered inside a run that outlives the run must be written into the issue
+**when it's produced, before or as downstream work consumes it** — not at
+wrap-up. A run that dies mid-flight must not take its reasoning with it, and a
+future session must be able to resume from the tracker alone.
+
+This is an inclusive rule; when in doubt, persist. Route by nature, not by a
+checklist of formats:
+
+- **Decision-bearing material → `notes/`** (or `brainstorm/` while still in
+  flux). If a future reader would need it to answer *"why did we do it this
+  way — what did we look at, and what was the thesis?"*, it belongs in `notes/`.
+  Typical shapes, far from exhaustive: research with its sources and data,
+  comparisons/benchmarks/prior art, the rationale behind a decision or
+  conclusion, and the plans or contracts downstream work executes against (API
+  shapes, schemas, specs, file-ownership splits). A workflow whose planner
+  settles a contract writes it to `notes/` before the builders run — the
+  builders' prompts then *point at* the note rather than being its only home.
+- **Run narrative → `agent-log/`** — what was attempted, in what order, what
+  happened, with evidence.
+
+Orchestrated runs (workflows, loops, subagent fan-outs) either have the
+orchestrator write these files or explicitly instruct their agents to — an
+agent's final message is not persistence.
+
+### Detail bar — reconstructable without the transcript
+
+Structured prose is the floor; **substance is the bar**. Each milestone (and
+the goal/summary) carries the concrete, line-level specifics a reader needs to
+reconstruct the run with the transcript gone: what was examined, the actual
+findings and verdicts (not "issues were found"), counts and measurements,
+commands run and their outcomes, file paths, and pointers to the evidence. A
+milestone of three vague bullets is malformed even with perfect frontmatter —
+if you can't say what specifically happened, the unit isn't done being logged.
+
 ### Optional one-liner convenience
 
 `agent-ks issue add-agent-log <issue-id> [--group <activity-folder>] --status …

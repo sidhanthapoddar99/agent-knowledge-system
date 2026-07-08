@@ -93,6 +93,15 @@ needs to cite its conclusion — mark it `**Resolved →** <target>` and leave t
 place. A "do nothing" resolution doesn't graduate. A note that keeps changing is a
 brainstorm wearing the wrong hat.
 
+**Subtasks are self-sufficient work orders, never one-liner scope markers.** Every
+subtask must pass the cold-pickup test: could a human (or a fresh agent session) with
+none of your context execute it? That means **deliverables spelled out, a "Done when"
+acceptance block, and explicit links to the notes/brainstorms that scope it** — a
+one-line body is acceptable only for a genuinely one-line mechanical task. Detail that
+exists only in a conversation, a workflow prompt, or an agent's plan does not count as
+scoped work; the subtask (or a note it links to) is where that detail lives. Full
+contract: [23_subtasks.md](references/20_sections/23_subtasks.md).
+
 **Comments tripwire:** a comment records *that* something happened, in a couple of
 lines plus a pointer. Writing a second paragraph? You're debating (→ brainstorm) or
 specifying (→ notes) — link, don't inline.
@@ -160,6 +169,24 @@ meta files, then `MNN_` milestone files (`101_…`, `102_…`).
   completion. Dense deliverables a run produces (architecture write-ups, diagrams,
   HTML artifacts via the **agent-ks-artifacts** skill) graduate to `notes/` —
   the milestone links to them, never inlines them.
+- **The tracker is the durable home — a run's transcript is not.** Anything produced
+  *inside* a run (a workflow, loop, or subagent) that outlives the run must be written
+  into the issue, not left in prompts, transcripts, or agent return values. This is an
+  inclusive rule — whenever in doubt, persist. It covers, non-exhaustively: research
+  and the sources/data behind it, comparisons and benchmarks, the thesis or rationale
+  behind a decision or conclusion, plans and contracts that downstream work executes
+  against (API shapes, schemas, file-ownership splits), and discovered constraints or
+  findings. Route by nature: **decision-bearing material — anything a future reader
+  would need to answer "why did we do it this way?" — goes to `notes/`** (or
+  `brainstorm/` while still in flux); the run narrative (what was attempted, what
+  happened) goes to `agent-log/`. Persist it **when it's produced — before or as
+  downstream work consumes it** — not at wrap-up; a run that dies must not take its
+  reasoning with it. Orchestrators (workflows/loops) either write these files
+  themselves or instruct their agents to.
+- **Agent-log files are detailed, line-rich records** — a milestone carries the
+  concrete specifics (findings, verdicts, counts, paths, commands, evidence) a reader
+  needs to reconstruct the run without the transcript; a few vague bullets is a
+  malformed milestone.
 - **Milestone frontmatter is required, not optional:** `iteration:` (drives the `#N`
   badge, counts 1, 2, 3… within the activity), `agent:`, `date:`, and `status:` from
   `not-started | in-progress | success | failed` — never the subtask vocabulary

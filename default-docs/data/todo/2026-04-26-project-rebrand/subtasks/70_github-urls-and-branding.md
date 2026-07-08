@@ -1,6 +1,6 @@
 ---
 title: "GitHub URLs + branding sweep"
-status: review
+status: done
 ---
 
 Once the new repo exists ([60](60_new-repo.md)): every URL and brand string

@@ -1,6 +1,6 @@
 ---
 title: "Project + docs sweep — documentation-template → agent-knowledge-system"
-status: review
+status: done
 ---
 
 The wide rename: every reference to "documentation-template" / "docs framework"

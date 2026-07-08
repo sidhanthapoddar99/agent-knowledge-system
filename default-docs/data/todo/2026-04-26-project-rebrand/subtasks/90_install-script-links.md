@@ -1,6 +1,6 @@
 ---
 title: "Installation scripts — update git links"
-status: review
+status: done
 ---
 
 Every place an installation path bakes in the old repo URL must move to the

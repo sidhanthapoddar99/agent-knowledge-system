@@ -1,6 +1,6 @@
 ---
 title: "CLAUDE.md legacy note — ~3 lines on the old naming"
-status: review
+status: done
 ---
 
 A deliberate, bounded exception to the history-free rule (which covers skills

@@ -1,6 +1,6 @@
 ---
 title: "./start self-migration flow in the archived repo"
-status: review
+status: done
 ---
 
 Shipped 2026-07-08 as the old repo's **final commit** (`f703db8` on

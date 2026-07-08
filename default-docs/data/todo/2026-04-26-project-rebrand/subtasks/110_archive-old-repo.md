@@ -1,6 +1,6 @@
 ---
 title: "Archive the old repo with a pointer README"
-status: review
+status: done
 ---
 
 The old `documentation-template` repo is **archived, not deleted** — existing
@@ -12,11 +12,11 @@ instruction (run `./start`, which walks you through the remote switch — see
 
 ## Tasks
 
-- [ ] Final commit to the old repo: README banner (big, first thing on the
+- [x] Final commit to the old repo: README banner (big, first thing on the
       page), plus the migration-aware `start` script
       ([100](100_start-migration-flow.md)) so archived clones can self-migrate.
-- [ ] Archive the repo in GitHub settings (read-only).
-- [ ] Order matters: the banner + migration script must land BEFORE archiving
+- [x] Archive the repo in GitHub settings (read-only).
+- [x] Order matters: the banner + migration script must land BEFORE archiving
       (archived repos are read-only).
 
 ## Executed 2026-07-08

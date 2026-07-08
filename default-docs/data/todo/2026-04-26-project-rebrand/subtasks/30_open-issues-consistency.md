@@ -1,6 +1,6 @@
 ---
 title: "Open-issue consistency pass — new names in unclosed issues"
-status: review
+status: done
 ---
 
 Closed issues keep their historical names (history lives in git and the

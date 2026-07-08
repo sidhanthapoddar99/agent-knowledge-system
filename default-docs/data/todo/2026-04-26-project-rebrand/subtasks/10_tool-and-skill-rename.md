@@ -1,6 +1,6 @@
 ---
 title: "Tool + skill rename — agent-ks CLI, agent-ks-* skills"
-status: review
+status: done
 ---
 
 The first executable slice of the rebrand, unblocked by the name lock

@@ -1,6 +1,6 @@
 ---
 title: "New GitHub repo — agent-knowledge-system"
-status: review
+status: done
 ---
 
 Create the new home: a fresh GitHub repository named for the rebrand

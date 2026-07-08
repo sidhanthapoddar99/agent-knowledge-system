@@ -9,7 +9,7 @@ Every plugin is a folder with a manifest and at least one capability folder. The
 
 ## The full folder shape
 
-This is taken straight from a working plugin (`documentation-guide`):
+This is taken straight from a working plugin (`agent-ks`):
 
 ```
 my-plugin/

@@ -1,6 +1,6 @@
 # `agent-ks` CLI toolkit — complete reference
 
-The `documentation-guide` plugin ships a single command-line entrypoint, **`agent-ks`**, added to `$PATH` automatically when the plugin is installed. Every operation is a subcommand:
+The `agent-ks` plugin ships a single command-line entrypoint, **`agent-ks`**, added to `$PATH` automatically when the plugin is installed. Every operation is a subcommand:
 
 ```
 agent-ks <group> <verb> [flags]

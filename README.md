@@ -14,7 +14,7 @@ The fastest path is via the Claude Code plugin distributed through [`sids-plugin
 
 ```
 /plugin marketplace add sidhanthapoddar99/sids-plugin-marketplace
-/plugin install documentation-guide@sids-plugin-marketplace
+/plugin install agent-ks@sids-plugin-marketplace
 /reload-plugins
 /docs-init
 ```
@@ -91,7 +91,7 @@ documentation-template/                 ← THIS repo (= framework folder)
 ├── start                               ← bash entrypoint (preflight + dev/build/preview/clean)
 ├── .env, .env.example                  ← bootstrap (CONFIG_DIR points at the active config dir)
 ├── plugins/
-│   └── documentation-guide/            ← plugin source (skill + wrappers + commands + bundled template) — distributed via sids-plugin-marketplace
+│   └── agent-ks/                       ← plugin source (skill + wrappers + commands + bundled template) — distributed via sids-plugin-marketplace
 ├── astro-doc-code/                     ← framework code — don't edit unless you're hacking on it
 │   ├── src/                            ← Astro layouts, loaders, parsers
 │   ├── astro.config.mjs
@@ -106,7 +106,7 @@ documentation-template/                 ← THIS repo (= framework folder)
 
 `default-docs/` is the framework's **own** content — its user-guide, its dev-docs, its sample blog/issues, its bundled themes — packaged with the install. **Consumers don't edit it.** When you use the framework via consumer mode (clone as a subfolder), you write your content at YOUR project root (in `config/`, `data/`, `assets/`, `themes/` next to the framework folder), and `default-docs/` stays read-only as a vendored dependency. In dogfood mode (this repo), `default-docs/` doubles as both the framework's own docs and the live testbed for any framework changes.
 
-The plugin in `plugins/documentation-guide/` is distributed via [`sids-plugin-marketplace`](https://github.com/sidhanthapoddar99/sids-plugin-marketplace), which fetches it from this repo via a `git-subdir` source.
+The plugin in `plugins/agent-ks/` is distributed via [`sids-plugin-marketplace`](https://github.com/sidhanthapoddar99/sids-plugin-marketplace), which fetches it from this repo via a `git-subdir` source.
 
 ## Documentation
 

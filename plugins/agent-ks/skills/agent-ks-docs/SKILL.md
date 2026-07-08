@@ -52,7 +52,7 @@ Cross-cutting tasks read multiple references. Example: *"add a new docs section 
     ├── astro-doc-code/           ← framework code (src/, package.json, astro.config.mjs)
     │   └── src/layouts/          ← per-content-type layouts (docs, blog, issues, custom)
     ├── default-docs/             ← framework's bundled content (its own user-guide / dev-docs / themes / template)
-    └── plugins/                  ← repo-local plugins (e.g. documentation-guide)
+    └── plugins/                  ← repo-local plugins (e.g. agent-ks)
 ```
 
 **Dogfood mode** — the framework repo *is* the project; the structure above collapses (no outer wrapper). Content lives under `documentation-template/default-docs/` and `CONFIG_DIR=./default-docs/config`. Same code path either way; only `CONFIG_DIR` differs.

@@ -19,7 +19,7 @@ $ echo $PATH | tr ':' '\n' | grep claude
 /home/you/.claude/plugins/cache/claude-plugins-official/pyright-lsp/1.0.0/bin
 /home/you/.claude/plugins/cache/claude-plugins-official/ralph-loop/1.0.0/bin
 /home/you/.claude/plugins/cache/claude-plugins-official/skill-creator/unknown/bin
-/home/you/.claude/plugins/cache/sids-plugin-marketplace/documentation-guide/0.1.4/bin
+/home/you/.claude/plugins/cache/sids-plugin-marketplace/agent-ks/0.1.4/bin
 …
 ```
 
@@ -29,11 +29,11 @@ That means the model can invoke any wrapper by its bare name — no path knowled
 agent-ks issue list --priority high
 ```
 
-resolves to `~/.claude/plugins/cache/sids-plugin-marketplace/documentation-guide/0.3.0/bin/agent-ks` automatically.
+resolves to `~/.claude/plugins/cache/sids-plugin-marketplace/agent-ks/0.3.0/bin/agent-ks` automatically.
 
 ## Wrapper template
 
-A wrapper is just an executable shell script. As a toolkit grows past a handful of commands, the cleanest pattern is a **single generic shim** routed through one dispatcher — every wrapper is byte-identical except its filename, and it passes its own basename through to a central `cli.mjs`. Example of the shape (a hypothetical `docs-list` wrapper; `documentation-guide` itself ships only the single `agent-ks` dispatcher):
+A wrapper is just an executable shell script. As a toolkit grows past a handful of commands, the cleanest pattern is a **single generic shim** routed through one dispatcher — every wrapper is byte-identical except its filename, and it passes its own basename through to a central `cli.mjs`. Example of the shape (a hypothetical `docs-list` wrapper; the plugin itself ships only the single `agent-ks` dispatcher):
 
 ```bash
 #!/usr/bin/env bash
@@ -59,7 +59,7 @@ Three things going on:
 
 ## Single-dispatcher architecture (manifest-driven)
 
-`documentation-guide` ships ~28 commands behind one dispatcher. The design has three parts:
+The `agent-ks` plugin ships ~28 commands behind one dispatcher. The design has three parts:
 
 - **`scripts/_manifest.mjs`** — the single source of truth. One array entry per command: `{ bin, group, verb, category, script, runtime, summary, flags }`. Nothing else hard-codes the command list.
 - **`scripts/cli.mjs`** — the dispatcher. It resolves the incoming tokens against the manifest, intercepts `--help`/`-h` centrally (rendered *from* the manifest, so help can't drift from reality), routes to the entry's `script` according to its `runtime`, and rebuilds `argv` so the target script sees its own args.
@@ -106,7 +106,7 @@ You could hand-author the same wrappers in `~/.claude/bin/` — but then there's
 
 ## Naming hygiene
 
-**Always prefix wrappers with your plugin's namespace.** If five plugins each ship a `list` wrapper, they collide on PATH (whichever loads first wins). The `documentation-guide` plugin applies the rule to its single dispatcher: the entrypoint is `agent-ks`, never a bare `docs` or `ks`.
+**Always prefix wrappers with your plugin's namespace.** If five plugins each ship a `list` wrapper, they collide on PATH (whichever loads first wins). The `agent-ks` plugin applies the rule to its single dispatcher: the entrypoint is `agent-ks`, never a bare `docs` or `ks`.
 
 Rules of thumb:
 
@@ -115,7 +115,7 @@ Rules of thumb:
 - Don't shadow common system commands (`ls`, `cd`, `git`, `npm`)
 - Don't shadow common dev tools (`jq`, `yq`, `rg`)
 
-> **Worked example — why the dispatcher is named `agent-ks`, not `docs`.** A subcommand toolkit wants a single short entrypoint, and bare `docs` is the obvious pick — but `docs` is *not* prefix-namespaced, and other tools ship one (e.g. NVIDIA CUDA puts a `docs` on PATH; in WSL the Windows paths often sort *ahead* of the plugin's bin dir, so CUDA's wins and the toolkit becomes unreachable by name). The fix is to keep the dispatcher name prefixed too: `documentation-guide` ships **`agent-ks`**, which is collision-safe by the same prefix rule. Lesson: the namespace prefix applies to the dispatcher, not just the per-command wrappers.
+> **Worked example — why the dispatcher is named `agent-ks`, not `docs`.** A subcommand toolkit wants a single short entrypoint, and bare `docs` is the obvious pick — but `docs` is *not* prefix-namespaced, and other tools ship one (e.g. NVIDIA CUDA puts a `docs` on PATH; in WSL the Windows paths often sort *ahead* of the plugin's bin dir, so CUDA's wins and the toolkit becomes unreachable by name). The fix is to keep the dispatcher name prefixed too: the plugin ships **`agent-ks`**, which is collision-safe by the same prefix rule. (The dispatcher and the plugin happen to share the `agent-ks` name — branding convergence, not a requirement.) Lesson: the namespace prefix applies to the dispatcher, not just the per-command wrappers.
 
 ## What goes in the wrapper
 

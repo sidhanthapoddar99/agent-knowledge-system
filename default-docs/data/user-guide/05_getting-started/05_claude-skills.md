@@ -5,7 +5,7 @@ description: AI-powered skills, CLI toolkit, and slash commands for working with
 
 # Claude Code Plugin
 
-This template ships its own **Claude Code plugin** — `documentation-guide` — that teaches Claude how to work inside this project without you having to explain the conventions every time. It bundles:
+This template ships its own **Claude Code plugin** — `agent-ks` — that teaches Claude how to work inside this project without you having to explain the conventions every time. It bundles:
 
 - **3 skills** — `agent-ks-docs` (triages every docs/blog/config/writing task to a domain-specific reference), `agent-ks-issues` (the complete, self-contained issue-tracker skill — anatomy, rules, agent-logs, agent-memory, and the execution verbs), and `agent-ks-artifacts` (building self-contained HTML artifacts — reports, dashboards, data viz, design systems — served at `/artifacts`)
 - **28 CLI commands** auto-added to `$PATH` — issue tracker, validators, docs/blog content, git metadata, and cross-content search (one `agent-ks` entrypoint; every operation is a `agent-ks <group> <verb>` subcommand)
@@ -19,7 +19,7 @@ Three commands. The first two are one-time per marketplace and per project; the 
 
 ```
 /plugin marketplace add sidhanthapoddar99/sids-plugin-marketplace
-/plugin install documentation-guide@sids-plugin-marketplace
+/plugin install agent-ks@sids-plugin-marketplace
 /reload-plugins
 ```
 
@@ -75,7 +75,7 @@ Typical first-time flow in a fresh directory:
 
 ```
 /plugin marketplace add sidhanthapoddar99/sids-plugin-marketplace
-/plugin install documentation-guide@sids-plugin-marketplace
+/plugin install agent-ks@sids-plugin-marketplace
 /reload-plugins
 /docs-init
 ```
@@ -167,7 +167,7 @@ You almost always describe the task in natural language and let the skill route 
 Pull the latest plugin version from the marketplace:
 
 ```
-/plugin update documentation-guide@sids-plugin-marketplace
+/plugin update agent-ks@sids-plugin-marketplace
 /reload-plugins
 ```
 
@@ -185,7 +185,7 @@ Or update everything you've installed:
 Plugin files are cached **once** at user level, regardless of which scope (user / project / local) enables them:
 
 ```
-~/.claude/plugins/cache/sids-plugin-marketplace/documentation-guide/<version>/
+~/.claude/plugins/cache/sids-plugin-marketplace/agent-ks/<version>/
 ├── .claude-plugin/plugin.json
 ├── README.md
 ├── bin/                  ← auto-added to $PATH at session start
@@ -209,7 +209,7 @@ What differs across scopes is just a boolean entry in each scope's `settings.jso
 ```json
 {
   "enabledPlugins": {
-    "documentation-guide@sids-plugin-marketplace": true
+    "agent-ks@sids-plugin-marketplace": true
   }
 }
 ```

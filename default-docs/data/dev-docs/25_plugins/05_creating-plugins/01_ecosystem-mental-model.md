@@ -20,7 +20,7 @@ After plugin installation, when a Claude Code session starts:
 5. **CLI wrappers in `bin/`** are added to `$PATH`. The model uses them via the `Bash` tool, same as any system command.
 6. **Hooks** never appear to the model — they fire in the runtime, before/after tool calls.
 
-There is no concept of "this skill belongs to plugin X." The skill name might be prefixed with the plugin namespace (`documentation-guide:agent-ks-docs`) for collision avoidance, but the model treats the prefix as part of the name, not as a structural relationship.
+There is no concept of "this skill belongs to plugin X." The skill name might be prefixed with the plugin namespace (`agent-ks:agent-ks-docs`) for collision avoidance, but the model treats the prefix as part of the name, not as a structural relationship.
 
 ## What the runtime sees
 

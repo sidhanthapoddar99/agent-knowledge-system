@@ -9,7 +9,7 @@
  *
  * This module is the ONLY place that grammar lives — the docs loader, parsers,
  * sidebar hook, the issue-tracker loader, and the validators (mirrored in the
- * documentation-guide plugin, which can't import across the package boundary)
+ * agent-ks plugin, which can't import across the package boundary)
  * all defer to it.
  *
  * **One grammar, one knob — the separator.** Width (2–5) and numeric-value sort

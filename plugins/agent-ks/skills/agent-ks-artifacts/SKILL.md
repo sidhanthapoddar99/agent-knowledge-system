@@ -1,7 +1,7 @@
 ---
 name: agent-ks-artifacts
 description: Use this skill to BUILD a self-contained HTML artifact as a content file in an agent-knowledge-system project — a report page, dashboard, data visualization, design-system swatch / type-specimen / component gallery, a variation set comparing N design options of one UI element, or a brand-guideline showcase — published as an `NN_`-prefixed `.html` page in a docs section (the `/artifacts` content type) or inside a tracker `brainstorm/` / `notes/` folder, with an optional `.meta.json` sidecar. Covers treatment calibration, honoring the host theme contract, dual-theme + self-containment discipline, the chart/dataviz procedure and the palette validator, design-system authoring flows, the variation-set / options-explorer pattern, and the pre-publish verify gate. Trigger eagerly whenever the user asks to build / design / generate an artifact, an HTML report, a dashboard, a chart, a data viz, a design system, a set of design options / variations to compare or pick from, or a brand guideline for THIS project. This is NOT about claude.ai Artifacts (the built-in `Artifact` tool / gallery); it is about HTML files served at `/artifacts` in an agent-knowledge-system repo. For writing markdown docs pages use the agent-ks-docs skill; for issue-tracker structure use agent-ks-issues.
-license: Complete terms in the documentation-guide plugin LICENSE file.
+license: Complete terms in the agent-ks plugin LICENSE file.
 ---
 
 # agent-ks-artifacts — building HTML artifacts in this framework

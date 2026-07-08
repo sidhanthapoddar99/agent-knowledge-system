@@ -4,7 +4,7 @@ allowed-tools: Read, Write, Edit, Bash
 argument-hint: (no arguments — fully interactive)
 ---
 
-You are running the `/docs-init` slash command from the `documentation-guide` plugin.
+You are running the `/docs-init` slash command from the `agent-ks` plugin.
 
 # Goal
 
@@ -60,12 +60,12 @@ If none exist, continue.
 The starter template is bundled inside this plugin at `<plugin-root>/template/`. Locate it:
 
 ```bash
-TEMPLATE_DIR=$(find ~/.claude/plugins/cache -path "*/documentation-guide/*/template" -type d 2>/dev/null | sort -V | tail -1)
+TEMPLATE_DIR=$(find ~/.claude/plugins/cache -path "*/agent-ks/*/template" -type d 2>/dev/null | sort -V | tail -1)
 echo "Template: $TEMPLATE_DIR"
 test -d "$TEMPLATE_DIR/config" || { echo "ERROR: bundled template not found"; exit 1; }
 ```
 
-If not found, tell the user the plugin install is broken and they should `/plugin update documentation-guide@sids-plugin-marketplace && /reload-plugins`.
+If not found, tell the user the plugin install is broken and they should `/plugin update agent-ks@sids-plugin-marketplace && /reload-plugins`.
 
 ## Step 3 — Ask: scope
 
@@ -235,9 +235,9 @@ From `<chosen_root>/documentation-template/`:
 
 The framework reads `.env` from `documentation-template/.env`. Default for consumer mode: `CONFIG_DIR=../config` (points back up to `<chosen_root>/config/`).
 
-### Tooling — `documentation-guide` plugin
+### Tooling — `agent-ks` plugin
 
-This project uses the `documentation-guide` Claude Code plugin. It ships:
+This project uses the `agent-ks` Claude Code plugin. It ships:
 
 - **Skills (3)** — `agent-ks-docs` (docs/blog/config/writing; routes to domain-specific reference files), `agent-ks-issues` (issue tracker), `agent-ks-artifacts` (HTML artifacts); each triggers automatically on its domain
 - **CLI on PATH** — one `agent-ks` entrypoint; every operation is `agent-ks <group> <verb>` (issue tracker: `agent-ks issue …`, validators: `agent-ks check …`, content: `agent-ks doc/blog …`, plus `find`, `move`, `img`). Discover with `agent-ks help`
@@ -247,7 +247,7 @@ Install (per workstation, one-time):
 
 ```
 /plugin marketplace add sidhanthapoddar99/sids-plugin-marketplace
-/plugin install documentation-guide@sids-plugin-marketplace
+/plugin install agent-ks@sids-plugin-marketplace
 /reload-plugins
 ```
 

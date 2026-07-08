@@ -5,13 +5,13 @@ description: How `/docs-init` scaffolds a new project from the bundled starter t
 
 # Init and the Starter Template
 
-The `/docs-init` slash command (shipped by the `documentation-guide` plugin) bootstraps a new docs project by copying a **bundled starter template** into your chosen directory and substituting your site name / description / repo URL into the copied files.
+The `/docs-init` slash command (shipped by the `agent-ks` plugin) bootstraps a new docs project by copying a **bundled starter template** into your chosen directory and substituting your site name / description / repo URL into the copied files.
 
 The result is a working five-section site (Home / Docs / Issues / Blog / User Guide) you can immediately `./start dev` and customise from there.
 
 ## What ships in the template
 
-The template lives **inside the plugin** at `<plugin-install>/template/` (where `<plugin-install>` is `~/.claude/plugins/cache/sids-plugin-marketplace/documentation-guide/<version>/`). It does **not** live in the framework's source tree — the plugin is the single distribution point for the starter template, decoupled from any framework clone. The bundle:
+The template lives **inside the plugin** at `<plugin-install>/template/` (where `<plugin-install>` is `~/.claude/plugins/cache/sids-plugin-marketplace/agent-ks/<version>/`). It does **not** live in the framework's source tree — the plugin is the single distribution point for the starter template, decoupled from any framework clone. The bundle:
 
 ```
 template/
@@ -60,7 +60,7 @@ Walks you through five short questions (the last is optional) then copies + subs
 
 Then it:
 
-1. **Locates the bundled template** in your plugin install (`~/.claude/plugins/cache/.../documentation-guide/<version>/template/`)
+1. **Locates the bundled template** in your plugin install (`~/.claude/plugins/cache/.../agent-ks/<version>/template/`)
 2. **Copies** everything into your chosen root (excluding the template's own `README.md`)
 3. **Substitutes placeholders** — `My Docs` → your site name, `My Documentation` → your title, `Modern documentation built with Astro` → your description, `your-org/your-repo` → your repo URL
 4. **Patches `CLAUDE.md`** at your project root so future Claude Code sessions know the layout, the active skill, and the build commands
@@ -79,7 +79,7 @@ Then it:
 # 0. One-time per workstation: install the plugin
 #    (from any Claude Code session)
 /plugin marketplace add sidhanthapoddar99/sids-plugin-marketplace
-/plugin install documentation-guide@sids-plugin-marketplace
+/plugin install agent-ks@sids-plugin-marketplace
 /reload-plugins
 
 # 1. Scaffold your content folders
@@ -107,11 +107,11 @@ If you'd rather not run the slash command — for example, you're scripting the 
 # 0. (One-time) Install the plugin so its files land in the cache.
 #    From a Claude Code session:
 /plugin marketplace add sidhanthapoddar99/sids-plugin-marketplace
-/plugin install documentation-guide@sids-plugin-marketplace
+/plugin install agent-ks@sids-plugin-marketplace
 /reload-plugins
 
 # 1. Find the bundle on disk.
-TEMPLATE=$(find ~/.claude/plugins/cache -path "*/documentation-guide/*/template" -type d | sort -V | tail -1)
+TEMPLATE=$(find ~/.claude/plugins/cache -path "*/agent-ks/*/template" -type d | sort -V | tail -1)
 echo "$TEMPLATE"
 
 # 2. Copy the bundle UP to your project root (excluding the template's own README).

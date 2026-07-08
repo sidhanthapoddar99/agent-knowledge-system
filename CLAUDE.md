@@ -2,11 +2,11 @@
 
 **agent-knowledge-system** — a knowledge + task system designed for AI consumers, with human-readable docs as a first-class output. Astro-based engine with modular layouts, YAML configuration, and live editing via Yjs CRDT.
 
-> **Legacy naming (rebrand, 2026-07):** formerly *documentation-template*, with CLI `docs-guide` and skills `documentation-guide` / `doc-issues` / `artifact-authoring`. Those names survive only in tracker history and old commits — never use them in new work; current names are `agent-ks` and `agent-ks-docs` / `agent-ks-issues` / `agent-ks-artifacts`. Delete this note once the repo move + archive (issue `2026-04-26-project-rebrand`) is fully settled.
+> **Legacy naming (rebrand, 2026-07):** formerly *documentation-template*, with plugin `documentation-guide` (install key `documentation-guide@sids-plugin-marketplace`), CLI `docs-guide`, and skills `documentation-guide` / `doc-issues` / `artifact-authoring`. Those names survive only in tracker history and old commits — never use them in new work; current names are plugin `agent-ks` (key `agent-ks@sids-plugin-marketplace`), CLI `agent-ks`, and skills `agent-ks-docs` / `agent-ks-issues` / `agent-ks-artifacts`. Delete this note once the repo move + archive (issue `2026-04-26-project-rebrand`) is fully settled.
 
 ## Skills + tooling
 
-This project ships a Claude Code plugin (`documentation-guide`) — source at `plugins/documentation-guide/`. See the README for install instructions.
+This project ships a Claude Code plugin (`agent-ks`) — source at `plugins/agent-ks/`. See the README for install instructions.
 
 **Skills (3).** `agent-ks-docs` triages every docs/blog/config/writing task to one of five reference targets (`writing.md`, `docs-layout.md`, `blog-layout.md`, `settings-layout.md`, `images.md`) — trigger eagerly for anything under `default-docs/` *outside the tracker*. `agent-ks-issues` is the self-contained issue-tracker skill — the whole anatomy (`brainstorm/` · `notes/` · `subtasks/` · `agent-log/` activity folders · `agent-memory/` · flat `comments/` · `glossary.md`), the creation threshold rules + issue dump, the 7-status / 4-category lifecycle (statuses fixed in framework code, shared by issues + subtasks under one `status` field) + AI rules, and its own tracker-flavoured writing reference; it also fires on the execution verbs (audit / refactor / loop / discuss) against a tracked issue, keeps always-on agent-memory, and treats discussion as explicit-save-only (offer when dense, never auto-save). For anything under `default-docs/data/todo/`, load `agent-ks-issues`. `agent-ks-artifacts` is the artifact skill — building self-contained HTML artifacts (reports, dashboards, data viz, design systems, variation sets) as `NN_`-prefixed `.html` pages served at `/artifacts`, with the `.meta.json` sidecar, theme modes, and the verify gate.
 
@@ -33,7 +33,7 @@ The plugin's skills carry the full operating manual, including the `agent-ks` CL
 ├── astro-doc-code/          # Framework code (src/, package.json, astro.config.mjs, tsconfig.json, bun.lock)
 ├── default-docs/            # User content (data, config, themes, assets)
 ├── migration/               # Content-format migrations, version-named `<to-version>_<statement>.py`
-├── plugins/                 # Repo-local plugin sources (e.g. documentation-guide)
+├── plugins/                 # Repo-local plugin sources (e.g. agent-ks)
 ├── .claude/, .claude-plugin/, .mcp.json
 ├── .env, .env.example
 └── CLAUDE.md, README.md
@@ -184,7 +184,7 @@ Every layout surface follows the framework's UX standards — truncation-only to
 
 **Do not** reach for hex codes, arbitrary `rem` font sizes, or invented variable names. If something feels missing from the contract, propose adding it to `theme.yaml` before inventing a private name.
 
-**Coupling — `theme.yaml` ↔ agent-ks-artifacts skill.** The `documentation-guide` plugin's `agent-ks-artifacts` skill carries an **inline copy** of the `required_variables` vocabulary in its text (SKILL.md §1 "inline variable contract"), so `site`-mode artifacts have the token names even if the plugin is ever distributed standalone with no theme CSS on disk. That inline list is coupled to this contract: **any change to `theme.yaml → required_variables` (add / rename / remove) must update the skill's inline variable section in the same change — both the repo source (`plugins/documentation-guide/skills/agent-ks-artifacts/SKILL.md`) and the installed cache** (mirror byte-identically). The live *values* are served by `agent-ks theme tokens --json`; only the *names* are duplicated inline.
+**Coupling — `theme.yaml` ↔ agent-ks-artifacts skill.** The `agent-ks` plugin's `agent-ks-artifacts` skill carries an **inline copy** of the `required_variables` vocabulary in its text (SKILL.md §1 "inline variable contract"), so `site`-mode artifacts have the token names even if the plugin is ever distributed standalone with no theme CSS on disk. That inline list is coupled to this contract: **any change to `theme.yaml → required_variables` (add / rename / remove) must update the skill's inline variable section in the same change — both the repo source (`plugins/agent-ks/skills/agent-ks-artifacts/SKILL.md`) and the installed cache** (mirror byte-identically). The live *values* are served by `agent-ks theme tokens --json`; only the *names* are duplicated inline.
 
 ### Where themes live
 

@@ -35,7 +35,7 @@ Plugins solve **distribution problems**, not capability problems. Every capabili
 Without plugins, every team would be reinventing the same skills/commands and hand-syncing them across projects. Plugins are the package manager for Claude Code capabilities.
 
 > [!note]
-> The model sees `documentation-guide:agent-ks-docs` and `claude-md-management:revise-claude-md` in its skill list — the prefix before the colon is the plugin namespace. This is purely for collision avoidance; the model doesn't reason about "documentation-guide the plugin." It reasons about the skill's description and decides whether to trigger.
+> The model sees `agent-ks:agent-ks-docs` and `claude-md-management:revise-claude-md` in its skill list — the prefix before the colon is the plugin namespace. This is purely for collision avoidance; the model doesn't reason about "agent-ks the plugin." It reasons about the skill's description and decides whether to trigger.
 
 ## Where plugins fit in the broader extensions ecosystem
 

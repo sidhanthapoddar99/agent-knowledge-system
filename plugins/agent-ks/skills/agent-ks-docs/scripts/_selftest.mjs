@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Self-test / smoke harness for the agent-ks CLI toolkit (documentation-guide plugin).
+ * Self-test / smoke harness for the agent-ks CLI toolkit (agent-ks plugin).
  *
  * Asserts the TARGET contract (Category 0) for every command, by invoking the
  * REPO `cli.mjs` directly — NOT the on-PATH `docs-*` bins, which resolve to the

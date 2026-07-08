@@ -114,18 +114,18 @@ Claude Code fetches the manifest and resolves plugin sources from the URLs liste
 
 ## How this plugin is distributed
 
-`plugins/documentation-guide/` is published through [`sids-plugin-marketplace`](https://github.com/sidhanthapoddar99/sids-plugin-marketplace) — a standalone marketplace that fetches just this subdirectory via a `git-subdir` source.
+`plugins/agent-ks/` is published through [`sids-plugin-marketplace`](https://github.com/sidhanthapoddar99/sids-plugin-marketplace) — a standalone marketplace that fetches just this subdirectory via a `git-subdir` source.
 
 While hacking on the plugin in this repo, you don't need to round-trip through the marketplace. Load the on-disk folder directly:
 
 ```
-claude --plugin-dir plugins/documentation-guide
+claude --plugin-dir plugins/agent-ks
 ```
 
 `--plugin-dir` mounts the plugin for that session only, with no marketplace registration and no cache copy. If you also have it installed normally, the `--plugin-dir` copy shadows the install for the session — see [Testing and Benchmarking](./05_creating-plugins/05_testing-and-benchmarking.md).
 
 > [!note]
-> `sids-plugin-marketplace` also ships [`ai-toolkit-dev`](https://github.com/sidhanthapoddar99/sids-plugin-marketplace/tree/main/plugins/ai-toolkit-dev) — a toolkit for authoring Claude Code plugins, marketplaces, and skills. Useful for plugin development workflow if you're iterating on `documentation-guide` or any other plugin.
+> `sids-plugin-marketplace` also ships [`ai-toolkit-dev`](https://github.com/sidhanthapoddar99/sids-plugin-marketplace/tree/main/plugins/ai-toolkit-dev) — a toolkit for authoring Claude Code plugins, marketplaces, and skills. Useful for plugin development workflow if you're iterating on `agent-ks` or any other plugin.
 
 ## Listing multiple plugins
 

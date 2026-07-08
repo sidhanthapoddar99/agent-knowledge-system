@@ -4,7 +4,7 @@ allowed-tools: Read, Write, Edit, Bash
 argument-hint: [the idea, in a phrase or a sentence]
 ---
 
-You are running the `/docs-quick-idea-note` slash command from the `documentation-guide` plugin.
+You are running the `/docs-quick-idea-note` slash command from the `agent-ks` plugin.
 
 # Goal
 

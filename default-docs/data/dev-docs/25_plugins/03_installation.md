@@ -45,7 +45,7 @@ Example:
 
 ```
 /plugin marketplace add sidhanthapoddar99/sids-plugin-marketplace
-/plugin install documentation-guide@sids-plugin-marketplace
+/plugin install agent-ks@sids-plugin-marketplace
 /reload-plugins
 ```
 

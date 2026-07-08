@@ -42,7 +42,7 @@ The boundary's easy 80% wasn't the interesting part. These were:
 
 - **A — all-in-one.** One install, no version-skew, matches current DX. Cost is only
   `node_modules` weight (dev-tools are dev-only). *Recommended.*
-- **B — sibling `documentation-template-dev` package.** Leaner engine, but a two-package
+- **B — sibling `agent-knowledge-system-dev` package.** Leaner engine, but a two-package
   coordination tax: versions must track, integration must gracefully no-op when the dev package
   is absent. More docs surface.
 - **C — plugin-style two integrations under one package.** Clean opt-in

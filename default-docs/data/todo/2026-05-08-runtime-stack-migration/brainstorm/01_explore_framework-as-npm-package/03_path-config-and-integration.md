@@ -14,7 +14,7 @@ second is where the npm-specific bet lived — and where the Go runtime chose a 
 Today `paths.ts`, `alias.ts`, `config.ts` resolve everything relative to a hard-coded "project
 root = cwd" and discover layouts via `import.meta.glob('src/layouts/**')` — which only works
 when `src/` is co-located with the consumer. Once the engine lives in
-`node_modules/documentation-template/`, all three assumptions break. The fix: the engine must
+`node_modules/agent-knowledge-system/`, all three assumptions break. The fix: the engine must
 **take the project root as an input**, threaded from the integration's options down through
 every loader.
 
@@ -37,7 +37,7 @@ Two alias families that previously both resolved against one root now diverge:
 
 | Family | Examples | Resolves to (post-extraction) |
 |---|---|---|
-| **System** | `@docs`, `@blog`, `@issues`, `@custom`, `@navbar`, `@footer` | package files — `node_modules/documentation-template/dist/layouts/...` |
+| **System** | `@docs`, `@blog`, `@issues`, `@custom`, `@navbar`, `@footer` | package files — `node_modules/agent-knowledge-system/dist/layouts/...` |
 | **User** | `@data`, `@assets`, `@themes`, custom `paths:` entries | the consumer's project root, as before |
 
 The collision case (a user alias shadowing a system name) has to error clearly rather than
@@ -57,7 +57,7 @@ hand them paths derived from `FrameworkPaths`, not hard-coded relatives.
 The consumer-facing API was to be an integration:
 
 ```js
-import { documentationTemplate } from 'documentation-template/integration';
+import { documentationTemplate } from 'agent-knowledge-system/integration';
 export default defineConfig({
   integrations: [documentationTemplate({ dataPath: './dynamic_data' })],
 });

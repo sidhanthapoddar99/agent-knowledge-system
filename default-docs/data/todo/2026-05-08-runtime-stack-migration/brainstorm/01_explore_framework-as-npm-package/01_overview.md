@@ -19,13 +19,13 @@ full-clone-per-project. Each of the ~20-30 consumer docs sites would shrink to a
 
 ```
 my-docs/
-├── package.json          ← one dep: "documentation-template": "^1.0.0"
+├── package.json          ← one dep: "agent-knowledge-system": "^1.0.0"
 ├── astro.config.mjs      ← 5 lines: import the integration, add to integrations
 ├── .env                  ← per-project secrets
 └── dynamic_data/         ← content + config (the only genuinely unique part)
 ```
 
-Framework updates would become `bun update documentation-template` per project instead of
+Framework updates would become `bun update agent-knowledge-system` per project instead of
 "pull the new template into every repo, resolve conflicts, reinstall." 30 clones → one engine
 source of truth. This is the end-state every comparable framework lands on — Starlight,
 Docusaurus, VuePress, Nextra all ship the engine as a package.

@@ -64,7 +64,7 @@ Candidates weighed:
 **Recommendation: `agent-ks-artifacts`.** It names the craft, avoids the
 built-in collision, and its description can open with an unambiguous scope line —
 "for building self-contained HTML artifacts as content files in a
-documentation-template project (the `/artifacts` content type), NOT claude.ai
+agent-knowledge-system project (the `/artifacts` content type), NOT claude.ai
 Artifacts." That scope sentence is what keeps the built-in and our skill from
 mis-triggering against each other.
 

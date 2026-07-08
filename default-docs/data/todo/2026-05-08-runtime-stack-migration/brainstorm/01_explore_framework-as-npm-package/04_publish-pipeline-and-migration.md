@@ -76,7 +76,7 @@ whatever migration doc the Go cutover eventually writes.
 Because the branch was cancelled before implementation, these stayed open — noted here so the
 Go migration doesn't rediscover them cold:
 
-- **Package name** (`documentation-template` vs `@scope/...` vs branded) — moot for npm, but the
+- **Package name** (`agent-knowledge-system` vs `@scope/...` vs branded) — moot for npm, but the
   *binary* name is the live version of this (`doc-engine` is the working placeholder).
 - **What happens to the framework's self-hosted `user-guide/`** once engine and content split —
   answered by "stays in the engine repo as an example consumer / reference site," which the Go

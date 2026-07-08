@@ -80,16 +80,20 @@ function Shallow-Check {
   if ($LASTEXITCODE -ne 0) { return }
   $isShallow = & git -C $Dir rev-parse --is-shallow-repository 2>$null
   if ($isShallow -ne 'false') { return }
-  if (Test-Path (Join-Path $Dir '.git/.start-shallow-declined')) { return }
+  # resolve the real git dir (works for worktrees/submodules where .git is a file)
+  $gitDir = & git -C $Dir rev-parse --absolute-git-dir 2>$null
+  if ($LASTEXITCODE -ne 0 -or -not $gitDir) { return }
+  if (Test-Path (Join-Path $gitDir '.start-shallow-declined')) { return }
 
   # Consumer mode iff CONFIG_DIR resolves outside the framework folder.
   $envFile = Join-Path $Dir '.env'
   if (-not (Test-Path $envFile)) { return }
   $configLine = (Get-Content $envFile | Where-Object { $_ -match '^CONFIG_DIR=' } | Select-Object -Last 1)
   if (-not $configLine) { return }
-  $configDir = ($configLine -replace '^CONFIG_DIR=', '').Trim('"', "'")
+  $configDir = (($configLine -replace '^CONFIG_DIR=', '') -replace '\s*#.*$', '').Trim().Trim('"', "'")
   try { $resolved = (Resolve-Path (Join-Path $Dir $configDir) -ErrorAction Stop).Path } catch { return }
-  if ($resolved.StartsWith((Resolve-Path $Dir).Path + [IO.Path]::DirectorySeparatorChar)) { return }  # dogfood
+  $dirResolved = (Resolve-Path $Dir).Path
+  if ($resolved -eq $dirResolved -or $resolved.StartsWith($dirResolved + [IO.Path]::DirectorySeparatorChar)) { return }  # dogfood
 
   # Same safety rails as the update check.
   & git -C $Dir diff --quiet; if ($LASTEXITCODE -ne 0) { return }
@@ -116,7 +120,7 @@ function Shallow-Check {
     }
   } else {
     Write-Host "[start] keeping full history (won't ask again - delete .git/.start-shallow-declined to re-enable)"
-    New-Item -ItemType File -Path (Join-Path $Dir '.git/.start-shallow-declined') -Force | Out-Null
+    New-Item -ItemType File -Path (Join-Path $gitDir '.start-shallow-declined') -Force -ErrorAction SilentlyContinue | Out-Null
   }
 }
 

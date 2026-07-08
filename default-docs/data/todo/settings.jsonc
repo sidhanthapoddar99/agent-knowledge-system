@@ -66,7 +66,7 @@
         "layout-issues": "The issue-tracker presentation specifically (this layout & its parts).",
         "editor": "The live editing application — CodeMirror + Yjs: core, sync/presence, view modes, and the editor server's operational surface.",
         "ai-plugin-and-docs": "The meta-project around the framework: the Claude Code plugin & skills plus the written prose documentation.",
-        "issue-dump": "The deliberate exception to the layer-of-the-stack axis: marks dump issues — lightweight capture surfaces for unhomed, half-formed thoughts (pre-issues, not a layer). A few dump issues, one per kind; each entry a subtask. Entries graduate to real issues (promote AND delete — never tick off). Capture via /docs-quick-idea-note. Convention only, not code-enforced."
+        "issue-dump": "The deliberate exception to the layer-of-the-stack axis: marks dump issues — lightweight capture surfaces for unhomed, half-formed thoughts (pre-issues, not a layer). A few dump issues, one per kind; each entry a subtask. Entries graduate to real issues (promote AND delete — never tick off). Capture via /agent-ks-quick-idea-note. Convention only, not code-enforced."
       }
     },
 

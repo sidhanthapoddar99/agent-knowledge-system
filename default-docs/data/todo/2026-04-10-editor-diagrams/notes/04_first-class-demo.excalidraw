@@ -1,7 +1,7 @@
 {
   "type": "excalidraw",
   "version": 2,
-  "source": "documentation-template",
+  "source": "agent-knowledge-system",
   "elements": [
     {
       "id": "note-file", "type": "rectangle", "x": 40, "y": 120, "width": 240, "height": 80,

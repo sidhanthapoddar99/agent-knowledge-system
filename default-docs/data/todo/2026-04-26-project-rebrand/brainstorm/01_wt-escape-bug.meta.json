@@ -1,0 +1,12 @@
+{
+  "title": "The worktree escape — agent-ks writing outside its sandbox",
+  "description": "Visual explainer of the benchmark's one real finding: the CLI's .env upward walk exits an agent worktree and resolves the tracker against the real repo. Anatomy, incident stats, and the two fix options.",
+  "embed_height": "full",
+  "artifact": {
+    "purpose": "Brainstorm-side explainer for deciding the fix (option A: boundary-stop in _env.mjs; option B: skill rule) before filing the follow-up issue.",
+    "type": "report",
+    "theme": "site",
+    "data": "Incident facts from agent-log/020_au_agent-benchmark/101_run-and-metrics.md — 2 independent reproductions (sonnet+skills, opus+skills), both self-recovered, zero residue in the real repo.",
+    "interactions": "None — static explainer; site-mode theming follows the host light/dark."
+  }
+}

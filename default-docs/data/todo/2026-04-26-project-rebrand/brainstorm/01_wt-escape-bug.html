@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The worktree escape — how agent-ks wrote outside its sandbox</title>
+    <style>
+      /* SITE-MODE artifact (artifact.theme: "site" in the sidecar): the engine
+         injects the host theme's CSS, so every var() below resolves to the live
+         theme in light and dark. Fallbacks only render out-of-engine. */
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: var(--font-family-base, system-ui, sans-serif);
+        font-size: var(--ui-text-body, 0.875rem);
+        color: var(--color-text-primary, #1a1a1a);
+        background: var(--color-bg-primary, #fafafa);
+        line-height: var(--line-height-base, 1.6);
+      }
+      .wrap { max-width: 880px; margin: 0 auto; padding: var(--spacing-xl, 2rem) var(--spacing-lg, 1.5rem); }
+      h1 { font-size: var(--ui-text-title, 1.5rem); margin: 0 0 var(--spacing-xs, .25rem); }
+      .sub { color: var(--color-text-secondary, #555); margin: 0 0 var(--spacing-xl, 2rem); }
+      h2 { font-size: var(--ui-text-body, .875rem); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--color-text-muted, #777); margin: var(--spacing-xl, 2rem) 0 var(--spacing-sm, .5rem); }
+      .card { background: var(--color-bg-secondary, #fff); border: 1px solid var(--color-border-default, #ddd); border-radius: var(--border-radius-lg, 10px); padding: var(--spacing-lg, 1.5rem); }
+      pre.tree { font-family: var(--font-family-mono, ui-monospace, monospace); font-size: var(--ui-text-micro, .75rem); background: var(--color-bg-tertiary, #f2f2f2); border-radius: var(--border-radius-md, 6px); padding: var(--spacing-md, 1rem); overflow-x: auto; margin: 0; line-height: 1.7; }
+      .walk { color: var(--color-warning, #9a6a10); font-weight: 600; }
+      .hit  { color: var(--color-error, #b3261e); font-weight: 600; }
+      .safe { color: var(--color-success, #2f7d54); font-weight: 600; }
+      .dim  { color: var(--color-text-muted, #888); }
+      .steps { display: grid; gap: var(--spacing-sm, .5rem); margin: 0; padding: 0; list-style: none; counter-reset: s; }
+      .steps li { counter-increment: s; display: flex; gap: var(--spacing-md, 1rem); align-items: baseline; background: var(--color-bg-secondary, #fff); border: 1px solid var(--color-border-light, #e5e5e5); border-radius: var(--border-radius-md, 6px); padding: var(--spacing-sm, .5rem) var(--spacing-md, 1rem); }
+      .steps li::before { content: counter(s); font-family: var(--font-family-mono, monospace); font-weight: 600; color: var(--color-brand-primary, #2f6f6a); min-width: 1.2em; }
+      code { font-family: var(--font-family-mono, ui-monospace, monospace); font-size: 0.9em; background: var(--color-bg-tertiary, #f2f2f2); border-radius: var(--border-radius-sm, 4px); padding: 0 .3em; }
+      .fixes { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--spacing-md, 1rem); }
+      .fix { border: 1px solid var(--color-border-default, #ddd); border-left: 3px solid var(--color-brand-primary, #2f6f6a); border-radius: var(--border-radius-md, 6px); padding: var(--spacing-md, 1rem); background: var(--color-bg-secondary, #fff); }
+      .fix h3 { margin: 0 0 var(--spacing-xs, .25rem); font-size: var(--ui-text-body, .875rem); }
+      .fix p { margin: 0; color: var(--color-text-secondary, #555); }
+      .stat-row { display: flex; gap: var(--spacing-md, 1rem); flex-wrap: wrap; }
+      .stat { flex: 1 1 140px; background: var(--color-bg-secondary, #fff); border: 1px solid var(--color-border-default, #ddd); border-radius: var(--border-radius-md, 6px); padding: var(--spacing-md, 1rem); }
+      .stat b { display: block; font-size: var(--font-size-lg, 1.125rem); }
+      .stat span { color: var(--color-text-muted, #777); font-size: var(--ui-text-micro, .75rem); }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <h1>The worktree escape</h1>
+      <p class="sub">How <code>agent-ks</code>, run inside an agent's sandbox worktree, ended up writing a file into the <em>real</em> tracker — found twice, independently, during the 6-arm benchmark.</p>
+
+      <h2>What happened</h2>
+      <div class="card">
+        <pre class="tree">agent-knowledge-system/                      ← the REAL repo
+├── .env                                     <span class="hit">③ …and finds THIS one</span>
+├── default-docs/data/todo/                  <span class="hit">④ CONFIG_DIR resolves here → comment lands in the real tracker</span>
+└── .claude/worktrees/
+    └── agent-&lt;id&gt;/                          ← the agent's isolated copy
+        ├── .git                             <span class="dim">(a FILE pointing at the outer repo — worktrees don't get their own)</span>
+        ├── <span class="dim">.env — MISSING (gitignored, so never checked out)</span>  <span class="walk">① CLI needs .env…</span>
+        └── default-docs/data/todo/          <span class="safe">where the write SHOULD have gone</span>
+                                             <span class="walk">② _env.mjs walks UP looking for one…</span></pre>
+      </div>
+
+      <h2>Why it happens</h2>
+      <ol class="steps">
+        <li><code>.env</code> is gitignored, so a fresh worktree never contains one — by design, not by accident.</li>
+        <li><code>_env.mjs</code> resolves the content root by walking <em>upward</em> from cwd until it finds a <code>.env</code>. Nothing tells it that <code>.claude/worktrees/agent-…/</code> is a boundary.</li>
+        <li>The walk exits the sandbox, hits the outer repo's <code>.env</code>, and every path after that — <code>CONFIG_DIR</code>, the tracker, the write target — belongs to the real checkout.</li>
+        <li>The CLI then does exactly what it was asked, in exactly the wrong place: <code>agent-ks issue add-comment</code> created the file in the real rebrand issue.</li>
+      </ol>
+
+      <h2>The incident, by the numbers</h2>
+      <div class="stat-row">
+        <div class="stat"><b>2 / 3</b><span>skills arms hit it (sonnet, opus) — independent reproductions</span></div>
+        <div class="stat"><b>2 / 2</b><span>caught it themselves (git-status discipline) and reverted</span></div>
+        <div class="stat"><b>0</b><span>stray files left in the real repo (verified after each run)</span></div>
+        <div class="stat"><b>2</b><span>distinct recoveries: explicit <code>--tracker</code> vs a worktree-local <code>.env</code></span></div>
+      </div>
+
+      <h2>Fix options — either suffices</h2>
+      <div class="fixes">
+        <div class="fix">
+          <h3>A · Stop the walk at a worktree boundary</h3>
+          <p>In a worktree, <code>.git</code> is a <em>file</em>, not a directory. When the upward walk passes a directory whose <code>.git</code> is a file (or when <code>git rev-parse --git-dir ≠ --git-common-dir</code>), stop there: the sandbox root is the project root, found <code>.env</code> or not. Fails safe — no <code>.env</code> means the CLI's existing "no .env found" error, which already tells the user what to do.</p>
+        </div>
+        <div class="fix">
+          <h3>B · Make the skill mandate it</h3>
+          <p>One line in <code>agent-ks-issues</code>/<code>agent-ks-docs</code>: <em>inside a worktree, always pass <code>--tracker</code> (or write a local <code>.env</code>) before any CLI write.</em> Cheaper, but relies on every future agent reading the rule — the bug stays loaded for anyone who doesn't.</p>
+        </div>
+      </div>
+
+      <p class="sub" style="margin-top: var(--spacing-xl, 2rem)">Verdict from the audit: do <strong>A</strong> in <code>_env.mjs</code> (mechanical, fails safe), and add B's sentence to the skill anyway — defense in depth for the one command class that writes. Full narrative: <code>agent-log/020_au_agent-benchmark/101_run-and-metrics.md</code>.</p>
+    </div>
+  </body>
+</html>

@@ -67,7 +67,7 @@ Node itself doesn't manage packages — dedup is a property of the *package mana
 | **pnpm** | ✅ yes, by design | Content-addressable store at `~/.local/share/pnpm/store` + hardlinks — the same idea as Bun's; it's pnpm's headline feature |
 | **Yarn (Berry, PnP mode)** | ✅ different approach | No `node_modules` at all — packages resolve from zip archives in a cache |
 
-So if you can't use Bun, **pnpm** gives you the same cross-project dedup. The `./start` wrapper's fallback is npm (maximum compatibility), which means on an npm-only machine each project really does carry its own full `node_modules` — that's the one setup where the multiplication is real.
+So if you can't use Bun, **pnpm** gives you the same cross-project dedup. The `./start` wrapper's fallback is npm (maximum compatibility), which means on an npm-only machine each project really does carry its own full `node_modules` — that's the one setup where the multiplication is real. `./start` warns you (in red, with a confirm) before any npm install for exactly this reason; scripted/CI runs get the warning without the prompt.
 
 ## Quick wins if disk is tight
 

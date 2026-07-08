@@ -134,6 +134,30 @@ deps_hash() {
   fi
 }
 
+# npm has no cross-project package dedup: every project carries its own full
+# node_modules (~420 MB), while bun hardlinks from a global cache so N projects
+# cost about one copy. Warn (red) before an npm install; confirm when
+# interactive. Background: user-guide → Getting Started → Storage & Disk
+# Footprint (05_getting-started/07_storage-and-footprint.md).
+npm_disk_warning() {
+  printf '\033[1;31m[start] WARNING: installing with npm — no cross-project dedup.\033[0m\n' >&2
+  printf '\033[31m[start] npm gives every project its own full node_modules (~420 MB each).\n' >&2
+  printf '[start] bun hardlinks packages from a global cache, so N projects cost ~one copy.\n' >&2
+  printf '[start] Recommended fix: install bun (https://bun.sh) and re-run ./start.\033[0m\n' >&2
+  printf '[start] Details: user-guide → Getting Started → Storage & Disk Footprint.\n' >&2
+  if [ -t 0 ] && [ "${START_SKIP_UPDATE_CHECK:-0}" != "1" ]; then
+    local reply
+    read -r -p "[start] proceed with npm install anyway? [Y/n] " reply
+    case "$reply" in
+      ""|y|Y|yes|YES) ;;
+      *)
+        echo "[start] aborted — install bun and re-run ./start" >&2
+        exit 1
+        ;;
+    esac
+  fi
+}
+
 NEED_INSTALL=""
 if [ ! -d node_modules ]; then
   NEED_INSTALL="node_modules missing"
@@ -141,6 +165,7 @@ elif [ ! -f "$STAMP" ] || [ "$(cat "$STAMP")" != "$(deps_hash)" ]; then
   NEED_INSTALL="dependency manifest changed since last install"
 fi
 if [ -n "$NEED_INSTALL" ]; then
+  [ "$RUNNER" = "npm" ] && npm_disk_warning
   echo "[start] $NEED_INSTALL — running '$INSTALL'..."
   $INSTALL
   deps_hash > "$STAMP"

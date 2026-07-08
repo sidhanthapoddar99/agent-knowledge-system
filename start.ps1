@@ -118,6 +118,26 @@ function Get-DepsHash {
   ($sha.ComputeHash($bytes) | ForEach-Object { $_.ToString('x2') }) -join ''
 }
 
+# npm has no cross-project package dedup: every project carries its own full
+# node_modules (~420 MB), while bun hardlinks from a global cache so N projects
+# cost about one copy. Warn (red) before an npm install; confirm when
+# interactive. Background: user-guide → Getting Started → Storage & Disk
+# Footprint (05_getting-started/07_storage-and-footprint.md).
+function Warn-NpmDisk {
+  Write-Host "[start] WARNING: installing with npm - no cross-project dedup." -ForegroundColor Red
+  Write-Host "[start] npm gives every project its own full node_modules (~420 MB each)." -ForegroundColor Red
+  Write-Host "[start] bun hardlinks packages from a global cache, so N projects cost ~one copy." -ForegroundColor Red
+  Write-Host "[start] Recommended fix: install bun (https://bun.sh) and re-run .\start.cmd." -ForegroundColor Red
+  Write-Host "[start] Details: user-guide -> Getting Started -> Storage & Disk Footprint."
+  if (-not [Console]::IsInputRedirected -and $env:START_SKIP_UPDATE_CHECK -ne '1') {
+    $reply = Read-Host "[start] proceed with npm install anyway? [Y/n]"
+    if ($reply -ne '' -and $reply -notmatch '^(?i)(y|yes)$') {
+      Write-Host "[start] aborted - install bun and re-run .\start.cmd"
+      exit 1
+    }
+  }
+}
+
 $needInstall = $null
 if (-not (Test-Path 'node_modules')) {
   $needInstall = 'node_modules missing'
@@ -125,6 +145,7 @@ if (-not (Test-Path 'node_modules')) {
   $needInstall = 'dependency manifest changed since last install'
 }
 if ($needInstall) {
+  if ($Runner -eq 'npm') { Warn-NpmDisk }
   Write-Host "[start] $needInstall - running '$Runner install'..."
   & $Runner install
   if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

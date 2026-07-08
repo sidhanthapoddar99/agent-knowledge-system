@@ -1,6 +1,6 @@
 ---
 title: "GitHub URLs + branding sweep"
-status: in-progress
+status: review
 ---
 
 Once the new repo exists ([60](60_new-repo.md)): every URL and brand string
@@ -33,8 +33,14 @@ printed clone command, and any `site.yaml`/footer links.
       carry no repo-name strings (verified by grep; the update check works
       off the git remote, not a hardcoded URL). CLI scripts: `_env.mjs` was
       the only one naming the folder — updated with legacy fallback.
-- [ ] **npm-fallback replication warning in `start`** (behavioral, all three
-      ports): when bun is NOT on PATH and the script is about to fall back to
+- [x] **npm-fallback replication warning in `start`** (done 2026-07-08 in
+      `start` + `start.ps1`; `start.cmd` just launches the ps1 port). Fires
+      only when npm is about to actually *install* (no nagging on every dev
+      launch once node_modules exists); interactive runs get the Y/n confirm
+      (decline aborts with the bun pointer), non-interactive stdin or
+      `START_SKIP_UPDATE_CHECK=1` degrade to warning-only. Sandbox-tested both
+      paths; bun runs stay silent. installation.md + storage page cross-link
+      the behavior. Original spec: when bun is NOT on PATH and the script is about to fall back to
       npm, print a **red warning** that npm gives every project its own full
       `node_modules` (~420 MB each — no cross-project dedup; bun hardlinks
       from a global cache so N projects cost ~one copy), recommend installing

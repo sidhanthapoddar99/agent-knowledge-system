@@ -49,7 +49,7 @@ cd agent-knowledge-system/
 ./start
 ```
 
-The wrapper checks for upstream updates and offers a fast-forward pull (`Y/n`), detects `bun` (falling back to `npm` if Bun isn't installed), runs `bun install` if `node_modules/` is missing, runs a build sanity check, then launches the dev server. After the first run you can skip the preflight by passing the script name explicitly (see [Available Commands](#available-commands) below). The update check still runs for explicit-script forms; bypass it entirely with `START_SKIP_UPDATE_CHECK=1` (useful in CI).
+The wrapper checks for upstream updates and offers a fast-forward pull (`Y/n`), detects `bun` (falling back to `npm` if Bun isn't installed — with a red disk-usage warning and a confirm, since npm can't share packages across projects; see [Storage & Disk Footprint](07_storage-and-footprint.md)), runs `bun install` if `node_modules/` is missing, runs a build sanity check, then launches the dev server. After the first run you can skip the preflight by passing the script name explicitly (see [Available Commands](#available-commands) below). The update check still runs for explicit-script forms; bypass it entirely with `START_SKIP_UPDATE_CHECK=1` (useful in CI).
 
 If you'd rather drive `bun`/`npm` directly, `cd astro-doc-code/` first:
 

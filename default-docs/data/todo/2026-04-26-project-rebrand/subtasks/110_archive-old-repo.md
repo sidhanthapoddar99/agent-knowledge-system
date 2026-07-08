@@ -1,6 +1,6 @@
 ---
 title: "Archive the old repo with a pointer README"
-status: open
+status: review
 ---
 
 The old `documentation-template` repo is **archived, not deleted** — existing
@@ -18,3 +18,18 @@ instruction (run `./start`, which walks you through the remote switch — see
 - [ ] Archive the repo in GitHub settings (read-only).
 - [ ] Order matters: the banner + migration script must land BEFORE archiving
       (archived repos are read-only).
+
+## Executed 2026-07-08
+
+- Final commit `f703db8` on old `main`: README top callout (CAUTION block:
+  moved, migration one-liner + manual steps), CLAUDE.md deprecation pointer
+  for agents in old checkouts, plugin.json description prefixed DEPRECATED
+  with the new URL, plugin README banner, and the `./start`/`start.ps1`
+  migration flow ([100](100_start-migration-flow.md)).
+- Repo description set to "ARCHIVED — moved to agent-knowledge-system: <url>"
+  (before archiving — archived repos are read-only), then archived via
+  `gh repo archive`. Verified `isArchived: true`.
+- Local cleanup: `old-origin` remote removed; local `main` deleted;
+  `rebrand/agent-ks` renamed to `main`, pushed (fast-forward
+  7fee583→fc5a3dd), remote branch `rebrand/agent-ks` deleted;
+  `development` force-updated to match `main`. Default branch: `main`.

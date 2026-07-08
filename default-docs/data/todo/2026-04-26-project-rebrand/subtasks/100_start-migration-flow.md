@@ -1,33 +1,32 @@
 ---
-title: "./start migration flow — archived clones self-migrate their origin"
-status: open
+title: "./start self-migration flow in the archived repo"
+status: review
 ---
 
-The migration UX for existing users, designed by sidhantha (2026-07-08): a
-clone of the archived repo should carry itself over to the new repo with no
-manual git surgery.
+Shipped 2026-07-08 as the old repo's **final commit** (`f703db8` on
+documentation-template `main`, pushed before archiving). The shape evolved
+from the original origin-rewrite idea to a cleaner clone-and-replace flow
+(the old checkout is retired entirely instead of being rewired in place):
 
-The flow:
+`./start` on the archived repo now runs `deprecation_migrate` before
+anything else:
 
-1. User runs `./start` in an old clone. The existing update check fetches
-   upstream (the archived repo — still fetchable) and fast-forwards, which
-   delivers the final archived commit containing the migration-aware `start`.
-2. That `start` detects its origin still points at the old repo, rewrites
-   `origin` to the new agent-knowledge-system URL, and asks the user to re-run
-   `./start`.
-3. The re-run fetches from the new origin and updates normally from then on.
+1. Big red deprecation banner (always — even non-interactive; scripted runs
+   get warning-only, never a prompt).
+2. Interactive Y/n: migrate now?
+3. Clones `agent-knowledge-system` **shallow** as a sibling of the old
+   folder (skips if it already exists; abort-safe if offline — nothing
+   changed on failure).
+4. Copies `.env` over (never clobbers an existing one) — CONFIG_DIR wiring
+   survives.
+5. **Consumer-mode check before any deletion**: CONFIG_DIR must resolve
+   OUTSIDE the folder. Only then offers (y/N) to delete the old folder —
+   "no data lost" is verified, not asserted. Dogfood checkouts are refused
+   with manual steps (their content lives inside the folder).
+6. Deletion happens via `exec bash -c` so nothing keeps reading from the
+   deleted script; prints the upgrade-complete message + `cd` pointer.
 
-## Tasks
-
-- [ ] Implement origin detection + rewrite in `start` (and `start.ps1` for the
-      Windows port): old-repo URL match → `git remote set-url origin <new>` →
-      clear message + exit asking for a re-run. Respect
-      `START_SKIP_UPDATE_CHECK=1`.
-- [ ] Guard rails: dirty tree / diverged history → print the manual
-      instructions instead of touching the remote; never rewrite a remote that
-      isn't the known old URL.
-- [ ] Test matrix: old clone with clean tree (happy path), dirty tree,
-      diverged, offline, non-interactive (CI) — the flow must degrade to
-      no-ops, mirroring the existing update-check behaviour.
-- [ ] This script must be in the FINAL commit of the archived repo
-      ([110](110_archive-old-repo.md)) — sequencing constraint.
+`start.ps1` ports the same flow minus the self-delete (Windows locks a
+running script's folder) — it clones, copies `.env`, and prints the exact
+`Remove-Item` step. Sandbox-tested: full happy path (clone → .env → delete →
+message), dogfood refusal, decline path.

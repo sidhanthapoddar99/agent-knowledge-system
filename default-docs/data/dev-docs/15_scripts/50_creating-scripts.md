@@ -1,6 +1,6 @@
 ---
 title: Creating Scripts
-description: How to add new client-side scripts to the documentation template
+description: How to add new client-side scripts to the framework
 sidebar_position: 50
 ---
 

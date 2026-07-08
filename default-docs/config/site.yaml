@@ -1,8 +1,8 @@
 # Site Configuration
 site:
-  name: "My Docs"
-  title: "My Documentation"
-  description: "Modern documentation built with Astro"
+  name: "Agent KS"
+  title: "Agent Knowledge System"
+  description: "A knowledge + task system designed for AI consumers, with human-readable docs as a first-class output"
 
 # Engine version this content targets (N.N.N). The engine refuses to run content
 # outside its supported range — after running migrations (repo-root migration/),

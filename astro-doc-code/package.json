@@ -1,5 +1,5 @@
 {
-  "name": "astro-docs-framework",
+  "name": "agent-knowledge-system",
   "type": "module",
   "version": "1.0.0",
   "description": "agent-knowledge-system — a knowledge + task system for AI consumers, built with Astro",

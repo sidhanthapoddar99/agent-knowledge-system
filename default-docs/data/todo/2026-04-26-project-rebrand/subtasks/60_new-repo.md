@@ -14,9 +14,21 @@ verify remotes.
 
 ## Tasks
 
+Sequencing settled 2026-07-08 (sizes + rationale in
+[notes/01](../notes/01_repo-size-and-clone-strategy.md)): `rebrand/agent-ks`
+is already on the old remote — after the new repo exists, push everything
+there, land the [70](70_github-urls-and-branding.md) sweep as commits on the
+branch in the **new** repo, then delete the stale branch from the old remote
+so documentation-template stays frozen at pre-rebrand `main` for archiving.
+
+## Tasks
+
 - [ ] Create the GitHub repo (name, description using the new positioning,
       topics).
-- [ ] Push full history + branches; set default branch.
+- [ ] `git gc --aggressive --prune=now`, then push full history + branches
+      (pack is ~6 MB); set default branch.
+- [ ] Delete `rebrand/agent-ks` from the old remote once it lives in the new
+      repo.
 - [ ] Verify tracker `updated` dates still derive correctly from the moved
       history.
 - [ ] Downstream URL updates are [70](70_github-urls-and-branding.md); the old

@@ -17,3 +17,8 @@ printed clone command, and any `site.yaml`/footer links.
 - [ ] README + docs branding strings (titles, descriptions) consistent with
       the agent-knowledge-system positioning (overlaps
       [20](20_project-and-docs-update.md) — coordinate, don't duplicate).
+- [ ] **Update the scripts as well** — `start` / `start.ps1` / `start.cmd`
+      (the update check's upstream remote assumptions, any echoed URLs or
+      old-name strings), `/docs-init` and `/docs-add-section` command bodies,
+      and CLI script strings under `skills/agent-ks-docs/scripts/` that name
+      the repo.

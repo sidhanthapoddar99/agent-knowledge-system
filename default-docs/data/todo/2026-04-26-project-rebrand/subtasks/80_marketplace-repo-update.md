@@ -1,6 +1,6 @@
 ---
 title: "Marketplace repo — point sids-plugin-marketplace at the new plugin"
-status: open
+status: done
 ---
 
 `sidhanthapoddar99/sids-plugin-marketplace` vendors this plugin (git-subdir
@@ -18,3 +18,16 @@ agent-ks@sids-plugin-marketplace` resolves.
       working either way).
 - [ ] Verify a clean-machine install: `marketplace add` → `plugin install
       agent-ks@…` → skills trigger, `agent-ks` on PATH.
+
+## Executed 2026-07-08
+
+- `sids-plugin-marketplace` commit `bc2b5f8`: entry renamed `agent-ks`,
+  git-subdir source → `agent-knowledge-system.git` / `plugins/agent-ks`,
+  description synced from the plugin manifest, old name kept in `keywords`
+  for discovery; README table row updated. Old entry REMOVED (not
+  tombstoned) — existing installs keep resolving from their installed cache.
+- This machine: `claude plugin marketplace update` + install →
+  `agent-ks@sids-plugin-marketplace` 0.6.0 at `cache/…/agent-ks/0.6.0/`,
+  `enabledPlugins` key swapped, `/reload-plugins` shows the `agent-ks:*`
+  skill namespace, CLI runs from the new cache. The hand-mirrored
+  `documentation-guide/0.5.x` grace path is retired (dirs GC-eligible).

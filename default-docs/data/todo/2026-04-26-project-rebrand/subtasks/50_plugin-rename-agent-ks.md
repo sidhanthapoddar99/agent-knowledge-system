@@ -34,7 +34,7 @@ marketplace repo entry ([80](80_marketplace-repo-update.md)), every consumer's
       in the NEW repo. Old installs keep resolving from the frozen old-main
       vendored copy. The marketplace entry flips (new repo URL + path
       `plugins/agent-ks` + name `agent-ks`) in 80, after the repo move (60).
-- [ ] *(moves with [80](80_marketplace-repo-update.md))* Real reinstall on this machine: `/plugin install
+- [x] *(landed with [80](80_marketplace-repo-update.md))* Real reinstall on this machine: `/plugin install
       agent-ks@sids-plugin-marketplace` can't resolve until the marketplace
       entry exists. Interim state (see decision below) is verified working:
       `agent-ks` on PATH, skills load, `check skill-links` + `check issues` +

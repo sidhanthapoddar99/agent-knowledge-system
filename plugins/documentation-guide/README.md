@@ -6,7 +6,7 @@ Claude Code plugin for the [documentation-template](https://github.com/sidhantha
 - **The `agent-ks` CLI** — one dispatcher on `PATH`; every operation is `agent-ks <group> <verb>` (issue tracker, validators, docs+blog content, git metadata, cross-content `find`, link-aware `move`, `img`). Discover with `agent-ks help`
 - **2 slash commands** — `/docs-init` (bootstrap a new docs project from zero) and `/docs-add-section` (scaffold a new top-level section)
 
-The skills teach Claude Code how to navigate this Astro-based docs framework: the project's `data/` content layout, frontmatter conventions, the folder-per-issue tracker, `site.yaml` configuration, custom themes, and more. Each task is triaged to a domain-specific reference file rather than dumping everything into one long prompt.
+The skills teach Claude Code how to navigate agent-knowledge-system (an Astro-based engine): the project's `data/` content layout, frontmatter conventions, the folder-per-issue tracker, `site.yaml` configuration, custom themes, and more. Each task is triaged to a domain-specific reference file rather than dumping everything into one long prompt.
 
 ## Install
 
@@ -28,7 +28,7 @@ agent-ks check config             # validate site.yaml / navbar.yaml / footer.ya
 agent-ks check section ./data/user-guide
 ```
 
-The skills trigger automatically whenever you work on docs (agent-ks-docs) or the issue tracker (agent-ks-issues) in a documentation-template project (i.e. one with a `documentation-template/` framework folder, with `.env`'s `CONFIG_DIR` pointing at the project's config).
+The skills trigger automatically whenever you work on docs (agent-ks-docs) or the issue tracker (agent-ks-issues) in an agent-knowledge-system project (i.e. one with a `documentation-template/` framework folder, with `.env`'s `CONFIG_DIR` pointing at the project's config).
 
 ## Bootstrap a new project
 
@@ -62,7 +62,7 @@ Computes the next `NN_` prefix, scaffolds `settings.json` + `01_overview.md`, an
 
 ## Requirements
 
-- A documentation-template-shaped project (the `documentation-template/` framework folder cloned somewhere, with `.env`'s `CONFIG_DIR` pointing at the project's `config/`)
+- A agent-knowledge-system-shaped project (the `documentation-template/` framework folder cloned somewhere, with `.env`'s `CONFIG_DIR` pointing at the project's `config/`)
 - `bun` preferred for running the helpers and the framework; `npm` / `node` work as fallbacks
 
 ## License

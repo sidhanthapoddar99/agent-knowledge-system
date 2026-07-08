@@ -15,13 +15,13 @@ If none of these apply, you do not need migrations — author content with the c
 
 > **Always confirm before applying a migration.** Migrations rewrite content in place. Run the detect/locate pass, show the user the count and affected files, and wait for an explicit go-ahead before the write pass — even when an error or warning triggered it. The only exception is when the user has already explicitly asked you to run that migration.
 
-## Where they live — the documentation-template root, NOT this plugin
+## Where they live — the framework repo root, NOT this plugin
 
 ```
 <repo-root>/migration/<to-version>_<statement>.py
 ```
 
-**The migration code is part of the documentation-template itself — refer to that folder and check it**; the plugin only carries this operating manual. One file per migration, named by the **engine version it brings content to** (`N.N.N`), then a short statement — version order is execution order (authoring dates live inside the docstrings; provenance, not ordering). They are **Python (stdlib only)** because they are **one-off runs**, not part of the live `.mjs` validator/CLI path. Each script is **self-documenting**: its module docstring carries the full purpose, behaviour, and usage. This reference does not enumerate individual scripts — open the script and read its docstring; `migration/README.md` carries the convention.
+**The migration code is part of the framework repo itself — refer to that folder and check it**; the plugin only carries this operating manual. One file per migration, named by the **engine version it brings content to** (`N.N.N`), then a short statement — version order is execution order (authoring dates live inside the docstrings; provenance, not ordering). They are **Python (stdlib only)** because they are **one-off runs**, not part of the live `.mjs` validator/CLI path. Each script is **self-documenting**: its module docstring carries the full purpose, behaviour, and usage. This reference does not enumerate individual scripts — open the script and read its docstring; `migration/README.md` carries the convention.
 
 ## The upgrade flow — never bump past the gate
 

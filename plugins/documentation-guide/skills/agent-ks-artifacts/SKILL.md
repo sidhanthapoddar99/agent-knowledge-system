@@ -1,6 +1,6 @@
 ---
 name: agent-ks-artifacts
-description: Use this skill to BUILD a self-contained HTML artifact as a content file in a documentation-template project — a report page, dashboard, data visualization, design-system swatch / type-specimen / component gallery, a variation set comparing N design options of one UI element, or a brand-guideline showcase — published as an `NN_`-prefixed `.html` page in a docs section (the `/artifacts` content type) or inside a tracker `brainstorm/` / `notes/` folder, with an optional `.meta.json` sidecar. Covers treatment calibration, honoring the host theme contract, dual-theme + self-containment discipline, the chart/dataviz procedure and the palette validator, design-system authoring flows, the variation-set / options-explorer pattern, and the pre-publish verify gate. Trigger eagerly whenever the user asks to build / design / generate an artifact, an HTML report, a dashboard, a chart, a data viz, a design system, a set of design options / variations to compare or pick from, or a brand guideline for THIS project. This is NOT about claude.ai Artifacts (the built-in `Artifact` tool / gallery); it is about HTML files served at `/artifacts` in a documentation-template repo. For writing markdown docs pages use the agent-ks-docs skill; for issue-tracker structure use agent-ks-issues.
+description: Use this skill to BUILD a self-contained HTML artifact as a content file in an agent-knowledge-system project — a report page, dashboard, data visualization, design-system swatch / type-specimen / component gallery, a variation set comparing N design options of one UI element, or a brand-guideline showcase — published as an `NN_`-prefixed `.html` page in a docs section (the `/artifacts` content type) or inside a tracker `brainstorm/` / `notes/` folder, with an optional `.meta.json` sidecar. Covers treatment calibration, honoring the host theme contract, dual-theme + self-containment discipline, the chart/dataviz procedure and the palette validator, design-system authoring flows, the variation-set / options-explorer pattern, and the pre-publish verify gate. Trigger eagerly whenever the user asks to build / design / generate an artifact, an HTML report, a dashboard, a chart, a data viz, a design system, a set of design options / variations to compare or pick from, or a brand guideline for THIS project. This is NOT about claude.ai Artifacts (the built-in `Artifact` tool / gallery); it is about HTML files served at `/artifacts` in an agent-knowledge-system repo. For writing markdown docs pages use the agent-ks-docs skill; for issue-tracker structure use agent-ks-issues.
 license: Complete terms in the documentation-guide plugin LICENSE file.
 ---
 
@@ -8,7 +8,7 @@ license: Complete terms in the documentation-guide plugin LICENSE file.
 
 Operating manual for building **artifacts**: self-contained HTML pages — reports,
 dashboards, interactive data visualizations, design-system showcases — that ship
-as content files in a documentation-template project and render inline in the docs
+as content files in an agent-knowledge-system project and render inline in the docs
 chrome plus full-page at their own URL.
 
 > **Scope fence — read this before anything else.** An *artifact* here is an

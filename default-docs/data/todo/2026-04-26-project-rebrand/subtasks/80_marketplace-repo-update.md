@@ -4,8 +4,8 @@ status: open
 ---
 
 `sidhanthapoddar99/sids-plugin-marketplace` vendors this plugin (git-subdir
-source from this repo). After the plugin rename ([60](60_plugin-rename-agent-ks.md))
-and repo move ([50](50_new-repo.md)), its `marketplace.json` entry must point
+source from this repo). After the plugin rename ([50](50_plugin-rename-agent-ks.md))
+and repo move ([60](60_new-repo.md)), its `marketplace.json` entry must point
 at the new repo + new plugin path/name, so `/plugin install
 agent-ks@sids-plugin-marketplace` resolves.
 

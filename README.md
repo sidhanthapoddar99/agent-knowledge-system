@@ -1,6 +1,8 @@
-# documentation-template
+# agent-knowledge-system
 
-Astro-based documentation framework with modular layouts, YAML configuration, a folder-per-issue tracker, and live editing via Yjs CRDT. Ships its own Claude Code plugin so authoring docs is one slash command away.
+A **knowledge + task system designed for AI consumers**, with human-readable docs as a first-class output — modular Astro layouts, YAML configuration, a folder-per-issue tracker, and live editing via Yjs CRDT. Ships its own Claude Code plugin (skills + the `agent-ks` CLI) so agents operate the whole system natively.
+
+> **Rebrand in progress** — formerly *documentation-template*. The GitHub repo, framework folder name, and clone URLs below still carry the old name until the repo move lands (tracked in `2026-04-26-project-rebrand`).
 
 ## Built for agents, observable by humans
 
@@ -27,7 +29,7 @@ The fastest path is via the Claude Code plugin distributed through [`sids-plugin
 | **Slash commands** — `/docs-init`, `/docs-add-section` | Bootstrap a new project; add a top-level section. Both interactive. |
 | **CLI** — one `agent-ks` entrypoint on `PATH` | 28 commands as `agent-ks <group> <verb>` — issue tracker (`agent-ks issue …`), validators (`agent-ks check …`), docs/blog content, git metadata, cross-content search. Discover with `agent-ks help`. |
 
-All 13 wrappers land on your `$PATH` automatically after install — no path configuration. Pass `--help` to any of them for the full flag list.
+The `agent-ks` entrypoint lands on your `$PATH` automatically after install — no path configuration. Pass `--help` to any command for the full flag list.
 
 ## Manual setup (without `/docs-init`)
 
@@ -114,7 +116,7 @@ The plugin in `plugins/documentation-guide/` is distributed via [`sids-plugin-ma
 
 ## What's coming
 
-The framework currently ships via `git clone`. A planned refactor (`2026-04-25-framework-as-npm-package` issue) packages it as a published `bun add documentation-template` dependency, so each consumer becomes a thin shell over the engine instead of a full clone. Once that lands, `/docs-init` will install the engine via npm/bun instead of asking you to clone.
+The framework currently ships via `git clone`. A planned refactor (`2026-04-25-framework-as-npm-package` issue) packages it as a published `bun add agent-knowledge-system` dependency, so each consumer becomes a thin shell over the engine instead of a full clone. Once that lands, `/docs-init` will install the engine via npm/bun instead of asking you to clone.
 
 ## License
 

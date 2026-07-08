@@ -9,7 +9,7 @@ The rename also unblocks naming decisions downstream (CLI binary name, install U
 **`agent-knowledge-system`**, decided by sidhantha in live discussion. The
 derived namespace: CLI binary **`agent-ks`** (single dispatcher, `agent-ks
 <group> <verb>`), skills **`agent-ks-docs`** / **`agent-ks-issues`** /
-**`agent-ks-artifacts`**, plugin **`agent-ks`** (rename pending, subtask 60).
+**`agent-ks-artifacts`**, plugin **`agent-ks`** (rename pending, subtask 50).
 The "agent-" stem answers the brand-alignment question: the identity is
 agent-first, not company-branded (`neura-` dropped).
 
@@ -73,20 +73,20 @@ Filed 2026-07-08 (name locked the same day):
 - `20_project-and-docs-update.md` — the documentation-template → agent-knowledge-system docs sweep
 - `30_open-issues-consistency.md` — forward-looking references in unclosed issues
 - `40_claude-md-legacy-note.md` — a bounded ~3-line legacy-naming note in CLAUDE.md
-- `50_new-repo.md` — the new GitHub repo, full history
-- `60_plugin-rename-agent-ks.md` — `plugins/documentation-guide` → `plugins/agent-ks`
+- `50_plugin-rename-agent-ks.md` — `plugins/documentation-guide` → `plugins/agent-ks`
+- `60_new-repo.md` — the new GitHub repo, full history (after the plugin rename, so it is born with final naming)
 - `70_github-urls-and-branding.md` — URL sweep after the repo exists
 - `80_marketplace-repo-update.md` — sids-plugin-marketplace points at the new plugin
-- `90_archive-old-repo.md` — archive (never delete) with a big README pointer
-- `100_install-script-links.md` — clone/install commands move to the new URL
-- `110_start-migration-flow.md` — `./start` in an old clone self-migrates its origin
+- `90_install-script-links.md` — clone/install commands move to the new URL
+- `100_start-migration-flow.md` — `./start` in an old clone self-migrates its origin
+- `110_archive-old-repo.md` — archive (never delete) with a big README pointer; runs LAST — the repo is read-only after
 
 ## Open questions
 
 1. **Backwards compatibility for existing installs.** Partially answered by the
-   archive + `./start` self-migration flow (subtasks 90/110) for clones; the
+   `./start` self-migration flow + archive (subtasks 100/110) for clones; the
    plugin-install transition (old `documentation-guide@…` key vs new
-   `agent-ks@…`) is decided inside subtasks 60/80.
+   `agent-ks@…`) is decided inside subtasks 50/80.
 2. **Install domain** (`https://<domain>/install.sh`) — still open; only
    matters when the CLI-tool distribution ships
    (`2026-04-26-framework-as-cli-tool`).

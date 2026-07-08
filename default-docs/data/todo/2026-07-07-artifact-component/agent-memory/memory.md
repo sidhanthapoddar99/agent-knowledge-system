@@ -41,7 +41,7 @@ title: "Agent memory — artifact component"
   `agent-log/070_it_skill-sharpening/`; settled decisions appended to
   `notes/02_settled-decisions.md`. Cache mirror target is
   `~/.claude/plugins/cache/sids-plugin-marketplace/documentation-guide/0.5.4/`
-  (the only cache dir with `artifact-authoring`, though repo plugin.json says
+  (the only cache dir with the artifacts skill, though repo plugin.json says
   0.5.5).
 - **Tracker artifact rendering (subtask 80, done→review):** `.html` in an issue's
   `notes/`/`brainstorm/` renders first-class via a **loader-only** change — no
@@ -57,7 +57,7 @@ title: "Agent memory — artifact component"
 
 ## Settled during planning (cite notes/02 + brainstorms)
 
-- **New skill name: `artifact-authoring`** — deliberately NOT `artifact-design`,
+- **Skill name: `agent-ks-artifacts`** (pre-rebrand: artifact-authoring) — deliberately NOT `artifact-design`,
   which would collide with the Claude Code built-in skill of that name.
 - **Sidecar naming: `<NN_name>.meta.json` / `.meta.jsonc`** — mirrors
   `diagram-pages.ts:161`, never a bare `<name>.json` (would collide with data
@@ -95,14 +95,14 @@ title: "Agent memory — artifact component"
   theme swap (mtime unchanged) or a `self`↔`site` flip busts it. `self` mode keeps
   the exact `"size-mtimeMs"` ETag and byte-identical serving (the subtask-20 contract
   now scopes to `self` only).
-- **CLI: `docs-guide theme tokens [name] [--json]`** (`scripts/theme/tokens.mjs`, THEME
+- **CLI: `agent-ks theme tokens [name] [--json]`** (`scripts/theme/tokens.mjs`, THEME
   group) mirrors engine theme resolution in pure Node and prints var→value light+dark;
   resolves `var()` chains. Self-test must run from the REPO (needs a reachable `.env`);
   running it from the plugin cache fails the `--json` checks (no `.env` up that tree)
   — not a defect.
-- **Plugin parity target: cache `0.5.4`** — `docs-guide` on PATH resolves there and it
+- **Plugin parity target: cache `0.5.4`** — `agent-ks` on PATH resolves there and it
   is byte-identical to repo source (repo `plugin.json` says 0.5.5 but no 0.5.5 cache
   dir exists). Mirror every touched plugin file into 0.5.4.
 - **theme.yaml ↔ skill coupling** recorded in repo CLAUDE.md theming section: the
-  artifact-authoring skill carries the `required_variables` names inline (standalone
+  agent-ks-artifacts skill carries the `required_variables` names inline (standalone
   independence); changing them requires updating the skill (repo + cache) same-change.

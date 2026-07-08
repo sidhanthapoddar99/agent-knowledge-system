@@ -1,6 +1,6 @@
 # Data layout
 
-User-editable content layer for the documentation-template framework. Every directory here serves a specific purpose; if you add or remove a top-level folder, update this file in the same change.
+User-editable content layer for the agent-knowledge-system framework. Every directory here serves a specific purpose; if you add or remove a top-level folder, update this file in the same change.
 
 The `agent-ks-docs` Claude skill (`plugins/documentation-guide/skills/agent-ks-docs/SKILL.md`) reads this README at the start of every task to orient itself — keeping it current means the skill stays accurate.
 

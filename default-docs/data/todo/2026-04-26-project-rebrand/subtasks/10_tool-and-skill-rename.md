@@ -6,7 +6,7 @@ status: review
 The first executable slice of the rebrand, unblocked by the name lock
 (agent-knowledge-system, decided with sidhantha 2026-07-08). The plugin's three
 skills and the CLI dispatcher move to the new namespace; the plugin folder and
-marketplace identity move later (see [60](60_plugin-rename-agent-ks.md)).
+marketplace identity move later (see [50](50_plugin-rename-agent-ks.md)).
 
 | Old | New |
 |---|---|

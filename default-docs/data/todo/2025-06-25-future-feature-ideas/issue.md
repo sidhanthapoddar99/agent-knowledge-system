@@ -19,4 +19,4 @@ aren't lost without paying full-issue ceremony for each one.
   goes to that issue's `subtasks/` directly.
 
 Full rules: `2026-07-01-issue-anatomy-restructure/notes/02_operating-rules.md` (and
-the `doc-issues` skill).
+the `agent-ks-issues` skill).

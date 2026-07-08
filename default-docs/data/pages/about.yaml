@@ -1,9 +1,9 @@
 # About Page Data
 title: "About"
-description: "Learn more about this documentation framework"
+description: "Learn more about agent-knowledge-system"
 
 content: |
-  This is a modern documentation framework built with Astro.
+  This is agent-knowledge-system — a knowledge + task system for AI consumers, built with Astro.
 
   ## Features
 

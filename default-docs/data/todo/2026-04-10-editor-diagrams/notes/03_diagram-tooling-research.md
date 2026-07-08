@@ -8,7 +8,7 @@ diagrams — especially huge `.excalidraw` scenes — without reading raw JSON?
 
 ## Verdict (one line)
 
-**Build** a small dependency-free `docs-guide excalidraw` subcommand for
+**Build** a small dependency-free `agent-ks excalidraw` subcommand for
 *summarize* and *surgical edit* (the flat, stable JSON makes both easy and
 nothing off-the-shelf does them file-in-place); **adopt** an existing
 headless exporter for rendering and `mmdc` for mermaid preview; treat
@@ -38,11 +38,11 @@ Schema docs: <https://docs.excalidraw.com/docs/codebase/json-schema>
 
 ## Build (the two subtask needs)
 
-- **`docs-guide excalidraw summary <file>`** — element counts by type, all
+- **`agent-ks excalidraw summary <file>`** — element counts by type, all
   text strings attributed to their container shape, bounding box, groups,
   connector topology (`startBinding`/`endBinding`). Turns a 3,000-line scene
   into a ~20-line digest.
-- **`docs-guide excalidraw edit`** — locate by `id` or label-text match;
+- **`agent-ks excalidraw edit`** — locate by `id` or label-text match;
   mutate `text` / `strokeColor` / `backgroundColor` or splice an element
   (cleaning `boundElements`/`containerId` refs on delete); write back with
   stable key order for minimal git diffs. Guardrail: bump the per-element

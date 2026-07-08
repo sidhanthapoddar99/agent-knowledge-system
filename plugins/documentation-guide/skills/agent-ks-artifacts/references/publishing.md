@@ -1,7 +1,7 @@
 # Publishing artifacts in this framework
 
 This is the adaptation layer — how an artifact is *published, themed, and delivered*
-in a documentation-template project. The loader/route/sidebar mechanics themselves
+in an agent-knowledge-system project. The loader/route/sidebar mechanics themselves
 belong to the framework (the artifact component and the `/artifacts` route); this
 file teaches the **authoring** side of that same model. Everywhere a habit from
 claude.ai artifact design would apply, the framework's mechanism replaces it.

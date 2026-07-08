@@ -3,7 +3,7 @@ title: "GitHub URLs + branding sweep"
 status: open
 ---
 
-Once the new repo exists ([50](50_new-repo.md)): every URL and brand string
+Once the new repo exists ([60](60_new-repo.md)): every URL and brand string
 that points at `sidhanthapoddar99/documentation-template` moves to the new
 repo — `plugin.json` `homepage`/`repository`, root README badges/links,
 user-guide installation pages, dev-docs marketplace pages, `/docs-init`'s

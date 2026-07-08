@@ -1,12 +1,12 @@
 ---
 title: Architecture Overview
-description: Understanding the core architecture of the documentation framework
+description: Understanding the core architecture of agent-knowledge-system
 sidebar_position: 1
 ---
 
 # Architecture Overview
 
-This documentation framework is built on a modular architecture with five distinct layers: User Space, Loaders, Parser, Layout, and Render.
+agent-knowledge-system is built on a modular architecture with five distinct layers: User Space, Loaders, Parser, Layout, and Render.
 
 ## System Layers
 

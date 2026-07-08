@@ -37,8 +37,8 @@ gives those files their embed path.
   they're content blocks, not framed embeds.
 - Sanitization/scoping: how fragment CSS is prevented from leaking into the
   page (and vice versa) without an iframe boundary.
-- Skills + docs: embed guidance in `documentation-guide` (images/docs-layout
-  references) + fragment-vs-artifact decision row in `artifact-authoring`;
+- Skills + docs: embed guidance in `agent-ks-docs` (images/docs-layout
+  references) + fragment-vs-artifact decision row in `agent-ks-artifacts`;
   user-guide + dev-docs.
 
 ## Tasks

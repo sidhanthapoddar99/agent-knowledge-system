@@ -1,6 +1,6 @@
 ---
 title: "CLAUDE.md legacy note — ~3 lines on the old naming"
-status: open
+status: review
 ---
 
 A deliberate, bounded exception to the history-free rule (which covers skills
@@ -14,7 +14,7 @@ retired name.
 
 ## Tasks
 
-- [ ] Write the note (≤3 lines) in CLAUDE.md near the Skills + tooling section.
+- [x] Write the note (≤3 lines) in CLAUDE.md near the Skills + tooling section.
 - [ ] Drop it once the rename has fully settled (old names gone from all open
       issues and the archive flow is live) — the note itself says when it can
       be deleted.

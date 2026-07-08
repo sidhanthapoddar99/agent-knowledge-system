@@ -61,8 +61,8 @@ config load time, and the limitation documented in the skills and the docs.
 1. `10_component` — first-class artifact component: scan, sidebar, embed render.
 2. `20_route` — reserved `/artifacts/<path>` full-page route + embed affordances.
 3. `30_reserved-url-guard` — config-load validation rejecting `artifacts` base URLs.
-4. `40_authoring-skill` — the new artifact-authoring skill, written in full detail.
-5. `50_skills-integration` — teach `documentation-guide` + `doc-issues` about the new type, the limitation, and the new skill.
+4. `40_authoring-skill` — the new agent-ks-artifacts skill, written in full detail.
+5. `50_skills-integration` — teach `agent-ks-docs` + `agent-ks-issues` about the new type, the limitation, and the new skill.
 6. `60_documentation` — user-guide (authoring/usage) + dev-docs (mechanism) pages.
 7. `70_upstream-provenance` — provenance map + protocol for folding in upstream skill updates.
 

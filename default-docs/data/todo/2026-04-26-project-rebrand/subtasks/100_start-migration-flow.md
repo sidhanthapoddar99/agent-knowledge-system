@@ -30,4 +30,4 @@ The flow:
       diverged, offline, non-interactive (CI) — the flow must degrade to
       no-ops, mirroring the existing update-check behaviour.
 - [ ] This script must be in the FINAL commit of the archived repo
-      ([90](90_archive-old-repo.md)) — sequencing constraint.
+      ([110](110_archive-old-repo.md)) — sequencing constraint.

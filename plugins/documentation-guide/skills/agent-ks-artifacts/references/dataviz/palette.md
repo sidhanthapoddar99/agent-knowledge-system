@@ -1,4 +1,4 @@
-# Reference palette — the documentation-template instance
+# Reference palette — the agent-knowledge-system instance
 
 Every parameter the data-viz method asks for, filled in for *this* framework. Two
 rules decide where each value comes from:

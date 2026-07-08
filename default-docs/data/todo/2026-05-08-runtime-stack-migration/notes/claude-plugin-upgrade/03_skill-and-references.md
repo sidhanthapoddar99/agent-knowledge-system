@@ -9,7 +9,7 @@ The skill (`SKILL.md`) and the 5 reference files describe how Claude reasons abo
 
 ## SKILL.md
 
-**File:** `plugins/documentation-guide/skills/documentation-guide/SKILL.md`
+**File:** `plugins/documentation-guide/skills/agent-ks-docs/SKILL.md`
 
 ### Changes required
 
@@ -31,7 +31,7 @@ The skill (`SKILL.md`) and the 5 reference files describe how Claude reasons abo
 
 ## Reference files
 
-All five live under `plugins/documentation-guide/skills/documentation-guide/references/`.
+All five live under `plugins/documentation-guide/skills/agent-ks-docs/references/`.
 
 ### `writing.md`
 

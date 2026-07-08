@@ -1,6 +1,6 @@
 # Images — optimizing screenshots & figures (`agent-ks img`)
 
-Reference for keeping images small in a documentation-template project. Read this
+Reference for keeping images small in an agent-knowledge-system project. Read this
 whenever you add or update an image/screenshot under `data/`.
 
 ## Why this matters

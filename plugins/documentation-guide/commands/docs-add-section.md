@@ -8,7 +8,7 @@ You are running the `/docs-add-section` slash command from the `documentation-gu
 
 # Goal
 
-Add a new **top-level docs section** to a documentation-template project. A "section" is a sidebar-driven folder under `data/` that maps to a route via an entry in `config/site.yaml`'s `pages:` block.
+Add a new **top-level docs section** to an agent-knowledge-system project. A "section" is a sidebar-driven folder under `data/` that maps to a route via an entry in `config/site.yaml`'s `pages:` block.
 
 Concrete output for a section named `handbook`:
 
@@ -38,7 +38,7 @@ pages:
 
 Find the docs project root by looking for `config/site.yaml` (or fall back to `default-docs/config/site.yaml` for the legacy layout) walking up from the current working directory. If neither is found:
 
-> No documentation-template project detected here (no `config/site.yaml` found walking up). Run `/docs-init` first to scaffold a project.
+> No agent-knowledge-system project detected here (no `config/site.yaml` found walking up). Run `/docs-init` first to scaffold a project.
 
 Stop.
 

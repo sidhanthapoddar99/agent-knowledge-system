@@ -1,6 +1,6 @@
 ---
 title: "Open-issue consistency pass — new names in unclosed issues"
-status: open
+status: review
 ---
 
 Closed issues keep their historical names (history lives in git and the
@@ -12,11 +12,11 @@ chase names that no longer exist.
 
 ## Tasks
 
-- [ ] `agent-ks issue list` over every non-closed issue; grep their subtasks /
+- [x] `agent-ks issue list` over every non-closed issue; grep their subtasks /
       notes / issue bodies for `docs-guide`, `doc-issues`,
       `artifact-authoring`, `documentation-guide` (skill sense).
-- [ ] Rewrite forward-looking references to `agent-ks`, `agent-ks-issues`,
+- [x] Rewrite forward-looking references to `agent-ks`, `agent-ks-issues`,
       `agent-ks-artifacts`, `agent-ks-docs`; leave retrospective records
       (agent-logs, comments, closed subtasks) as written.
-- [ ] Special case: `2026-07-07-artifact-component` subtasks 110/120 point at
+- [x] Special case: `2026-07-07-artifact-component` subtasks 110/120 point at
       the artifact skill by name — update before they're executed.

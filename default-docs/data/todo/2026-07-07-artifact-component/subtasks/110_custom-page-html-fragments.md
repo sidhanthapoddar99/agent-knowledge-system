@@ -32,7 +32,7 @@ entry when picked up):
   state the rule explicitly.
 - Sanitization/contract: what the fragment may contain (no `<head>`-type
   elements; styles scoped how? `:global` leakage rules); validation at load.
-- Skill + docs: `artifact-authoring` gains the fragment-vs-artifact decision
+- Skill + docs: `agent-ks-artifacts` gains the fragment-vs-artifact decision
   guidance (insert → fragment, document → artifact); custom-page docs updated
   (user-guide `25_layouts/`, dev-docs).
 - Relation to [[2026-04-10-new-layout-types]] — cross-cutting with custom
@@ -46,7 +46,7 @@ entry when picked up):
 - [ ] Implement: custom-page loader + layout accept an HTML fragment insert
       rendered inline in the content area, theme-native.
 - [ ] Skill + docs: fragment-vs-artifact decision guidance in
-      `artifact-authoring` (repo + cache); user-guide + dev-docs pages.
+      `agent-ks-artifacts` (repo + cache); user-guide + dev-docs pages.
 - [ ] Verify: a demo custom page with a fragment renders on-theme in both
       modes with zero fragment-side theme code; YAML-only custom pages
       regress clean.

@@ -1,11 +1,11 @@
 ---
 title: Overview
-description: AI-native documentation framework with a built-in issues tracker for solo builders and small teams.
+description: AI-native knowledge + task system with a built-in issues tracker for solo builders and small teams.
 ---
 
 # Overview
 
-A documentation framework built for **the new world of software** — where one person, or a handful, ships alongside an AI agent instead of a PM, a scrum master, and a quarterly roadmap.
+A knowledge + task system built for **the new world of software** — where one person, or a handful, ships alongside an AI agent instead of a PM, a scrum master, and a quarterly roadmap.
 
 ## Purpose
 

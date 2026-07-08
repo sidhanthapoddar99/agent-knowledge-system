@@ -1,6 +1,8 @@
 # Project Overview
 
-Astro-based documentation framework with modular layouts, YAML configuration, and live editing via Yjs CRDT.
+**agent-knowledge-system** — a knowledge + task system designed for AI consumers, with human-readable docs as a first-class output. Astro-based engine with modular layouts, YAML configuration, and live editing via Yjs CRDT.
+
+> **Legacy naming (rebrand, 2026-07):** formerly *documentation-template*, with CLI `docs-guide` and skills `documentation-guide` / `doc-issues` / `artifact-authoring`. Those names survive only in tracker history and old commits — never use them in new work; current names are `agent-ks` and `agent-ks-docs` / `agent-ks-issues` / `agent-ks-artifacts`. Delete this note once the repo move + archive (issue `2026-04-26-project-rebrand`) is fully settled.
 
 ## Skills + tooling
 
@@ -20,7 +22,7 @@ The plugin's skills carry the full operating manual, including the `agent-ks` CL
 
 | Command | Use |
 |---|---|
-| `/docs-init` | Bootstrap a new documentation-template project from zero — interactive: scope (whole repo vs subfolder) → site name → first section → writes `config/`, `data/`, starter page, patches `CLAUDE.md`. Prints framework-clone command at the end. |
+| `/docs-init` | Bootstrap a new agent-knowledge-system project from zero — interactive: scope (whole repo vs subfolder) → site name → first section → writes `config/`, `data/`, starter page, patches `CLAUDE.md`. Prints framework-clone command at the end. |
 | `/docs-add-section [name]` | Scaffold a new top-level section under `data/` — auto-computes next `NN_` prefix, creates `settings.json` + starter page, optionally registers in `site.yaml`. |
 
 ## Repository Layout

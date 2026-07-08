@@ -65,7 +65,7 @@ export function resolveEntry(tokenA, tokenB) {
 /** Grouped listing for bare `docs help`. Returns a string. */
 export function renderList() {
   const out = [];
-  out.push('agent-ks — documentation-template toolkit\n');
+  out.push('agent-ks — agent-knowledge-system toolkit\n');
   out.push(`Usage: ${DISPATCH} <group> <verb> [flags]\n`);
 
   const GROUP_ORDER = [null, 'issue', 'check'];

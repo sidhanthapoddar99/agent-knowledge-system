@@ -5,7 +5,7 @@ description: Use this skill for ANY work in a documentation-template issue track
 
 # agent-ks-issues — the issue-tracker skill
 
-Operating manual for any issue tracker in a documentation-template project. The default
+Operating manual for any issue tracker in an agent-knowledge-system project. The default
 tracker lives at `data/todo/`; a project may have several, all with the same shape
 (folder-per-issue, `settings.json` metadata, vocabulary in the tracker root).
 

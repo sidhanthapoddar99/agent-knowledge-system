@@ -10,7 +10,7 @@ Build tooling so agents (and humans) can work with scenes surgically:
 
 ## Tasks
 
-- [ ] **Extract / summarize** — a `docs-guide`-style command (or skill recipe)
+- [ ] **Extract / summarize** — a `agent-ks`-style command (or skill recipe)
       that reports a scene's structure without the raw JSON: element count,
       element types, text labels, groups/frames, bounding box. Enough for an
       agent to "read" the diagram cheaply.

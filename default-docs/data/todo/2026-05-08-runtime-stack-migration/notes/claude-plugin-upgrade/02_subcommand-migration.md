@@ -111,7 +111,7 @@ plugins/documentation-guide/
 │   ├── docs-init.md
 │   └── docs-add-section.md
 └── skills/
-    └── documentation-guide/
+    └── agent-ks-docs/
         ├── SKILL.md            ← updated
         └── references/
             ├── writing.md

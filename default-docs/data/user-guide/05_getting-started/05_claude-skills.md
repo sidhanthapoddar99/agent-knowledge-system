@@ -1,6 +1,6 @@
 ---
 title: Claude Code Plugin
-description: AI-powered skills, CLI toolkit, and slash commands for working with documentation-template via Claude Code.
+description: AI-powered skills, CLI toolkit, and slash commands for working with agent-knowledge-system via Claude Code.
 ---
 
 # Claude Code Plugin

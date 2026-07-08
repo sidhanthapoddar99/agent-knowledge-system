@@ -2,7 +2,7 @@
   "name": "astro-docs-framework",
   "type": "module",
   "version": "1.0.0",
-  "description": "Modern documentation framework built with Astro",
+  "description": "agent-knowledge-system — a knowledge + task system for AI consumers, built with Astro",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",

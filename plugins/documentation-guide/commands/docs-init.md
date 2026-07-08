@@ -1,5 +1,5 @@
 ---
-description: Bootstrap a new documentation-template project from the bundled starter template (5 sections wired up — Home, Docs, Issues, Blog, User Guide). Walks through site name, description, repo URL.
+description: Bootstrap a new agent-knowledge-system project from the bundled starter template (5 sections wired up — Home, Docs, Issues, Blog, User Guide). Walks through site name, description, repo URL.
 allowed-tools: Read, Write, Edit, Bash
 argument-hint: (no arguments — fully interactive)
 ---
@@ -8,7 +8,7 @@ You are running the `/docs-init` slash command from the `documentation-guide` pl
 
 # Goal
 
-Scaffold a new **documentation-template** project from zero by **copying the plugin's bundled starter template** into the user's chosen directory, then substituting their site name / description / repo URL into the copied files.
+Scaffold a new **agent-knowledge-system** project from zero by **copying the plugin's bundled starter template** into the user's chosen directory, then substituting their site name / description / repo URL into the copied files.
 
 The template ships **5 sections wired up**: Home (`/`), Docs (`/docs`), Issues (`/issues`), Blog (`/blog`), and the framework's bundled User Guide (`/user-guide`). It's a working site out of the box — the user customises the content from there.
 
@@ -87,7 +87,7 @@ Ask three short questions in one message — the user can answer all at once:
 
 1. **Site name** — short label shown in the navbar (e.g. "Acme Docs"). Default: the basename of `chosen_root`.
 2. **Site title** — full title used in `<title>` tags. Default: same as site name.
-3. **Description** — one-sentence tagline. Default: "Documentation built with documentation-template".
+3. **Description** — one-sentence tagline. Default: "Documentation built with agent-knowledge-system".
 4. **GitHub repo URL** (or `org/repo` shorthand) — used in footer + social links. Default: leave the placeholder `your-org/your-repo` (the user can edit `config/footer.yaml` later).
 
 Bind these to shell vars:
@@ -211,7 +211,7 @@ pages: section and the matching entry in config/navbar.yaml.
 
 ## Documentation
 
-This project uses the **documentation-template** framework. The docs site lives at `<chosen_root>/`.
+This project uses the **agent-knowledge-system** framework. The docs site lives at `<chosen_root>/`.
 
 ### Layout (consumer mode)
 

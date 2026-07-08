@@ -11,7 +11,7 @@ Once the Go binary ships, the `documentation-guide` Claude Code plugin needs to 
 
 The plugin lives at `plugins/documentation-guide/` and contains:
 
-1. **The skill** — `skills/documentation-guide/SKILL.md` — triages docs/issue/blog/config tasks to one of five reference files (`writing.md`, `docs-layout.md`, `blog-layout.md`, `issue-layout.md`, `settings-layout.md`).
+1. **The skill** — `skills/agent-ks-docs/SKILL.md` — triages docs/issue/blog/config tasks to one of five reference files (`writing.md`, `docs-layout.md`, `blog-layout.md`, `issue-layout.md`, `settings-layout.md`).
 
 2. **11 bash wrappers** in `bin/` that exec `.mjs` scripts via `bun`:
    - Issue tracker: `docs-list`, `docs-show`, `docs-subtasks`, `docs-agent-logs`, `docs-set-state`, `docs-add-comment`, `docs-add-agent-log`, `docs-review-queue`
@@ -21,9 +21,9 @@ The plugin lives at `plugins/documentation-guide/` and contains:
    - `/docs-init` — bootstrap a new documentation-template project
    - `/docs-add-section` — scaffold a new top-level section
 
-4. **5 reference files** under `skills/documentation-guide/references/` — `writing.md`, `docs-layout.md`, `blog-layout.md`, `issue-layout.md`, `settings-layout.md`.
+4. **5 reference files** under `skills/agent-ks-docs/references/` — `writing.md`, `docs-layout.md`, `blog-layout.md`, `issue-layout.md`, `settings-layout.md`.
 
-5. **Backing scripts** under `skills/documentation-guide/scripts/` — `.mjs` files that the bash wrappers exec.
+5. **Backing scripts** under `skills/agent-ks-docs/scripts/` — `.mjs` files that the bash wrappers exec.
 
 ## What changes after migration
 

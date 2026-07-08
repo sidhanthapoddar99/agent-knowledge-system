@@ -5,7 +5,7 @@ status: open
 
 Teach both authoring skills and graph-query skills, so humans and AI agents both benefit from the new reference layer.
 
-## `docs-guide` skill — authoring
+## `agent-ks-docs` skill — authoring
 
 - [ ] Document `[[target]]` (wiki link) vs `[[[target]]]` (embed) as the canonical reference syntax.
 - [ ] Teach the resolution order (slug / filename / title / fuzzy).

@@ -57,7 +57,7 @@ title: "Agent memory — artifact component"
 
 ## Settled during planning (cite notes/02 + brainstorms)
 
-- **Skill name: `agent-ks-artifacts`** (pre-rebrand: artifact-authoring) — deliberately NOT `artifact-design`,
+- **Skill name: `agent-ks-artifacts`** (pre-rebrand: agent-ks-artifacts) — deliberately NOT `artifact-design`,
   which would collide with the Claude Code built-in skill of that name.
 - **Sidecar naming: `<NN_name>.meta.json` / `.meta.jsonc`** — mirrors
   `diagram-pages.ts:161`, never a bare `<name>.json` (would collide with data

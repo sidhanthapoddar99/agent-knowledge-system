@@ -15,7 +15,7 @@ Two Opus critics ran in parallel: a fact-checker opening every cited code path
 in the repo, and a conventions/completeness critic checking the seven vision
 requirements all landed. A fixer agent then applied confirmed findings
 surgically. The main session read the notes in full, spot-checked structure of
-the brainstorms and largest subtasks, and ran `docs-guide check issues`.
+the brainstorms and largest subtasks, and ran `agent-ks check issues`.
 
 ## Result
 

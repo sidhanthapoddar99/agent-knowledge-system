@@ -25,7 +25,7 @@ decision ("which one?") rather than documentation.
 
 ## The question (audit only — do NOT create artifacts)
 
-Does the `artifact-authoring` skill (SKILL.md + references), followed by a
+Does the `agent-ks-artifacts` skill (SKILL.md + references), followed by a
 cold agent with **no session context**, carry enough intent and guidance to
 produce artifacts of this kind at this caliber? Two executor profiles matter:
 an **Opus** agent and a **Sonnet agent at medium thinking** — the skill must

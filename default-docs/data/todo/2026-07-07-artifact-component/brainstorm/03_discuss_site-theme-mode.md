@@ -50,7 +50,7 @@ the CLAUDE.md cheat sheet, the skill references) — a `site`-mode artifact
 just consumes them. The *values* (needed e.g. to validate a chart palette
 against the real surfaces in both modes) require resolving the active theme
 (name → `theme_paths` scan → `extends` inheritance → CSS merge), which is
-non-trivial — so a CLI verb, **`docs-guide theme tokens --json`**, outputs the
+non-trivial — so a CLI verb, **`agent-ks theme tokens --json`**, outputs the
 resolved variable→value map for light and dark. Feeds authoring and the
 bundled palette validator; ends the "AI re-derives the theme every time"
 problem.
@@ -94,18 +94,18 @@ at the repo's CSS. Three reasons:
 3. **Future independence:** if the plugin is ever distributed standalone
    (not installed inside this repo as it is today), there is no theme CSS on
    disk to reference — the inline list is then the only source. The
-   `docs-guide theme tokens` verb complements this with live *values* when the
+   `agent-ks theme tokens` verb complements this with live *values* when the
    repo is present; the inline list carries the *names* always.
 
 This creates a real coupling: the skill's inline variable list depends on the
 theming system. **CLAUDE.md must record the dependency** — anyone changing
 theme variables (adding/renaming in `theme.yaml`) must update the
-artifact-authoring skill's variable section in the same change.
+agent-ks-artifacts skill's variable section in the same change.
 
 ## Decision
 
 Accepted as a package: route-side conditional injection keyed on
-`artifact.theme: "site" | "self"` (default `self`); `docs-guide theme tokens`
+`artifact.theme: "site" | "self"` (default `self`); `agent-ks theme tokens`
 query verb; authoring-skill section teaching both modes + the mode-choice
 doctrine above + the inline variable contract + the fallback-layer rule;
 documentation updated on both audience sides; CLAUDE.md notes the

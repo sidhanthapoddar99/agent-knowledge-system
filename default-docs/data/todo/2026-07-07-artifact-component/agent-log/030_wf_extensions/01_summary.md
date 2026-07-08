@@ -18,7 +18,7 @@ Loader-only: `issues.ts readFreeformDocs` gates `.html` to `notes/` and
 shows real filenames (also fixed the pre-existing diagram mislabel);
 `isTrackedDocFile` counts `.html` + sidecars for the cache signature. Theme
 handshake, open-full-page, and expand ride the global artifact renderer —
-zero new issues-layout JS. doc-issues skill + guide.ts + both docs sides
+zero new issues-layout JS. agent-ks-issues skill + guide.ts + both docs sides
 updated, cache parity kept.
 
 ## Subtask 90 — site-theme mode (at review)
@@ -29,7 +29,7 @@ at the START of `<head>` (robust against a literal `</head>` in code samples
 — a bug that actually fired in testing; theme-first so artifact rules win the
 cascade); site-variant ETag is a content hash (theme swaps bust caches
 despite unchanged mtimes); `self` stays byte-identical (verified by diff).
-New `docs-guide theme tokens [name] [--json]` verb resolves the full
+New `agent-ks theme tokens [name] [--json]` verb resolves the full
 inheritance chain, passes the 98-test plugin self-test. Skill carries the
 mode-choice doctrine + inline variable contract; CLAUDE.md carries the
 coupling note; live site-mode demo `11_site-theme-demo.html` on the showcase.

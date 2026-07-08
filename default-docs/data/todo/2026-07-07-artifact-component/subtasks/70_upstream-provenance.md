@@ -108,7 +108,7 @@ and the manifest. This proves the procedure is executable and surfaces a genuine
 delta a future maintainer must fold in.
 
 **Reconciliation + verification — done (2026-07-07, after `40` shipped).** The
-`artifact-authoring` skill is now built and mirrored to the installed cache, so the
+`agent-ks-artifacts` skill is now built and mirrored to the installed cache, so the
 two previously-blocked checkboxes are complete:
 
 - **Provenance map reconciled file-for-file with the shipped skill.** note/01 now

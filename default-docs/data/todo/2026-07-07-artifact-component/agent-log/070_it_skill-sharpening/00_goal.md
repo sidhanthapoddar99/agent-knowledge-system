@@ -6,7 +6,7 @@ title: "Goal — author the accepted variation-set remedy + live-test sharpening
 
 Execute the remedy accepted by sidhantha on 2026-07-08 (subtask
 [100](../../subtasks/100_variation-capability-audit.md)): make the
-`artifact-authoring` skill able to carry his signature **variation-set /
+`agent-ks-artifacts` skill able to carry his signature **variation-set /
 options-explorer** pattern to a cold agent — especially the Sonnet-medium
 profile the audit found failing — plus the three sharpening items his review
 of the live cold-Sonnet test added:

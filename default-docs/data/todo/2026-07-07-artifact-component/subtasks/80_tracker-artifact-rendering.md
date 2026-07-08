@@ -51,7 +51,7 @@ embed-only/excluded as in docs, and the issues layout has its own parts
       artifacts the same way it does docs-embedded ones.
       *(Rides the global `BaseLayout` `scripts/artifacts.ts` + global
       `.artifact` CSS — verified dark propagates into the iframe.)*
-- [x] **Skills + docs touch-up** — `doc-issues` skill (repo source + installed
+- [x] **Skills + docs touch-up** — `agent-ks-issues` skill (repo source + installed
       cache) and the user-guide/dev-docs artifact pages state that tracker
       notes/brainstorm artifacts render first-class in the issue view (current
       system only, history-free); bundled `guide.ts` legend updated if it
@@ -77,6 +77,6 @@ embed-only/excluded as in docs, and the issues layout has its own parts
       validator still clean; a diagram-page and a markdown note regression
       check.
       *(Headless screenshots both themes — iframe + theme-synced; `/artifacts`
-      route 200; `docs-guide check issues` clean (only pre-existing unrelated
+      route 200; `agent-ks check issues` clean (only pre-existing unrelated
       warnings); diagram note (`editor-diagrams/notes/04_first-class-demo.excalidraw`)
       and markdown note both still render, marker only on the artifact.)*

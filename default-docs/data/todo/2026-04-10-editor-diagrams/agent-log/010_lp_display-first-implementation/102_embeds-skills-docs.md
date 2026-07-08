@@ -21,8 +21,8 @@ and the user-guide, closing group `10_embeds/`.
   syntax = render-by-reference (images natively, excalidraw scenes), plus
   plain-link behaviour, the new `<a href>` colocated-file rewrite, and error
   semantics.
-- **Skills**: `documentation-guide/references/writing.md` (Diagrams block +
-  colocated-assets bullet) and `doc-issues/references/10_writing/10_writing.md`
+- **Skills**: `agent-ks-docs/references/writing.md` (Diagrams block +
+  colocated-assets bullet) and `agent-ks-issues/references/10_writing/10_writing.md`
   (Diagrams + Assets sections, live-demo pointer) — mirrored to the installed
   plugin cache, diff-verified in sync.
 

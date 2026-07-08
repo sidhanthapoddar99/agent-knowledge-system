@@ -1,5 +1,5 @@
 ---
-title: "Author the converged artifact-authoring skill (SKILL.md + references + scripts)"
+title: "Author the converged agent-ks-artifacts skill (SKILL.md + references + scripts)"
 status: done
 ---
 
@@ -32,8 +32,8 @@ integration is [`50_skills-integration.md`](./50_skills-integration.md).
 ## Where it lives
 
 A new skill folder under `plugins/documentation-guide/skills/<name>/` (peer of
-the existing `documentation-guide/` and `doc-issues/` skills) — suggested name
-`artifact-authoring`. Structure mirrors the existing skills:
+the existing `agent-ks-docs/` and `agent-ks-issues/` skills) — suggested name
+`agent-ks-artifacts`. Structure mirrors the existing skills:
 `SKILL.md` + `references/` + `scripts/`. Per the plugin parity rule (MEMORY.md),
 the identical tree must also be mirrored into the installed cache at
 `/home/sid/.claude/plugins/cache/sids-plugin-marketplace/documentation-guide/<version>/skills/<name>/`
@@ -73,12 +73,12 @@ contents and §4's merge decisions.)*
 
 ### Scaffold + frontmatter
 
-- [x] **Scaffold the skill folder** `plugins/documentation-guide/skills/artifact-authoring/`
+- [x] **Scaffold the skill folder** `plugins/documentation-guide/skills/agent-ks-artifacts/`
       with `SKILL.md`, `references/`, `scripts/`. Write YAML frontmatter
       (`name`, `description`, `license`) with a `description` tuned for
       triggering on artifact-building intent (building/designing an HTML artifact,
       dashboard, report page, design system, brand guideline) — distinct from the
-      `documentation-guide` skill (which triages docs writing) and `doc-issues`
+      `agent-ks-docs` skill (which triages docs writing) and `agent-ks-issues`
       (tracker). Done when the skill loads and its description reads as
       action-triggering, not a summary.
 
@@ -226,7 +226,7 @@ contents and §4's merge decisions.)*
       prompt (and does **not** steal docs-writing or tracker prompts from the
       sibling skills). Run the palette validator under bun (`node`/`bun
       scripts/validate_palette.js "#..,#.." --mode dark`) and confirm exit codes.
-      Run `docs-guide check skill-links` (the `check-skill-links.mjs` validator)
+      Run `agent-ks check skill-links` (the `check-skill-links.mjs` validator)
       against the new skill so every relative reference resolves. Spot-check that
       every theme token the skill names actually exists in
       `astro-doc-code/src/styles/theme.yaml` (the design-sync
@@ -235,10 +235,10 @@ contents and §4's merge decisions.)*
 
 ## Landed (2026-07-07) — status review
 
-Skill authored at `plugins/documentation-guide/skills/artifact-authoring/`
+Skill authored at `plugins/documentation-guide/skills/agent-ks-artifacts/`
 (`SKILL.md` + 4 references + a `dataviz/` sub-folder of 8 files + a bundled
 `scripts/validate_palette.js` + `references/PROVENANCE.md`), mirrored byte-identical
-into the installed cache at `…/documentation-guide/0.5.4/skills/artifact-authoring/`.
+into the installed cache at `…/documentation-guide/0.5.4/skills/agent-ks-artifacts/`.
 Plugin `plugin.json` description and `README.md` now enumerate **3 skills**.
 
 **Two placement reconciliations** (the brainstorm §3 TOC is the authority for

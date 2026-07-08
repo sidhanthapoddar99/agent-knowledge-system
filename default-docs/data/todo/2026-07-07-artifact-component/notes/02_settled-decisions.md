@@ -157,7 +157,7 @@ skill: **read the sidecar before touching an existing artifact**, and **update
 it in the same change as any HTML edit**. Rationale: this platform is
 agents-first — agents perform the edits, humans get observability — so no
 human pass will catch a drifted declaration; the drift guard must be the
-agent's own discipline (a future `docs-guide` check remains an option if drift
+agent's own discipline (a future `agent-ks` check remains an option if drift
 ever bites).
 
 ## Decided — self-mode token naming preference

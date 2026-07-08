@@ -40,15 +40,15 @@ are served untouched.
       and the propagated attribute via an injected attribute-only init script
       mirroring `BaseLayout` (localStorage → prefers-color-scheme → stamp
       `data-theme="dark"` only for dark), consistent with the docs chrome.
-- [x] **`docs-guide theme tokens` CLI verb** — new `theme` group verb in the
+- [x] **`agent-ks theme tokens` CLI verb** — new `theme` group verb in the
       plugin toolkit: resolves the active theme (site.yaml name →
       `theme_paths` scan → `extends` inheritance → CSS merge) and prints the
       variable→value map for light and dark; `--json` for agents; uniform
-      contract (`--help`, exit codes). Wire into `docs-guide help` discovery.
+      contract (`--help`, exit codes). Wire into `agent-ks help` discovery.
       *Done:* `scripts/theme/tokens.mjs` + manifest entry + selftest wiring;
-      resolves `var()` chains; `docs-guide theme tokens [name] [--json]`; passes
+      resolves `var()` chains; `agent-ks theme tokens [name] [--json]`; passes
       the self-test (98/98) and lists under a THEME group in `help`.
-- [x] **Authoring skill** — `artifact-authoring` (repo source + installed
+- [x] **Authoring skill** — `agent-ks-artifacts` (repo source + installed
       cache, byte-identical): a section teaching the two modes with the
       **mode-choice doctrine** (brainstorm 03): data representation /
       explaining the docs → `site`; UI/UX deliberation (theme, design system,
@@ -58,7 +58,7 @@ are served untouched.
       under discussion; it must stay portable and independent). In `site` mode
       consume the token contract and define nothing; carry the minimal neutral
       fallback layer for out-of-engine opens (and why that doesn't violate the
-      layouts no-fallback rule); use `docs-guide theme tokens --json` for real
+      layouts no-fallback rule); use `agent-ks theme tokens --json` for real
       values (e.g. palette validation against actual surfaces).
 - [x] **Inline variable contract in the skill** — the skill enumerates the
       engine's theme variable vocabulary in its own text (the
@@ -69,7 +69,7 @@ are served untouched.
       theme CSS on disk to read. The CLI verb supplies live values; the inline
       list supplies the names unconditionally.
 - [x] **CLAUDE.md coupling note** — add to this repo's CLAUDE.md (theming
-      section): the artifact-authoring skill carries an inline copy of the
+      section): the agent-ks-artifacts skill carries an inline copy of the
       theme variable contract; any change to `theme.yaml → required_variables`
       (add/rename/remove) must update that skill section (repo + cache) in the
       same change. *Done:* coupling paragraph under the theme-variable-contract

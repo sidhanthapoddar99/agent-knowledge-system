@@ -17,7 +17,7 @@ Workflow: two parallel Fable fixers — (a) the substantial rewrite of
 technical content identical while re-expressing every sentence; (b) the
 mechanical accuracy fixes (broken `adopts-site` value, variable-list drift,
 canonical sidecar example, history-narration deletions, guide.ts strings,
-`embed_height` canonicalization, docs-guide location sentence, opaque-block
+`embed_height` canonicalization, agent-ks location sentence, opaque-block
 clause, palette acknowledgment). Then a Fable verifier re-runs the shingle
 analysis, the theme.yaml cross-check, the plugin self-test, and cache-parity
 diff; a final fixer applies anything it finds.

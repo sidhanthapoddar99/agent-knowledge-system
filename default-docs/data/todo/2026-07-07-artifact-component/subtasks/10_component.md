@@ -168,7 +168,7 @@ recorded in the settled-decisions note under `../notes/`.
       "open full page" button navigates to `/artifacts/<path>`; (4) toggling the
       site theme flips the artifact when it honors `data-theme`; (5) editing the
       `.meta.jsonc` sidecar live-updates. Then `bun run build` and confirm the page is
-      emitted. Finally run `docs-guide check section` on that section — zero new
+      emitted. Finally run `agent-ks check section` on that section — zero new
       errors.
 
 ## Implementation record (status → review)
@@ -207,7 +207,7 @@ and re-syncs on toggle (headless screenshots + `iframe.contentDocument` probe),
 (752 pages with demo, 751 after removal); tsc: my files clean (27 remaining errors all
 pre-existing in untouched files). Demo removed; dev server killed. Nothing committed.
 
-**Handoff to subtask 50 (skills-integration):** `docs-guide check section` warns
+**Handoff to subtask 50 (skills-integration):** `agent-ks check section` warns
 "non-md file in docs folder" on the artifact `.html` + `.meta.jsonc` (0 errors). The
 CLI checker isn't artifact-aware yet — teaching it to recognize `NN_`-prefixed `.html`
 + `.meta` sidecars belongs to subtask 50.

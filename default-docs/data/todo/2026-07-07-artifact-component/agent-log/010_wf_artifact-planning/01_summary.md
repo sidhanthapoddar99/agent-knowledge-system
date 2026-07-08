@@ -18,7 +18,7 @@ The full planning depth of this issue — 11 files, ~17k words:
   route mechanics, reserved-URL guard, expand affordance), each ending in a
   recommendation, grounded in verified file:line references.
 - `brainstorm/02_discuss_authoring-skill-design.md` — 10 sections designing
-  the `artifact-authoring` skill: placement, triage wiring, table of contents,
+  the `agent-ks-artifacts` skill: placement, triage wiring, table of contents,
   source-by-source convergence, adaptation layer, CDN stance, sidecar contract,
   design-system flows, bundled scripts, licensing stance.
 - `notes/01_skill-sources-and-provenance.md` — capture provenance for all four

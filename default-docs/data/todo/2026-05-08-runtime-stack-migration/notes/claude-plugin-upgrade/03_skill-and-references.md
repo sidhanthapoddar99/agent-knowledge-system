@@ -13,7 +13,7 @@ The skill (`SKILL.md`) and the 5 reference files describe how Claude reasons abo
 
 ### Changes required
 
-1. **Command examples** — every reference to a wrapper (`docs-list`, `docs-show`, etc.) renames to `doc-engine docs ...`. Mechanical sweep; preserve flags and semantics.
+1. **Command examples** — every reference to a wrapper (`agent-ks issue list`, `agent-ks issue show`, etc.) renames to `doc-engine docs ...`. Mechanical sweep; preserve flags and semantics.
 
 2. **Triage logic** — unchanged. The decision tree (which reference file matches which task) doesn't depend on tool names.
 
@@ -39,11 +39,11 @@ All five live under `plugins/documentation-guide/skills/agent-ks-docs/references
 
 ### `docs-layout.md`
 
-**Changes:** Update validation invocation examples (`docs-check-section <folder>` → `doc-engine docs check section <folder>`). Layout rules themselves don't change.
+**Changes:** Update validation invocation examples (`agent-ks check section <folder>` → `doc-engine docs check section <folder>`). Layout rules themselves don't change.
 
 ### `blog-layout.md`
 
-**Changes:** Same — `docs-check-blog` → `doc-engine docs check blog`. Frontmatter / file naming rules unchanged.
+**Changes:** Same — `agent-ks check blog` → `doc-engine docs check blog`. Frontmatter / file naming rules unchanged.
 
 ### `issue-layout.md`
 
@@ -54,7 +54,7 @@ All five live under `plugins/documentation-guide/skills/agent-ks-docs/references
 
 ### `settings-layout.md`
 
-**Changes:** Update `docs-check-config` references. Schema docs unchanged.
+**Changes:** Update `agent-ks check config` references. Schema docs unchanged.
 
 ## CLAUDE.md (project root)
 

@@ -8,7 +8,7 @@ sidhantha's favourite real-world use of artifacts: **one page showing 4–10
 design options** of a UI element (mobile-nav styles, FAB glass variants,
 ask-bar states, dashboard redesigns) where every option actually *works* —
 buttons press, navs open, states toggle — so the team can feel each option
-and pick one. The question: can the `artifact-authoring` skill teach an
+and pick one. The question: can the `agent-ks-artifacts` skill teach an
 agent to build that?
 
 **Answer: not yet.** A strong model (Opus) gets there by filling the gaps

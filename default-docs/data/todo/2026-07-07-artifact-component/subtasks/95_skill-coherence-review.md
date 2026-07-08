@@ -11,7 +11,7 @@ findings; it does not edit. What to apply gets decided with the user.
 
 ## Review brief
 
-- **Coherence** — `artifact-authoring` must read as ONE skill, not four
+- **Coherence** — `agent-ks-artifacts` must read as ONE skill, not four
   rewrites stapled together: consistent voice and terminology, no
   contradictory guidance across the merged sources (artifact-design ↔
   frontend-design ↔ dataviz ↔ design-sync extractions), clean lean-triage
@@ -24,13 +24,13 @@ findings; it does not edit. What to apply gets decided with the user.
   variable contract + standalone-distribution rationale, the neutral
   fallback-layer rule, design-system creation flows (issue brainstorm vs
   published docs section), palette validation via the bundled script and
-  `docs-guide theme tokens`.
+  `agent-ks theme tokens`.
 - **Cold-agent test** — could an agent following only the skill produce a
   correct artifact without guessing (the design-sync "act on this without
   guessing" bar)? Are the reserved-URL limitation and the two-mode choice
   stated where an author actually trips on them?
-- **Ecosystem wiring** — `documentation-guide` and `doc-issues` hand off to
-  `artifact-authoring` at the right trigger moments; `guide.ts` legend in
+- **Ecosystem wiring** — `agent-ks-docs` and `agent-ks-issues` hand off to
+  `agent-ks-artifacts` at the right trigger moments; `guide.ts` legend in
   sync; everything history-free (no "newly added" phrasing).
 - **Hygiene** — repo ↔ installed-cache byte parity; no near-verbatim upstream
   prose (spot-check distinctive sentences against `tmp_skills/`); frontmatter

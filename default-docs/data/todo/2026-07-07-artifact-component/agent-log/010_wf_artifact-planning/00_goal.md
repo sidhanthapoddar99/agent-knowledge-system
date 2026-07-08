@@ -27,7 +27,7 @@ main session which reviews everything before sign-off:
    prose quality), and a completeness critic checks the user's stated
    requirements all landed somewhere.
 4. **Fix** — confirmed findings applied; main session reviews and validates
-   (`docs-guide check section`).
+   (`agent-ks check section`).
 
 ## Success criteria
 

@@ -24,7 +24,7 @@ The full remedy accepted on subtask
 
 ## Verification
 
-`diff -rq` repo skill ↔ installed cache clean; `docs-guide check issues`
+`diff -rq` repo skill ↔ installed cache clean; `agent-ks check issues`
 clean. Subtask 100 handed off at `review` (human closes).
 
 ## The through-line

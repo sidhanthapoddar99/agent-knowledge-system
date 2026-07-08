@@ -45,7 +45,7 @@
       "Header — issue title, thesis, status/priority/component chips, theme toggle",
       "The vision — embedded content-area render + /artifacts/<path> full-page route, URL-as-primitive",
       "Settled decisions — the six pinned choices with one-line rationales",
-      "Four-source convergence — the four captured skills flowing into artifact-authoring",
+      "Four-source convergence — the four captured skills flowing into agent-ks-artifacts",
       "Subtask plan — the seven workstreams 10->70 with status pills and the suggested build order",
       "Footer — provenance line"
     ],
@@ -57,7 +57,7 @@
       "suggested_build_order": ["20", "10", "30", "40", "50/60", "70"],
       "converged_sources": 4,
       "source_names": ["artifact-design", "dataviz", "design-sync", "frontend-design"],
-      "converges_into": "artifact-authoring",
+      "converges_into": "agent-ks-artifacts",
       "reserved_base_urls": ["artifacts", "assets", "content-assets", "api", "editor"],
       "full_page_route": "/artifacts/<path>",
       "sidecar_convention": "<name>.meta.json / <name>.meta.jsonc"

@@ -13,7 +13,7 @@ rewrite-never-paste stance). sidhantha keeps it in place while working on
 this machine.
 
 **Why this note is red:** the folder is the three-way-diff baseline for every
-future upstream sync of the `artifact-authoring` skill, and its built-in half
+future upstream sync of the `agent-ks-artifacts` skill, and its built-in half
 is **version-locked to Claude Code v2.1.202** — after the harness updates,
 that exact snapshot cannot be re-downloaded. `git clean -fdx`, a fresh clone,
 or a machine change loses it. **Do not delete it. Do not `git clean` the repo

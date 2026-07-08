@@ -1,5 +1,5 @@
 ---
-title: "Skills integration — teach documentation-guide, doc-issues, and guide.ts about artifacts"
+title: "Skills integration — teach agent-ks-docs, agent-ks-issues, and guide.ts about artifacts"
 status: done
 ---
 
@@ -10,20 +10,20 @@ existing skills and the framework-bundled issue guide — otherwise an agent
 working docs or the tracker won't know artifacts exist, won't warn about the
 reserved base URL, and won't hand off to the new authoring skill. This subtask is
 the connective tissue between [`40_authoring-skill.md`](./40_authoring-skill.md)
-(which *creates* the artifact-authoring skill) and the shipped feature. It
+(which *creates* the agent-ks-artifacts skill) and the shipped feature. It
 follows the plugin **parity rule** (MEMORY.md): every edit lands in **both** the
 repo-local plugin source and the installed cache.
 
 ## What to touch (verified locations)
 
-- **`documentation-guide` skill** — repo-local
-  `plugins/documentation-guide/skills/documentation-guide/` (`SKILL.md` +
+- **`agent-ks-docs` skill** — repo-local
+  `plugins/documentation-guide/skills/agent-ks-docs/` (`SKILL.md` +
   `references/`: `writing.md`, `settings-layout.md`, `images.md`, `layouts/`,
   `cli-toolkit.md`, `doc-migration.md`). This skill triages non-tracker docs
   work; it must learn that an `NN_.html` file is a first-class page type and route
   authors to the new skill.
-- **`doc-issues` skill** — repo-local
-  `plugins/documentation-guide/skills/doc-issues/` (`SKILL.md` + numbered
+- **`agent-ks-issues` skill** — repo-local
+  `plugins/documentation-guide/skills/agent-ks-issues/` (`SKILL.md` + numbered
   `references/`: `00_anatomy/`, `10_writing/`, `20_sections/`, `40_operations/`,
   `60_examples/`). Artifacts can live inside a tracker `brainstorm/`/`notes/`
   folder (design systems authored in an issue), so this skill must mention them.
@@ -40,7 +40,7 @@ repo-local plugin source and the installed cache.
 
 ## Tasks
 
-- [x] **Teach `documentation-guide` the new first-class type.** In its `SKILL.md`
+- [x] **Teach `agent-ks-docs` the new first-class type.** In its `SKILL.md`
       triage (and the relevant reference — likely `references/layouts/` alongside
       the docs-page material, or `writing.md`), add: `.html` files with an `NN_`
       prefix render as first-class docs pages, embedded in the content area with
@@ -51,7 +51,7 @@ repo-local plugin source and the installed cache.
       the skill mentions the type and its sidecar without duplicating the
       authoring manual.
 
-- [x] **Add the reserved-URL limitation to `documentation-guide`.** Wherever the
+- [x] **Add the reserved-URL limitation to `agent-ks-docs`.** Wherever the
       skill covers section `settings.json` / `base_url` (the settings reference),
       state that `artifacts` (and the other route-reserved words: `assets`,
       `content-assets`, `api`, `editor`) may not be a section base URL and that
@@ -59,18 +59,18 @@ repo-local plugin source and the installed cache.
       [`30_reserved-url-guard.md`](./30_reserved-url-guard.md)). Done when the
       reserved-word list here matches the code constant exactly.
 
-- [x] **Add the handoff to the new authoring skill.** In `documentation-guide`'s
+- [x] **Add the handoff to the new authoring skill.** In `agent-ks-docs`'s
       triage table, add a row: *building/designing an artifact, dashboard, report
-      page, brand/design system → hand off to `artifact-authoring`*. This is the
-      routing seam that keeps `documentation-guide` about *writing docs* and the
+      page, brand/design system → hand off to `agent-ks-artifacts`*. This is the
+      routing seam that keeps `agent-ks-docs` about *writing docs* and the
       new skill about *building artifacts*. Done when a docs-writing agent is
       pointed at the right skill for artifact construction.
 
-- [x] **Teach `doc-issues` about artifacts in the tracker.** In its anatomy /
+- [x] **Teach `agent-ks-issues` about artifacts in the tracker.** In its anatomy /
       writing references, note that a `brainstorm/`, `notes/`, or `subtasks/`
       folder may hold `NN_.html` artifacts (with sidecars) — e.g. a design system
       drafted inside an issue — and that building them is the
-      `artifact-authoring` skill's job. Keep the tracker skill's focus on *where
+      `agent-ks-artifacts` skill's job. Keep the tracker skill's focus on *where
       they live and how they're referenced*, not how to design them. Done when the
       tracker skill acknowledges artifacts as valid supporting content and hands
       off construction.
@@ -80,7 +80,7 @@ repo-local plugin source and the installed cache.
       of `astro-doc-code/src/layouts/issues/default/guide.ts` (keeping it the thin
       legend it is — the full manual stays in the skill). If nothing about the
       folder anatomy changes, record explicitly that no `guide.ts` edit was
-      needed. Done when the bundled guide and the `doc-issues` skill agree.
+      needed. Done when the bundled guide and the `agent-ks-issues` skill agree.
 
 - [x] **Honor the parity + history-free rules.** Mirror every edit into the
       installed cache and bump the plugin/marketplace version together with `40`.
@@ -90,33 +90,33 @@ repo-local plugin source and the installed cache.
       when repo-local and cache are byte-identical and no historical asides were
       added.
 
-- [x] **Verification.** Run `docs-guide check skill-links`
+- [x] **Verification.** Run `agent-ks check skill-links`
       (`check-skill-links.mjs`) over both edited skills — every relative reference
       resolves. Grep both skills for the reserved-word list and confirm it matches
       the `30` code constant. Do a cold trigger check: a "help me author an
-      artifact" prompt reaches `artifact-authoring`; a "add a docs page" prompt
-      still reaches `documentation-guide`; a tracker prompt still reaches
-      `doc-issues`. Diff repo-local vs installed cache to confirm parity.
+      artifact" prompt reaches `agent-ks-artifacts`; a "add a docs page" prompt
+      still reaches `agent-ks-docs`; a tracker prompt still reaches
+      `agent-ks-issues`. Diff repo-local vs installed cache to confirm parity.
 
 ## Landed (2026-07-07)
 
 **Files edited (repo, each mirrored byte-identically into the installed cache
 `~/.claude/plugins/cache/sids-plugin-marketplace/documentation-guide/0.5.4/`):**
 
-- `plugins/documentation-guide/skills/documentation-guide/SKILL.md` — triage row
-  *(building/designing an HTML artifact → hand off to `artifact-authoring`)* + a
+- `plugins/documentation-guide/skills/agent-ks-docs/SKILL.md` — triage row
+  *(building/designing an HTML artifact → hand off to `agent-ks-artifacts`)* + a
   thin "Artifact pages" pointer (first-class `.html` type, embed, `/artifacts`
   full-page URL, `.meta.json`/`.meta.jsonc` sidecar, reserved base URL).
-- `.../documentation-guide/references/layouts/docs-layout.md` — new "Artifact
+- `.../agent-ks-docs/references/layouts/docs-layout.md` — new "Artifact
   pages" section (mirrors the "Diagram pages" one) + `allow_artifact_pages`
   settings-field row. Cross-refs the shipped user-guide `08_artifact-pages.md`.
-- `.../documentation-guide/references/settings-layout.md` — reserved-base-URL
+- `.../agent-ks-docs/references/settings-layout.md` — reserved-base-URL
   IMPORTANT callout in §4 (`artifacts, assets, content-assets, api, editor`;
   hard-fail at config load).
-- `plugins/documentation-guide/skills/doc-issues/SKILL.md` — `artifact-authoring`
+- `plugins/documentation-guide/skills/agent-ks-issues/SKILL.md` — `agent-ks-artifacts`
   sibling-skill pointer (build handoff; tracker keeps *where they live / how
   referenced*).
-- `.../doc-issues/references/10_writing/10_writing.md` — new "Artifacts" section
+- `.../agent-ks-issues/references/10_writing/10_writing.md` — new "Artifacts" section
   (URL-reference model, companion sidecar, the design-system Home-A→Home-B
   promotion).
 - `plugins/documentation-guide/.claude-plugin/plugin.json` — `version` 0.5.4 →
@@ -142,7 +142,7 @@ files — an existing tracker capability. Artifacts have a *lesser* tracker
 presence than diagrams (referenced by `/artifacts/` URL, not embedded as sidebar
 entries), so adding them to `guide.ts` would over-specify beyond the map's role
 and diverge from how diagrams are (not) treated there. The file-type detail lives
-in the `doc-issues` skill's writing reference; map and skill agree. No change.
+in the `agent-ks-issues` skill's writing reference; map and skill agree. No change.
 
 **Accuracy note / handoff to `10_component` review.** The tracker loader
 (`astro-doc-code/src/loaders/issues.ts`) wires `diagramContainerHtml` for
@@ -152,7 +152,7 @@ Artifacts render as first-class *embedded* pages only in **docs sections**
 (`data.ts` → `loadArtifactPages`). The `/artifacts/<path>` route *does* serve any
 `.html` under any content dir (the tracker included — proven by the fixture
 `notes/03_planning-overview.html` building to
-`dist/artifacts/todo/.../03_planning-overview.html`). So the doc-issues skill was
+`dist/artifacts/todo/.../03_planning-overview.html`). So the agent-ks-issues skill was
 written to the **shipped reality** — in-issue artifacts are linked full-page
 documents, not embedded tracker entries — matching the canonical user-guide
 (`08_artifact-pages.md`, docs-section framed) and the settled decisions (which
@@ -160,11 +160,11 @@ never specify tracker embedding). Making artifacts first-class *embedded* tracke
 entries (parity with diagram files) is deferred scope now owned by
 [`80_tracker-artifact-rendering.md`](./80_tracker-artifact-rendering.md) (the
 `issues.ts` loader + issues detail-layout change, `notes/`/`brainstorm/` only, per
-sidhantha) — when that lands, the doc-issues "Artifacts" note is upgraded to claim
+sidhantha) — when that lands, the agent-ks-issues "Artifacts" note is upgraded to claim
 embedded rendering. Flagged, not fabricated.
 
 **Verification run:**
-- `docs-guide check skill-links` → ✓ all checks passed (exit 0) on **both**
+- `agent-ks check skill-links` → ✓ all checks passed (exit 0) on **both**
   skills, in **both** the repo copy and the installed cache.
 - Reserved-word list in the skills equals the code constant
   `RESERVED_BASE_URLS = ['artifacts','assets','content-assets','api','editor']`
@@ -172,9 +172,9 @@ embedded rendering. Flagged, not fabricated.
 - Parity: `diff -rq` of both skill trees + `plugin.json` = byte-identical
   repo↔cache (only the runtime `.in_use` marker differs).
 - `plugin.json` valid JSON, `version` 0.5.5, description still asserts "Ships 3
-  skills"; `docs-guide help` still loads from the edited cache (exit 0).
+  skills"; `agent-ks help` still loads from the edited cache (exit 0).
 - Neither sibling skill's `description:` frontmatter was touched — triggering is
-  unchanged; artifact-build triggering is owned by `artifact-authoring`'s own
+  unchanged; artifact-build triggering is owned by `agent-ks-artifacts`'s own
   description (from `40`). A live cold-prompt eval was not run in this headless
   subagent; assessed by description scoping (same posture as `40`).
 - History-free: no "newly added / previously unsupported" phrasing; all edits

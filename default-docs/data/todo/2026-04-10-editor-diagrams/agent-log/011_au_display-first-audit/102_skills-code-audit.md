@@ -22,7 +22,7 @@ map, `./`/`../` fence rule, sidecar fields (+`.jsonc`), no-prefix
 warning+skip, assets exclusion, collision behaviour, `allow_diagram_pages`
 scope (docs-only), title derivation, and the excalidraw/asset postprocessors
 running on docs+blog+issues. `guide.ts` has no diagram content (nothing to
-sync). One soft phrasing note: doc-issues `10_writing.md:107` says assets
+sync). One soft phrasing note: agent-ks-issues `10_writing.md:107` says assets
 are the home for diagrams "that don't need to be first-class" — first-class
 diagram pages are docs-only, so the contrast implies a tracker option that
 doesn't exist. Cosmetic.

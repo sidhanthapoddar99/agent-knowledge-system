@@ -78,7 +78,7 @@ Real users running the binary on real projects. Bug bash. Performance tuning if 
 | **Theme CSS regressions** from no-Vite-bundling | The contract is variable-based; if the variable contract is honoured, regressions should be near-zero. Snapshot screenshots help. |
 | **y-go maturity** for editor backend | Either prove y-go fits in a 1-week spike during phase 3, or fall back to plan 3b (editor stays JS, served by Go HTTP) |
 | **CodeMirror integration** breaks when its bundle is served from `embed.FS` instead of Vite dev | This is just static asset serving — should be a non-issue, but worth a phase 2 spike |
-| **Issue tracker frontmatter parsing** has subtle YAML quirks | The current `_lib.mjs` plugin code is the spec; port it carefully; cross-validate with `docs-list --json` output |
+| **Issue tracker frontmatter parsing** has subtle YAML quirks | The current `_lib.mjs` plugin code is the spec; port it carefully; cross-validate with `agent-ks issue list --json` output |
 
 ## Ordering rationale
 

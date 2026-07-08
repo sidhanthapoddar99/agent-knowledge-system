@@ -24,7 +24,7 @@ executes clean.
    claimed re-expression but the shingle analysis disproves it. Resolution
    per the settled rewrite-never-paste decision: genuine rewrite.
 2. **SEVERE — ecosystem teaches a silently-broken value.**
-   `documentation-guide/references/layouts/docs-layout.md:175` example uses
+   `agent-ks-docs/references/layouts/docs-layout.md:175` example uses
    `"theme": "adopts-site"` — a draft-era value the loader doesn't recognize;
    copiers silently get `self`. Fix to `"site"` (repo + cache).
 3. **MODERATE — inline variable list drifts from `theme.yaml`** while
@@ -41,10 +41,10 @@ executes clean.
    "the older value…") in SKILL.md, publishing.md, and user-guide
    08_artifact-pages.md violate the skills-are-history-free rule — delete,
    keep loader tolerance silent ("any other value reads as `self`").
-6. **MINOR** — `guide.ts` names `documentation-guide` (twice) as the tracker
-   manual; should be `doc-issues`. `embed_height` taught top-level in one
+6. **MINOR** — `guide.ts` names `agent-ks-docs` (twice) as the tracker
+   manual; should be `agent-ks-issues`. `embed_height` taught top-level in one
    skill, inside `artifact:` in the other (loader canonical: top-level);
-   demo sidecar declares both. `docs-guide` CLI invoked but never located
+   demo sidecar declares both. `agent-ks` CLI invoked but never located
    for cold agents. "Opaque `artifact:` block" overstates (framework reads
    `theme`). Palette hue-set origin (upstream reference set) deserves a
    one-line acknowledgment.

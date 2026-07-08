@@ -5,7 +5,7 @@ title: "Skill sources and provenance — the four captured skills + upstream-syn
 # Skill sources and provenance
 
 This note is the durable provenance record for the four design skills captured
-into repo-root `tmp_skills/` and converged into the new `artifact-authoring`
+into repo-root `tmp_skills/` and converged into the new `agent-ks-artifacts`
 skill (design deliberation, including the section-by-section convergence map, in
 [`../brainstorm/02_discuss_authoring-skill-design.md`](../brainstorm/02_discuss_authoring-skill-design.md)
 §§3–4). Its job is to make a *future*
@@ -70,7 +70,7 @@ for it (see the protocol below).
 
 ## Reconciliation — the shipped map (post-implementation, 2026-07-07)
 
-Subtask `40` has shipped `plugins/documentation-guide/skills/artifact-authoring/`
+Subtask `40` has shipped `plugins/documentation-guide/skills/agent-ks-artifacts/`
 (mirrored byte-identically into the installed cache). This is the file-for-file
 map of **what actually shipped**, replacing the pre-implementation plan — the
 manifest's per-source `convergence_destination` strings were written against the
@@ -195,7 +195,7 @@ brainstorm's licensing section). Options weighed:
    (alongside this note), recording, per source file: `sha256`,
    byte-exact-vs-transcribed flag, capture date (2026-07-07), upstream coordinate
    (CC v2.1.202 for built-ins; the pinned SHA for frontend-design), and the
-   convergence destination in the planned `artifact-authoring` skill. It covers
+   convergence destination in the planned `agent-ks-artifacts` skill. It covers
    all 39 files under `tmp_skills/` (every recorded hash re-verified against disk),
    flags the dropped-but-exists-upstream items (`validate_palette.py`, the entire
    design-sync machinery) as conscious omissions, and carries the fold-in protocol

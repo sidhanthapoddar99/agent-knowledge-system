@@ -29,9 +29,9 @@ overlay, data-theme propagation, no invert filter). Build: 751 pages green;
 served artifact byte-identical to source; guard verified throwing on
 `artifacts` AND `content-assets` with config reverted after.
 
-**Skill:** `artifact-authoring` (SKILL.md + references + bundled
+**Skill:** `agent-ks-artifacts` (SKILL.md + references + bundled
 validate_palette.js), plugin bumped to 0.5.5, cache parity byte-identical.
-**Integration:** documentation-guide + doc-issues triage + references updated,
+**Integration:** documentation-guide + agent-ks-issues triage + references updated,
 `guide.ts` legend updated. **Docs:** user-guide `08_artifact-pages.md` +
 `09_artifact-showcase.md` (live demo `10_design-system-demo.html` + sidecar);
 dev-docs mechanism page. **Provenance:** integrity manifest

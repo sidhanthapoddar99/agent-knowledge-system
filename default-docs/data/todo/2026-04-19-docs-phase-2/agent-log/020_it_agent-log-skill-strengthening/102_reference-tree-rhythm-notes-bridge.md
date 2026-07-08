@@ -13,7 +13,7 @@ Second pass after user review of milestone #1: raise adherence without losing
 agent flexibility. Three gaps named — the per-kind reference tree wasn't in the
 skill (only in `notes/02`), the scaffold-first / stub-then-update lifecycle was
 absent (the recipe read as write-at-completion), and nothing pointed rich run
-outputs toward `notes/` + the artifact-authoring skill.
+outputs toward `notes/` + the agent-ks-artifacts skill.
 
 ## Approach
 
@@ -34,7 +34,7 @@ outputs toward `notes/` + the artifact-authoring skill.
   trace → update to `success`/`failed` with results → summary at wrap), marked
   as a rhythm not a ritual; new subsection **"Rich outputs graduate to
   `notes/`"** — dense deliverables (architecture write-ups, diagrams, HTML
-  artifacts via the artifact-authoring sibling skill) live in `notes/`/
+  artifacts via the agent-ks-artifacts sibling skill) live in `notes/`/
   `brainstorm/`, milestones link to them ("if a section outgrows its bullets,
   it's a note wearing a milestone's hat").
 - **SKILL.md**: the granularity bullet now carries the default rhythm and the

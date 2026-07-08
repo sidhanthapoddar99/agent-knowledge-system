@@ -32,10 +32,10 @@ frontend-design.
 
 ## 1. Skill name and placement in the plugin
 
-The plugin ships two skills today — `documentation-guide` (all non-tracker
-content) and `doc-issues` (the tracker) — each a folder under
+The plugin ships two skills today — `agent-ks-docs` (all non-tracker
+content) and `agent-ks-issues` (the tracker) — each a folder under
 `plugins/documentation-guide/skills/<name>/` with a `SKILL.md`, a `references/`
-directory, and (for `documentation-guide`) a `scripts/` directory. The new skill
+directory, and (for `agent-ks-docs`) a `scripts/` directory. The new skill
 is a **third peer** in that same folder, mirroring the shape:
 `plugins/documentation-guide/skills/<name>/{SKILL.md, references/, scripts/}`.
 
@@ -51,17 +51,17 @@ descriptions fight for the same triggers and an agent can load the wrong manual
 
 Candidates weighed:
 
-- **`artifact-authoring`** — verb-noun, says the job ("author artifacts"),
+- **`agent-ks-artifacts`** — verb-noun, says the job ("author artifacts"),
   clearly distinct from the built-in `artifact-design`. Reads well next to
-  `doc-issues` / `documentation-guide`.
-- **`doc-artifacts`** — matches the `doc-` prefix of `doc-issues`, signalling
-  "a documentation-domain sub-skill." But `doc-` in `doc-issues` connotes the
+  `agent-ks-issues` / `agent-ks-docs`.
+- **`doc-artifacts`** — matches the `doc-` prefix of `agent-ks-issues`, signalling
+  "a documentation-domain sub-skill." But `doc-` in `agent-ks-issues` connotes the
   *tracker*, and artifacts are not tracker-only (they live in docs sections too),
   so the prefix mildly misleads.
 - **`artifacts`** — shortest, but a bare noun triggers loosely and collides
   hardest with the built-in's vocabulary.
 
-**Recommendation: `artifact-authoring`.** It names the craft, avoids the
+**Recommendation: `agent-ks-artifacts`.** It names the craft, avoids the
 built-in collision, and its description can open with an unambiguous scope line —
 "for building self-contained HTML artifacts as content files in a
 documentation-template project (the `/artifacts` content type), NOT claude.ai
@@ -70,8 +70,8 @@ mis-triggering against each other.
 
 **Parity rule.** Per the repo's plugin repo/cache parity convention, the skill
 must be authored in the repo-local source
-(`plugins/documentation-guide/skills/artifact-authoring/`) **and** mirrored into
-the installed plugin cache that `docs-guide` actually runs from. Both edits ship
+(`plugins/documentation-guide/skills/agent-ks-artifacts/`) **and** mirrored into
+the installed plugin cache that `agent-ks` actually runs from. Both edits ship
 together — see the `50_skills-integration` workstream, which owns the same parity
 obligation for the edits to the two existing skills.
 
@@ -79,29 +79,29 @@ obligation for the edits to the two existing skills.
 
 ## 2. Triage — who triggers whom
 
-The plugin already models a clean division: `documentation-guide` triages
-non-tracker content and *hands off* the whole tracker domain to `doc-issues`
+The plugin already models a clean division: `agent-ks-docs` triages
+non-tracker content and *hands off* the whole tracker domain to `agent-ks-issues`
 (self-contained). The new skill slots in as a third self-contained specialist,
 and the two existing skills gain a thin pointer to it — exactly how
-`documentation-guide` points at `doc-issues` today.
+`agent-ks-docs` points at `agent-ks-issues` today.
 
 Proposed handoff wiring (the `50_skills-integration` workstream implements it):
 
-- **`documentation-guide`** — its triage table gains a row: *"authoring or
-  embedding an HTML artifact in a docs section → load `artifact-authoring`."* Its
+- **`agent-ks-docs`** — its triage table gains a row: *"authoring or
+  embedding an HTML artifact in a docs section → load `agent-ks-artifacts`."* Its
   `references/settings-layout.md` gains the reserved-`artifacts`-base-URL
   limitation (a section config that would collide with the route). The
   build/design *craft* is not duplicated here — only the pointer and the config
   constraint.
-- **`doc-issues`** — gains a pointer: *"building an artifact inside a
+- **`agent-ks-issues`** — gains a pointer: *"building an artifact inside a
   `brainstorm/`, `notes/`, or subtask context (a design-system draft, a data
-  dashboard for a decision) → load `artifact-authoring`."* This parallels how
-  `doc-issues` already tells the reader to load `documentation-guide`'s
+  dashboard for a decision) → load `agent-ks-artifacts`."* This parallels how
+  `agent-ks-issues` already tells the reader to load `agent-ks-docs`'s
   `images.md` for screenshots inside an issue.
-- **`artifact-authoring`** — **self-contained**, owns the whole manual: where
+- **`agent-ks-artifacts`** — **self-contained**, owns the whole manual: where
   artifacts live (docs sections *and* tracker folders), the sidecar contract,
   the embed/route model, and the full design/dataviz/design-system craft. It is
-  the analogue of `doc-issues`: a sibling skill loads it and steps back.
+  the analogue of `agent-ks-issues`: a sibling skill loads it and steps back.
 
 **The built-in `artifact-design` question.** Should our skill reference the
 built-in (it *is* present in-session) or fully absorb it? Settled by the user:
@@ -112,7 +112,7 @@ that would re-introduce claude.ai publish mechanics we deliberately strip. The
 built-in stays for its own domain (the `Artifact` tool); ours owns the repo
 domain. The scope sentence (§1) is the fence between them.
 
-**Recommendation:** three-skill triage as above; `artifact-authoring`
+**Recommendation:** three-skill triage as above; `agent-ks-artifacts`
 self-contained; both existing skills carry a one-line pointer + the reserved-URL
 note, nothing more.
 
@@ -121,8 +121,8 @@ note, nothing more.
 ## 3. Shape — `SKILL.md` + `references/` split (the table of contents)
 
 The house pattern is a **lean triage router** in `SKILL.md` that points at
-self-contained references (`documentation-guide` is the exemplar). But
-`doc-issues` shows the other valid shape: a fuller inline manual for the
+self-contained references (`agent-ks-docs` is the exemplar). But
+`agent-ks-issues` shows the other valid shape: a fuller inline manual for the
 *thinking*, with references for the deep procedures. Artifact authoring wants a
 hybrid: the **calibration governor and the verify gate are load-bearing enough
 to live inline** (they change what every artifact becomes and must not be
@@ -340,7 +340,7 @@ this is our layer sitting on top of design-sync's taxonomy.
   system is *in flux*: a brand exploration, competing palette directions, a
   component look being argued out. Artifacts here are thinking-artifacts —
   drafts that live beside the deliberation that produced them, versioned with the
-  issue. Per `doc-issues`, brainstorm content deliberates real alternatives, so a
+  issue. Per `agent-ks-issues`, brainstorm content deliberates real alternatives, so a
   design-system brainstorm ships *multiple* artifact options with commentary and
   a recommendation, not one polished result. The skill instructs: keep each
   option a self-contained artifact, declare its palette/purpose in the sidecar so
@@ -376,7 +376,7 @@ The script triage is settled here.
 
 - **Bundle `validate_palette.js` (primary).** It is a dependency-free ES module
   (~260 lines, all color math inlined) that runs under node or bun with no npm
-  install. It ships at `plugins/documentation-guide/skills/artifact-authoring/scripts/validate_palette.js`.
+  install. It ships at `plugins/documentation-guide/skills/agent-ks-artifacts/scripts/validate_palette.js`.
   Two invocation modes the skill documents:
   - *CLI:* `node validate_palette.js "#2a78d6,#1baf7a,…" --mode light` (add
     `--surface "#1a1a19"` for a non-default chart surface, `--pairs all` for
@@ -440,7 +440,7 @@ where* so a future upstream update can still be diffed and folded in
   and `10_component`; the skill defers to it and teaches only the content
   contract.
 - **Everything else here is a recommendation ready to become the `40_authoring-skill`
-  work order** — name (`artifact-authoring`), placement, triage wiring, the
+  work order** — name (`agent-ks-artifacts`), placement, triage wiring, the
   `SKILL.md` + `references/` TOC, the section sourcing, the CDN stance (self-
   contained with a repo-relative relaxation), the sidecar content contract, the
   two design-system homes, the bundled validator, and the rewrite posture.

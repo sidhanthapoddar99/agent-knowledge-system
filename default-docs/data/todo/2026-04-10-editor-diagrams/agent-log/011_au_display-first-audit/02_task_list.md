@@ -25,7 +25,7 @@ judgement-heavy checks and research on Opus.
       shipped code; repo↔cache parity diff.
       **Clean** — repo↔cache byte-identical; every diagram claim in both
       skills matches the shipped code. One soft phrasing note in the
-      doc-issues writing reference (details in `102_skills-code-audit.md`).
+      agent-ks-issues writing reference (details in `102_skills-code-audit.md`).
 - [x] **O2 (Opus)** — code review of the diagram pipeline (report-only).
       **3 medium findings** (content-assets over-serving, double-escaped
       alt captions, mermaid `securityLevel: 'loose'`) + several lows; core
@@ -33,7 +33,7 @@ judgement-heavy checks and research on Opus.
       (details in `102_skills-code-audit.md`).
 - [x] **O3 (Opus)** — research: excalidraw MCP / scene-editing tooling,
       mermaid preview tooling (feeds `subtasks/40_tooling/`).
-      **Done** — verdict: build `docs-guide excalidraw summary/edit`, adopt
+      **Done** — verdict: build `agent-ks excalidraw summary/edit`, adopt
       headless exporters + `mmdc`; MCPs are canvas-bound, not file-based.
       Report: `notes/03_diagram-tooling-research.md`, milestone
       `103_tooling-research.md`.

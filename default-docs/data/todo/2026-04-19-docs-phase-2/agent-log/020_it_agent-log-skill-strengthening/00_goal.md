@@ -1,5 +1,5 @@
 ---
-title: "Goal — make the milestone structure unmissable in the doc-issues skill"
+title: "Goal — make the milestone structure unmissable in the agent-ks-issues skill"
 ---
 
 Executes subtask `09_agent-log-milestone-structure-skill-review.md` against the

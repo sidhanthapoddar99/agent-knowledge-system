@@ -21,7 +21,7 @@ files on disk — an impedance mismatch with our repo-file workflow. The
 `.excalidraw` format itself is flat, stable JSON where labels are separate
 `text` elements, so both subtask needs (scene summarizer, targeted edits)
 are ~100-line dependency-free builds; no element-level editing library
-exists anywhere. Recommendation: **build** `docs-guide excalidraw
+exists anywhere. Recommendation: **build** `agent-ks excalidraw
 summary/edit`; **adopt** a headless exporter (excalirender or
 excalidraw-brute-export-cli — official `exportToSvg` needs a browser DOM)
 and `mmdc` for mermaid preview; use `yctimlin`'s tool surface as a design

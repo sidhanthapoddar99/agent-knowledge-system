@@ -23,7 +23,7 @@ three-way-diff upstream protocol); and all seven subtasks (`10_`–`70_`).
 ## Result
 
 All 11 files written (~17k words). Notable calls the writers made: the new
-skill is named `artifact-authoring` (avoids colliding with the Claude Code
+skill is named `agent-ks-artifacts` (avoids colliding with the Claude Code
 built-in `artifact-design`); the sidecar is `<name>.meta.json`/`.meta.jsonc`
 mirroring `diagram-pages.ts:161`; the reserved-URL guard resurrects the dead
 `validateRoutes()` and covers the full reserved segment set (`artifacts`,

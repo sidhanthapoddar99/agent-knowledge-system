@@ -25,8 +25,8 @@ variable list now exactly mirrors `required_variables` (+ `--line-height-base`,
 extras flagged non-contract); publishing.md token table → pointer to the
 SKILL.md canonical; deictic sidecar example → inline 17-line canonical
 `.meta.jsonc` + pointers to the two shipped live demos; history narrations
-deleted (incl. the pre-existing documentation-guide one); guide.ts strings →
-doc-issues; `embed_height` canonical top-level everywhere; CLI location
+deleted (incl. the pre-existing agent-ks-docs one); guide.ts strings →
+agent-ks-issues; `embed_height` canonical top-level everywhere; CLI location
 sentence added; opaque-block clause corrected.
 
 ## Verify + residual pass

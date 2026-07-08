@@ -7,8 +7,8 @@ title: "Follow-up check — did the cold agent really follow our skill?"
 sidhantha, reviewing [the cold-Sonnet artifact](../../brainstorm/10_variation-comparison/mobile-nav-options.html),
 noticed its `.meta.json` declares a palette, and the HTML uses CSS variables
 (`--accent-soft`, `--ink`, …) that are neither defined in the skill nor drawn
-from the documentation-guide theme contract. Question raised: did the subagent
-ignore `artifact-authoring` and fall back to the built-in `artifact-design` /
+from the project theme contract. Question raised: did the subagent
+ignore `agent-ks-artifacts` and fall back to the built-in `artifact-design` /
 `frontend-design` skills — and would that also explain the delta findings?
 
 ## Approach

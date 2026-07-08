@@ -17,6 +17,6 @@ A second pass after user review
 "default rhythm + hard invariants": the per-kind reference tree now lives in
 the skill itself, the recipe became the scaffold → stub `in-progress` → update
 → wrap lifecycle, and dense run outputs are pointed at `notes/` (+ the
-artifact-authoring skill) with milestones linking rather than inlining.
+agent-ks-artifacts skill) with milestones linking rather than inlining.
 Remaining: verify the structure holds on the next real run (subtask 09's last
 open item).

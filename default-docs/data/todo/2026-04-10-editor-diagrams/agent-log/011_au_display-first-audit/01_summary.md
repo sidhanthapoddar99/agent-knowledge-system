@@ -31,10 +31,10 @@ drops, postprocessor ordering) verified correct.
 3. **Audience split** — sections are 93%+ consistent; 6 user-guide pages
    lean internals (worst: `10_configuration/03_site/09_reference.md`,
    TypeScript interfaces shown to YAML users).
-4. **Cosmetic** — one phrasing note in doc-issues `10_writing.md:107`.
+4. **Cosmetic** — one phrasing note in agent-ks-issues `10_writing.md:107`.
 
 **Research (M3):** tooling direction decided and written to
-`notes/03_diagram-tooling-research.md` — build `docs-guide excalidraw
+`notes/03_diagram-tooling-research.md` — build `agent-ks excalidraw
 summary/edit` (MCPs are canvas-bound, not file-based; format is trivially
 editable JSON), adopt headless exporters + `mmdc`.
 `subtasks/40_tooling/20_diagram-tooling-research.md` → review.

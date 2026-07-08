@@ -10,7 +10,7 @@ implementation agents are Opus at xhigh reasoning). Issue status set to
 - [x] Set issue `in-progress`; scaffold this activity
 - [x] **Build** — three parallel streams:
       code chain (subtask 30 guard + 20 route, then 10 component on top);
-      subtask 40 artifact-authoring skill (rewrite-not-paste, cache parity);
+      subtask 40 agent-ks-artifacts skill (rewrite-not-paste, cache parity);
       subtask 70 provenance manifest (sha256 per tmp_skills file)
 - [x] **Integrate** — subtask 50 sibling-skills integration ∥ subtask 60
       user-guide + dev-docs pages (incl. demo artifact showcase)

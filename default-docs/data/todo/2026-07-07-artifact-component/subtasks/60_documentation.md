@@ -48,7 +48,7 @@ reserved-word list as the guard (`30`) and the skills (`50`).
       values — palette/purpose/key data — that let an agent understand the
       artifact without reading the HTML); the self-containment expectation; and
       how to view it full-page at `/artifacts/<path>`. Point to the
-      `artifact-authoring` skill for *building* artifacts well. Done when an author
+      `agent-ks-artifacts` skill for *building* artifacts well. Done when an author
       can create and embed an artifact from this page alone.
 
 - [x] **user-guide: reserved-URL limitation.** DONE — added "Reserved base URLs" section + enriched "Route Validation" in `10_configuration/03_site/08_page.md` (list matches `RESERVED_BASE_URLS`). In
@@ -91,7 +91,7 @@ reserved-word list as the guard (`30`) and the skills (`50`).
       under `../notes/`. Done when the rationale is captured on the dev side, not
       just in the tracker.
 
-- [x] **Verification.** DONE — `docs-guide check section` = 0 errors on all 4 touched sections (2 expected non-md-file warnings on the demo `.html`/`.meta.json` are subtask 50's scope). `bun run build` = 755 pages green; full-page route emits byte-identical. Dev server + headless browser: embedded demo fills the content column (sidebar stays, outline auto-hides), open-full-page URL correct, both light + dark verified (embedded follows the site via `data-theme`; full-page via `prefers-color-scheme`), demo is self-contained; every cross-link resolves (fixed `page` slug + em-dash anchor against built heading IDs). Audience split intact. Run `docs-guide check section` on both
+- [x] **Verification.** DONE — `agent-ks check section` = 0 errors on all 4 touched sections (2 expected non-md-file warnings on the demo `.html`/`.meta.json` are subtask 50's scope). `bun run build` = 755 pages green; full-page route emits byte-identical. Dev server + headless browser: embedded demo fills the content column (sidebar stays, outline auto-hides), open-full-page URL correct, both light + dark verified (embedded follows the site via `data-theme`; full-page via `prefers-color-scheme`), demo is self-contained; every cross-link resolves (fixed `page` slug + em-dash anchor against built heading IDs). Audience split intact. Run `agent-ks check section` on both
       `user-guide/15_writing-content` and the touched `dev-docs` sections — zero
       errors (frontmatter, prefixes, links). Run `./start build` and navigate the
       new pages in `preview`; confirm the showcase artifact renders and every

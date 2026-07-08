@@ -5,7 +5,7 @@ title: "Goal — audit: variation-set artifact capability of the skill"
 ## Goal
 
 Answer subtask [100](../../subtasks/100_variation-capability-audit.md)'s
-question: does the `artifact-authoring` skill carry enough intent for a cold
+question: does the `agent-ks-artifacts` skill carry enough intent for a cold
 agent — Opus, and critically **Sonnet at medium thinking** — to produce
 multi-variation interactive design-option artifacts at the caliber of
 sidhantha's reference set (4–10 workable, labeled, genuinely interactive

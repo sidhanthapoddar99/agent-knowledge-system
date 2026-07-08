@@ -5,7 +5,7 @@ title: "Delta analysis — cold-Sonnet artifact vs the reference caliber"
 # The live experiment, and what it actually showed
 
 **Setup (2026-07-08):** a cold Sonnet agent, given ONLY the
-`artifact-authoring` skill and the task *"an artifact presenting 5
+`agent-ks-artifacts` skill and the task *"an artifact presenting 5
 mobile-navigation design options for an existing app, interactive, for the
 team to pick one"*, produced
 [mobile-nav-options.html](mobile-nav-options.html) (+

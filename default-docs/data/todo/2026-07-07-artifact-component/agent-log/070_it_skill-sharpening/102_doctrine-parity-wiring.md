@@ -13,7 +13,7 @@ validation.
 
 Direct edits to `SKILL.md`, `references/publishing.md`, and `README.md`; cp
 mirror into the installed cache (`0.5.4` — the only cache dir carrying
-`artifact-authoring`); tracker records updated per the doc-issues conventions.
+`agent-ks-artifacts`); tracker records updated per the agent-ks-issues conventions.
 
 ## Result
 
@@ -36,11 +36,11 @@ mirror into the installed cache (`0.5.4` — the only cache dir carrying
   Subtask 100 → `status: review` with all tasks ticked and the sharpening
   items enumerated; audit log 060 got an Outcome section; the settled
   decisions (pattern doctrine, design-memory duty, naming preference) appended
-  to `notes/02_settled-decisions.md`. `docs-guide check issues` clean.
+  to `notes/02_settled-decisions.md`. `agent-ks check issues` clean.
 
 ## Next
 
 Human review of subtask 100 (AI ceiling is `review`). Optional deepening
 remains open: export 1–2 reference artifacts into `assets/` for a direct
-fidelity comparison; a mechanical sidecar-drift check in `docs-guide` stays a
+fidelity comparison; a mechanical sidecar-drift check in `agent-ks` stays a
 future option if drift ever bites.

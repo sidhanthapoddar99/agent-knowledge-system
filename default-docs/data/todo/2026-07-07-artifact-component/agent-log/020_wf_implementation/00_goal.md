@@ -7,7 +7,7 @@ title: "Goal — ultracode implementation run (all seven subtasks)"
 Implement the entire issue: all seven subtasks, end to end, with every
 recommendation and settled decision from the planning run accepted by the user
 (sidhantha, 2026-07-07) as final. The feature ships: artifact loader + embed,
-`/artifacts` route, reserved-URL guard, the `artifact-authoring` skill,
+`/artifacts` route, reserved-URL guard, the `agent-ks-artifacts` skill,
 sibling-skill integration, user-guide + dev-docs pages, and the provenance
 manifest.
 

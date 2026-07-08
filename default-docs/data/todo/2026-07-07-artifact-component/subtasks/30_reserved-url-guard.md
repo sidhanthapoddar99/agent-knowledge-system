@@ -112,7 +112,7 @@ serving routes either. Whatever reserved-segment list we introduce for
 
 
 - [x] **Verification (happy path + guard docs).** Confirm a normal config (no
-      reserved base URLs) still loads and `docs-guide check config` passes. The
+      reserved base URLs) still loads and `agent-ks check config` passes. The
       user-facing statement of this limitation is authored in
       [`60_documentation.md`](./60_documentation.md) and the skills learn it in
       [`50_skills-integration.md`](./50_skills-integration.md) — this subtask owns
@@ -120,7 +120,7 @@ serving routes either. Whatever reserved-segment list we introduce for
       list so code and docs never drift.
       <!-- DONE (enforcement half). Reverted config: full build loads clean (751
       pages), so loadSiteConfig()'s guard does not fire on a normal config.
-      `docs-guide check config` reports ONE error but it is PRE-EXISTING and
+      `agent-ks check config` reports ONE error but it is PRE-EXISTING and
       unrelated: pages.issues-test.data → @data/issues-test dir is missing (a
       separate data-dir-existence check, not the reserved-URL guard). No
       reserved-URL error is raised on the normal config. CROSS-CHECK FOR

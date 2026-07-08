@@ -50,7 +50,7 @@ the full meta.json example; no changes needed.
 - `docs-layout.md` — sidecar prose expanded with the concrete
   `XX_name.meta.json` JSON example.
 - History purged per the new rule: legacy-content paragraphs deleted from
-  `writing.md` and doc-issues `10_writing.md`; the `state:`-field history
+  `writing.md` and agent-ks-issues `10_writing.md`; the `state:`-field history
   parenthetical deleted from `23_subtasks.md`; `cli-toolkit.md`'s
   legacy-tags row now points at `doc-migration.md` instead of dating
   content. (Kept: the `-` separator tolerance and deprecated-label notes —

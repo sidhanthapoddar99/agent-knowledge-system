@@ -11,7 +11,7 @@ JSON is huge and unreadable in practice.
 **Researched 2026-07-04** (Opus agent, activity
 `agent-log/011_au_display-first-audit/103_tooling-research.md`). Full report:
 `notes/03_diagram-tooling-research.md`. Verdict: **build** a small
-`docs-guide excalidraw summary/edit` subcommand (flat stable JSON, no
+`agent-ks excalidraw summary/edit` subcommand (flat stable JSON, no
 library does file-in-place edits); **adopt** a headless exporter
 (excalirender / excalidraw-brute-export-cli) + `mmdc` for rendering.
 Awaiting sign-off on that direction.

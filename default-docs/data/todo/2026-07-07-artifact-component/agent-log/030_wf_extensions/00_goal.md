@@ -7,7 +7,7 @@ title: "Goal — extensions run: tracker rendering (80) + site-theme mode (90)"
 Implement the two user-accepted scope extensions from live testing: artifacts
 rendering first-class inside the issue tracker (`notes/` + `brainstorm/` only),
 and the site-theme mode package (sidecar `theme: "site" | "self"`, route-side
-theme injection, `docs-guide theme tokens` CLI verb, mode-choice doctrine +
+theme injection, `agent-ks theme tokens` CLI verb, mode-choice doctrine +
 inline variable contract in the skill, CLAUDE.md coupling note, docs).
 
 ## Approach

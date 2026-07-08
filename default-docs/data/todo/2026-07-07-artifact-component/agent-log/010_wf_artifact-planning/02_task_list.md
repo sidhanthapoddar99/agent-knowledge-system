@@ -19,4 +19,4 @@ at xhigh reasoning; the main session scaffolded `issue.md` / `settings.json` /
       — 6 findings (1 major)
 - [x] **Fix** — all 6 findings applied (see `102_verify-fix-review.md`)
 - [x] Main-session review of all written files; tracker validator
-      (`docs-guide check issues`) clean; milestones + summary written to this activity
+      (`agent-ks check issues`) clean; milestones + summary written to this activity

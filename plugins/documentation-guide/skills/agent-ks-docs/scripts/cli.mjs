@@ -3,9 +3,9 @@
  *
  * Invocation: <runtime> cli.mjs <token...> [args...]
  * Routing + all command metadata now live in _manifest.mjs (the single source
- * of truth). Each flat `bin/<name>` shim passes its own basename as the first
- * token; the `docs` subcommand form (`docs <group> <verb>`) resolves to the
- * same manifest entry. See _manifest.mjs → resolveCommand().
+ * of truth). The single `agent-ks` shim forwards its args verbatim, and the
+ * `agent-ks <group> <verb>` form resolves to the matching
+ * manifest entry. See _manifest.mjs → resolveCommand().
  *
  * Adding a command: add ONE entry to MANIFEST in _manifest.mjs, then copy a
  * bin/<name> + bin/<name>.cmd shim pair (or rely on the `docs` subcommand).

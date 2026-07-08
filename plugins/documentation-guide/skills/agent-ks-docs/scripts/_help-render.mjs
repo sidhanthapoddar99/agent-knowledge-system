@@ -1,6 +1,6 @@
 /**
  * _help-render.mjs — PURE help renderers (no process.exit, no top-level side
- * effects), so both help.mjs (the `docs help` command) and cli.mjs (the global
+ * effects), so both help.mjs (the `agent-ks help` command) and cli.mjs (the global
  * --help/-h interceptor in subtask 05) can import them safely.
  *
  * Everything is generated from the manifest — help text never drifts.
@@ -62,7 +62,7 @@ export function resolveEntry(tokenA, tokenB) {
   return (two && bySubcommand[two]) || byBin[tokenA] || bySubcommand[tokenA] || null;
 }
 
-/** Grouped listing for bare `docs help`. Returns a string. */
+/** Grouped listing for bare `agent-ks help`. Returns a string. */
 export function renderList() {
   const out = [];
   out.push('agent-ks — agent-knowledge-system toolkit\n');

@@ -54,7 +54,7 @@ Computes the next `NN_` prefix, scaffolds `settings.json` + `01_overview.md`, an
 |---|---|
 | Docs/blog/config skill | `skills/agent-ks-docs/SKILL.md` (+ reference files in `references/`) |
 | Issue-tracker skill | `skills/agent-ks-issues/SKILL.md` (+ ~20 reference files in `references/`) |
-| Artifact-authoring skill | `skills/agent-ks-artifacts/SKILL.md` (+ `references/` incl. a `dataviz/` sub-folder, and a bundled `scripts/validate_palette.js`) |
+| Artifacts skill | `skills/agent-ks-artifacts/SKILL.md` (+ `references/` incl. a `dataviz/` sub-folder, and a bundled `scripts/validate_palette.js`) |
 | CLI entrypoint | `bin/agent-ks` (bash) + `bin/agent-ks.cmd` (Windows) |
 | CLI dispatcher | `skills/agent-ks-docs/scripts/cli.mjs` — the `<group> <verb>` → script map |
 | 2 slash commands | `commands/docs-init.md`, `commands/docs-add-section.md` |

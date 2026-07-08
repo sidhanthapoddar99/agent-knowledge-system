@@ -60,7 +60,7 @@ It has a **dual trigger surface**: the tracker nouns (issue, subtask, comment, b
 
 ## Skill — `agent-ks-artifacts`
 
-The **artifact-authoring skill** — building self-contained HTML artifacts (reports, dashboards, data visualizations, design systems / brand guidelines, variation sets comparing design options) as `NN_`-prefixed `.html` pages served at `/artifacts`, with an optional `.meta.json` sidecar. It covers treatment calibration, the two theme modes (`site` injection vs `self` dual-theme), the dataviz procedure with a bundled palette validator, and the pre-publish verify gate. It triggers whenever you ask Claude to build or design an artifact, a chart, a dashboard, or a design system for the project.
+The **artifact skill** — building self-contained HTML artifacts (reports, dashboards, data visualizations, design systems / brand guidelines, variation sets comparing design options) as `NN_`-prefixed `.html` pages served at `/artifacts`, with an optional `.meta.json` sidecar. It covers treatment calibration, the two theme modes (`site` injection vs `self` dual-theme), the dataviz procedure with a bundled palette validator, and the pre-publish verify gate. It triggers whenever you ask Claude to build or design an artifact, a chart, a dashboard, or a design system for the project.
 
 ## Slash commands
 

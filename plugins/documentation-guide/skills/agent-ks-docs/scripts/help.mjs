@@ -1,10 +1,10 @@
 /**
- * `docs help` — discovery command (Category 0b). All rendering is delegated to
+ * `agent-ks help` — discovery command (Category 0b). All rendering is delegated to
  * _help-render.mjs (shared with cli.mjs's global --help interceptor).
  *
- *   docs help                 list every command grouped by domain
- *   docs help <command>       show one command's flags (bin or "group verb")
- *   docs help --json          machine-readable manifest dump (for agents)
+ *   agent-ks help                 list every command grouped by domain
+ *   agent-ks help <command>       show one command's flags (bin or "group verb")
+ *   agent-ks help --json          machine-readable manifest dump (for agents)
  *
  * Honors the Category-0 contract: output to stdout, exit 0.
  */
@@ -20,14 +20,14 @@ if (args.flags.json) {
 }
 
 // `-h` is not yet aliased by parseArgs (subtask 05 global fix lives in cli.mjs);
-// drop help tokens so `docs help -h` shows the listing rather than treating it
+// drop help tokens so `agent-ks help -h` shows the listing rather than treating it
 // as a command name.
 const positionals = args._.filter((t) => t !== '-h' && t !== '--help');
 
 if (positionals[0]) {
   const entry = resolveEntry(positionals[0], positionals[1]);
   if (!entry) {
-    console.error(`docs help: unknown command "${positionals.join(' ')}"`);
+    console.error(`agent-ks help: unknown command "${positionals.join(' ')}"`);
     process.exit(2);
   }
   console.log(renderCommandDetail(entry));

@@ -304,7 +304,7 @@ social:
 | `@footer/<style>` | `astro-doc-code/src/layouts/footer/<style>/` | `footer.yaml → layout` |
 | `@ext-layouts` | `LAYOUT_EXT_DIR` from `.env` | for user-shipped layouts (overrides built-ins by name) |
 | `@theme/<name>` | a theme folder | inside `theme.yaml → extends:` |
-| `@root/<sub>` | the framework folder + `<sub>` (i.e. the framework's install location on disk — `documentation-template/` in consumer mode, the repo root in dogfood mode) | reaching the framework's bundled content (`@root/default-docs/...`); path-traversal blocked. **NOT the consumer's outer project root** — see env.md for the two-mode model |
+| `@root/<sub>` | the framework folder + `<sub>` (i.e. the framework's install location on disk — `documentation-template/` in consumer mode, the repo root in dogfood mode) | reaching the framework's bundled content (`@root/default-docs/...`); path-traversal blocked. **NOT the consumer's outer project root** — see §2 (".env — the bootstrap layer") for the two-mode model |
 
 **User-defined aliases** — declared in `site.yaml → paths:`:
 
@@ -439,4 +439,4 @@ Uses regex over the YAML text — no YAML library dependency. Catches the common
 - `@root/default-docs/data/user-guide/20_custom-pages/` — custom page definitions + creating custom layouts
 - `@root/default-docs/data/user-guide/25_themes/` — theme contract + creation walkthroughs
 - `references/writing.md` — markdown content authoring (per-content-type concerns are NOT in this file)
-- `references/layouts/docs-layout.md` / `blog-layout.md` / `issues/` (entry `00_overview.md`) — per-content-type structure
+- `references/layouts/docs-layout.md` / `blog-layout.md` — per-content-type structure (the issue tracker is the `agent-ks-issues` skill's domain)

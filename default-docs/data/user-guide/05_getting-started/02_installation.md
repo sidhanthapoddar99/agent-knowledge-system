@@ -70,7 +70,7 @@ Install the `documentation-guide` plugin (distributed via [`sids-plugin-marketpl
 
 This installs:
 
-- A skill that triggers automatically on docs work
+- 3 skills (`agent-ks-docs` / `agent-ks-issues` / `agent-ks-artifacts`) that trigger automatically on docs, tracker, and artifact work
 - A single `agent-ks` CLI on `$PATH` — every operation is a `agent-ks <group> <verb>` subcommand (run `agent-ks help` to list them all)
 - 2 slash commands — `/docs-init` to bootstrap a new project from zero, `/docs-add-section` to add a top-level section to an existing one
 

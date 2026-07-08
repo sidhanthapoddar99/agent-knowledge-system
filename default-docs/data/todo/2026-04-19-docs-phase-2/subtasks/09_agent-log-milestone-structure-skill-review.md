@@ -36,7 +36,7 @@ This is a **skill review, not a code change**: reread `24_agent-logs.md` (and th
 `63_agent-loops.md` worked example) and figure out why the milestone shape isn't
 being followed — likely the frontmatter block and the per-kind granularity rules
 are too buried/implicit for an agent writing logs mid-run — then strengthen the
-skill text (repo source `plugins/documentation-guide/skills/agent-ks-issues/` **and**
+skill text (repo source `plugins/agent-ks/skills/agent-ks-issues/` **and**
 the installed cache, mirrored byte-identically) plus the bundled `guide.ts` legend
 if its wording contributed.
 

@@ -34,10 +34,10 @@ frontend-design.
 
 The plugin ships two skills today — `agent-ks-docs` (all non-tracker
 content) and `agent-ks-issues` (the tracker) — each a folder under
-`plugins/documentation-guide/skills/<name>/` with a `SKILL.md`, a `references/`
+`plugins/agent-ks/skills/<name>/` with a `SKILL.md`, a `references/`
 directory, and (for `agent-ks-docs`) a `scripts/` directory. The new skill
 is a **third peer** in that same folder, mirroring the shape:
-`plugins/documentation-guide/skills/<name>/{SKILL.md, references/, scripts/}`.
+`plugins/agent-ks/skills/<name>/{SKILL.md, references/, scripts/}`.
 
 **Name — the real constraint is a collision.** One of our own sources,
 `artifact-design`, is a **Claude Code built-in skill** that is present in every
@@ -70,7 +70,7 @@ mis-triggering against each other.
 
 **Parity rule.** Per the repo's plugin repo/cache parity convention, the skill
 must be authored in the repo-local source
-(`plugins/documentation-guide/skills/agent-ks-artifacts/`) **and** mirrored into
+(`plugins/agent-ks/skills/agent-ks-artifacts/`) **and** mirrored into
 the installed plugin cache that `agent-ks` actually runs from. Both edits ship
 together — see the `50_skills-integration` workstream, which owns the same parity
 obligation for the edits to the two existing skills.
@@ -376,7 +376,7 @@ The script triage is settled here.
 
 - **Bundle `validate_palette.js` (primary).** It is a dependency-free ES module
   (~260 lines, all color math inlined) that runs under node or bun with no npm
-  install. It ships at `plugins/documentation-guide/skills/agent-ks-artifacts/scripts/validate_palette.js`.
+  install. It ships at `plugins/agent-ks/skills/agent-ks-artifacts/scripts/validate_palette.js`.
   Two invocation modes the skill documents:
   - *CLI:* `node validate_palette.js "#2a78d6,#1baf7a,…" --mode light` (add
     `--surface "#1a1a19"` for a non-default chart surface, `--pairs all` for

@@ -6,7 +6,7 @@ status: done
 > [!NOTE]
 > **Moved — status `done` as of 2026-07-08.** The catalogue page
 > (`05_claude-skills.md`) is in sync, but reality moved out from under the
-> format described below: skills now ship via the **`documentation-guide`
+> format described below: skills now ship via the **`agent-ks`
 > plugin** (2 skills at the time — `agent-ks-docs` + `agent-ks-issues` — plus the
 > `agent-ks` CLI), not `.claude/skills/`; the planned standalone `issues`
 > skill was **folded into `agent-ks-issues`**; and the page was rewritten around the
@@ -44,5 +44,5 @@ These are already in the tracker and will need rows when they land:
 ## Cross-reference
 
 - Source of truth for the catalogue: `.claude/skills/` directory.
-- Installation: Claude Code plugin marketplace (this repo's root has `.claude-plugin/marketplace.json`; consumers run `/plugin marketplace add <repo-url>` then `/plugin install documentation-guide@<marketplace>`). The earlier `download-skills.{sh,mjs}` approach was abandoned — see `2025-06-25-claude-skills/subtasks/09_plugin-marketplace-dogfood.md`.
+- Installation: Claude Code plugin marketplace (this repo's root has `.claude-plugin/marketplace.json`; consumers run `/plugin marketplace add <repo-url>` then `/plugin install agent-ks@<marketplace>`). The earlier `download-skills.{sh,mjs}` approach was abandoned — see `2025-06-25-claude-skills/subtasks/09_plugin-marketplace-dogfood.md`.
 - Skill permissions: `.claude/settings.local.json`.

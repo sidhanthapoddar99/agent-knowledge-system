@@ -104,7 +104,7 @@ Most of the speedup is bun startup tax (~150 ms per invocation). Go binaries hav
 After full migration, the plugin folder shrinks to:
 
 ```
-plugins/documentation-guide/
+plugins/agent-ks/
 ├── plugin.json
 ├── README.md
 ├── commands/                   ← slash commands

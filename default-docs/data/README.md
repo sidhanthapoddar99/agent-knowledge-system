@@ -2,7 +2,7 @@
 
 User-editable content layer for the agent-knowledge-system framework. Every directory here serves a specific purpose; if you add or remove a top-level folder, update this file in the same change.
 
-The `agent-ks-docs` Claude skill (`plugins/documentation-guide/skills/agent-ks-docs/SKILL.md`) reads this README at the start of every task to orient itself — keeping it current means the skill stays accurate.
+The `agent-ks-docs` Claude skill (`plugins/agent-ks/skills/agent-ks-docs/SKILL.md`) reads this README at the start of every task to orient itself — keeping it current means the skill stays accurate.
 
 ## Top-level directories
 
@@ -38,5 +38,5 @@ Every top-level folder is registered as a route in `default-docs/config/site.yam
 
 - `default-docs/config/site.yaml` — route definitions for each folder above
 - `user-guide/05_getting-started/04_data-structure.md` — end-user explanation of this layout
-- `plugins/documentation-guide/skills/agent-ks-docs/SKILL.md` — the agent skill that reads this README for orientation
-- `plugins/documentation-guide/skills/agent-ks-docs/references/` — per-content-type detail (writing, docs-layout, blog-layout, settings-layout, images)
+- `plugins/agent-ks/skills/agent-ks-docs/SKILL.md` — the agent skill that reads this README for orientation
+- `plugins/agent-ks/skills/agent-ks-docs/references/` — per-content-type detail (writing, docs-layout, blog-layout, settings-layout, images)

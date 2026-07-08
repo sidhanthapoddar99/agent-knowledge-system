@@ -88,7 +88,7 @@ Phase 1 first because every other phase depends on Go-rendered HTML existing. Ph
 
 - The user's `default-docs/` folder shape (see `02_architecture.md`).
 - The tracker schema (vocabulary, settings.json shape, agent-log/comments format).
-- The skill-and-reference set in `documentation-guide` plugin (file paths, just subcommand renaming — see `notes/claude-plugin-upgrade/`).
+- The skill-and-reference set in `agent-ks` plugin (file paths, just subcommand renaming — see `notes/claude-plugin-upgrade/`).
 - The two-mode operation (consumer-mode where framework is sub-folder; dogfood-mode where framework IS the project) — this gets simpler in Go because there's no `astro-doc-code/` anymore. Single binary is the framework.
 
 ## What we'd cut from v1

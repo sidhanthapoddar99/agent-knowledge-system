@@ -20,6 +20,14 @@ marketplace repo entry ([80](80_marketplace-repo-update.md)), every consumer's
       `agent-ks:agent-ks-docs`; bin-wrappers page de-historicized),
       `07_artifact-skill-provenance.md`, `order-prefix.ts` comment, plugin
       README + all 3 command bodies + `cli-toolkit.md` + `_selftest.mjs`.
+- [x] Comprehensiveness pass (second sweep): `.gitattributes` bin path,
+      `data/README.md` skill paths, and the plugin-sense references in all
+      **non-closed** issues (deliberately parked during the
+      [30](30_open-issues-consistency.md) sweep because the plugin rename
+      hadn't landed yet) — docs-phase-2, artifact-component (incl. integrity
+      manifest path strings + agent-memory), editor-diagrams, runtime-stack
+      notes/settings. Closed issues keep historical names; verified zero old
+      identity strings on live surfaces + active issues afterwards.
 - [x] Coordinate with the marketplace update (80): nothing to break *today* —
       the marketplace vendors `plugins/documentation-guide` from the OLD
       repo's `main`, and this rename lives on `rebrand/agent-ks`, which lands

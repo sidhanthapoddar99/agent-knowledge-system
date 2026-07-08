@@ -47,7 +47,7 @@ dev-docs/25_plugins/                       (slots after 20_development/)
 
 ### Relationship to other work
 
-- Dogfood install of \`documentation-guide@documentation-template\` is the canonical worked example to reference throughout.
+- Dogfood install of \`agent-ks@sids-plugin-marketplace\` is the canonical worked example to reference throughout.
 - After \`2026-04-25-framework-as-npm-package\` lands, \`02_storage-and-scope.md\` may need a paragraph on how npm-installed framework engines interact with plugin caching (probably no interaction, but worth confirming).
 
 Filed to track this for the next dev-docs sweep — don't write yet.

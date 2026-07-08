@@ -15,7 +15,7 @@ tracker for existing offenders.
 
 ## Approach
 
-- Edit the repo source under `plugins/documentation-guide/skills/agent-ks-issues/`,
+- Edit the repo source under `plugins/agent-ks/skills/agent-ks-issues/`,
   then mirror to the installed cache (`~/.claude/plugins/cache/.../0.5.4/`)
   and confirm parity with `diff -rq`.
 - Keep `guide.ts` a thin legend — one line, not the full table.

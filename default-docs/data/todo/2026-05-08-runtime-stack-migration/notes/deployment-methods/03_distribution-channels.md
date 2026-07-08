@@ -84,7 +84,7 @@ Multi-arch manifest: `linux/amd64`, `linux/arm64`. Built via `docker buildx`.
 | Theme contract (required_variables) | Lockstep with binary major | Theme contract change is breaking |
 | `site.yaml` schema | Lockstep with binary major | Schema break = major bump |
 | Tracker schema (settings.json, frontmatter) | Lockstep with binary major | Schema break = major bump |
-| Plugin (documentation-guide) | Independent SemVer | Decoupled; can ship without binary release |
+| Plugin (agent-ks) | Independent SemVer | Decoupled; can ship without binary release |
 | Vite frontend bundle | Embedded; tied to binary | No independent versioning |
 
 ## Update flow
@@ -170,4 +170,4 @@ This three-version window means smooth upgrades for users who skip a release.
 
 - Self-update telemetry (which versions are running where)
 - Per-platform installer customisation (homebrew tap is enough; no `apt`, `dnf`, `pacman` packages)
-- Plugin distribution channel — `documentation-guide` plugin distributed via Claude Code's plugin mechanism, not via this binary's update flow
+- Plugin distribution channel — `agent-ks` plugin distributed via Claude Code's plugin mechanism, not via this binary's update flow

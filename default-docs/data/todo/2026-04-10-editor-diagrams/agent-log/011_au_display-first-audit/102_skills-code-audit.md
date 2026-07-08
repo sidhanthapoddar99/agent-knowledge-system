@@ -15,7 +15,7 @@ collision handling.
 
 ## Result — O1 (skills)
 
-**Clean.** Repo `plugins/documentation-guide/skills/` and the installed
+**Clean.** Repo `plugins/agent-ks/skills/` and the installed
 cache tree are byte-identical (`diff -rq`, includes `_order-prefix.mjs`).
 Every concrete claim verified against code: embed grammar, extension→kind
 map, `./`/`../` fence rule, sidecar fields (+`.jsonc`), no-prefix

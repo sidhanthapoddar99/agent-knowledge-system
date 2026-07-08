@@ -3,13 +3,13 @@ title: "Plugin upgrade overview — what changes, what stays"
 sidebar_label: "01 · Overview"
 ---
 
-# documentation-guide plugin upgrade — overview
+# agent-ks plugin upgrade — overview
 
-Once the Go binary ships, the `documentation-guide` Claude Code plugin needs to evolve. This note captures the scope of that change. Companion notes break down the subcommand migration and skill/reference updates.
+Once the Go binary ships, the `agent-ks` Claude Code plugin needs to evolve. This note captures the scope of that change. Companion notes break down the subcommand migration and skill/reference updates.
 
 ## What's there today
 
-The plugin lives at `plugins/documentation-guide/` and contains:
+The plugin lives at `plugins/agent-ks/` and contains:
 
 1. **3 skills** — `agent-ks-docs` (triages docs/blog/config tasks to reference files: `writing.md`, `docs-layout.md`, `blog-layout.md`, `settings-layout.md`, `images.md`), `agent-ks-issues` (self-contained issue tracker), `agent-ks-artifacts` (HTML artifacts).
 

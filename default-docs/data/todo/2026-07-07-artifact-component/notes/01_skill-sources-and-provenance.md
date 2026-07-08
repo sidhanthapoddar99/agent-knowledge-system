@@ -70,7 +70,7 @@ for it (see the protocol below).
 
 ## Reconciliation — the shipped map (post-implementation, 2026-07-07)
 
-Subtask `40` has shipped `plugins/documentation-guide/skills/agent-ks-artifacts/`
+Subtask `40` has shipped `plugins/agent-ks/skills/agent-ks-artifacts/`
 (mirrored byte-identically into the installed cache). This is the file-for-file
 map of **what actually shipped**, replacing the pre-implementation plan — the
 manifest's per-source `convergence_destination` strings were written against the

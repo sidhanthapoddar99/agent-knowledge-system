@@ -40,7 +40,7 @@ title: "Agent memory — artifact component"
   with their own values (free to add beyond). Full record:
   `agent-log/070_it_skill-sharpening/`; settled decisions appended to
   `notes/02_settled-decisions.md`. Cache mirror target is
-  `~/.claude/plugins/cache/sids-plugin-marketplace/documentation-guide/0.5.4/`
+  `~/.claude/plugins/cache/sids-plugin-marketplace/agent-ks/0.5.4/`
   (the only cache dir with the artifacts skill, though repo plugin.json says
   0.5.5).
 - **Tracker artifact rendering (subtask 80, done→review):** `.html` in an issue's

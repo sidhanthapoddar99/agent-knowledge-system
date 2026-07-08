@@ -11,7 +11,7 @@ milestone 102) and deferred out of that wave as its own concern.
 *future design*: it describes an `/issues` skill at
 `.claude/skills/issues/SKILL.md` plus helper scripts, gated behind
 "⏸ Not implemented yet" markers. Reality shipped differently and is live — the
-`agent-ks-issues` + `agent-ks-docs` skills (in the `documentation-guide`
+`agent-ks-issues` + `agent-ks-docs` skills (in the `agent-ks`
 plugin) and the `agent-ks` CLI. The page therefore both names the wrong
 architecture and presents it as unbuilt, contradicting `01_overview.md`, which
 already points agents at the real skill. (The AI *rules* on the page — including

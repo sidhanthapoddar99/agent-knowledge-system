@@ -26,7 +26,7 @@ Broader motivation: zero runtime dependencies for end users, ~25 MB binary inste
   - Single-binary distribution mechanics
   - How runtime config (site.yaml, themes, layouts, custom pages) stays user-editable
   - Performance comparison — current prod/dev vs Go+Vite prod/dev
-- **`notes/claude-plugin-upgrade/`** — how `documentation-guide` plugin evolves once the binary ships.
+- **`notes/claude-plugin-upgrade/`** — how `agent-ks` plugin evolves once the binary ships.
   - The 11 bash wrappers collapse into binary subcommands
   - Skill + reference updates
   - Slash commands stay; plugin gets thinner

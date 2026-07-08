@@ -17,13 +17,13 @@ repo-local plugin source and the installed cache.
 ## What to touch (verified locations)
 
 - **`agent-ks-docs` skill** — repo-local
-  `plugins/documentation-guide/skills/agent-ks-docs/` (`SKILL.md` +
+  `plugins/agent-ks/skills/agent-ks-docs/` (`SKILL.md` +
   `references/`: `writing.md`, `settings-layout.md`, `images.md`, `layouts/`,
   `cli-toolkit.md`, `doc-migration.md`). This skill triages non-tracker docs
   work; it must learn that an `NN_.html` file is a first-class page type and route
   authors to the new skill.
 - **`agent-ks-issues` skill** — repo-local
-  `plugins/documentation-guide/skills/agent-ks-issues/` (`SKILL.md` + numbered
+  `plugins/agent-ks/skills/agent-ks-issues/` (`SKILL.md` + numbered
   `references/`: `00_anatomy/`, `10_writing/`, `20_sections/`, `40_operations/`,
   `60_examples/`). Artifacts can live inside a tracker `brainstorm/`/`notes/`
   folder (design systems authored in an issue), so this skill must mention them.
@@ -33,7 +33,7 @@ repo-local plugin source and the installed cache.
   only if artifacts change what a tracker folder can contain (a light mention that
   supporting files can be `.html` artifacts).
 - **Installed cache mirror** —
-  `/home/sid/.claude/plugins/cache/sids-plugin-marketplace/documentation-guide/<version>/skills/…`
+  `/home/sid/.claude/plugins/cache/sids-plugin-marketplace/agent-ks/<version>/skills/…`
   (current shipped version `0.5.4`). Every skill edit must be mirrored here, and
   the manifest/marketplace version bumped in lockstep with the new skill from
   `40`.
@@ -101,9 +101,9 @@ repo-local plugin source and the installed cache.
 ## Landed (2026-07-07)
 
 **Files edited (repo, each mirrored byte-identically into the installed cache
-`~/.claude/plugins/cache/sids-plugin-marketplace/documentation-guide/0.5.4/`):**
+`~/.claude/plugins/cache/sids-plugin-marketplace/agent-ks/0.5.4/`):**
 
-- `plugins/documentation-guide/skills/agent-ks-docs/SKILL.md` — triage row
+- `plugins/agent-ks/skills/agent-ks-docs/SKILL.md` — triage row
   *(building/designing an HTML artifact → hand off to `agent-ks-artifacts`)* + a
   thin "Artifact pages" pointer (first-class `.html` type, embed, `/artifacts`
   full-page URL, `.meta.json`/`.meta.jsonc` sidecar, reserved base URL).
@@ -113,20 +113,20 @@ repo-local plugin source and the installed cache.
 - `.../agent-ks-docs/references/settings-layout.md` — reserved-base-URL
   IMPORTANT callout in §4 (`artifacts, assets, content-assets, api, editor`;
   hard-fail at config load).
-- `plugins/documentation-guide/skills/agent-ks-issues/SKILL.md` — `agent-ks-artifacts`
+- `plugins/agent-ks/skills/agent-ks-issues/SKILL.md` — `agent-ks-artifacts`
   sibling-skill pointer (build handoff; tracker keeps *where they live / how
   referenced*).
 - `.../agent-ks-issues/references/10_writing/10_writing.md` — new "Artifacts" section
   (URL-reference model, companion sidecar, the design-system Home-A→Home-B
   promotion).
-- `plugins/documentation-guide/.claude-plugin/plugin.json` — `version` 0.5.4 →
+- `plugins/agent-ks/.claude-plugin/plugin.json` — `version` 0.5.4 →
   **0.5.5** (patch; matches how the analogous first-class-diagram feature was
   versioned, 0.5.3→0.5.4). *(The "Ships 3 skills" description + README were
   already updated by `40`.)*
 
 **Cache directory-name vs manifest-version — expected, recorded.** The active
 installed cache is edited **in place** at
-`~/.claude/plugins/cache/sids-plugin-marketplace/documentation-guide/0.5.4/`, so its
+`~/.claude/plugins/cache/sids-plugin-marketplace/agent-ks/0.5.4/`, so its
 directory is still named `0.5.4/` while the `plugin.json` inside it now reads
 `0.5.5` (repo↔cache stay byte-identical, `.in_use` aside). The folder name is fixed
 at install time, not by the manifest, so a name/version mismatch is the normal

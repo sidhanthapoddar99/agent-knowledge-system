@@ -31,7 +31,7 @@ served artifact byte-identical to source; guard verified throwing on
 
 **Skill:** `agent-ks-artifacts` (SKILL.md + references + bundled
 validate_palette.js), plugin bumped to 0.5.5, cache parity byte-identical.
-**Integration:** documentation-guide + agent-ks-issues triage + references updated,
+**Integration:** agent-ks-docs + agent-ks-issues triage + references updated,
 `guide.ts` legend updated. **Docs:** user-guide `08_artifact-pages.md` +
 `09_artifact-showcase.md` (live demo `10_design-system-demo.html` + sidecar);
 dev-docs mechanism page. **Provenance:** integrity manifest

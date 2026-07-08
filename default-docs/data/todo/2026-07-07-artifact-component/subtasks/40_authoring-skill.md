@@ -31,12 +31,12 @@ integration is [`50_skills-integration.md`](./50_skills-integration.md).
 
 ## Where it lives
 
-A new skill folder under `plugins/documentation-guide/skills/<name>/` (peer of
+A new skill folder under `plugins/agent-ks/skills/<name>/` (peer of
 the existing `agent-ks-docs/` and `agent-ks-issues/` skills) — suggested name
 `agent-ks-artifacts`. Structure mirrors the existing skills:
 `SKILL.md` + `references/` + `scripts/`. Per the plugin parity rule (MEMORY.md),
 the identical tree must also be mirrored into the installed cache at
-`/home/sid/.claude/plugins/cache/sids-plugin-marketplace/documentation-guide/<version>/skills/<name>/`
+`/home/sid/.claude/plugins/cache/sids-plugin-marketplace/agent-ks/<version>/skills/<name>/`
 and the plugin manifest / marketplace version bumped — coordinate that bump with
 `50`. The four `tmp_skills/` sources are **input**, not shipped content; their
 permanent home is decided in `70`.
@@ -73,7 +73,7 @@ contents and §4's merge decisions.)*
 
 ### Scaffold + frontmatter
 
-- [x] **Scaffold the skill folder** `plugins/documentation-guide/skills/agent-ks-artifacts/`
+- [x] **Scaffold the skill folder** `plugins/agent-ks/skills/agent-ks-artifacts/`
       with `SKILL.md`, `references/`, `scripts/`. Write YAML frontmatter
       (`name`, `description`, `license`) with a `description` tuned for
       triggering on artifact-building intent (building/designing an HTML artifact,
@@ -235,10 +235,10 @@ contents and §4's merge decisions.)*
 
 ## Landed (2026-07-07) — status review
 
-Skill authored at `plugins/documentation-guide/skills/agent-ks-artifacts/`
+Skill authored at `plugins/agent-ks/skills/agent-ks-artifacts/`
 (`SKILL.md` + 4 references + a `dataviz/` sub-folder of 8 files + a bundled
 `scripts/validate_palette.js` + `references/PROVENANCE.md`), mirrored byte-identical
-into the installed cache at `…/documentation-guide/0.5.4/skills/agent-ks-artifacts/`.
+into the installed cache at `…/agent-ks/0.5.4/skills/agent-ks-artifacts/`.
 Plugin `plugin.json` description and `README.md` now enumerate **3 skills**.
 
 **Two placement reconciliations** (the brainstorm §3 TOC is the authority for

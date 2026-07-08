@@ -40,7 +40,7 @@ getStaticPaths, e.g.:
     [issues] "<tracker>/settings.jsonc" — every `component` value must declare a
     description (these are rendered in the tracker Guide). Missing for: <values>.
 
-`docs-guide check issues` reports the same as errors (exit 1) without a build.
+`agent-ks check issues` reports the same as errors (exit 1) without a build.
 
 WHY NO `migrate` COMMAND (manual transition)
 --------------------------------------------

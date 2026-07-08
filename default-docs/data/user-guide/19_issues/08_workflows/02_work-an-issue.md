@@ -33,7 +33,7 @@ Three ways:
 
 - **UI** — click the status icon in the detail-page sidebar or subtask checklist. Cycles `open → in-progress → review → done` (the off-path statuses `blocked`, `input-needed`, and `dropped` are set by editing the file).
 - **Manual edit** — change `status:` in the subtask's frontmatter. Loader picks up the change on the next mtime invalidation.
-- **CLI** — `docs-guide issue set-state <issue-id> review --subtask 01` (or pass an explicit `…/subtasks/01_foo.md` path). Writes the `status` field; `--subtask` targets the subtask (never the issue).
+- **CLI** — `agent-ks issue set-state <issue-id> review --subtask 01` (or pass an explicit `…/subtasks/01_foo.md` path). Writes the `status` field; `--subtask` targets the subtask (never the issue).
 
 ### Key rule
 

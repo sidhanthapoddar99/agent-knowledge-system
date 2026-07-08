@@ -62,7 +62,7 @@ export function assertContentVersionSupported(contentVersion: string | undefined
       `The content must be migrated from ${declared} to ${ENGINE_VERSION} — ask your AI to do it: ` +
       `the migration scripts live in migration/ at the repo root, named by the version they bring ` +
       `content to. Run each script between ${declared} and ${ENGINE_VERSION} in version order ` +
-      `(detect pass, then --dry-run, then migrate), verify with docs-guide check, ` +
+      `(detect pass, then --dry-run, then migrate), verify with agent-ks check, ` +
       `then set engine_version: "${ENGINE_VERSION}" in site.yaml.`,
     );
   }

@@ -2,7 +2,7 @@
  * guide.ts — the framework-bundled "issue anatomy" guide.
  *
  * Rendered on every issue's **Guide** panel (see DetailBody.astro). This is the
- * plugin-independent twin of the `doc-issues` skill's guide: a THIN
+ * plugin-independent twin of the `agent-ks-issues` skill's guide: a THIN
  * legend (the map of what each section is), not the full operating manual.
  * The manual lives in the skill; keep this in sync with it at release time.
  *
@@ -272,7 +272,7 @@ The two root artifacts — together they are the Overview page.
   **Glossary**.
 
 > For the full operating manual — when to log a milestone, the explicit-save
-> rules, worked examples — see the **doc-issues** skill.
+> rules, worked examples — see the **agent-ks-issues** skill.
 `;
 }
 

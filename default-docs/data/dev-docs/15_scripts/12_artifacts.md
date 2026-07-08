@@ -71,8 +71,8 @@ its own), with no flash of unthemed content. `theme: "self"` (the default) is se
 byte-for-byte. The mechanism, the head-start insertion point, and the content-hash
 ETag that busts on a theme change are documented in
 [the reserved artifact route](/dev-docs/architecture/routing#the-reserved-artifact-route);
-authoring the two modes lives in the `artifact-authoring` skill, and
-`docs-guide theme tokens --json` prints the live variable→value map the route injects
+authoring the two modes lives in the `agent-ks-artifacts` skill, and
+`agent-ks theme tokens --json` prints the live variable→value map the route injects
 (it resolves the active theme the same way the engine does — `site.yaml` name →
 `theme_paths` scan → `extends` inheritance → CSS merge).
 

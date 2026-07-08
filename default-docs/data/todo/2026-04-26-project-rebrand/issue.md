@@ -4,9 +4,16 @@ Rename and reposition the project. Current framing — "documentation-template, 
 
 The rename also unblocks naming decisions downstream (CLI binary name, install URL, plugin namespace, marketplace listing, skill names, package metadata) that are currently held with placeholders.
 
-## Proposed name
+## Name — LOCKED (2026-07-08)
 
-`neura-knowledge-system` — placeholder; not locked. The naming requirements:
+**`agent-knowledge-system`**, decided by sidhantha in live discussion. The
+derived namespace: CLI binary **`agent-ks`** (single dispatcher, `agent-ks
+<group> <verb>`), skills **`agent-ks-docs`** / **`agent-ks-issues`** /
+**`agent-ks-artifacts`**, plugin **`agent-ks`** (rename pending, subtask 60).
+The "agent-" stem answers the brand-alignment question: the identity is
+agent-first, not company-branded (`neura-` dropped).
+
+The original naming requirements, all satisfied:
 
 - Captures the "knowledge + task" duality (docs + issues tracker + structured content for AI to read AND contribute to)
 - Signals the AI-first design intent (the CLI wrappers, the issues schema, the plugin, the validators are all built for AI agents to use)
@@ -60,17 +67,26 @@ Implementation order suggestion: lock the name first (one-paragraph subtask, asy
 
 ## Subtasks
 
-To be filed once the name is locked. Likely shape:
+Filed 2026-07-08 (name locked the same day):
 
-- `01_lock-name.md` — discussion + decision; produces the canonical name + the CLI prefix (e.g., `nks-` for wrappers)
-- `02_repo-and-package-rename.md` — GitHub repo, package metadata
-- `03_plugin-and-skill-rename.md` — plugin namespace, skill names, slash commands, CLI wrappers
-- `04_docs-sweep.md` — user-guide, dev-docs, CLAUDE.md, README, in-code messages
-- `05_marketplace-and-install-domain.md` — marketplace listing, install URL/domain registration
+- `10_tool-and-skill-rename.md` — CLI `agent-ks` + skills `agent-ks-*` (in flight)
+- `20_project-and-docs-update.md` — the documentation-template → agent-knowledge-system docs sweep
+- `30_open-issues-consistency.md` — forward-looking references in unclosed issues
+- `40_claude-md-legacy-note.md` — a bounded ~3-line legacy-naming note in CLAUDE.md
+- `50_new-repo.md` — the new GitHub repo, full history
+- `60_plugin-rename-agent-ks.md` — `plugins/documentation-guide` → `plugins/agent-ks`
+- `70_github-urls-and-branding.md` — URL sweep after the repo exists
+- `80_marketplace-repo-update.md` — sids-plugin-marketplace points at the new plugin
+- `90_archive-old-repo.md` — archive (never delete) with a big README pointer
+- `100_install-script-links.md` — clone/install commands move to the new URL
+- `110_start-migration-flow.md` — `./start` in an old clone self-migrates its origin
 
 ## Open questions
 
-1. **Final name.** `neura-knowledge-system` is the proposal. Alternatives worth a pass: `neura-kb`, `neura-docs`, something fully detached from `neura`. Decide with brand alignment in mind.
-2. **Brand alignment with neuralabs.** Is this a community-OSS project or a neuralabs product? Affects whether the `neura-` prefix makes sense.
-3. **CLI prefix.** Long names = ugly wrappers. `neura-knowledge-system-list` is unusable. Likely need a short alias prefix (`nks-`, `nk-`, `nks `, etc.). Decide alongside the name.
-4. **Backwards compatibility for existing installs.** If anyone (including this repo, dogfooding) has the old plugin marketplace install, do we provide a transition path or hard-cut?
+1. **Backwards compatibility for existing installs.** Partially answered by the
+   archive + `./start` self-migration flow (subtasks 90/110) for clones; the
+   plugin-install transition (old `documentation-guide@…` key vs new
+   `agent-ks@…`) is decided inside subtasks 60/80.
+2. **Install domain** (`https://<domain>/install.sh`) — still open; only
+   matters when the CLI-tool distribution ships
+   (`2026-04-26-framework-as-cli-tool`).

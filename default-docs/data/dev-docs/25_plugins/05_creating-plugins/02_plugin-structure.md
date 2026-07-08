@@ -18,8 +18,8 @@ my-plugin/
 ├── README.md                 ← human-readable; shown in /plugin UI
 ├── LICENSE                   ← required for distribution; "TBD" placeholder is fine while iterating
 ├── bin/                      ← AUTO-ADDED TO $PATH at session start
-│   ├── docs-guide            ← single dispatcher shim (→ scripts/cli.mjs)
-│   └── docs-guide.cmd        ← Windows twin
+│   ├── agent-ks            ← single dispatcher shim (→ scripts/cli.mjs)
+│   └── agent-ks.cmd        ← Windows twin
 ├── skills/                   ← per-skill folders
 │   └── <skill-name>/
 │       ├── SKILL.md          ← frontmatter + body

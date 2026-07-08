@@ -132,7 +132,7 @@ keys are an authoring convention:
 Common keys are `purpose`, `type`, `theme`, `palette`, `data`, `interactions`,
 and `sources` — write the ones that apply and add your own. For
 the full authoring conventions (and how to build an artifact that reads as
-designed rather than generic), see the **`artifact-authoring` skill**, which
+designed rather than generic), see the **`agent-ks-artifacts` skill**, which
 owns this contract.
 
 ## Write it self-contained
@@ -177,7 +177,7 @@ body {
 .card { background: var(--color-bg-secondary, #f5f5f5); }
 ```
 
-Live values for every token, in light and dark, come from `docs-guide theme tokens
+Live values for every token, in light and dark, come from `agent-ks theme tokens
 --json` — handy when a chart palette has to sit on the real surfaces.
 
 **Self mode** — the site's light/dark state is a `data-theme` attribute; style for
@@ -197,7 +197,7 @@ Live values for every token, in light and dark, come from `docs-guide theme toke
 The framework **never** applies the diagram dark-mode invert filter to an artifact —
 inverting arbitrary HTML would wreck its images and brand colors — so honoring the
 theme is the artifact's own job. For the full authoring doctrine — including why any
-UI/UX design is always `self` — see the **`artifact-authoring` skill**. Both modes
+UI/UX design is always `self` — see the **`agent-ks-artifacts` skill**. Both modes
 run live on the [Artifact Showcase](./examples/artifact-showcase): a `self` design system and a
 `site` dashboard.
 

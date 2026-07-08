@@ -10,7 +10,7 @@
  *
  * Everything that needs to know about lifecycle vocabulary — the loader, the
  * layouts, the `guide.ts` panel, and (by mirrored copy, since it is `.mjs`)
- * the `docs-guide` CLI — consumes THIS module so the vocabulary is declared
+ * the `agent-ks` CLI — consumes THIS module so the vocabulary is declared
  * exactly once on the framework side. Issues and subtasks share it: same seven
  * statuses, same field name (`status`), same validation.
  */
@@ -150,7 +150,7 @@ export function unknownStatusMessage(rawValue: string, fileHint: string): string
     `Allowed values: ${STATUSES.join(' | ')}.`,
     `Legacy values are auto-mapped (closed→done, cancelled→dropped) — if you see`,
     `this for a legacy value, run the state→status migration script`,
-    `(plugins/documentation-guide/.../migration/2026-07-02_state-to-status.py).`,
+    `(migration/0.1.1_state-to-status.py).`,
   ].join('\n');
 }
 
@@ -169,7 +169,7 @@ export function statusFieldForbiddenMessage(fileHint: string): string {
     `top-level \`statusColors\` map instead — e.g. { "statusColors": { "review": "#f0c674" } }.`,
     `Keys must be a subset of: ${STATUSES.join(' | ')}.`,
     `See the migration script`,
-    `(plugins/documentation-guide/skills/documentation-guide/migration/2026-07-03_root-settings-schema.py)`,
+    `(migration/0.1.2_root-settings-schema.py)`,
     `for the exact rewrite.`,
   ].join('\n');
 }
@@ -182,7 +182,7 @@ export function unknownStatusColorMessage(key: string, fileHint: string): string
     `A colour for a status that doesn't exist is a typo, not an override.`,
     `Valid statuses: ${STATUSES.join(' | ')}.`,
     `The migration script's \`detect\` subcommand flags exactly this`,
-    `(plugins/documentation-guide/skills/documentation-guide/migration/2026-07-03_root-settings-schema.py).`,
+    `(migration/0.1.2_root-settings-schema.py).`,
   ].join('\n');
 }
 

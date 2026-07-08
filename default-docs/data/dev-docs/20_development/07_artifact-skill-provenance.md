@@ -4,7 +4,7 @@ title: "Artifact skill — provenance & re-capture"
 
 # Artifact skill — provenance & re-capture
 
-The `artifact-authoring` skill (in the `documentation-guide` plugin) is a
+The `agent-ks-artifacts` skill (in the `documentation-guide` plugin) is a
 **convergence of four Anthropic-authored design skills**, re-expressed for
 this framework's publish mechanism. This page records where each source came
 from and — the part that matters operationally — **how to capture each one
@@ -59,7 +59,7 @@ Key mechanics worth knowing when re-capturing:
 
 ## Where the converged skill's own truth lives
 
-The skill itself (`plugins/documentation-guide/skills/artifact-authoring/`)
+The skill itself (`plugins/documentation-guide/skills/agent-ks-artifacts/`)
 is the *product*; its per-section source mapping is recorded in its
 `references/PROVENANCE.md`, and the design deliberation lives in the tracker
 issue's `brainstorm/02_discuss_authoring-skill-design.md`. Edits to the skill

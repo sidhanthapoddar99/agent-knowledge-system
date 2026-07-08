@@ -93,7 +93,7 @@ The validator emits an info-level hint when these are violated; both stay legal 
 
 Every file is plain markdown in a predictable folder. No API, no auth, no schema — an agent can `ls` the tracker, read any issue, write subtasks, append to agent logs. The seven-status, four-category lifecycle (`open → in-progress → review → done`, plus `blocked`, `input-needed`, and `dropped` for the off-path cases) exists specifically so AI-driven work can ship to **review** and hand the final call to a human — `done` and `dropped` are human-only transitions. Subtasks share the same `status` field and carry it independently — an issue can stay `open` while three of five subtasks are already `done` or in `review`.
 
-Agents working with the tracker should invoke the `documentation-guide` skill — its `references/layouts/issues/` folder (entry `00_overview.md`) is the canonical agent-facing companion to this page.
+Agents working with the tracker should invoke the `agent-ks-issues` skill — the self-contained issue-tracker skill (anatomy, creation rules, lifecycle, agent-logs, agent-memory) is the canonical agent-facing companion to this page.
 
 ## What to read next
 

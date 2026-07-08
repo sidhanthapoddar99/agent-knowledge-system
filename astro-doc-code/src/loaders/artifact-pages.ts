@@ -64,7 +64,7 @@ export const ARTIFACT_URL_PREFIX = '/artifacts';
  * sidecar. `embed_height` is a rendering override (Thread C). `artifact` is an
  * opaque AI-legibility block — the loader never parses it, only passes it
  * through onto `entry.data.artifact`; its key conventions belong to the
- * artifact-authoring skill, not the engine.
+ * agent-ks-artifacts skill, not the engine.
  */
 interface ArtifactMeta {
   title?: string;

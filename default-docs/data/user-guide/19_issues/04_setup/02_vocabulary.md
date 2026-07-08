@@ -12,7 +12,7 @@ Per-issue `settings.json` files are validated against this root. Rename a value 
 
 ## JSON or JSONC — annotate the meanings
 
-The settings file may be plain `settings.json` **or** `settings.jsonc` — JSON that also allows `//` line comments, `/* */` block comments, and trailing commas. Both the framework loaders and the `docs-guide` toolkit read either; when both files exist for the same folder, **`.jsonc` wins**. Since JSONC is a strict superset of JSON, a comment-free `.json` file is still perfectly valid — the win is the ability to annotate.
+The settings file may be plain `settings.json` **or** `settings.jsonc` — JSON that also allows `//` line comments, `/* */` block comments, and trailing commas. Both the framework loaders and the `agent-ks` toolkit read either; when both files exist for the same folder, **`.jsonc` wins**. Since JSONC is a strict superset of JSON, a comment-free `.json` file is still perfectly valid — the win is the ability to annotate.
 
 **For the root vocabulary, prefer `.jsonc` and annotate freely.** Each value's *meaning* now lives in a required `descriptions` map alongside `component` and `labels` (see [Value descriptions](#value-descriptions)) — that map is the controlled gloss every issue author and AI agent reads to decide where a new issue belongs, and it renders verbatim in the tracker's **Guide** modal. It keeps `component` from decaying into a junk drawer, so keep it accurate as the taxonomy changes. JSONC comments remain handy for rationale the descriptions don't cover.
 
@@ -169,7 +169,7 @@ meanings and transition conventions are in [Lifecycle and Review](./lifecycle-an
 
 **The status set is fixed in framework code — you cannot add, remove, or rename statuses
 per tracker.** A `fields.status` block in the root settings is a **hard error** at
-build/dev startup (and fails `docs-guide check issues`): a stray `values` list there would
+build/dev startup (and fails `agent-ks check issues`): a stray `values` list there would
 read as authoritative and silently redefine the vocabulary, so the loader rejects it loudly
 rather than ignoring it. An unknown status *value* on an issue is likewise a hard error, not
 a silent default. Migrating an old `fields.status` block? Run
@@ -201,14 +201,14 @@ lifecycle vocabulary rather than letting each project drift.
 
 There is exactly one place the vocabulary lives: `astro-doc-code/src/loaders/issue-status.ts`
 (statuses, categories, default colors, helpers). The loader, layouts, `guide.ts` panel,
-and — mirrored on the JS side — the `docs-guide` CLI all consume it. A framework
+and — mirrored on the JS side — the `agent-ks` CLI all consume it. A framework
 maintainer changing the lifecycle edits that one constant (and its CLI mirror in
 `_lib.mjs`); a tracker author never touches it. If you find yourself wanting a new status,
 that's a framework-level decision, not a per-tracker config change.
 
 ### Value descriptions
 
-`component` and `labels` each require a parallel `descriptions` map — one `"<value>": "<meaning>"` entry for **every** value in `values`. A missing description is a **hard error** at build/dev startup (and fails `docs-guide check issues`). An extra description for a value that isn't in `values` is silently ignored. `priority` descriptions are **optional**, and status carries its own fixed, built-in glosses (you don't write them).
+`component` and `labels` each require a parallel `descriptions` map — one `"<value>": "<meaning>"` entry for **every** value in `values`. A missing description is a **hard error** at build/dev startup (and fails `agent-ks check issues`). An extra description for a value that isn't in `values` is silently ignored. `priority` descriptions are **optional**, and status carries its own fixed, built-in glosses (you don't write them).
 
 ```jsonc
 "component": {

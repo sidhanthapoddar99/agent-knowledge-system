@@ -240,7 +240,7 @@ interface ArtifactMeta {
   embed_height?: number | string;
   // Opaque AI-legibility block — stored on entry.data.artifact untouched,
   // never parsed by the engine; its key conventions belong to the
-  // artifact-authoring skill (purpose, palette, key data, …).
+  // agent-ks-artifacts skill (purpose, palette, key data, …).
   artifact?: Record<string, unknown>;
 }
 ```

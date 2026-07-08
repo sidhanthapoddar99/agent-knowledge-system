@@ -308,8 +308,8 @@ Mode resolution is attribute-only, mirroring the chrome: the full-page init read
 `localStorage.theme` then `prefers-color-scheme` and stamps `data-theme="dark"` only
 for dark (no site CSS reads `prefers-color-scheme`); in the embed, `scripts/artifacts.ts`
 additionally propagates the parent site's attribute in. Authoring guidance for the
-two modes — and `docs-guide theme tokens --json` to print the live variable→value
-map — is in the `artifact-authoring` skill.
+two modes — and `agent-ks theme tokens --json` to print the live variable→value
+map — is in the `agent-ks-artifacts` skill.
 
 No alias is registered for this route: a serving route is neither a layout nor a
 `paths:` key, so `loaders/alias.ts` and `RESERVED_KEYS` in `loaders/paths.ts`

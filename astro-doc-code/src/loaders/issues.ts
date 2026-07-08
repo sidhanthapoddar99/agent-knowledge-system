@@ -454,7 +454,7 @@ function missingDescriptionsMessage(
     `Fix: add a \`descriptions\` map alongside \`values\` under \`fields.${field}\`, e.g.`,
     `  "${field}": { "values": [...], "descriptions": { "${missing[0]}": "what it means" } }`,
     `See the migration script`,
-    `(plugins/documentation-guide/skills/documentation-guide/migration/2026-07-03_root-settings-schema.py).`,
+    `(migration/0.1.2_root-settings-schema.py).`,
   ].join('\n');
 }
 

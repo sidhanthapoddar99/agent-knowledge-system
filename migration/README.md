@@ -27,7 +27,7 @@ provenance, not ordering.
 2. Run **each** `migration/` script in `(X, Y]` in version order: detect →
    dry-run → migrate. All of them — a zero-hit detect is a passed check, not a
    skipped script.
-3. Verify (`docs-guide check issues` / `check section` / a build).
+3. Verify (`agent-ks check issues` / `check section` / a build).
 4. Set `engine_version: "Y"` in `site.yaml` — last step, never first. Bumping
    the version without running the chain defeats the gate's purpose (detecting
    that migration is needed) and moves the breakage where nothing points at it.

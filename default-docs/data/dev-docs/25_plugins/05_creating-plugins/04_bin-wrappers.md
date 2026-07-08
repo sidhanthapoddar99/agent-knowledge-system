@@ -26,20 +26,20 @@ $ echo $PATH | tr ':' '\n' | grep claude
 That means the model can invoke any wrapper by its bare name — no path knowledge required:
 
 ```bash
-docs-guide issue list --priority high
+agent-ks issue list --priority high
 ```
 
-resolves to `~/.claude/plugins/cache/sids-plugin-marketplace/documentation-guide/0.3.0/bin/docs-guide` automatically.
+resolves to `~/.claude/plugins/cache/sids-plugin-marketplace/documentation-guide/0.3.0/bin/agent-ks` automatically.
 
 ## Wrapper template
 
-A wrapper is just an executable shell script. As a toolkit grows past a handful of commands, the cleanest pattern is a **single generic shim** routed through one dispatcher — every wrapper is byte-identical except its filename, and it passes its own basename through to a central `cli.mjs`. Real example from `documentation-guide`:
+A wrapper is just an executable shell script. As a toolkit grows past a handful of commands, the cleanest pattern is a **single generic shim** routed through one dispatcher — every wrapper is byte-identical except its filename, and it passes its own basename through to a central `cli.mjs`. Example of the shape (a hypothetical `docs-list` wrapper; `documentation-guide` itself ships only the single `agent-ks` dispatcher):
 
 ```bash
 #!/usr/bin/env bash
 # Generic shim — routes via its own filename through the shared cli.mjs dispatcher.
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-CLI="$DIR/../skills/documentation-guide/scripts/cli.mjs"
+CLI="$DIR/../skills/agent-ks-docs/scripts/cli.mjs"
 if command -v bun >/dev/null 2>&1; then
   exec bun "$CLI" "$(basename "$0")" "$@"
 else
@@ -65,15 +65,15 @@ Three things going on:
 - **`scripts/cli.mjs`** — the dispatcher. It resolves the incoming tokens against the manifest, intercepts `--help`/`-h` centrally (rendered *from* the manifest, so help can't drift from reality), routes to the entry's `script` according to its `runtime`, and rebuilds `argv` so the target script sees its own args.
 - **`scripts/_cli.mjs`** — the shared contract helpers (`parseArgs`, `emitJson`, `writeStdout`, exit-code helpers) every command imports, so arg parsing, `--json`, and exit codes are uniform. The contract is written down in `scripts/CONTRACT.md`.
 
-There is a **single shim on PATH** — `docs-guide` (plus its `.cmd` twin) — which forwards `"$@"` verbatim to the dispatcher. Every command is invoked as `docs-guide <group> <verb>` (e.g. `docs-guide issue list`). The manifest `bin` field (`docs-list`) survives only as an internal identifier — it keys the manifest, the harness, and `docs-guide help docs-list`, but is **not** a binary on PATH.
+There is a **single shim on PATH** — `agent-ks` (plus its `.cmd` twin) — which forwards `"$@"` verbatim to the dispatcher. Every command is invoked as `agent-ks <group> <verb>` (e.g. `agent-ks issue list`). The manifest `bin` field (`docs-list`) survives only as an internal identifier — it keys the manifest, the harness, and `agent-ks help docs-list`, but is **not** a binary on PATH.
 
-> An earlier iteration shipped a flat `docs-*` shim per command (28 of them) *plus* the dispatcher — two ways to call everything. That was collapsed to the single `docs-guide` entrypoint: the per-command shims were pure clutter once the dispatcher existed, and a bare `docs` dispatcher collides (see Naming hygiene). One prefixed dispatcher is the whole surface.
+> An earlier iteration shipped a flat `docs-*` shim per command (28 of them) *plus* the dispatcher — two ways to call everything. That was collapsed to the single `agent-ks` entrypoint: the per-command shims were pure clutter once the dispatcher existed, and a bare `docs` dispatcher collides (see Naming hygiene). One prefixed dispatcher is the whole surface.
 
 ### Adding a command
 
 1. Add **one** entry to `MANIFEST` in `_manifest.mjs` (set `runtime: 'mjs'`, or another language — see below).
 2. Put the implementation at `scripts/<entry.script>`, importing the shared contract from `_cli.mjs`.
-3. **No new shim** — the single `docs-guide` dispatcher resolves the new `<group> <verb>` from the manifest automatically.
+3. **No new shim** — the single `agent-ks` dispatcher resolves the new `<group> <verb>` from the manifest automatically.
 4. The self-test harness reads the manifest, so it picks up the new command automatically (`--help`/`-h`/exit-0, and `--json` where applicable).
 
 ## Why bin beats the alternatives
@@ -97,7 +97,7 @@ Slash commands are a great UX for templated *prompts* — they expand into instr
 | Use case | Use |
 |---|---|
 | "Bootstrap a new project" (interactive Q&A) | Slash command |
-| "Run `docs-guide issue list` and filter by priority" (one shell call) | Bin wrapper |
+| "Run `agent-ks issue list` and filter by priority" (one shell call) | Bin wrapper |
 | "Validate the docs config" (binary pass/fail) | Bin wrapper |
 
 ### vs hand-authored wrappers in user scope
@@ -106,7 +106,7 @@ You could hand-author the same wrappers in `~/.claude/bin/` — but then there's
 
 ## Naming hygiene
 
-**Always prefix wrappers with your plugin's namespace.** If five plugins each ship a `list` wrapper, they collide on PATH (whichever loads first wins). The `documentation-guide` plugin uses `docs-` for everything: `docs-list`, `docs-show`, `docs-check-section`, etc.
+**Always prefix wrappers with your plugin's namespace.** If five plugins each ship a `list` wrapper, they collide on PATH (whichever loads first wins). The `documentation-guide` plugin applies the rule to its single dispatcher: the entrypoint is `agent-ks`, never a bare `docs` or `ks`.
 
 Rules of thumb:
 
@@ -115,7 +115,7 @@ Rules of thumb:
 - Don't shadow common system commands (`ls`, `cd`, `git`, `npm`)
 - Don't shadow common dev tools (`jq`, `yq`, `rg`)
 
-> **Worked example — why the dispatcher is named `docs-guide`, not `docs`.** A subcommand toolkit wants a single short entrypoint, and bare `docs` is the obvious pick — but `docs` is *not* prefix-namespaced, and other tools ship one (e.g. NVIDIA CUDA puts a `docs` on PATH; in WSL the Windows paths often sort *ahead* of the plugin's bin dir, so CUDA's wins and the toolkit becomes unreachable by name). The fix is to keep the dispatcher name prefixed too: `documentation-guide` ships **`docs-guide`**, which is collision-safe by the same rule as `docs-list` was. Lesson: the namespace prefix applies to the dispatcher, not just the per-command wrappers.
+> **Worked example — why the dispatcher is named `agent-ks`, not `docs`.** A subcommand toolkit wants a single short entrypoint, and bare `docs` is the obvious pick — but `docs` is *not* prefix-namespaced, and other tools ship one (e.g. NVIDIA CUDA puts a `docs` on PATH; in WSL the Windows paths often sort *ahead* of the plugin's bin dir, so CUDA's wins and the toolkit becomes unreachable by name). The fix is to keep the dispatcher name prefixed too: `documentation-guide` ships **`agent-ks`**, which is collision-safe by the same prefix rule. Lesson: the namespace prefix applies to the dispatcher, not just the per-command wrappers.
 
 ## What goes in the wrapper
 
@@ -144,16 +144,16 @@ if (entry.runtime && entry.runtime !== 'mjs') {
 
 Interpreter detection mirrors the bun→node fallback: try ordered candidates, probe `--version`, use the first that works. Python is **not** guaranteed on Windows (bun/node is), so a registered-but-missing interpreter should fail with a clear message (exit `127`), never a cryptic crash. Don't try to bootstrap installations from inside the wrapper.
 
-This keeps the toolkit polyglot-ready: a Python command drops in by adding a manifest entry with `runtime: 'py'` and a `.py` script that honours the same contract (`scripts/CONTRACT.md`) — no dispatcher changes. Non-JS scripts get the project's content root via `docs-guide resolve-context` (`--json`) instead of re-implementing `.env` discovery.
+This keeps the toolkit polyglot-ready: a Python command drops in by adding a manifest entry with `runtime: 'py'` and a `.py` script that honours the same contract (`scripts/CONTRACT.md`) — no dispatcher changes. Non-JS scripts get the project's content root via `agent-ks resolve-context` (`--json`) instead of re-implementing `.env` discovery.
 
 ## Verifying after install
 
 ```bash
 # Should resolve to your plugin's cache bin folder
-which docs-guide
+which agent-ks
 
 # Should run and return output
-docs-guide --help
+agent-ks --help
 ```
 
 If the wrapper isn't on PATH after `/reload-plugins`:

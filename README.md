@@ -23,10 +23,9 @@ The fastest path is via the Claude Code plugin distributed through [`sids-plugin
 
 | Surface | Use it for |
 |---|---|
-| **Skill** — `documentation-guide` | Triggers automatically on any docs/issue/blog/config work. Triages to one of five domain-specific reference files. |
+| **Skills (3)** — `agent-ks-docs`, `agent-ks-issues`, `agent-ks-artifacts` | Trigger automatically on docs/blog/config work, issue-tracker work, and HTML-artifact building respectively. Each triages to domain-specific reference files. |
 | **Slash commands** — `/docs-init`, `/docs-add-section` | Bootstrap a new project; add a top-level section. Both interactive. |
-| **CLI wrappers (8)** for the issue tracker | `docs-list`, `docs-show`, `docs-subtasks`, `docs-agent-logs`, `docs-set-state`, `docs-add-comment`, `docs-add-agent-log`, `docs-review-queue` |
-| **Validators (3)** — exit `0` clean / `1` on errors | `docs-check-blog`, `docs-check-config`, `docs-check-section <folder>` |
+| **CLI** — one `agent-ks` entrypoint on `PATH` | 28 commands as `agent-ks <group> <verb>` — issue tracker (`agent-ks issue …`), validators (`agent-ks check …`), docs/blog content, git metadata, cross-content search. Discover with `agent-ks help`. |
 
 All 13 wrappers land on your `$PATH` automatically after install — no path configuration. Pass `--help` to any of them for the full flag list.
 

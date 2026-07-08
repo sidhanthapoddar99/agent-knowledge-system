@@ -167,7 +167,7 @@ cd - > /dev/null
 
 Open `$chosen_root/CLAUDE.md`. If absent, write the full template below. If present, append the **`## Documentation`** section (or merge intelligently if there's already such a section). Substitute `<SITE_NAME>`, `<DESCRIPTION>`, and `<chosen_root>` (use `.` if `chosen_root="."`).
 
-The CLAUDE.md patch is the single most important post-init artifact — without it, future sessions don't know the docs layout, that the `documentation-guide` skill is installed, or how to build/run.
+The CLAUDE.md patch is the single most important post-init artifact — without it, future sessions don't know the docs layout, that the `agent-ks-docs` skill is installed, or how to build/run.
 
 ## Step 8 — Print summary + next steps
 
@@ -239,8 +239,8 @@ The framework reads `.env` from `documentation-template/.env`. Default for consu
 
 This project uses the `documentation-guide` Claude Code plugin. It ships:
 
-- **Skill** — automatically triggers on docs work; routes to domain-specific reference files (writing, docs-layout, blog-layout, issues, settings-layout)
-- **CLI wrappers on PATH** — `docs-list`, `docs-show`, `docs-subtasks`, `docs-agent-logs`, `docs-set-state`, `docs-add-comment`, `docs-add-agent-log`, `docs-review-queue` (issue tracker), `docs-check-blog`, `docs-check-config`, `docs-check-section` (validators), `docs-move` (link-aware move/rename)
+- **Skills (3)** — `agent-ks-docs` (docs/blog/config/writing; routes to domain-specific reference files), `agent-ks-issues` (issue tracker), `agent-ks-artifacts` (HTML artifacts); each triggers automatically on its domain
+- **CLI on PATH** — one `agent-ks` entrypoint; every operation is `agent-ks <group> <verb>` (issue tracker: `agent-ks issue …`, validators: `agent-ks check …`, content: `agent-ks doc/blog …`, plus `find`, `move`, `img`). Discover with `agent-ks help`
 - **Slash commands** — `/docs-init`, `/docs-add-section`
 
 Install (per workstation, one-time):
@@ -255,7 +255,7 @@ Install (per workstation, one-time):
 
 - **New page in existing section** — create `data/<section>/<NN>_<slug>.md` with `title:` frontmatter. `NN_` is the next numeric prefix in the section (2–5 digits, sorted by value — generally 2-digit and gap-spaced).
 - **New top-level section** — run `/docs-add-section` (creates `data/<name>/`, `settings.json`, starter page; optionally registers in `site.yaml`)
-- **Validate before commit** — `docs-check-config` and `docs-check-section <chosen_root>/data/<section>` flag missing `settings.json`, missing frontmatter, prefix collisions
+- **Validate before commit** — `agent-ks check config` and `agent-ks check section <chosen_root>/data/<section>` flag missing `settings.json`, missing frontmatter, prefix collisions
 ````
 
 If `CLAUDE.md` already exists, append everything from `## Documentation` onward — don't overwrite the rest of the file.
@@ -267,6 +267,6 @@ If `CLAUDE.md` already exists, append everything from `## Documentation` onward 
 - Ask one question at a time when you genuinely need user input; batch related questions where natural.
 - Show the file plan before writing — never silently scaffold.
 - If the user has chosen a non-default for any answer, restate it back so they can correct typos.
-- After scaffolding, validate by running `docs-check-config` (with the resolved `<chosen_root>/config` path passed explicitly, since `.env` doesn't exist yet) — it should exit clean. If it doesn't, fix the issue or report it.
+- After scaffolding, validate by running `agent-ks check config` (with the resolved `<chosen_root>/config` path passed explicitly, since `.env` doesn't exist yet) — it should exit clean. If it doesn't, fix the issue or report it.
 - Do **not** clone the framework engine for the user (network operation, license/fork preference). Print the clone command in the summary instead.
 - Do **not** write `.env` — it lives inside the framework folder which doesn't exist yet. The post-clone step creates it.

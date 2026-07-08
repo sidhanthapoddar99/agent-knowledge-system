@@ -1,7 +1,7 @@
 {
-  "title": "Rebrand: documentation-template → neura-knowledge-system",
-  "description": "Project-wide rename and repositioning. Shift from 'docs framework' framing to 'knowledge + task system created and fine-tuned for AI.' Locks naming for the CLI binary, plugin, skills, marketplace listing, install URL, and downstream documentation. Prerequisite for any naming-locked subtask (notably the Method 1 CLI in 2026-04-26-framework-as-cli-tool/subtasks/03).",
-  "status": "open",
+  "title": "Agent Knowledge System Rebrand",
+  "description": "Project-wide rename and repositioning: documentation-template → agent-knowledge-system. Shift from 'docs framework' framing to 'knowledge + task system created and fine-tuned for AI.' Name locked 2026-07-08: CLI `agent-ks`, skills agent-ks-docs / agent-ks-issues / agent-ks-artifacts, plugin → agent-ks. Covers the new repo, marketplace update, old-repo archive, and the ./start self-migration flow.",
+  "status": "in-progress",
   "priority": "medium",
   "component": ["ai-plugin-and-docs"],
   "labels": [

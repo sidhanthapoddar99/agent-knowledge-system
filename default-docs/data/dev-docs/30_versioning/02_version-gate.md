@@ -48,7 +48,7 @@ This content targets engine 0.0.5, but this engine is 0.1.2 and supports content
 0.1.2 or newer. The content must be migrated from 0.0.5 to 0.1.2 — ask your AI to
 do it: the migration scripts live in migration/ at the repo root, named by the
 version they bring content to. Run each script between 0.0.5 and 0.1.2 in version
-order (detect pass, then --dry-run, then migrate), verify with docs-guide check,
+order (detect pass, then --dry-run, then migrate), verify with agent-ks check,
 then set engine_version: "0.1.2" in site.yaml.
 ```
 

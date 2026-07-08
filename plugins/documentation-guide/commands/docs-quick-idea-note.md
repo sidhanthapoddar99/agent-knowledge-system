@@ -13,7 +13,7 @@ subtask file appended to the right dump issue. No new issue folder, no
 `settings.json`, no ritual — but also **no bare dump**: the entry gets a couple of
 context-setting sentences so it reads cold later.
 
-Background (from the tracker's operating rules — the `doc-issues` skill carries the
+Background (from the tracker's operating rules — the `agent-ks-issues` skill carries the
 full version): a thought earns a **full issue** only if you can name its component
 and its first subtask in one breath. The dump is for thoughts that *fail* that test
 **and have no obvious home**. Dump issues are ordinary issues tagged with the
@@ -33,13 +33,13 @@ If `$ARGUMENTS` is non-empty, that's the idea. Otherwise ask:
 Before dumping, spend one quick check deciding where the thought belongs:
 
 1. **Does it obviously belong to an existing issue?** Run
-   `docs-guide issue list --search "<two or three keyword roots>" --quiet-tips`.
+   `agent-ks issue list --search "<two or three keyword roots>" --quiet-tips`.
    - Strong match → **don't dump it.** Tell the user: "This looks like it belongs to
      `<id>` — add it there as a subtask instead?" On yes, write it as a subtask of
      that issue (next `NN_` prefix, standard frontmatter) and stop.
 2. **Does it already pass the full-issue litmus test** (component + first subtask
    nameable in one breath)? If clearly yes, say so and offer to create a real issue
-   instead (per the `doc-issues` skill's creation recipe). Only proceed to the dump
+   instead (per the `agent-ks-issues` skill's creation recipe). Only proceed to the dump
    if the user prefers to park it.
 3. Otherwise → it's dump material. Continue.
 
@@ -51,7 +51,7 @@ point is speed.
 Find the dump issues:
 
 ```bash
-docs-guide issue list --component issue-dump --quiet-tips
+agent-ks issue list --component issue-dump --quiet-tips
 ```
 
 - **One dump issue** → use it.
@@ -97,7 +97,7 @@ Captured → <dump-issue-id>/subtasks/NN_<slug>.md
 ```
 
 No validation ceremony needed for a single subtask write; run
-`docs-guide check issues` only if you touched settings files (Step 3 creation path).
+`agent-ks check issues` only if you touched settings files (Step 3 creation path).
 
 # Tone & guardrails
 

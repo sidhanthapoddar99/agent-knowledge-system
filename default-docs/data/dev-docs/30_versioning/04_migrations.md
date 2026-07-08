@@ -77,8 +77,8 @@ For each script in the chain:
 3. **Migrate** — idempotent; re-running finds zero instances.
 4. **Re-detect** — must report zero. This re-run is the migration test.
 
-Then the tree-wide verification (`docs-guide check issues`,
-`docs-guide check section …`, a build) and **only then** the bump:
+Then the tree-wide verification (`agent-ks check issues`,
+`agent-ks check section …`, a build) and **only then** the bump:
 `engine_version: "Y"` in `site.yaml`.
 
 > [!CAUTION]

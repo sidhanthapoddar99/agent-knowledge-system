@@ -10,7 +10,7 @@ Three ways to create an issue, depending on how you're working:
 
 - **Via the live editor** — point-and-click in the dev-toolbar editor (usually fastest)
 - **By hand in the filesystem** — the canonical form; everything else ends up here anyway
-- **Via the `doc-issues` Claude Code skill** — for AI agents doing autonomous creation
+- **Via the `agent-ks-issues` Claude Code skill** — for AI agents doing autonomous creation
 
 This page walks the filesystem path. The editor path does the same thing behind a form.
 

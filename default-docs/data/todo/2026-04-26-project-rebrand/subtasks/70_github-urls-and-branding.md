@@ -22,3 +22,14 @@ printed clone command, and any `site.yaml`/footer links.
       old-name strings), `/docs-init` and `/docs-add-section` command bodies,
       and CLI script strings under `skills/agent-ks-docs/scripts/` that name
       the repo.
+- [ ] **npm-fallback replication warning in `start`** (behavioral, all three
+      ports): when bun is NOT on PATH and the script is about to fall back to
+      npm, print a **red warning** that npm gives every project its own full
+      `node_modules` (~420 MB each — no cross-project dedup; bun hardlinks
+      from a global cache so N projects cost ~one copy), recommend installing
+      bun as the fix, and ask a Y/n confirmation before proceeding with the
+      npm install. Non-interactive shells and `START_SKIP_UPDATE_CHECK=1`-style
+      scripted runs must not hang — degrade to warning-only, no prompt.
+      Consumer-facing background lives in user-guide
+      `05_getting-started/07_storage-and-footprint.md`; keep the wording
+      consistent with it.

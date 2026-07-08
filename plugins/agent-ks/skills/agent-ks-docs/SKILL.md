@@ -85,6 +85,7 @@ These apply across all domains. Reference files don't repeat them — they assum
 > - **Discover, don't guess:** `agent-ks help` lists everything grouped · `agent-ks help <group> <verb>` shows one command's flags · `agent-ks help --json` dumps the manifest.
 > - **Uniform contract:** every command takes `--help`/`-h` (→ stdout, exit 0) and `--json` where it returns data; exit codes `0` ok · `1` no-result/handled-error · `2` usage.
 > - **Full command + option reference:** [`references/cli-toolkit.md`](references/cli-toolkit.md) — every group, command, and flag.
+> - **Inside a git worktree** (agent sandboxes, `.claude/worktrees/…`): the CLI's `.env` search stops at the worktree root — write a worktree-local `.env` or pass explicit paths (`--tracker`, positional dirs, `DOCS_PROJECT_ROOT`) before any command that writes.
 >
 > **`agent-ks` is the only entrypoint** — flat `docs-<name>` binaries (`docs-list`, `docs-check-blog`, …) do not exist. If a project's `CLAUDE.md`, agent memory, or scripts invoke one, **rewrite it to the `agent-ks <group> <verb>` form** as you go.
 

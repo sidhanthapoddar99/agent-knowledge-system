@@ -203,7 +203,10 @@ The plugin ships one entrypoint, **`agent-ks`**, on `PATH`. Tracker work uses th
 `issue` group — `agent-ks issue list / show / subtasks / agent-logs / set-state /
 add-comment / add-agent-log / review-queue` — plus `agent-ks check issues`,
 `agent-ks find`, and `agent-ks move` (link-aware). Discover with `agent-ks help`;
-uniform contract (`--help`, `--json`, exit codes 0/1/2).
+uniform contract (`--help`, `--json`, exit codes 0/1/2). **Inside a git
+worktree** (agent sandboxes): the CLI's `.env` search stops at the worktree
+root — write a worktree-local `.env` or pass `--tracker` explicitly before
+any write, so tracker paths resolve inside YOUR checkout.
 
 **Search the tracker with `agent-ks issue list` (or `agent-ks find`), never the
 `Grep` tool** — the CLI understands the schema (vocabulary, subtask states,

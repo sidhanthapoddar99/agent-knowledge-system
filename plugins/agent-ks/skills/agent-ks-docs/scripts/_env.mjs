@@ -27,12 +27,25 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-/** Walk up from startDir looking for a `.env` file; return its absolute path or null. */
+/**
+ * Walk up from startDir looking for a `.env` file; return its absolute path or null.
+ *
+ * The walk STOPS at a checkout boundary: a directory whose `.git` is a FILE
+ * (git worktrees and submodules — a normal checkout has a `.git` directory).
+ * That directory is still checked for its own `.env` (a vendored-submodule
+ * framework legitimately carries one), but the walk never continues past it —
+ * otherwise a CLI run inside an agent worktree finds the OUTER repo's `.env`
+ * and reads/writes a different checkout than the one it's standing in.
+ */
 export function findEnvFile(startDir) {
   let dir = path.resolve(startDir);
   while (dir !== path.dirname(dir)) {
     const p = path.join(dir, '.env');
     if (fs.existsSync(p)) return p;
+    const gitMarker = path.join(dir, '.git');
+    try {
+      if (fs.existsSync(gitMarker) && fs.statSync(gitMarker).isFile()) return null;
+    } catch { /* unreadable .git — keep walking */ }
     dir = path.dirname(dir);
   }
   return null;
@@ -104,8 +117,10 @@ export function resolveProjectContext(searchStart) {
   if (!envPath) {
     throw new Error(
       'No .env found walking up from script or cwd, nor at the consumer-mode\n' +
-  '  convention spots (<cwd>/docs/agent-knowledge-system/.env, <cwd>/agent-knowledge-system/.env,\n' +
-  '  or the legacy documentation-template equivalents).\n' +
+      '  convention spots (<cwd>/docs/agent-knowledge-system/.env, <cwd>/agent-knowledge-system/.env,\n' +
+      '  or the legacy documentation-template equivalents).\n' +
+      '  Note: in a git worktree the upward walk stops at the worktree root —\n' +
+      '  write a worktree-local .env or pass --tracker / DOCS_PROJECT_ROOT.\n' +
       '  Set DOCS_PROJECT_ROOT or pass --tracker / a positional path explicitly.\n' +
       '  Plugin scripts read CONFIG_DIR from the framework\'s .env to derive the content root —\n' +
       '  no hardcoded folder names.'

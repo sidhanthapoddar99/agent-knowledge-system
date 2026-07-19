@@ -117,7 +117,7 @@ All content sections except `comments/` accept nested subfolders up to 5 levels 
 - Folder + file names are freeform; the `NN_` prefix is optional. Brainstorm files can carry a full-word kind (`NN_<kind>_<slug>.md`); agent-memory's `memory.md` pins first in the sidebar.
 
 **Agent-log specifics:**
-- The first level is **activity folders** `NNN_<code>_<name>/` — the 2-letter code is the kind (symbol in the sidebar; mapping via `agentLogKinds` in `settings.json`). Inside: `0NN_` meta files pin to the top (badge-less), `MNN_` milestones show `#<iteration>` tinted by `status`.
+- The first level is **activity folders** `NNN_<code>_<name>/` — the 2-letter code is the kind (symbol in the sidebar; mapping via `agentLogKinds` in `settings.json`). Inside: `0NN_` meta files pin to the top (showing their `NN` prefix, no status tint), `MNN_` milestones show `#<iteration>` tinted by `status`.
 
 `comments/` stays flat — it doesn't accept subfolders.
 

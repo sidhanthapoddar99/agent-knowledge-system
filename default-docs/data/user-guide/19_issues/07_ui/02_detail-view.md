@@ -75,7 +75,7 @@ Each section lists its files as links to **their own URLs** (`/<issue>/notes/<na
   | cross | `dropped` | red (`--color-error`) |
 
   Group folders show a **done/total** count; the section header shows the issue-wide done/total with an amber dot when anything is in the Review category. The same legend renders live (real symbols, real colors) on every issue's **Guide** panel.
-- **Agent log** — activity folders render `NN <symbol> <name> … <count>` (the kind symbol's tooltip names it); inside, `0NN_` meta files pin badge-less on top and milestones show `#<iteration>` tinted by status (grey/blue/green/red).
+- **Agent log** — activity folders render `NN <symbol> <name> … <count>` (the kind symbol's tooltip names it); inside, `0NN_` meta files pin on top showing their `NN` prefix (neutral) and milestones show `#<iteration>` tinted by status (grey/blue/green/red).
 - **Agent memory** — `memory.md` pins first.
 - Ordering everywhere: bucket (agent-log meta first) → iteration → numeric prefix value → name. Ascending, one rule for all sections.
 - Collapse state of sections and folders persists per issue.

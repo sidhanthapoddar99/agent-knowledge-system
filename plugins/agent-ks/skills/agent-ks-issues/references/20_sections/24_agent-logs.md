@@ -28,7 +28,7 @@ agent-log/
 
 - **`NNN`** orders (2–5 digit prefix, by value, gap-spaced); **`<code>`** is the kind;
   **`<name>`** describes the run.
-- **Pinned `0NN` slots** (no `iteration` frontmatter, render badge-less). The
+- **Pinned `0NN` slots** (no `iteration` frontmatter; each shows its neutral `NN` order prefix in the sidebar, not the status-tinted `#N` badge, which is milestone-only). The
   recommended **standard set of six** — a convention, not code-enforced — keeps every
   activity uniform so the next agent knows exactly where each thing lives:
   `00_goal` · `01_summary` · `02_task_list` · `03_working` (raw byproducts / research /

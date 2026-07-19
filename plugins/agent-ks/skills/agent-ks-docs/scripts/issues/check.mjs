@@ -412,7 +412,7 @@ for (const entry of issueFolders) {
         try { fm = matter(fs.readFileSync(path.join(logDir, e.name, f.name), 'utf-8')).data || {}; }
         catch { continue; } // malformed fm already reported by the generic walk
         if (isMeta && fm.iteration !== undefined) {
-          warnings.push(`${rel}: 0NN_ meta file carries \`iteration\` — meta files are badge-less; milestones use a leading digit ≥ 1`);
+          warnings.push(`${rel}: 0NN_ meta file carries \`iteration\` — meta files show a plain \`NN\` prefix (no \`#N\` badge); milestones use a leading digit ≥ 1`);
         }
         if (!isMeta && fm.iteration === undefined) {
           warnings.push(`${rel}: milestone without \`iteration:\` frontmatter — no #N badge; falls back to sequence`);

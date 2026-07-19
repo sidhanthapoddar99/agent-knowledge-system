@@ -67,9 +67,9 @@ Declare only your *custom* codes; the defaults are always available (**merge** s
 
 An activity folder renders as **`NN  <symbol>  <name>  …  <count>`** — numeric prefix, kind symbol up front (hover shows the kind name via the fast tooltip), the code-stripped name, and the file count on the right.
 
-## Meta files and standard slots — pinned, badge-less
+## Meta files and standard slots — pinned, prefix-numbered
 
-`0NN_`-prefixed entries (no `iteration` frontmatter) pin to the top of the folder, badge-less, above the milestones. The recommended shape is a **standard set of six slots** — a convention, not enforced by code, that keeps every activity uniform so a reader (or the next agent) knows exactly where to look:
+`0NN_`-prefixed entries (no `iteration` frontmatter) pin to the top of the folder, above the milestones. Each shows its **`NN` order prefix** in the sidebar (neutral — the status-tinted `#N` badge is milestone-only). The recommended shape is a **standard set of six slots** — a convention, not enforced by code, that keeps every activity uniform so a reader (or the next agent) knows exactly where to look:
 
 | Slot | Holds |
 |---|---|

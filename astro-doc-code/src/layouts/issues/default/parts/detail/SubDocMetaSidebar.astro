@@ -22,7 +22,7 @@ const { toc } = Astro.props;
         <ul class="issue-meta-toc">
           {toc.map((h) => (
             <li class={`issue-meta-toc__level-${h.level}`}>
-              <a href={`#${h.id}`} class="issue-meta-toc__link" data-toc-link={h.id}>{h.text}</a>
+              <a href={`#${h.id}`} class="issue-meta-toc__link" data-toc-link={h.id} data-tip={h.text}>{h.text}</a>
             </li>
           ))}
         </ul>

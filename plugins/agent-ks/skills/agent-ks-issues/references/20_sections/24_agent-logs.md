@@ -17,6 +17,9 @@ agent-log/
 │   ├── 00_goal.md               ← pinned meta — generic names, kind is on the folder
 │   ├── 01_summary.md            ← outcome TL;DR (written when the run wraps)
 │   ├── 02_task_list.md          ← live checklist / status (update as you go)
+│   ├── 03_working.md            ← raw byproducts worked on (file → 03_working/ if it grows)
+│   ├── 04_benchmark.md          ← comparable measurements (perf/evals/A-B); template below
+│   ├── 05_notes.md              ← run handover — caveats, next-iteration issues, discoveries
 │   ├── 101_token-bucket.md      ← milestone: MNN_<name>, M ≥ 1 → shown "#<iteration> token bucket"
 │   └── 102_redis-backing.md
 ├── 020_au_edge-cases/
@@ -25,16 +28,28 @@ agent-log/
 
 - **`NNN`** orders (2–5 digit prefix, by value, gap-spaced); **`<code>`** is the kind;
   **`<name>`** describes the run.
-- **Pinned meta files** (`0NN`, no `iteration` frontmatter): `00_goal.md`,
-  `01_summary.md`, `02_task_list.md` are the standard trio — not a fixed set. Add more
-  `0NN` meta as needed (e.g. `03_references.md`, an `attention-needed` file for mid-run
-  escalations) and omit any an activity doesn't need — a folder with only milestones is
-  valid. Meta files render badge-less.
+- **Pinned `0NN` slots** (no `iteration` frontmatter, render badge-less). The
+  recommended **standard set of six** — a convention, not code-enforced — keeps every
+  activity uniform so the next agent knows exactly where each thing lives:
+  `00_goal` · `01_summary` · `02_task_list` · `03_working` (raw byproducts / research /
+  sub-agent reports / scratch / discussion) · `04_benchmark` (comparable measurements) ·
+  `05_notes` (run handover — caveats, issues to fix next iteration, future-useful
+  discoveries). The set stays **open** — add more `0NN` slots (`06_references`, an
+  `attention-needed` escalation file) as a run needs them.
+- **File or folder.** Each slot is a **file** by default (`03_working.md`) and becomes a
+  same-named **folder** (`03_working/…`) only when its content must split across files —
+  common for `03`–`05`. File → pinned row; folder → nested subsection; same `0NN` prefix.
+- **Present even when blank.** By convention the standard slots are kept present even
+  empty — a stub with `title` frontmatter and a short callout stating what the slot is
+  for (and, for `03`–`05`, that it can grow into a folder). A not-applicable slot keeps
+  the stub but says so, so a reviewer sees it was considered, not forgotten. `00`–`02`
+  are near-always filled; `03`–`05` are the ones that most often sit blank-with-callout.
 - **Milestones** are `MNN_<name>.md` with `M ≥ 1` (`101_`, `102_`, … `201_`…): the
-  leading non-zero digit is what separates them from `0NN` meta. Displayed as
+  leading non-zero digit is what separates them from `0NN` slots. Displayed as
   `#<iteration> <name>` — `iteration` is a frontmatter field independent of the file
   prefix (prefix orders on disk; `iteration` drives the badge).
-- **Don't scaffold empty folders** — create activities on demand.
+- **Don't scaffold empty *activity* folders** — create an activity on demand; but once
+  an activity exists, the blank-with-callout slots above are the going-forward shape.
 
 ## Kinds — the code in the folder name
 
@@ -189,9 +204,13 @@ steps when the run is small (a burst logged after the fact is fine); what must
 survive any adaptation is the invariants: full milestone frontmatter, one
 milestone per mapping unit, summary at wrap.
 
-1. **Scaffold before starting.** `ls <issue>/agent-log/` → next `NNN_` value →
-   create `NNN_<code>_<name>/` with `00_goal.md` (what triggered the run, what
-   "done" looks like) — and `02_task_list.md` when there's live state to track.
+1. **Scaffold before starting.** Run
+   `agent-ks issue new-agent-log <issue-id> --kind <code> --name <slug>` — it picks the
+   next gap-spaced `NNN_` prefix and creates `NNN_<code>_<name>/` pre-seeded with all six
+   standard slots (blank + callout; `04_benchmark` carries the full template). Pass
+   `--goal "…"` to fill `00_goal` in one shot. Then fill `00_goal` (what triggered the
+   run, what "done" looks like) and delete the callouts as you fill each slot. (By hand:
+   `ls <issue>/agent-log/` → next value → create the folder and slot files yourself.)
 2. **Stub the milestone when its unit begins** — a phase kicks off, a loop
    iteration starts: write the `1NN_` file with full frontmatter,
    `status: in-progress`, and a couple of lines on what it's attempting. Now the
@@ -240,6 +259,33 @@ Orchestrated runs (workflows, loops, subagent fan-outs) either have the
 orchestrator write these files or explicitly instruct their agents to — an
 agent's final message is not persistence.
 
+### The `03`–`05` slots — what each holds
+
+The three lower `0NN` slots (each a file, or a same-named folder when it grows):
+
+- **`03_working`** — raw byproducts the run worked on: research, sub-agent reports,
+  scratch analyses, discussion. It's the **raw vs curated** split against the issue's
+  top-level `notes/`: `03_working` is the provenance a note is *built from* (*what you
+  examined*), `notes/` is the synthesis a reader cites (*what you concluded*), and a
+  milestone links both. When a raw report *is itself* the durable citable artifact, it
+  goes straight to `notes/` — `03_working` earns folder-hood only on a raw-then-curate
+  split. Folder files: descriptive names (`research-01_<topic>.md`), each with `title`.
+- **`04_benchmark`** — comparable measurements (perf, evals, A/B). The value is
+  **comparability**, so use a fixed template (Method / Results table / Claim-vs-measured
+  / Artifacts) so a reviewer can scan a whole cycle's trend. Numbers inline in
+  `04_benchmark.md`; promote to a `04_benchmark/` folder only when it produces heavy
+  artifacts (traces, CSVs, before/after screenshots).
+- **`05_notes`** — the run's **handover to the next run**: caveats and gotchas, issues
+  found but deferred, discoveries useful later. Disambiguate: durable output/decisions →
+  issue `notes/`; facts that stay true across runs → `agent-memory/`; run-to-next-run
+  notes → `05_notes`.
+
+A slot promoted to a folder sits at the activity's **second level**
+(`agent-log/<activity>/03_working/<f>`), the loader's max depth — keep files directly
+inside; a folder nested deeper is warned + ignored. Full template + worked example:
+user-guide `19_issues/05_sub-docs/05_agent-log.md` (the canonical source — when this and
+the user-guide disagree, the user-guide wins).
+
 ### Detail bar — reconstructable without the transcript
 
 Structured prose is the floor; **substance is the bar**. Each milestone (and
@@ -284,6 +330,7 @@ For rapid ad-hoc changes landed in a burst, pick the logging home by how much
 ## When NOT to edit
 
 - Don't rewrite history — append; prior milestones stay as written.
-- Don't scaffold empty activity folders or meta files nothing needs.
+- Don't scaffold empty *activity* folders — create an activity on demand. (Within an
+  activity, the blank-with-callout standard slots are the intended shape, not clutter.)
 
 For a worked example of a long autonomous run, see [63_agent-loops.md](../60_examples/63_agent-loops.md).

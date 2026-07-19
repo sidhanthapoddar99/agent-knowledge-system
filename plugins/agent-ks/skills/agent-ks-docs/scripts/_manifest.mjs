@@ -129,6 +129,17 @@ export const MANIFEST = [
     ],
   },
   {
+    bin: 'docs-new-agent-log', group: 'issue', verb: 'new-agent-log', category: 3, script: 'issues/new-agent-log.mjs', runtime: 'mjs',
+    summary: 'Scaffold a new agent-log activity folder pre-seeded with the standard six slots',
+    flags: [
+      { name: 'kind', value: 'code', desc: 'activity kind code (lp/au/rf/it/wf or a custom agentLogKinds code) — required' },
+      { name: 'name', value: 'slug', desc: 'kebab-case run name, sanitised to [a-z0-9-] — required' },
+      { name: 'goal', value: 'text', desc: 'seed 00_goal.md with this text instead of its placeholder callout' },
+      { name: 'json', desc: 'structured JSON output' },
+      { name: 'tracker', value: 'path', desc: 'non-default tracker' },
+    ],
+  },
+  {
     bin: 'docs-review-queue', group: 'issue', verb: 'review-queue', category: 3, script: 'issues/review-queue.mjs', runtime: 'mjs',
     summary: 'Items awaiting review (status=review or open w/ review subtask)',
     flags: [

@@ -132,7 +132,9 @@ YYYY-MM-DD-<slug>/                    ← the issue folder
 │   └── 02_build/…                    ← group folder — shows done/total
 ├── agent-log/
 │   └── 010_lp_implement-x/           ← NNN_<code>_<name>/ — code = kind
-│       ├── 00_goal.md                ← pinned meta files (open set)
+│       ├── 00_goal.md                ← standard 0NN slots (goal/summary/task_list…
+│       ├── 03_working.md             …  03_working · 04_benchmark · 05_notes)
+│       ├── 05_notes.md               ← each a file, or a same-named folder if it grows
 │       └── 101_milestone.md          ← MNN_ + iteration frontmatter → "#1"
 └── agent-memory/
     ├── memory.md                     ← pinned index — read this first
@@ -152,8 +154,11 @@ ${kindsTable(kinds)}
 - Add custom kinds in \`settings.json\` — merged over the defaults above:
   \`"agentLogKinds": { "ex": { "name": "experiment", "icon": "flask", "desc": "…" } }\`
 - Inside an activity folder:
-  - **Meta files first** — \`00_goal.md\`, \`01_summary.md\`, \`02_task_list.md\`.
-    A standard-but-**open** set: add more \`0NN_\` files, omit what's not needed.
+  - **Standard \`0NN\` slots first** (convention, kept present even when blank):
+    \`00_goal\` · \`01_summary\` · \`02_task_list\` · \`03_working\` (raw byproducts /
+    research the run worked on) · \`04_benchmark\` (comparable measurements) ·
+    \`05_notes\` (run handover — caveats, next-iteration issues, discoveries). Each is
+    a **file, or a same-named folder** when it grows. The set stays open — add more.
   - **Milestones** — \`MNN_<name>.md\` (M ≥ 1), shown as **#\\<iteration\\>**.
     A milestone is a substantial completed chunk (~3–6 per activity), not a step —
     per kind: one per workflow phase · loop iteration (roll up rapid rounds) ·

@@ -67,15 +67,39 @@ Declare only your *custom* codes; the defaults are always available (**merge** s
 
 An activity folder renders as **`NN  <symbol>  <name>  …  <count>`** — numeric prefix, kind symbol up front (hover shows the kind name via the fast tooltip), the code-stripped name, and the file count on the right.
 
-## Meta files — pinned, badge-less
+## Meta files and standard slots — pinned, badge-less
 
-`0NN_`-prefixed files (no `iteration` frontmatter) pin to the top of the folder, badge-less. The standard trio:
+`0NN_`-prefixed entries (no `iteration` frontmatter) pin to the top of the folder, badge-less, above the milestones. The recommended shape is a **standard set of six slots** — a convention, not enforced by code, that keeps every activity uniform so a reader (or the next agent) knows exactly where to look:
 
-- `00_goal.md` — what the run is trying to achieve (generic name — the kind is already on the folder).
-- `01_summary.md` — outcome TL;DR, written when the run wraps.
-- `02_task_list.md` — the run's live checklist. *This is the working checklist for one run, **not** the issue's durable `subtasks/` plan.*
+| Slot | Holds |
+|---|---|
+| `00_goal` | What the run is trying to achieve (generic name — the kind is already on the folder). |
+| `01_summary` | Outcome TL;DR, written when the run wraps. |
+| `02_task_list` | The run's live checklist. *Working checklist for one run, **not** the issue's durable `subtasks/` plan.* |
+| `03_working` | Raw byproducts the run worked on — research, sub-agent reports, scratch analyses, discussion records, intermediate dumps. |
+| `04_benchmark` | Comparable measurements — perf / evals / A-B (uses the [benchmark template](#04_benchmark--comparable-measurements) below). |
+| `05_notes` | Run **handover** — caveats, issues found to fix next iteration, things discovered that help future work. |
 
-The set is **standard but open**: the user *or the agent* can add more (`03_references.md`, …), and any of them can be omitted — a folder with only milestones is valid.
+### File or folder — grow only when you need to
+
+Every slot is a **file by default** (`03_working.md`) and becomes a **folder of the same name** (`03_working/`) only when its content needs splitting across multiple files (`03_working/research-01_shaders.md`, `research-02_batching.md`, …). Same numeric prefix either way; the file renders as a pinned meta row, the folder as a nested subsection. This applies to any slot but is the common case for `03`–`05`.
+
+### Present even when blank
+
+By convention the standard slots are kept **present even when empty** — a slot with nothing yet is a stub file carrying a short placeholder callout, so the structure stays uniform and there's no guesswork about where a thing belongs:
+
+```markdown
+---
+title: "Working"
+---
+
+> [!NOTE]
+> Blank — nothing recorded here yet. This slot holds the raw byproducts the
+> run worked on (research, sub-agent reports, scratch, discussion). If it grows,
+> convert this file into a `03_working/` folder and split across files.
+```
+
+A slot that's genuinely not applicable keeps the stub but says so (`> [!NOTE]\n> Not applicable — this run produced no benchmarks.`) — a reviewer then knows it was considered, not forgotten. `00`–`02` are near-always filled; `03`–`05` are the ones that most often sit blank-with-callout. The set stays **open** — add more `0NN_` slots (`06_references`, an `attention-needed` escalation file, …) as a run needs them.
 
 ## Milestones
 
@@ -114,6 +138,80 @@ The Goal / Approach / Result / Next body shape isn't enforced, but it's what mak
 ### Ordering
 
 Within a level, entries sort by: **bucket** (non-iteration files first — meta files and folders) → **iteration number** → **numeric prefix value** (mixed widths sort by value, so `70_` before `200_`) → filename. So meta files pin up top and milestones follow as `#1, #2, …` regardless of prefix widths.
+
+## What the `03`–`05` slots hold
+
+### `03_working` — raw provenance, distinct from curated `notes/`
+
+`03_working` is where the run keeps the **raw material it worked on** — research, sub-agent reports, scratch analyses, saved discussion. The distinction from the issue's top-level `notes/` is **raw vs curated**, and it's a pipeline, not a contradiction of the "graduate to `notes/`" rule:
+
+- **`03_working`** = the raw material the run looked at (*what you examined*).
+- **`notes/`** (issue-level) = the curated synthesis a future reader cites (*what you concluded*).
+- A **milestone** links both — "researched X (see `03_working/research-01_x.md`), concluded Y (see `../../notes/02_decision.md`)".
+
+As a folder, files are descriptively named — `research-01_<topic>.md`, `discuss-01_<topic>.md` — each with `title` frontmatter. When a raw report *is itself* the durable, citable artifact with no curation step, put it straight in the issue's `notes/`; `03_working` earns folder-hood only when there's a raw-then-curate separation.
+
+### `04_benchmark` — comparable measurements, with a fixed shape
+
+The slot is the easy part; the value is **comparability**. A per-stage benchmark is only useful if every run reports the same metrics, method, and hardware baseline, so a reviewer can scan a whole cycle and read the trend. Without a fixed shape you get nine incomparable files. Use this template (columns are *suggested*, not mandatory — keep the ones that fit):
+
+```markdown
+---
+title: "Benchmark — <stage/activity name>"
+---
+
+# Benchmark — <what was measured>
+
+## Method
+- Baseline: <commit/branch before> vs <commit/branch after>
+- Hardware: <cpu / gpu / RAM — the reference floor>
+- Scenario: <exact repro: doc size, input pattern, iterations, tool>
+- Instrument: <deterministic unit measure / Playwright + performance.memory / DevTools trace>
+
+## Results
+| Metric | Before | After | Delta | Notes |
+|--------|--------|-------|-------|-------|
+| <e.g. retained undo bytes / heap / frame time / redraw ms> | | | | |
+
+## Claim vs measured
+<the stage claimed X; measured Y; verdict: confirmed / partial / regression /
+no-change — for a non-perf stage, "no regression" is the passing result>
+
+## Artifacts
+<links to heavy artifacts — traces, screenshots, CSVs>
+```
+
+Lightweight numbers live inline in `04_benchmark.md`. When a run produces heavy artifacts (traces, CSVs, before/after screenshots), promote the slot to a `04_benchmark/` folder — the template becomes `04_benchmark/00_report.md` and the artifacts sit beside it.
+
+### `05_notes` — the run's handover
+
+`05_notes` is written **from this run to the next** — the parting notes a fresh session needs: caveats and gotchas hit along the way, issues found but deferred ("fix in the next iteration"), and things discovered that will help future work. Keep it disambiguated from its two neighbours:
+
+- Durable output / decisions a reader cites → issue-level **`notes/`** (not this slot).
+- Facts that stay true across runs → **`agent-memory/`**.
+- Notes *from this run to the next run* → **`05_notes`**.
+
+### Depth ceiling
+
+A slot promoted to a folder sits at the activity folder's second level (`agent-log/<activity>/03_working/<file>`), which is the loader's maximum supported depth. Keep files **directly inside** the slot folder — a further nested folder lands at level 3 and is warned + ignored.
+
+### Worked example
+
+```
+agent-log/
+└── 080_au_gpu-research/
+    ├── 00_goal.md
+    ├── 01_summary.md
+    ├── 02_task_list.md
+    ├── 03_working/                   ← promoted to a folder — several raw reports
+    │   ├── research-01_shaders.md    ← raw sub-agent report (title frontmatter)
+    │   ├── research-02_batching.md
+    │   └── discuss-01_tradeoffs.md   ← saved discussion record
+    ├── 04_benchmark.md               ← file — numbers inline, no heavy artifacts
+    ├── 05_notes.md                   ← handover: caveats + what to try next iteration
+    └── 101_research-fanout.md        ← milestone links 03_working + the curated note   #1
+# curated conclusion lives in the issue's notes/02_gpu-approach.md, cited by 101_research-fanout.md
+```
 
 ## Rules of the road
 

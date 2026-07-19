@@ -45,6 +45,7 @@ There is **one binary** (`agent-ks`, plus its Windows `agent-ks.cmd` twin) routi
 | `agent-ks issue agent-logs <id>` | Last N agent-log entries | `--last <N>` · `--full` · `--json` · `--tracker` |
 | `agent-ks issue add-comment <id>` | Append a comment (auto-incremented prefix) | `--author <name>` · `--body <md>` · `--date` · `--slug` · `--tracker` |
 | `agent-ks issue add-agent-log <id>` | Append an agent-log entry | `--body <md>` · `--status <state>` · `--iteration <N>` · `--agent <name>` · `--group <a[/b]>` · `--date` · `--slug` · `--tracker` |
+| `agent-ks issue new-agent-log <id>` | Scaffold an activity folder with the six standard slots | `--kind <code>` · `--name <slug>` · `--goal <text>` · `--json` · `--tracker` |
 | `agent-ks issue review-queue` | Items awaiting review (Review-category status — `review`/`input-needed` — + any active issue w/ a Review-category subtask) | `--json` · `--tracker` |
 
 **Search scoping** (`list`): `--path` matches the file/folder path text; `--meta` matches only the structured layer (frontmatter + `settings.json`); `--count` summarises instead of dumping excerpts. `agent-ks issue list --path astro --status all` finds the astro issue in one call.

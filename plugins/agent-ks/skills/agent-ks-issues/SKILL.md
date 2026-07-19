@@ -168,7 +168,13 @@ meta files, then `MNN_` milestone files (`101_…`, `102_…`).
   `in-progress` when its unit begins → update to `success`/`failed` with results on
   completion. Dense deliverables a run produces (architecture write-ups, diagrams,
   HTML artifacts via the **agent-ks-artifacts** skill) graduate to `notes/` —
-  the milestone links to them, never inlines them.
+  the milestone links to them, never inlines them. An activity's pinned `0NN` slots
+  follow a **standard set of six** (convention, not enforced): `00_goal` · `01_summary`
+  · `02_task_list` · `03_working` (raw byproducts/research the run worked on) ·
+  `04_benchmark` (comparable measurements) · `05_notes` (run handover — caveats,
+  next-iteration issues, discoveries). Each is a **file, or a same-named folder** when it
+  grows, and is kept **present even when blank** (stub + a fill-me callout). See
+  [24_agent-logs.md](references/20_sections/24_agent-logs.md).
 - **The tracker is the durable home — a run's transcript is not.** Anything produced
   *inside* a run (a workflow, loop, or subagent) that outlives the run must be written
   into the issue, not left in prompts, transcripts, or agent return values. This is an
@@ -228,7 +234,8 @@ Full detail + recipes: [24_agent-logs.md](references/20_sections/24_agent-logs.m
 
 The plugin ships one entrypoint, **`agent-ks`**, on `PATH`. Tracker work uses the
 `issue` group — `agent-ks issue list / show / subtasks / agent-logs / set-state /
-add-comment / add-agent-log / review-queue` — plus `agent-ks check issues`,
+add-comment / add-agent-log / new-agent-log / review-queue` (`new-agent-log` scaffolds a
+fresh activity folder with the six standard slots) — plus `agent-ks check issues`,
 `agent-ks find`, and `agent-ks move` (link-aware). Discover with `agent-ks help`;
 uniform contract (`--help`, `--json`, exit codes 0/1/2). **Inside a git
 worktree** (agent sandboxes): the CLI's `.env` search stops at the worktree

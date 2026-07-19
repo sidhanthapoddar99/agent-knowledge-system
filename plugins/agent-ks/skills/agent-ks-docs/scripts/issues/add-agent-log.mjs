@@ -3,15 +3,15 @@
  * add-agent-log.mjs — append an agent-log entry for an issue.
  * Auto-increments iteration if not provided.
  *
- * Optional --group <a>[/<b>] places the file under agent-log/<a>/[<b>/]
- * — up to 2 levels of subfolders, matching the loader's depth cap.
+ * Optional --group <a>[/<b>/…] places the file under agent-log/<a>/[<b>/…]
+ * — nested subfolders up to the loader's depth cap (MAX_SUBFOLDER_DEPTH).
  */
 
 import fs from 'node:fs';
 import path from 'node:path';
 import {
   resolveTracker, isInsideAllowed, nextNumericPrefix, pad, todayISO,
-  readIssueAgentLogs, parseArgs, printHelp, relForLog,
+  readIssueAgentLogs, parseArgs, printHelp, relForLog, MAX_SUBFOLDER_DEPTH,
 } from './_lib.mjs';
 
 const args = parseArgs(process.argv.slice(2));
@@ -20,10 +20,10 @@ const id = args._[0];
 if (args.flags.help || !id || !args.flags.body) {
   printHelp('issue add-agent-log', [
     '<issue-id> --body <markdown> [--status in-progress|success|failed] [--iteration N]',
-    '[--agent <name>] [--date YYYY-MM-DD] [--slug <short-slug>] [--group <a>[/<b>]] [--tracker <path>]',
+    '[--agent <name>] [--date YYYY-MM-DD] [--slug <short-slug>] [--group <a>[/<b>/…]] [--tracker <path>]',
     '',
-    'Append an agent-log file under <issue>/agent-log/ (or .../<a>/[<b>/] with --group).',
-    '--group accepts up to 2 slash-separated segments (e.g. "exploration" or "exploration/phase-1").',
+    'Append an agent-log file under <issue>/agent-log/ (or .../<a>/[<b>/…] with --group).',
+    `--group accepts up to ${MAX_SUBFOLDER_DEPTH} slash-separated segments (e.g. "exploration" or "exploration/phase-1"); up to 3 is the recommended convention.`,
     'Iteration auto-increments from the highest existing iteration / sequence + 1.',
     'Default status: in-progress.  Default agent: claude.  Default slug: iter-<N>.',
   ]);
@@ -35,8 +35,8 @@ const baseDir = path.join(tracker, id, 'agent-log');
 const groupSegments = args.flags.group
   ? args.flags.group.split('/').filter(Boolean)
   : [];
-if (groupSegments.length > 2) {
-  console.error(`--group accepts at most 2 segments (got ${groupSegments.length}: "${args.flags.group}")`);
+if (groupSegments.length > MAX_SUBFOLDER_DEPTH) {
+  console.error(`--group accepts at most ${MAX_SUBFOLDER_DEPTH} segments (got ${groupSegments.length}: "${args.flags.group}")`);
   process.exit(1);
 }
 const dir = groupSegments.length > 0 ? path.join(baseDir, ...groupSegments) : baseDir;

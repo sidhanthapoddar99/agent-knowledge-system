@@ -30,9 +30,9 @@ subtasks/
 
 The prefix drives sort order (numeric), the slug becomes the default display title. Files without a numeric prefix sort after numbered ones, alphabetically.
 
-## Subfoldering — up to 2 levels
+## Subfoldering — up to 5 levels (up to 3 recommended)
 
-`subtasks/` accepts up to **two levels of subfolders** for grouping a longer breakdown by phase or theme. The folder is a **grouping label only** — there's no folder body file. Every `.md` leaf is a first-class subtask with its own state, URL, and count.
+`subtasks/` accepts nested subfolders up to 5 levels deep for grouping a longer breakdown by phase or theme; the recommended convention is up to 3 levels. The folder is a **grouping label only** — there's no folder body file. Every `.md` leaf is a first-class subtask with its own state, URL, and count.
 
 ```
 subtasks/
@@ -55,8 +55,8 @@ Rules:
   // subtasks/02_implementation/settings.json
   { "title": "Implementation" }
   ```
-- The deepest level (level 2) is **files-only**. Anything nested deeper than `subtasks/<group>/<subgroup>/<file>.md` is warned by the loader and ignored.
-- If you find yourself wanting a third level, the work has probably outgrown a single issue — split it into a sibling issue.
+- Folders may nest up to 5 levels deep; a folder nested beyond level 5 is warned by the loader and ignored. Files may live at any level, and the recommended convention is up to 3 levels.
+- If you find yourself wanting a fourth level (past the recommended three), the work has probably outgrown a single issue — split it into a sibling issue. The hard cap is 5.
 
 ## Frontmatter
 

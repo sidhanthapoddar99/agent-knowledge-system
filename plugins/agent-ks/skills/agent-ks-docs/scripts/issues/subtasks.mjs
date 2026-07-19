@@ -3,7 +3,7 @@
  * subtasks.mjs — list subtasks for one issue, or across all issues.
  *
  * Default: grouped output that mirrors the on-disk folder grouping (subtasks
- * may live under up to 2 levels of grouping folders). Pass `--flat` to get a
+ * may live under nested grouping folders, up to the loader's depth cap). Pass `--flat` to get a
  * one-line-per-subtask list instead — handy when you want to pipe into
  * another tool and don't care about the grouping intent.
  *
@@ -24,7 +24,7 @@ if (args.flags.help || (!positional && !args.flags.all)) {
     '<issue-id|--all> [--status open,in-progress,review,done,…] [--flat] [--json] [--tracker <path>]',
     '',
     'List subtasks for one issue, or across all issues with --all.',
-    'Default: grouped output (mirrors the subtasks/ folder tree, up to 2 levels).',
+    'Default: grouped output (mirrors the subtasks/ folder tree, nested up to the depth cap).',
     '--flat   one-line-per-subtask, no grouping (issue<TAB>file<TAB>status<TAB>title).',
     '--json   machine-readable; carries groupPath per subtask + group metadata.',
     'Default scope: everything not in the Closed category (done/dropped hidden).',

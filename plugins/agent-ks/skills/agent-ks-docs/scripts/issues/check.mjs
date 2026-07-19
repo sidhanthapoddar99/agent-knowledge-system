@@ -25,7 +25,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
-import { resolveTracker, listIssueFolders, readVocabulary, parseArgs, printHelp, STATUSES, TERMINAL_STATUSES, normalizeStatus, LEGACY_STATUS_MAP } from './_lib.mjs';
+import { resolveTracker, listIssueFolders, readVocabulary, parseArgs, printHelp, STATUSES, TERMINAL_STATUSES, normalizeStatus, LEGACY_STATUS_MAP, MAX_SUBFOLDER_DEPTH } from './_lib.mjs';
 import { readJsonChecked, reportAndExit } from '../_check-lib.mjs';
 
 const args = parseArgs(process.argv.slice(2));
@@ -270,7 +270,7 @@ for (const entry of issueFolders) {
     }
   }
 
-  // Subtasks (recursive — up to 2 levels of grouping folders allowed).
+  // Subtasks (recursive — nested grouping folders up to MAX_SUBFOLDER_DEPTH).
   // Folder = grouping label only; no folder body file. An optional
   // settings.json on a group folder may set its display title.
   const subDir = path.join(folder, 'subtasks');
@@ -282,8 +282,8 @@ for (const entry of issueFolders) {
       catch { return; }
       for (const e of entries) {
         if (e.isDirectory()) {
-          if (segments.length >= 2) {
-            warnings.push(`${id}/subtasks/${[...segments, e.name].join('/')}/: exceeds 2-level depth cap, ignored by loader`);
+          if (segments.length >= MAX_SUBFOLDER_DEPTH) {
+            warnings.push(`${id}/subtasks/${[...segments, e.name].join('/')}/: exceeds ${MAX_SUBFOLDER_DEPTH}-level depth cap, ignored by loader`);
             continue;
           }
           walkSubtasks(path.join(absDir, e.name), [...segments, e.name]);
@@ -326,10 +326,10 @@ for (const entry of issueFolders) {
     warnings.push(`${id}/: AI-handoff-bound issue has no subtasks — consider adding at least one as the agent's handoff anchor`);
   }
 
-  // Free-form sub-doc folders: depth cap (max 2 levels — anything deeper is
-  // ignored by the loader; depth 0 = root, depth 1 = group, depth 2 = subgroup)
-  // plus schema-drift on every .md frontmatter. Brainstorm and agent-memory
-  // share the notes frontmatter surface (free-form docs, no extra machinery).
+  // Free-form sub-doc folders: depth cap (MAX_SUBFOLDER_DEPTH levels — anything
+  // deeper is ignored by the loader; depth 0 = files at root, each nested folder
+  // adds a level) plus schema-drift on every .md frontmatter. Brainstorm and
+  // agent-memory share the notes frontmatter surface (free-form docs).
   const FM_KEYS_BY_TYPE = {
     notes: NOTE_FM_KEYS,
     brainstorm: NOTE_FM_KEYS,
@@ -347,8 +347,8 @@ for (const entry of issueFolders) {
       for (const e of entries) {
         if (e.isDirectory()) {
           if (sub === 'comments') continue; // comments are flat
-          if (segments.length >= 2) {
-            warnings.push(`${id}/${sub}/${[...segments, e.name].join('/')}/: exceeds 2-level depth cap, ignored by loader`);
+          if (segments.length >= MAX_SUBFOLDER_DEPTH) {
+            warnings.push(`${id}/${sub}/${[...segments, e.name].join('/')}/: exceeds ${MAX_SUBFOLDER_DEPTH}-level depth cap, ignored by loader`);
             continue;
           }
           walk(path.join(absDir, e.name), [...segments, e.name]);

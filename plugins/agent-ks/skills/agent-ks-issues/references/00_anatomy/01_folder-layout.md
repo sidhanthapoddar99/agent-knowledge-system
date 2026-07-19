@@ -13,15 +13,15 @@ Every tracker has the same skeleton:
     ├── glossary.md                              ← optional — this issue's colour legend / terms
     ├── comments/                                ← flat evolution log — NO subfolders
     │   └── NNN_<slug>.md                        ← NNN = the comment id (CLI-numbered)
-    ├── brainstorm/                              ← active deliberation (up to 2 subfolder levels)
+    ├── brainstorm/                              ← active deliberation (up to 5 subfolder levels, up to 3 is recommended)
     │   ├── NN_<kind>_<slug>.md                  ← kind = full word (research/explore/idea/discuss), optional
     │   └── NN_<slug>/                           ← folder = one multi-file brainstorm thread
     │       └── 01_explore_options.md
-    ├── notes/                                   ← finalized output + references (up to 2 levels)
+    ├── notes/                                   ← finalized output + references (up to 5 levels, up to 3 is recommended)
     │   ├── <slug>.md                            ← prefix optional — curated reading order when used
     │   └── <group>/
     │       └── <slug>.md
-    ├── subtasks/                                ← the plan (up to 2 subfolder levels)
+    ├── subtasks/                                ← the plan (up to 5 subfolder levels, up to 3 is recommended)
     │   ├── NN_<slug>.md                         ← root-level leaf
     │   └── NN_<group>/                          ← grouping folder (label only, no body file)
     │       ├── settings.json                    ← optional — { "title": "..." } display title
@@ -43,8 +43,8 @@ Every tracker has the same skeleton:
 
 ## Subfolder rules (all content sections except `comments/`)
 
-- Up to **2 levels of nesting** (`<group>/<subgroup>/<file>.md`). Anything deeper is logged as a warning by the loader and silently skipped — never relied on. If you reach for a third level, that's the signal to split the issue, not to nest deeper.
-- **Files and folders can mix at every level** that allows folders. So `notes/intro.md` can sit beside `notes/design/`, and `notes/design/overview.md` can sit beside `notes/design/phase-1/`. Only the deepest level (level 2) is files-only.
+- Up to **5 levels of nesting** (`<group>/<subgroup>/<…>/<file>.md`). Anything deeper is logged as a warning by the loader and silently skipped — never relied on. **The recommended convention is up to 3 levels** — keep trees shallow; reserve the full 5 only when the structure truly demands it.
+- **Files and folders can mix at every level** that allows folders. So `notes/intro.md` can sit beside `notes/design/`, and `notes/design/overview.md` can sit beside `notes/design/phase-1/`. Only the deepest level (level 5) is files-only.
 - **`comments/` stays flat** — no subfolders, ever.
 - **Sidebar counts:** subtask group folders show **done/total**; other sections show
   the plain descendant count. Ordering is ascending everywhere.

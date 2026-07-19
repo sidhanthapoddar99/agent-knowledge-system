@@ -1,11 +1,12 @@
 ---
 /**
- * Recursively render a 2-level tree of notes or agent-logs in the sidebar.
+ * Recursively render a nested tree of notes or agent-logs in the sidebar.
  * Files at this level become <a> rows; subgroups become <details> blocks
  * that recursively render the same component for their inner tree.
  *
- * The depth cap (2) is enforced upstream by the loader, so this component
- * doesn't need a guard — it stops naturally when `tree.groups` is empty.
+ * The depth cap (MAX_SUBFOLDER_DEPTH) is enforced upstream by the loader, so
+ * this component doesn't need a guard — it stops naturally when `tree.groups`
+ * is empty.
  */
 import type { AgentLogKind, IssueAgentLog, IssueNote } from '@loaders/issues';
 import {

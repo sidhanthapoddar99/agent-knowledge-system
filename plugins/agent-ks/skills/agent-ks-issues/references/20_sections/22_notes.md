@@ -47,7 +47,7 @@ A numeric prefix is **optional** for notes (folders *and* files). When you do nu
 
 ## Subfolders
 
-May live at the root of `notes/`, or one or two folders deeper for grouping (e.g. `notes/design/phase-1/kickoff.md`). Folder names are freeform. **Two levels is the cap** — if you reach for a third, that's a sign to split into a sibling group or a new issue.
+May live at the root of `notes/`, or several folders deeper for grouping (e.g. `notes/design/phase-1/kickoff.md`). Folder names are freeform. **5 levels is the hard cap; up to 3 is the recommended convention** — if you reach past three, that's usually a sign to split into a sibling group or a new issue.
 
 ## Add a note
 

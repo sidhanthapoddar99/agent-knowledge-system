@@ -122,7 +122,7 @@ export const MANIFEST = [
       { name: 'status', value: 'state', desc: 'in-progress|success|failed' },
       { name: 'iteration', value: 'N', desc: 'override iteration number' },
       { name: 'agent', value: 'name', desc: 'agent name (default claude)' },
-      { name: 'group', value: 'a[/b]', desc: 'nest under up to 2 subgroups' },
+      { name: 'group', value: 'a[/b/…]', desc: 'nest under subgroups (up to the depth cap; up to 3 recommended)' },
       { name: 'date', value: 'YYYY-MM-DD', desc: 'override date' },
       { name: 'slug', value: 'slug', desc: 'short slug for the filename' },
       { name: 'tracker', value: 'path', desc: 'non-default tracker' },

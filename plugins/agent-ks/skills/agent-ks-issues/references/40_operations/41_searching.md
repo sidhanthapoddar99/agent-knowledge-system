@@ -39,7 +39,7 @@ The plugin ships 8 issue-tracker CLI wrappers (`agent-ks issue list`, `agent-ks 
 |---|---|
 | `agent-ks issue list` (`list.mjs`) | Multi-field filter **+ free-text regex search**. Returns paths + line numbers + excerpts. Drop-in replacement for `grep` / `find` over `data/todo/`. Default scope: non-closed (hides `done`/`dropped`). |
 | `agent-ks issue show` (`show.mjs`) | Print one issue's metadata + subtask status summary + comment & agent-log heads. `--full` for bodies. |
-| `agent-ks issue subtasks` (`subtasks.mjs`) | List subtasks for one issue, or across all with `--all`. Default: grouped tree (mirrors the 2-level folders). `--flat` for one-line-per-subtask. Default scope: non-closed (hides `done`/`dropped`). |
+| `agent-ks issue subtasks` (`subtasks.mjs`) | List subtasks for one issue, or across all with `--all`. Default: grouped tree (mirrors the nested folder structure). `--flat` for one-line-per-subtask. Default scope: non-closed (hides `done`/`dropped`). |
 | `agent-ks issue agent-logs` (`agent-logs.mjs`) | Print the last N agent-log entries (default 3) — catch up before resuming work. |
 | `agent-ks issue set-state` (`set-state.mjs`) | Update issue status (`settings.json`) or subtask status (frontmatter). Path-allow-listed to the content root. |
 | `agent-ks issue add-comment` (`add-comment.mjs`) | Append a comment with auto-incremented `NNN_` prefix. |

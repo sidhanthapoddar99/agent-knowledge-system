@@ -281,8 +281,9 @@ The three lower `0NN` slots (each a file, or a same-named folder when it grows):
   notes → `05_notes`.
 
 A slot promoted to a folder sits at the activity's **second level**
-(`agent-log/<activity>/03_working/<f>`), the loader's max depth — keep files directly
-inside; a folder nested deeper is warned + ignored. Full template + worked example:
+(`agent-log/<activity>/03_working/<f>`). The loader allows nesting up to 5 levels, but
+**up to 3 is the recommended convention** — keep slot folders flat (files directly inside)
+unless the content demands more; anything beyond level 5 is warned + ignored. Full template + worked example:
 user-guide `19_issues/05_sub-docs/05_agent-log.md` (the canonical source — when this and
 the user-guide disagree, the user-guide wins).
 

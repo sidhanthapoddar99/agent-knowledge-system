@@ -6,18 +6,20 @@
  *     settings.json                            (metadata, required)
  *     issue.md                                 (body, required)
  *     comments/NNN_*.md                        (thread, optional)
- *     subtasks/[<group>/[<subgroup>/]]*.md     (checklist items, optional — 2-level tree)
- *     notes/[<group>/[<subgroup>/]]*.md        (supporting documents, optional — 2-level tree)
- *     agent-log/[<group>/[<subgroup>/]]*.md    (iterative AI agent notes, optional — 2-level tree)
+ *     subtasks/<group>/…/*.md                  (checklist items, optional — nested tree)
+ *     notes/<group>/…/*.md                      (supporting documents, optional — nested tree)
+ *     agent-log/<group>/…/*.md                  (iterative AI agent notes, optional — nested tree)
  *
- * Subtasks, notes, and agent-log all support up to two levels of subfoldering.
- * For subtasks the folder is a *grouping label only* — no folder body file;
- * every leaf `.md` is a first-class subtask with its own state, URL, and
- * count. A folder may ship an optional `settings.json` with at minimum a
- * `title` field overriding the slug-derived label. For notes and agent-log,
- * folder + file names are freeform (no `NNN_` prefix required; when present
- * on agent-log files, the leading number is still parsed as `sequence`).
- * Anything nested deeper than two levels is warned and ignored.
+ * Subtasks, notes, and agent-log all support subfoldering up to
+ * `MAX_SUBFOLDER_DEPTH` (5) levels deep — a hard cap. The recommended
+ * convention is up to 3 levels; keep trees shallow where you can. For subtasks the
+ * folder is a *grouping label only* — no folder body file; every leaf `.md` is
+ * a first-class subtask with its own state, URL, and count. A folder may ship an
+ * optional `settings.json` with at minimum a `title` field overriding the
+ * slug-derived label. For notes and agent-log, folder + file names are freeform
+ * (no `NNN_` prefix required; when present on agent-log files, the leading
+ * number is still parsed as `sequence`). Anything nested deeper than the cap is
+ * warned and ignored.
  *
  * The root <dataPath>/settings.json defines the tag vocabulary (status, priority,
  * component, labels, authors) — returned as `vocabulary`.
@@ -68,6 +70,15 @@ export {
   type IssueStatus,
   type CategoryId,
 } from './issue-status';
+
+/**
+ * Hard cap on how deep content subfolders may nest under a section
+ * (`subtasks/`, `notes/`, `brainstorm/`, `agent-memory/`, `agent-log/`).
+ * A `groupPath` of this length may still hold files, but a folder *inside* it
+ * is warned and ignored. The recommended convention is up to 3 levels — this 5
+ * is the ceiling, not the target. `comments/` stays flat (never nests).
+ */
+export const MAX_SUBFOLDER_DEPTH = 5;
 
 export interface IssueMetadata {
   title: string;
@@ -136,8 +147,8 @@ export interface IssueAgentLog {
   status: string | null;
   /** Frontmatter `date` */
   date: string | null;
-  /** Folder segments below `agent-log/` — 0/1/2 entries. Same shape as
-   *  IssueNote.groupPath. Anything deeper than 2 is warned + ignored. */
+  /** Folder segments below `agent-log/` — 0…MAX_SUBFOLDER_DEPTH entries. Same
+   *  shape as IssueNote.groupPath. Anything deeper than the cap is warned + ignored. */
   groupPath: string[];
   filePath: string;
   /** Path relative to dataPath — includes the group folders when nested. */
@@ -239,10 +250,10 @@ export interface Issue {
   /** Notes — finalized supporting markdown docs under notes/ */
   notes: IssueNote[];
   /** Brainstorm — active deliberation / research / exploration under brainstorm/.
-   *  Same free-form, 2-level shape as notes. */
+   *  Same free-form, nested shape as notes (up to MAX_SUBFOLDER_DEPTH). */
   brainstorm: IssueNote[];
   /** Agent memory — AI-mutable working state under agent-memory/.
-   *  Same free-form, 2-level shape as notes. */
+   *  Same free-form, nested shape as notes (up to MAX_SUBFOLDER_DEPTH). */
   agentMemory: IssueNote[];
   /** Agent logs — iterative AI execution notes under agent-log/ */
   agentLogs: IssueAgentLog[];
@@ -356,38 +367,26 @@ function computeSignature(dataPath: string): number {
     for (const sub of ['comments', 'subtasks', 'notes', 'brainstorm', 'agent-memory', 'agent-log']) {
       const subDir = path.join(folder, sub);
       sig += statMtime(subDir);
-      // subtasks, notes, and agent-log support up to 2 levels of
-      // subfolders; comments stays flat.
+      // All sections except comments nest up to MAX_SUBFOLDER_DEPTH levels;
+      // walk the whole supported tree so a deep edit still busts the cache.
       const allowsNesting = sub !== 'comments';
-      try {
-        const items = fs.readdirSync(subDir, { withFileTypes: true });
+      const walkSig = (absDir: string, depth: number): void => {
+        let items: fs.Dirent[];
+        try { items = fs.readdirSync(absDir, { withFileTypes: true }); }
+        catch { return; /* dir absent / empty */ }
         for (const item of items) {
-          const abs = path.join(subDir, item.name);
+          const abs = path.join(absDir, item.name);
           if (item.isFile() && isTrackedDocFile(item.name)) {
             sig += statMtime(abs);
-          } else if (item.isDirectory() && allowsNesting) {
+          } else if (item.isDirectory() && allowsNesting && depth < MAX_SUBFOLDER_DEPTH) {
             sig += statMtime(abs);
-            // Folder-level settings.json (subtasks groups may carry one).
+            // Folder-level settings.json (grouping folders may carry one).
             sig += statSettingsMtime(abs);
-            try {
-              for (const inner of fs.readdirSync(abs, { withFileTypes: true })) {
-                const innerAbs = path.join(abs, inner.name);
-                if (inner.isFile() && isTrackedDocFile(inner.name)) {
-                  sig += statMtime(innerAbs);
-                } else if (inner.isDirectory()) {
-                  sig += statMtime(innerAbs);
-                  sig += statSettingsMtime(innerAbs);
-                  try {
-                    for (const f of fs.readdirSync(innerAbs)) {
-                      if (isTrackedDocFile(f)) sig += statMtime(path.join(innerAbs, f));
-                    }
-                  } catch { /* empty leaf */ }
-                }
-              }
-            } catch { /* empty group */ }
+            walkSig(abs, depth + 1);
           }
         }
-      } catch { /* dir absent */ }
+      };
+      walkSig(subDir, 0);
     }
   }
 
@@ -589,21 +588,21 @@ async function loadIssueFolder(folderPath: string, dataPath: string): Promise<Is
   }
 
   // Subtasks: frontmatter-driven files under subtasks/ (body optional).
-  // Up to 2 levels of grouping folders; folder = label only, no body file.
+  // Nested grouping folders up to MAX_SUBFOLDER_DEPTH; folder = label only, no body file.
   const { subtasks, subtaskGroups } = await readSubtasks(
     path.join(folderPath, 'subtasks'), dataPath, id,
   );
 
-  // Notes: rendered markdown under notes/, up to 2 levels of subfolders
+  // Notes: rendered markdown under notes/, nested up to MAX_SUBFOLDER_DEPTH
   const notes = await readFreeformDocs(path.join(folderPath, 'notes'), dataPath, id, 'notes');
 
-  // Brainstorm: same free-form 2-level shape as notes
+  // Brainstorm: same free-form nested shape as notes
   const brainstorm = await readFreeformDocs(path.join(folderPath, 'brainstorm'), dataPath, id, 'brainstorm');
 
-  // Agent memory: AI-mutable working state; same free-form 2-level shape as notes
+  // Agent memory: AI-mutable working state; same free-form nested shape as notes
   const agentMemory = await readFreeformDocs(path.join(folderPath, 'agent-memory'), dataPath, id, 'agent-memory');
 
-  // Agent logs: same 2-level shape as notes; sequence resets per leaf folder
+  // Agent logs: same nested shape as notes; sequence resets per leaf folder
   const agentLogs = await readAgentLogs(path.join(folderPath, 'agent-log'), dataPath, id);
 
   // Effective agent-log kind map: framework defaults + this issue's overrides.
@@ -669,12 +668,13 @@ async function loadIssueFolder(folderPath: string, dataPath: string): Promise<Is
 }
 
 /**
- * Walk a 2-level tree of `*.md` files under `rootDir`. Yields entries in
- * stable folder-then-name order; sequence counter (assigned by the caller
- * via `onFile`) resets at each leaf folder. Anything deeper than 2 levels
- * is logged as a warning and skipped.
+ * Walk a nested tree of `*.md` files under `rootDir`, up to
+ * `MAX_SUBFOLDER_DEPTH` folder levels. Yields entries in stable
+ * folder-then-name order; sequence counter (assigned by the caller via
+ * `onFile`) resets at each leaf folder. Anything deeper than the cap is
+ * logged as a warning and skipped.
  */
-async function walkTwoLevels<T>(
+async function walkSubfolderTree<T>(
   rootDir: string,
   issueId: string,
   subName: string,
@@ -703,9 +703,9 @@ async function walkTwoLevels<T>(
       .map((e) => e.name)
       .sort();
     for (const folder of subFolders) {
-      if (groupPath.length >= 2) {
+      if (groupPath.length >= MAX_SUBFOLDER_DEPTH) {
         console.warn(
-          `[issues] "${issueId}": ${subName}/${[...groupPath, folder].join('/')}/ exceeds the 2-level depth cap — ignored`,
+          `[issues] "${issueId}": ${subName}/${[...groupPath, folder].join('/')}/ exceeds the ${MAX_SUBFOLDER_DEPTH}-level depth cap — ignored`,
         );
         continue;
       }
@@ -747,7 +747,7 @@ async function readFreeformDocs(
     ? ['.md', '.html', ...DIAGRAM_EXTENSIONS]
     : ['.md', ...DIAGRAM_EXTENSIONS];
 
-  const docs = await walkTwoLevels(dir, issueId, subName, async (abs, groupPath) => {
+  const docs = await walkSubfolderTree(dir, issueId, subName, async (abs, groupPath) => {
     // First-class artifact (.html): the body is the same by-reference `.artifact`
     // container the docs layout emits — the BaseLayout client script turns it
     // into an <iframe> onto the /artifacts/<path> route with the open-full-page
@@ -828,7 +828,7 @@ async function readAgentLogs(
   dataPath: string,
   issueId: string,
 ): Promise<IssueAgentLog[]> {
-  return walkTwoLevels(logsDir, issueId, 'agent-log', async (abs, groupPath, fallbackSeq) => {
+  return walkSubfolderTree(logsDir, issueId, 'agent-log', async (abs, groupPath, fallbackSeq) => {
     // Diagram files are first-class log entries too (same rule as notes/
     // brainstorm); they carry no frontmatter, so meta fields stay null.
     const diagram = diagramContainerHtml(abs);
@@ -951,9 +951,9 @@ async function readSubtasks(
       .map((e) => e.name)
       .sort();
     for (const folder of subFolders) {
-      if (groupPath.length >= 2) {
+      if (groupPath.length >= MAX_SUBFOLDER_DEPTH) {
         console.warn(
-          `[issues] "${issueId}": subtasks/${[...groupPath, folder].join('/')}/ exceeds the 2-level depth cap — ignored`,
+          `[issues] "${issueId}": subtasks/${[...groupPath, folder].join('/')}/ exceeds the ${MAX_SUBFOLDER_DEPTH}-level depth cap — ignored`,
         );
         continue;
       }

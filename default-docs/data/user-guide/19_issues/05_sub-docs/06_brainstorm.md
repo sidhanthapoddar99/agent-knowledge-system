@@ -32,7 +32,7 @@ brainstorm/
   | `discuss` | Weighing trade-offs, open questions, recorded back-and-forth. |
 
   Any word that fits is valid (`spike`, `compare`, …), and omitting the kind word is valid too.
-- **A folder = one brainstorm.** A multi-file exploration gets an `NN_<slug>/` folder; inner files use the same loose convention. A single-file thought stays flat. Up to two levels, like the other sections.
+- **A folder = one brainstorm.** A multi-file exploration gets an `NN_<slug>/` folder; inner files use the same loose convention. A single-file thought stays flat. Up to 5 levels (up to 3 recommended), like the other sections.
 
 ## The graduation marker
 

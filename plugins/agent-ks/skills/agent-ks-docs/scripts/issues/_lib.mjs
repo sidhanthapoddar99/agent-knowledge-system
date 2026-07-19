@@ -22,6 +22,12 @@ import { parseJsonc, preferJsonc } from '../_jsonc.mjs';
 // re-exported here so issues/* import sites are unchanged.
 export { parseArgs, printHelp };
 
+// Hard cap on content subfolder nesting depth (subtasks/notes/brainstorm/
+// agent-memory/agent-log). Mirrors MAX_SUBFOLDER_DEPTH in the loader
+// (astro-doc-code/src/loaders/issues.ts). The recommended convention is up to
+// 3 levels; 5 is the ceiling. comments/ stays flat (never nests).
+export const MAX_SUBFOLDER_DEPTH = 5;
+
 // ---------- Paths & validation ----------------------------------------------
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
@@ -163,12 +169,12 @@ function makeSubtask(abs, groupPath) {
   return { slug, sequence, title, status, category: categoryOf(status), groupPath, filePath: abs, fileName: name };
 }
 
-/** Subtasks may live under up to 2 levels of grouping folders; the folder
- *  is a label only, never a body file. Each leaf .md is a first-class
+/** Subtasks may live under nested grouping folders (up to MAX_SUBFOLDER_DEPTH);
+ *  the folder is a label only, never a body file. Each leaf .md is a first-class
  *  subtask. Returns a flat list with `groupPath` annotated. */
 export function readIssueSubtasks(trackerPath, issueId) {
   const dir = path.join(trackerPath, issueId, 'subtasks');
-  return walkTwoLevels(dir).map((e) => makeSubtask(e.filePath, e.groupPath));
+  return walkSubfolderTree(dir).map((e) => makeSubtask(e.filePath, e.groupPath));
 }
 
 /** Read group-folder labels under subtasks/. Each entry is `{ groupPath,
@@ -182,7 +188,7 @@ export function readIssueSubtaskGroups(trackerPath, issueId) {
     let entries;
     try { entries = fs.readdirSync(absDir, { withFileTypes: true }); }
     catch { return; }
-    if (groupPath.length >= 2) return;
+    if (groupPath.length >= MAX_SUBFOLDER_DEPTH) return;
     const subDirs = entries.filter((e) => e.isDirectory()).map((e) => e.name).sort();
     for (const folder of subDirs) {
       const childPath = [...groupPath, folder];
@@ -233,13 +239,14 @@ export function readIssueComments(trackerPath, issueId) {
 }
 
 /**
- * Walk a 2-level tree of `*.md` files under `rootDir`. Returns entries in
- * stable folder-then-name order. Each entry is `{ filePath, groupPath }`
- * where `groupPath` is 0/1/2 folder segments below `rootDir`. Anything
- * deeper than 2 levels is silently skipped (the loader is the source of
- * truth for warnings; CLI tools just read what's there).
+ * Walk a nested tree of `*.md` files under `rootDir`, up to
+ * `MAX_SUBFOLDER_DEPTH` folder levels. Returns entries in stable
+ * folder-then-name order. Each entry is `{ filePath, groupPath }` where
+ * `groupPath` is 0…MAX_SUBFOLDER_DEPTH folder segments below `rootDir`.
+ * Anything deeper than the cap is silently skipped (the loader is the source
+ * of truth for warnings; CLI tools just read what's there).
  */
-function walkTwoLevels(rootDir) {
+function walkSubfolderTree(rootDir) {
   if (!fs.existsSync(rootDir)) return [];
   const out = [];
   function emit(absDir, groupPath) {
@@ -248,7 +255,7 @@ function walkTwoLevels(rootDir) {
     catch { return; }
     const files = entries.filter((e) => e.isFile() && e.name.endsWith('.md')).map((e) => e.name).sort();
     for (const name of files) out.push({ filePath: path.join(absDir, name), groupPath });
-    if (groupPath.length >= 2) return;
+    if (groupPath.length >= MAX_SUBFOLDER_DEPTH) return;
     const subDirs = entries.filter((e) => e.isDirectory()).map((e) => e.name).sort();
     for (const folder of subDirs) emit(path.join(absDir, folder), [...groupPath, folder]);
   }
@@ -275,12 +282,12 @@ function makeAgentLog(abs, groupPath) {
 
 export function readIssueAgentLogs(trackerPath, issueId) {
   const dir = path.join(trackerPath, issueId, 'agent-log');
-  return walkTwoLevels(dir).map((e) => makeAgentLog(e.filePath, e.groupPath));
+  return walkSubfolderTree(dir).map((e) => makeAgentLog(e.filePath, e.groupPath));
 }
 
 export function readIssueNotes(trackerPath, issueId) {
   const dir = path.join(trackerPath, issueId, 'notes');
-  return walkTwoLevels(dir).map((e) => ({
+  return walkSubfolderTree(dir).map((e) => ({
     name: path.basename(e.filePath).replace(/\.md$/, ''),
     filePath: e.filePath,
     groupPath: e.groupPath,
@@ -314,7 +321,7 @@ export function listSearchableFiles(trackerPath, issueId, fields = null) {
     const p = path.join(issueDir, 'settings.json');
     if (fs.existsSync(p)) files.push(p);
   }
-  // comments stays flat; subtasks + notes + agent-log allow 2-level subfolders
+  // comments stays flat; subtasks + notes + agent-log allow nested subfolders
   if (include('comments')) {
     const dir = path.join(issueDir, 'comments');
     if (fs.existsSync(dir)) {
@@ -324,13 +331,13 @@ export function listSearchableFiles(trackerPath, issueId, fields = null) {
     }
   }
   if (include('subtasks')) {
-    for (const e of walkTwoLevels(path.join(issueDir, 'subtasks'))) files.push(e.filePath);
+    for (const e of walkSubfolderTree(path.join(issueDir, 'subtasks'))) files.push(e.filePath);
   }
   if (include('notes')) {
-    for (const e of walkTwoLevels(path.join(issueDir, 'notes'))) files.push(e.filePath);
+    for (const e of walkSubfolderTree(path.join(issueDir, 'notes'))) files.push(e.filePath);
   }
   if (include('agent-log') || include('agent-logs')) {
-    for (const e of walkTwoLevels(path.join(issueDir, 'agent-log'))) files.push(e.filePath);
+    for (const e of walkSubfolderTree(path.join(issueDir, 'agent-log'))) files.push(e.filePath);
   }
   return files;
 }

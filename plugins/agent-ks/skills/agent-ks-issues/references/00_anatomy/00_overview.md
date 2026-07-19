@@ -106,7 +106,7 @@ contents.
 |---|---|
 | **`00_anatomy/` — orientation** | |
 | [00_overview.md](00_overview.md) | *(this file)* operating model, lifecycle + AI rules, this index |
-| [01_folder-layout.md](01_folder-layout.md) | the `<issue>/` folder tree, the 2-level rule, URL shapes |
+| [01_folder-layout.md](01_folder-layout.md) | the `<issue>/` folder tree, the 5-level nesting cap, URL shapes |
 | [02_per-issue-settings.md](02_per-issue-settings.md) | per-issue `settings.json`; derived vs stored; `agentLogKinds` |
 | [03_overall-issue-tracker-vocabulary.md](03_overall-issue-tracker-vocabulary.md) | the tracker-root `settings.json(c)` — `fields` vocabulary, authors, views |
 | **`10_writing/` — writing inside issues** | |

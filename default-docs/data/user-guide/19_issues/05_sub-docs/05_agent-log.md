@@ -193,7 +193,7 @@ Lightweight numbers live inline in `04_benchmark.md`. When a run produces heavy 
 
 ### Depth ceiling
 
-A slot promoted to a folder sits at the activity folder's second level (`agent-log/<activity>/03_working/<file>`), which is the loader's maximum supported depth. Keep files **directly inside** the slot folder — a further nested folder lands at level 3 and is warned + ignored.
+A slot promoted to a folder sits at the activity folder's second level (`agent-log/<activity>/03_working/<file>`). The loader allows nesting up to **5 levels** deep, so a slot folder *can* hold its own subfolders — but **the recommended convention is up to 3 levels**: keep slot folders flat, with files **directly inside**, unless the content genuinely demands more structure. Anything nested beyond level 5 is warned + ignored.
 
 ### Worked example
 

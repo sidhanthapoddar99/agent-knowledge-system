@@ -218,10 +218,10 @@ export function logUrl(baseUrl: string, issueId: string, log: IssueAgentLog): st
 }
 
 /**
- * Two-level tree: files at this folder + a map of named subgroups, each of
- * which is itself a one-level grouping (its own file list + its own
- * sub-subgroup map). Used by the sidebar to render notes / agent-logs as
- * collapsible nested sections that mirror the on-disk shape.
+ * Nested tree: files at this folder + a map of named subgroups, each itself a
+ * `GroupedTree` (its own file list + subgroup map), recursing to the loader's
+ * depth cap. Used by the sidebar to render notes / agent-logs as collapsible
+ * nested sections that mirror the on-disk shape.
  */
 export interface GroupedTree<T> {
   files: T[];
@@ -246,7 +246,7 @@ function insertIntoTree<T>(tree: GroupedTree<T>, segments: string[], item: T): v
   insertIntoTree(child, rest, item);
 }
 
-/** Build a 2-level tree from flat entries that carry a `groupPath` array. */
+/** Build a nested tree from flat entries that carry a `groupPath` array. */
 export function groupByPath<T extends { groupPath: string[] }>(items: T[]): GroupedTree<T> {
   const tree = emptyTree<T>();
   for (const item of items) insertIntoTree(tree, item.groupPath, item);
@@ -254,7 +254,7 @@ export function groupByPath<T extends { groupPath: string[] }>(items: T[]): Grou
 }
 
 /**
- * 2-level tree of subtasks that also carries group-label metadata for each
+ * Nested tree of subtasks that also carries group-label metadata for each
  * folder (numeric prefix + display title). Built from the loader's flat
  * `subtasks` list + parallel `subtaskGroups` list.
  */

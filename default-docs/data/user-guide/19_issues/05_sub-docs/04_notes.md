@@ -23,9 +23,9 @@ notes/
 
 A numeric prefix is **optional** for notes (folders and files) — but when you want a fixed reading order, `NN_` and `NNN_` are both good conventions, using the same 2–5 digit, sort-by-value grammar as the rest of the tracker. The prefix orders the note in the sidebar; the slug after it becomes the default title. The numbering is a **curated reading order** (the author's intended sequence), not a timeline — no kind words, no machinery.
 
-## Subfoldering — up to 2 levels
+## Subfoldering — up to 5 levels (up to 3 recommended)
 
-`notes/` accepts up to **two levels of subfolders** so long-running issues can group related notes by theme or phase. Folder names are freeform — no naming convention required.
+`notes/` accepts nested subfolders up to 5 levels deep so long-running issues can group related notes by theme or phase; the recommended convention is up to 3 levels. Folder names are freeform — no naming convention required.
 
 ```
 notes/
@@ -43,11 +43,11 @@ notes/
 Rules:
 
 - Mix files and folders freely at every level that allows folders. `notes/overview.md` can sit beside `notes/design/`, and `notes/design/api-shape.md` can sit beside `notes/design/phase-1/`.
-- The deepest folder (level 2) is **files-only**. Anything nested deeper than `notes/<group>/<subgroup>/<file>.md` is logged as a warning by the loader and silently skipped.
+- Folders may nest up to 5 levels deep; a folder nested beyond level 5 is logged as a warning by the loader and silently skipped. Files may live at any level, and the recommended convention is up to 3 levels.
 - Subgroups appear as collapsible nested sections in the sidebar. Each level shows a count of descendant notes.
 - Filenames within a folder must be unique — but the *same* filename can appear in different folders (`notes/design/intro.md` and `notes/research/intro.md` coexist; they have distinct URLs).
 
-If you find yourself wanting a third level, that's usually a signal to split into a sibling group at level 1, or — if the notes have outgrown a single issue — to split into a separate issue.
+If you find yourself wanting a fourth level (past the recommended three), that's usually a signal to split into a sibling group at level 1, or — if the notes have outgrown a single issue — to split into a separate issue. The hard cap is 5.
 
 ## Frontmatter
 

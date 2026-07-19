@@ -15,7 +15,7 @@ agent-memory/
 ├── memory.md            ← the INDEX / entry point — always read first, pinned first in the sidebar
 ├── gotchas.md           ← topic file: one coherent topic each
 ├── decisions.md
-└── 01_context/          ← folders allowed (same 2-level walk) when a topic outgrows a file
+└── 01_context/          ← folders allowed (nested up to 5 levels) when a topic outgrows a file
     └── 01_env.md
 ```
 

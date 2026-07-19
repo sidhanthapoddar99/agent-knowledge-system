@@ -63,15 +63,15 @@ Examples:
 ├── comments/                        ← evolution log, flat (optional)
 │   ├── 001_opened.md
 │   └── 002_scope-narrowed.md
-├── brainstorm/                      ← active deliberation, up to 2 levels (optional)
+├── brainstorm/                      ← active deliberation, up to 5 levels (up to 3 recommended) (optional)
 │   ├── 01_research_prior-art.md               ← NN_<kind>_<slug>.md — full-word kind, optional
 │   └── 02_options/                            ← folder = one multi-file brainstorm
 │       └── 01_explore_approach-a.md
-├── notes/                           ← finalized output + references, up to 2 levels (optional)
+├── notes/                           ← finalized output + references, up to 5 levels (up to 3 recommended) (optional)
 │   ├── 01_decided-architecture.md
 │   └── 02_reference/
 │       └── 01_links.md
-├── subtasks/                        ← the plan, up to 2 subfolder levels (optional)
+├── subtasks/                        ← the plan, up to 5 subfolder levels (up to 3 recommended) (optional)
 │   ├── 01_setup.md
 │   └── 02_implementation/                     ← group (folder = label only, shows done/total)
 │       ├── 01_backend.md
@@ -94,19 +94,19 @@ Examples:
 | `glossary.md` | — | Per-issue glossary, rendered as-is on the **Glossary** panel (never generated). Suggested sections: *Colour legend* · *Key terms* · *Conventions*, scoped per section where meanings differ. |
 | `comments/` | — | One file per comment — `NNN_<slug>.md` (author/date in frontmatter) or the strict `NNN_YYYY-MM-DD_<author>.md`. Flat — no subfolders. See [Comments](./sub-docs/comments). |
 | `brainstorm/` | — | Active deliberation — the *process* of deciding. `NN_<kind>_<slug>.md` with optional full-word kinds; folder = one brainstorm. See [Brainstorm](./sub-docs/brainstorm). |
-| `notes/` | — | Finalized output + durable references — the *product*. **Up to 2 levels of subfolders.** See [Notes](./sub-docs/notes). |
-| `subtasks/` | — | The plan — atomic units of work with `NN_<slug>.md` naming and frontmatter state. **Up to 2 levels of grouping subfolders** — folder = label only (sidebar shows its **done/total**), leaves are first-class subtasks. See [Subtasks](./sub-docs/subtasks). |
+| `notes/` | — | Finalized output + durable references — the *product*. **Up to 5 levels (up to 3 recommended).** See [Notes](./sub-docs/notes). |
+| `subtasks/` | — | The plan — atomic units of work with `NN_<slug>.md` naming and frontmatter state. **Up to 5 levels of grouping subfolders (up to 3 recommended)** — folder = label only (sidebar shows its **done/total**), leaves are first-class subtasks. See [Subtasks](./sub-docs/subtasks). |
 | `agent-log/` | — | Execution record — `NNN_<code>_<name>/` **activity folders** (kind code in the name), pinned `0NN_` meta files + `MNN_` milestones inside. Flat files parse for backward compat only. See [Agent Log](./sub-docs/agent-log). |
 | `agent-memory/` | — | AI-mutable working state — pinned `memory.md` index + topic files. See [Agent Memory](./sub-docs/agent-memory). |
 
 ### Subfolder rules (`subtasks/`, `notes/`, `brainstorm/`, `agent-memory/`, `agent-log/`)
 
-All content sections except `comments/` accept up to **two levels of subfolders** for grouping. Folder and file names follow each type's conventions.
+All content sections except `comments/` accept nested subfolders up to 5 levels deep for grouping; the recommended convention is up to 3 levels — keep trees shallow. Folder and file names follow each type's conventions.
 
-- Mix files and folders freely at the root and at level-1. Level-2 is files-only — folders found at depth 3 are warned and silently skipped.
+- Mix files and folders freely at every level that allows folders. Folders may nest up to 5 levels deep; a folder nested beyond level 5 is warned by the loader and ignored. Files may live at any level, and the recommended convention is up to 3 levels.
 - The same filename can appear in different folders (`notes/design/intro.md` and `notes/research/intro.md` coexist with distinct URLs).
 - Subgroups render as collapsible nested sections in the detail-page sidebar; each level shows a count of descendants.
-- If you find yourself reaching for a third level, that's usually a signal to split into a sibling group at level-1, or — if the content has outgrown a single issue — into a separate issue.
+- If you find yourself reaching past the recommended three levels, that's usually a signal to split into a sibling group at level 1, or — if the content has outgrown a single issue — into a separate issue. The hard cap is 5.
 
 **Subtasks specifics:**
 - The folder is a **grouping label only** — no body file. Every `.md` leaf is a first-class subtask with its own state, URL, and count. URL: `/<tracker>/<issue>/subtasks/<group>/<subgroup>/<slug>`.

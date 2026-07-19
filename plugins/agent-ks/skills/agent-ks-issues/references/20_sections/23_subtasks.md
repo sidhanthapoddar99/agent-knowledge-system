@@ -46,17 +46,50 @@ exactly?", the subtask isn't written yet. **Never a bare dump, and never a one-l
 scope marker**: even a one-line task gets a sentence or two of context-setting (what
 triggered it, what it serves, where the surrounding work lives) before the checklist.
 
-The standard shape for a substantive subtask:
+**The five-section template** is the standard shape — scaffold it with
+`agent-ks issue new-subtask <id> --name <slug>`:
 
-- **A short intro** saying what this subtask is and why it exists.
-- **Deliverables** — concrete and enumerable: which endpoints/components/behaviours,
-  with the semantics that matter (not "build user management" but *which* actions,
-  *what* they return, *what* gets recorded).
-- **A "Done when" block** — the acceptance criteria that make `review` verifiable.
-- **Links to the material that scopes it** — the settled notes, brainstorm
-  conclusions, design/brand guidelines, or contract note this work executes against.
-  A subtask whose real spec lives in a conversation, a workflow prompt, or an agent's
-  head is unscoped; put the spec in `notes/` and link it.
+```markdown
+# Overview
+Brief: what this subtask is, what triggered it, what "done" looks like.
+
+# References
+The material this work rests on: related notes/, the agent-log activity
+executing it, the brainstorm/ threads it resolved from. Full paths.
+
+# Todo list
+- [ ] The checklist (nested checkboxes welcome; check off as work lands)
+
+# Outcomes and Next Steps
+PLACEHOLDER until completion — then: what landed (with evidence — commits,
+measurements, agent-log links), what was deferred, concrete next steps.
+
+# Details
+The large, detailed content: full spec, design reasoning, scope rulings —
+everything a cold reader needs to execute.
+```
+
+What each section must carry:
+
+- **Overview** — a short intro saying what this subtask is and why it exists.
+- **References** — links to the settled notes, brainstorm conclusions,
+  design/brand guidelines, or contract material this work executes against.
+  A subtask whose real spec lives in a conversation, a workflow prompt, or an
+  agent's head is unscoped.
+- **Todo list** — deliverables, concrete and enumerable: which
+  endpoints/components/behaviours, with the semantics that matter (not "build
+  user management" but *which* actions, *what* they return, *what* gets
+  recorded). Fold "Done when" acceptance criteria in here (or as a closing
+  sub-list) so `review` is verifiable.
+- **Outcomes and Next Steps** — ships as a `PLACEHOLDER` callout; **filled at
+  hand-off**, before the status flips to `review`. The template lint
+  (`agent-ks check issues --subtask-template`, or tracker-root
+  `"subtaskTemplate": true`) flags a Review/Closed subtask that still carries
+  the marker.
+- **Details** — **the spec lives here, inline.** For subtask-scoped specs this
+  replaces a separate one-consumer note — one level, one home. `notes/` remains
+  the home for material that is *shared across subtasks* or outlives the issue;
+  don't inline those, link them from References.
 
 Formatting conventions:
 

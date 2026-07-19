@@ -140,6 +140,18 @@ export const MANIFEST = [
     ],
   },
   {
+    bin: 'docs-new-subtask', group: 'issue', verb: 'new-subtask', category: 3, script: 'issues/new-subtask.mjs', runtime: 'mjs',
+    summary: 'Scaffold a new subtask pre-seeded with the five-section template (Overview/References/Todo/Outcomes/Details)',
+    flags: [
+      { name: 'name', value: 'slug', desc: 'kebab-case subtask name, sanitised to [a-z0-9-] — required' },
+      { name: 'title', value: 'text', desc: 'frontmatter title (default: de-kebabed name)' },
+      { name: 'group', value: 'a[/b]', desc: 'nest under a grouping folder path (created if missing)' },
+      { name: 'overview', value: 'text', desc: 'seed the Overview section instead of its placeholder callout' },
+      { name: 'json', desc: 'structured JSON output' },
+      { name: 'tracker', value: 'path', desc: 'non-default tracker' },
+    ],
+  },
+  {
     bin: 'docs-review-queue', group: 'issue', verb: 'review-queue', category: 3, script: 'issues/review-queue.mjs', runtime: 'mjs',
     summary: 'Items awaiting review (status=review or open w/ review subtask)',
     flags: [
@@ -171,6 +183,7 @@ export const MANIFEST = [
       { name: 'json', desc: 'structured findings' },
       { name: 'quiet', desc: 'suppress warnings' },
       { name: 'strict', desc: 'treat warnings as errors' },
+      { name: 'subtask-template', desc: 'lint subtasks against the five-section template (also on via root settings `subtaskTemplate: true`)' },
       { name: 'tracker', value: 'path', desc: 'non-default tracker' },
     ],
   },

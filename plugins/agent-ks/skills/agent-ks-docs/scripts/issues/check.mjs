@@ -31,7 +31,7 @@ import { readJsonChecked, reportAndExit } from '../_check-lib.mjs';
 const args = parseArgs(process.argv.slice(2));
 if (args.flags.help) {
   printHelp('check issues', [
-    '[--tracker <path>] [--quiet|--no-warnings] [--verbose] [--strict]',
+    '[--tracker <path>] [--quiet|--no-warnings] [--verbose] [--strict] [--subtask-template]',
     '',
     'Validate the structure of an issue tracker. Defaults to <content-root>/data/todo (derived from .env CONFIG_DIR).',
     'Reports errors (will fail loaders) and warnings (lint-only — including unknown-key drift).',
@@ -39,6 +39,10 @@ if (args.flags.help) {
     '  --quiet, --no-warnings   suppress warnings; only errors print',
     '  --verbose                for unknown-key warnings, also list the canonical keys',
     '  --strict                 promote unknown-key warnings to errors (exit 1 on schema drift)',
+    '  --subtask-template       lint subtasks against the five-section template (Overview / References /',
+    '                           Todo list / Outcomes and Next Steps / Details) + flag review/done subtasks',
+    '                           whose Outcomes still carry the PLACEHOLDER marker. Also enabled when the',
+    '                           tracker root settings.json sets `"subtaskTemplate": true`.',
   ]);
   process.exit(0);
 }
@@ -60,7 +64,7 @@ const ISSUE_SETTINGS_KEYS = new Set([
   'title', 'description', 'status', 'priority', 'component', 'labels',
   'author', 'assignees', 'draft', 'agentLogKinds',
 ]);
-const TRACKER_ROOT_KEYS = new Set(['label', 'fields', 'authors', 'views', 'draft', 'statusColors']);
+const TRACKER_ROOT_KEYS = new Set(['label', 'fields', 'authors', 'views', 'draft', 'statusColors', 'subtaskTemplate']);
 // `status` is no longer a valid field — statuses are code-fixed and colours
 // live under the top-level `statusColors` map (see the explicit check below).
 const TRACKER_FIELD_KEYS = new Set(['priority', 'component', 'labels']);
@@ -126,6 +130,32 @@ const validStatuses = STATUSES;
 const validPriorities = vocab?.fields?.priority?.values || [];
 const validComponents = vocab?.fields?.component?.values || [];
 const validLabels = vocab?.fields?.labels?.values || [];
+
+// Subtask five-section template lint — opt-in per tracker (root settings.json
+// `"subtaskTemplate": true`) or per run (--subtask-template). Convention, not
+// loader-enforced, so everything it finds is a warning. Two rules:
+//   1. every subtask carries the five section headings;
+//   2. a Review/Closed-category subtask must not still carry the PLACEHOLDER
+//      marker in its "Outcomes and Next Steps" section.
+const TEMPLATE_LINT = !!args.flags['subtask-template'] || vocab?.subtaskTemplate === true;
+const TEMPLATE_SECTIONS = ['Overview', 'References', 'Todo list', 'Outcomes and Next Steps', 'Details'];
+const OUTCOME_DUE_STATUSES = new Set(['review', 'done']);
+function lintSubtaskTemplate(fileLabel, content, rawStatus) {
+  const missing = TEMPLATE_SECTIONS.filter(
+    (s) => !new RegExp(`^#{1,3} +${s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*$`, 'im').test(content),
+  );
+  if (missing.length) {
+    warnings.push(`${fileLabel}: missing template section${missing.length > 1 ? 's' : ''} ${missing.map((s) => `\`# ${s}\``).join(', ')}`);
+  }
+  if (OUTCOME_DUE_STATUSES.has(normalizeStatus(rawStatus))) {
+    // Scope the marker search to the Outcomes section when it exists.
+    const m = content.match(/^#{1,3} +Outcomes and Next Steps\s*$([\s\S]*?)(?=^#{1,3} |\n*$(?![\s\S]))/im);
+    const scope = m ? m[1] : content;
+    if (/\bPLACEHOLDER\b/.test(scope)) {
+      warnings.push(`${fileLabel}: status \`${rawStatus}\` but "Outcomes and Next Steps" still carries the PLACEHOLDER marker — write the outcomes before hand-off`);
+    }
+  }
+}
 
 // Schema-drift on tracker root + its fields block
 reportDrift('<root>/settings.json', unknownKeys(vocab, TRACKER_ROOT_KEYS), TRACKER_ROOT_KEYS);
@@ -292,7 +322,8 @@ for (const entry of issueFolders) {
           const rel = [...segments, e.name].join('/');
           const abs = path.join(absDir, e.name);
           try {
-            const fm = matter(fs.readFileSync(abs, 'utf-8')).data || {};
+            const parsed = matter(fs.readFileSync(abs, 'utf-8'));
+            const fm = parsed.data || {};
             // Canonical field is `status:`; `state:` is the legacy name.
             const rawStatus = fm.status ?? fm.state;
             if (fm.status === undefined && fm.state !== undefined) {
@@ -307,6 +338,7 @@ for (const entry of issueFolders) {
               warnings.push(`${id}/subtasks/${rel}: no \`status:\` — defaults to open`);
             }
             reportDrift(`${id}/subtasks/${rel}`, unknownKeys(fm, SUBTASK_FM_KEYS), SUBTASK_FM_KEYS);
+            if (TEMPLATE_LINT) lintSubtaskTemplate(`${id}/subtasks/${rel}`, parsed.content || '', rawStatus);
           } catch (err) {
             errors.push(`${id}/subtasks/${rel}: malformed frontmatter (${err.message})`);
           }

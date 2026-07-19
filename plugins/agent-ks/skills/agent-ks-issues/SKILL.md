@@ -234,8 +234,10 @@ Full detail + recipes: [24_agent-logs.md](references/20_sections/24_agent-logs.m
 
 The plugin ships one entrypoint, **`agent-ks`**, on `PATH`. Tracker work uses the
 `issue` group — `agent-ks issue list / show / subtasks / agent-logs / set-state /
-add-comment / add-agent-log / new-agent-log / review-queue` (`new-agent-log` scaffolds a
-fresh activity folder with the six standard slots) — plus `agent-ks check issues`,
+add-comment / add-agent-log / new-agent-log / new-subtask / review-queue`
+(`new-agent-log` scaffolds a fresh activity folder with the six standard slots;
+`new-subtask` scaffolds a subtask with the five-section template — Overview /
+References / Todo list / Outcomes and Next Steps / Details) — plus `agent-ks check issues`,
 `agent-ks find`, and `agent-ks move` (link-aware). Discover with `agent-ks help`;
 uniform contract (`--help`, `--json`, exit codes 0/1/2). **Inside a git
 worktree** (agent sandboxes): the CLI's `.env` search stops at the worktree

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blogs — File Tree → Sidebar</title>
+<style>
+/* ============================================================================
+ * SHARED STYLE KIT — "Naming & the Sidebar" artifact set. (verbatim)
+ * ==========================================================================*/
+* { box-sizing: border-box; }
+body.ns-body {
+  font-family: var(--font-family-base, system-ui, sans-serif);
+  color: var(--color-text-primary, #1a1a1a);
+  background: var(--color-bg-primary, #ffffff);
+  line-height: var(--line-height-base, 1.6);
+  margin: 0; padding: var(--spacing-xl, 32px);
+}
+.ns-wrap { max-width: 980px; margin: 0 auto; }
+.ns-title { font-size: var(--content-h1, 2rem); font-weight: 700; margin: 0 0 var(--spacing-xs, 8px); }
+.ns-lead { color: var(--color-text-secondary, #555); margin: 0 0 var(--spacing-xl, 32px); max-width: 70ch; }
+.ns-section { margin: var(--spacing-2xl, 48px) 0; }
+.ns-section > h2 {
+  font-size: var(--content-h2, 1.5rem); font-weight: 650; margin: 0 0 var(--spacing-xs, 8px);
+}
+.ns-section > .ns-say { color: var(--color-text-secondary, #555); margin: 0 0 var(--spacing-lg, 24px); max-width: 70ch; }
+
+/* Tree ↔ sidebar side-by-side */
+.ns-split { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-lg, 24px); align-items: start; }
+@media (max-width: 760px) { .ns-split { grid-template-columns: 1fr; } }
+.ns-panel {
+  border: 1px solid var(--color-border-default, #ddd); border-radius: var(--border-radius-lg, 10px);
+  background: var(--color-bg-secondary, #fafafa); overflow: hidden;
+}
+.ns-panel__cap {
+  font-size: var(--ui-text-micro, 12px); text-transform: uppercase; letter-spacing: .06em;
+  color: var(--color-text-muted, #888); padding: var(--spacing-sm, 10px) var(--spacing-md, 16px);
+  border-bottom: 1px solid var(--color-border-light, #eee); background: var(--color-bg-tertiary, #f0f0f0);
+}
+.ns-tree {
+  font-family: var(--font-family-mono, ui-monospace, monospace); font-size: var(--ui-text-body, 14px);
+  white-space: pre; overflow-x: auto; padding: var(--spacing-md, 16px); margin: 0;
+  color: var(--color-text-secondary, #555);
+}
+.ns-tree .p { color: var(--color-text-muted, #999); }              /* the NN_ prefix segment */
+.ns-tree .d { color: var(--color-text-primary, #1a1a1a); font-weight: 600; } /* folder / emphasised name */
+
+/* Mini sidebar */
+.ns-sb { padding: var(--spacing-sm, 10px); display: flex; flex-direction: column; gap: 1px; }
+.ns-sb__sec {
+  font-size: var(--ui-text-micro, 12px); text-transform: uppercase; letter-spacing: .05em; font-weight: 600;
+  color: var(--color-text-muted, #888); padding: var(--spacing-md, 14px) var(--spacing-sm, 10px) 4px;
+}
+.ns-sb__row {
+  display: flex; align-items: center; gap: var(--spacing-xs, 8px);
+  padding: 4px var(--spacing-sm, 10px); border-radius: var(--border-radius-sm, 6px);
+  font-size: var(--ui-text-body, 14px); color: var(--color-text-primary, #1a1a1a);
+}
+.ns-sb__row.is-active { background: var(--color-bg-tertiary, #eee); }
+.ns-sb__row--l1 { padding-left: var(--spacing-lg, 22px); }
+.ns-sb__row--l2 { padding-left: var(--spacing-xl, 34px); }
+.ns-sb__num {
+  flex: none; min-width: 22px; text-align: center; font-family: var(--font-family-mono, monospace);
+  font-size: var(--ui-text-micro, 12px); font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted, #888); background: var(--color-bg-tertiary, #eee);
+  border-radius: var(--border-radius-sm, 4px); padding: 1px 5px;
+}
+.ns-sb__num.is-iter       { color: var(--color-text-secondary, #555); background: var(--color-bg-tertiary, #eee); }
+.ns-sb__num.is-in-progress{ color: var(--color-info, #2563eb);    background: color-mix(in srgb, var(--color-info, #2563eb) 14%, transparent); }
+.ns-sb__num.is-success    { color: var(--color-success, #16a34a); background: color-mix(in srgb, var(--color-success, #16a34a) 14%, transparent); }
+.ns-sb__num.is-failed     { color: var(--color-error, #dc2626);   background: color-mix(in srgb, var(--color-error, #dc2626) 14%, transparent); }
+.ns-sb__num.is-not-started{ color: var(--color-text-muted, #888); background: var(--color-bg-tertiary, #eee); }
+.ns-sb__label { flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ns-sb__ico { flex: none; display: inline-flex; width: 14px; height: 14px; color: var(--color-text-muted, #888); }
+.ns-sb__ico svg { width: 100%; height: 100%; }
+.ns-sb__kind { flex: none; display: inline-flex; width: 14px; height: 14px; color: var(--color-text-secondary, #555); }
+.ns-sb__kind svg { width: 100%; height: 100%; }
+.ns-sb__count { flex: none; font-size: var(--ui-text-micro, 12px); color: var(--color-text-muted, #888); font-variant-numeric: tabular-nums; }
+.ns-sb__chev { flex: none; width: 10px; height: 10px; color: var(--color-text-muted, #888); }
+
+/* Callouts */
+.ns-note {
+  border-left: 3px solid var(--color-info, #2563eb);
+  background: color-mix(in srgb, var(--color-info, #2563eb) 7%, transparent);
+  padding: var(--spacing-sm, 12px) var(--spacing-md, 16px);
+  border-radius: 0 var(--border-radius-md, 8px) var(--border-radius-md, 8px) 0;
+  margin: var(--spacing-md, 16px) 0; font-size: var(--ui-text-body, 14px);
+}
+.ns-note.is-warn  { border-color: var(--color-warning, #d97706); background: color-mix(in srgb, var(--color-warning, #d97706) 8%, transparent); }
+.ns-note.is-error { border-color: var(--color-error, #dc2626);  background: color-mix(in srgb, var(--color-error, #dc2626) 8%, transparent); }
+
+/* Edge-case gallery */
+.ns-cases { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--spacing-md, 16px); }
+.ns-case {
+  border: 1px solid var(--color-border-default, #ddd); border-radius: var(--border-radius-md, 8px);
+  padding: var(--spacing-md, 16px); background: var(--color-bg-secondary, #fafafa);
+}
+.ns-case h4 { margin: 0 0 var(--spacing-xs, 8px); font-size: var(--ui-text-body, 14px); font-weight: 600; }
+.ns-case p { margin: var(--spacing-xs, 8px) 0 0; font-size: var(--ui-text-micro, 12px); color: var(--color-text-secondary, #555); }
+
+/* Rules legend */
+.ns-legend { width: 100%; border-collapse: collapse; font-size: var(--ui-text-body, 14px); }
+.ns-legend th, .ns-legend td { text-align: left; padding: var(--spacing-sm, 10px); border-bottom: 1px solid var(--color-border-light, #eee); vertical-align: top; }
+.ns-legend th { font-size: var(--ui-text-micro, 12px); text-transform: uppercase; letter-spacing: .05em; color: var(--color-text-muted, #888); }
+.ns-tag { display: inline-block; font-size: var(--ui-text-micro, 12px); padding: 1px 8px; border-radius: var(--border-radius-full, 999px); font-weight: 600; white-space: nowrap; }
+.ns-tag.req { color: var(--color-error, #dc2626);   background: color-mix(in srgb, var(--color-error, #dc2626) 12%, transparent); }
+.ns-tag.opt { color: var(--color-text-secondary, #555); background: var(--color-bg-tertiary, #eee); }
+.ns-tag.rec { color: var(--color-info, #2563eb);   background: color-mix(in srgb, var(--color-info, #2563eb) 12%, transparent); }
+
+/* ---- Domain extension: blog index cards (rendered result surface) -------- */
+.ns-cardlist { padding: var(--spacing-sm, 10px); display: flex; flex-direction: column; gap: var(--spacing-sm, 10px); }
+.ns-card {
+  border: 1px solid var(--color-border-light, #eee); border-radius: var(--border-radius-md, 8px);
+  background: var(--color-bg-primary, #fff); padding: var(--spacing-sm, 10px) var(--spacing-md, 14px);
+}
+.ns-card__tags { display: flex; gap: 6px; margin: 0 0 4px; flex-wrap: wrap; }
+.ns-card__tag {
+  font-size: var(--ui-text-micro, 12px); color: var(--color-brand-primary, #2563eb);
+  background: color-mix(in srgb, var(--color-brand-primary, #2563eb) 10%, transparent);
+  padding: 0 8px; border-radius: var(--border-radius-full, 999px);
+}
+.ns-card__title { font-size: var(--ui-text-body, 14px); font-weight: 600; color: var(--color-text-primary, #1a1a1a); margin: 0; }
+.ns-card__desc { font-size: var(--ui-text-micro, 12px); color: var(--color-text-secondary, #555); margin: 2px 0 0; }
+.ns-card__meta { display: flex; gap: var(--spacing-sm, 10px); margin-top: 6px; font-size: var(--ui-text-micro, 12px); color: var(--color-text-muted, #888); }
+.ns-card__url { font-family: var(--font-family-mono, monospace); font-size: var(--ui-text-micro, 12px); color: var(--color-text-muted, #888); margin-top: 4px; }
+.ns-card__url b { color: var(--color-text-secondary, #555); font-weight: 600; }
+.ns-card.is-draft { border-style: dashed; border-color: var(--color-warning, #d97706); }
+.ns-drafttag {
+  font-size: var(--ui-text-micro, 12px); font-weight: 600; color: var(--color-warning, #d97706);
+  background: color-mix(in srgb, var(--color-warning, #d97706) 12%, transparent);
+  padding: 0 8px; border-radius: var(--border-radius-full, 999px);
+}
+</style>
+</head>
+<body class="ns-body">
+<div class="ns-wrap">
+  <h1 class="ns-title">Blogs — File Tree → Sidebar</h1>
+  <p class="ns-lead">Blog is the simplest naming scheme in the framework: a <b>flat</b> folder of
+  <code>YYYY-MM-DD-&lt;slug&gt;.md</code> files. The date drives ordering (newest-first) and is stripped
+  from the URL; there is no <code>NN_</code> prefix and no sidebar tree — the index renders as a grid of
+  cards.</p>
+
+  <!-- ===================== PRIMARY: TREE → RENDERED INDEX ==================== -->
+  <div class="ns-section">
+    <h2>On disk → the rendered index</h2>
+    <p class="ns-say">Files are named by date, and can sit in the folder in any order. The loader sorts by
+    <code>date</code> descending, so the newest post is first regardless of on-disk order. Each card links to
+    <code>/blog/&lt;slug&gt;</code> — the date prefix is removed from the URL.</p>
+    <div class="ns-split">
+      <div class="ns-panel">
+        <div class="ns-panel__cap">On disk — data/blog/ (flat)</div>
+        <pre class="ns-tree">blog/
+├── <span class="p">2024-01-15-</span>hello-world.md
+├── <span class="p">2024-03-02-</span>theming-deep-dive.md
+└── <span class="p">2024-01-20-</span>customization.md</pre>
+      </div>
+      <div class="ns-panel">
+        <div class="ns-panel__cap">Rendered — /blog index (newest-first)</div>
+        <div class="ns-cardlist">
+          <div class="ns-card">
+            <div class="ns-card__tags"><span class="ns-card__tag">themes</span><span class="ns-card__tag">guide</span></div>
+            <h3 class="ns-card__title">Theming Deep Dive</h3>
+            <p class="ns-card__desc">Everything about the token contract.</p>
+            <div class="ns-card__meta"><span>Docs Team</span><time>Mar 2, 2024</time></div>
+            <div class="ns-card__url">→ /blog/<b>theming-deep-dive</b></div>
+          </div>
+          <div class="ns-card">
+            <h3 class="ns-card__title">Customization</h3>
+            <p class="ns-card__desc">Make the site your own.</p>
+            <div class="ns-card__meta"><time>Jan 20, 2024</time></div>
+            <div class="ns-card__url">→ /blog/<b>customization</b></div>
+          </div>
+          <div class="ns-card">
+            <div class="ns-card__tags"><span class="ns-card__tag">announcement</span></div>
+            <h3 class="ns-card__title">Hello World</h3>
+            <p class="ns-card__desc">Welcome to the blog.</p>
+            <div class="ns-card__meta"><time>Jan 15, 2024</time></div>
+            <div class="ns-card__url">→ /blog/<b>hello-world</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ns-note">The card shows <b>title</b> (frontmatter), <b>description</b>, up to <b>2 tags</b>,
+    optional <b>author</b>, and the formatted <b>date</b> (<code>en-US</code>, e.g. "Mar 2, 2024"). A featured
+    <code>image</code> renders above the card when present.</div>
+  </div>
+
+  <!-- ===================== EDGE CASES ==================== -->
+  <div class="ns-section">
+    <h2>Edge cases</h2>
+    <p class="ns-say">Where the date comes from, what happens when it is wrong or absent, drafts, and why a
+    numeric prefix means nothing here.</p>
+    <div class="ns-cases">
+
+      <div class="ns-case">
+        <h4>Frontmatter <code>date</code> wins</h4>
+        <pre class="ns-tree" style="padding:8px 0"><span class="p">2024-01-15-</span>post.md
+  ↳ date: 2024-06-01</pre>
+        <p>The filename date is only a <em>fallback</em>: it is applied only when frontmatter has no
+        <code>date</code>. A frontmatter <code>date</code> overrides it, so this post sorts and displays as
+        <b>Jun 1, 2024</b> — not Jan 15.</p>
+      </div>
+
+      <div class="ns-case">
+        <h4>No date anywhere → sorts last</h4>
+        <pre class="ns-tree" style="padding:8px 0"><span class="d">notes.md</span>
+  (no date prefix, no fm date)</pre>
+        <p>Filename without a <code>YYYY-MM-DD-</code> prefix is allowed: the whole name becomes the slug and
+        <code>date</code> stays undefined. In the sort it counts as time <code>0</code>, so it falls to the
+        <b>oldest end</b> (last, newest-first). The card renders <b>no date line</b>.</p>
+      </div>
+
+      <div class="ns-note is-warn" style="grid-column:1/-1">
+        <b>Invalid date is not caught.</b> A malformed date like <code>2024-13-40</code> (in the filename or
+        frontmatter) is never validated. <code>new Date()</code> yields <em>Invalid Date</em> →
+        <code>getTime()</code> is <code>NaN</code>, so the sort comparison is <code>NaN</code> and that post's
+        position becomes <b>unstable</b>; the card prints the literal text <b>"Invalid Date"</b>. No build
+        error, no warning — it silently misbehaves.
+      </div>
+
+      <div class="ns-case is-draft">
+        <h4><span class="ns-drafttag">draft: true</span></h4>
+        <pre class="ns-tree" style="padding:8px 0"><span class="p">2024-05-01-</span>wip.md
+  ↳ draft: true</pre>
+        <p>Visible in <b>dev</b>, hidden in <b>production</b>. Drafts are included when
+        <code>includeDrafts</code> is on — the default is <code>!import.meta.env.PROD</code> — and filtered out
+        of the built site. Each draft also raises a lint <b>warning</b> in the error panel.</p>
+      </div>
+
+      <div class="ns-case">
+        <h4>Tags: only first 2 shown</h4>
+        <pre class="ns-tree" style="padding:8px 0">tags: [a, b, c, d]
+  card → a  b</pre>
+        <p>The card renders <code>tags.slice(0, 2)</code> — extra tags exist in frontmatter but the preview
+        card only shows the first two. All tags are still available on the post page.</p>
+      </div>
+
+      <div class="ns-case">
+        <h4>A <code>NN_</code> prefix is meaningless</h4>
+        <pre class="ns-tree" style="padding:8px 0"><span class="p">01_</span>2024-01-15-x.md</pre>
+        <p>Blogs sort by <b>date</b>, never by an order prefix. A leading <code>01_</code> is not stripped and
+        not interpreted — it just becomes part of the slug/name. Use the date, not a number, to order posts.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===================== RULES LEGEND ==================== -->
+  <div class="ns-section">
+    <h2>Rules</h2>
+    <table class="ns-legend">
+      <thead><tr><th>Rule</th><th>Status</th><th>Detail</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>title</code> in frontmatter</td>
+          <td><span class="ns-tag req">required</span></td>
+          <td>The only required field; falls back to "Untitled" if missing.</td>
+        </tr>
+        <tr>
+          <td><code>YYYY-MM-DD-</code> filename prefix</td>
+          <td><span class="ns-tag rec">recommended</span></td>
+          <td>Not enforced, but it is how a post gets a date without frontmatter. Without a date (here or in
+          frontmatter) the post sorts to the oldest end and shows no date.</td>
+        </tr>
+        <tr>
+          <td>Frontmatter <code>date</code></td>
+          <td><span class="ns-tag opt">optional</span></td>
+          <td>Overrides the filename date when present. Drives newest-first ordering and the card date.</td>
+        </tr>
+        <tr>
+          <td>Flat layout (no nesting)</td>
+          <td><span class="ns-tag rec">recommended</span></td>
+          <td>Blog is a flat folder of files; there is no sidebar tree and no folder grouping.</td>
+        </tr>
+        <tr>
+          <td><code>NN_</code> order prefix</td>
+          <td><span class="ns-tag opt">n/a</span></td>
+          <td>The docs prefix grammar does not apply — ordering is by date only. A number is not stripped.</td>
+        </tr>
+        <tr>
+          <td><code>draft: true</code></td>
+          <td><span class="ns-tag opt">optional</span></td>
+          <td>Dev-only. Shown while developing, filtered out of the production build; raises a lint warning.</td>
+        </tr>
+        <tr>
+          <td><code>description</code></td>
+          <td><span class="ns-tag opt">optional</span></td>
+          <td>Shown on the card; its absence raises a "missing-description" lint warning (SEO hint).</td>
+        </tr>
+        <tr>
+          <td><code>author</code>, <code>tags</code>, <code>image</code></td>
+          <td><span class="ns-tag opt">optional</span></td>
+          <td>All shown on the card when present; card renders at most the first 2 tags.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+</body>
+</html>

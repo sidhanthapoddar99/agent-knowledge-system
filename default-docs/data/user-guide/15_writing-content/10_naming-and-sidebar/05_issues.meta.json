@@ -1,0 +1,33 @@
+{
+  "title": "Issues — File Tree → Sidebar",
+  "description": "How an issue folder's sub-folders (comments, notes, brainstorm, subtasks, agent-log, agent-memory) are named and exactly what the detail-page sidebar renders. Opens with the self-contained Leading marks legend — the NN order badge, the status-tinted #iteration milestone badge, the five agent-log kind symbols, the 7 subtask status icons with their tints, and the folder chevron / descendant count — then walks each sub-folder, and covers the never-throws prefix rule that sets issues apart from docs.",
+  "sidebar_label": "Issues",
+  "sidebar_position": 5,
+  "embed_height": "full",
+  "artifact": {
+    "purpose": "Explainer mapping each issue sub-folder's on-disk naming to its sidebar treatment. Carries the consolidated Leading marks legend (NN badge, status-tinted #iteration milestone badge, agent-log kind symbols, the 7 subtask status icons + tints, folder chevron / count) as a dedicated up-front reference, then walks comments, notes, brainstorm, subtasks, agent-log (0NN meta vs MNN milestone contrast), agent-memory, the nesting cap, and the loose (never-throws) prefix parse. The trailing type glyphs live in the Suffix Icons artifact.",
+    "type": "explainer",
+    "theme": "site",
+    "consumes": {
+      "backgrounds": ["--color-bg-primary", "--color-bg-secondary", "--color-bg-tertiary"],
+      "text": ["--color-text-primary", "--color-text-secondary", "--color-text-muted"],
+      "borders": ["--color-border-default", "--color-border-light"],
+      "status": ["--color-success", "--color-warning", "--color-error", "--color-info"],
+      "brand": ["--color-brand-primary"],
+      "type": ["--ui-text-micro", "--ui-text-body", "--content-h1", "--content-h2", "--font-family-base", "--font-family-mono"],
+      "space": ["--spacing-xs", "--spacing-sm", "--spacing-md", "--spacing-lg", "--spacing-xl", "--spacing-2xl"],
+      "radius": ["--border-radius-sm", "--border-radius-md", "--border-radius-lg", "--border-radius-full"]
+    },
+    "sources": [
+      "astro-doc-code/src/layouts/issues/default/parts/detail/SubdocTree.astro",
+      "astro-doc-code/src/layouts/issues/default/parts/detail/SubtaskTree.astro",
+      "astro-doc-code/src/layouts/issues/default/server/state-icon.ts",
+      "astro-doc-code/src/layouts/issues/default/server/agent-log-icons.ts",
+      "astro-doc-code/src/layouts/issues/default/server/helpers.ts",
+      "astro-doc-code/src/layouts/file-type-icons.ts",
+      "astro-doc-code/src/loaders/issues.ts",
+      "astro-doc-code/src/parsers/core/order-prefix.ts",
+      "default-docs/data/todo/2026-07-01-demo-issue-anatomy-showcase/"
+    ]
+  }
+}

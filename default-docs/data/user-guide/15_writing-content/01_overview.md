@@ -27,6 +27,7 @@ Folder names (`docs`, `blog`, `issues`, `pages`) are convention — the actual p
 | [Asset Embedding](./asset-embedding) | The `[[path]]` syntax for inlining file contents |
 | [Page Outline](./outline) | How the auto-generated table of contents works |
 | [Drafts](./drafts) | `draft: true` — visible in dev, hidden in production |
+| [Naming & the Sidebar](./naming-and-sidebar/overview) | How files and folders are named, and exactly what shows in the navigation sidebar for each content type — a shared prefix-grammar reference plus visual file-tree → sidebar artifacts for docs, blogs, and issues |
 
 For the broader dev vs prod runtime story (what differs when you run `./start dev` vs `./start build`, and how to hide whole sections / navbar items), see [Dev Mode](/user-guide/configuration/dev-mode) in the Configuration section.
 

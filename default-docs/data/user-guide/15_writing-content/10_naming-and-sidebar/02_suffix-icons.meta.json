@@ -1,0 +1,56 @@
+{
+  "title": "Suffix Icons",
+  "description": "The trailing type glyphs — the single mark a sidebar row gets when the page is not markdown: an HTML artifact or a diagram page. Markdown is the unmarked default. This two-key glyph vocabulary (diagram, artifact) is shared by both the docs sidebar (fileType) and the issue sub-doc tree (docType), with the real SVGs inlined from framework source. Leading marks live in the Issues artifact.",
+  "sidebar_label": "Suffix Icons",
+  "sidebar_position": 2,
+  "embed_height": "full",
+  "artifact": {
+    "purpose": "Document the trailing type-glyph vocabulary shared by the docs sidebar and the issue sub-doc tree — the two keyed exceptions (diagram, artifact) that mark a non-markdown page, with markdown as the unmarked default. Leading marks (badges, kind symbols, status icons, chevron) are covered by the Issues artifact.",
+    "type": "explainer",
+    "theme": "site",
+    "interactions": "none — static explainer; re-themes live via the host site's light/dark toggle (no artifact-local JS)",
+    "consumes": {
+      "color": [
+        "--color-bg-primary",
+        "--color-bg-secondary",
+        "--color-bg-tertiary",
+        "--color-text-primary",
+        "--color-text-secondary",
+        "--color-text-muted",
+        "--color-border-default",
+        "--color-border-light",
+        "--color-brand-primary",
+        "--color-info",
+        "--color-success",
+        "--color-warning",
+        "--color-error"
+      ],
+      "typography": [
+        "--font-family-base",
+        "--font-family-mono",
+        "--line-height-base",
+        "--content-h1",
+        "--content-h2",
+        "--ui-text-body",
+        "--ui-text-micro"
+      ],
+      "spacing_radius_shadow": [
+        "--spacing-xs",
+        "--spacing-sm",
+        "--spacing-md",
+        "--spacing-lg",
+        "--spacing-xl",
+        "--spacing-2xl",
+        "--border-radius-sm",
+        "--border-radius-md",
+        "--border-radius-lg",
+        "--border-radius-full"
+      ]
+    },
+    "sources": [
+      "astro-doc-code/src/layouts/file-type-icons.ts",
+      "astro-doc-code/src/layouts/docs/default/Sidebar.astro",
+      "astro-doc-code/src/layouts/issues/default/parts/detail/SubdocTree.astro"
+    ]
+  }
+}

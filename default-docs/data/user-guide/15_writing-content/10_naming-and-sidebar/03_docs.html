@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Docs — File Tree → Sidebar</title>
+<style>
+/* ============================================================================
+ * SHARED STYLE KIT — "Naming & the Sidebar" artifact set. (verbatim)
+ * ==========================================================================*/
+* { box-sizing: border-box; }
+body.ns-body {
+  font-family: var(--font-family-base, system-ui, sans-serif);
+  color: var(--color-text-primary, #1a1a1a);
+  background: var(--color-bg-primary, #ffffff);
+  line-height: var(--line-height-base, 1.6);
+  margin: 0; padding: var(--spacing-xl, 32px);
+}
+.ns-wrap { max-width: 980px; margin: 0 auto; }
+.ns-title { font-size: var(--content-h1, 2rem); font-weight: 700; margin: 0 0 var(--spacing-xs, 8px); }
+.ns-lead { color: var(--color-text-secondary, #555); margin: 0 0 var(--spacing-xl, 32px); max-width: 70ch; }
+.ns-section { margin: var(--spacing-2xl, 48px) 0; }
+.ns-section > h2 {
+  font-size: var(--content-h2, 1.5rem); font-weight: 650; margin: 0 0 var(--spacing-xs, 8px);
+}
+.ns-section > .ns-say { color: var(--color-text-secondary, #555); margin: 0 0 var(--spacing-lg, 24px); max-width: 70ch; }
+
+/* Tree ↔ sidebar side-by-side */
+.ns-split { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-lg, 24px); align-items: start; }
+@media (max-width: 760px) { .ns-split { grid-template-columns: 1fr; } }
+.ns-panel {
+  border: 1px solid var(--color-border-default, #ddd); border-radius: var(--border-radius-lg, 10px);
+  background: var(--color-bg-secondary, #fafafa); overflow: hidden;
+}
+.ns-panel__cap {
+  font-size: var(--ui-text-micro, 12px); text-transform: uppercase; letter-spacing: .06em;
+  color: var(--color-text-muted, #888); padding: var(--spacing-sm, 10px) var(--spacing-md, 16px);
+  border-bottom: 1px solid var(--color-border-light, #eee); background: var(--color-bg-tertiary, #f0f0f0);
+}
+.ns-tree {
+  font-family: var(--font-family-mono, ui-monospace, monospace); font-size: var(--ui-text-body, 14px);
+  white-space: pre; overflow-x: auto; padding: var(--spacing-md, 16px); margin: 0;
+  color: var(--color-text-secondary, #555);
+}
+.ns-tree .p { color: var(--color-text-muted, #999); }              /* the NN_ prefix segment */
+.ns-tree .d { color: var(--color-text-primary, #1a1a1a); font-weight: 600; } /* folder / emphasised name */
+
+/* Mini sidebar */
+.ns-sb { padding: var(--spacing-sm, 10px); display: flex; flex-direction: column; gap: 1px; }
+.ns-sb__sec {
+  font-size: var(--ui-text-micro, 12px); text-transform: uppercase; letter-spacing: .05em; font-weight: 600;
+  color: var(--color-text-muted, #888); padding: var(--spacing-md, 14px) var(--spacing-sm, 10px) 4px;
+}
+.ns-sb__row {
+  display: flex; align-items: center; gap: var(--spacing-xs, 8px);
+  padding: 4px var(--spacing-sm, 10px); border-radius: var(--border-radius-sm, 6px);
+  font-size: var(--ui-text-body, 14px); color: var(--color-text-primary, #1a1a1a);
+}
+.ns-sb__row.is-active { background: var(--color-bg-tertiary, #eee); }
+.ns-sb__row--l1 { padding-left: var(--spacing-lg, 22px); }
+.ns-sb__row--l2 { padding-left: var(--spacing-xl, 34px); }
+.ns-sb__num {
+  flex: none; min-width: 22px; text-align: center; font-family: var(--font-family-mono, monospace);
+  font-size: var(--ui-text-micro, 12px); font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted, #888); background: var(--color-bg-tertiary, #eee);
+  border-radius: var(--border-radius-sm, 4px); padding: 1px 5px;
+}
+.ns-sb__num.is-iter       { color: var(--color-text-secondary, #555); background: var(--color-bg-tertiary, #eee); }
+.ns-sb__num.is-in-progress{ color: var(--color-info, #2563eb);    background: color-mix(in srgb, var(--color-info, #2563eb) 14%, transparent); }
+.ns-sb__num.is-success    { color: var(--color-success, #16a34a); background: color-mix(in srgb, var(--color-success, #16a34a) 14%, transparent); }
+.ns-sb__num.is-failed     { color: var(--color-error, #dc2626);   background: color-mix(in srgb, var(--color-error, #dc2626) 14%, transparent); }
+.ns-sb__num.is-not-started{ color: var(--color-text-muted, #888); background: var(--color-bg-tertiary, #eee); }
+.ns-sb__label { flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ns-sb__ico { flex: none; display: inline-flex; width: 14px; height: 14px; color: var(--color-text-muted, #888); }
+.ns-sb__ico svg { width: 100%; height: 100%; }
+.ns-sb__kind { flex: none; display: inline-flex; width: 14px; height: 14px; color: var(--color-text-secondary, #555); }
+.ns-sb__kind svg { width: 100%; height: 100%; }
+.ns-sb__count { flex: none; font-size: var(--ui-text-micro, 12px); color: var(--color-text-muted, #888); font-variant-numeric: tabular-nums; }
+.ns-sb__chev { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 10px; height: 10px; color: var(--color-text-muted, #888); }
+.ns-sb__chev svg { width: 100%; height: 100%; display: block; }
+
+/* Callouts */
+.ns-note {
+  border-left: 3px solid var(--color-info, #2563eb);
+  background: color-mix(in srgb, var(--color-info, #2563eb) 7%, transparent);
+  padding: var(--spacing-sm, 12px) var(--spacing-md, 16px);
+  border-radius: 0 var(--border-radius-md, 8px) var(--border-radius-md, 8px) 0;
+  margin: var(--spacing-md, 16px) 0; font-size: var(--ui-text-body, 14px);
+}
+.ns-note.is-warn  { border-color: var(--color-warning, #d97706); background: color-mix(in srgb, var(--color-warning, #d97706) 8%, transparent); }
+.ns-note.is-error { border-color: var(--color-error, #dc2626);  background: color-mix(in srgb, var(--color-error, #dc2626) 8%, transparent); }
+
+/* Edge-case gallery */
+.ns-cases { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--spacing-md, 16px); }
+.ns-case {
+  border: 1px solid var(--color-border-default, #ddd); border-radius: var(--border-radius-md, 8px);
+  padding: var(--spacing-md, 16px); background: var(--color-bg-secondary, #fafafa);
+}
+.ns-case h4 { margin: 0 0 var(--spacing-xs, 8px); font-size: var(--ui-text-body, 14px); font-weight: 600; }
+.ns-case p { margin: var(--spacing-xs, 8px) 0 0; font-size: var(--ui-text-micro, 12px); color: var(--color-text-secondary, #555); }
+
+/* Rules legend */
+.ns-legend { width: 100%; border-collapse: collapse; font-size: var(--ui-text-body, 14px); }
+.ns-legend th, .ns-legend td { text-align: left; padding: var(--spacing-sm, 10px); border-bottom: 1px solid var(--color-border-light, #eee); vertical-align: top; }
+.ns-legend th { font-size: var(--ui-text-micro, 12px); text-transform: uppercase; letter-spacing: .05em; color: var(--color-text-muted, #888); }
+.ns-tag { display: inline-block; font-size: var(--ui-text-micro, 12px); padding: 1px 8px; border-radius: var(--border-radius-full, 999px); font-weight: 600; white-space: nowrap; }
+.ns-tag.req { color: var(--color-error, #dc2626);   background: color-mix(in srgb, var(--color-error, #dc2626) 12%, transparent); }
+.ns-tag.opt { color: var(--color-text-secondary, #555); background: var(--color-bg-tertiary, #eee); }
+.ns-tag.rec { color: var(--color-info, #2563eb);   background: color-mix(in srgb, var(--color-info, #2563eb) 12%, transparent); }
+
+/* ---- domain extensions (docs artifact) — do not restyle shared vocabulary --- */
+.ns-tree .c { color: var(--color-text-muted, #999); font-style: italic; }  /* trailing note */
+.ns-tree .g { color: var(--color-text-secondary, #555); }                  /* glyph marker */
+.ns-err {
+  font-family: var(--font-family-mono, ui-monospace, monospace);
+  font-size: var(--ui-text-micro, 12px); white-space: pre-wrap; word-break: break-word;
+  margin: var(--spacing-xs, 8px) 0 0; color: var(--color-text-primary, #1a1a1a);
+}
+.ns-err b { color: var(--color-error, #dc2626); }
+.ns-fm {
+  font-family: var(--font-family-mono, ui-monospace, monospace); font-size: var(--ui-text-micro, 12px);
+  white-space: pre; overflow-x: auto; margin: var(--spacing-xs, 8px) 0 0;
+  padding: var(--spacing-sm, 10px); border-radius: var(--border-radius-sm, 6px);
+  background: var(--color-bg-tertiary, #f0f0f0); color: var(--color-text-secondary, #555);
+}
+.ns-mini { margin-top: var(--spacing-sm, 10px); border: 1px solid var(--color-border-light, #eee); border-radius: var(--border-radius-sm, 6px); overflow: hidden; }
+.ns-mini .ns-sb { padding: 4px; }
+.ns-inline-kind { display: inline-flex; width: 12px; height: 12px; vertical-align: -2px; color: var(--color-text-secondary, #555); }
+.ns-inline-kind svg { width: 100%; height: 100%; }
+</style>
+</head>
+<body class="ns-body">
+<div class="ns-wrap">
+
+  <h1 class="ns-title">Docs — File Tree → Sidebar</h1>
+  <p class="ns-lead">
+    A docs section's folder tree <em>is</em> its navigation. Every file needs an
+    <code>NN_</code> prefix (2–5 digits) — this one is <strong>mandatory</strong>: a docs
+    file without it is a hard build error. The sidebar then throws the prefix away and
+    shows the frontmatter <code>title</code>; the number survives only as sort order.
+  </p>
+
+  <!-- ============================ PRIMARY ============================ -->
+  <section class="ns-section">
+    <h2>On disk → in the sidebar</h2>
+    <p class="ns-say">
+      A realistic section: root files interleave with folder sections, sorted together by the
+      numeric value of their prefix. Every folder becomes a collapsible section header; every
+      file becomes a row labelled by its frontmatter <code>title</code>, never its filename.
+    </p>
+
+    <div class="ns-split">
+      <div class="ns-panel">
+        <div class="ns-panel__cap">15_writing-content/ &nbsp;·&nbsp; on disk</div>
+<pre class="ns-tree"><span class="d">15_writing-content/</span>
+├─ settings.json          <span class="c"># required per folder</span>
+├─ <span class="p">01_</span>overview.md          <span class="c"># title: "Overview"</span>
+├─ <span class="p">05_</span><span class="d">getting-started/</span>
+│  ├─ settings.json
+│  ├─ <span class="p">01_</span>intro.md          <span class="c"># title: "Introduction"</span>
+│  └─ <span class="p">10_</span>install.md        <span class="c"># title: "Installing the CLI"</span>
+├─ <span class="p">010_</span><span class="d">configuration/</span>      <span class="c"># 010 = value 10</span>
+│  ├─ settings.json
+│  ├─ <span class="p">05_</span>site-yaml.md      <span class="c"># title: "Site Configuration"</span>
+│  └─ <span class="p">20_</span>navbar.md         <span class="c"># title: "Navigation Bar"</span>
+└─ <span class="p">110_</span><span class="d">diagrams/</span>           <span class="c"># 110 = value 110</span>
+   ├─ settings.json
+   ├─ <span class="p">01_</span>overview.md       <span class="c"># title: "Diagrams Overview"</span>
+   └─ <span class="p">05_</span>architecture.<span class="d">excalidraw</span>  <span class="g">◇</span> <span class="c">diagram page</span></pre>
+      </div>
+
+      <div class="ns-panel">
+        <div class="ns-panel__cap">what the sidebar renders</div>
+        <div class="ns-sb">
+          <div class="ns-sb__row is-active"><span class="ns-sb__label">Overview</span></div>
+
+          <div class="ns-sb__sec">Getting Started
+            <span class="ns-sb__chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span>
+          </div>
+          <div class="ns-sb__row ns-sb__row--l1"><span class="ns-sb__label">Introduction</span></div>
+          <div class="ns-sb__row ns-sb__row--l1"><span class="ns-sb__label">Installing the CLI</span></div>
+
+          <div class="ns-sb__sec">Configuration
+            <span class="ns-sb__chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span>
+          </div>
+          <div class="ns-sb__row ns-sb__row--l1"><span class="ns-sb__label">Site Configuration</span></div>
+          <div class="ns-sb__row ns-sb__row--l1"><span class="ns-sb__label">Navigation Bar</span></div>
+
+          <div class="ns-sb__sec">Diagrams
+            <span class="ns-sb__chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span>
+          </div>
+          <div class="ns-sb__row ns-sb__row--l1"><span class="ns-sb__label">Diagrams Overview</span></div>
+          <div class="ns-sb__row ns-sb__row--l1">
+            <span class="ns-sb__label">System Architecture</span>
+            <span class="ns-sb__kind" title="Diagram" aria-label="Diagram"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="1.5" width="6" height="4.5" rx="1"/><rect x="8.5" y="10" width="6" height="4.5" rx="1"/><path d="M4.5 6v2.5a2 2 0 002 2h2"/></svg></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ns-note">
+      <strong>Read this pair carefully.</strong> The <code>NN_</code> prefixes and the
+      <code>getting-started/</code> folder name are <em>gone</em> from the sidebar. Labels come from
+      each file's <code>title</code> frontmatter; a folder becomes a section header named from its
+      own <code>settings.json</code> <code>label</code> (or its title-cased slug). Ordering follows the
+      numeric prefix value — so <code>05_</code> (5) &lt; <code>010_</code> (10) &lt; <code>110_</code> (110),
+      and the root file <code>01_overview.md</code> lands above them all.
+      <em>Source: <code>Sidebar.astro</code>, <code>useSidebar.ts</code> lines 223–237, 271–288.</em>
+    </div>
+  </section>
+
+  <!-- ============================ EDGE CASES ============================ -->
+  <section class="ns-section">
+    <h2>Edge cases</h2>
+    <p class="ns-say">Every rule and every way it can go wrong — a hard error, a silent warning, or a quiet sort.</p>
+
+    <div class="ns-cases">
+
+      <!-- 1. missing prefix = HARD ERROR -->
+      <div class="ns-case">
+        <h4>Missing prefix → build fails</h4>
+        <div class="ns-fm">guides/setup.md          <span style="color:var(--color-error,#dc2626)">✗ no NN_ prefix</span></div>
+        <div class="ns-note is-error" style="margin-top:8px">
+          <p class="ns-err"><b>[DOCS ERROR]</b> Files missing required XX_ position prefix:
+  - guides/setup.md
+
+Docs files must be named with a position prefix (01-99).
+Examples:
+  01_getting-started.mdx
+  02_installation.mdx
+  guides/01_configuration.mdx</p>
+        </div>
+        <p>Verbatim throw from <code>data.ts</code> lines 253–265. Docs is the <em>only</em> content
+          type where a missing prefix is fatal — the site won't start.</p>
+      </div>
+
+      <!-- 2. mixed-width numeric sort -->
+      <div class="ns-case">
+        <h4>Mixed widths sort by value</h4>
+        <div class="ns-fm"><span class="p">05_</span>a.md   <span class="c">→ 5</span>
+<span class="p">010_</span>b.md  <span class="c">→ 10</span>
+<span class="p">110_</span>c.md  <span class="c">→ 110</span></div>
+        <p>Order is the parsed <em>numeric value</em>, never the string — so <code>05</code> &lt;
+          <code>010</code> &lt; <code>110</code>. Gap-space your prefixes (10, 20, 30) to insert later
+          without renumbering. <code>order-prefix.ts</code>.</p>
+      </div>
+
+      <!-- 3. folder = section -->
+      <div class="ns-case">
+        <h4>A folder is a section</h4>
+        <div class="ns-fm"><span class="p">05_</span><span class="d">getting-started/</span>
+├─ settings.json
+├─ <span class="p">01_</span>intro.md
+└─ <span class="p">10_</span>install.md</div>
+        <p>Every prefixed sub-folder renders as a collapsible section header (from its
+          <code>settings.json</code> <code>label</code>, else the title-cased slug); its files nest one
+          level in. <code>useSidebar.ts</code> <code>nodeToSection()</code>.</p>
+      </div>
+
+      <!-- 4. sidebar_position override / tiebreak -->
+      <div class="ns-case">
+        <h4><code>sidebar_position</code> overrides</h4>
+        <div class="ns-fm">50_appendix.md
+<span class="c">---</span>
+title: Appendix
+sidebar_position: 1   <span class="c"># wins</span></div>
+        <p>The prefix seeds <code>sidebar_position</code> (base-parser.ts 184–189); an explicit
+          frontmatter value <em>overrides</em> it. So <code>50_appendix.md</code> can jump to the top
+          without renaming — and acts as the tiebreak when two prefixes collide.</p>
+      </div>
+
+      <!-- 5. deeper than render depth -->
+      <div class="ns-case">
+        <h4>Deeper than the render depth</h4>
+        <div class="ns-fm"><span class="p">10_</span><span class="d">a/</span> › <span class="p">10_</span><span class="d">b/</span> › <span class="p">10_</span><span class="d">c/</span> › <span class="p">10_</span><span class="d">d/</span></div>
+        <div class="ns-note is-warn" style="margin-top:8px">
+          The default docs sidebar draws about <strong>3 levels</strong> (<code>sidebar.depth</code>
+          default <code>3</code>, <code>data.ts</code> 383). Pages nested deeper still
+          <strong>build and are reachable by URL</strong> — they just don't appear as sidebar rows.
+        </div>
+        <p>Docs have <strong>no hard nesting cap</strong> — you can nest as deep as you like and every page builds and routes. <code>sidebar.depth</code> only limits how deep the sidebar <em>draws</em>. (The 5-level hard cap, <code>MAX_SUBFOLDER_DEPTH</code>, is the separate <strong>issue-tracker</strong> rule — it does not apply to docs.)</p>
+      </div>
+
+      <!-- 6. non-md page: diagram/artifact opt-in + glyph -->
+      <div class="ns-case">
+        <h4>Non-markdown page + glyph</h4>
+        <div class="ns-fm"><span class="p">05_</span>architecture.<span class="d">excalidraw</span>
+<span class="p">08_</span>dashboard.<span class="d">html</span></div>
+        <div class="ns-mini">
+          <div class="ns-sb">
+            <div class="ns-sb__row"><span class="ns-sb__label">System Architecture</span>
+              <span class="ns-sb__kind" title="Diagram" aria-label="Diagram"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="1.5" width="6" height="4.5" rx="1"/><rect x="8.5" y="10" width="6" height="4.5" rx="1"/><path d="M4.5 6v2.5a2 2 0 002 2h2"/></svg></span>
+            </div>
+            <div class="ns-sb__row"><span class="ns-sb__label">Dashboard</span>
+              <span class="ns-sb__kind" title="Artifact" aria-label="Artifact"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="10" rx="1.5"/><path d="M2 6.5h12"/></svg></span>
+            </div>
+          </div>
+        </div>
+        <p><code>.mmd/.dot/.excalidraw</code> and <code>.html</code> pages render first-class (still
+          <code>NN_</code>-prefixed) and carry a trailing type glyph — the only mark a docs row ever
+          gets. Enabled by default; opt out with <code>allow_diagram_pages</code> /
+          <code>allow_artifact_pages: false</code>. Unlike markdown, a missing prefix here is a
+          <em>warning + skip</em>, not a build error. <code>file-type-icons.ts</code>,
+          <code>diagram-pages.ts</code> 20–23, <code>artifact-pages.ts</code> 32–37.</p>
+      </div>
+
+      <!-- 7. title from frontmatter -->
+      <div class="ns-case">
+        <h4>Label = title, not filename</h4>
+        <div class="ns-fm"><span class="p">05_</span>site-yaml.md
+<span class="c">---</span>
+title: Site Configuration</div>
+        <div class="ns-mini"><div class="ns-sb"><div class="ns-sb__row"><span class="ns-sb__label">Site Configuration</span></div></div></div>
+        <p>The row reads <strong>Site Configuration</strong> — never <code>site-yaml</code>.
+          <code>title</code> frontmatter is required per file (<code>docs.ts</code> schema); a
+          <code>sidebar_label</code> can shorten it. Missing <code>title</code> throws
+          (base-parser.ts 285–290).</p>
+      </div>
+
+      <!-- 8. not-a-prefix widths -->
+      <div class="ns-case">
+        <h4>One digit / six digits ≠ prefix</h4>
+        <div class="ns-fm">1_intro.md       <span class="c"># NOT a prefix</span>
+123456_x.md      <span class="c"># NOT a prefix</span></div>
+        <p>The grammar is strictly <strong>2–5 digits</strong> then <code>_</code>. A single digit or
+          6+ digits isn't parsed as a prefix — so <code>1_intro.md</code> counts as
+          <em>no prefix</em> and triggers the hard build error above. <code>order-prefix.ts</code> 24–25, 41.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================ RULES LEGEND ============================ -->
+  <section class="ns-section">
+    <h2>Rules at a glance</h2>
+    <table class="ns-legend">
+      <thead>
+        <tr><th>Rule</th><th>Status</th><th>Detail</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>NN_</code> prefix on every docs file</td>
+          <td><span class="ns-tag req">required</span></td>
+          <td>Mandatory — the loader <strong>throws a ParserError at build</strong> if any docs file lacks it. Docs is the only content type that enforces this.</td>
+        </tr>
+        <tr>
+          <td><code>NN_</code> prefix on sub-folders</td>
+          <td><span class="ns-tag rec">convention</span></td>
+          <td>Sets section order by numeric value. Unprefixed folders default to position 999 and sort last rather than erroring.</td>
+        </tr>
+        <tr>
+          <td><code>settings.json</code> per folder</td>
+          <td><span class="ns-tag req">required</span></td>
+          <td>Declares the section <code>label</code>, collapse behaviour, sidebar depth, outline, pagination. Missing → framework defaults (validator flags it).</td>
+        </tr>
+        <tr>
+          <td><code>title</code> frontmatter per file</td>
+          <td><span class="ns-tag req">required</span></td>
+          <td>Becomes the sidebar label (the prefix and slug are discarded). Missing <code>title</code> throws.</td>
+        </tr>
+        <tr>
+          <td><code>sidebar_position</code> / <code>sidebar_label</code></td>
+          <td><span class="ns-tag opt">optional</span></td>
+          <td>Override the prefix-derived order and shorten the label. Absent → order comes from the prefix value.</td>
+        </tr>
+        <tr>
+          <td>Prefix width</td>
+          <td><span class="ns-tag opt">2–5 digits</span></td>
+          <td>Sort by numeric value, so mixed widths coexist (<code>05</code> &lt; <code>010</code> &lt; <code>110</code>). One digit or 6+ digits is not a prefix.</td>
+        </tr>
+        <tr>
+          <td>Folder nesting depth</td>
+          <td><span class="ns-tag opt">unlimited</span></td>
+          <td>Docs have <strong>no hard cap</strong> — nest freely, all pages build and route. The sidebar only <em>draws</em> to <code>sidebar.depth</code> (default 3); deeper pages exist but aren't shown as rows. (The 5-level <code>MAX_SUBFOLDER_DEPTH</code> cap is the issue tracker's, not docs'.)</td>
+        </tr>
+        <tr>
+          <td>Non-markdown pages (<code>.mmd</code>/<code>.dot</code>/<code>.excalidraw</code>/<code>.html</code>)</td>
+          <td><span class="ns-tag opt">opt-out</span></td>
+          <td>First-class when <code>NN_</code>-prefixed; on by default, disable with <code>allow_diagram_pages</code>/<code>allow_artifact_pages: false</code>. Carry a trailing type glyph; missing prefix = warning, not error.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+</div>
+</body>
+</html>

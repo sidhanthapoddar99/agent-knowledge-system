@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Issues — File Tree → Sidebar</title>
+<style>
+/* ============================================================================
+ * SHARED STYLE KIT — "Naming & the Sidebar" artifact set. (verbatim)
+ * ==========================================================================*/
+* { box-sizing: border-box; }
+body.ns-body {
+  font-family: var(--font-family-base, system-ui, sans-serif);
+  color: var(--color-text-primary, #1a1a1a);
+  background: var(--color-bg-primary, #ffffff);
+  line-height: var(--line-height-base, 1.6);
+  margin: 0; padding: var(--spacing-xl, 32px);
+}
+.ns-wrap { max-width: 980px; margin: 0 auto; }
+.ns-title { font-size: var(--content-h1, 2rem); font-weight: 700; margin: 0 0 var(--spacing-xs, 8px); }
+.ns-lead { color: var(--color-text-secondary, #555); margin: 0 0 var(--spacing-xl, 32px); max-width: 70ch; }
+.ns-section { margin: var(--spacing-2xl, 48px) 0; }
+.ns-section > h2 {
+  font-size: var(--content-h2, 1.5rem); font-weight: 650; margin: 0 0 var(--spacing-xs, 8px);
+}
+.ns-section > .ns-say { color: var(--color-text-secondary, #555); margin: 0 0 var(--spacing-lg, 24px); max-width: 70ch; }
+
+/* Tree ↔ sidebar side-by-side */
+.ns-split { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-lg, 24px); align-items: start; }
+@media (max-width: 760px) { .ns-split { grid-template-columns: 1fr; } }
+.ns-panel {
+  border: 1px solid var(--color-border-default, #ddd); border-radius: var(--border-radius-lg, 10px);
+  background: var(--color-bg-secondary, #fafafa); overflow: hidden;
+}
+.ns-panel__cap {
+  font-size: var(--ui-text-micro, 12px); text-transform: uppercase; letter-spacing: .06em;
+  color: var(--color-text-muted, #888); padding: var(--spacing-sm, 10px) var(--spacing-md, 16px);
+  border-bottom: 1px solid var(--color-border-light, #eee); background: var(--color-bg-tertiary, #f0f0f0);
+}
+.ns-tree {
+  font-family: var(--font-family-mono, ui-monospace, monospace); font-size: var(--ui-text-body, 14px);
+  white-space: pre; overflow-x: auto; padding: var(--spacing-md, 16px); margin: 0;
+  color: var(--color-text-secondary, #555);
+}
+.ns-tree .p { color: var(--color-text-muted, #999); }              /* the NN_ prefix segment */
+.ns-tree .d { color: var(--color-text-primary, #1a1a1a); font-weight: 600; } /* folder / emphasised name */
+
+/* Mini sidebar */
+.ns-sb { padding: var(--spacing-sm, 10px); display: flex; flex-direction: column; gap: 1px; }
+.ns-sb__sec {
+  font-size: var(--ui-text-micro, 12px); text-transform: uppercase; letter-spacing: .05em; font-weight: 600;
+  color: var(--color-text-muted, #888); padding: var(--spacing-md, 14px) var(--spacing-sm, 10px) 4px;
+}
+.ns-sb__row {
+  display: flex; align-items: center; gap: var(--spacing-xs, 8px);
+  padding: 4px var(--spacing-sm, 10px); border-radius: var(--border-radius-sm, 6px);
+  font-size: var(--ui-text-body, 14px); color: var(--color-text-primary, #1a1a1a);
+}
+.ns-sb__row.is-active { background: var(--color-bg-tertiary, #eee); }
+.ns-sb__row--l1 { padding-left: var(--spacing-lg, 22px); }
+.ns-sb__row--l2 { padding-left: var(--spacing-xl, 34px); }
+.ns-sb__num {
+  flex: none; min-width: 22px; text-align: center; font-family: var(--font-family-mono, monospace);
+  font-size: var(--ui-text-micro, 12px); font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted, #888); background: var(--color-bg-tertiary, #eee);
+  border-radius: var(--border-radius-sm, 4px); padding: 1px 5px;
+}
+.ns-sb__num.is-iter       { color: var(--color-text-secondary, #555); background: var(--color-bg-tertiary, #eee); }
+.ns-sb__num.is-in-progress{ color: var(--color-info, #2563eb);    background: color-mix(in srgb, var(--color-info, #2563eb) 14%, transparent); }
+.ns-sb__num.is-success    { color: var(--color-success, #16a34a); background: color-mix(in srgb, var(--color-success, #16a34a) 14%, transparent); }
+.ns-sb__num.is-failed     { color: var(--color-error, #dc2626);   background: color-mix(in srgb, var(--color-error, #dc2626) 14%, transparent); }
+.ns-sb__num.is-not-started{ color: var(--color-text-muted, #888); background: var(--color-bg-tertiary, #eee); }
+.ns-sb__label { flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ns-sb__ico { flex: none; display: inline-flex; width: 14px; height: 14px; color: var(--color-text-muted, #888); }
+.ns-sb__ico svg { width: 100%; height: 100%; }
+.ns-sb__kind { flex: none; display: inline-flex; width: 14px; height: 14px; color: var(--color-text-secondary, #555); }
+.ns-sb__kind svg { width: 100%; height: 100%; }
+.ns-sb__count { flex: none; font-size: var(--ui-text-micro, 12px); color: var(--color-text-muted, #888); font-variant-numeric: tabular-nums; }
+.ns-sb__chev { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 10px; height: 10px; color: var(--color-text-muted, #888); }
+.ns-sb__chev svg { width: 100%; height: 100%; display: block; }
+
+/* Callouts */
+.ns-note {
+  border-left: 3px solid var(--color-info, #2563eb);
+  background: color-mix(in srgb, var(--color-info, #2563eb) 7%, transparent);
+  padding: var(--spacing-sm, 12px) var(--spacing-md, 16px);
+  border-radius: 0 var(--border-radius-md, 8px) var(--border-radius-md, 8px) 0;
+  margin: var(--spacing-md, 16px) 0; font-size: var(--ui-text-body, 14px);
+}
+.ns-note.is-warn  { border-color: var(--color-warning, #d97706); background: color-mix(in srgb, var(--color-warning, #d97706) 8%, transparent); }
+.ns-note.is-error { border-color: var(--color-error, #dc2626);  background: color-mix(in srgb, var(--color-error, #dc2626) 8%, transparent); }
+
+/* Edge-case gallery */
+.ns-cases { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--spacing-md, 16px); }
+.ns-case {
+  border: 1px solid var(--color-border-default, #ddd); border-radius: var(--border-radius-md, 8px);
+  padding: var(--spacing-md, 16px); background: var(--color-bg-secondary, #fafafa);
+}
+.ns-case h4 { margin: 0 0 var(--spacing-xs, 8px); font-size: var(--ui-text-body, 14px); font-weight: 600; }
+.ns-case p { margin: var(--spacing-xs, 8px) 0 0; font-size: var(--ui-text-micro, 12px); color: var(--color-text-secondary, #555); }
+
+/* Rules legend */
+.ns-legend { width: 100%; border-collapse: collapse; font-size: var(--ui-text-body, 14px); }
+.ns-legend th, .ns-legend td { text-align: left; padding: var(--spacing-sm, 10px); border-bottom: 1px solid var(--color-border-light, #eee); vertical-align: top; }
+.ns-legend th { font-size: var(--ui-text-micro, 12px); text-transform: uppercase; letter-spacing: .05em; color: var(--color-text-muted, #888); }
+.ns-tag { display: inline-block; font-size: var(--ui-text-micro, 12px); padding: 1px 8px; border-radius: var(--border-radius-full, 999px); font-weight: 600; white-space: nowrap; }
+.ns-tag.req { color: var(--color-error, #dc2626);   background: color-mix(in srgb, var(--color-error, #dc2626) 12%, transparent); }
+.ns-tag.opt { color: var(--color-text-secondary, #555); background: var(--color-bg-tertiary, #eee); }
+.ns-tag.rec { color: var(--color-info, #2563eb);   background: color-mix(in srgb, var(--color-info, #2563eb) 12%, transparent); }
+
+/* ============================================================================
+ * DOMAIN EXTENSIONS — issues only. Reuse the shared vocabulary; add what the
+ * issue tracker needs that no other artifact does: status-tinted subtask
+ * icons, deeper nesting indents, a comment rail, and small inline chips.
+ * ==========================================================================*/
+.ns-sb__check { flex: none; display: inline-flex; width: 15px; height: 15px; color: var(--color-text-muted, #888); }
+.ns-sb__check svg { width: 100%; height: 100%; }
+.ns-sb__check.is-open         { color: var(--color-text-muted, #888); }
+.ns-sb__check.is-blocked      { color: var(--color-error, #dc2626); }
+.ns-sb__check.is-in-progress  { color: var(--color-info, #2563eb); }
+.ns-sb__check.is-input-needed { color: var(--color-warning, #d97706); }
+.ns-sb__check.is-review       { color: var(--color-info, #2563eb); }
+.ns-sb__check.is-done         { color: var(--color-success, #16a34a); }
+.ns-sb__check.is-dropped      { color: var(--color-text-muted, #888); }
+.ns-sb__row--l3 { padding-left: 46px; }
+.ns-sb__row--l4 { padding-left: 58px; }
+.ns-sb__row--l5 { padding-left: 70px; }
+.ns-sb__row.is-cap { opacity: .5; }
+
+/* Comment rail (comments never enter the nav sidebar) */
+.ns-rail { padding: var(--spacing-md, 16px); display: flex; flex-direction: column; gap: var(--spacing-sm, 12px); }
+.ns-rail__c { display: flex; gap: var(--spacing-sm, 10px); align-items: flex-start; }
+.ns-rail__id {
+  flex: none; font-family: var(--font-family-mono, monospace); font-size: var(--ui-text-micro, 12px);
+  font-variant-numeric: tabular-nums; color: var(--color-text-muted, #888);
+  background: var(--color-bg-tertiary, #eee); border-radius: var(--border-radius-sm, 4px); padding: 1px 6px;
+}
+.ns-rail__b { font-size: var(--ui-text-body, 14px); }
+.ns-rail__b b { font-weight: 600; }
+.ns-rail__meta { font-size: var(--ui-text-micro, 12px); color: var(--color-text-muted, #888); }
+
+/* 7-status specimen strip */
+.ns-statuses { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--spacing-sm, 10px); margin: var(--spacing-md, 16px) 0; }
+.ns-status { display: flex; align-items: center; gap: var(--spacing-xs, 8px); font-size: var(--ui-text-body, 14px);
+  border: 1px solid var(--color-border-light, #eee); border-radius: var(--border-radius-md, 8px);
+  padding: var(--spacing-xs, 8px) var(--spacing-sm, 10px); background: var(--color-bg-secondary, #fafafa); }
+
+/* Inline badge sample for prose */
+.ns-chip {
+  display: inline-flex; align-items: center; min-width: 20px; justify-content: center;
+  font-family: var(--font-family-mono, monospace); font-size: var(--ui-text-micro, 12px);
+  font-variant-numeric: tabular-nums; padding: 0 5px; border-radius: var(--border-radius-sm, 4px);
+  color: var(--color-text-muted, #888); background: var(--color-bg-tertiary, #eee); vertical-align: middle;
+}
+.ns-chip.is-success { color: var(--color-success, #16a34a); background: color-mix(in srgb, var(--color-success, #16a34a) 14%, transparent); }
+.ns-chip.is-failed  { color: var(--color-error, #dc2626);   background: color-mix(in srgb, var(--color-error, #dc2626) 14%, transparent); }
+.ns-chip.is-in-progress { color: var(--color-info, #2563eb); background: color-mix(in srgb, var(--color-info, #2563eb) 14%, transparent); }
+code { font-family: var(--font-family-mono, monospace); font-size: .9em; background: var(--color-bg-tertiary, #eee); padding: 1px 5px; border-radius: var(--border-radius-sm, 4px); }
+h3.ns-sub { font-size: var(--ui-text-body, 14px); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--color-text-muted, #888); margin: var(--spacing-lg, 24px) 0 var(--spacing-xs, 8px); }
+
+/* Leading-mark legend gallery (glyph cards) */
+.ns-fam { font-size: var(--ui-text-micro, 12px); text-transform: uppercase; letter-spacing: .06em;
+  font-weight: 700; color: var(--color-text-muted, #888); margin: var(--spacing-xl, 32px) 0 var(--spacing-sm, 10px); }
+.ns-glyphs { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--spacing-md, 16px); }
+.ns-glyph {
+  border: 1px solid var(--color-border-default, #ddd); border-radius: var(--border-radius-md, 8px);
+  background: var(--color-bg-secondary, #fafafa); overflow: hidden;
+}
+.ns-glyph .ns-sb { border-bottom: 1px solid var(--color-border-light, #eee); background: var(--color-bg-primary, #fff); }
+.ns-glyph__meta { padding: var(--spacing-sm, 10px) var(--spacing-md, 14px); }
+.ns-glyph__name { font-size: var(--ui-text-body, 14px); font-weight: 600; margin: 0; display: flex; align-items: baseline; gap: var(--spacing-xs, 8px); flex-wrap: wrap; }
+.ns-glyph__desc { margin: 4px 0 0; font-size: var(--ui-text-micro, 12px); color: var(--color-text-secondary, #555); line-height: 1.5; }
+.ns-scope { display: inline-block; font-size: 11px; font-weight: 600; padding: 0 6px; border-radius: var(--border-radius-full, 999px);
+  border: 1px solid var(--color-border-default, #ddd); color: var(--color-text-muted, #888); background: var(--color-bg-tertiary, #f0f0f0); }
+.ns-scope.both  { color: var(--color-brand-primary, #2563eb); border-color: color-mix(in srgb, var(--color-brand-primary, #2563eb) 40%, transparent); }
+</style>
+</head>
+<body class="ns-body">
+<div class="ns-wrap">
+
+  <h1 class="ns-title">Issues — File Tree → Sidebar</h1>
+  <p class="ns-lead">
+    An issue is a <em>folder</em>, and each of its sub-folders has its own naming rule and its own
+    sidebar treatment. Unlike docs — where the order prefix is <strong>stripped</strong> and the
+    label is the frontmatter <code>title</code> — the issue tracker keeps the number and
+    <strong>relocates it to a leading badge</strong>. Prefixes are <strong>optional</strong> here:
+    a loose parse, never a build error. This page maps every sub-folder on disk to exactly what the
+    detail-page sidebar renders.
+  </p>
+
+  <!-- ==================================================================== -->
+  <section class="ns-section">
+    <h2>The whole issue</h2>
+    <p class="ns-say">
+      The detail sidebar opens with fixed <strong>“This issue”</strong> panels, then one collapsible
+      group per populated sub-folder. Section order is fixed by the layout:
+      Brainstorm · Notes · Subtasks · Agent&nbsp;log · Agent&nbsp;memory.
+    </p>
+    <div class="ns-split">
+      <div class="ns-panel">
+        <div class="ns-panel__cap">On disk — 2026-07-01-demo-issue-anatomy-showcase/</div>
+<pre class="ns-tree"><span class="d">settings.json</span>          metadata (required)
+<span class="d">issue.md</span>               body (required)
+<span class="d">glossary.md</span>            optional — backs Glossary panel
+<span class="d">comments/</span>              flat, append-only
+<span class="d">brainstorm/</span>            deliberation (nested)
+<span class="d">notes/</span>                 finalized docs (nested)
+<span class="d">subtasks/</span>              checklist items (nested)
+<span class="d">agent-log/</span>             AI execution logs (nested)
+<span class="d">agent-memory/</span>          AI working state (nested)</pre>
+      </div>
+      <div class="ns-panel">
+        <div class="ns-panel__cap">Sidebar — detail page nav</div>
+        <div class="ns-sb">
+          <div class="ns-sb__sec">This issue</div>
+          <div class="ns-sb__row is-active"><span class="ns-sb__label">Overview</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__label">Comments</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__label">Comprehensive</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__label">Guide</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__label">Glossary</span></div>
+          <div class="ns-sb__sec">Brainstorm</div>
+          <div class="ns-sb__row"><span class="ns-sb__label" style="color:var(--color-text-muted)">…</span></div>
+          <div class="ns-sb__sec">Notes</div>
+          <div class="ns-sb__row"><span class="ns-sb__label" style="color:var(--color-text-muted)">…</span></div>
+          <div class="ns-sb__sec">Subtasks</div>
+          <div class="ns-sb__row"><span class="ns-sb__label" style="color:var(--color-text-muted)">…</span></div>
+          <div class="ns-sb__sec">Agent log</div>
+          <div class="ns-sb__row"><span class="ns-sb__label" style="color:var(--color-text-muted)">…</span></div>
+          <div class="ns-sb__sec">Agent memory</div>
+          <div class="ns-sb__row"><span class="ns-sb__label" style="color:var(--color-text-muted)">…</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="ns-note">
+      <strong>This-issue panels are fixed, not files.</strong> Overview, Comments, Comprehensive and
+      Guide are framework panels. <strong>Glossary</strong> appears only when the issue ships a
+      root-level <code>glossary.md</code>; otherwise the panel prompts you to add one.
+    </div>
+  </section>
+
+  <!-- ==================================================================== -->
+  <section class="ns-section">
+    <h2>Leading marks — the legend</h2>
+    <p class="ns-say">
+      Before the walkthrough, here is the full vocabulary of marks that sit at the
+      <strong>start</strong> of an issue-sidebar row, before the label. These are
+      <strong>issue-sidebar concepts</strong> — the docs sidebar strips the prefix and shows no
+      leading badge (the folder chevron is the only leading mark it shares). Colour is reserved for
+      <em>status meaning</em>; the neutral <code>NN</code> badge and the chevron/count stay grey.
+      They recur in context throughout the per-sub-folder sections below; this is the one-stop
+      reference. (The <em>trailing</em> type glyphs — the mark for a non-markdown page — are
+      documented in the <a href="./suffix-icons">Suffix Icons</a> artifact.)
+    </p>
+
+    <!-- Number & iteration badges -->
+    <div class="ns-fam">Number &amp; iteration badges</div>
+    <div class="ns-glyphs">
+
+      <div class="ns-glyph">
+        <div class="ns-sb">
+          <div class="ns-sb__row">
+            <span class="ns-sb__num">05</span>
+            <span class="ns-sb__label">theme modes explainer</span>
+          </div>
+        </div>
+        <div class="ns-glyph__meta">
+          <p class="ns-glyph__name">Neutral <code>NN</code> badge <span class="ns-scope">issue sidebar</span></p>
+          <p class="ns-glyph__desc">The order prefix, <em>relocated</em> to a leading badge (docs throw the prefix away; issues keep it). Padded to two digits. Appears on normal files, on folders, and on agent-log <code>0NN_</code> meta files (goal, summary, task-list…). Always neutral grey — order, not status.</p>
+        </div>
+      </div>
+
+      <div class="ns-glyph">
+        <div class="ns-sb">
+          <div class="ns-sb__row"><span class="ns-sb__num is-not-started">#3</span><span class="ns-sb__label">not started</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__num is-in-progress">#3</span><span class="ns-sb__label">in progress</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__num is-success">#3</span><span class="ns-sb__label">success</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__num is-failed">#3</span><span class="ns-sb__label">failed</span></div>
+        </div>
+        <div class="ns-glyph__meta">
+          <p class="ns-glyph__name"><code>#&lt;iteration&gt;</code> badge — status-tinted <span class="ns-scope">issue sidebar</span></p>
+          <p class="ns-glyph__desc">An agent-log <strong>milestone</strong> (a file carrying an <code>iteration</code> field) replaces its <code>NN</code> badge with <code>#N</code>, tinted by the milestone's status: <span style="color:var(--color-text-muted)">grey = not-started</span>, <span style="color:var(--color-info)">blue = in-progress</span>, <span style="color:var(--color-success)">green = success</span>, <span style="color:var(--color-error)">red = failed</span>. A non-iteration <code>0NN_</code> meta file stays on the neutral <code>NN</code> badge — the tint is a milestone signal only.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Agent-log kind symbols -->
+    <div class="ns-fam">Agent-log kind symbols</div>
+    <p class="ns-say">An agent-log activity folder is named <code>NNN_&lt;code&gt;_&lt;name&gt;</code>. When the two-letter code is a recognised kind, its symbol is drawn between the folder's <code>NN</code> badge and its name. Five kinds ship as framework defaults; a project can declare more in an issue's <code>settings.json</code> (<code>agentLogKinds</code>) drawing from a curated symbol palette. Unrecognised code → no symbol, and the name keeps the raw code.</p>
+    <div class="ns-glyphs">
+
+      <div class="ns-glyph">
+        <div class="ns-sb"><div class="ns-sb__row">
+          <svg class="ns-sb__chev" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
+          <span class="ns-sb__num">02</span>
+          <span class="ns-sb__kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg></span>
+          <span class="ns-sb__label">agent benchmark</span>
+          <span class="ns-sb__count">7</span>
+        </div></div>
+        <div class="ns-glyph__meta">
+          <p class="ns-glyph__name"><code>lp</code> · loop <span class="ns-scope">issue sidebar</span></p>
+          <p class="ns-glyph__desc">Autonomous multi-iteration runs toward one goal. Symbol: <code>repeat</code>.</p>
+        </div>
+      </div>
+
+      <div class="ns-glyph">
+        <div class="ns-sb"><div class="ns-sb__row">
+          <svg class="ns-sb__chev" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
+          <span class="ns-sb__num">03</span>
+          <span class="ns-sb__kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
+          <span class="ns-sb__label">security sweep</span>
+          <span class="ns-sb__count">4</span>
+        </div></div>
+        <div class="ns-glyph__meta">
+          <p class="ns-glyph__name"><code>au</code> · audit <span class="ns-scope">issue sidebar</span></p>
+          <p class="ns-glyph__desc">Systematic review / inspection sweeps. Symbol: <code>search</code>.</p>
+        </div>
+      </div>
+
+      <div class="ns-glyph">
+        <div class="ns-sb"><div class="ns-sb__row">
+          <svg class="ns-sb__chev" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
+          <span class="ns-sb__num">04</span>
+          <span class="ns-sb__kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
+          <span class="ns-sb__label">loader rework</span>
+          <span class="ns-sb__count">6</span>
+        </div></div>
+        <div class="ns-glyph__meta">
+          <p class="ns-glyph__name"><code>rf</code> · refactor <span class="ns-scope">issue sidebar</span></p>
+          <p class="ns-glyph__desc">Structural rework with no behaviour change. Symbol: <code>wrench</code>.</p>
+        </div>
+      </div>
+
+      <div class="ns-glyph">
+        <div class="ns-sb"><div class="ns-sb__row">
+          <svg class="ns-sb__chev" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
+          <span class="ns-sb__num">05</span>
+          <span class="ns-sb__kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg></span>
+          <span class="ns-sb__label">quick fixes</span>
+          <span class="ns-sb__count">3</span>
+        </div></div>
+        <div class="ns-glyph__meta">
+          <p class="ns-glyph__name"><code>it</code> · iteration <span class="ns-scope">issue sidebar</span></p>
+          <p class="ns-glyph__desc">Rapid ad-hoc change bursts. Symbol: <code>refresh-cw</code>.</p>
+        </div>
+      </div>
+
+      <div class="ns-glyph">
+        <div class="ns-sb"><div class="ns-sb__row">
+          <svg class="ns-sb__chev" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
+          <span class="ns-sb__num">06</span>
+          <span class="ns-sb__kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" x2="6" y1="3" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg></span>
+          <span class="ns-sb__label">release pipeline</span>
+          <span class="ns-sb__count">5</span>
+        </div></div>
+        <div class="ns-glyph__meta">
+          <p class="ns-glyph__name"><code>wf</code> · workflow <span class="ns-scope">issue sidebar</span></p>
+          <p class="ns-glyph__desc">Multi-stage orchestrated pipelines. Symbol: <code>git-branch</code>.</p>
+        </div>
+      </div>
+
+    </div>
+    <div class="ns-note">
+      <strong>Custom kinds.</strong> Beyond the five defaults, a tracker may map extra two-letter codes to symbols from a curated palette (<code>flask</code>, <code>zap</code>, <code>flag</code>, <code>star</code>, <code>book</code>, <code>shield</code>, <code>layers</code>, <code>clock</code>, <code>target</code>, <code>check-circle</code>, <code>bug</code>). A kind that names no icon — or an unknown one — falls back to the generic <code>tag</code> glyph.
+    </div>
+
+    <!-- Subtask status icons -->
+    <div class="ns-fam">Subtask status icons</div>
+    <p class="ns-say">A subtask row leads with a status icon drawn from the fixed 7-status lifecycle. The icon's <strong>shape</strong> names the state; its <strong>tint</strong> groups it (neutral / info / warning / success / error). These are issue-sidebar only.</p>
+    <div class="ns-glyphs">
+
+      <div class="ns-glyph">
+        <div class="ns-sb"><div class="ns-sb__row">
+          <span class="ns-sb__ico" style="color:var(--color-text-muted)"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="2"/></svg></span>
+          <span class="ns-sb__num">01</span><span class="ns-sb__label">draft the spec</span>
+        </div></div>
+        <div class="ns-glyph__meta">
+          <p class="ns-glyph__name">open — hollow square <span class="ns-scope">issue sidebar</span></p>
+          <p class="ns-glyph__desc"><span class="ns-tag opt">neutral</span> Untouched — no work started yet.</p>
+        </div>
+      </div>
+
+      <div class="ns-glyph">
+        <div class="ns-sb"><div class="ns-sb__row">
+          <span class="ns-sb__ico" style="color:var(--color-text-muted)"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M4 4l8 8"/></svg></span>
+          <span class="ns-sb__num">02</span><span class="ns-sb__label">wait on upstream</span>
+        </div></div>
+        <div class="ns-glyph__meta">
+          <p class="ns-glyph__name">blocked — circle with slash <span class="ns-scope">issue sidebar</span></p>
+          <p class="ns-glyph__desc"><span class="ns-tag opt">neutral</span> Waiting on another issue or subtask; the reason is in prose.</p>
+        </div>
+      </div>
+
+      <div class="ns-glyph">
+        <div class="ns-sb"><div class="ns-sb__row">
+          <span class="ns-sb__ico" style="color:var(--color-info)"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 2a6 6 0 010 12z" fill="currentColor" stroke="none"/></svg></span>
+          <span class="ns-sb__num">03</span><span class="ns-sb__label">wire the loader</span>
+        </div></div>
+        <div class="ns-glyph__meta">
+          <p class="ns-glyph__name">in-progress — half-filled circle <span class="ns-scope">issue sidebar</span></p>
+          <p class="ns-glyph__desc"><span class="ns-tag rec">info</span> Actively being worked. Agents set this automatically when they pick an item up.</p>
+        </div>
+      </div>
+
+      <div class="ns-glyph">
+        <div class="ns-sb"><div class="ns-sb__row">
+          <span class="ns-sb__ico" style="color:var(--color-warning)"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 5.2a3 3 0 115.8 1c-.5 1.4-2.3 1.7-2.3 3.6"/><circle cx="8.4" cy="13.1" r="0.9" fill="currentColor" stroke="none"/></svg></span>
+          <span class="ns-sb__num">04</span><span class="ns-sb__label">confirm the schema</span>
+        </div></div>
+        <div class="ns-glyph__meta">
+          <p class="ns-glyph__name">input-needed — bare question mark <span class="ns-scope">issue sidebar</span></p>
+          <p class="ns-glyph__desc"><span class="ns-tag" style="color:var(--color-warning);background:color-mix(in srgb,var(--color-warning) 12%,transparent)">warning</span> An agent hit a wall and needs a human answer — the question is written inline.</p>
+        </div>
+      </div>
+
+      <div class="ns-glyph">
+        <div class="ns-sb"><div class="ns-sb__row">
+          <span class="ns-sb__ico" style="color:var(--color-warning)"><svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="4"/></svg></span>
+          <span class="ns-sb__num">05</span><span class="ns-sb__label">review the diff</span>
+        </div></div>
+        <div class="ns-glyph__meta">
+          <p class="ns-glyph__name">review — filled circle <span class="ns-scope">issue sidebar</span></p>
+          <p class="ns-glyph__desc"><span class="ns-tag" style="color:var(--color-warning);background:color-mix(in srgb,var(--color-warning) 12%,transparent)">warning</span> Work is done and awaiting human sign-off.</p>
+        </div>
+      </div>
+
+      <div class="ns-glyph">
+        <div class="ns-sb"><div class="ns-sb__row">
+          <span class="ns-sb__ico" style="color:var(--color-success)"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8l3 3 7-7"/></svg></span>
+          <span class="ns-sb__num">06</span><span class="ns-sb__label" style="text-decoration:line-through;color:var(--color-text-muted)">ship it</span>
+        </div></div>
+        <div class="ns-glyph__meta">
+          <p class="ns-glyph__name">done — check <span class="ns-scope">issue sidebar</span></p>
+          <p class="ns-glyph__desc"><span class="ns-tag" style="color:var(--color-success);background:color-mix(in srgb,var(--color-success) 12%,transparent)">success</span> Shipped. Human-only — an agent never sets this. The row label strikes through.</p>
+        </div>
+      </div>
+
+      <div class="ns-glyph">
+        <div class="ns-sb"><div class="ns-sb__row">
+          <span class="ns-sb__ico" style="color:var(--color-error)"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg></span>
+          <span class="ns-sb__num">07</span><span class="ns-sb__label" style="text-decoration:line-through;color:var(--color-text-muted)">abandoned path</span>
+        </div></div>
+        <div class="ns-glyph__meta">
+          <p class="ns-glyph__name">dropped — cross <span class="ns-scope">issue sidebar</span></p>
+          <p class="ns-glyph__desc"><span class="ns-tag req">error</span> Deliberately abandoned. Human-only, and needs a comment saying why.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Chevron & count -->
+    <div class="ns-fam">Folder chevron &amp; group count</div>
+    <div class="ns-glyphs">
+      <div class="ns-glyph">
+        <div class="ns-sb"><div class="ns-sb__row">
+          <svg class="ns-sb__chev" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
+          <span class="ns-sb__num">02</span><span class="ns-sb__label">design</span>
+          <span class="ns-sb__count">4</span>
+        </div></div>
+        <div class="ns-glyph__meta">
+          <p class="ns-glyph__name">Chevron + count <span class="ns-scope both">both*</span></p>
+          <p class="ns-glyph__desc">A collapsible folder shows a disclosure chevron at its start and a descendant <strong>count</strong> at its end. Issue sub-doc folders count total descendants; a <strong>subtask</strong> folder shows <code>done / total</code> instead. The docs sidebar collapses sections with a chevron too, without the count.</p>
+        </div>
+      </div>
+      <div class="ns-glyph">
+        <div class="ns-sb"><div class="ns-sb__row">
+          <svg class="ns-sb__chev" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
+          <span class="ns-sb__num">01</span><span class="ns-sb__label">implementation</span>
+          <span class="ns-sb__count">2/5</span>
+        </div></div>
+        <div class="ns-glyph__meta">
+          <p class="ns-glyph__name">Subtask folder count <span class="ns-scope">issue sidebar</span></p>
+          <p class="ns-glyph__desc"><code>done/total</code> — terminal (done + dropped) descendants over all descendants, mirroring the section header.</p>
+        </div>
+      </div>
+    </div>
+    <p class="ns-glyph__desc" style="margin-top:8px">* The chevron is the only leading mark shared with the docs sidebar; the number badge and count are issue-only.</p>
+  </section>
+
+  <!-- ==================================================================== -->
+  <section class="ns-section">
+    <h2>Comments — <code>NNN_&lt;slug&gt;.md</code></h2>
+    <p class="ns-say">
+      A flat, append-only thread — comments <strong>never nest</strong> and are
+      <strong>never renumbered</strong>. The 3-digit leading number is the comment <em>id</em>,
+      shown as <code>#001</code> in the comment rail. Comments don’t appear in the nav sidebar;
+      they render in the Overview / Comments panel.
+    </p>
+    <div class="ns-split">
+      <div class="ns-panel">
+        <div class="ns-panel__cap">On disk — comments/</div>
+<pre class="ns-tree"><span class="p">001_</span><span class="d">opened</span>.md
+<span class="p">002_</span><span class="d">scope-narrowed</span>.md
+<span class="p">003_</span><span class="d">handoff</span>.md</pre>
+      </div>
+      <div class="ns-panel">
+        <div class="ns-panel__cap">Comment rail</div>
+        <div class="ns-rail">
+          <div class="ns-rail__c"><span class="ns-rail__id">#001</span><div class="ns-rail__b"><b>opened</b><div class="ns-rail__meta">sid · 2026-07-01</div></div></div>
+          <div class="ns-rail__c"><span class="ns-rail__id">#002</span><div class="ns-rail__b"><b>scope narrowed</b><div class="ns-rail__meta">sid · 2026-07-01</div></div></div>
+          <div class="ns-rail__c"><span class="ns-rail__id">#003</span><div class="ns-rail__b"><b>handoff</b><div class="ns-rail__meta">claude · 2026-07-01</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="ns-note">
+      The strict form is <code>NNN_YYYY-MM-DD_author.md</code> (date + author parsed from the name);
+      the looser <code>NNN_&lt;slug&gt;.md</code> is also accepted — the id comes from the leading
+      digits and date/author fall back to frontmatter. The prefix here can be any digit count, not
+      just 2–5: it is the sequence, not an order prefix.
+    </div>
+  </section>
+
+  <!-- ==================================================================== -->
+  <section class="ns-section">
+    <h2>Notes — optional <code>NN_</code> badge + clean label</h2>
+    <p class="ns-say">
+      Finalized supporting docs. A prefixed file shows its padded number as a neutral leading badge
+      and a de-prefixed, separators-to-spaces label. An <strong>unprefixed</strong> file gets
+      <strong>no badge</strong> and sorts <strong>last</strong>. A non-markdown note — a first-class
+      <code>.html</code> artifact or a diagram file — carries a trailing type glyph.
+    </p>
+    <div class="ns-split">
+      <div class="ns-panel">
+        <div class="ns-panel__cap">On disk — notes/</div>
+<pre class="ns-tree"><span class="p">01_</span><span class="d">decided-architecture</span>.md
+<span class="p">02_</span><span class="d">reference</span>/
+   <span class="p">01_</span><span class="d">links</span>.md
+   <span class="p">02_</span><span class="d">prior-art</span>.md
+<span class="d">no-prefix-scratch</span>.md</pre>
+      </div>
+      <div class="ns-panel">
+        <div class="ns-panel__cap">Sidebar — Notes</div>
+        <div class="ns-sb">
+          <div class="ns-sb__row"><span class="ns-sb__num">01</span><span class="ns-sb__label">decided architecture</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__chev"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg></span><span class="ns-sb__num">02</span><span class="ns-sb__label">reference</span><span class="ns-sb__count">2</span></div>
+          <div class="ns-sb__row ns-sb__row--l1"><span class="ns-sb__num">01</span><span class="ns-sb__label">links</span></div>
+          <div class="ns-sb__row ns-sb__row--l1"><span class="ns-sb__num">02</span><span class="ns-sb__label">prior art</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__label">no prefix scratch</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="ns-say" style="margin-top:16px">
+      Same folder, one prefixed <code>.html</code> and one diagram — note the trailing glyphs
+      (<span class="ns-sb__ico" style="vertical-align:middle"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="10" rx="1.5"/><path d="M2 6.5h12"/></svg></span>&nbsp;artifact,
+      <span class="ns-sb__ico" style="vertical-align:middle"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="1.5" width="6" height="4.5" rx="1"/><rect x="8.5" y="10" width="6" height="4.5" rx="1"/><path d="M4.5 6v2.5a2 2 0 002 2h2"/></svg></span>&nbsp;diagram). Markdown is the default and stays unmarked.
+    </p>
+    <div class="ns-split">
+      <div class="ns-panel">
+        <div class="ns-panel__cap">On disk — notes/ (non-markdown)</div>
+<pre class="ns-tree"><span class="p">03_</span><span class="d">dashboard</span>.html
+<span class="p">04_</span><span class="d">flow</span>.excalidraw
+<span class="d">readme</span>.md</pre>
+      </div>
+      <div class="ns-panel">
+        <div class="ns-panel__cap">Sidebar — Notes</div>
+        <div class="ns-sb">
+          <div class="ns-sb__row"><span class="ns-sb__num">03</span><span class="ns-sb__label">dashboard</span><span class="ns-sb__ico"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="10" rx="1.5"/><path d="M2 6.5h12"/></svg></span></div>
+          <div class="ns-sb__row"><span class="ns-sb__num">04</span><span class="ns-sb__label">flow</span><span class="ns-sb__ico"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="1.5" width="6" height="4.5" rx="1"/><rect x="8.5" y="10" width="6" height="4.5" rx="1"/><path d="M4.5 6v2.5a2 2 0 002 2h2"/></svg></span></div>
+          <div class="ns-sb__row"><span class="ns-sb__label">readme</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="ns-note">
+      First-class <code>.html</code> artifacts are accepted in <code>notes/</code> and
+      <code>brainstorm/</code> only. Diagram files (<code>.excalidraw</code>, <code>.mmd</code>, …)
+      are first-class in every section. The <code>color:</code> frontmatter field tints just that
+      row’s label — user-defined semantics.
+    </div>
+  </section>
+
+  <!-- ==================================================================== -->
+  <section class="ns-section">
+    <h2>Brainstorm — <code>NN_&lt;kind&gt;_&lt;slug&gt;</code></h2>
+    <p class="ns-say">
+      Active deliberation. By convention the middle segment is a <strong>kind word</strong>
+      (<code>discuss</code>, <code>research</code>, …) — but unlike agent-log codes it gets
+      <strong>no special symbol</strong>: it simply becomes part of the label. A folder is one
+      multi-file brainstorm. Same nested shape as notes.
+    </p>
+    <div class="ns-split">
+      <div class="ns-panel">
+        <div class="ns-panel__cap">On disk — brainstorm/</div>
+<pre class="ns-tree"><span class="p">01_</span><span class="d">options</span>/
+   <span class="p">01_</span><span class="d">approach-a</span>.md
+   <span class="p">02_</span><span class="d">approach-b</span>.md
+<span class="p">02_</span>discuss_<span class="d">open-questions</span>.md
+<span class="p">03_</span>research_<span class="d">prior-art</span>.md
+<span class="p">04_</span><span class="d">nesting-demo</span>/ …</pre>
+      </div>
+      <div class="ns-panel">
+        <div class="ns-panel__cap">Sidebar — Brainstorm</div>
+        <div class="ns-sb">
+          <div class="ns-sb__row"><span class="ns-sb__chev"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg></span><span class="ns-sb__num">01</span><span class="ns-sb__label">options</span><span class="ns-sb__count">2</span></div>
+          <div class="ns-sb__row ns-sb__row--l1"><span class="ns-sb__num">01</span><span class="ns-sb__label">approach a</span></div>
+          <div class="ns-sb__row ns-sb__row--l1"><span class="ns-sb__num">02</span><span class="ns-sb__label">approach b</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__num">02</span><span class="ns-sb__label">discuss open questions</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__num">03</span><span class="ns-sb__label">research prior art</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__chev"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg></span><span class="ns-sb__num">04</span><span class="ns-sb__label">nesting demo</span><span class="ns-sb__count">1</span></div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="ns-sub">The 5-level nesting demo &amp; the depth cap</h3>
+    <p class="ns-say">
+      Folders may nest up to <strong>5 levels deep — a hard cap</strong>
+      (<code>MAX_SUBFOLDER_DEPTH = 5</code>); <strong>3 is the recommended ceiling</strong>. The
+      folder’s descendant count sits on its row; the numeric prefix badge repeats at each level.
+    </p>
+    <div class="ns-split">
+      <div class="ns-panel">
+        <div class="ns-panel__cap">On disk — brainstorm/04_nesting-demo/</div>
+<pre class="ns-tree"><span class="p">04_</span><span class="d">nesting-demo</span>/           depth 1
+ <span class="p">02_</span><span class="d">layer-two</span>/           depth 2
+  <span class="p">03_</span><span class="d">layer-three</span>/        depth 3
+   <span class="p">04_</span><span class="d">layer-four</span>/        depth 4
+    <span class="p">05_</span><span class="d">layer-five</span>/       depth 5 ✓
+     <span class="p">01_</span><span class="d">deepest</span>.md      file OK
+     <span class="p">06_</span><span class="d">too-deep</span>/       depth 6 ✗ dropped</pre>
+      </div>
+      <div class="ns-panel">
+        <div class="ns-panel__cap">Sidebar — nested</div>
+        <div class="ns-sb">
+          <div class="ns-sb__row"><span class="ns-sb__chev"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg></span><span class="ns-sb__num">04</span><span class="ns-sb__label">nesting demo</span><span class="ns-sb__count">1</span></div>
+          <div class="ns-sb__row ns-sb__row--l1"><span class="ns-sb__chev"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg></span><span class="ns-sb__num">02</span><span class="ns-sb__label">layer two</span><span class="ns-sb__count">1</span></div>
+          <div class="ns-sb__row ns-sb__row--l2"><span class="ns-sb__chev"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg></span><span class="ns-sb__num">03</span><span class="ns-sb__label">layer three</span><span class="ns-sb__count">1</span></div>
+          <div class="ns-sb__row ns-sb__row--l3"><span class="ns-sb__chev"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg></span><span class="ns-sb__num">04</span><span class="ns-sb__label">layer four</span><span class="ns-sb__count">1</span></div>
+          <div class="ns-sb__row ns-sb__row--l4"><span class="ns-sb__chev"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg></span><span class="ns-sb__num">05</span><span class="ns-sb__label">layer five</span><span class="ns-sb__count">1</span></div>
+          <div class="ns-sb__row ns-sb__row--l5"><span class="ns-sb__num">01</span><span class="ns-sb__label">deepest</span></div>
+          <div class="ns-sb__row ns-sb__row--l5 is-cap"><span class="ns-sb__label">06_too-deep/ — ignored</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="ns-note is-warn">
+      A folder nested a 6th level deep is <strong>warned and ignored</strong> at load — never a hard
+      error. Files <em>at</em> depth 5 render fine; only a deeper <em>folder</em> is dropped.
+    </div>
+  </section>
+
+  <!-- ==================================================================== -->
+  <section class="ns-section">
+    <h2>Subtasks — a status icon per row</h2>
+    <p class="ns-say">
+      Every leaf <code>.md</code> is a first-class subtask carrying one of the shared 7 lifecycle
+      statuses (default <code>open</code>). The sidebar row leads with the status icon, then the
+      optional <code>NN_</code> sequence badge, then the title. A group folder is a
+      <strong>label only</strong> (no body file); its row shows a <strong>done / total</strong>
+      count, where “done” = terminal statuses (<code>done</code> + <code>dropped</code>).
+    </p>
+
+    <div class="ns-statuses">
+      <div class="ns-status"><span class="ns-sb__check is-open"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="2"/></svg></span> open</div>
+      <div class="ns-status"><span class="ns-sb__check is-in-progress"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 2a6 6 0 010 12z" fill="currentColor" stroke="none"/></svg></span> in progress</div>
+      <div class="ns-status"><span class="ns-sb__check is-blocked"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M4 4l8 8"/></svg></span> blocked</div>
+      <div class="ns-status"><span class="ns-sb__check is-input-needed"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 5.2a3 3 0 115.8 1c-.5 1.4-2.3 1.7-2.3 3.6"/><circle cx="8.4" cy="13.1" r="0.9" fill="currentColor" stroke="none"/></svg></span> input needed</div>
+      <div class="ns-status"><span class="ns-sb__check is-review"><svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="4"/></svg></span> review</div>
+      <div class="ns-status"><span class="ns-sb__check is-done"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8l3 3 7-7"/></svg></span> done</div>
+      <div class="ns-status"><span class="ns-sb__check is-dropped"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg></span> dropped</div>
+    </div>
+
+    <div class="ns-split">
+      <div class="ns-panel">
+        <div class="ns-panel__cap">On disk — subtasks/</div>
+<pre class="ns-tree"><span class="p">01_</span><span class="d">setup</span>.md            status: done
+<span class="p">02_</span><span class="d">build</span>/             settings.json → "Build the sections"
+   <span class="p">01_</span><span class="d">backend</span>.md      status: done
+   <span class="p">02_</span><span class="d">frontend</span>.md     status: review
+<span class="p">03_</span><span class="d">no-prefix</span>.md        status: open</pre>
+      </div>
+      <div class="ns-panel">
+        <div class="ns-panel__cap">Sidebar — Subtasks</div>
+        <div class="ns-sb">
+          <div class="ns-sb__row"><span class="ns-sb__check is-done"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8l3 3 7-7"/></svg></span><span class="ns-sb__num">01</span><span class="ns-sb__label">Setup fixture scaffolding</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__chev"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg></span><span class="ns-sb__num">02</span><span class="ns-sb__label">Build the sections</span><span class="ns-sb__count">1/2</span></div>
+          <div class="ns-sb__row ns-sb__row--l1"><span class="ns-sb__check is-done"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8l3 3 7-7"/></svg></span><span class="ns-sb__num">01</span><span class="ns-sb__label">Wire the loader sections</span></div>
+          <div class="ns-sb__row ns-sb__row--l1"><span class="ns-sb__check is-review"><svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="4"/></svg></span><span class="ns-sb__num">02</span><span class="ns-sb__label">Sidebar + panels</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__check is-open"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="2"/></svg></span><span class="ns-sb__num">03</span><span class="ns-sb__label">Un-prefixed subtask</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="ns-note">
+      A folder’s label comes from its optional <code>settings.json → title</code> (here “Build the
+      sections”), else the slug-derived name. Its count <code>1/2</code> = one terminal (backend
+      done) of two — a subtask in <code>review</code> is not terminal. Subtask rows sort by sequence
+      value; a subtask with no <code>NN_</code> prefix carries no badge and sorts after numbered ones.
+    </div>
+  </section>
+
+  <!-- ==================================================================== -->
+  <section class="ns-section">
+    <h2>Agent-log — the meta-vs-milestone contrast</h2>
+    <p class="ns-say">
+      This is the richest section. An <strong>activity folder</strong> is named
+      <code>NNN_&lt;code&gt;_&lt;name&gt;/</code> — a 2-letter kind code between the order prefix and
+      the name. In the sidebar it renders as <strong>NN badge + kind symbol + clean name + count</strong>.
+      An <strong>unknown</strong> code gets no symbol and the label keeps the code.
+    </p>
+    <div class="ns-split">
+      <div class="ns-panel">
+        <div class="ns-panel__cap">On disk — agent-log/ (activity folders)</div>
+<pre class="ns-tree"><span class="p">010_</span>lp_<span class="d">implement-sections</span>/
+<span class="p">020_</span>au_<span class="d">edge-cases</span>/
+<span class="p">030_</span>rf_<span class="d">label-parser</span>/
+<span class="p">040_</span>wf_<span class="d">migration</span>/
+<span class="p">050_</span>it_<span class="d">ui</span>/
+<span class="p">060_</span>ex_<span class="d">spike</span>/     custom kind (settings.json)
+<span class="p">70_</span>nt_<span class="d">test</span>/       unknown code
+<span class="p">200_</span>it_<span class="d">stress</span>/</pre>
+      </div>
+      <div class="ns-panel">
+        <div class="ns-panel__cap">Sidebar — Agent log</div>
+        <div class="ns-sb">
+          <div class="ns-sb__row"><span class="ns-sb__chev"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg></span><span class="ns-sb__num">010</span><span class="ns-sb__kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg></span><span class="ns-sb__label">implement sections</span><span class="ns-sb__count">9</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__chev"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg></span><span class="ns-sb__num">020</span><span class="ns-sb__kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span><span class="ns-sb__label">edge cases</span><span class="ns-sb__count">5</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__chev"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg></span><span class="ns-sb__num">030</span><span class="ns-sb__kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span><span class="ns-sb__label">label parser</span><span class="ns-sb__count">1</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__chev"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg></span><span class="ns-sb__num">040</span><span class="ns-sb__kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" x2="6" y1="3" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg></span><span class="ns-sb__label">migration</span><span class="ns-sb__count">2</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__chev"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg></span><span class="ns-sb__num">050</span><span class="ns-sb__kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg></span><span class="ns-sb__label">ui</span><span class="ns-sb__count">2</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__chev"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg></span><span class="ns-sb__num">060</span><span class="ns-sb__kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.31"/><path d="M14 9.3V1.99"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/><path d="M5.52 16h12.96"/></svg></span><span class="ns-sb__label">spike</span><span class="ns-sb__count">2</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__chev"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg></span><span class="ns-sb__num">70</span><span class="ns-sb__label">nt test</span><span class="ns-sb__count">2</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__chev"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg></span><span class="ns-sb__num">200</span><span class="ns-sb__kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg></span><span class="ns-sb__label">stress</span><span class="ns-sb__count">5</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="ns-note">
+      The five framework kinds: <strong>lp</strong> loop (loop glyph), <strong>au</strong> audit
+      (magnifier), <strong>rf</strong> refactor (wrench), <strong>wf</strong> workflow (branch),
+      <strong>it</strong> iteration (refresh). An issue’s <code>settings.json → agentLogKinds</code>
+      adds custom codes — here <code>ex</code> → “experiment” (flask). Ordering is by numeric
+      <em>value</em>: <code>70</code> (=70) sorts before <code>200</code> — not lexically.
+    </div>
+
+    <h3 class="ns-sub">Inside an activity folder — <code>0NN_</code> meta vs <code>MNN_</code> milestone</h3>
+    <p class="ns-say">
+      This is the contrast to internalize. The reserved <strong><code>0NN_</code> slot files</strong>
+      (goal / summary / task_list / working / benchmark / notes) show a <strong>neutral NN badge</strong>,
+      exactly like a folder. A <strong>milestone</strong> — any file carrying an
+      <code>iteration:</code> frontmatter — instead shows a <strong><code>#&lt;iteration&gt;</code> badge,
+      status-tinted</strong>. The <code>0NN</code> bucket always sorts first; milestones follow, by iteration.
+    </p>
+    <div class="ns-split">
+      <div class="ns-panel">
+        <div class="ns-panel__cap">On disk — agent-log/010_lp_implement-sections/</div>
+<pre class="ns-tree"><span class="p">00_</span><span class="d">goal</span>.md
+<span class="p">01_</span><span class="d">summary</span>.md
+<span class="p">02_</span><span class="d">task_list</span>.md
+<span class="p">03_</span><span class="d">working</span>/            folder form
+<span class="p">04_</span><span class="d">benchmark</span>.md
+<span class="p">05_</span><span class="d">notes</span>.md
+<span class="p">101_</span><span class="d">loader-reader</span>.md    iteration: 1
+<span class="p">102_</span><span class="d">sidebar-sections</span>.md iteration: 2</pre>
+      </div>
+      <div class="ns-panel">
+        <div class="ns-panel__cap">Sidebar — expanded</div>
+        <div class="ns-sb">
+          <div class="ns-sb__row"><span class="ns-sb__num">00</span><span class="ns-sb__label">goal</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__num">01</span><span class="ns-sb__label">summary</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__num">02</span><span class="ns-sb__label">task list</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__chev"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg></span><span class="ns-sb__num">03</span><span class="ns-sb__label">working</span><span class="ns-sb__count">2</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__num">04</span><span class="ns-sb__label">benchmark</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__num">05</span><span class="ns-sb__label">notes</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__num is-success">#1</span><span class="ns-sb__label">loader reader</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__num is-success">#2</span><span class="ns-sb__label">sidebar sections</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="ns-note">
+      A <code>0NN_</code> slot may be a <strong>file or a folder</strong> (<code>03_working.md</code>
+      vs <code>03_working/</code>) and may be omitted when not applicable — either way its badge is
+      the neutral order prefix, never a status tint. Status colour is a <em>milestone</em> signal only.
+    </div>
+
+    <h3 class="ns-sub">Milestone tints — grey / blue / green / red</h3>
+    <p class="ns-say">
+      The <code>#N</code> badge is tinted by the milestone’s <code>status:</code> frontmatter
+      (<code>200_it_stress/</code> exercises all four):
+      <span class="ns-chip is-success">#1</span> success = green,
+      <span class="ns-chip is-failed">#2</span> failed = red,
+      <span class="ns-chip is-in-progress">#3</span> in-progress = blue,
+      <span class="ns-chip">#4</span> not-started = grey.
+    </p>
+    <div class="ns-split">
+      <div class="ns-panel">
+        <div class="ns-panel__cap">On disk — agent-log/200_it_stress/</div>
+<pre class="ns-tree"><span class="p">00_</span><span class="d">goal</span>.md
+<span class="p">101_</span><span class="d">step-a</span>.md   iteration: 1  status: success
+<span class="p">102_</span><span class="d">step-b</span>.md   iteration: 2  status: failed
+<span class="p">103_</span><span class="d">step-c</span>.md   iteration: 3  status: in-progress
+<span class="p">104_</span><span class="d">step-d</span>.md   iteration: 4  status: not-started</pre>
+      </div>
+      <div class="ns-panel">
+        <div class="ns-panel__cap">Sidebar — expanded</div>
+        <div class="ns-sb">
+          <div class="ns-sb__row"><span class="ns-sb__num">00</span><span class="ns-sb__label">goal</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__num is-success">#1</span><span class="ns-sb__label">step a</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__num is-failed">#2</span><span class="ns-sb__label">step b</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__num is-in-progress">#3</span><span class="ns-sb__label">step c</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__num is-not-started">#4</span><span class="ns-sb__label">step d</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================================== -->
+  <section class="ns-section">
+    <h2>Agent-memory — <code>memory.md</code> pins first</h2>
+    <p class="ns-say">
+      AI-mutable working state. The special file <code>memory.md</code> is the section index and
+      always sorts <strong>first</strong> (no badge). Other topic files sort by name.
+      <code>NN_</code> prefixes are <strong>discouraged</strong> here — memory is a flat topical
+      workspace, not an ordered document — but they parse the same if present.
+    </p>
+    <div class="ns-split">
+      <div class="ns-panel">
+        <div class="ns-panel__cap">On disk — agent-memory/</div>
+<pre class="ns-tree"><span class="d">memory</span>.md              pin
+<span class="d">decisions</span>.md
+<span class="d">gotchas</span>.md
+<span class="p">01_</span><span class="d">context</span>/
+   <span class="p">01_</span><span class="d">env</span>.md</pre>
+      </div>
+      <div class="ns-panel">
+        <div class="ns-panel__cap">Sidebar — Agent memory</div>
+        <div class="ns-sb">
+          <div class="ns-sb__row is-active"><span class="ns-sb__label">memory</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__chev"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg></span><span class="ns-sb__num">01</span><span class="ns-sb__label">context</span><span class="ns-sb__count">1</span></div>
+          <div class="ns-sb__row ns-sb__row--l1"><span class="ns-sb__num">01</span><span class="ns-sb__label">env</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__label">decisions</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__label">gotchas</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="ns-note">
+      After the <code>memory.md</code> pin, entries sort by numeric prefix value then lexically — so
+      the prefixed <code>01_context/</code> (value 1) precedes the unprefixed <code>decisions.md</code>
+      and <code>gotchas.md</code> (which sort last, alphabetically). Artifacts (<code>.html</code>) are
+      <strong>not</strong> accepted in agent-memory — markdown and diagrams only.
+    </div>
+  </section>
+
+  <!-- ==================================================================== -->
+  <section class="ns-section">
+    <h2>Edge-case gallery</h2>
+    <p class="ns-say">The corners — what shows, what sorts where, and the one thing that never happens (a hard error).</p>
+    <div class="ns-cases">
+      <div class="ns-case">
+        <h4>Prefix present</h4>
+        <div class="ns-sb__row" style="padding-left:0"><span class="ns-sb__num">02</span><span class="ns-sb__label">reference</span></div>
+        <p><code>02_reference</code> → neutral <span class="ns-chip">02</span> badge + de-prefixed label. The number is kept, just relocated.</p>
+      </div>
+      <div class="ns-case">
+        <h4>Prefix absent</h4>
+        <div class="ns-sb__row" style="padding-left:0"><span class="ns-sb__label">no prefix scratch</span></div>
+        <p>No badge at all, and the row sorts <strong>last</strong> (+∞). Perfectly valid — issue prefixes are optional.</p>
+      </div>
+      <div class="ns-case">
+        <h4>One digit — not a prefix</h4>
+        <div class="ns-sb__row" style="padding-left:0"><span class="ns-sb__label">5 draft</span></div>
+        <p><code>5_draft</code> has only 1 digit; the grammar needs 2–5. It’s treated as a plain name, no badge, sorts last.</p>
+      </div>
+      <div class="ns-case">
+        <h4>Six digits — not a prefix</h4>
+        <div class="ns-sb__row" style="padding-left:0"><span class="ns-sb__label">123456 draft</span></div>
+        <p><code>123456_draft</code> exceeds 5 digits, so it isn’t an order prefix — the whole thing is the name.</p>
+      </div>
+      <div class="ns-case">
+        <h4>Width-mixed value sort</h4>
+        <div class="ns-sb__row" style="padding-left:0"><span class="ns-sb__num">70</span><span class="ns-sb__label">test</span></div>
+        <div class="ns-sb__row" style="padding-left:0"><span class="ns-sb__num">200</span><span class="ns-sb__label">stress</span></div>
+        <p><code>70_</code> before <code>200_</code> — ordered by numeric value (70&lt;200), never by string.</p>
+      </div>
+      <div class="ns-case">
+        <h4>Unknown kind code</h4>
+        <div class="ns-sb__row" style="padding-left:0"><span class="ns-sb__num">70</span><span class="ns-sb__label">nt test</span></div>
+        <p><code>70_nt_test</code>: <code>nt</code> isn’t a declared kind → no symbol, and the label keeps the code.</p>
+      </div>
+      <div class="ns-case">
+        <h4>Meta vs milestone badge</h4>
+        <div class="ns-sb__row" style="padding-left:0"><span class="ns-sb__num">00</span><span class="ns-sb__label">goal</span></div>
+        <div class="ns-sb__row" style="padding-left:0"><span class="ns-sb__num is-success">#1</span><span class="ns-sb__label">loader reader</span></div>
+        <p><code>0NN_</code> slot = neutral <span class="ns-chip">00</span>; an <code>iteration:</code> file = status-tinted <span class="ns-chip is-success">#1</span>.</p>
+      </div>
+      <div class="ns-case">
+        <h4>Type glyph</h4>
+        <div class="ns-sb__row" style="padding-left:0"><span class="ns-sb__num">03</span><span class="ns-sb__label">dashboard</span><span class="ns-sb__ico"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="10" rx="1.5"/><path d="M2 6.5h12"/></svg></span></div>
+        <p>A non-markdown note (<code>.html</code> artifact / diagram) gets a trailing glyph. Markdown stays unmarked.</p>
+      </div>
+      <div class="ns-case">
+        <h4>Color tint</h4>
+        <div class="ns-sb__row" style="padding-left:0"><span class="ns-sb__num">01</span><span class="ns-sb__label" style="color:var(--color-brand-primary)">decided architecture</span></div>
+        <p>A <code>color:</code> frontmatter value tints just that row’s label — user-defined meaning.</p>
+      </div>
+      <div class="ns-case">
+        <h4>Nesting cap</h4>
+        <p>Folders nest to <strong>5 (hard)</strong> / <strong>3 (recommended)</strong>. A 6th folder level is <strong>warned &amp; ignored</strong>, not fatal.</p>
+      </div>
+      <div class="ns-case">
+        <h4>Failure mode — there is none</h4>
+        <p>Unlike docs (a missing prefix <strong>throws</strong> at build), issue sub-docs parse loosely and <strong>never throw</strong>. Worst case: no badge, sorts last.</p>
+      </div>
+      <div class="ns-case">
+        <h4>Route collision</h4>
+        <p>Two files that reduce to the same slug (<code>03_plan.md</code> + <code>03_plan.html</code>) are <strong>warned</strong> — rename one so it doesn’t silently shadow the other.</p>
+      </div>
+    </div>
+    <div class="ns-note is-error">
+      <strong>The docs contrast:</strong> in a <code>docs/</code> section a file with no <code>NN_</code>
+      prefix is a hard <code>ParserError</code> at build. In the issue tracker the same file is fine —
+      it just renders unnumbered and sorts last. Optional everywhere, fatal nowhere.
+    </div>
+  </section>
+
+  <!-- ==================================================================== -->
+  <section class="ns-section">
+    <h2>Rules legend — per sub-folder</h2>
+    <table class="ns-legend">
+      <thead>
+        <tr><th>Sub-folder</th><th>Prefix scheme</th><th>Prefix</th><th>What the sidebar shows</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>comments/</code></td>
+          <td><code>NNN_&lt;slug&gt;.md</code> (id, any width)</td>
+          <td><span class="ns-tag req">required</span></td>
+          <td>Flat rail, id as <code>#001</code>; never nests, never renumbered</td>
+        </tr>
+        <tr>
+          <td><code>notes/</code></td>
+          <td><code>NN_&lt;slug&gt;</code> (2–5 digits)</td>
+          <td><span class="ns-tag opt">optional</span></td>
+          <td>NN badge + clean label; unprefixed = no badge, sorts last; trailing glyph for non-md</td>
+        </tr>
+        <tr>
+          <td><code>brainstorm/</code></td>
+          <td><code>NN_&lt;kind&gt;_&lt;slug&gt;</code></td>
+          <td><span class="ns-tag opt">optional</span></td>
+          <td>NN badge + label (kind word is plain text, no symbol); folder = one multi-file brainstorm</td>
+        </tr>
+        <tr>
+          <td><code>subtasks/</code></td>
+          <td><code>NN_&lt;slug&gt;</code></td>
+          <td><span class="ns-tag opt">optional</span></td>
+          <td>Status icon + NN badge + title; group folder shows done/total</td>
+        </tr>
+        <tr>
+          <td><code>agent-log/</code></td>
+          <td><code>NNN_&lt;code&gt;_&lt;name&gt;/</code> · slots <code>0NN_</code> · milestones carry <code>iteration:</code></td>
+          <td><span class="ns-tag opt">optional</span></td>
+          <td>Folder: NN + kind symbol + name + count. Slot: neutral NN. Milestone: status-tinted <code>#N</code></td>
+        </tr>
+        <tr>
+          <td><code>agent-memory/</code></td>
+          <td><code>memory.md</code> pin + topic files</td>
+          <td><span class="ns-tag rec">prefix discouraged</span></td>
+          <td><code>memory.md</code> first; others by name; NN parses if present</td>
+        </tr>
+      </tbody>
+    </table>
+    <table class="ns-legend" style="margin-top:24px">
+      <thead><tr><th>Limit</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td>Prefix digit width</td><td><span class="ns-tag opt">2–5 digits</span> — 1 or 6+ is not a prefix</td></tr>
+        <tr><td>Separator</td><td><code>_</code> canonical; legacy <code>-</code> tolerated (loose parse)</td></tr>
+        <tr><td>Sort order</td><td>Numeric <strong>value</strong> (widths coexist); unprefixed last; lexical tie-break</td></tr>
+        <tr><td>Nesting depth</td><td><span class="ns-tag rec">3 recommended</span> · <span class="ns-tag req">5 hard cap</span> — deeper folder warned &amp; ignored</td></tr>
+        <tr><td>Requiredness</td><td>Prefix optional everywhere; a missing prefix <strong>never</strong> throws (unlike docs)</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+</div>
+</body>
+</html>

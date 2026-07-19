@@ -1,0 +1,33 @@
+{
+  "title": "Docs — File Tree → Sidebar",
+  "description": "How a docs section's files and folders map to sidebar sections and rows — the mandatory NN_ prefix, numeric-value ordering, title-from-frontmatter labels, non-markdown type glyphs, and every failure mode from hard build error to silent warning.",
+  "sidebar_label": "Docs — File Tree → Sidebar",
+  "sidebar_position": 3,
+  "embed_height": "full",
+  "artifact": {
+    "purpose": "Explain, visually, how a docs section's on-disk file tree becomes the navigation sidebar: prefix grammar, numeric-value sort, title-only labels, folder sections, non-markdown pages, and the required-prefix failure mode. Companion to the suffix-icons, blogs, and issues artifacts in this sub-section.",
+    "type": "explainer",
+    "theme": "site",
+    "consumes": {
+      "text": ["--color-text-primary", "--color-text-secondary", "--color-text-muted"],
+      "backgrounds": ["--color-bg-primary", "--color-bg-secondary", "--color-bg-tertiary"],
+      "borders": ["--color-border-default", "--color-border-light"],
+      "status": ["--color-info", "--color-warning", "--color-error", "--color-success"],
+      "typography": ["--font-family-base", "--font-family-mono", "--content-h1", "--content-h2", "--ui-text-body", "--ui-text-micro"],
+      "spacing": ["--spacing-xs", "--spacing-sm", "--spacing-md", "--spacing-lg", "--spacing-xl", "--spacing-2xl"],
+      "radius": ["--border-radius-sm", "--border-radius-md", "--border-radius-lg", "--border-radius-full"]
+    },
+    "sources": [
+      "astro-doc-code/src/loaders/data.ts",
+      "astro-doc-code/src/hooks/useSidebar.ts",
+      "astro-doc-code/src/layouts/docs/default/Sidebar.astro",
+      "astro-doc-code/src/layouts/docs/default/Layout.astro",
+      "astro-doc-code/src/parsers/content-types/docs.ts",
+      "astro-doc-code/src/parsers/core/order-prefix.ts",
+      "astro-doc-code/src/parsers/core/base-parser.ts",
+      "astro-doc-code/src/layouts/file-type-icons.ts",
+      "astro-doc-code/src/loaders/diagram-pages.ts",
+      "astro-doc-code/src/loaders/artifact-pages.ts"
+    ]
+  }
+}

@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Suffix Icons</title>
+<style>
+/* ============================================================================
+ * SHARED STYLE KIT — "Naming & the Sidebar" artifact set.
+ * Paste this VERBATIM into your artifact's <style>. Build with these class
+ * names so all four artifacts (suffix-icons, docs, blogs, issues) look like one
+ * coherent set. Extend for domain needs, but DO NOT restyle this vocabulary.
+ *
+ * site-mode: every color/size is a theme token consumed with a neutral fallback
+ * for the raw-file case. Do NOT define your own palette on :root.
+ * ==========================================================================*/
+* { box-sizing: border-box; }
+body.ns-body {
+  font-family: var(--font-family-base, system-ui, sans-serif);
+  color: var(--color-text-primary, #1a1a1a);
+  background: var(--color-bg-primary, #ffffff);
+  line-height: var(--line-height-base, 1.6);
+  margin: 0; padding: var(--spacing-xl, 32px);
+}
+.ns-wrap { max-width: 980px; margin: 0 auto; }
+.ns-title { font-size: var(--content-h1, 2rem); font-weight: 700; margin: 0 0 var(--spacing-xs, 8px); }
+.ns-lead { color: var(--color-text-secondary, #555); margin: 0 0 var(--spacing-xl, 32px); max-width: 70ch; }
+.ns-section { margin: var(--spacing-2xl, 48px) 0; }
+.ns-section > h2 {
+  font-size: var(--content-h2, 1.5rem); font-weight: 650; margin: 0 0 var(--spacing-xs, 8px);
+}
+.ns-section > .ns-say { color: var(--color-text-secondary, #555); margin: 0 0 var(--spacing-lg, 24px); max-width: 70ch; }
+
+/* Tree ↔ sidebar side-by-side */
+.ns-split { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-lg, 24px); align-items: start; }
+@media (max-width: 760px) { .ns-split { grid-template-columns: 1fr; } }
+.ns-panel {
+  border: 1px solid var(--color-border-default, #ddd); border-radius: var(--border-radius-lg, 10px);
+  background: var(--color-bg-secondary, #fafafa); overflow: hidden;
+}
+.ns-panel__cap {
+  font-size: var(--ui-text-micro, 12px); text-transform: uppercase; letter-spacing: .06em;
+  color: var(--color-text-muted, #888); padding: var(--spacing-sm, 10px) var(--spacing-md, 16px);
+  border-bottom: 1px solid var(--color-border-light, #eee); background: var(--color-bg-tertiary, #f0f0f0);
+}
+.ns-tree {
+  font-family: var(--font-family-mono, ui-monospace, monospace); font-size: var(--ui-text-body, 14px);
+  white-space: pre; overflow-x: auto; padding: var(--spacing-md, 16px); margin: 0;
+  color: var(--color-text-secondary, #555);
+}
+.ns-tree .p { color: var(--color-text-muted, #999); }              /* the NN_ prefix segment */
+.ns-tree .d { color: var(--color-text-primary, #1a1a1a); font-weight: 600; } /* folder / emphasised name */
+
+/* Mini sidebar */
+.ns-sb { padding: var(--spacing-sm, 10px); display: flex; flex-direction: column; gap: 1px; }
+.ns-sb__sec {
+  font-size: var(--ui-text-micro, 12px); text-transform: uppercase; letter-spacing: .05em; font-weight: 600;
+  color: var(--color-text-muted, #888); padding: var(--spacing-md, 14px) var(--spacing-sm, 10px) 4px;
+}
+.ns-sb__row {
+  display: flex; align-items: center; gap: var(--spacing-xs, 8px);
+  padding: 4px var(--spacing-sm, 10px); border-radius: var(--border-radius-sm, 6px);
+  font-size: var(--ui-text-body, 14px); color: var(--color-text-primary, #1a1a1a);
+}
+.ns-sb__row.is-active { background: var(--color-bg-tertiary, #eee); }
+.ns-sb__row--l1 { padding-left: var(--spacing-lg, 22px); }
+.ns-sb__row--l2 { padding-left: var(--spacing-xl, 34px); }
+.ns-sb__num {
+  flex: none; min-width: 22px; text-align: center; font-family: var(--font-family-mono, monospace);
+  font-size: var(--ui-text-micro, 12px); font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted, #888); background: var(--color-bg-tertiary, #eee);
+  border-radius: var(--border-radius-sm, 4px); padding: 1px 5px;
+}
+.ns-sb__num.is-iter       { color: var(--color-text-secondary, #555); background: var(--color-bg-tertiary, #eee); }
+.ns-sb__num.is-in-progress{ color: var(--color-info, #2563eb);    background: color-mix(in srgb, var(--color-info, #2563eb) 14%, transparent); }
+.ns-sb__num.is-success    { color: var(--color-success, #16a34a); background: color-mix(in srgb, var(--color-success, #16a34a) 14%, transparent); }
+.ns-sb__num.is-failed     { color: var(--color-error, #dc2626);   background: color-mix(in srgb, var(--color-error, #dc2626) 14%, transparent); }
+.ns-sb__num.is-not-started{ color: var(--color-text-muted, #888); background: var(--color-bg-tertiary, #eee); }
+.ns-sb__label { flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ns-sb__ico { flex: none; display: inline-flex; width: 14px; height: 14px; color: var(--color-text-muted, #888); }
+.ns-sb__ico svg { width: 100%; height: 100%; }
+.ns-sb__kind { flex: none; display: inline-flex; width: 14px; height: 14px; color: var(--color-text-secondary, #555); }
+.ns-sb__kind svg { width: 100%; height: 100%; }
+.ns-sb__count { flex: none; font-size: var(--ui-text-micro, 12px); color: var(--color-text-muted, #888); font-variant-numeric: tabular-nums; }
+.ns-sb__chev { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 10px; height: 10px; color: var(--color-text-muted, #888); }
+.ns-sb__chev svg { width: 100%; height: 100%; display: block; }
+
+/* Callouts */
+.ns-note {
+  border-left: 3px solid var(--color-info, #2563eb);
+  background: color-mix(in srgb, var(--color-info, #2563eb) 7%, transparent);
+  padding: var(--spacing-sm, 12px) var(--spacing-md, 16px);
+  border-radius: 0 var(--border-radius-md, 8px) var(--border-radius-md, 8px) 0;
+  margin: var(--spacing-md, 16px) 0; font-size: var(--ui-text-body, 14px);
+}
+.ns-note.is-warn  { border-color: var(--color-warning, #d97706); background: color-mix(in srgb, var(--color-warning, #d97706) 8%, transparent); }
+.ns-note.is-error { border-color: var(--color-error, #dc2626);  background: color-mix(in srgb, var(--color-error, #dc2626) 8%, transparent); }
+
+/* Edge-case gallery */
+.ns-cases { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--spacing-md, 16px); }
+.ns-case {
+  border: 1px solid var(--color-border-default, #ddd); border-radius: var(--border-radius-md, 8px);
+  padding: var(--spacing-md, 16px); background: var(--color-bg-secondary, #fafafa);
+}
+.ns-case h4 { margin: 0 0 var(--spacing-xs, 8px); font-size: var(--ui-text-body, 14px); font-weight: 600; }
+.ns-case p { margin: var(--spacing-xs, 8px) 0 0; font-size: var(--ui-text-micro, 12px); color: var(--color-text-secondary, #555); }
+
+/* Rules legend */
+.ns-legend { width: 100%; border-collapse: collapse; font-size: var(--ui-text-body, 14px); }
+.ns-legend th, .ns-legend td { text-align: left; padding: var(--spacing-sm, 10px); border-bottom: 1px solid var(--color-border-light, #eee); vertical-align: top; }
+.ns-legend th { font-size: var(--ui-text-micro, 12px); text-transform: uppercase; letter-spacing: .05em; color: var(--color-text-muted, #888); }
+.ns-tag { display: inline-block; font-size: var(--ui-text-micro, 12px); padding: 1px 8px; border-radius: var(--border-radius-full, 999px); font-weight: 600; white-space: nowrap; }
+.ns-tag.req { color: var(--color-error, #dc2626);   background: color-mix(in srgb, var(--color-error, #dc2626) 12%, transparent); }
+.ns-tag.opt { color: var(--color-text-secondary, #555); background: var(--color-bg-tertiary, #eee); }
+.ns-tag.rec { color: var(--color-info, #2563eb);   background: color-mix(in srgb, var(--color-info, #2563eb) 12%, transparent); }
+
+/* ── Domain extensions (glyph reference) — new classes only, shared vocabulary untouched ── */
+.ns-fam { font-size: var(--ui-text-micro, 12px); text-transform: uppercase; letter-spacing: .06em;
+  font-weight: 700; color: var(--color-text-muted, #888); margin: var(--spacing-xl, 32px) 0 var(--spacing-sm, 10px); }
+.ns-glyphs { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--spacing-md, 16px); }
+.ns-glyph {
+  border: 1px solid var(--color-border-default, #ddd); border-radius: var(--border-radius-md, 8px);
+  background: var(--color-bg-secondary, #fafafa); overflow: hidden;
+}
+.ns-glyph .ns-sb { border-bottom: 1px solid var(--color-border-light, #eee); background: var(--color-bg-primary, #fff); }
+.ns-glyph__meta { padding: var(--spacing-sm, 10px) var(--spacing-md, 14px); }
+.ns-glyph__name { font-size: var(--ui-text-body, 14px); font-weight: 600; margin: 0; display: flex; align-items: baseline; gap: var(--spacing-xs, 8px); flex-wrap: wrap; }
+.ns-glyph__where { font-size: var(--ui-text-micro, 12px); font-weight: 600; text-transform: uppercase; letter-spacing: .04em;
+  color: var(--color-text-muted, #888); }
+.ns-glyph__desc { margin: 4px 0 0; font-size: var(--ui-text-micro, 12px); color: var(--color-text-secondary, #555); line-height: 1.5; }
+.ns-scope { display: inline-block; font-size: 11px; font-weight: 600; padding: 0 6px; border-radius: var(--border-radius-full, 999px);
+  border: 1px solid var(--color-border-default, #ddd); color: var(--color-text-muted, #888); background: var(--color-bg-tertiary, #f0f0f0); }
+.ns-scope.both  { color: var(--color-brand-primary, #2563eb); border-color: color-mix(in srgb, var(--color-brand-primary, #2563eb) 40%, transparent); }
+</style>
+</head>
+<body class="ns-body">
+<div class="ns-wrap">
+  <h1 class="ns-title">Suffix Icons</h1>
+  <p class="ns-lead">The trailing type glyphs — the single mark a sidebar row gets when the page is <strong>not markdown</strong>. Markdown is the default and stays <strong>unmarked</strong>; a glyph trails the label only for the exceptions: an HTML <strong>artifact</strong> or a <strong>diagram</strong> page. This one small vocabulary is <strong>shared by both</strong> the docs sidebar and the issue sub-doc tree, with the real SVGs inlined verbatim from framework source.</p>
+
+  <div class="ns-note">
+    <strong>Trailing zone only.</strong> This page covers the mark that <em>follows</em> the label. The <em>leading</em> marks that can precede a label — the <code>NN</code> number badge, the status-tinted <code>#iteration</code> badge, agent-log kind symbols, subtask status icons, and the folder chevron / descendant count — are all issue-sidebar concepts and live in the <a href="./issues">Issues artifact</a>.
+  </div>
+
+  <!-- ============================ TRAILING TYPE GLYPHS ============================ -->
+  <section class="ns-section">
+    <h2>Trailing type glyphs</h2>
+    <p class="ns-say">A single glyph can <strong>trail</strong> the label to mark a non-markdown page. <strong>Markdown is the default and is always unmarked</strong> — a glyph appears only for the exceptions. This vocabulary is <strong>shared by both</strong> the docs sidebar and the issue sub-doc tree (docs call the field <code>fileType</code>, issues call it <code>docType</code> — the marked keys are identical). Exactly two types are marked today.</p>
+    <div class="ns-glyphs">
+
+      <div class="ns-glyph">
+        <div class="ns-sb">
+          <div class="ns-sb__row"><span class="ns-sb__label">architecture overview</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__label">data flow</span>
+            <span class="ns-sb__ico"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="1.5" width="6" height="4.5" rx="1"/><rect x="8.5" y="10" width="6" height="4.5" rx="1"/><path d="M4.5 6v2.5a2 2 0 002 2h2"/></svg></span>
+          </div>
+        </div>
+        <div class="ns-glyph__meta">
+          <p class="ns-glyph__name">Diagram <span class="ns-scope both">both</span></p>
+          <p class="ns-glyph__desc">A first-class diagram page (e.g. <code>.excalidraw</code>, <code>.mmd</code>, <code>.dot</code>). Tooltip label: <strong>Diagram</strong>. The unmarked row above it is a plain markdown page — no glyph.</p>
+        </div>
+      </div>
+
+      <div class="ns-glyph">
+        <div class="ns-sb">
+          <div class="ns-sb__row"><span class="ns-sb__label">release notes</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__label">metrics dashboard</span>
+            <span class="ns-sb__ico"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="10" rx="1.5"/><path d="M2 6.5h12"/></svg></span>
+          </div>
+        </div>
+        <div class="ns-glyph__meta">
+          <p class="ns-glyph__name">Artifact <span class="ns-scope both">both</span></p>
+          <p class="ns-glyph__desc">A self-contained <code>.html</code> artifact page (a report, dashboard, or explainer like this one). Tooltip label: <strong>Artifact</strong>.</p>
+        </div>
+      </div>
+
+    </div>
+    <div class="ns-note is-warn">
+      <strong>Two, and only two, marked types.</strong> The glyph map contains exactly <code>diagram</code> and <code>artifact</code>. Any other file type — including markdown — resolves to <em>no glyph</em>. Growing the vocabulary means adding a keyed entry to <code>file-type-icons.ts</code>; there is no per-page override.
+    </div>
+  </section>
+
+  <!-- ============================ TREE → SIDEBAR ============================ -->
+  <section class="ns-section">
+    <h2>On disk → in the sidebar</h2>
+    <p class="ns-say">The glyph is derived from the page's type, not typed by hand. Here a section mixes a plain markdown page, an <code>.html</code> artifact, and a diagram file — only the two non-markdown rows pick up a trailing glyph.</p>
+    <div class="ns-split">
+      <div class="ns-panel">
+        <div class="ns-panel__cap">On disk — a docs section</div>
+<pre class="ns-tree"><span class="p">01_</span><span class="d">overview</span>.md
+<span class="p">02_</span><span class="d">metrics-dashboard</span>.html
+<span class="p">03_</span><span class="d">data-flow</span>.excalidraw</pre>
+      </div>
+      <div class="ns-panel">
+        <div class="ns-panel__cap">Sidebar — rendered rows</div>
+        <div class="ns-sb">
+          <div class="ns-sb__row"><span class="ns-sb__label">overview</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__label">metrics dashboard</span><span class="ns-sb__ico"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="10" rx="1.5"/><path d="M2 6.5h12"/></svg></span></div>
+          <div class="ns-sb__row"><span class="ns-sb__label">data flow</span><span class="ns-sb__ico"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="1.5" width="6" height="4.5" rx="1"/><rect x="8.5" y="10" width="6" height="4.5" rx="1"/><path d="M4.5 6v2.5a2 2 0 002 2h2"/></svg></span></div>
+        </div>
+      </div>
+    </div>
+    <p class="ns-say" style="margin-top:16px">The same three rows render identically inside an issue's <code>notes/</code> or <code>brainstorm/</code> tree — the issue tracker reads the type from <code>docType</code> instead of <code>fileType</code>, but the glyph map it consults is this exact one.</p>
+  </section>
+
+  <!-- ============================ RULES LEGEND ============================ -->
+  <section class="ns-section">
+    <h2>Rules at a glance</h2>
+    <table class="ns-legend">
+      <thead><tr><th>Rule</th><th></th><th>Detail</th></tr></thead>
+      <tbody>
+        <tr><td>Markdown page</td><td><span class="ns-tag opt">unmarked</span></td><td>The default content type carries no trailing glyph, ever. A glyph marks only the exception.</td></tr>
+        <tr><td>Marked file types</td><td><span class="ns-tag rec">2 only</span></td><td><code>diagram</code> and <code>artifact</code> — the full glyph map. Shared by docs (<code>fileType</code>) and issues (<code>docType</code>).</td></tr>
+        <tr><td>Type-glyph color</td><td><span class="ns-tag opt">monochrome</span></td><td><code>currentColor</code> only — color stays reserved for status meaning.</td></tr>
+        <tr><td>Position</td><td><span class="ns-tag opt">trailing</span></td><td>The glyph follows the label. Leading marks (badges, symbols, status icons, chevron) are documented in the <a href="./issues">Issues artifact</a>.</td></tr>
+        <tr><td>Growing the set</td><td><span class="ns-tag rec">code only</span></td><td>Add a keyed entry to <code>file-type-icons.ts</code>; there is no per-page override.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <p class="ns-glyph__desc" style="margin-top:32px">Both glyphs above are inlined verbatim from framework source: <code>src/layouts/file-type-icons.ts</code> — the shared <code>fileType</code> / <code>docType</code> glyph map (keys <code>diagram</code> and <code>artifact</code>). The leading-mark legend lives in the <a href="./issues">Issues artifact</a>.</p>
+</div>
+</body>
+</html>

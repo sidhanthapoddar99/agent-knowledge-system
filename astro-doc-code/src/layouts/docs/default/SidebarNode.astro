@@ -1,0 +1,102 @@
+---
+/**
+ * SidebarNode - one node (file item or folder section) of the docs sidebar,
+ * rendered recursively to an arbitrary depth. A file becomes an <a> row; a
+ * folder becomes a <details>-less collapsible <div> section whose children are
+ * rendered by this same component one level deeper.
+ *
+ * Depth budget: `depth` is 1-based (top-level nodes are depth 1). A folder's
+ * item children (files) always render — they belong to a drawn folder — but a
+ * *sub-folder* is only drawn while `depth + 1 <= maxDepth`. `maxDepth` is the
+ * single system-wide `MAX_SUBFOLDER_DEPTH` (5) — there is no separate depth
+ * setting. Files inside a folder at the cap still render; a folder past the cap
+ * is dropped — the same "folders nest to the cap, leaves at the cap still show"
+ * rule the issue tracker uses.
+ */
+import type { SidebarNode } from '@/hooks/useSidebar';
+import { isSectionActive } from '@/hooks/useSidebar';
+import { fileTypeIcon } from '../../file-type-icons';
+
+interface Props {
+  node: SidebarNode;
+  currentPath: string;
+  depth: number;
+  maxDepth: number;
+}
+
+const { node, currentPath, depth, maxDepth } = Astro.props;
+
+const isActive = (href?: string): boolean => !!href && currentPath === href;
+
+// Precomputed (kept out of JSX so the `<=` isn't misparsed as a tag open):
+// children live one level down; sub-folders draw only while within the budget.
+const childDepth = depth + 1;
+const drawSubfolders = childDepth <= maxDepth;
+
+function shouldExpand(section: Extract<SidebarNode, { type: 'section' }>): boolean {
+  if (isSectionActive(section, currentPath)) return true;
+  return !section.collapsed;
+}
+---
+{node.type === 'item' ? (
+  <a
+    href={node.href}
+    class:list={['sidebar__link', { 'sidebar__link--top': depth === 1, 'sidebar__link--active': isActive(node.href) }]}
+    aria-current={isActive(node.href) ? 'page' : undefined}
+    data-tip={node.title}
+  >
+    <span class="sidebar__link-label">{node.title}</span>
+    {fileTypeIcon(node.fileType) && (
+      <span class="sidebar__link-doctype" data-tip={fileTypeIcon(node.fileType)!.label} data-tip-always aria-label={fileTypeIcon(node.fileType)!.label} set:html={fileTypeIcon(node.fileType)!.svg} />
+    )}
+  </a>
+) : (
+  <div
+    class:list={['sidebar__section', { 'sidebar__section--nested': depth > 1, 'sidebar__section--active': isSectionActive(node, currentPath) }]}
+    data-collapse-key={node.slug}
+    data-collapsed={!shouldExpand(node)}
+  >
+    {node.children.length > 0 ? (
+      <>
+        {node.collapsible ? (
+          <button
+            class:list={['sidebar__header', 'sidebar__header--collapsible', { 'sidebar__header--nested': depth > 1 }]}
+            aria-expanded={shouldExpand(node)}
+            data-collapse-trigger
+          >
+            <span data-tip={node.title}>{node.title}</span>
+            <svg class="sidebar__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </button>
+        ) : (
+          <span class:list={['sidebar__header', { 'sidebar__header--nested': depth > 1 }]} data-tip={node.title}>{node.title}</span>
+        )}
+
+        <ul class="sidebar__list" data-collapse-content>
+          {node.children.map((child) => (
+            child.type === 'item' ? (
+              <li>
+                <Astro.self node={child} currentPath={currentPath} depth={childDepth} maxDepth={maxDepth} />
+              </li>
+            ) : drawSubfolders ? (
+              <li class="sidebar__nested">
+                <Astro.self node={child} currentPath={currentPath} depth={childDepth} maxDepth={maxDepth} />
+              </li>
+            ) : null
+          ))}
+        </ul>
+      </>
+    ) : node.href ? (
+      <a
+        href={node.href}
+        class:list={['sidebar__link sidebar__link--top', { 'sidebar__link--active': isActive(node.href) }]}
+        aria-current={isActive(node.href) ? 'page' : undefined}
+      >
+        {node.title}
+      </a>
+    ) : (
+      <span class="sidebar__header" data-tip={node.title}>{node.title}</span>
+    )}
+  </div>
+)}

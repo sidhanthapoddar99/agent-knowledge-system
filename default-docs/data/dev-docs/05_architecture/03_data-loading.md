@@ -285,7 +285,6 @@ const settings = loadSettings('/abs/path/to/data/docs');
     collapsed: false,     // All sections start open
     collapsible: true,    // Sections can be toggled
     sort: 'position',     // Order by NN_ prefix
-    depth: 3,             // Show up to 3 levels of nesting
   },
   outline: {
     enabled: true,
@@ -328,7 +327,6 @@ interface ContentSettings {
     collapsed?: boolean;       // Start collapsed
     collapsible?: boolean;     // Allow user to toggle
     sort?: 'position' | 'alphabetical';
-    depth?: number;            // Max nesting depth shown
   };
   outline?: {
     enabled?: boolean;

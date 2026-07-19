@@ -74,6 +74,7 @@ src/layouts/
 │   ├── default/                  # 3-column: sidebar + body + outline
 │   │   ├── Layout.astro
 │   │   ├── Sidebar.astro
+│   │   ├── SidebarNode.astro     # Recursive node renderer (depth-bounded)
 │   │   ├── Body.astro
 │   │   ├── Outline.astro
 │   │   └── Pagination.astro

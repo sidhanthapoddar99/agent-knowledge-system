@@ -10,6 +10,7 @@ import Pagination from './Pagination.astro';
 
 import { loadContentWithSettings, type LoadedContent, type ContentSettings } from '@loaders/data';
 import { buildSidebarTree, getPrevNext } from '@/hooks/useSidebar';
+import { MAX_SUBFOLDER_DEPTH } from '@parsers/core/order-prefix';
 
 interface Props {
   title: string;
@@ -54,6 +55,7 @@ const paginationEnabled = settings.pagination?.enabled !== false;
   <Sidebar
     nodes={sidebarNodes}
     currentPath={currentPath}
+    maxDepth={MAX_SUBFOLDER_DEPTH}
   />
 
   <Body title={title} description={description} content={content}>

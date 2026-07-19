@@ -24,6 +24,22 @@
 export const ORDER_PREFIX_MIN_DIGITS = 2;
 export const ORDER_PREFIX_MAX_DIGITS = 5;
 
+/**
+ * The single **maximum nesting depth** for the whole system — one value shared
+ * by both navigation surfaces:
+ *   - **Issues:** a hard *structural* cap. A content subfolder (`subtasks/`,
+ *     `notes/`, `brainstorm/`, `agent-memory/`, `agent-log/`) may nest this deep;
+ *     a folder *inside* the last level may still hold files, but a folder beyond
+ *     it is warned and ignored. `comments/` stays flat.
+ *   - **Docs:** the *sidebar draw* depth. The docs tree may nest freely (every
+ *     page builds and routes), but the sidebar draws rows only down to this many
+ *     folder levels.
+ *
+ * It is a **ceiling, not a default** — there is no separate configurable depth.
+ * "Up to 3 levels" is a recommended authoring convention, not a code value.
+ */
+export const MAX_SUBFOLDER_DEPTH = 5;
+
 export interface ParsedOrderPrefix {
   /** Numeric order from the prefix, or null when the segment has none. */
   position: number | null;

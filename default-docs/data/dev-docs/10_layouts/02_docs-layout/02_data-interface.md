@@ -224,8 +224,7 @@ Each docs folder can have a `settings.json` to control sidebar and outline behav
   "sidebar": {
     "collapsed": false,
     "collapsible": true,
-    "sort": "position",
-    "depth": 3
+    "sort": "position"
   },
   "outline": {
     "enabled": true,
@@ -246,7 +245,6 @@ All fields are optional. Missing fields fall back to these defaults:
 | `sidebar.collapsed` | `false` | Sections start open |
 | `sidebar.collapsible` | `true` | Users can toggle sections |
 | `sidebar.sort` | `'position'` | Order by `NN_` prefix number |
-| `sidebar.depth` | `3` | Show up to 3 nesting levels |
 | `outline.enabled` | `true` | Show outline panel |
 | `outline.levels` | `[2, 3]` | Include h2 and h3 headings |
 | `outline.title` | `'On this page'` | Outline panel header |
@@ -261,7 +259,6 @@ interface ContentSettings {
     collapsed?: boolean;
     collapsible?: boolean;
     sort?: 'position' | 'alphabetical';
-    depth?: number;
   };
   outline?: {
     enabled?: boolean;

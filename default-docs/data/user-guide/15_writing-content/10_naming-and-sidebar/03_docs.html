@@ -274,11 +274,11 @@ sidebar_position: 1   <span class="c"># wins</span></div>
         <h4>Deeper than the render depth</h4>
         <div class="ns-fm"><span class="p">10_</span><span class="d">a/</span> › <span class="p">10_</span><span class="d">b/</span> › <span class="p">10_</span><span class="d">c/</span> › <span class="p">10_</span><span class="d">d/</span></div>
         <div class="ns-note is-warn" style="margin-top:8px">
-          The default docs sidebar draws about <strong>3 levels</strong> (<code>sidebar.depth</code>
-          default <code>3</code>, <code>data.ts</code> 383). Pages nested deeper still
+          The docs sidebar draws folder rows down to the single shared
+          <code>MAX_SUBFOLDER_DEPTH</code> (<strong>5</strong>). Folders nested deeper still
           <strong>build and are reachable by URL</strong> — they just don't appear as sidebar rows.
         </div>
-        <p>Docs have <strong>no hard nesting cap</strong> — you can nest as deep as you like and every page builds and routes. <code>sidebar.depth</code> only limits how deep the sidebar <em>draws</em>. (The 5-level hard cap, <code>MAX_SUBFOLDER_DEPTH</code>, is the separate <strong>issue-tracker</strong> rule — it does not apply to docs.)</p>
+        <p>There is <strong>no separate depth setting</strong> — <code>MAX_SUBFOLDER_DEPTH</code> is one value shared across docs and issues, and <strong>3 levels is a recommended convention, not a configured default</strong>. For docs it bounds sidebar rendering; for issues the same value bounds the folder structure itself.</p>
       </div>
 
       <!-- 6. non-md page: diagram/artifact opt-in + glyph -->
@@ -370,8 +370,8 @@ title: Site Configuration</div>
         </tr>
         <tr>
           <td>Folder nesting depth</td>
-          <td><span class="ns-tag opt">unlimited</span></td>
-          <td>Docs have <strong>no hard cap</strong> — nest freely, all pages build and route. The sidebar only <em>draws</em> to <code>sidebar.depth</code> (default 3); deeper pages exist but aren't shown as rows. (The 5-level <code>MAX_SUBFOLDER_DEPTH</code> cap is the issue tracker's, not docs'.)</td>
+          <td><span class="ns-tag rec">3 rec · 5 max</span></td>
+          <td>Files nest freely — all pages build and route. The sidebar <em>draws</em> folder rows down to the shared <code>MAX_SUBFOLDER_DEPTH</code> (5); 3 is a recommended convention, not a setting. Folders deeper than 5 route but aren't drawn.</td>
         </tr>
         <tr>
           <td>Non-markdown pages (<code>.mmd</code>/<code>.dot</code>/<code>.excalidraw</code>/<code>.html</code>)</td>

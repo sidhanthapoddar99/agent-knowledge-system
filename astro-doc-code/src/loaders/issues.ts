@@ -38,7 +38,7 @@ import path from 'path';
 import matter from 'gray-matter';
 import { createIssuesParser } from '../parsers/content-types/issues';
 import { getIssueDate } from './issue-dates';
-import { parseOrderPrefixLoose } from '../parsers/core/order-prefix';
+import { parseOrderPrefixLoose, MAX_SUBFOLDER_DEPTH } from '../parsers/core/order-prefix';
 import { readSettings, statSettingsMtime, resolveSettingsPath } from './settings-file';
 import { diagramContainerHtml, DIAGRAM_EXTENSIONS } from './diagram-pages';
 import { artifactContainerHtml } from './artifact-pages';
@@ -71,14 +71,11 @@ export {
   type CategoryId,
 } from './issue-status';
 
-/**
- * Hard cap on how deep content subfolders may nest under a section
- * (`subtasks/`, `notes/`, `brainstorm/`, `agent-memory/`, `agent-log/`).
- * A `groupPath` of this length may still hold files, but a folder *inside* it
- * is warned and ignored. The recommended convention is up to 3 levels — this 5
- * is the ceiling, not the target. `comments/` stays flat (never nests).
- */
-export const MAX_SUBFOLDER_DEPTH = 5;
+/** Re-exported from the shared `order-prefix` module — the single system-wide
+ *  max nesting depth (issue folders + docs sidebar draw depth). Kept exported
+ *  here so existing `@loaders/issues` importers (route-match, layouts) are
+ *  unaffected. See its definition for the full contract. */
+export { MAX_SUBFOLDER_DEPTH };
 
 export interface IssueMetadata {
   title: string;

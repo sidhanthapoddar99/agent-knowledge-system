@@ -1,162 +1,34 @@
 ---
 /**
- * Sidebar - Documentation navigation sidebar with recursive nesting
- * Accepts mixed array of items (files) and sections (folders)
+ * Sidebar - Documentation navigation sidebar with recursive nesting.
+ * Accepts a mixed array of items (root files) and sections (folders) and
+ * delegates each to the recursive <SidebarNode>, drawing rows down to
+ * `maxDepth` levels — the shared `MAX_SUBFOLDER_DEPTH` (5); no depth setting.
  */
 
-import type { SidebarSection, SidebarItem, SidebarNode } from '@/hooks/useSidebar';
-import { fileTypeIcon } from '../../file-type-icons';
+import type { SidebarNode as SidebarNodeType } from '@/hooks/useSidebar';
+import { MAX_SUBFOLDER_DEPTH } from '@parsers/core/order-prefix';
+import SidebarNode from './SidebarNode.astro';
 
 interface Props {
-  nodes: SidebarNode[];  // Mixed: items (root files) + sections (folders)
+  nodes: SidebarNodeType[];  // Mixed: items (root files) + sections (folders)
   currentPath: string;
+  /** How many folder levels the sidebar draws — the shared system-wide
+   *  MAX_SUBFOLDER_DEPTH. The tree itself is unlimited (deeper pages route). */
+  maxDepth?: number;
 }
 
-const { nodes, currentPath } = Astro.props;
+const { nodes, currentPath, maxDepth = MAX_SUBFOLDER_DEPTH } = Astro.props;
 
 // Root segment of the URL (e.g. `user-guide`, `dev-docs`) — namespaces the
 // collapse cache per docs section. Stable across renders of the same section.
 const sectionRoot = currentPath.split('/').filter(Boolean)[0] || 'docs';
-
-function isActive(href: string): boolean {
-  return currentPath === href;
-}
-
-function isSectionActive(section: SidebarSection): boolean {
-  if (section.href && isActive(section.href)) return true;
-
-  for (const child of section.children) {
-    if (child.type === 'item' && isActive(child.href)) return true;
-    if (child.type === 'section' && isSectionActive(child)) return true;
-  }
-
-  return false;
-}
-
-function shouldBeExpanded(section: SidebarSection): boolean {
-  // Always expand if contains active item
-  if (isSectionActive(section)) return true;
-  // Otherwise use collapsed setting
-  return !section.collapsed;
-}
 ---
 
 <aside class="sidebar" data-sidebar-root={sectionRoot}>
   <nav class="sidebar__nav" aria-label="Documentation">
-    {nodes.map((node, index) => (
-      node.type === 'item' ? (
-        /* Root-level item (file without folder) */
-        <a
-          href={node.href}
-          class:list={['sidebar__link sidebar__link--top', { 'sidebar__link--active': isActive(node.href) }]}
-          aria-current={isActive(node.href) ? 'page' : undefined}
-          data-tip={node.title}
-        >
-          <span class="sidebar__link-label">{node.title}</span>
-          {fileTypeIcon(node.fileType) && (
-            <span class="sidebar__link-doctype" data-tip={fileTypeIcon(node.fileType)!.label} data-tip-always aria-label={fileTypeIcon(node.fileType)!.label} set:html={fileTypeIcon(node.fileType)!.svg} />
-          )}
-        </a>
-      ) : (
-        /* Section (folder with children) */
-        <div
-          class:list={['sidebar__section', { 'sidebar__section--active': isSectionActive(node) }]}
-          data-section={index}
-          data-collapse-key={node.slug}
-          data-collapsed={!shouldBeExpanded(node)}
-        >
-          {node.children.length > 0 ? (
-            <>
-              {node.collapsible ? (
-                <button
-                  class="sidebar__header sidebar__header--collapsible"
-                  aria-expanded={shouldBeExpanded(node)}
-                  data-collapse-trigger
-                >
-                  <span data-tip={node.title}>{node.title}</span>
-                  <svg class="sidebar__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="6 9 12 15 18 9" />
-                  </svg>
-                </button>
-              ) : (
-                <span class="sidebar__header" data-tip={node.title}>{node.title}</span>
-              )}
-
-              <ul class="sidebar__list" data-collapse-content>
-                {node.children.map((child) => (
-                  child.type === 'item' ? (
-                    <li>
-                      <a
-                        href={child.href}
-                        class:list={['sidebar__link', { 'sidebar__link--active': isActive(child.href) }]}
-                        aria-current={isActive(child.href) ? 'page' : undefined}
-                        data-tip={child.title}
-                      >
-                        <span class="sidebar__link-label">{child.title}</span>
-                        {fileTypeIcon(child.fileType) && (
-                          <span class="sidebar__link-doctype" data-tip={fileTypeIcon(child.fileType)!.label} data-tip-always aria-label={fileTypeIcon(child.fileType)!.label} set:html={fileTypeIcon(child.fileType)!.svg} />
-                        )}
-                      </a>
-                    </li>
-                  ) : (
-                    <li class="sidebar__nested">
-                      <div
-                        class:list={['sidebar__section', 'sidebar__section--nested', { 'sidebar__section--active': isSectionActive(child) }]}
-                        data-collapse-key={child.slug}
-                        data-collapsed={!shouldBeExpanded(child)}
-                      >
-                        {child.collapsible ? (
-                          <button
-                            class="sidebar__header sidebar__header--collapsible sidebar__header--nested"
-                            aria-expanded={shouldBeExpanded(child)}
-                            data-collapse-trigger
-                          >
-                            <span data-tip={child.title}>{child.title}</span>
-                            <svg class="sidebar__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                              <polyline points="6 9 12 15 18 9" />
-                            </svg>
-                          </button>
-                        ) : (
-                          <span class="sidebar__header sidebar__header--nested" data-tip={child.title}>{child.title}</span>
-                        )}
-                        <ul class="sidebar__list" data-collapse-content>
-                          {child.children.map((subChild) => (
-                            subChild.type === 'item' ? (
-                              <li>
-                                <a
-                                  href={subChild.href}
-                                  class:list={['sidebar__link', { 'sidebar__link--active': isActive(subChild.href) }]}
-                                  aria-current={isActive(subChild.href) ? 'page' : undefined}
-                                  data-tip={subChild.title}
-                                >
-                                  <span class="sidebar__link-label">{subChild.title}</span>
-                                  {fileTypeIcon(subChild.fileType) && (
-                                    <span class="sidebar__link-doctype" data-tip={fileTypeIcon(subChild.fileType)!.label} data-tip-always aria-label={fileTypeIcon(subChild.fileType)!.label} set:html={fileTypeIcon(subChild.fileType)!.svg} />
-                                  )}
-                                </a>
-                              </li>
-                            ) : null
-                          ))}
-                        </ul>
-                      </div>
-                    </li>
-                  )
-                ))}
-              </ul>
-            </>
-          ) : node.href ? (
-            <a
-              href={node.href}
-              class:list={['sidebar__link sidebar__link--top', { 'sidebar__link--active': isActive(node.href) }]}
-              aria-current={isActive(node.href) ? 'page' : undefined}
-            >
-              {node.title}
-            </a>
-          ) : (
-            <span class="sidebar__header" data-tip={node.title}>{node.title}</span>
-          )}
-        </div>
-      )
+    {nodes.map((node) => (
+      <SidebarNode node={node} currentPath={currentPath} depth={1} maxDepth={maxDepth} />
     ))}
   </nav>
 </aside>

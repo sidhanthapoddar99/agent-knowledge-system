@@ -380,7 +380,6 @@ export function loadSettings(dataPath: string): ContentSettings {
       collapsed: false,
       collapsible: true,
       sort: 'position',
-      depth: 3,
     },
     outline: {
       enabled: true,

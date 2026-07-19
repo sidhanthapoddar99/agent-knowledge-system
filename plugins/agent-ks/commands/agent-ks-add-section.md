@@ -120,8 +120,7 @@ Wait for confirmation. If yes, write all files using the templates below.
   "sidebar": {
     "collapsed": false,
     "collapsible": true,
-    "sort": "position",
-    "depth": 3
+    "sort": "position"
   }
 }
 ```

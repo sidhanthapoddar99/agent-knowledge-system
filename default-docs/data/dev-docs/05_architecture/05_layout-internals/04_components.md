@@ -16,6 +16,7 @@ src/layouts/
 │   ├── default/               # Owns all doc components
 │   │   ├── Layout.astro
 │   │   ├── Sidebar.astro
+│   │   ├── SidebarNode.astro   # Recursive node renderer (depth-bounded)
 │   │   ├── Body.astro
 │   │   ├── Outline.astro
 │   │   └── Pagination.astro
@@ -52,15 +53,24 @@ src/layouts/
 
 ### Sidebar
 
-**File:** `src/layouts/docs/default/Sidebar.astro`
+**Files:** `src/layouts/docs/default/Sidebar.astro` (shell + collapse script) and
+`src/layouts/docs/default/SidebarNode.astro` (the recursive per-node renderer).
 
-Renders hierarchical navigation tree with collapsible sections.
+Renders a hierarchical navigation tree with collapsible sections. `Sidebar.astro`
+owns the `<aside>` wrapper and the collapse-persistence script, then delegates each
+node to `SidebarNode.astro`, which renders a file row or folder section and recurses
+via `Astro.self` for sub-folders. Draw depth is bounded by `maxDepth` — the single
+system-wide `MAX_SUBFOLDER_DEPTH` (5) from `parsers/core/order-prefix`, shared with the
+issue tracker. There is no separate depth setting. The tree itself is unlimited;
+`maxDepth` only limits how deep it's drawn (a sub-folder is rendered while
+`depth + 1 <= maxDepth`; a file inside a drawn folder always renders).
 
 ```astro
 ---
 interface Props {
   nodes: SidebarNode[];    // Mixed: items (root files) + sections (folders)
   currentPath: string;
+  maxDepth?: number;       // Shared MAX_SUBFOLDER_DEPTH (5) — folder draw depth
 }
 
 type SidebarNode = SidebarItem | SidebarSection;
@@ -87,17 +97,13 @@ interface SidebarSection {
 
 <aside class="sidebar">
   {nodes.map(node => (
-    node.type === 'item' ? (
-      <a href={node.href}>{node.title}</a>
-    ) : (
-      <SidebarSection section={node} currentPath={currentPath} />
-    )
+    <SidebarNode node={node} currentPath={currentPath} depth={1} maxDepth={maxDepth} />
   ))}
 </aside>
 ```
 
 **Features:**
-- Recursive rendering for nested sections
+- Recursive rendering (`SidebarNode` via `Astro.self`) to the shared `MAX_SUBFOLDER_DEPTH` (5) levels
 - Collapsible sections with chevron icons
 - Active state highlighting
 - Reads `settings.json` for section labels
@@ -356,6 +362,7 @@ import Sidebar from './Sidebar.astro';
 import Body from './Body.astro';
 import Outline from './Outline.astro';
 import Pagination from './Pagination.astro';
+import { MAX_SUBFOLDER_DEPTH } from '@parsers/core/order-prefix';
 
 const { content: allContent, settings } = await loadContentWithSettings(dataPath);
 const sidebarNodes = buildSidebarTree(allContent, baseUrl, dataPath);
@@ -366,6 +373,7 @@ const { prev, next } = getPrevNext(sidebarNodes, currentPath);
   <Sidebar
     nodes={sidebarNodes}
     currentPath={currentPath}
+    maxDepth={MAX_SUBFOLDER_DEPTH}
   />
 
   <Body title={title} description={description} content={content}>

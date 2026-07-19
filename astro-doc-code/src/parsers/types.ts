@@ -113,7 +113,6 @@ export interface ContentSettings {
     collapsed?: boolean;
     collapsible?: boolean;
     sort?: 'position' | 'alphabetical';
-    depth?: number;
   };
   outline?: {
     enabled?: boolean;

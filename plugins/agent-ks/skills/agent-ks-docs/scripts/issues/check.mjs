@@ -140,7 +140,12 @@ const validLabels = vocab?.fields?.labels?.values || [];
 const TEMPLATE_LINT = !!args.flags['subtask-template'] || vocab?.subtaskTemplate === true;
 const TEMPLATE_SECTIONS = ['Overview', 'References', 'Todo list', 'Outcomes and Next Steps', 'Details'];
 const OUTCOME_DUE_STATUSES = new Set(['review', 'done']);
+// Index leaves (any 00_-prefixed leaf — a group's series guide; naming it
+// 00_overview.md / 00_index.md is good practice, not a mandate) are exempt:
+// they are a status surface, not a work order.
+const INDEX_LEAF = /^00_[^/]+\.md$/i;
 function lintSubtaskTemplate(fileLabel, content, rawStatus) {
+  if (INDEX_LEAF.test(fileLabel.split('/').pop())) return;
   const missing = TEMPLATE_SECTIONS.filter(
     (s) => !new RegExp(`^#{1,3} +${s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*$`, 'im').test(content),
   );
@@ -310,6 +315,10 @@ for (const entry of issueFolders) {
       let entries;
       try { entries = fs.readdirSync(absDir, { withFileTypes: true }); }
       catch { return; }
+      // Per-folder tally for the index-leaf derived-status rule: the index
+      // mirrors its SIBLINGS (leaves in this folder, index excluded).
+      let indexLeaf = null; // { rel, status }
+      const siblingStatuses = [];
       for (const e of entries) {
         if (e.isDirectory()) {
           if (segments.length >= MAX_SUBFOLDER_DEPTH) {
@@ -339,9 +348,21 @@ for (const entry of issueFolders) {
             }
             reportDrift(`${id}/subtasks/${rel}`, unknownKeys(fm, SUBTASK_FM_KEYS), SUBTASK_FM_KEYS);
             if (TEMPLATE_LINT) lintSubtaskTemplate(`${id}/subtasks/${rel}`, parsed.content || '', rawStatus);
+            if (INDEX_LEAF.test(e.name)) indexLeaf = { rel, status: normalizeStatus(rawStatus) };
+            else siblingStatuses.push(normalizeStatus(rawStatus));
           } catch (err) {
             errors.push(`${id}/subtasks/${rel}: malformed frontmatter (${err.message})`);
           }
+        }
+      }
+      // Index-leaf derived status: open (all siblings open) → in-progress
+      // (any sibling non-open) → done (all siblings Closed: done/dropped).
+      if (indexLeaf && siblingStatuses.length > 0) {
+        const allOpen = siblingStatuses.every((s) => s === 'open');
+        const allClosed = siblingStatuses.every((s) => TERMINAL_STATUSES.includes(s));
+        const derived = allClosed ? 'done' : allOpen ? 'open' : 'in-progress';
+        if (indexLeaf.status !== derived && !(derived === 'done' && indexLeaf.status === 'dropped')) {
+          warnings.push(`${id}/subtasks/${indexLeaf.rel}: index-leaf status \`${indexLeaf.status}\` disagrees with its siblings — derived \`${derived}\` (open=all-open, in-progress=any started, done=all closed)`);
         }
       }
     }

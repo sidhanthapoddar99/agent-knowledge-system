@@ -21,6 +21,48 @@ A subtask may live at the root of `subtasks/`, or nested up to 5 levels deep (`s
 
 **Optional folder `settings.json`:** a group folder may carry `{ "title": "..." }` to override the slug-derived sidebar label. Skip the file when the slug already reads cleanly.
 
+**The series index — the `00_` leaf:** a group with many subtasks (a
+long-running series, roughly 6+ leaves) may open with an **index leaf** — any
+leaf carrying the `00_` prefix, sorting first — the guide for the whole
+effort. The `00_` prefix is what marks a leaf as the index; naming it
+`00_overview.md` or `00_index.md` is good practice, not a mandate. Ordinary
+work orders start at `10_` — never give one the `00_` prefix.
+It is a regular subtask **file**, NOT a folder body — folders
+stay label-only. It belongs **inside a grouping folder** (its series); an
+index at the `subtasks/` root only when the whole subtask set is one series.
+Scaffold one with `agent-ks issue new-subtask <id> --group <g> --index`.
+
+What an index leaf carries (its own four-section shape, distinct from the
+work-order template):
+
+- **Overview / Goal** — what the series is and **why it started**: the
+  motivation, the triggering problem, and the outcome the whole group is
+  driving toward.
+- **References** — the research and design material behind the series: the
+  `notes/`, `brainstorm/` conclusions, papers/audits it executes, and the
+  key decisions/rulings that govern every leaf.
+- **Subtasks** — the reading order and a per-subtask status table (the
+  series' single status surface — keep it current as leaves flip).
+- **Conclusions and Summary** — a `PLACEHOLDER` until the series closes;
+  then the final wrap: what the whole series achieved (headline results,
+  evidence), what was deferred, and where follow-up work lives.
+
+The index leaf's `status` is **derived from its sibling subtasks**, mirroring
+the group rather than tracking its own work:
+
+- **`open`** — every sibling is still `open`;
+- **`in-progress`** — any sibling has started or finished (anything
+  non-open: `in-progress`, `review`, `input-needed`, `blocked`, `done`)
+  while the group as a whole is not closed;
+- **`done`** — every sibling is Closed (`done`/`dropped`). Flipping the
+  index to `done` once every sibling is human-closed is mechanical
+  bookkeeping, not a hand-off — an agent may do it.
+
+Keep the mirror current whenever you flip a sibling's status.
+`check issues` warns when an index leaf's status disagrees with the derived
+one, and the five-section template lint skips index leaves entirely — they
+are a status surface, not a work order.
+
 ## Numbering — `NN_` or `NNN_`, gap-spaced
 
 Subtasks use the **same shared ordering-prefix grammar as docs** (2–5 digits, ordered by *numeric value*, so widths coexist — `01_` and `010_` sort as 1 and 10; see the `agent-ks-docs` skill's `references/layouts/docs-layout.md`). This applies to leaf files **and** grouping folders.

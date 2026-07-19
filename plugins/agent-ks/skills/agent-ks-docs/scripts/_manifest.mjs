@@ -147,6 +147,7 @@ export const MANIFEST = [
       { name: 'title', value: 'text', desc: 'frontmatter title (default: de-kebabed name)' },
       { name: 'group', value: 'a[/b]', desc: 'nest under a grouping folder path (created if missing)' },
       { name: 'overview', value: 'text', desc: 'seed the Overview section instead of its placeholder callout' },
+      { name: 'index', desc: 'scaffold the series index leaf (00_overview.md, index shape) instead of a work order' },
       { name: 'json', desc: 'structured JSON output' },
       { name: 'tracker', value: 'path', desc: 'non-default tracker' },
     ],

@@ -28,22 +28,32 @@ import {
 
 const args = parseArgs(process.argv.slice(2));
 const id = args._[0];
-const rawName = args.flags.name && args.flags.name !== true ? String(args.flags.name) : null;
+const IS_INDEX = !!args.flags.index;
+const rawName = args.flags.name && args.flags.name !== true
+  ? String(args.flags.name)
+  : (IS_INDEX ? 'overview' : null);
 
 if (args.flags.help || !id || !rawName) {
   printHelp('issue new-subtask', [
-    '<issue-id> --name <slug> [--title <text>] [--group <a[/b]>] [--overview <text>] [--json] [--tracker <path>]',
+    '<issue-id> --name <slug> [--title <text>] [--group <a[/b]>] [--overview <text>] [--index] [--json] [--tracker <path>]',
     '',
     'Scaffold a new subtask file subtasks/[<group>/]NN_<name>.md pre-seeded with the',
     'standard five-section template (Overview / References / Todo list / Outcomes and',
     'Next Steps / Details). The prefix is the next gap-spaced number in the target',
     'folder. Outcomes ships as a PLACEHOLDER callout the template lint can track.',
     '',
-    '--name      kebab-case subtask name (sanitised to [a-z0-9-]) — required',
+    'With --index: scaffold the series INDEX LEAF instead — 00_overview.md (or',
+    '00_<name>.md), prefix fixed at 00, with the index shape: Overview & goal (why',
+    'the series started), References (research/notes behind it), Subtasks status',
+    'table, and a Conclusions and Summary placeholder for the final wrap. Its',
+    'status mirrors its siblings (open → in-progress → done).',
+    '',
+    '--name      kebab-case subtask name (sanitised to [a-z0-9-]) — required unless --index (default: overview)',
     '--title     frontmatter title (default: name, de-kebabed and capitalised)',
     '--group     nest under a grouping folder path (created if missing; label only;',
     '            segments sanitised to [a-z0-9-]; max 4 levels — loader depth cap)',
     '--overview  seed the Overview section with this text instead of its callout',
+    '--index     scaffold the series index leaf (00_) instead of a work order',
     '--json      print the created file as JSON',
   ]);
   process.exit(id && rawName ? 0 : 1);
@@ -100,7 +110,7 @@ function nextPrefix(dir) {
   return max === 0 ? 10 : max + 10;
 }
 
-const prefix = pad(nextPrefix(baseDir));
+const prefix = IS_INDEX ? '00' : pad(nextPrefix(baseDir));
 const fileName = `${prefix}_${name}.md`;
 const abs = path.join(baseDir, fileName);
 
@@ -115,7 +125,45 @@ if (fs.existsSync(abs)) {
 
 const overviewBody = args.flags.overview && args.flags.overview !== true
   ? `${String(args.flags.overview).trim()}\n`
-  : `> [!NOTE]\n> Blank — a brief overview: what this subtask is, what triggered it, and what\n> "done" looks like. Keep it short; the full spec lives in **Details** below.\n`;
+  : (IS_INDEX
+    ? `> [!NOTE]\n> Blank — what this series is and WHY it started: the motivation, the\n> triggering problem, and the outcome the whole group is driving toward.\n`
+    : `> [!NOTE]\n> Blank — a brief overview: what this subtask is, what triggered it, and what\n> "done" looks like. Keep it short; the full spec lives in **Details** below.\n`);
+
+// The index-leaf shape — the series guide, not a work order (see the
+// agent-ks-issues skill, 23_subtasks.md "series index"). Status mirrors the
+// sibling subtasks; the Conclusions PLACEHOLDER is filled at series close.
+const indexBody = `---
+title: "${title}"
+status: open
+---
+
+# Overview
+
+${overviewBody}
+# References
+
+> [!NOTE]
+> Blank — the research and design material behind the series: the \`notes/\`,
+> \`brainstorm/\` conclusions, papers/audits it executes, and the key
+> decisions/rulings that govern every leaf. Full paths.
+
+# Subtasks
+
+> [!NOTE]
+> Blank — the reading order and per-subtask status table: the series' single
+> status surface. Keep it current as leaves flip.
+
+| # | Subtask | Status |
+|---|---------|--------|
+|   |         |        |
+
+# Conclusions and Summary
+
+> [!IMPORTANT]
+> **PLACEHOLDER** — filled when the series closes: what the whole series
+> achieved (headline results, evidence), what was deferred, and where
+> follow-up work lives.
+`;
 
 const body = `---
 title: "${title}"
@@ -156,7 +204,7 @@ ${overviewBody}
 `;
 
 fs.mkdirSync(baseDir, { recursive: true });
-fs.writeFileSync(abs, body);
+fs.writeFileSync(abs, IS_INDEX ? indexBody : body);
 
 if (args.flags.json) {
   console.log(JSON.stringify({

@@ -8,7 +8,7 @@ date: 2026-07-01
 ## Goal
 Read brainstorm + agent-memory with the same shape as notes.
 ## Result
-`readNotes` → `readFreeformDocs(dir, dataPath, issueId, subName)`; 2-level walk reused.
+`readNotes` → `readFreeformDocs(dir, dataPath, issueId, subName)`; the nested walk reused.
 Build green.
 ## Next
 Wire routing.

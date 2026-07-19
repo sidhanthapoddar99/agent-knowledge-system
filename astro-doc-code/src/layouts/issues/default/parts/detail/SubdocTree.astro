@@ -69,9 +69,12 @@ function prefixValue(name: string): number {
   return p === null ? Number.POSITIVE_INFINITY : p;
 }
 
-/** Milestone status → sidebar `#<iteration>` badge colour class. Agent-log only. */
+/** Milestone status → sidebar `#<iteration>` badge colour class. Agent-log only.
+ *  Status tint is a *milestone* signal: a non-iteration `0NN` meta/slot file
+ *  shows a neutral order prefix (like a folder), never a status colour. */
 function logStatusModifier(item: IssueNote | IssueAgentLog): string {
   if (kind !== 'log') return '';
+  if ((item as IssueAgentLog).iteration === null) return '';
   const s = ((item as IssueAgentLog).status ?? '').toLowerCase().replace(/\s+/g, '-');
   if (s === 'in-progress' || s === 'wip' || s === 'active') return 'is-in-progress';
   if (s === 'success' || s === 'completed' || s === 'complete' || s === 'done') return 'is-success';
@@ -85,9 +88,12 @@ function logStatusModifier(item: IssueNote | IssueAgentLog): string {
  *  `#<iteration>` wins when set). */
 function leafNum(item: IssueNote | IssueAgentLog): string {
   if (kind === 'log') {
-    // Milestones show `#<iteration>`; meta files (`0NN`, no iteration) are badge-less.
+    // A milestone shows its `#<iteration>` badge; a non-iteration entry (a `0NN`
+    // meta / slot file: goal, summary, task_list, working, benchmark, notes)
+    // falls back to its padded `NN` order prefix — same as folders and the other
+    // kinds, so it's no longer prefix-less in the sidebar.
     const it = (item as IssueAgentLog).iteration;
-    return it !== null ? `#${it}` : '';
+    if (it !== null) return `#${it}`;
   }
   return prefixNum(item.name);
 }
@@ -138,9 +144,14 @@ interface SubdocEntry {
   child?: SubdocTree;
 }
 
+// `tree` is a union (`GroupedTree<IssueNote> | GroupedTree<IssueAgentLog>`), so
+// `.files` / `.groups` are union-typed; TS can't call across the union. Widen to
+// the union element types — every downstream use already treats them as such.
+const treeFiles = tree.files as (IssueNote | IssueAgentLog)[];
+const treeGroups = tree.groups as Map<string, SubdocTree>;
 const entries: SubdocEntry[] = [
-  ...tree.files.map((item): SubdocEntry => ({ kind: 'leaf', sortName: item.name, item })),
-  ...Array.from(tree.groups, ([groupName, child]): SubdocEntry => ({ kind: 'group', sortName: groupName, groupName, child })),
+  ...treeFiles.map((item): SubdocEntry => ({ kind: 'leaf', sortName: item.name, item })),
+  ...Array.from(treeGroups, ([groupName, child]): SubdocEntry => ({ kind: 'group', sortName: groupName, groupName, child })),
 ];
 
 /** Frontmatter `iteration` for an entry, or null. Only leaf agent-log files

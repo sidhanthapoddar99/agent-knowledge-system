@@ -11,7 +11,7 @@
  * hint for the dev toolbar, and the per-layout props bag) from the match.
  */
 import { loadContent } from '@loaders/index';
-import { loadIssues, loadIssue } from '@loaders/issues';
+import { loadIssues, loadIssue, MAX_SUBFOLDER_DEPTH } from '@loaders/issues';
 
 export type PageType =
   | 'custom'
@@ -148,11 +148,12 @@ export async function matchServerRoute(
 
 function resolveSubDoc(issue: any, parts: string[]): RouteProps['subDoc'] | null {
   const [kind, ...rest] = parts;
-  // subtasks / notes / agent-log: rest = [...groupPath, slug-or-name],
-  // groupPath is 0–2 segments.
+  // subtasks / notes / brainstorm / agent-memory / agent-log:
+  //   rest = [...groupPath, slug-or-name], groupPath is 0–MAX_SUBFOLDER_DEPTH
+  //   segments → rest length is 1 … MAX_SUBFOLDER_DEPTH + 1.
   if (
     (kind === 'subtasks' || kind === 'notes' || kind === 'brainstorm' || kind === 'agent-memory' || kind === 'agent-log')
-    && rest.length >= 1 && rest.length <= 3
+    && rest.length >= 1 && rest.length <= MAX_SUBFOLDER_DEPTH + 1
   ) {
     const groupPath = rest.slice(0, -1);
     const tail = rest[rest.length - 1];

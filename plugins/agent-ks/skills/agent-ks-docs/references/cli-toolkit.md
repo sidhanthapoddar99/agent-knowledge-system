@@ -45,7 +45,7 @@ There is **one binary** (`agent-ks`, plus its Windows `agent-ks.cmd` twin) routi
 | `agent-ks issue agent-logs <id>` | Last N agent-log entries | `--last <N>` · `--full` · `--json` · `--tracker` |
 | `agent-ks issue add-comment <id>` | Append a comment (auto-incremented prefix) | `--author <name>` · `--body <md>` · `--date` · `--slug` · `--tracker` |
 | `agent-ks issue add-agent-log <id>` | Append an agent-log entry | `--body <md>` · `--status <state>` · `--iteration <N>` · `--agent <name>` · `--group <a[/b]>` · `--date` · `--slug` · `--tracker` |
-| `agent-ks issue new-agent-log <id>` | Scaffold an activity folder with the six standard slots | `--kind <code>` · `--name <slug>` · `--goal <text>` · `--json` · `--tracker` |
+| `agent-ks issue new-agent-log <id>` | Scaffold an activity folder with the six standard slots | `--kind <code>` · `--name <slug>` · `--group <a[/b]>` · `--prefix <NNN>` · `--goal <text>` · `--json` · `--tracker` |
 | `agent-ks issue new-subtask <id>` | Scaffold a subtask with the five-section template (Overview / References / Todo list / Outcomes and Next Steps / Details) | `--name <slug>` · `--title <text>` · `--group <a[/b]>` · `--overview <text>` · `--json` · `--tracker` |
 | `agent-ks issue review-queue` | Items awaiting review (Review-category status — `review`/`input-needed` — + any active issue w/ a Review-category subtask) | `--json` · `--tracker` |
 

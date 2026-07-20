@@ -134,6 +134,8 @@ export const MANIFEST = [
     flags: [
       { name: 'kind', value: 'code', desc: 'activity kind code (lp/au/rf/it/wf or a custom agentLogKinds code) — required' },
       { name: 'name', value: 'slug', desc: 'kebab-case run name, sanitised to [a-z0-9-] — required' },
+      { name: 'group', value: 'a[/b]', desc: 'nest under a grouping folder path (created if missing; numbering scoped to the group)' },
+      { name: 'prefix', value: 'NNN', desc: 'explicit activity number (2–5 digits) instead of the next gap-spaced one' },
       { name: 'goal', value: 'text', desc: 'seed 00_goal.md with this text instead of its placeholder callout' },
       { name: 'json', desc: 'structured JSON output' },
       { name: 'tracker', value: 'path', desc: 'non-default tracker' },

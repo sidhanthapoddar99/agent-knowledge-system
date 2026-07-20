@@ -4,8 +4,8 @@
  * pre-seeded with the standard six 0NN slots (blank + callout).
  *
  * Distinct from add-agent-log (which appends a single milestone/entry): this
- * creates the folder `NNN_<code>_<name>/` and the uniform slot set so every
- * activity starts from the same shape with no guesswork:
+ * creates the folder `agent-log/[<group>/]NNN_<code>_<name>/` and the uniform
+ * slot set so every activity starts from the same shape with no guesswork:
  *   00_goal · 01_summary · 02_task_list · 03_working · 04_benchmark · 05_notes
  * Each slot is a file with `title` frontmatter and a placeholder callout; the
  * lower three note that they can be promoted to a same-named folder if they
@@ -16,7 +16,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {
   resolveTracker, isInsideAllowed, readIssueMeta, pad,
-  parseArgs, printHelp, relForLog,
+  parseArgs, printHelp, relForLog, MAX_SUBFOLDER_DEPTH,
 } from './_lib.mjs';
 
 // Framework-default kinds (mirror of src/loaders/issues.ts). An issue may add
@@ -31,17 +31,23 @@ const rawName = args.flags.name && args.flags.name !== true ? String(args.flags.
 
 if (args.flags.help || !id || !kind || !rawName) {
   printHelp('issue new-agent-log', [
-    '<issue-id> --kind <code> --name <slug> [--goal <text>] [--json] [--tracker <path>]',
+    '<issue-id> --kind <code> --name <slug> [--group <a[/b]>] [--prefix <NNN>] [--goal <text>] [--json] [--tracker <path>]',
     '',
-    'Scaffold a new agent-log activity folder NNN_<code>_<name>/ pre-seeded with the',
-    'standard six slots (00_goal 01_summary 02_task_list 03_working 04_benchmark 05_notes),',
-    'each a blank file with a title + placeholder callout. 04_benchmark carries the full',
-    'benchmark template. No milestone is created — add those on demand as work lands.',
+    'Scaffold a new agent-log activity folder agent-log/[<group>/]NNN_<code>_<name>/',
+    'pre-seeded with the standard six slots (00_goal 01_summary 02_task_list 03_working',
+    '04_benchmark 05_notes), each a blank file with a title + placeholder callout.',
+    '04_benchmark carries the full benchmark template. No milestone is created — add',
+    'those on demand as work lands.',
     '',
-    `--kind   activity kind code (defaults: ${Object.keys(DEFAULT_KINDS).join('/')}; custom via settings.json agentLogKinds)`,
-    '--name   kebab-case run name (sanitised to [a-z0-9-])',
-    '--goal   optional text to seed 00_goal.md instead of its placeholder callout',
-    '--json   print the created folder + files as JSON',
+    `--kind    activity kind code (defaults: ${Object.keys(DEFAULT_KINDS).join('/')}; custom via settings.json agentLogKinds)`,
+    '--name    kebab-case run name (sanitised to [a-z0-9-])',
+    '--group   nest under a grouping folder path, e.g. a per-series group like',
+    '          "refactor" (created if missing; segments sanitised to [a-z0-9-];',
+    '          numbering is scoped to the group folder)',
+    '--prefix  explicit activity number (digits, e.g. 013) instead of the next',
+    '          gap-spaced one — for series that number sequentially',
+    '--goal    optional text to seed 00_goal.md instead of its placeholder callout',
+    '--json    print the created folder + files as JSON',
   ]);
   process.exit(id && kind && rawName ? 0 : 1);
 }
@@ -70,7 +76,32 @@ if (!name) {
   process.exit(1);
 }
 
-const baseDir = path.join(tracker, id, 'agent-log');
+// Optional grouping folders — labels only (e.g. a per-series group like
+// "refactor/"), sanitised segment by segment, same grammar as subtask groups.
+const groupRaw = args.flags.group && args.flags.group !== true ? String(args.flags.group) : '';
+const groupSegments = groupRaw
+  .split('/')
+  .map((s) => s.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''))
+  .filter(Boolean);
+
+if (groupSegments.length >= MAX_SUBFOLDER_DEPTH) {
+  console.error(
+    `--group "${groupRaw}" nests ${groupSegments.length} folder levels; the loader ` +
+    `reads at most ${MAX_SUBFOLDER_DEPTH - 1} grouping levels below agent-log/ ` +
+    `(depth cap ${MAX_SUBFOLDER_DEPTH}). Flatten the grouping.`
+  );
+  process.exit(1);
+}
+
+// Optional explicit prefix — for series that number sequentially (001, 002, …)
+// rather than gap-spaced; digits only, used verbatim (zero-padding preserved).
+const prefixRaw = args.flags.prefix && args.flags.prefix !== true ? String(args.flags.prefix) : '';
+if (prefixRaw && !/^\d{2,5}$/.test(prefixRaw)) {
+  console.error(`--prefix "${prefixRaw}" must be 2–5 digits (e.g. 013).`);
+  process.exit(1);
+}
+
+const baseDir = path.join(tracker, id, 'agent-log', ...groupSegments);
 
 // Next activity prefix — gap-spaced by 10 (010, 020, …) to leave insert room,
 // matching the convention. Scans existing DIRECTORIES (activity folders), not
@@ -87,7 +118,7 @@ function nextActivityPrefix(dir) {
   return max === 0 ? 10 : max + 10;
 }
 
-const prefix = pad(nextActivityPrefix(baseDir));
+const prefix = prefixRaw || pad(nextActivityPrefix(baseDir));
 const folderName = `${prefix}_${kind}_${name}`;
 const dir = path.join(baseDir, folderName);
 
@@ -148,6 +179,7 @@ if (args.flags.json) {
     issue: id,
     folder: folderName,
     path: relForLog(dir),
+    group: groupSegments.join('/') || null,
     files: written,
   }, null, 2));
 } else {

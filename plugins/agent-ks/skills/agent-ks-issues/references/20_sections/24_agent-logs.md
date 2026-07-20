@@ -208,9 +208,13 @@ milestone per mapping unit, summary at wrap.
    `agent-ks issue new-agent-log <issue-id> --kind <code> --name <slug>` — it picks the
    next gap-spaced `NNN_` prefix and creates `NNN_<code>_<name>/` pre-seeded with all six
    standard slots (blank + callout; `04_benchmark` carries the full template). Pass
-   `--goal "…"` to fill `00_goal` in one shot. Then fill `00_goal` (what triggered the
-   run, what "done" looks like) and delete the callouts as you fill each slot. (By hand:
-   `ls <issue>/agent-log/` → next value → create the folder and slot files yourself.)
+   `--goal "…"` to fill `00_goal` in one shot. If the issue groups its activities into
+   subfolders (e.g. one long-running series in `agent-log/refactor/`), pass
+   `--group <folder>` — numbering is scoped to that group — and `--prefix <NNN>` when the
+   series numbers sequentially (001, 002, …) instead of gap-spaced. Then fill `00_goal`
+   (what triggered the run, what "done" looks like) and delete the callouts as you fill
+   each slot. (By hand: `ls <issue>/agent-log/` → next value → create the folder and
+   slot files yourself.)
 2. **Stub the milestone when its unit begins** — a phase kicks off, a loop
    iteration starts: write the `1NN_` file with full frontmatter,
    `status: in-progress`, and a couple of lines on what it's attempting. Now the

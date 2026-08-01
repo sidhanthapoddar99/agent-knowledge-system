@@ -34,8 +34,18 @@ Every tracker has the same skeleton:
     │       └── 101_<milestone>.md               ← MNN_ milestones, M ≥ 1
     └── agent-memory/                            ← AI working state (mutable, issue-scoped)
         ├── memory.md                            ← the index — read first, pinned first
-        └── <topic>.md
+        ├── plans/                               ← what's left (live) — optional
+        │   ├── 0NN_plan-<three-words>.md        ← HIGHEST = ACTIVE, one open at a time
+        │   └── 1NN_<standing>.md                ← spans every plan (e.g. questions-to-answer)
+        ├── knowledge/                           ← what's true (mutable in place) — optional
+        │   └── <topic>.md
+        └── history/                             ← how we got here (write-once) — optional
+            └── <subject>.md
 ```
+
+The three buckets are **lifecycle**, not subject, and you grow into them — most
+issues need only `memory.md` plus a few topic files at its root. See
+[26_agent-memory.md](../20_sections/26_agent-memory.md).
 
 **Folder naming regex:** `^\d{4}-\d{2}-\d{2}-[a-z0-9-]+$` (date + kebab-case slug).
 

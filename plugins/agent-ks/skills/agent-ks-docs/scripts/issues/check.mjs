@@ -16,6 +16,8 @@
  *   • Agent-log grammar: NNN_<code>_<name>/ activity folders, 0NN meta files
  *     vs milestone files (milestones carry `iteration`; status vocabulary)
  *   • Agent-memory has a memory.md index
+ *   • Agent-memory plans: 0NN_plan-<slug>.md band, one plan open at a time,
+ *     cycle slugs present, dependencies resolve, done/total matches the boxes
  *   • Comments / agent-logs follow naming conventions (warned, not errored)
  *   • Stray .md at folder root (other than issue.md) → warning
  *
@@ -73,6 +75,9 @@ const NOTE_FM_KEYS = new Set([
   'title', 'description', 'sidebar_label', 'author', 'date', 'created', 'tags',
   'color',
 ]);
+// agent-memory shares the notes surface, plus the plan-file lifecycle fields
+// (`plan: open|closed` is what makes one-plan-open-at-a-time machine-checkable).
+const AGENT_MEMORY_FM_KEYS = new Set([...NOTE_FM_KEYS, 'plan', 'opened', 'closed']);
 const AGENT_LOG_FM_KEYS = new Set([
   'title', 'iteration', 'agent', 'status', 'date', 'sidebar_label',
   'color',
@@ -158,6 +163,140 @@ function lintSubtaskTemplate(fileLabel, content, rawStatus) {
     const scope = m ? m[1] : content;
     if (/\bPLACEHOLDER\b/.test(scope)) {
       warnings.push(`${fileLabel}: status \`${rawStatus}\` but "Outcomes and Next Steps" still carries the PLACEHOLDER marker — write the outcomes before hand-off`);
+    }
+  }
+}
+
+// ---- agent-memory/plans/ ---------------------------------------------------
+// Two reserved bands: 0NN_ plan files (sequential, HIGHEST = ACTIVE) and 1NN_
+// standing files. Every rule below exists because breaking it fails SILENTLY —
+// a second open plan restores the "which one is live?" ambiguity the numbering
+// was introduced to remove, and a stale count still reads as authoritative.
+const PLAN_FILE = /^(\d{2,5})_plan-([a-z0-9-]+)\.md$/;
+const PLAN_UNSLUGGED = /^(\d{2,5})_plan\.md$/;
+
+function planIsClosed(raw, fm) {
+  return String(fm.plan || '').toLowerCase() === 'closed' || /^##\s+Closed\s*$/m.test(raw);
+}
+
+/** Parse the cycle table: returns [{ n, slug, deps, done, total, status }]. Bails
+ *  to [] on anything it doesn't recognise — a free-form plan is not a defect. */
+function parseCycleTable(raw) {
+  const lines = raw.split(/\r?\n/);
+  const headIdx = lines.findIndex((l) => /^\s*\|/.test(l) && /\bCycle\b/i.test(l) && /\bStatus\b/i.test(l));
+  if (headIdx < 0) return [];
+  const cols = lines[headIdx].split('|').slice(1, -1).map((c) => c.trim().toLowerCase());
+  const at = (nameRe) => cols.findIndex((c) => nameRe.test(c));
+  const iNum = at(/^#$/), iCycle = at(/^cycle$/), iDeps = at(/depends/), iSub = at(/subtask/), iStat = at(/^status$/);
+  if (iCycle < 0) return [];
+  const rows = [];
+  for (let i = headIdx + 2; i < lines.length; i++) {
+    if (!/^\s*\|/.test(lines[i])) break;
+    const cells = lines[i].split('|').slice(1, -1).map((c) => c.trim());
+    if (cells.length < cols.length) continue;
+    const cycleCell = cells[iCycle] || '';
+    // `<angle-bracket>` cells are the scaffolded template's placeholder row —
+    // a freshly opened plan must not lint dirty before anyone has filled it in.
+    if (/<[^>]*>/.test(cycleCell)) continue;
+    const slugM = cycleCell.match(/`([a-z0-9-]+)`/);
+    const subM = iSub >= 0 ? (cells[iSub] || '').match(/(\d+)\s*\/\s*(\d+)/) : null;
+    rows.push({
+      line: i + 1,
+      n: iNum >= 0 ? (cells[iNum] || '').replace(/\D/g, '') : '',
+      cycle: cycleCell,
+      slug: slugM ? slugM[1] : null,
+      deps: iDeps >= 0 ? (cells[iDeps] || '') : '',
+      done: subM ? parseInt(subM[1], 10) : null,
+      total: subM ? parseInt(subM[2], 10) : null,
+      status: iStat >= 0 ? (cells[iStat] || '').replace(/[`*]/g, '').trim() : '',
+    });
+  }
+  return rows;
+}
+
+/** Checkbox counts inside the `## <n> · <name>` section for one cycle row. */
+function cycleSectionBoxes(raw, n) {
+  if (!n) return null;
+  const re = new RegExp(`^##\\s+${n}\\s*[·.)\\-—]\\s*.*$`, 'm');
+  const m = raw.match(re);
+  if (!m) return null;
+  const start = raw.indexOf(m[0]) + m[0].length;
+  const rest = raw.slice(start);
+  const end = rest.search(/^##\s+/m);
+  const body = end < 0 ? rest : rest.slice(0, end);
+  const boxes = body.match(/^\s*[-*]\s+\[[ xX]\]/gm) || [];
+  const done = body.match(/^\s*[-*]\s+\[[xX]\]/gm) || [];
+  return { total: boxes.length, done: done.length };
+}
+
+function lintMemoryPlans(id, plansDir) {
+  if (!fs.existsSync(plansDir)) return;
+  const files = fs.readdirSync(plansDir).filter((f) => f.endsWith('.md'));
+  const plans = [];
+
+  for (const f of files) {
+    if (PLAN_UNSLUGGED.test(f)) {
+      warnings.push(`${id}/agent-memory/plans/${f}: plan file has no slug — name it \`NNN_plan-<three-words>.md\`; a closed plan's whole value is being identifiable without opening it`);
+    }
+    const m = f.match(PLAN_FILE);
+    if (!m) continue;
+    const num = parseInt(m[1], 10);
+    if (num >= 100) {
+      warnings.push(`${id}/agent-memory/plans/${f}: plan files belong in the \`0NN_\` band (sequence); \`1NN_\` and above is reserved for standing files that span every plan`);
+      continue;
+    }
+    const abs = path.join(plansDir, f);
+    let raw; let fm = {};
+    try { raw = fs.readFileSync(abs, 'utf-8'); fm = matter(raw).data || {}; }
+    catch { continue; }
+    plans.push({ file: f, num, slug: m[2], raw, fm, closed: planIsClosed(raw, fm) });
+  }
+
+  if (!plans.length) return;
+  plans.sort((a, b) => a.num - b.num);
+  const active = plans[plans.length - 1];
+
+  for (const p of plans) {
+    const label = `${id}/agent-memory/plans/${p.file}`;
+    const declared = String(p.fm.plan || '').toLowerCase();
+    if (declared && declared !== 'open' && declared !== 'closed') {
+      warnings.push(`${label}: frontmatter \`plan: ${p.fm.plan}\` — expected \`open\` or \`closed\``);
+    }
+    if (declared === 'open' && /^##\s+Closed\s*$/m.test(p.raw)) {
+      warnings.push(`${label}: frontmatter says \`plan: open\` but the file carries a \`## Closed\` section — one of them is wrong, and both read as authoritative`);
+    }
+    // One plan open at a time: everything below the highest number must be closed.
+    if (p !== active && !p.closed) {
+      warnings.push(`${label}: superseded by \`${active.file}\` but still OPEN — a closed plan needs \`plan: closed\` + a \`## Closed\` section (what shipped, what was dropped and why), then it is never edited again`);
+    }
+
+    // Cycle table: slugs are identity, `#` is only order. Warn on the two ways
+    // that silently rots — a dependency naming no cycle, and a count that has
+    // drifted from the boxes it summarises.
+    const rows = parseCycleTable(p.raw);
+    if (!rows.length) continue;
+    const slugs = new Set(rows.map((r) => r.slug).filter(Boolean));
+    for (const r of rows) {
+      // A missing slug is one defect, not a reason to stop checking the row —
+      // its status and its count are just as wrong-able without one.
+      const who = r.slug ? `\`${r.slug}\`` : `"${r.cycle.replace(/[*|]/g, '').trim() || `row ${r.line}`}"`;
+      if (!r.slug) {
+        warnings.push(`${label}: cycle ${who} has no \`slug\` — \`#\` is display order and may change; every cross-reference must cite a slug that never does`);
+      }
+      for (const dep of (r.deps.match(/[a-z0-9-]{2,}/g) || [])) {
+        if (!slugs.has(dep)) {
+          warnings.push(`${label}: cycle ${who} depends on \`${dep}\`, which matches no cycle in this plan`);
+        }
+      }
+      if (r.status && !VALID_SUBTASK_STATES.includes(normalizeStatus(r.status))) {
+        warnings.push(`${label}: cycle ${who} has status "${r.status}" — use the tracker vocabulary (${VALID_SUBTASK_STATES.join('|')}); "ready" is derived (open + no unmet dependency), never written`);
+      }
+      if (r.total !== null) {
+        const boxes = cycleSectionBoxes(p.raw, r.n);
+        if (boxes && (boxes.total !== r.total || boxes.done !== r.done)) {
+          warnings.push(`${label}: cycle ${who} table says ${r.done}/${r.total} subtasks but its section has ${boxes.done}/${boxes.total} ticked boxes — the count is derived, not asserted`);
+        }
+      }
     }
   }
 }
@@ -386,7 +525,7 @@ for (const entry of issueFolders) {
   const FM_KEYS_BY_TYPE = {
     notes: NOTE_FM_KEYS,
     brainstorm: NOTE_FM_KEYS,
-    'agent-memory': NOTE_FM_KEYS,
+    'agent-memory': AGENT_MEMORY_FM_KEYS,
     'agent-log': AGENT_LOG_FM_KEYS,
     comments: COMMENT_FM_KEYS,
   };
@@ -425,6 +564,13 @@ for (const entry of issueFolders) {
   if (fs.existsSync(memDir) && !fs.existsSync(path.join(memDir, 'memory.md'))) {
     warnings.push(`${id}/agent-memory/: no \`memory.md\` index — agents read it first; add one line per topic file`);
   }
+
+  // agent-memory/plans/: the live picture. Two reserved bands — 0NN_ plan files
+  // (sequential, highest = active) and 1NN_ standing files. The rules linted
+  // here are the ones that fail SILENTLY when broken: a second open plan makes
+  // "which one is live?" ambiguous again, and an unslugged or self-contradicting
+  // plan reads as authoritative either way.
+  lintMemoryPlans(id, path.join(memDir, 'plans'));
 
   // agent-log grammar: the norm is NNN_<code>_<name>/ activity folders (kind
   // code in the folder name), with 0NN_ pinned meta files and milestone files

@@ -83,8 +83,14 @@ Examples:
 │       ├── 01_summary.md
 │       └── 101_milestone.md                   ← MNN_ + iteration frontmatter → "#1"
 └── agent-memory/                    ← AI working state (optional)
-    ├── memory.md                              ← pinned index — read first
-    └── gotchas.md                             ← topic files, edited in place
+    ├── memory.md                              ← pinned index — routes, never stores
+    ├── plans/                                 ← what's left (live)
+    │   ├── 001_plan-finish-the-codec.md       ← 0NN_ band — HIGHEST = ACTIVE
+    │   └── 101_questions-to-answer.md         ← 1NN_ band — standing
+    ├── knowledge/                             ← what's true, edited in place
+    │   └── gotchas.md
+    └── history/                               ← how we got here, write-once
+        └── the-first-attempt.md
 ```
 
 | Path | Required | Contents |
@@ -97,7 +103,7 @@ Examples:
 | `notes/` | — | Finalized output + durable references — the *product*. **Up to 5 levels (up to 3 recommended).** See [Notes](./sub-docs/notes). |
 | `subtasks/` | — | The plan — atomic units of work with `NN_<slug>.md` naming and frontmatter state. **Up to 5 levels of grouping subfolders (up to 3 recommended)** — folder = label only (sidebar shows its **done/total**), leaves are first-class subtasks. See [Subtasks](./sub-docs/subtasks). |
 | `agent-log/` | — | Execution record — `NNN_<code>_<name>/` **activity folders** (kind code in the name), pinned `0NN_` meta files + `MNN_` milestones inside. Flat files parse for backward compat only. See [Agent Log](./sub-docs/agent-log). |
-| `agent-memory/` | — | AI-mutable working state — pinned `memory.md` index + topic files. See [Agent Memory](./sub-docs/agent-memory). |
+| `agent-memory/` | — | AI-mutable working state — a pinned `memory.md` index that **routes and never stores**, plus up to three **lifecycle** buckets: `plans/` (what's left — `0NN_plan-<slug>.md`, highest is active, one open at a time), `knowledge/` (what's true), `history/` (how we got here, write-once). Grow into them. See [Agent Memory](./sub-docs/agent-memory). |
 
 ### Subfolder rules (`subtasks/`, `notes/`, `brainstorm/`, `agent-memory/`, `agent-log/`)
 
@@ -115,6 +121,7 @@ All content sections except `comments/` accept nested subfolders up to 5 levels 
 
 **Notes / brainstorm / agent-memory specifics:**
 - Folder + file names are freeform; the `NN_` prefix is optional. Brainstorm files can carry a full-word kind (`NN_<kind>_<slug>.md`); agent-memory's `memory.md` pins first in the sidebar.
+- **One exception where numbering is load-bearing:** `agent-memory/plans/` reserves `0NN_` for the plan sequence (highest number = the active plan) and `1NN_` for standing files that span every plan. Memory is a map everywhere else — this one folder is a sequence.
 
 **Agent-log specifics:**
 - The first level is **activity folders** `NNN_<code>_<name>/` — the 2-letter code is the kind (symbol in the sidebar; mapping via `agentLogKinds` in `settings.json`). Inside: `0NN_` meta files pin to the top (showing their `NN` prefix, no status tint), `MNN_` milestones show `#<iteration>` tinted by `status`.

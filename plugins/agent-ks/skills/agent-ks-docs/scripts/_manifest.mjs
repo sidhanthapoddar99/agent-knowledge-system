@@ -155,6 +155,19 @@ export const MANIFEST = [
     ],
   },
   {
+    bin: 'docs-new-memory-plan', group: 'issue', verb: 'new-memory-plan', category: 3, script: 'issues/new-memory-plan.mjs', runtime: 'mjs',
+    summary: "Open the next plan file in an issue's agent-memory/plans/ (enforces one plan open at a time)",
+    flags: [
+      { name: 'name', value: 'slug', desc: 'kebab-case plan slug, ~3 words, sanitised to [a-z0-9-] — required' },
+      { name: 'title', value: 'text', desc: 'frontmatter title (default: "Plan NNN — <de-kebabed name>")' },
+      { name: 'goal', value: 'text', desc: 'seed the Goal section instead of its placeholder callout' },
+      { name: 'close', desc: 'close the current active plan first (stamps plan: closed + a `## Closed` section)' },
+      { name: 'force', desc: 'open a new plan even though the current one is still open' },
+      { name: 'json', desc: 'structured JSON output' },
+      { name: 'tracker', value: 'path', desc: 'non-default tracker' },
+    ],
+  },
+  {
     bin: 'docs-review-queue', group: 'issue', verb: 'review-queue', category: 3, script: 'issues/review-queue.mjs', runtime: 'mjs',
     summary: 'Items awaiting review (status=review or open w/ review subtask)',
     flags: [

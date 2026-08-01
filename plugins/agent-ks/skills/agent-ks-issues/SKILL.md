@@ -200,8 +200,12 @@ meta files, then `MNN_` milestone files (`101_…`, `102_…`).
 - **Every file — goal, summary, task-list, milestone, subtask — is structured,
   context-setting prose, never a bare dump.** Even a single-line thought gets a
   couple of explanatory sentences a cold reader can follow.
-- **Agent-memory is always on:** maintain `agent-memory/` (a `memory.md` index +
-  topic files) continuously — it's agent-autonomous and mutable in place.
+- **Agent-memory is always on:** maintain `agent-memory/` continuously — it's
+  agent-autonomous and mutable in place. A `memory.md` index that **routes and
+  never stores**, plus up to three lifecycle buckets: `plans/` (what's left —
+  numbered, highest is active, **one open at a time**), `knowledge/` (what's
+  true), `history/` (how we got here, write-once). Grow into them; most issues
+  need only the index and a few topic files.
 - **Discussion is explicit-save-only:** working dialogue is saved (as a `discuss`
   brainstorm or a comment) **only when the user asks**; when it turns dense or
   decision-bearing you may *offer* — never persist on your own initiative.
@@ -234,10 +238,13 @@ Full detail + recipes: [24_agent-logs.md](references/20_sections/24_agent-logs.m
 
 The plugin ships one entrypoint, **`agent-ks`**, on `PATH`. Tracker work uses the
 `issue` group — `agent-ks issue list / show / subtasks / agent-logs / set-state /
-add-comment / add-agent-log / new-agent-log / new-subtask / review-queue`
+add-comment / add-agent-log / new-agent-log / new-subtask / new-memory-plan /
+review-queue`
 (`new-agent-log` scaffolds a fresh activity folder with the six standard slots;
 `new-subtask` scaffolds a subtask with the five-section template — Overview /
-References / Todo list / Outcomes and Next Steps / Details) — plus `agent-ks check issues`,
+References / Todo list / Outcomes and Next Steps / Details; `new-memory-plan`
+opens the next `agent-memory/plans/` file and **refuses while the current one is
+still open**) — plus `agent-ks check issues`,
 `agent-ks find`, and `agent-ks move` (link-aware). Discover with `agent-ks help`;
 uniform contract (`--help`, `--json`, exit codes 0/1/2). **Inside a git
 worktree** (agent sandboxes): the CLI's `.env` search stops at the worktree

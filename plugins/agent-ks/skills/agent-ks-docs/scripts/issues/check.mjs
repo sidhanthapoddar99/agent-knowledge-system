@@ -214,6 +214,35 @@ function parseCycleTable(raw) {
   return rows;
 }
 
+/** The OPTIONAL `## Execution order` section. `#` in the cycle table is a stable
+ *  identifier that is never renumbered, so when the running order diverges the
+ *  correct move is this section — and then it, not the numbering, is the order.
+ *  Returns { body, rows: [cellText] } or null. HTML comments are stripped first
+ *  so the scaffold's commented-out example is not mistaken for a live section. */
+function parseExecutionOrder(raw) {
+  const clean = raw.replace(/<!--[\s\S]*?-->/g, '');
+  const head = clean.match(/^##\s+Execution order\b.*$/m);
+  if (!head) return null;
+  const after = clean.slice(clean.indexOf(head[0]) + head[0].length);
+  const end = after.search(/^##\s+/m);
+  const body = end < 0 ? after : after.slice(0, end);
+  const lines = body.split(/\r?\n/);
+  const headIdx = lines.findIndex((l) => /^\s*\|/.test(l) && /\border\b/i.test(l));
+  const rows = [];
+  if (headIdx >= 0) {
+    const cols = lines[headIdx].split('|').slice(1, -1).map((c) => c.trim().toLowerCase());
+    const iCycle = cols.findIndex((c) => /cycle|stage/.test(c));
+    for (let i = headIdx + 2; i < lines.length; i++) {
+      if (!/^\s*\|/.test(lines[i])) break;
+      const cells = lines[i].split('|').slice(1, -1).map((c) => c.trim());
+      const cell = iCycle >= 0 ? (cells[iCycle] || '') : cells.join(' ');
+      if (/<[^>]*>/.test(cell)) continue; // template placeholder row
+      rows.push(cell);
+    }
+  }
+  return { body, rows };
+}
+
 /** Checkbox counts inside the `## <n> · <name>` section for one cycle row. */
 function cycleSectionBoxes(raw, n) {
   if (!n) return null;
@@ -281,7 +310,7 @@ function lintMemoryPlans(id, plansDir) {
       // its status and its count are just as wrong-able without one.
       const who = r.slug ? `\`${r.slug}\`` : `"${r.cycle.replace(/[*|]/g, '').trim() || `row ${r.line}`}"`;
       if (!r.slug) {
-        warnings.push(`${label}: cycle ${who} has no \`slug\` — \`#\` is display order and may change; every cross-reference must cite a slug that never does`);
+        warnings.push(`${label}: cycle ${who} has no \`slug\` — a reference from another file cannot cite \`#${r.n || '?'}\`, which means nothing outside this plan`);
       }
       for (const dep of (r.deps.match(/[a-z0-9-]{2,}/g) || [])) {
         if (!slugs.has(dep)) {
@@ -297,6 +326,29 @@ function lintMemoryPlans(id, plansDir) {
           warnings.push(`${label}: cycle ${who} table says ${r.done}/${r.total} subtasks but its section has ${boxes.done}/${boxes.total} ticked boxes — the count is derived, not asserted`);
         }
       }
+    }
+
+    // The optional `## Execution order` section is a SECOND table over the same
+    // cycles, so it can drift from the first. Both directions matter: a row
+    // naming a cycle that doesn't exist is a leftover from a reorder, and a
+    // cycle missing from the order reads as forgotten rather than parallel.
+    const order = parseExecutionOrder(p.raw);
+    if (!order) continue;
+    const numbered = rows.filter((r) => r.n);
+    const known = new Set(numbered.map((r) => r.n));
+    const placed = new Set();
+    for (const cell of order.rows) {
+      for (const ref of (cell.match(/\d+/g) || [])) {
+        if (known.has(ref)) placed.add(ref);
+        else warnings.push(`${label}: the execution order names cycle \`${ref}\`, which is not in the cycle table — left over from a reorder?`);
+      }
+    }
+    for (const r of numbered) {
+      // The escape hatch is deliberately cheap: naming the cycle anywhere in the
+      // section ("cycle 2 is a parallel track") is enough to clear this.
+      if (placed.has(r.n)) continue;
+      if (r.slug && order.body.includes(r.slug)) continue;
+      warnings.push(`${label}: cycle ${r.slug ? `\`${r.slug}\`` : `#${r.n}`} is in the table but nowhere in the execution order — place it, or say in that section that it is deliberately outside the sequence (a parallel track), or it reads as forgotten`);
     }
   }
 }

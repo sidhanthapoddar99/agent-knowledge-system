@@ -114,6 +114,19 @@ Where the shape came from (the user's words, an audit, a decision), then the tab
 | 2 | **Sign-offs** `sign-offs` | eight finished things stop being parked | **human** | — | 0/13 | input-needed |
 | 3 | **The write lease** `write-lease` | the actual restructure | agent | `sign-offs` | 0/1 | blocked |
 
+## Execution order — what actually happens next
+<!-- OPTIONAL. Omit while the `#` order IS the running order; add it the moment
+     the two diverge. When present, THIS TABLE WINS. -->
+
+| Order | Cycle | Why it sits here | Blocked on |
+|---|---|---|---|
+| **1st** | **1** — bug fixing | finish what is started before opening anything | nobody |
+| **2nd** | **3 + 2 together** — the lease loop | they interleave as one loop, not a sequence | nobody |
+| **last** | **4** — cleanup | optimising code that 3 is about to move means doing it twice | 3 |
+
+**Cycle N is not in this order — it is a parallel track.** Say so for anything
+deliberately outside the sequence, or it reads as forgotten.
+
 ## 1 · Bug fixing
 
 The objective and the outcome, in prose a human reads once and gets. What this
@@ -152,17 +165,34 @@ That gives the plan a clean correspondence with the rest of the tracker:
 | **cycle** | one **activity** `NNN_<code>_<name>/` | one work branch |
 | subtask checkbox | milestone | commit |
 
-Cycles are **ordered but largely independent** — the order is a preference and may be changed during execution, which has one hard consequence:
+### Identity vs order — the rule that keeps a reorder cheap
 
-- **The `#` column is position, never identity.** It may change.
-- **The slug is identity, and never changes.** Every cross-reference — inside the plan, from a subtask, from an agent-log milestone — cites the slug, never `#2`. A plan that refers to "stage 3" breaks silently the first time it's reordered.
-- **Real dependencies go in the `Depends on` column**, as slugs. If it isn't in that column, reordering is safe.
+Cycles are **ordered but largely independent**, and the order **will** change mid-execution. That is normal. The failure is responding to it by renumbering — which is expensive precisely because the numbers work: people write "blocked on #7" in subtasks, milestones and chat, and every one of those references breaks silently.
+
+- **`#` is a STABLE IDENTIFIER** — assigned once, never renumbered, never reused. The table's row order carries no meaning on its own.
+- **The slug is identity too**, and is what a reference from *another* file should cite — `#7` is meaningless outside the plan it lives in.
+- **When the running order diverges from the numbering, add the optional `## Execution order` section.** Never renumber. When that section exists **it wins** over the `#` order; when it's absent, the `#` order *is* the order.
+- **Real dependencies go in `Depends on`**, as slugs — structural, cycle → cycle, permanent.
+
+### The `## Execution order` section — optional, and worth adding early
+
+A second small table holding three things a dependency column structurally cannot:
+
+| It holds | Example |
+|---|---|
+| Ordering reasons that are **not** dependencies | *"the surrounding code is freshly understood — doing it later means re-learning it"* · *"finish what is started before opening anything"* |
+| Cycles deliberately **outside** the sequence | a human review track that nothing waits on and that waits on nothing |
+| Cycles that **merge** into one loop | *"7 + 6 together"* — decide-and-build interleaved, not one after the other |
+
+**`Blocked on` here is not `Depends on` there.** `Depends on` is structural and permanent (cycle → cycle). `Blocked on` is what's holding this up *today*, which is very often a person — *"one call from the owner on the dead branches"* is not a cycle dependency, and that's exactly why it needs its own column.
+
+**Anything left out of the order must be named as deliberately out of it.** A cycle missing from the table otherwise reads as forgotten rather than parallel.
 
 ### The table columns
 
 | Column | Holds |
 |---|---|
-| `#` | display order — mutable, not identity |
+| `#` | **stable identifier** — assigned once, never renumbered or reused |
 | `Cycle` | name + its stable slug |
 | `Outcome` | **what it actually gets you** — the plainest statement of the payoff, not a restatement of the name |
 | `Owner` | who can close it — `agent`, a person's name, or both. Human-owned cycles are usually the real bottleneck; the column makes that visible |

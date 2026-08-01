@@ -110,6 +110,19 @@ Where the shape came from (the user's words, an audit), then:
 | 2 | **Sign-offs** `sign-offs` | eight finished things stop being parked | **human** | — | 0/13 | input-needed |
 | 3 | **The write lease** `write-lease` | the actual restructure | agent | `sign-offs` | 0/1 | blocked |
 
+## Execution order — what actually happens next
+<!-- OPTIONAL. Omit it while the `#` order IS the running order; add it the
+     moment the two diverge. When present, THIS TABLE WINS. -->
+
+| Order | Cycle | Why it sits here | Blocked on |
+|---|---|---|---|
+| **1st** | **1** — bug fixing | finish what is started before opening anything | nobody |
+| **2nd** | **3 + 2 together** — the lease loop | they interleave as one loop, not a sequence | nobody |
+| **last** | **4** — cleanup | optimising code that 3 is about to move means doing it twice | 3 |
+
+**Cycle N is not in this order — it is a parallel track.** Say so for anything
+deliberately outside the sequence, or it reads as forgotten.
+
 ## 1 · Bug fixing
 Objective and outcome in prose a human reads once and gets — what this is,
 plainly. Not a restatement of the subtasks below.
@@ -149,21 +162,45 @@ a cycle yet.
 | **cycle** | one **activity** `NNN_<code>_<name>/` | one work branch |
 | subtask checkbox | milestone | commit |
 
-Cycles are **ordered but largely independent**, and the order may change during
-execution — which has one hard consequence:
+### Identity vs order — the rule that keeps a reorder cheap
 
-- **`#` is position, never identity.** It may change.
-- **The slug is identity and never changes.** Every cross-reference — in the plan,
-  from a subtask, from an agent-log milestone — cites the **slug**, never `#2`. A
-  plan that says "see stage 3" breaks silently on the first reorder.
-- **Real dependencies live in `Depends on`**, as slugs. Not in that column ⇒
-  reordering is safe.
+Cycles are **ordered but largely independent**, and the order **will** change
+mid-execution. That is normal; the failure is responding to it by renumbering.
+
+- **`#` is a STABLE IDENTIFIER** — assigned once, never renumbered, never reused.
+  The table's row order carries no meaning on its own.
+- **The slug is identity too**, and is what a reference from *another* file cites
+  — `#7` is meaningless outside the plan it lives in.
+- **When the running order diverges from the numbering, add the optional
+  `## Execution order` section.** Never renumber. When that section exists, **it
+  wins** over the `#` order; when it is absent, the `#` order *is* the order.
+- **Real dependencies live in `Depends on`**, as slugs, and are structural
+  (cycle → cycle, permanent).
+
+### The `## Execution order` section — optional, and worth it early
+
+A second small table that holds three things a dependency column structurally
+cannot:
+
+| It holds | Example |
+|---|---|
+| Ordering reasons that are **not** dependencies | *"the surrounding code is freshly understood — doing it later means re-learning it"* · *"finish what is started before opening anything"* |
+| Cycles deliberately **outside** the sequence | a human review track that nothing waits on and that waits on nothing |
+| Cycles that **merge** into one loop | *"7 + 6 together"* — decide-and-build interleaved, not one after the other |
+
+**`Blocked on` here is NOT `Depends on` there.** `Depends on` is structural and
+permanent (cycle → cycle). `Blocked on` is what is holding this up *today*,
+which is very often a person — *"one call from the owner on the dead branches"*
+is not a cycle dependency, and that is exactly why it needs its own column.
+
+**Anything left out of the order must be named as deliberately out of it** —
+otherwise a cycle missing from the table reads as forgotten rather than parallel.
 
 ### Columns
 
 | Column | Holds |
 |---|---|
-| `#` | display order — mutable, not identity |
+| `#` | **stable identifier** — assigned once, never renumbered or reused |
 | `Cycle` | name + its stable slug |
 | `Outcome` | **what it actually gets you** — the payoff, not a restatement of the name |
 | `Owner` | who can close it: `agent`, a person, or both. Human-owned cycles are usually the real bottleneck; the column makes that visible |

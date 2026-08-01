@@ -190,12 +190,35 @@ ${goalBody}
   cycle is that they can be done together, in one pass.
   Right-sizing test: one cycle = one agent-log activity = one work branch.
 
-  \`#\` is display order and MAY CHANGE. The \`slug\` is identity and NEVER changes —
-  every cross-reference (here, from a subtask, from a milestone) cites the slug,
-  never "#2", or the first reorder breaks it silently.
-  Real dependencies go in \`Depends on\`, as slugs. \`Subtasks\` is done/total,
-  derived from the boxes below. \`Status\` uses the tracker's own vocabulary;
-  "ready" is derived (open + no unmet dependency), never written.
+  \`#\` IS A STABLE IDENTIFIER — assigned once, NEVER renumbered and never reused,
+  because other files cite it. The row order carries no meaning; when the running
+  order changes, edit the Execution order section below, never these numbers.
+  The \`slug\` is identity too, and is what a reference from ANOTHER file should
+  cite ("#7" is meaningless outside this plan).
+  \`Depends on\` is STRUCTURAL: cycle → cycle, permanent. (What is blocking a cycle
+  TODAY — including a person — belongs in the execution-order table instead.)
+  \`Subtasks\` is done/total, derived from the boxes below. \`Status\` uses the
+  tracker's own vocabulary; "ready" is derived (open + no unmet dependency).
+-->
+
+<!-- OPTIONAL — delete this whole section if the \`#\` order IS the running order.
+     Add it the moment the two diverge, which is the ONLY correct response to
+     "we need to do these in a different order now". Renumbering is never it.
+
+## Execution order — what actually happens next
+
+**The numbers above are stable identifiers, not a running order.** Other files
+cite them, so they are never renumbered; this table is the order work actually
+happens in, and **when it disagrees with the numbering above, this table wins.**
+
+| Order | Cycle | Why it sits here | Blocked on |
+|---|---|---|---|
+| **1st** | **1** — <name> | the reason, which is often NOT a dependency: code freshly understood, finish what is started, doing it later means doing it twice | nobody |
+| **2nd** | **3 + 2 together** — <name> | cycles that interleave as ONE loop rather than following one another | nobody |
+| **last** | **4** — <name> | | 3 |
+
+**Cycle N is not in this order — it is a parallel track.** Say so explicitly for
+anything deliberately outside the sequence, or it reads as forgotten.
 -->
 
 ## 1 · <cycle name>

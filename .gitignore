@@ -33,3 +33,4 @@ bun.lockb
 .env
 verification/*/node_modules/
 verification/*/package*.json
+verification/skill-compare/

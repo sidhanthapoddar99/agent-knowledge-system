@@ -4,8 +4,13 @@ title: "Summary"
 
 # State
 
-Running. Iteration 01 (the plans section) has landed and is verified against a
-real fixture; the rest of `040_execution/` follows in order.
+Running, and near the end. **Every subtask under `040_execution/` has landed
+except the audit that closes the run** — seven rounds are in `working/`, and the
+three independent readers are reading now.
+
+Two things are deliberately NOT done and will not be: `020` sits at
+`input-needed` with a proposed diff to Sid's personal global file, which only he
+may apply; and `050_version-bump` is outside this folder and held on his word.
 
 This log is itself the first thing written in the shape it ships — the six slots
 are gone, `working/` carries one file per round, and nothing here restates what
@@ -32,14 +37,14 @@ Executes against
 [the settings.json spec](../../notes/40_agent-log-settings-framework-spec.md).
 
 - [x] `010` — the plans section (framework + CLI + validator)
-- [ ] `015` — per-agent-log `settings.json`
-- [ ] `090` — the section registry
-- [ ] `030` / `040` / `080` / `110` — the skill
-- [ ] `050` / `120` — `guide.ts` and the user-guide
-- [ ] `070` — sidebar icons
-- [ ] `100` — the status-vocabulary migration
-- [ ] `140` — the demo fixture
-- [ ] `020` — the proposed `~/.claude/CLAUDE.md` diff
+- [x] `015` — per-agent-log `settings.json`
+- [x] `090` — the section registry
+- [x] `030` / `040` / `080` / `110` — the skill
+- [x] `050` / `120` — `guide.ts` and the user-guide
+- [x] `070` — sidebar icons
+- [x] `100` — the status-vocabulary migration
+- [x] `140` — the demo fixture
+- [~] `020` — the proposed `~/.claude/CLAUDE.md` diff
 - [ ] `130` — the three-reader audit
 
 # Out of Scope

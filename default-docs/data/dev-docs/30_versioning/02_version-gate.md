@@ -36,8 +36,14 @@ declared > ENGINE_VERSION       → throw (content too new — upgrade engine)
 otherwise                       → proceed silently
 ```
 
-Malformed declarations (anything not `N.N.N`) also throw, with a hint showing
-the correct form. Only major.minor are compared — patch never gates.
+Malformed declarations (anything not `X.Y.Z`) also throw, with a hint showing
+the correct form. **All three places are compared** — the minimum means the
+minimum, whichever place differs.
+
+> [!NOTE]
+> **Changed 2026-08-02.** This line previously read *"Only major.minor are
+> compared — patch never gates."* Since every format migration here has moved
+> only the third place, that meant nothing was ever gated.
 
 ## The messages, verbatim
 

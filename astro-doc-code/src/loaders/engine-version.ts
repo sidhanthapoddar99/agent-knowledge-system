@@ -42,24 +42,27 @@ export function isValidVersion(v: string): boolean {
 }
 
 /**
- * Numeric per-segment comparison. Returns <0 / 0 / >0 like a comparator.
+ * Numeric per-segment comparison over ALL THREE places. Returns <0 / 0 / >0
+ * like a comparator.
  *
- * KNOWN DEFECT — X and Y are compared, Z is NOT. Because every format migration
- * this repo has shipped moved only Z (0.1.0 -> 0.1.1 -> 0.1.2), content at
- * 0.1.0 compares EQUAL to a floor of 0.1.2 and passes. **The gate has therefore
- * never once enforced a migration** — the only thing it has ever caught is
- * content with no `engine_version` at all (0.0.0). `0.1.1_state-to-status.py`
- * was a breaking value remap and was never forced on anyone.
+ * The minimum means the minimum: content below MIN_CONTENT_VERSION is refused,
+ * full stop. There is no rule about which place "counts".
  *
- * The fix is `|| aPat - bPat`, tracked in
- * `2026-08-02-refactor-efficiency-and-planning`, subtask 050. It does not make
- * every bump mandatory: MIN_CONTENT_VERSION stays the control, so shipping
- * 0.1.4 with the floor left at 0.1.3 still passes content at 0.1.3.
+ * Fixed 2026-08-02. Previously this compared X and Y only, discarding Z — and
+ * since every format migration this repo has shipped moved only Z (0.1.0 ->
+ * 0.1.1 -> 0.1.2), content at 0.1.0 compared EQUAL to a floor of 0.1.2 and
+ * passed. The check had therefore never once refused a migrated format; the
+ * only thing it ever caught was content with no `engine_version` at all.
+ * `0.1.1_state-to-status.py` was a breaking value remap and reached nobody.
+ *
+ * This does NOT make every release mandatory. MIN_CONTENT_VERSION is the
+ * control: ship a fix as 0.1.4 and leave the floor at 0.1.3, and content at
+ * 0.1.3 still passes. Raise the floor only when old content genuinely breaks.
  */
 export function compareFormatVersions(a: string, b: string): number {
-  const [aMaj, aMin] = a.split('.').map(Number);
-  const [bMaj, bMin] = b.split('.').map(Number);
-  return aMaj - bMaj || aMin - bMin;
+  const [aMaj, aMin, aPat] = a.split('.').map(Number);
+  const [bMaj, bMin, bPat] = b.split('.').map(Number);
+  return aMaj - bMaj || aMin - bMin || aPat - bPat;
 }
 
 /**

@@ -26,12 +26,28 @@ contract from then on.
 
 ## Version semantics
 
-- Format is `N.N.N` (major.minor.patch). Major stays `0` while the project is
-  in beta.
-- **Only major.minor participate in compatibility.** A patch release never
-  changes the content format, by definition — the gate ignores the third
-  segment entirely (`compareFormatVersions()` compares two segments).
+- Format is `X.Y.Z`. Described by **position**, because "minor" and "patch" name
+  different places to different readers:
+
+  | Place | Moves for |
+  |---|---|
+  | `X` | reserved — beta (`0`) versus production |
+  | `Y` | major upgrades |
+  | `Z` | small additions and fixes |
+
+- **All three places participate in compatibility.** The minimum means the
+  minimum: content below `MIN_CONTENT_VERSION` is refused, whichever place
+  differs. There is no rule about which one "counts".
 - Comparison is numeric per segment, not lexicographic.
+
+> [!NOTE]
+> **Changed 2026-08-02.** This previously read *"Only major.minor participate —
+> a patch release never changes the content format, by definition."* That was
+> never true in practice: every format migration this project has shipped moved
+> only `Z` (`0.1.0`, `0.1.1`, `0.1.2`), so `compareFormatVersions()` discarding
+> the third place meant content at `0.1.0` passed a floor of `0.1.2`. The check
+> had never once refused an un-migrated tree — the only thing it ever caught was
+> content with no `engine_version` key at all. It now compares all three.
 
 ## Why the contract exists
 

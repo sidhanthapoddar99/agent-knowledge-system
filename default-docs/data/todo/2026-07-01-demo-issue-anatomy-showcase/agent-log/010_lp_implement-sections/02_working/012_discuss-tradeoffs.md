@@ -9,7 +9,7 @@ Decide whether the four section shapes collapse into one pluggable reader,
 or stay four functions.
 
 # Inputs
-- `working/011_research-loader-shapes.md` — read this first
+- `02_working/011_research-loader-shapes.md` — read this first
 
 # Expected Outcome
 Findings and a recommendation.

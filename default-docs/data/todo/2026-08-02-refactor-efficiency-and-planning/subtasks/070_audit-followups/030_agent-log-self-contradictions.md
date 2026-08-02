@@ -19,9 +19,9 @@ worked example matches the rule it illustrates.
 
 # References
 
-- [reader 3 — sol](../../agent-log/020_wf_ship-the-split/working/073_verdict-sol.md)
+- [reader 3 — sol](../../agent-log/020_wf_ship-the-split/02_working/073_verdict-sol.md)
   — the child-log passage is its *worst passage in my winner*
-- [reader 1 — Opus](../../agent-log/020_wf_ship-the-split/working/071_verdict-opus.md)
+- [reader 1 — Opus](../../agent-log/020_wf_ship-the-split/02_working/071_verdict-opus.md)
   — the numbering defect, under *flatly wrong*
 - The intended shape: [the agent-log structure](../../notes/20_agent-log-structure.md)
 
@@ -80,7 +80,7 @@ deleted.** That is the same failure as the stale worked examples
 ## On "write-once"
 
 The write-once claim is defensible as *intent* — an iteration file is not
-rewritten the way `summary.md`'s State is. But the file also instructs a
+rewritten the way `01_summary.md`'s State is. But the file also instructs a
 two-phase write (head before the work, Outcome after), which is by definition not
 write-once. The wording needs to distinguish **written twice, at two known
 moments** from **live**.

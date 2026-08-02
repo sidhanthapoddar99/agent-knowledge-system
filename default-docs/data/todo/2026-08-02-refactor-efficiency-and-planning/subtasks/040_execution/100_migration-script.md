@@ -125,6 +125,29 @@ Folder structure untouched — the retired six-slot folders and `MNN_` files sti
 parse and render as ordinary markdown. History stays as written; a script that
 restructured old folders would rewrite the record rather than migrate it.
 
+> [!IMPORTANT]
+> **This stays true of THIS script, and a second script exists for the other
+> case.** On 2026-08-03 the three slots gained numeric prefixes
+> ([the numbering spec](../../notes/80_agent-log-numbering-spec.md)), so every
+> agent log already written in the **new** shape needs
+> `summary.md` → `01_summary.md`, `working/` → `02_working/`,
+> `debrief/` → `03_debrief/`. That is not the case this section was arguing
+> against: the retired six-slot folders are still left exactly where they are,
+> and what moves is only the shape this issue itself introduced days earlier.
+> It ships as `0.1.4_agent-log-slot-numbering.py` under
+> [number the agent log's own slots](../100_agent-log-slot-numbering.md), not
+> here — this script is a text rewrite of frontmatter values and is already
+> verified idempotent, and folding a link-aware folder rename into it would put
+> two unrelated failure modes behind one command.
+>
+> **Two things that converter has to get right, neither of which this one
+> faced.** First, the old six-slot shape contained a file called
+> `01_summary.md` — the *same name* the new shape now uses — so it must decide
+> which shape a folder is in before renaming anything, and must never rename
+> onto an existing name. Second, renames are link-bearing: the spec counts
+> **114 inbound links** mentioning `summary.md`, so this is `agent-ks move`
+> work, run by one actor sequentially, not a text substitution.
+
 # Details
 
 ## Where the number went, and what the migration is the only chance to check
@@ -133,7 +156,7 @@ restructured old folders would rewrite the record rather than migrate it.
 the filename, which is the half that was already there:
 
 ```
-working/
+02_working/
 ├── 010_audit-round.md       ← iteration 01, the orchestrator's file
 ├── 011_audit-bytes.md       ← iteration 01, a producer's own file
 ├── 020_fix-round.md         ← iteration 02
@@ -222,6 +245,14 @@ that restructured old folders would rewrite the record rather than migrate it.
 **That earlier note said "a migration would be optional and is not proposed."
 That was wrong about the values**, and this subtask is the correction: the
 structure needs no migration, the vocabulary does.
+
+**Changed 2026-08-03 — the last clause now has one exception.** *Old* structure
+still needs no migration. *New* structure does, because the three slots were
+renumbered after this script shipped
+([the numbering spec](../../notes/80_agent-log-numbering-spec.md)). That is a
+separate script in a separate subtask
+([number the agent log's own slots](../100_agent-log-slot-numbering.md)); see the
+callout under *Scope held* for why the two are not merged.
 
 ## Blast radius — counted
 

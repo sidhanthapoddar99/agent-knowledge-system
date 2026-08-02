@@ -116,7 +116,7 @@ logs and iteration files together.
 
 | Lines | What | Fate |
 |---|---|---|
-| ~133–140 | The anatomy tree showing `00_goal.md` / `03_working.md` / `05_notes.md` / `101_milestone.md` | → `summary.md` / `working/` / `notes/` + `settings.json` |
+| ~133–140 | The anatomy tree showing `00_goal.md` / `03_working.md` / `05_notes.md` / `101_milestone.md` | → `01_summary.md` / `02_working/` / `03_debrief/` + `settings.json`, plus a child agent log at `100_`. **Changed 2026-08-03** — the slots gained prefixes ([the numbering spec](./80_agent-log-numbering-spec.md)); the old `notes/` in this cell was already stale for `debrief/` |
 | ~157–161 | *"**Standard `0NN` slots first** (convention, kept present even when blank)"* + the six-slot list | **Delete.** This is a **fourth home** of the six-file floor, alongside the skill, the CLI scaffolder and NeuraSutra's `standing-rules.md` |
 | ~162–167 | The whole **Milestones** block — `MNN_<name>.md`, ~3–6 per agent log, per-kind rhythm, keep failed ones | **Delete** — milestones no longer exist |
 | ~166 | The `#N` badge tinting sentence | → agent log status colouring (above) |
@@ -124,7 +124,7 @@ logs and iteration files together.
 
 ## Iteration-file status is NOT this
 
-Iteration files inside `working/` carry status in **frontmatter**, not
+Iteration files inside `02_working/` carry status in **frontmatter**, not
 `settings.json`:
 
 ```yaml

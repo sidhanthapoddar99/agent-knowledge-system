@@ -44,6 +44,14 @@ schema are updated, and each change names the audit finding it answers.
 - [x] **Confirm with Sid before writing** — this is his personal global file.
       Confirmed 2026-08-03; all four applied
 
+**Added 2026-08-03, after the edits had already landed — see *A fifth edit is now
+owed*, below.**
+
+- [ ] **A follow-up edit to the same two bullets**, because the three slots have
+      been renamed since they were written:
+      [the numbering spec](../../notes/80_agent-log-numbering-spec.md). One more
+      confirmation from Sid, one more find-block pair
+
 # Outcomes and Next Steps
 
 **All four edits are in `~/.claude/CLAUDE.md` as of 2026-08-03.** The file grew
@@ -74,6 +82,34 @@ below were **not** rewritten into past tense or trimmed once applied. They are
 the only place the reasoning lives — which finding each edit answers, and what
 each one deliberately keeps. A record that shrinks to *"applied"* cannot be
 audited later.
+
+## A fifth edit is now owed — the slots were renamed the same day
+
+**The four blocks under *Details* stay verbatim.** They are the record of what
+was written into `~/.claude/CLAUDE.md` on 2026-08-03, and editing them would
+leave the file and its record disagreeing about what was ever applied.
+
+What has changed since is the names they contain. The three agent-log slots
+became `01_summary.md`, `02_working/` and `03_debrief/`
+([the numbering spec](../../notes/80_agent-log-numbering-spec.md)), so two
+applied bullets now name files that no longer exist:
+
+| Applied text, now stale | Says | Should say |
+|---|---|---|
+| Edit 1, first bullet | *"a conclusive `summary.md`, a `working/` file per round, and a `debrief/` for what leaves the run"* | the same sentence with the three prefixed names |
+| Edit 3, first bullet | *"The run's `summary.md` IS the brief"* | *"The run's `01_summary.md` IS the brief"* |
+
+**Nothing else in the four edits is affected** — the proportionality rule, the
+produced-not-ran rule, the plans re-pointing and the no-committed-brief rule are
+all about behaviour rather than filenames.
+
+**This one is owed here rather than in the rename subtask.**
+[Number the agent log's own slots](../100_agent-log-slot-numbering.md) swept the
+skill, the user-guide, the in-app guide and the fixtures; it could not sweep
+`~/.claude/CLAUDE.md`, which lives outside every repo and needs Sid's word every
+time. So it stays this subtask's, and it is worth its own pass rather than being
+folded into some later edit — a global rule that names a file which is not there
+is the kind of thing an agent works around silently.
 
 ## What this unblocks
 

@@ -15,7 +15,7 @@ This overview is the **shared reference**: the prefix grammar, the required-vs-o
 | [Suffix Icons](./suffix-icons) | The trailing marker a row gets when the page is **not markdown** — the artifact and diagram/chart glyphs — the one glyph vocabulary shared by the docs sidebar and the issue sub-doc tree. Markdown is unmarked. |
 | [Docs — File Tree → Sidebar](./docs) | How a docs section's files and folders map to sidebar sections and entries, with the mandatory-prefix rule and its failure modes |
 | [Blogs — File Tree → Sidebar](./blogs) | The date-prefix scheme, flat ordering, and what the index and sidebar render |
-| [Issues — File Tree → Sidebar](./issues) | The richest case: every issue sub-folder (comments, notes, brainstorm, subtasks, agent-log, agent-memory) and what each renders — plus the **leading-mark legend**: the `NN` / `#iteration` badges and their status tints, agent-log kind symbols, subtask status icons, and the folder chevron / count |
+| [Issues — File Tree → Sidebar](./issues) | The richest case: every issue sub-folder (comments, notes, brainstorm, subtasks, agent-log, agent-memory) and what each renders — plus the **leading-mark legend**: the `NN` badge and its status tint, agent-log kind symbols, subtask status icons, and the folder chevron / count |
 
 ## The ordering prefix — one grammar
 
@@ -42,7 +42,7 @@ What *changes* between content types is (1) whether the prefix is **required, op
 | **Issue — subtasks** | `NN_` / `NNN_` | Conventional (for order) | Never throws; unprefixed sorts last. Both 2- and 3-digit are idiomatic. |
 | **Issue — comments** | `NNN_<slug>.md` | Conventional | The 3-digit sequence *is* the comment id (`#001`). Append-only, never renumbered. |
 | **Issue — notes / brainstorm / agent-memory** | optional `NN_` | **Optional** | Loose parse, never throws. Add a prefix only when you want a fixed reading order. |
-| **Issue — agent-log** | `NNN_<code>_<name>/` folders; `0NN_` meta files; `MNN_` milestones | Conventional | Loose parse. The prefix drives ordering *and* the badge (see below). |
+| **Issue — agent-log** | `NNN_<code>_<name>/` activity folders; numbered slots inside (`01_summary.md`, `02_working/`, `03_debrief/`); child activities at `100_` and up | Conventional | Loose parse. The prefix drives ordering *and* decides slot-vs-child-activity (see below). |
 
 The single hard rule to remember: **only docs make the prefix mandatory** (the loader refuses to build without it). Everywhere in the issue tracker the prefix is optional — present for order, absent when order doesn't matter.
 
@@ -61,10 +61,10 @@ Docs *files* nest freely — every page builds and is reachable by URL, however 
 The issue sidebar (`SubdocTree.astro`) **relocates** the prefix into a dedicated badge rendered *before* a de-prefixed label — it does **not** throw the number away:
 
 - A normal sub-doc or grouping folder shows its padded **`NN`** as a neutral badge, then the clean label, then (if non-markdown) a type glyph. A group folder also shows a **descendant count** on the right.
-- **Agent-log is the special case.** Inside an activity folder (`NNN_<code>_<name>/`):
-  - **`0NN_` meta / slot files** (`00_goal`, `01_summary`, `02_task_list`, `03_working`, `04_benchmark`, `05_notes`) carry no `iteration` — they show their **neutral `NN`** badge, exactly like a folder.
-  - **`MNN_` milestones** (leading digit ≥ 1, with an `iteration:` frontmatter field) show a **`#<iteration>`** badge instead, **status-tinted** (grey / blue / green / red for not-started / in-progress / success / failed).
-  - So within one activity: meta files display `NN`, milestones display `#N`. **The number is always visible** — the agent-log label is de-prefixed for readability, but the ordering number is surfaced as a badge, never dropped.
+- **Agent-log is the special case — but only in what a number *means*, not in how it renders.** Inside an activity folder (`NNN_<code>_<name>/`):
+  - **The run's own slots** are `01_summary.md`, `02_working/` and `03_debrief/`. They are numbered so the read order is stated in the filename, the same place every other section states it — nothing is pinned, and a fourth slot would just be `04_`.
+  - **A folder whose prefix is `100` or above is a child activity**, named `NNN_<code>_<name>/` exactly like a top-level one. So *slot or child activity?* is a comparison against 100, not a list of reserved names the loader has to carry.
+  - Every row shows its **neutral `NN`** badge either way. **The number is always visible** — the agent-log label is de-prefixed for readability, but the ordering number is surfaced as a badge, never dropped. A file that declares a `status:` in frontmatter gets that badge **tinted**, which is a round-level signal and not a second badge.
 
 ### Blogs — date sorted, date stripped from the URL
 
@@ -74,7 +74,7 @@ Blog posts are flat and sort by **date, newest first**. There is **no blog sideb
 
 - A **docs file with no `NN_` prefix** → the docs loader throws; the build fails. (Docs *diagram* / *artifact* pages are still prefixed, and are enabled **by default** — opt *out* per folder with `allow_diagram_pages` / `allow_artifact_pages: false`.)
 - An **issue** grouping folder **beyond 5 levels** deep → warned and ignored by the issues loader. (Docs files nest freely and still route; the docs *sidebar* just draws folder rows down to the same shared max of 5 — no separate setting.)
-- More than one `component` on an issue, a subtask folder with no `settings.json`, an agent-log milestone missing `iteration:` — all surfaced by `agent-ks check issues` (warnings vs errors documented there).
+- More than one `component` on an issue, a subtask folder with no `settings.json`, an agent-log activity with no `01_summary.md`, an unnumbered `working/` or `debrief/` left over from the old shape — all surfaced by `agent-ks check issues` (warnings vs errors documented there).
 
 ## See also
 

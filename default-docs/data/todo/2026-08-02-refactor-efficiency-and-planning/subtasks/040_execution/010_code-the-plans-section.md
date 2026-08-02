@@ -56,7 +56,10 @@ and a fresh plan can be scaffolded with one command.
       shipped differently*, below: it creates two files, not four
 - [x] CLI: `issue new-iteration` — **creates an iteration file with its head
       pre-filled** (`# Goal` / `# Inputs` / `# Expected Outcome` / `# Outcome`)
-      and derives the `NNN` from what is already in `working/`
+      and derives the `NNN` from what is already in `working/`.
+      **Changed 2026-08-03** — the folder it reads and writes is now
+      `02_working/` ([the numbering spec](../../notes/80_agent-log-numbering-spec.md));
+      the `NNN` derivation inside it is untouched
 - [x] CLI: `check issues` learns the section **and the new agent log shape**.
       One active plan stays a hint, never an error
 - [x] *(moved out — agent log `settings.json` is
@@ -82,7 +85,7 @@ renaming one `subtasks:` target gave exactly one error and exit 1; restoring it
 gave exit 0.
 
 **Run record:**
-[`020_wf_ship-the-split/working/010_plans-section.md`](../../agent-log/020_wf_ship-the-split/working/010_plans-section.md).
+[`020_wf_ship-the-split/working/010_plans-section.md`](../../agent-log/020_wf_ship-the-split/02_working/010_plans-section.md).
 
 **Next:** [`015`](./015_code-agent-log-settings.md), then
 [`090`](./090_section-registry.md) — deliberately a separate diff.
@@ -97,13 +100,19 @@ names the broken refs in red rather than quietly rendering a smaller number.
 
 **`new-agent-log` creates two files, not four.** The todo above said
 `summary.md` + `working/` + `debrief/` + `settings.json`. Only the two *files*
-are created. Git does not track an empty directory, so scaffolding `working/`
-and `debrief/` produces a shape that exists for whoever ran the command and for
+are created. Git does not track an empty directory, so scaffolding the two
+folders produces a shape that exists for whoever ran the command and for
 nobody who clones — and creating files nobody needs is the exact defect the
 six-slot floor was. The folders appear when something goes in them:
-`new-iteration` creates `working/`, and `debrief/` is written when the run has
-something to hand over. The command prints the `new-iteration` line as its next
-step.
+`new-iteration` creates the working folder, and the debrief folder is written
+when the run has something to hand over. The command prints the `new-iteration`
+line as its next step.
+
+**Changed 2026-08-03 — the four names in that paragraph are now
+`01_summary.md` + `02_working/` + `03_debrief/` + `settings.json`**
+([the numbering spec](../../notes/80_agent-log-numbering-spec.md)). The
+two-files-not-four reasoning is unaffected: it is about *when* a folder is
+created, not what it is called.
 
 **The new agent-log lint skips old-shape folders, silently.** Existing agent
 logs are not migrated — *"history stays as written; this governs what is
@@ -111,6 +120,16 @@ recorded next."* Linting them anyway produced **289 warnings** on the first run,
 which is how a validator stops being read at all, taking the two real findings
 with it. Detection is by the retired markers themselves (`0N_goal`…, `MNN_`
 milestones), so a genuinely new folder is still checked.
+
+> [!WARNING]
+> **Re-check that detector against the 2026-08-03 numbering
+> ([number the agent log's own slots](../100_agent-log-slot-numbering.md)).** The
+> new shape's first slot is `01_summary.md`, and the retired six-slot shape had a
+> file of **exactly that name**. Any detector keying on a `0N_` prefix rather
+> than on the specific retired names (`00_goal`, `02_task_list`, `05_notes`,
+> `MNN_`) will now classify every new-shape agent log as old-shape and skip it —
+> a lint that silently stops linting, which is the failure mode this paragraph
+> exists to avoid. Read off the two shapes, not verified against the code here.
 
 **`SubdocTree` and `NotePage` were not touched.** The Details table below listed
 them as required. They are the free-form *nested tree* machinery; a plan is a

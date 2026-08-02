@@ -58,42 +58,49 @@ comments/
 
 Keep the body focused. Long deliberation belongs in a note, not a comment. See [Comments](../sub-docs/comments).
 
-## Write an agent-log entry
+## Write an agent-log round file
 
 For AI iterations specifically — don't use this for human edits (use comments instead).
 
-Each iteration:
+Each round:
 
-1. Pick the next sequence number in `agent-log/` (or in the subgroup folder if you're exploring variants)
-2. Create `NNN_<slug>.md`
-3. Write the 4-section structure — **Goal, Approach, Result, Next**
+1. **Find the run's folder** — `agent-log/NNN_<code>_<name>/`, or open one if this is new
+   work. A run opens when work is delegated or when it goes over multiple rounds; anything
+   smaller gets a line in the plan and no folder at all.
+2. **Write the round file into that folder's `02_working/`**, named `NNN_<slug>.md` — the
+   first two digits are the iteration and the last is which file within it (`0` for the
+   round's own file, `1`–`9` for an agent that produced something substantial of its own).
+3. **Open with the four `#` sections** — Goal, Inputs, Expected Outcome, Outcome.
+   Everything after them is free-form.
 
 ```markdown
 ---
-iteration: 3
+title: "FilterBar state persistence"
 agent: claude-opus-4-6
-status: success
+status: done          # the canonical seven — did the agent FINISH, not what it found
 date: 2026-04-21
 ---
 
-# Iteration 3 — FilterBar state persistence
-
-## Goal
+# Goal
 Wire FilterBar state into URL query params. Survive refresh + back/forward nav.
 
-## Approach
-Listen to FilterBar change events → URLSearchParams → `history.replaceState`.
-On page load, parse URL → apply to FilterBar initial state.
+# Inputs
+`notes/03_url-state-decision.md`. `none` when there are none.
 
-## Result
+# Expected Outcome
+The change, and what it touched.
+
+# Outcome
 Working. Tested: reload preserves state, back/forward nav restores prior states.
-Commit: df7a2e1.
-
-## Next
-Hand off for review — subtask 02 → `review`.
+Commit: df7a2e1. Handing off for review — subtask 02 → `review`.
 ```
 
-**Keep failed iterations.** They're more valuable than successes for the next iteration. See [Agent Log](../sub-docs/agent-log).
+**The iteration number is the filename and is never repeated in frontmatter.** The
+`030_` prefix owns it; a copy in frontmatter is a second place to keep right.
+
+**Keep failed rounds.** They're more valuable than successes for the next round — set
+`status: dropped` and say what failed in `# Outcome`. The run's conclusive file is
+`01_summary.md` beside `02_working/`. See [Agent Log](../sub-docs/agent-log).
 
 ## Add a subtask mid-flight
 

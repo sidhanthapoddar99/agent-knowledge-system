@@ -1,16 +1,16 @@
 #!/usr/bin/env bun
 /**
  * new-iteration.mjs — create an iteration file (or a producer's file) inside an
- * agent log's `working/`, with its HEAD pre-filled.
+ * agent log's `02_working/`, with its HEAD pre-filled.
  *
  * Numbering: the first two digits are the ITERATION, the last digit is which
  * file within it — `0` for the iteration file itself, `1`…`9` for a producer's
  * own file sitting beside it.
  *
- *   working/010_audit-round.md          iteration 01 — the orchestrator's file
- *   working/011_scope-a-bytes.md          a producer within it
- *   working/012_scope-b-blast.md          another producer
- *   working/020_fix-round.md            iteration 02
+ *   02_working/010_audit-round.md          iteration 01 — the orchestrator's file
+ *   02_working/011_scope-a-bytes.md          a producer within it
+ *   02_working/012_scope-b-blast.md          another producer
+ *   02_working/020_fix-round.md            iteration 02
  *
  * An iteration is a GROUP — of subtasks, of executions, of agents — not one
  * agent's assignment. File count scales with what was PRODUCED, not with how
@@ -52,7 +52,7 @@ if (args.flags.help || !id || !logRaw || !rawName) {
     '<issue-id> --log <path-under-agent-log> --name <slug> [--producer] [--iteration <NN>]',
     '           [--goal <text>] [--inputs <a,b>] [--unit <kind>] [--agent <name>] [--json] [--tracker <path>]',
     '',
-    "Create working/NNN_<name>.md inside an agent log, with its head pre-filled",
+    "Create 02_working/NNN_<name>.md inside an agent log, with its head pre-filled",
     '(Goal / Inputs / Expected Outcome / Outcome). First two digits = the iteration,',
     'last digit = which file within it (0 = the iteration file, 1-9 = producers).',
     '',
@@ -95,9 +95,9 @@ if (!name) {
   process.exit(1);
 }
 
-const workingDir = path.join(logDir, 'working');
+const workingDir = path.join(logDir, '02_working');
 
-/** Every NNN_ prefix already used in working/, as { iteration, file } pairs. */
+/** Every NNN_ prefix already used in 02_working/, as { iteration, file } pairs. */
 function existingPrefixes() {
   if (!fs.existsSync(workingDir)) return [];
   const out = [];
@@ -126,7 +126,7 @@ else iteration = maxIteration + 1;
 
 if (iteration > 99) {
   console.error(
-    `Iteration ${iteration} exceeds the two-digit band. A working/ that has run ` +
+    `Iteration ${iteration} exceeds the two-digit band. A 02_working/ that has run ` +
     `99 rounds is evidence the RUN should have been split into child agent logs.`,
   );
   process.exit(1);
@@ -141,7 +141,7 @@ if (IS_PRODUCER) {
     console.error(
       `Iteration ${iteration} already has nine producer files. That many agents on ` +
       `one round is evidence the round should be two child agent logs, not that ` +
-      `working/ should grow a tree.`,
+      `02_working/ should grow a tree.`,
     );
     process.exit(1);
   }

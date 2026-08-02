@@ -10,9 +10,9 @@ status: open
 acted on.** Three neutral readers compared the old `agent-ks-issues` skill
 against the new one, having seen neither this issue nor the reasoning behind
 either version. Their verdicts are stored verbatim at
-[`071`](../../agent-log/020_wf_ship-the-split/working/071_verdict-opus.md) ·
-[`072`](../../agent-log/020_wf_ship-the-split/working/072_verdict-sonnet.md) ·
-[`073`](../../agent-log/020_wf_ship-the-split/working/073_verdict-sol.md).
+[`071`](../../agent-log/020_wf_ship-the-split/02_working/071_verdict-opus.md) ·
+[`072`](../../agent-log/020_wf_ship-the-split/02_working/072_verdict-sonnet.md) ·
+[`073`](../../agent-log/020_wf_ship-the-split/02_working/073_verdict-sol.md).
 
 **Each subtask here is a proposal, not a plan.** They sit at `open` because the
 decision to do any of them is Sid's, taken with the verdicts in front of him.
@@ -21,11 +21,11 @@ decision to do any of them is Sid's, taken with the verdicts in front of him.
 
 - The audit that produced these: [`130`](../040_execution/130_independent-skill-audit.md)
 - The three verdicts, verbatim:
-  [reader 1 — Opus](../../agent-log/020_wf_ship-the-split/working/071_verdict-opus.md) ·
-  [reader 2 — Sonnet](../../agent-log/020_wf_ship-the-split/working/072_verdict-sonnet.md) ·
-  [reader 3 — sol](../../agent-log/020_wf_ship-the-split/working/073_verdict-sol.md)
+  [reader 1 — Opus](../../agent-log/020_wf_ship-the-split/02_working/071_verdict-opus.md) ·
+  [reader 2 — Sonnet](../../agent-log/020_wf_ship-the-split/02_working/072_verdict-sonnet.md) ·
+  [reader 3 — sol](../../agent-log/020_wf_ship-the-split/02_working/073_verdict-sol.md)
 - The merged picture and what was mechanically verified:
-  [`070`](../../agent-log/020_wf_ship-the-split/working/070_independent-audit.md)
+  [`070`](../../agent-log/020_wf_ship-the-split/02_working/070_independent-audit.md)
 - What the skill is supposed to be:
   [What each section is for](../../notes/60_section-responsibilities.md)
 

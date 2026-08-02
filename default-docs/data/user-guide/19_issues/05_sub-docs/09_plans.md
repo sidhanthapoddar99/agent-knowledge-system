@@ -95,8 +95,6 @@ status: in-progress                  # the canonical 7
 subtasks:
   - "[Mandatory catalog](../../subtasks/16_slide-type/80_mandatory-catalog.md)"
   - "[Byte stability](../../subtasks/13_memory/86_byte-stability.md)"
-agent-logs:
-  - "[Overnight, stages 3-5](../../agent-log/030_lp_overnight/summary.md)"
 ---
 
 ## Todo
@@ -133,6 +131,39 @@ a note reading *"blocked on 14"* stops meaning anything the moment 14 is renumbe
   broken refs in red. A reference resolving to nothing would otherwise just vanish: a
   stage listing four subtasks and rendering three looks exactly like a stage that
   listed three.
+
+### The body is free-form
+
+`## Todo` and `## Questions` are conventions, not a schema. A stage may carry whatever
+explains it: why it sits at this position, what its status means *in practice* (not that
+it is blocked, but on what and what would unblock it), what was tried and rejected, a
+caveat or a measurement.
+
+Keep it short, but do not keep it thin — the table row is the summary, and anything a
+reader needs beyond that summary belongs here. A stage whose body is three unexplained
+checkboxes has pushed its reasoning into somebody's head.
+
+What still does not belong: the work itself (that is the subtask) and questions that
+outlive the plan (those are the issue's notes).
+
+### The frontmatter ref list is for subtasks only
+
+`subtasks:` is the one structured reference list a stage carries. An `agent-logs:`
+list used to sit beside it; it is **retired**, and `agent-ks check issues` errors on
+one. Link the run from the stage **body** instead, like anything else the stage wants
+to point at:
+
+```markdown
+## The run
+
+Carried out by [010/01 the section loop](../../agent-log/010_lp_implement-sections/01_summary.md).
+```
+
+The frontmatter answers exactly one question — *which subtasks does this stage
+schedule?* — and a second structured list made it read as the place to put every link,
+which is what frontmatter must not become. A body link is also strictly more useful: it
+takes an **ordering label**, `agent-ks move` rewrites it, and it can sit inside a
+sentence that says why the run matters, which a list entry cannot.
 
 ### No `blocked-by:` field
 

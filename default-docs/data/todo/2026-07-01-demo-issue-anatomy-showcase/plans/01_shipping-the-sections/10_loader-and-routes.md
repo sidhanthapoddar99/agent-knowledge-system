@@ -6,8 +6,6 @@ who: claude
 status: done
 subtasks:
   - "[Backend](../../subtasks/02_build/01_backend.md)"
-agent-logs:
-  - "[Implement sections](../../agent-log/010_lp_implement-sections/summary.md)"
 ---
 
 ## Todo
@@ -16,3 +14,8 @@ agent-logs:
 
 ## Questions
 - [x] Does a section need to opt out of sub-doc URLs? — deferred, costs one field
+
+## The run
+
+Carried out by [010/01 the section loop](../../agent-log/010_lp_implement-sections/01_summary.md) —
+six rounds, and the loader survey in `02_working/011` is where the shape came from.

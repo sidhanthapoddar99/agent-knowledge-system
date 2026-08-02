@@ -218,25 +218,30 @@ Full contract: [28_plans.md](references/20_sections/28_plans.md).
 Nothing else opens one. Work you do inline gets a line in the plan and no folder.
 
 ```
-agent-log/NNN_<kind>_<name>/     ← one run, one goal
+agent-log/0NN_<kind>_<name>/     ← one run, one goal
 ├── settings.json                ←   optional: status → colours the kind symbol
-├── summary.md                   ←   REQUIRED. The one conclusive file.
-├── working/                     ←   one file per iteration, plus producers'
+├── 01_summary.md                ←   REQUIRED. The one conclusive file.
+├── 02_working/                  ←   one file per iteration, plus producers'
 │   ├── 010_<round>.md           ←     iteration 01 — the orchestrator's file
 │   ├── 011_<what-it-produced>.md←     a producer within it
 │   └── 020_<round>.md           ←     iteration 02
-├── debrief/                     ←   what leaves this run
+├── 03_debrief/                  ←   what leaves this run
 │   └── 01_handover.md
-└── 010_wf_<sub-goal>/           ←   a child agent log — same shape, recursively
+└── 100_wf_<sub-goal>/           ←   a child agent log — same shape, recursively
 ```
+
+**The prefix decides what a member of an agent log is** — `< 100` is one of the run's
+own three slots, `≥ 100` is a child agent log. Arithmetic rather than a reserved-name
+list, so nothing is ambiguous and a fourth slot needs no code to know its name; the
+numbers also state the order the three are meant to be read in.
 
 Kind codes go in the folder name: `lp` loop · `au` audit · `rf` refactor · `it`
 iteration · `wf` workflow; custom codes via `agentLogKinds` in the issue's
 `settings.json`.
 
 - **Read the agent log before starting work** — don't repeat an approach that failed.
-- **`summary.md` IS the brief.** Point a delegated agent at it and spend the prompt on
-  the delta. Never write a separate brief file.
+- **`01_summary.md` IS the brief.** Point a delegated agent at it and spend the prompt
+  on the delta. Never write a separate brief file.
 - **An iteration is a GROUP** — of subtasks, of executions, of agents — not one agent
   and not one subtask. The orchestrator writes the iteration file from what the round
   produced.
@@ -269,7 +274,7 @@ these files themselves or instruct their agents to.
 | Scope | Home |
 |---|---|
 | Within one round — *"pick A, B, C or D here"* | the iteration file |
-| Affects the rest of this run | the agent log's `debrief/` |
+| Affects the rest of this run | the agent log's `03_debrief/` |
 | Affects more than one run, or answers *"why did we do it this way?"* | the issue's `notes/` |
 | Still in flux | the issue's `brainstorm/` |
 
@@ -325,8 +330,8 @@ The plugin ships one entrypoint, **`agent-ks`**, on `PATH`. Tracker work uses th
 | `list` · `show` · `subtasks` · `agent-logs` · `review-queue` | read |
 | `set-state` · `add-comment` · `add-agent-log` | write |
 | `new-subtask` | scaffolds a subtask — Overview / References / Todo list / Outcomes and Next Steps / Details |
-| `new-agent-log` | scaffolds an agent log — `settings.json` + `summary.md`, and `working/` + `debrief/` as work lands |
-| `new-iteration` | opens the next iteration file in `working/`, head already written (`--producer` for a producer file) |
+| `new-agent-log` | scaffolds an agent log — `settings.json` + `01_summary.md`, and `02_working/` + `03_debrief/` as work lands |
+| `new-iteration` | opens the next iteration file in `02_working/`, head already written (`--producer` for a producer file) |
 | `new-plan` · `new-stage` | opens a plan, and a stage inside it (`--after` inserts) |
 
 Plus `agent-ks check issues`, `agent-ks find`, and `agent-ks move` (link-aware).
@@ -390,9 +395,10 @@ for a tight report — patterns in [41_searching.md](references/40_operations/41
   same fact in two places with nothing comparing them — and a stale label is invisible,
   because the link still resolves and only lies about position.
 
-  A segment with no numeric prefix contributes nothing and ends the run, so a file under
-  `working/` labels as `090`, not `020/090`. A target with no prefix takes no label at
-  all — it has no ordering identity to state.
+  A segment with no numeric prefix ends the run, so
+  `agent-log/020_wf_ship/02_working/090_x.md` labels as `020/02/090` — the walk stops at
+  `agent-log/`, which carries none. A target with no prefix takes no label at all: it
+  has no ordering identity to state.
 - **Frontmatter `title`** on every markdown file (Astro builds fail without it).
 - **`settings.json` may be `.jsonc`** (comments + trailing commas) — prefer `.jsonc`
   for the tracker root and annotate what each component/label means.

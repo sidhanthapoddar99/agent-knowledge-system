@@ -80,9 +80,10 @@ Examples:
 ├── agent-log/                       ← execution record (optional)
 │   └── 010_lp_implement-x/                    ← an agent log: NNN_<code>_<name>/
 │       ├── settings.json                      ← optional {"status": "…"}
-│       ├── summary.md                         ← the one conclusive file
-│       ├── working/010_round.md               ← first 2 digits = iteration, last = file
-│       └── debrief/01_handover.md             ← what leaves the run
+│       ├── 01_summary.md                      ← the one conclusive file
+│       ├── 02_working/010_round.md            ← first 2 digits = iteration, last = file
+│       ├── 03_debrief/01_handover.md          ← what leaves the run
+│       └── 100_wf_child-run/                  ← prefix ≥ 100 → a child agent log
 └── agent-memory/                    ← AI working state (optional)
     ├── memory.md                              ← pinned index — routes, never stores
     ├── knowledge/                             ← what's true, edited in place
@@ -101,7 +102,7 @@ Examples:
 | `notes/` | — | Finalized output + durable references — the *product*. **Up to 5 levels (up to 3 recommended).** See [Notes](./sub-docs/notes). |
 | `subtasks/` | — | The plan — atomic units of work with `NN_<slug>.md` naming and frontmatter state. **Up to 5 levels of grouping subfolders (up to 3 recommended)** — folder = label only (sidebar shows its **done/total**), leaves are first-class subtasks. See [Subtasks](./sub-docs/subtasks). |
 | `plans/` | — | **Order** — `NN_<name>/` plan folders, each with `overview.md` and `NN_<stage>.md` stages that reference the subtasks they schedule. See [Plans](./sub-docs/plans). |
-| `agent-log/` | — | **Execution + outcome** — `NNN_<code>_<name>/` per run (kind code in the name), holding `summary.md`, `working/` and `debrief/`. See [Agent Log](./sub-docs/agent-log). |
+| `agent-log/` | — | **Execution + outcome** — `NNN_<code>_<name>/` per run (kind code in the name), holding the numbered slots `01_summary.md`, `02_working/` and `03_debrief/`. See [Agent Log](./sub-docs/agent-log). |
 | `agent-memory/` | — | AI-mutable working state — a pinned `memory.md` index that **routes and never stores**, plus two **lifecycle** buckets: `knowledge/` (what's true and binding) and `history/` (how we got here, write-once). Order is not here: it lives in the top-level `plans/` section. See [Agent Memory](./sub-docs/agent-memory). |
 
 ### Subfolder rules (`subtasks/`, `notes/`, `brainstorm/`, `agent-memory/`, `agent-log/`)
@@ -120,10 +121,12 @@ All content sections except `comments/` accept nested subfolders up to 5 levels 
 
 **Notes / brainstorm / agent-memory specifics:**
 - Folder + file names are freeform; the `NN_` prefix is optional. Brainstorm files can carry a full-word kind (`NN_<kind>_<slug>.md`); agent-memory's `memory.md` pins first in the sidebar.
-- **Two places where numbering is load-bearing:** a plan's stage prefix is both its **order and its id** ("stage 20"), and inside an agent log's `working/` the first two digits are the **iteration** while the last is which file within it. `agent-memory/` is a map, so numbering there is pointless.
+- **Two places where numbering is load-bearing:** a plan's stage prefix is both its **order and its id** ("stage 20"), and inside an agent log's `02_working/` the first two digits are the **iteration** while the last is which file within it. `agent-memory/` is a map, so numbering there is pointless.
 
 **Agent-log specifics:**
-- The first level is one folder per run, `NNN_<code>_<name>/` — the 2-letter code is the kind (symbol in the sidebar; mapping via `agentLogKinds` in `settings.json`), tinted by that folder's optional `settings.json` status. Inside: `summary.md` pins first, then the reserved `working/` and `debrief/` folders, then any **child agent log** — anything else matching `NNN_<code>_<name>/`.
+- The first level is one folder per run, `NNN_<code>_<name>/` — the 2-letter code is the kind (symbol in the sidebar; mapping via `agentLogKinds` in `settings.json`), tinted by that folder's optional `settings.json` status.
+- Inside a run, the three slots are **numbered**: `01_summary.md`, `02_working/`, `03_debrief/`. The prefix is what states the reading order, in the same place every other section states it, so nothing has to be pinned.
+- A folder inside a run whose prefix is **`100` or above** is a **child agent log** — same `NNN_<code>_<name>/` shape, recursively. Below `100` (or unprefixed) it is one of the run's own slots. That makes slot-or-child a comparison on a number the filesystem already carries, rather than a list of reserved names only the loader knows — and it means a fourth slot costs `04_` and nothing else.
 
 `comments/` stays flat — it doesn't accept subfolders.
 
@@ -171,9 +174,10 @@ and of its own name, joined by `/`.
 
 The path is computed by walking up from the file collecting numeric prefixes and
 stopping at the first segment without one — so `subtasks/040_execution/100_x.md` is
-`040/100`, while `agent-log/020_wf_ship/working/090_x.md` is just `090`, because
-`working/` has no prefix and ends the run. A target with no prefix takes no label; it has
-no ordering identity to state.
+`040/100`, and `agent-log/020_wf_ship/02_working/090_x.md` is `020/02/090`, the walk
+ending at the unprefixed `agent-log/`. An unprefixed folder along the way ends it
+earlier: `notes/reference/030_x.md` is just `030`. A target with no prefix takes no
+label; it has no ordering identity to state.
 
 :::note[Two things keep it honest, and they are the reason this is a convention rather than a suggestion]
 `agent-ks move` recomputes the label whenever it rewrites the target, so renumbering a

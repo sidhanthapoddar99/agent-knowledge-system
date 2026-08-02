@@ -252,8 +252,8 @@ h3.ns-sub { font-size: var(--ui-text-body, 14px); font-weight: 600; text-transfo
       documented in the <a href="./suffix-icons">Suffix Icons</a> artifact.)
     </p>
 
-    <!-- Number & iteration badges -->
-    <div class="ns-fam">Number &amp; iteration badges</div>
+    <!-- Number badge, plain and status-tinted -->
+    <div class="ns-fam">Number badges</div>
     <div class="ns-glyphs">
 
       <div class="ns-glyph">
@@ -265,20 +265,20 @@ h3.ns-sub { font-size: var(--ui-text-body, 14px); font-weight: 600; text-transfo
         </div>
         <div class="ns-glyph__meta">
           <p class="ns-glyph__name">Neutral <code>NN</code> badge <span class="ns-scope">issue sidebar</span></p>
-          <p class="ns-glyph__desc">The order prefix, <em>relocated</em> to a leading badge (docs throw the prefix away; issues keep it). Padded to two digits. Appears on normal files, on folders, and on agent-log <code>0NN_</code> meta files (goal, summary, task-list…). Always neutral grey — order, not status.</p>
+          <p class="ns-glyph__desc">The order prefix, <em>relocated</em> to a leading badge (docs throw the prefix away; issues keep it). Padded to two digits. <strong>One rule for every row</strong> — ordinary files, folders, and an agent-log run's own numbered slots (<code>01_summary.md</code>, <code>02_working/</code>, <code>03_debrief/</code>). Neutral grey means <em>order, not status</em>.</p>
         </div>
       </div>
 
       <div class="ns-glyph">
         <div class="ns-sb">
-          <div class="ns-sb__row"><span class="ns-sb__num is-not-started">#3</span><span class="ns-sb__label">not started</span></div>
-          <div class="ns-sb__row"><span class="ns-sb__num is-in-progress">#3</span><span class="ns-sb__label">in progress</span></div>
-          <div class="ns-sb__row"><span class="ns-sb__num is-success">#3</span><span class="ns-sb__label">success</span></div>
-          <div class="ns-sb__row"><span class="ns-sb__num is-failed">#3</span><span class="ns-sb__label">failed</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__num">030</span><span class="ns-sb__label">declares no status</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__num is-in-progress">031</span><span class="ns-sb__label">in progress</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__num is-success">032</span><span class="ns-sb__label">done</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__num is-failed">033</span><span class="ns-sb__label">dropped</span></div>
         </div>
         <div class="ns-glyph__meta">
-          <p class="ns-glyph__name"><code>#&lt;iteration&gt;</code> badge — status-tinted <span class="ns-scope">issue sidebar</span></p>
-          <p class="ns-glyph__desc">An agent-log <strong>milestone</strong> (a file carrying an <code>iteration</code> field) replaces its <code>NN</code> badge with <code>#N</code>, tinted by the milestone's status: <span style="color:var(--color-text-muted)">grey = not-started</span>, <span style="color:var(--color-info)">blue = in-progress</span>, <span style="color:var(--color-success)">green = success</span>, <span style="color:var(--color-error)">red = failed</span>. A non-iteration <code>0NN_</code> meta file stays on the neutral <code>NN</code> badge — the tint is a milestone signal only.</p>
+          <p class="ns-glyph__name">The same <code>NN</code> badge, <strong>status-tinted</strong> <span class="ns-scope">issue sidebar</span></p>
+          <p class="ns-glyph__desc">A round inside <code>02_working/</code> that declares a <code>status:</code> in frontmatter has <em>its own prefix number</em> tinted by it — <span style="color:var(--color-info)">blue = in-progress</span>, <span style="color:var(--color-success)">green = done</span>, <span style="color:var(--color-error)">red = dropped</span>. A file that declares nothing keeps the default colour, because “said nothing” has to stay distinguishable from any status it might have declared. <strong>There is no second badge</strong>: the round-level signal rides on the number the filename already carries, while the activity folder's own dot says how the whole run went.</p>
         </div>
       </div>
 
@@ -687,7 +687,7 @@ h3.ns-sub { font-size: var(--ui-text-body, 14px); font-weight: 600; text-transfo
 
   <!-- ==================================================================== -->
   <section class="ns-section">
-    <h2>Agent-log — the meta-vs-milestone contrast</h2>
+    <h2>Agent-log — activities, their slots, and child activities</h2>
     <p class="ns-say">
       This is the richest section. An <strong>activity folder</strong> is named
       <code>NNN_&lt;code&gt;_&lt;name&gt;/</code> — a 2-letter kind code between the order prefix and
@@ -728,74 +728,92 @@ h3.ns-sub { font-size: var(--ui-text-body, 14px); font-weight: 600; text-transfo
       <em>value</em>: <code>70</code> (=70) sorts before <code>200</code> — not lexically.
     </div>
 
-    <h3 class="ns-sub">Inside an activity folder — <code>0NN_</code> meta vs <code>MNN_</code> milestone</h3>
+    <h3 class="ns-sub">Inside an activity folder — the numbered slots, then child activities</h3>
     <p class="ns-say">
-      This is the contrast to internalize. The reserved <strong><code>0NN_</code> slot files</strong>
-      (goal / summary / task_list / working / benchmark / notes) show a <strong>neutral NN badge</strong>,
-      exactly like a folder. A <strong>milestone</strong> — any file carrying an
-      <code>iteration:</code> frontmatter — instead shows a <strong><code>#&lt;iteration&gt;</code> badge,
-      status-tinted</strong>. The <code>0NN</code> bucket always sorts first; milestones follow, by iteration.
+      An activity holds three <strong>slots</strong>, and they are numbered:
+      <code>01_summary.md</code> (required — the run's one conclusive file),
+      <code>02_working/</code> (one file per round), <code>03_debrief/</code> (what leaves the run).
+      Anything else that is a folder is a <strong>child activity</strong>, and the way you tell the
+      two apart is the prefix: <strong>below <code>100</code> is a slot, <code>100</code> and above
+      is a child activity</strong>. Slots are omitted when they do not apply — they are never kept
+      present-but-blank, and the remaining numbers do not close up.
     </p>
     <div class="ns-split">
       <div class="ns-panel">
         <div class="ns-panel__cap">On disk — agent-log/010_lp_implement-sections/</div>
-<pre class="ns-tree"><span class="p">00_</span><span class="d">goal</span>.md
-<span class="p">01_</span><span class="d">summary</span>.md
-<span class="p">02_</span><span class="d">task_list</span>.md
-<span class="p">03_</span><span class="d">working</span>/            folder form
-<span class="p">04_</span><span class="d">benchmark</span>.md
-<span class="p">05_</span><span class="d">notes</span>.md
-<span class="p">101_</span><span class="d">loader-reader</span>.md    iteration: 1
-<span class="p">102_</span><span class="d">sidebar-sections</span>.md iteration: 2</pre>
+<pre class="ns-tree"><span class="d">settings.json</span>            optional {"status": "…"}
+<span class="p">01_</span><span class="d">summary</span>.md            required
+<span class="p">02_</span><span class="d">working</span>/              the rounds
+   <span class="p">010_</span><span class="d">loader-reader</span>.md
+   <span class="p">020_</span><span class="d">sidebar-sections</span>.md
+<span class="p">03_</span><span class="d">debrief</span>/
+   <span class="p">01_</span><span class="d">handover</span>.md
+<span class="p">100_</span>wf_<span class="d">migration</span>/         ≥ 100 → a CHILD activity</pre>
       </div>
       <div class="ns-panel">
         <div class="ns-panel__cap">Sidebar — expanded</div>
         <div class="ns-sb">
-          <div class="ns-sb__row"><span class="ns-sb__num">00</span><span class="ns-sb__label">goal</span></div>
           <div class="ns-sb__row"><span class="ns-sb__num">01</span><span class="ns-sb__label">summary</span></div>
-          <div class="ns-sb__row"><span class="ns-sb__num">02</span><span class="ns-sb__label">task list</span></div>
-          <div class="ns-sb__row"><span class="ns-sb__chev"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg></span><span class="ns-sb__num">03</span><span class="ns-sb__label">working</span><span class="ns-sb__count">2</span></div>
-          <div class="ns-sb__row"><span class="ns-sb__num">04</span><span class="ns-sb__label">benchmark</span></div>
-          <div class="ns-sb__row"><span class="ns-sb__num">05</span><span class="ns-sb__label">notes</span></div>
-          <div class="ns-sb__row"><span class="ns-sb__num is-success">#1</span><span class="ns-sb__label">loader reader</span></div>
-          <div class="ns-sb__row"><span class="ns-sb__num is-success">#2</span><span class="ns-sb__label">sidebar sections</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__chev"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg></span><span class="ns-sb__num">02</span><span class="ns-sb__label">working</span><span class="ns-sb__count">2</span></div>
+          <div class="ns-sb__row ns-sb__row--l1"><span class="ns-sb__num">010</span><span class="ns-sb__label">loader reader</span></div>
+          <div class="ns-sb__row ns-sb__row--l1"><span class="ns-sb__num">020</span><span class="ns-sb__label">sidebar sections</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__chev"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg></span><span class="ns-sb__num">03</span><span class="ns-sb__label">debrief</span><span class="ns-sb__count">1</span></div>
+          <div class="ns-sb__row ns-sb__row--l1"><span class="ns-sb__num">01</span><span class="ns-sb__label">handover</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__chev"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg></span><span class="ns-sb__num">100</span><span class="ns-sb__kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" x2="6" y1="3" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg></span><span class="ns-sb__label">migration</span><span class="ns-sb__count">3</span></div>
         </div>
       </div>
     </div>
     <div class="ns-note">
-      A <code>0NN_</code> slot may be a <strong>file or a folder</strong> (<code>03_working.md</code>
-      vs <code>03_working/</code>) and may be omitted when not applicable — either way its badge is
-      the neutral order prefix, never a status tint. Status colour is a <em>milestone</em> signal only.
+      <strong>Nothing is pinned, and the numbers are why.</strong> The rows above are in plain
+      ascending prefix order — the same sort every other section uses. The reading order
+      <em>summary → working → debrief</em> used to be enforced by a hand-written rule that matched a
+      file called <code>summary.md</code> and floated it to the top; numbering the slots states that
+      order in the filename, where every other section already states it, and the special case could
+      be deleted rather than renamed.
+    </div>
+    <div class="ns-note">
+      <strong>Slot or child activity is arithmetic, not a name list.</strong> It used to be that a
+      folder was a slot if it was <em>called</em> <code>working</code> or <code>debrief</code> — a
+      rule the loader carried and the filesystem could not see. Comparing against <code>100</code>
+      instead buys two things: a fourth slot costs <code>04_</code> and no code change, and a child
+      activity may be named anything at all, including <code>working</code>, which the old name list
+      silently forbade. A folder with <strong>no prefix</strong> counts as a slot — it is not a run,
+      and promoting it to one would invent a run that never happened.
     </div>
 
-    <h3 class="ns-sub">Milestone tints — grey / blue / green / red</h3>
+    <h3 class="ns-sub">Status tints — on the round's own number</h3>
     <p class="ns-say">
-      The <code>#N</code> badge is tinted by the milestone’s <code>status:</code> frontmatter
-      (<code>200_it_stress/</code> exercises all four):
-      <span class="ns-chip is-success">#1</span> success = green,
-      <span class="ns-chip is-failed">#2</span> failed = red,
-      <span class="ns-chip is-in-progress">#3</span> in-progress = blue,
-      <span class="ns-chip">#4</span> not-started = grey.
+      A file inside <code>02_working/</code> may declare a <code>status:</code>, which tints
+      <em>its own</em> prefix badge — there is no separate badge for it:
+      <span class="ns-chip is-success">032</span> done = green,
+      <span class="ns-chip is-failed">033</span> dropped = red,
+      <span class="ns-chip is-in-progress">031</span> in-progress = blue,
+      <span class="ns-chip">030</span> nothing declared = the default colour. That last one matters:
+      untinted has to stay distinguishable from any status the file might have declared.
     </p>
     <div class="ns-split">
       <div class="ns-panel">
-        <div class="ns-panel__cap">On disk — agent-log/200_it_stress/</div>
-<pre class="ns-tree"><span class="p">00_</span><span class="d">goal</span>.md
-<span class="p">101_</span><span class="d">step-a</span>.md   iteration: 1  status: success
-<span class="p">102_</span><span class="d">step-b</span>.md   iteration: 2  status: failed
-<span class="p">103_</span><span class="d">step-c</span>.md   iteration: 3  status: in-progress
-<span class="p">104_</span><span class="d">step-d</span>.md   iteration: 4  status: not-started</pre>
+        <div class="ns-panel__cap">On disk — agent-log/200_it_stress/02_working/</div>
+<pre class="ns-tree"><span class="p">030_</span><span class="d">round-ledger</span>.md   (no status)
+<span class="p">031_</span><span class="d">step-a</span>.md         status: in-progress
+<span class="p">032_</span><span class="d">step-b</span>.md         status: done
+<span class="p">033_</span><span class="d">step-c</span>.md         status: dropped</pre>
       </div>
       <div class="ns-panel">
         <div class="ns-panel__cap">Sidebar — expanded</div>
         <div class="ns-sb">
-          <div class="ns-sb__row"><span class="ns-sb__num">00</span><span class="ns-sb__label">goal</span></div>
-          <div class="ns-sb__row"><span class="ns-sb__num is-success">#1</span><span class="ns-sb__label">step a</span></div>
-          <div class="ns-sb__row"><span class="ns-sb__num is-failed">#2</span><span class="ns-sb__label">step b</span></div>
-          <div class="ns-sb__row"><span class="ns-sb__num is-in-progress">#3</span><span class="ns-sb__label">step c</span></div>
-          <div class="ns-sb__row"><span class="ns-sb__num is-not-started">#4</span><span class="ns-sb__label">step d</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__num">030</span><span class="ns-sb__label">round ledger</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__num is-in-progress">031</span><span class="ns-sb__label">step a</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__num is-success">032</span><span class="ns-sb__label">step b</span></div>
+          <div class="ns-sb__row"><span class="ns-sb__num is-failed">033</span><span class="ns-sb__label">step c</span></div>
         </div>
       </div>
+    </div>
+    <div class="ns-note">
+      The first two digits of a round's prefix are the <strong>iteration</strong> and the last is
+      which file within it — <code>0</code> for the orchestrator's own file, <code>1</code>–<code>9</code>
+      for a producer's. That numbering is unchanged by the slot numbering above, and it is why
+      <code>02_working/</code> stays flat.
     </div>
   </section>
 
@@ -873,10 +891,10 @@ h3.ns-sub { font-size: var(--ui-text-body, 14px); font-weight: 600; text-transfo
         <p><code>70_nt_test</code>: <code>nt</code> isn’t a declared kind → no symbol, and the label keeps the code.</p>
       </div>
       <div class="ns-case">
-        <h4>Meta vs milestone badge</h4>
-        <div class="ns-sb__row" style="padding-left:0"><span class="ns-sb__num">00</span><span class="ns-sb__label">goal</span></div>
-        <div class="ns-sb__row" style="padding-left:0"><span class="ns-sb__num is-success">#1</span><span class="ns-sb__label">loader reader</span></div>
-        <p><code>0NN_</code> slot = neutral <span class="ns-chip">00</span>; an <code>iteration:</code> file = status-tinted <span class="ns-chip is-success">#1</span>.</p>
+        <h4>Slot or child activity?</h4>
+        <div class="ns-sb__row" style="padding-left:0"><span class="ns-sb__num">02</span><span class="ns-sb__label">working</span></div>
+        <div class="ns-sb__row" style="padding-left:0"><span class="ns-sb__num">100</span><span class="ns-sb__label">migration</span></div>
+        <p>Inside an activity, a folder prefixed below <code>100</code> is one of the run's own slots; <code>100</code> and above is a child activity. Unprefixed counts as a slot.</p>
       </div>
       <div class="ns-case">
         <h4>Type glyph</h4>
@@ -942,9 +960,9 @@ h3.ns-sub { font-size: var(--ui-text-body, 14px); font-weight: 600; text-transfo
         </tr>
         <tr>
           <td><code>agent-log/</code></td>
-          <td><code>NNN_&lt;code&gt;_&lt;name&gt;/</code> · slots <code>0NN_</code> · milestones carry <code>iteration:</code></td>
+          <td><code>NNN_&lt;code&gt;_&lt;name&gt;/</code> · slots <code>01_summary.md</code> / <code>02_working/</code> / <code>03_debrief/</code> · child activity at <code>100_</code> and up</td>
           <td><span class="ns-tag opt">optional</span></td>
-          <td>Folder: kind symbol + NN + name + count. Slot: neutral NN. Milestone: status-tinted <code>#N</code></td>
+          <td>Activity folder: kind symbol + NN + name + count. Everything inside: neutral NN, tinted when the file declares a <code>status:</code></td>
         </tr>
         <tr>
           <td><code>agent-memory/</code></td>

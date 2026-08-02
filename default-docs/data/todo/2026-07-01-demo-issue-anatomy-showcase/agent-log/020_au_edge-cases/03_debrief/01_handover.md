@@ -18,7 +18,7 @@ keeps the pointer and nothing else.
 - **The mixed-width claim will look plausible again.** Reading the parser
   suggests `05_` and `010_` sort wrongly. They do not — numeric comparison is
   applied before the string. It is refuted in
-  [the merged verdict](../working/010_findings.md); check there before spending a
+  [the merged verdict](../02_working/010_findings.md); check there before spending a
   round on it.
 - **Rendering was deliberately out of scope**, so nothing here says whether a
   dropped folder is *visible* as dropped. That is still unaudited.

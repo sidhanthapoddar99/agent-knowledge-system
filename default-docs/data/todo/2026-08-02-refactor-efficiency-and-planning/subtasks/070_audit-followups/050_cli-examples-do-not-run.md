@@ -27,7 +27,7 @@ bun new-plan.mjs 2026-08-03-cli-smoke --name audit-followup
 
 # References
 
-- [reader 1 — Opus](../../agent-log/020_wf_ship-the-split/working/071_verdict-opus.md)
+- [reader 1 — Opus](../../agent-log/020_wf_ship-the-split/02_working/071_verdict-opus.md)
   — reported it under *flatly wrong*, as an inconsistency between the old
   positional grammar and the new commands
 - The commands themselves: `plugins/agent-ks/skills/agent-ks-docs/scripts/issues/`

@@ -13,8 +13,9 @@
  *   • Subtasks have valid `status` (open|blocked|in-progress|input-needed|review|done|dropped)
  *   • Sub-folders are the known anatomy: subtasks / notes / brainstorm /
  *     plans / agent-log / agent-memory / comments (unknown dirs → warning)
- *   • Agent-log grammar: NNN_<code>_<name>/ folders, a required summary.md, the
- *     reserved working/ + debrief/ names, and iteration-file numbering
+ *   • Agent-log grammar: NNN_<code>_<name>/ folders, a required 01_summary.md,
+ *     the numbered 02_working/ + 03_debrief/ slots, the prefix>=100 rule that
+ *     separates a child activity from a slot, and iteration-file numbering
  *   • Plans: plan folders only, the reserved overview.md, stage numbering, and
  *     — the one ERROR here — every `subtasks:` reference resolving to a real
  *     subtask, because a broken reference silently under-counts a stage
@@ -87,13 +88,17 @@ const AGENT_MEMORY_FM_KEYS = new Set([...NOTE_FM_KEYS]);
 // `iteration` is retired — the `011_` filename owns the number, and a
 // frontmatter copy is a second place to keep it right. It stays in this set
 // because it is all over the historic record, which is NOT migrated; the
-// retirement is enforced on new-shape files only (under `working/`), where it
-// is an actual mistake rather than a fact about how things used to be written.
+// retirement is enforced on new-shape files only (under `02_working/`), where
+// it is an actual mistake rather than a fact about how things used to be
+// written.
 const AGENT_LOG_FM_KEYS = new Set([
   'title', 'iteration', 'agent', 'status', 'date', 'sidebar_label', 'color',
 ]);
+// `agent-logs` is deliberately ABSENT — retired 2026-08-03, and reported by its
+// own error below rather than as a generic unknown-key warning, because the fix
+// is a move rather than a deletion and the author needs telling where to.
 const PLAN_STAGE_FM_KEYS = new Set([
-  'title', 'outcome', 'notes', 'who', 'status', 'subtasks', 'agent-logs', 'sidebar_label', 'color',
+  'title', 'outcome', 'notes', 'who', 'status', 'subtasks', 'sidebar_label', 'color',
 ]);
 const PLAN_SETTINGS_KEYS = new Set(['title', 'status', 'description']);
 // GitHub-flavoured callout opener, any kind. Used to check that a round marked
@@ -369,6 +374,9 @@ function lintPlans(id, issueDir) {
       const fm = parsed.data || {};
       reportDrift(stageLabel, unknownKeys(fm, PLAN_STAGE_FM_KEYS), PLAN_STAGE_FM_KEYS);
 
+      if (fm['agent-logs'] !== undefined) {
+        errors.push(`${stageLabel}: \`agent-logs:\` is retired — the frontmatter ref list is for SUBTASKS only. Link the run from the stage BODY like anything else, with an ordering label in the text: \`[010/01 the section loop](../../agent-log/010_lp_implement-sections/01_summary.md)\``);
+      }
       if (!fm.title) warnings.push(`${stageLabel}: no \`title\` — the generated heading and its anchor both come from it, so a missing title makes the stage un-linkable by name`);
       if (fm.status !== undefined && !normalizeStatus(fm.status)) {
         errors.push(`${stageLabel}: invalid status \`${fm.status}\` (fixed vocabulary: ${STATUSES.join('|')})`);
@@ -380,7 +388,7 @@ function lintPlans(id, issueDir) {
       // The one error that matters. A ref that names nothing shrinks this
       // stage's subtask count, and nothing downstream can tell that number
       // from a right one.
-      for (const [field, raw] of [['subtasks', fm.subtasks], ['agent-logs', fm['agent-logs']]]) {
+      for (const [field, raw] of [['subtasks', fm.subtasks]]) {
         const list = Array.isArray(raw) ? raw : raw == null ? [] : [raw];
         for (const entry of list) {
           const target = planRefTarget(entry, planDir, issueDir);
@@ -672,16 +680,42 @@ for (const entry of issueFolders) {
   lintOrderingLabels(id, folder);
 
   // agent-log grammar. An agent log is NNN_<code>_<name>/ — one run, one goal —
-  // holding summary.md (required), the reserved working/ and debrief/ folders,
-  // and any number of CHILD agent logs matching the same pattern. Everything
-  // else nested inside is a child log by construction, so there is no ambiguity
-  // at read time.
+  // holding 01_summary.md (required) and the numbered 02_working/ + 03_debrief/
+  // slots, plus any number of CHILD agent logs.
+  //
+  // Slot or child is ARITHMETIC: a nested folder with a prefix below 100 is one
+  // of the run's own slots, 100 and up is a child activity. That replaced a
+  // hard-coded {working, debrief} name set, which could not admit a fourth slot
+  // and silently forbade a child ever being *named* `working`. Mirrors
+  // AGENT_LOG_CHILD_MIN_PREFIX in src/loaders/issues.ts.
   const logDir = path.join(folder, 'agent-log');
-  const LOG_RESERVED = new Set(['working', 'debrief']);
+  const CHILD_MIN_PREFIX = 100;
+  const SLOT_NAMES = { '01': '01_summary.md', '02': '02_working', '03': '03_debrief' };
+  /** A nested folder is a slot (not a child activity) when its prefix is < 100,
+   *  or when it has no prefix at all — an unprefixed folder is not an activity,
+   *  and reading it as one would invent a run that does not exist. */
+  const isSlotFolder = (name) => {
+    const m = name.match(/^(\d{1,5})[_-]/);
+    return !m || parseInt(m[1], 10) < CHILD_MIN_PREFIX;
+  };
 
-  // Markers of the RETIRED six-slot shape: the pinned `0NN` slots and the
-  // `MNN_` milestone files. A folder carrying either is history.
-  const LEGACY_SLOT = /^0\d_(goal|summary|task_list|working|benchmark|notes)$/;
+  // Markers of the RETIRED six-slot shape. A folder carrying one is history and
+  // every new-shape rule below is skipped for it.
+  //
+  // **Only names UNIQUE to the retired shape may appear here**, and getting that
+  // wrong is silent in the worst direction. This was `/^0\d_(goal|summary|
+  // task_list|working|benchmark|notes)$/`, written when the current shape's
+  // slots were unnumbered. Numbering them made `01_summary` and `02_working`
+  // names that BOTH shapes use — so every new-shape agent log would have
+  // matched, been classified as history, and had all of its checks skipped.
+  // The validator would have gone quiet on the whole section and reported a
+  // clean run, which is indistinguishable from having nothing to say.
+  //
+  // `01_summary` and a bare `working` are therefore absent by necessity, not by
+  // oversight. The five below exist only in the six-slot shape: the current one
+  // has no goal / task-list / benchmark / notes slot at all, and its working
+  // folder is `02_`, never `03_`.
+  const LEGACY_SLOT = /^(00_goal|02_task_list|03_working|04_benchmark|05_notes)$/;
   const LEGACY_MILESTONE = /^[1-9]\d{2,4}_.+\.md$/;
 
   function lintAgentLogFolder(absDir, rel, depth) {
@@ -717,13 +751,25 @@ for (const entry of issueFolders) {
     );
     if (isLegacy) return;
 
-    if (!files.some((f) => f.isFile() && f.name === 'summary.md')) {
-      warnings.push(`${rel}/: no \`summary.md\` — it is the one conclusive file for the run (State / Goal / Todo / Out of Scope / Outcome), and it IS the brief agents are pointed at`);
+    if (!files.some((f) => f.isFile() && f.name === '01_summary.md')) {
+      warnings.push(`${rel}/: no \`01_summary.md\` — it is the one conclusive file for the run (State / Goal / Todo / Out of Scope / Outcome), and it IS the brief agents are pointed at`);
+    }
+
+    // The three slots are numbered so their READ ORDER is stated in the filename
+    // rather than enforced by a sort rule in the layout. An unnumbered `working/`
+    // or `debrief/` still renders — it just sorts by name into the middle of the
+    // child activities, which is the one thing the numbering exists to prevent.
+    for (const f of files) {
+      const base = f.name.replace(/\.md$/, '');
+      if (/^(summary|working|debrief)$/.test(base)) {
+        const want = base === 'summary' ? '01_summary.md' : base === 'working' ? '02_working/' : '03_debrief/';
+        warnings.push(`${rel}/${f.name}: unnumbered slot — rename to \`${want}\`. The prefix is what puts the run's own slots ahead of its child activities (which start at ${CHILD_MIN_PREFIX}); without it this sorts lexically among them`);
+      }
     }
 
     // Iteration files. First two digits = the iteration, last = which file
     // within it (0 = the iteration file, 1-9 = a producer's own file).
-    const workingDir = path.join(absDir, 'working');
+    const workingDir = path.join(absDir, '02_working');
     if (fs.existsSync(workingDir)) {
       const byIteration = new Map();
       for (const f of fs.readdirSync(workingDir, { withFileTypes: true })) {
@@ -733,7 +779,7 @@ for (const entry of issueFolders) {
         const pm = base.match(/^(\d{2})(\d)[_-]/);
         if (!pm) {
           if (/^\d/.test(base)) {
-            warnings.push(`${rel}/working/${f.name}: prefix is not NNN_ — the first two digits are the iteration and the last is which file within it (0 = the iteration file, 1-9 = producers)`);
+            warnings.push(`${rel}/02_working/${f.name}: prefix is not NNN_ — the first two digits are the iteration and the last is which file within it (0 = the iteration file, 1-9 = producers)`);
           }
           continue;
         }
@@ -750,13 +796,13 @@ for (const entry of issueFolders) {
           body = parsed.content || '';
         } catch { continue; } // malformed fm already reported by the generic walk
         if (fm.iteration !== undefined) {
-          warnings.push(`${rel}/working/${f.name}: carries \`iteration:\` — retired. The \`${pm[1]}${pm[2]}_\` filename owns the number, and a frontmatter copy is a second place to keep it right`);
+          warnings.push(`${rel}/02_working/${f.name}: carries \`iteration:\` — retired. The \`${pm[1]}${pm[2]}_\` filename owns the number, and a frontmatter copy is a second place to keep it right`);
         }
         const iterStatus = normalizeStatus(fm.status);
         if (fm.status !== undefined && !iterStatus) {
-          errors.push(`${rel}/working/${f.name}: invalid status \`${fm.status}\` (fixed vocabulary: ${STATUSES.join('|')}). \`status\` says whether the agent FINISHED; what it found goes in \`# Outcome\``);
+          errors.push(`${rel}/02_working/${f.name}: invalid status \`${fm.status}\` (fixed vocabulary: ${STATUSES.join('|')}). \`status\` says whether the agent FINISHED; what it found goes in \`# Outcome\``);
         } else if (iterStatus && !AGENT_LOG_STATUSES.includes(iterStatus)) {
-          errors.push(`${rel}/working/${f.name}: status \`${iterStatus}\` is not meaningful for a ROUND (${AGENT_LOG_STATUSES.join('|')}). \`blocked\` and \`review\` describe a work item — a round either ran or it did not`);
+          errors.push(`${rel}/02_working/${f.name}: status \`${iterStatus}\` is not meaningful for a ROUND (${AGENT_LOG_STATUSES.join('|')}). \`blocked\` and \`review\` describe a work item — a round either ran or it did not`);
         }
         // A round that did not land carries TWO signals, and they do different
         // jobs: `status: dropped` is the scannable one, the callout is the one
@@ -764,29 +810,41 @@ for (const entry of issueFolders) {
         // compresses the only useful facts (what failed, what it cost, what was
         // learned) into a word that reads as if it already told you them.
         if (iterStatus === 'dropped' && !ROUND_FAILURE_CALLOUT.test(body)) {
-          warnings.push(`${rel}/working/${f.name}: \`status: dropped\` with no callout — a round that did not land says why in a \`> [!WARNING]\` / \`> [!IMPORTANT]\` callout. The status makes it scannable; the callout is what a reader actually needs`);
+          warnings.push(`${rel}/02_working/${f.name}: \`status: dropped\` with no callout — a round that did not land says why in a \`> [!WARNING]\` / \`> [!IMPORTANT]\` callout. The status makes it scannable; the callout is what a reader actually needs`);
         }
       }
       for (const [iteration, list] of byIteration) {
         if (list.length > 1 && !list.some((f) => f.digit === 0)) {
-          warnings.push(`${rel}/working/: iteration ${iteration} has ${list.length} producer files but no iteration file (\`${iteration}0_…\`) — the round's own record is what ties them together`);
+          warnings.push(`${rel}/02_working/: iteration ${iteration} has ${list.length} producer files but no iteration file (\`${iteration}0_…\`) — the round's own record is what ties them together`);
         }
       }
     }
 
     for (const f of files) {
-      if (f.isFile() && f.name.endsWith('.md') && f.name !== 'summary.md') {
-        warnings.push(`${rel}/${f.name}: loose file at the agent log's root — iteration files go in working/, anything leaving the run goes in debrief/`);
+      if (f.isFile() && f.name.endsWith('.md') && f.name !== '01_summary.md') {
+        warnings.push(`${rel}/${f.name}: loose file at the agent log's root — iteration files go in 02_working/, anything leaving the run goes in 03_debrief/`);
         continue;
       }
-      if (!f.isDirectory() || LOG_RESERVED.has(f.name)) continue;
+      if (!f.isDirectory()) continue;
+      if (isSlotFolder(f.name)) {
+        // A slot, by prefix. Name it as one, or a reader has to guess.
+        //
+        // A bare `working`/`debrief` is skipped here because the unnumbered-slot
+        // pass above already reported it, with the exact rename. Two warnings
+        // for one problem is how a validator teaches people to skim it.
+        if (/^(working|debrief)$/.test(f.name)) continue;
+        if (f.name !== '02_working' && f.name !== '03_debrief') {
+          warnings.push(`${rel}/${f.name}/: prefix is below ${CHILD_MIN_PREFIX}, so this reads as one of the run's own slots rather than a child activity — the slots are \`${SLOT_NAMES['02']}/\` and \`${SLOT_NAMES['03']}/\`. A child activity is \`NXX_<code>_<name>/\` with a prefix of ${CHILD_MIN_PREFIX} or more`);
+        }
+        continue;
+      }
 
-      // A nested folder that is not reserved is a CHILD agent log.
+      // Prefix >= 100 — a CHILD agent log.
       const childRel = `${rel}/${f.name}`;
       const m = f.name.match(/^(\d{2,5})_(.+)$/);
       const codeMatch = m ? m[2].match(/^([a-z]{2})_(.+)$/) : null;
       if (!m) {
-        warnings.push(`${childRel}/: no numeric order prefix — sorts last; a child agent log is NNN_<code>_<name>/`);
+        warnings.push(`${childRel}/: no numeric order prefix — sorts last; a child agent log is NXX_<code>_<name>/ with a prefix of ${CHILD_MIN_PREFIX} or more`);
       } else if (!codeMatch) {
         warnings.push(`${childRel}/: no kind code after the prefix — renders without a symbol (codes: ${[...effectiveKindCodes].sort().join('/')})`);
       } else if (!effectiveKindCodes.has(codeMatch[1])) {
@@ -822,7 +880,7 @@ for (const entry of issueFolders) {
       }
 
       // A grouping folder (no kind code) holds agent logs rather than being one;
-      // recursing into it as a log would demand a summary.md it should not have.
+      // recursing into it as a log would demand an 01_summary.md it should not have.
       if (codeMatch) lintAgentLogFolder(path.join(logDir, e.name), `${id}/agent-log/${e.name}`, 1);
     }
   }

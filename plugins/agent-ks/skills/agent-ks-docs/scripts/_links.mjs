@@ -98,10 +98,20 @@ const ORDERING_LABEL_RE = /^(\d{2,5}(?:\/\d{2,5})*)(\s+)(\S[\s\S]*)$/;
  * segments ending at the file itself. Purely local — it knows nothing about
  * sections, so it behaves the same in a tracker and in a docs tree.
  *
- *   subtasks/040_execution/100_migration.md   → "040/100"
- *   notes/70_reference.md                     → "70"
- *   agent-log/020_wf_ship/working/090_x.md    → "090"   (`working` breaks the run)
- *   agent-log/020_wf_ship/summary.md          → ""      (no prefix, no identity)
+ *   subtasks/040_execution/100_migration.md       → "040/100"
+ *   notes/70_reference.md                         → "70"
+ *   agent-log/020_wf_ship/01_summary.md           → "020/01"
+ *   agent-log/020_wf_ship/02_working/090_x.md     → "020/02/090"
+ *   agent-log/010_lp_a/100_wf_child/01_summary.md → "010/100/01"
+ *
+ * **Numbering the agent-log slots lengthened these, and that was a real fix.**
+ * While the slot was called `working/`, the unprefixed segment broke the run and
+ * a round file's label came out as a bare `090`. That was a deliberate
+ * under-report, recorded as such when the ordering label shipped: teaching this
+ * function which folder names are "pass-through" would have put tracker
+ * knowledge into a library the docs side also uses. `02_working/` carries a
+ * prefix, so the purely local rule now yields the full `020/02/090` — the
+ * accurate answer, reached by removing a special case rather than adding one.
  */
 export function orderingPathFor(absPath) {
   const segments = absPath.split(path.sep).filter(Boolean);

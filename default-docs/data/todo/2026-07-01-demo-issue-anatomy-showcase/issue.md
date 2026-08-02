@@ -19,14 +19,14 @@ It intentionally exercises:
 - **Agent Logs** — **three**, and deliberately not one per kind. A catalogue of every
   code and shape produced a fixture full of one- and two-file stubs, which teaches the
   wrong thing about what a log is for. What is here instead:
-  - [A loop that ran six rounds](./agent-log/010_lp_implement-sections/summary.md) —
+  - [A loop that ran six rounds](./agent-log/010_lp_implement-sections/01_summary.md) —
     producer files beside their iteration file, one producer folder holding several
     artifacts (including a `.mmd` diagram), a debrief, and a **child agent log** whose
     status is `in-progress` while its parent is `done`.
-  - [An audit](./agent-log/020_au_edge-cases/summary.md) — a pair is **two** files plus
+  - [An audit](./agent-log/020_au_edge-cases/01_summary.md) — a pair is **two** files plus
     the merged verdict, because one half reproducing a defect is not outvoted by the
     other half finding nothing.
-  - [An abandoned experiment](./agent-log/030_ex_one-pass-spike/summary.md) — the custom
+  - [An abandoned experiment](./agent-log/030_ex_one-pass-spike/01_summary.md) — the custom
     `ex` kind from `settings.json`, `status: dropped`, and both signals a failed run
     needs: the colour, and the callout saying what actually happened.
 - **Agent Memory** — a `memory.md` index, a flat topic file, and the two folders the

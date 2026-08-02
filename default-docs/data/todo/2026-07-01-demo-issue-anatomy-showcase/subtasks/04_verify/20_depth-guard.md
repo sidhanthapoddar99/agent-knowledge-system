@@ -10,7 +10,7 @@ error.
 
 # References
 
-- [The merged verdict](../../agent-log/020_au_edge-cases/working/010_findings.md) — confirmed, verdict **fix**
+- [The merged verdict](../../agent-log/020_au_edge-cases/02_working/010_findings.md) — confirmed, verdict **fix**
 
 # Todo list
 

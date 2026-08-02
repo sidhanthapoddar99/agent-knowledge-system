@@ -18,10 +18,10 @@ breaking something it did not break, or take blame for it.
 
 # References
 
-- [reader 2 — Sonnet](../../agent-log/020_wf_ship-the-split/working/072_verdict-sonnet.md)
+- [reader 2 — Sonnet](../../agent-log/020_wf_ship-the-split/02_working/072_verdict-sonnet.md)
   — the append-only contradiction, flagged as *"technically wrong in both,
   identically"*
-- [reader 3 — sol](../../agent-log/020_wf_ship-the-split/working/073_verdict-sol.md)
+- [reader 3 — sol](../../agent-log/020_wf_ship-the-split/02_working/073_verdict-sol.md)
   — the `title` requirement
 
 # Todo list
@@ -33,7 +33,7 @@ breaking something it did not break, or take blame for it.
 - [ ] **`43_moving-restructuring.md`** — states flatly that `agent-log/` is
       append-only, while each version's own agent-log document names a section
       that is rewritten in place (old: `02_task_list.md`; new: `# State` in
-      `summary.md`)
+      `01_summary.md`)
 - [ ] Confirm both really are unchanged between the two versions before acting —
       the claim is the readers', and it is the thing that puts them in this file
       rather than in [`060`](./060_countable-defects.md)

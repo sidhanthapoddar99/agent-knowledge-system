@@ -20,7 +20,7 @@ what it should be when the subtasks it references disagree.
 
 # References
 
-- [reader 3 — sol](../../agent-log/020_wf_ship-the-split/working/073_verdict-sol.md)
+- [reader 3 — sol](../../agent-log/020_wf_ship-the-split/02_working/073_verdict-sol.md)
   — found it alone, under *instructions I could not follow*
 - The wording that already exists and should be mirrored:
   `default-docs/data/user-guide/19_issues/05_sub-docs/09_plans.md`

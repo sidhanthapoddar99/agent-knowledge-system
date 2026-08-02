@@ -180,8 +180,12 @@ function containsActive(t: SubdocTree): boolean {
 
 /** A renderable entry at this tree level — a leaf file or a subgroup folder.
  *  Files and folders are interleaved and ordered by the precedence chain below
- *  (bucket → iteration → numeric prefix value → lexicographic), so a numbered
- *  folder slots in among numbered files by value instead of by string. */
+ *  (`memory.md` pin → numeric prefix value → lexicographic), so a numbered
+ *  folder slots in among numbered files by value instead of by string.
+ *
+ *  That interleaving is what makes an agent log's `01_summary.md` (a file),
+ *  `02_working/` and `03_debrief/` (folders) and its child activities at `100_`
+ *  and up fall into one correct order with no special case. */
 interface SubdocEntry {
   kind: 'leaf' | 'group';
   sortName: string;
@@ -203,15 +207,17 @@ const entries: SubdocEntry[] = [
 /**
  * Ordering — precedence chain:
  *   0. `memory.md` pin (agent-memory only): the section's index / entry point
- *      always sorts first.
- *   1. `summary.md` pin (agent-log only): the run's one conclusive file sorts
- *      first inside its folder, for the same reason — it is the entry point.
- *   2. Numeric prefix *value* — so mixed widths (`20_` vs `100_`) order by value,
+ *      always sorts first. It carries no prefix, so nothing else can express it.
+ *   1. Numeric prefix *value* — so mixed widths (`20_` vs `100_`) order by value,
  *      not lexically. Unprefixed sorts last (+∞).
- *   3. Lexicographic on the raw name — the final tie-break.
+ *   2. Lexicographic on the raw name — the final tie-break.
  *
- * The old iteration bucket is gone with milestones: every agent-log entry now
- * orders by its filename prefix, which is the number the file already carries.
+ * **An agent log needs no pin.** There used to be a `summary.md`-sorts-first
+ * rule here, matching the file by NAME. The run's slots are now numbered —
+ * `01_summary.md`, `02_working/`, `03_debrief/`, then child activities at `100_`
+ * and up — so the read order the pin was enforcing is the prefix order, and the
+ * special case could be deleted rather than renamed. That is the point of the
+ * numbering: the order is stated where every other section states it.
  */
 entries.sort((a, b) => {
   if (kind === 'memory') {
@@ -219,14 +225,9 @@ entries.sort((a, b) => {
     const bPin = b.kind === 'leaf' && b.sortName === 'memory' ? 0 : 1;
     if (aPin !== bPin) return aPin - bPin;                                 // 0. index pin
   }
-  if (kind === 'log') {
-    const aPin = a.kind === 'leaf' && a.sortName === 'summary' ? 0 : 1;
-    const bPin = b.kind === 'leaf' && b.sortName === 'summary' ? 0 : 1;
-    if (aPin !== bPin) return aPin - bPin;                                 // 1. summary pin
-  }
   const av = prefixValue(a.sortName), bv = prefixValue(b.sortName);
-  if (av !== bv) return av - bv;                                           // 2. prefix value
-  return a.sortName.localeCompare(b.sortName);                            // 3. lexicographic
+  if (av !== bv) return av - bv;                                           // 1. prefix value
+  return a.sortName.localeCompare(b.sortName);                            // 2. lexicographic
 });
 ---
 

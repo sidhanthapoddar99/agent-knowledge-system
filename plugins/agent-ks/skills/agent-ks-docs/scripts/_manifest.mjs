@@ -130,21 +130,21 @@ export const MANIFEST = [
   },
   {
     bin: 'docs-new-agent-log', group: 'issue', verb: 'new-agent-log', category: 3, script: 'issues/new-agent-log.mjs', runtime: 'mjs',
-    summary: 'Scaffold an agent log — settings.json + summary.md, nothing else seeded',
+    summary: 'Scaffold an agent log — settings.json + 01_summary.md, nothing else seeded',
     flags: [
       { name: 'kind', value: 'code', desc: 'agent-log kind code (lp/au/rf/it/wf or a custom agentLogKinds code) — required' },
       { name: 'name', value: 'slug', desc: 'kebab-case run name, sanitised to [a-z0-9-] — required' },
       { name: 'group', value: 'a[/b]', desc: 'nest under a grouping folder path (created if missing; numbering scoped to the group)' },
       { name: 'parent', value: 'path', desc: 'create as a CHILD agent log inside an existing one (a sub-goal with its own goal)' },
       { name: 'prefix', value: 'NNN', desc: 'explicit number (2–5 digits) instead of the next gap-spaced one' },
-      { name: 'goal', value: 'text', desc: 'seed summary.md’s Goal section' },
+      { name: 'goal', value: 'text', desc: 'seed 01_summary.md’s Goal section' },
       { name: 'json', desc: 'structured JSON output' },
       { name: 'tracker', value: 'path', desc: 'non-default tracker' },
     ],
   },
   {
     bin: 'docs-new-iteration', group: 'issue', verb: 'new-iteration', category: 3, script: 'issues/new-iteration.mjs', runtime: 'mjs',
-    summary: "Create an iteration (or producer) file in an agent log's working/, head pre-filled",
+    summary: "Create an iteration (or producer) file in an agent log's 02_working/, head pre-filled",
     flags: [
       { name: 'log', value: 'path', desc: 'path to the agent log, relative to agent-log/ — required' },
       { name: 'name', value: 'slug', desc: 'kebab-case file name — required' },

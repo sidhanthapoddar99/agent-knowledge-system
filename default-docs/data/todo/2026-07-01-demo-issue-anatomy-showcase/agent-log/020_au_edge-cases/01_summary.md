@@ -23,11 +23,11 @@ audit was started is exactly the thing no subtask holds, so it lives here.
 Scope: prefix parsing and depth handling in the section reader. Not a file list —
 a concern, so neither half could skim one file and call it done.
 
-- [x] [The reading half](./working/011_reading-half.md) — read the parser and the
+- [x] [The reading half](./02_working/011_reading-half.md) — read the parser and the
       depth guard, and named two suspect paths without running anything
-- [x] [The executing half](./working/012_executing-half.md) — built inputs for
+- [x] [The executing half](./02_working/012_executing-half.md) — built inputs for
       both, reproduced one and refuted the other
-- [x] [Merge as a union](./working/010_findings.md) — the iteration file, with
+- [x] [Merge as a union](./02_working/010_findings.md) — the iteration file, with
       the verdict per finding
 
 # Out of Scope
@@ -44,11 +44,11 @@ carried by
 [the depth-guard subtask](../../subtasks/04_verify/20_depth-guard.md). The
 mixed-width prefix claim looked right on reading and did not survive contact with
 an actual input; it is recorded as withdrawn in
-[the merged verdict](./working/010_findings.md) rather than deleted, so the next
+[the merged verdict](./02_working/010_findings.md) rather than deleted, so the next
 reader does not raise it again.
 
 **Findings merge as a union, never a vote.** One half reproducing a crash is not
 outvoted by the other half finding nothing — which is why a pair is two files and
 never one. Merging them would have lost which half found what.
 
-What leaves this audit is in [the handover](./debrief/01_handover.md).
+What leaves this audit is in [the handover](./03_debrief/01_handover.md).

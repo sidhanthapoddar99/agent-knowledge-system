@@ -193,10 +193,10 @@ YYYY-MM-DD-<slug>/                    ← the issue folder
 ├── agent-log/
 │   └── 010_lp_implement-x/           ← NNN_<code>_<name>/ — one run, one goal
 │       ├── settings.json             ← optional {"status": "…"} — colours the symbol
-│       ├── summary.md                ← the one conclusive file, and the brief
-│       ├── working/010_round.md      ← first 2 digits = iteration, last = file in it
-│       ├── debrief/01_handover.md    ← what leaves the run
-│       └── 020_wf_sub-goal/          ← a child agent log — same shape, recursively
+│       ├── 01_summary.md             ← the one conclusive file, and the brief
+│       ├── 02_working/010_round.md   ← first 2 digits = iteration, last = file in it
+│       ├── 03_debrief/01_handover.md ← what leaves the run
+│       └── 100_wf_sub-goal/          ← a child agent log — prefix ≥ 100, same shape
 └── agent-memory/
     ├── memory.md                     ← pinned index — read this first
     └── gotchas.md                    ← topic files, edited in place
@@ -224,25 +224,32 @@ ${kindsTable(kinds)}
   different facts.
 
 ${runStatusTable(statusColors)}
-- **\`summary.md\`** — required, and the one conclusive file. Five \`#\` sections, in
+- **The three slots are numbered** — \`01_summary.md\`, \`02_working/\`,
+  \`03_debrief/\` — because that is the order they are meant to be read in, and the
+  filename is where every other section states its order.
+- **\`01_summary.md\`** — required, and the one conclusive file. Five \`#\` sections, in
   order: **State** (live, and written as a callout — where the run is right now) ·
   **Goal** (purpose and trigger) · **Todo** (headed by its references; every item a
   markdown **link**, never a bare number, each carrying a line of what it did) ·
   **Out of Scope** (optional) · **Outcome** (a detail area — point at the iteration
-  file rather than re-narrating it). \`summary.md\` **is** the brief you point a
-  delegated agent at.
-- **\`working/\`** — one file per **iteration**, plus a file for each agent that
+  file rather than re-narrating it). It **is** the brief you point a delegated
+  agent at.
+- **\`02_working/\`** — one file per **iteration**, plus a file for each agent that
   produced something substantial. An iteration is a **group** — of subtasks, of
   executions, of agents — never one agent and never one subtask.
   - Numbering \`NNN_<name>.md\`: **first two digits = the iteration, last digit =
     which file within it** (\`0\` = the iteration file, \`1\`–\`9\` = producers).
   - **A file exists because something was produced, not because an agent ran.**
   - Flat. A folder only when one producer makes several artifacts.
-- **\`debrief/\`** — what leaves the run: handover, questions, findings, lessons,
+- **\`03_debrief/\`** — what leaves the run: handover, questions, findings, lessons,
   caveats. Written when noticed, not only at the end. No slot is required to exist.
-- **A child agent log** is any \`NNN_<code>_<name>/\` nested inside — same shape,
-  recursively. The rule: **does it have its own goal?** Yes → child log. No → an
-  iteration file. \`working\` and \`debrief\` are reserved names.
+- **A child agent log** is any nested folder whose prefix is **≥ 100** —
+  \`100_wf_<name>/\`, \`210_au_<name>/\` — same shape, recursively. The rule for
+  *whether* to open one: **does it have its own goal?** Yes → child log. No → an
+  iteration file.
+- **Slot or child is arithmetic, not a name list.** Prefix under 100 → one of the
+  run's own slots; 100 and up → a child activity. So a fourth slot is just \`04_\`,
+  and nothing forbids a child being *called* \`working\` any more.
 - Iteration-file frontmatter, and its four-section head:
 
 | Field | Meaning |
@@ -287,8 +294,7 @@ this round. Everything else about the work lives in the subtasks its stages refe
 | \`notes\` | One line — why it sits here, what it waits on, the caveat the other columns cannot say. |
 | \`who\` | Who it waits on. |
 | \`status\` | The canonical seven. A waiting stage is \`blocked\`, with what it waits on in one line of body. |
-| \`subtasks:\` | Markdown links to the subtasks it schedules — rendered as live-status chips under the stage. |
-| \`agent-logs:\` | Links to the runs carrying it out. |
+| \`subtasks:\` | Markdown links to the subtasks it schedules. **The only ref list** — rendered as a status-marked list under the stage. |
 
 - \`outcome\` and \`notes\` render as **inline markdown**, so a link, \`code\` or an emoji
   in them works. A link is the right way to name another file from a note — a bare
@@ -298,7 +304,17 @@ this round. Everything else about the work lives in the subtasks its stages refe
   the stage's own heading. A tally of things already shown one screen down is a second
   copy of one fact, and the copy is what goes stale.
 
-- Body: \`## Todo\` and \`## Questions\`. Not every todo needs a subtask.
+- **The body is free-form prose.** \`## Todo\` and \`## Questions\` are conventional,
+  not a schema: a stage may say why it sits where it does, what its status means in
+  practice, what was tried, what it is really waiting on. Short, but as descriptive as
+  the stage needs — the table row is a summary and the body is where the reasoning goes.
+  Not every todo needs a subtask.
+- **Link a run from the BODY, never frontmatter.** \`agent-logs:\` is retired
+  (\`agent-ks check issues\` errors on it). Write
+  \`[010/01 the section loop](../../agent-log/010_lp_implement-sections/01_summary.md)\` —
+  the ordering label keeps the number, and \`agent-ks move\` rewrites it. Frontmatter
+  answers one question, *which subtasks does this stage schedule?*; a second ref list
+  made it read as the place for every link.
 - **Closing a plan is yours** — it ends a *schedule*, not a sign-off on work. Write a
   \`## Closed\` section in \`overview.md\` (what shipped, **what was dropped and why**,
   the successor) and never edit it again. A closed plan is never deleted.

@@ -71,8 +71,6 @@ status: in-progress                  # the canonical 7
 subtasks:
   - "[Mandatory catalog](../../subtasks/16_slide-type/80_mandatory-catalog.md)"
   - "[Byte stability](../../subtasks/13_memory/86_byte-stability.md)"
-agent-logs:
-  - "[Overnight, stages 3-5](../../agent-log/030_lp_overnight/summary.md)"
 ---
 
 ## Todo
@@ -93,11 +91,55 @@ and pulls the subtask's live title and status, so stale link text costs nothing.
 **Not every todo links to a subtask.** Small things are not forced into a folder of
 their own.
 
+## The body is free-form, and that is the point
+
+`## Todo` and `## Questions` are **conventions, not a schema.** A stage may carry
+whatever explains it:
+
+- why it sits at this position rather than earlier or later
+- what its status means *in practice* — not that it is blocked, but on what, and
+  what would unblock it
+- what was tried and rejected, so the next reader does not retry it
+- a caveat, a measurement, a decision taken mid-stage
+
+**Keep it short, but do not keep it thin.** The table row is a summary: `#`,
+name, status, owner, one-line outcome, one-line note. Everything a reader needs
+*beyond* that summary belongs in the body, and a stage whose body is three
+unexplained checkboxes has pushed its reasoning into someone's head.
+
+What still does not belong here: the work itself (that is the subtask), and
+questions that outlive the plan (those are the issue's `notes/`).
+
+
 **Only the `subtasks:` list is rendered** under the stage. Unlinked todos are todos.
 
 **A broken `subtasks:` ref is a validator error**, and the plan page lists it in red. A
 reference resolving to nothing would otherwise vanish: a stage listing four subtasks and
 rendering three looks exactly like a stage that listed three.
+
+## The frontmatter ref list is for SUBTASKS only
+
+`subtasks:` is the one structured reference list a stage carries. **There was an
+`agent-logs:` list beside it; it is retired** (`agent-ks check issues` errors on
+one), and a run that carried the stage out goes in the **body**, as an ordinary
+markdown link:
+
+```markdown
+## The run
+
+Carried out by [010/01 the section loop](../../agent-log/010_lp_implement-sections/01_summary.md).
+```
+
+Two reasons, and the second is the one that matters:
+
+| | |
+|---|---|
+| The frontmatter answers **one** question | *Which subtasks does this stage schedule?* A second structured list made it look like the place for every link a stage wants — which is exactly what frontmatter must not become |
+| A body link is **just a link** | It gets the ordering label, `agent-ks move` rewrites it, and it can sit in a sentence that says *why* the run matters. A frontmatter entry can only sit in a list |
+
+**Give the link an [ordering label](../10_writing/10_writing.md#linking)** —
+`[010/01 the section loop](…)` — so the number survives and `move` keeps it
+honest.
 
 ## `outcome` and `notes` are inline markdown
 

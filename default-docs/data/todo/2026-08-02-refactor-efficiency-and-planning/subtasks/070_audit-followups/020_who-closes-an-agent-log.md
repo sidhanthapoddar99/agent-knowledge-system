@@ -19,10 +19,10 @@ other mention points at it.
 
 # References
 
-- [reader 1 — Opus](../../agent-log/020_wf_ship-the-split/working/071_verdict-opus.md)
+- [reader 1 — Opus](../../agent-log/020_wf_ship-the-split/02_working/071_verdict-opus.md)
   — named this *the worst passage in my winner*, and *"I cannot pick without
   guessing"*
-- [reader 3 — sol](../../agent-log/020_wf_ship-the-split/working/073_verdict-sol.md)
+- [reader 3 — sol](../../agent-log/020_wf_ship-the-split/02_working/073_verdict-sol.md)
   — same defect under *what my winner does worse*
 - The rule as intended: [the status vocabulary](../040_execution/100_migration-script.md)
 

@@ -22,10 +22,10 @@ skill's own rules would accept.
 # References
 
 - The verdicts that raised it:
-  [reader 2 — Sonnet](../../agent-log/020_wf_ship-the-split/working/072_verdict-sonnet.md)
-  (decisive), [reader 1 — Opus](../../agent-log/020_wf_ship-the-split/working/071_verdict-opus.md)
+  [reader 2 — Sonnet](../../agent-log/020_wf_ship-the-split/02_working/072_verdict-sonnet.md)
+  (decisive), [reader 1 — Opus](../../agent-log/020_wf_ship-the-split/02_working/071_verdict-opus.md)
   (*"What my winner does worse"*, item 4),
-  [reader 3 — sol](../../agent-log/020_wf_ship-the-split/working/073_verdict-sol.md)
+  [reader 3 — sol](../../agent-log/020_wf_ship-the-split/02_working/073_verdict-sol.md)
 - The rules the examples contradict:
   [subtasks by category](../040_execution/080_skill-subtasks-by-category.md) ·
   [the agent-log shape](../../notes/20_agent-log-structure.md)

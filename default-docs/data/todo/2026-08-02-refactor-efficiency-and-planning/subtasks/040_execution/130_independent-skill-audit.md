@@ -46,10 +46,10 @@ response.
 # Outcomes and Next Steps
 
 **Done, and the skill is untouched.** Three verdicts stored verbatim at
-[`071`](../../agent-log/020_wf_ship-the-split/working/071_verdict-opus.md) ·
-[`072`](../../agent-log/020_wf_ship-the-split/working/072_verdict-sonnet.md) ·
-[`073`](../../agent-log/020_wf_ship-the-split/working/073_verdict-sol.md), merged
-at [`070`](../../agent-log/020_wf_ship-the-split/working/070_independent-audit.md).
+[`071`](../../agent-log/020_wf_ship-the-split/02_working/071_verdict-opus.md) ·
+[`072`](../../agent-log/020_wf_ship-the-split/02_working/072_verdict-sonnet.md) ·
+[`073`](../../agent-log/020_wf_ship-the-split/02_working/073_verdict-sol.md), merged
+at [`070`](../../agent-log/020_wf_ship-the-split/02_working/070_independent-audit.md).
 
 | Reader | Q1 reads | Q2 coherent | Q3 structured | Q4 follow | Overall |
 |---|---|---|---|---|---|

@@ -7,16 +7,22 @@
  *
  *   settings.json   {"status": "open"} — the run's status, which colours its
  *                   kind symbol in the sidebar
- *   summary.md      the one conclusive file: State · Goal · Todo ·
+ *   01_summary.md   the one conclusive file: State · Goal · Todo ·
  *                   Out of Scope (optional) · Outcome
  *
  * **No other slot is seeded, and that is deliberate.** The previous version of
  * this script created six files whether or not the run had anything to put in
- * them, which is how a one-line change acquired a three-file floor. `working/`
- * appears when the first iteration file is written (`agent-ks issue
- * new-iteration`); `debrief/` appears when the run has something to hand over.
+ * them, which is how a one-line change acquired a three-file floor.
+ * `02_working/` appears when the first iteration file is written (`agent-ks
+ * issue new-iteration`); `03_debrief/` appears when the run has something to
+ * hand over.
  *
- * `summary.md` IS the brief: point an agent at it and spend the prompt on the
+ * **The slots are numbered `01`–`03` and child activities start at 100.** That
+ * is the whole grammar: a folder inside an activity is one of its own slots when
+ * the prefix is under 100 and a child run at 100 or above, so the read order is
+ * stated in the filename and the slot/child question is arithmetic.
+ *
+ * `01_summary.md` IS the brief: point an agent at it and spend the prompt on the
  * delta, rather than committing a separate brief file per run.
  */
 
@@ -43,10 +49,11 @@ if (args.flags.help || !id || !kind || !rawName) {
     '<issue-id> --kind <code> --name <slug> [--group <a[/b]>] [--prefix <NNN>] [--goal <text>] [--parent <path>] [--json] [--tracker <path>]',
     '',
     'Scaffold an agent log at agent-log/[<group>/]NNN_<code>_<name>/ with settings.json',
-    '({"status": "open"}) and summary.md (State / Goal / Todo / Out of Scope /',
-    'Outcome). Nothing else is seeded: working/ appears with',
-    'the first iteration file (issue new-iteration), debrief/ when the run has',
-    'something to hand over.',
+    '({"status": "open"}) and 01_summary.md (State / Goal / Todo / Out of Scope /',
+    'Outcome). Nothing else is seeded: 02_working/ appears with',
+    'the first iteration file (issue new-iteration), 03_debrief/ when the run has',
+    'something to hand over. A CHILD log (--parent) is numbered from 100 up, which',
+    'is what distinguishes it from the parent\'s own 01-03 slots.',
     '',
     `--kind    agent-log kind code (defaults: ${Object.keys(DEFAULT_KINDS).join('/')}; custom via settings.json agentLogKinds)`,
     '--name    kebab-case run name (sanitised to [a-z0-9-])',
@@ -121,22 +128,43 @@ if (prefixRaw && !/^\d{2,5}$/.test(prefixRaw)) {
 
 const baseDir = path.join(tracker, id, 'agent-log', ...groupSegments);
 
-// Next prefix — gap-spaced by 10 (010, 020, …) to leave insert room. Scans
-// DIRECTORIES only: `working/` and `debrief/` are reserved names, not runs.
-const RESERVED = new Set(['working', 'debrief']);
-function nextActivityPrefix(dir) {
+// Next prefix — gap-spaced by 10 to leave insert room. Scans DIRECTORIES only,
+// and skips anything below CHILD_MIN_PREFIX: those are the run's own slots
+// (`02_working/`, `03_debrief/`), not runs. Prefix, not name — which is why a
+// child activity may now be *called* whatever it likes.
+const CHILD_MIN_PREFIX = 100;
+function nextActivityPrefix(dir, floor) {
   let max = 0;
   if (fs.existsSync(dir)) {
     for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
-      if (!e.isDirectory() || RESERVED.has(e.name)) continue;
+      if (!e.isDirectory()) continue;
       const m = e.name.match(/^(\d+)[_-]/);
-      if (m) max = Math.max(max, parseInt(m[1], 10));
+      if (!m) continue;
+      const n = parseInt(m[1], 10);
+      if (n < floor) continue;
+      max = Math.max(max, n);
     }
   }
-  return max === 0 ? 10 : max + 10;
+  return max === 0 ? floor : max + 10;
 }
 
-const prefix = prefixRaw || pad(nextActivityPrefix(baseDir));
+// A CHILD activity starts at 100: below that is the parent's own slot band, and
+// a child numbered `04_` would sort into the middle of them.
+const floor = parentRaw ? CHILD_MIN_PREFIX : 10;
+const prefix = prefixRaw || pad(nextActivityPrefix(baseDir, floor));
+
+if (parentRaw && !prefixRaw && parseInt(prefix, 10) < CHILD_MIN_PREFIX) {
+  console.error(`Refusing to number a child agent log below ${CHILD_MIN_PREFIX}: that band belongs to the parent's own slots.`);
+  process.exit(1);
+}
+if (parentRaw && prefixRaw && parseInt(prefixRaw, 10) < CHILD_MIN_PREFIX) {
+  console.error(
+    `--prefix "${prefixRaw}" is below ${CHILD_MIN_PREFIX}, which is the parent's slot band ` +
+    `(01_summary.md / 02_working/ / 03_debrief/). A child agent log is NXX_<code>_<name>/ ` +
+    `with a prefix of ${CHILD_MIN_PREFIX} or more.`,
+  );
+  process.exit(1);
+}
 const folderName = `${prefix}_${kind}_${name}`;
 const dir = path.join(baseDir, folderName);
 
@@ -198,8 +226,8 @@ ${goalBody}
 
 fs.mkdirSync(dir, { recursive: true });
 fs.writeFileSync(path.join(dir, 'settings.json'), `{\n  "status": "open"\n}\n`);
-fs.writeFileSync(path.join(dir, 'summary.md'), summary);
-const written = ['settings.json', 'summary.md'];
+fs.writeFileSync(path.join(dir, '01_summary.md'), summary);
+const written = ['settings.json', '01_summary.md'];
 
 if (args.flags.json) {
   console.log(JSON.stringify({

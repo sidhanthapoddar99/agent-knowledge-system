@@ -22,4 +22,4 @@ research and the trade-off argument below are the producers.
 
 Issues found: one, and it is not this round's to fix — the sidebar draws depth
 from a constant the loader does not share, so the two can disagree. Detail in
-[the handover](../debrief/01_handover.md).
+[the handover](../03_debrief/01_handover.md).

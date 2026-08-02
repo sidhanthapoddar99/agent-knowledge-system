@@ -16,7 +16,7 @@ import SubDocMetaSidebar from './parts/detail/SubDocMetaSidebar.astro';
 import MetaPanel from './parts/shared/MetaPanel.astro';
 import { allStateIcons } from './server/state-icon';
 import { extractToc } from './server/toc';
-import { sortSubtasksByState, terminalStartIndex, TERMINAL, logPanelKey, subtaskPanelKey, planPanelKey, planStagePanelKey } from './server/helpers';
+import { sortSubtasksByState, terminalStartIndex, TERMINAL, logPanelKey, subtaskPanelKey, planPanelKey, planStagePanelKey, planDocument } from './server/helpers';
 import { FREEFORM_SECTIONS, sectionPanelKey } from '@loaders/issues';
 import type { Issue, IssuesVocabulary, IssueSubtask, IssueNote, IssueAgentLog, IssuePlan, IssuePlanStage } from '@loaders/issues';
 import './styles/detail.css';
@@ -74,11 +74,17 @@ if (freeform) {
   toc = extractToc(subDoc.subtask.html);
 } else if (subDoc.kind === 'plan') {
   activeKey = planPanelKey(subDoc.plan);
-  // The plan page's outline is its STAGES, not the headings inside them — nine
-  // stages each carrying `## Todo` would make the rail unreadable and say
-  // nothing. Built from the stage list directly rather than scraped back out of
-  // the rendered HTML.
-  toc = subDoc.plan.stages.map((s) => ({ id: s.anchor, level: 1, text: s.title }));
+  // Overview → Stages (the table) → each stage → the headings inside it, from
+  // the SAME function that renders the page, so the rail cannot list a section
+  // PlanPage did not render or miss one it did.
+  //
+  // It used to be `plan.stages.map(...)` — stage titles only, on the reasoning
+  // that nine stages each carrying `## Todo` would make the rail unreadable.
+  // That was true while a stage body WAS a Todo list; it is no longer the
+  // shape. A stage now carries whatever the stage needs explaining, so its
+  // headings are the part a reader is actually navigating to, and the overview
+  // and the table had no entry at all.
+  toc = planDocument(subDoc.plan).toc;
 } else if (subDoc.kind === 'plan-stage') {
   activeKey = planStagePanelKey(subDoc.plan, subDoc.stage);
   toc = extractToc(subDoc.stage.html);

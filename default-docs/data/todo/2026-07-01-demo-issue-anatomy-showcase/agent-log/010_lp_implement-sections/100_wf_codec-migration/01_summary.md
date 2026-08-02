@@ -13,7 +13,7 @@ title: "Summary"
 # Goal
 
 Move the codec onto the shared prefix parser that
-[the parent run](../summary.md) built, **without changing a single byte it
+[the parent run](../01_summary.md) built, **without changing a single byte it
 emits**.
 
 **Trigger:** the parser landed with two callers while the codec was still parsing
@@ -25,9 +25,9 @@ carry, and it can succeed or fail on its own terms.
 
 # Todo
 
-- [x] [Move the read path](./working/010_reader.md) — the hand-rolled prefix
+- [x] [Move the read path](./02_working/010_reader.md) — the hand-rolled prefix
       parse deleted, one more caller on the shared parser
-- [x] [Prove byte identity](./working/011_probe-byte-identity/01_report.md) — a
+- [x] [Prove byte identity](./02_working/011_probe-byte-identity/01_report.md) — a
       producer file: every fixture re-encoded and compared byte for byte
 - [ ] Move the write path — not started, and it is the half that can actually
       change the bytes
@@ -42,8 +42,8 @@ question.
 Half shipped, and the half that shipped is the safe one — a read path cannot
 corrupt what it reads. Byte identity held across the whole fixture corpus; the
 method and the counts are in
-[the probe report](./working/011_probe-byte-identity/01_report.md), which is a
+[the probe report](./02_working/011_probe-byte-identity/01_report.md), which is a
 producer file rather than prose in the round above it because it is evidence
 someone may need to re-check.
 
-What the next run needs is in [the handover](./debrief/01_handover.md).
+What the next run needs is in [the handover](./03_debrief/01_handover.md).

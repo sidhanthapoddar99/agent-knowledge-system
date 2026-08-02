@@ -25,7 +25,7 @@ There's a natural flow, but **no required order** — sections are organized by 
 - **`notes/`** is the finalized output + durable references — the *product* you build on.
 - **`subtasks/`** is the work breakdown. Each subtask is one explicit "did this happen yet?" checkbox — the AI handoff anchor.
 - **`plans/`** is where **order** lives — one folder per plan, holding stages that *reference* the subtasks they schedule. A plan stores no status of its own, so it cannot carry a stale count.
-- **`agent-log/`** is where a run is carried out and its outcome recorded — one folder per run, with a conclusive `summary.md` and one file per round of work. Failed rounds are kept; they're as informative as successes.
+- **`agent-log/`** is where a run is carried out and its outcome recorded — one folder per run, with a conclusive `01_summary.md` and one file per round of work in `02_working/`. Failed rounds are kept; they're as informative as successes.
 - **`agent-memory/`** is the AI's mutable working state — durable facts worth not rediscovering.
 - **`comments/`** is the flat evolution log — what changed, status shifts, hand-offs.
 
@@ -56,8 +56,8 @@ A complete issue folder:
 │   └── 02_theme-system-docs.md
 ├── agent-log/
 │   └── 010_lp_implement-x/
-│       ├── summary.md
-│       └── working/010_round.md
+│       ├── 01_summary.md
+│       └── 02_working/010_round.md
 ├── agent-memory/
 │   └── memory.md
 └── comments/

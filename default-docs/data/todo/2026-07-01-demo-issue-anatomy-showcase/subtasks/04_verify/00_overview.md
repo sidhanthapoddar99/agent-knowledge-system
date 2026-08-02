@@ -15,7 +15,7 @@ other areas, not when it runs. Order is the
 # References
 
 - [Decided architecture](../../notes/01_decided-architecture.md)
-- [The edge-case audit](../../agent-log/020_au_edge-cases/summary.md)
+- [The edge-case audit](../../agent-log/020_au_edge-cases/01_summary.md)
 
 # Subtasks
 

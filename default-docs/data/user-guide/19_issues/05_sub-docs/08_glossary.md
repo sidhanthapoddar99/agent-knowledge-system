@@ -47,7 +47,7 @@ freely. Prefer **tables and pointers over paragraphs**:
 ### Agent log
 | Colour | Meaning | Example |
 |---|---|---|
-| amber  | round to eyeball | agent-log/050_it_ui/working/010_sizing-tweaks |
+| amber  | round to eyeball | agent-log/050_it_ui/02_working/010_sizing-tweaks |
 
 ## Key terms
 | Term | Meaning |

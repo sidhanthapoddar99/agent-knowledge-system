@@ -208,14 +208,20 @@ export interface IssuePlanStage {
   who: string | null;
   status: IssueStatus;
   category: CategoryId;
-  /** `subtasks:` entries resolved to ISSUE-relative posix paths
+  /** `subtasks:` entries resolved to ISSUE-relative posix paths.
+   *
+   *  **This is the ONLY reference list a stage carries.** There was an
+   *  `agent-logs:` list beside it; it is retired. The frontmatter answers one
+   *  question — *which subtasks does this stage schedule?* — and a run that
+   *  carried the stage out is a different fact, belonging in the body as an
+   *  ordinary markdown link like everything else a stage wants to point at.
+   *  Two structured ref lists made the frontmatter look like the place to put
+   *  every link, which is what it must not be.
    *  (`subtasks/16_slide-type/80_mandatory-catalog.md`). Entries that point
    *  outside the issue, or carry no parsable target, land in
    *  {@link unresolvedRefs} instead — never silently dropped, because a
    *  dropped ref would under-count the stage and read as a real number. */
   subtaskRefs: string[];
-  /** `agent-logs:` entries, same resolution. */
-  agentLogRefs: string[];
   /** Raw entries whose target could not be parsed or fell outside the issue.
    *  Rendered visibly and errored by `agent-ks check issues`. */
   unresolvedRefs: string[];
@@ -1132,7 +1138,7 @@ async function readPlans(
       const name = file.replace(/\.md$/, '');
       let fm: {
         title?: string; outcome?: string; notes?: string; who?: string; status?: string;
-        subtasks?: unknown; 'agent-logs'?: unknown;
+        subtasks?: unknown;
       } = {};
       try { fm = matter(fs.readFileSync(stageAbs, 'utf-8')).data as typeof fm; } catch {}
 
@@ -1141,7 +1147,6 @@ async function readPlans(
         : slugToLabel(name);
       const stageStatus = resolveStatus(fm.status, path.relative(dataPath, stageAbs));
       const subtasks = readPlanRefs(fm.subtasks, abs, issueDir);
-      const logs = readPlanRefs(fm['agent-logs'], abs, issueDir);
 
       stages.push({
         name,
@@ -1153,8 +1158,7 @@ async function readPlans(
         status: stageStatus,
         category: categoryOf(stageStatus),
         subtaskRefs: subtasks.refs,
-        agentLogRefs: logs.refs,
-        unresolvedRefs: [...subtasks.unresolved, ...logs.unresolved],
+        unresolvedRefs: [...subtasks.unresolved],
         anchor: planStageAnchor(title),
         filePath: stageAbs,
         relativePath: path.relative(dataPath, stageAbs),
@@ -1178,9 +1182,33 @@ async function readPlans(
   return plans;
 }
 
-/** Reserved folder names inside an agent log. Anything else nested there is a
- *  CHILD agent log, so there is no ambiguity at read time. */
-export const AGENT_LOG_RESERVED_FOLDERS = new Set(['working', 'debrief']);
+/**
+ * The prefix at which a folder inside an activity stops being one of the run's
+ * own SLOTS and becomes a CHILD activity.
+ *
+ * An activity's slots are `01_summary.md`, `02_working/`, `03_debrief/`; a child
+ * activity is `100_wf_<name>/`, `210_au_<name>/` and so on. So the read-time
+ * question — slot or child? — is arithmetic on a number the filesystem already
+ * carries, rather than a set of names only this module knows.
+ *
+ * This replaced a `new Set(['working', 'debrief'])`. Two things were wrong with
+ * the name list, and only the second is obvious:
+ *
+ *   1. A fourth slot would have meant teaching this constant a fourth name.
+ *      `04_` needs nothing.
+ *   2. A child activity could never be *named* `working` — a restriction that
+ *      existed, was enforced silently, and was written down nowhere.
+ */
+export const AGENT_LOG_CHILD_MIN_PREFIX = 100;
+
+/** True when a folder inside an activity is one of the run's own slots
+ *  (`02_working/`, `03_debrief/`) rather than a child activity. Unprefixed
+ *  folders count as slots: they are not activities, so treating one as a run
+ *  would invent a run that does not exist. */
+export function isAgentLogSlotFolder(name: string): boolean {
+  const { position } = parseOrderPrefixLoose(name);
+  return position === null || position < AGENT_LOG_CHILD_MIN_PREFIX;
+}
 
 /**
  * Walk `agent-log/` for folders and read each one's optional `settings.json`.
@@ -1203,7 +1231,7 @@ function readAgentLogGroups(logsDir: string, dataPath: string): AgentLogGroupMet
       if (groupPath.length >= MAX_SUBFOLDER_DEPTH) continue;   // loader cap; warned by readAgentLogs
       const childAbs = path.join(absDir, entry.name);
       const childPath = [...groupPath, entry.name];
-      const reserved = AGENT_LOG_RESERVED_FOLDERS.has(entry.name);
+      const reserved = isAgentLogSlotFolder(entry.name);
 
       let status: IssueStatus | null = null;
       if (!reserved) {

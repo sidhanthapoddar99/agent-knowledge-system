@@ -10,6 +10,7 @@ import {
   TERMINAL_STATUSES, isTerminalStatus, categoryOf,
   sectionById, sectionPanelKey,
 } from '@loaders/issues';
+import { extractAndPrefixToc, type TocEntry } from './toc';
 
 export const TERMINAL: readonly IssueStatus[] = TERMINAL_STATUSES;
 
@@ -280,11 +281,50 @@ function logRefPath(l: IssueAgentLog): string {
   return ['agent-log', ...l.groupPath, `${l.name}.md`].join('/');
 }
 
+/**
+ * The ordering path of an issue-relative path: the maximal run of
+ * numerically-prefixed segments ending at the file.
+ *
+ *   subtasks/040_execution/100_migration.md         → "040/100"
+ *   agent-log/020_wf_ship/02_working/090_round.md   → "020/02/090"
+ *   agent-log/020_wf_ship/notes.md                  → ""   (no prefix, no identity)
+ *
+ * **A deliberate mirror of `orderingPathFor` in the CLI's `_links.mjs`**, which
+ * cannot be imported here: that module is a Bun script in the plugin, this runs
+ * in the Astro build. The rule is four lines and has no state, so a second
+ * implementation is cheaper than a shared package — but it is a second copy, so
+ * a change to either belongs in both, and the two examples above are the check.
+ *
+ * Used to render a stage's references as `<icon> 040/100 <title>`, which is the
+ * same shape as the ORDERING LABEL a human writes by hand in link text. The
+ * sidebar lists entries by number; a reference that shows only a name cannot be
+ * matched against what is already on screen.
+ */
+const SEGMENT_PREFIX_RE = /^(\d{2,5})[_-]/;
+export function orderingPathOf(relPath: string): string {
+  const segments = relPath.split('/').filter(Boolean);
+  const out: string[] = [];
+  for (let i = segments.length - 1; i >= 0; i--) {
+    const m = SEGMENT_PREFIX_RE.exec(segments[i]);
+    if (!m) break;
+    out.unshift(m[1]);
+  }
+  return out.join('/');
+}
+
+/** Ordering path of a subtask, from the path a stage's `subtasks:` ref resolves to. */
+export function subtaskOrderingPath(s: IssueSubtask): string {
+  return orderingPathOf(subtaskRefPath(s));
+}
+
+/** Ordering path of an agent-log entry, same derivation. */
+export function logOrderingPath(l: IssueAgentLog): string {
+  return orderingPathOf(logRefPath(l));
+}
+
 export interface PlanStageResolution {
   /** The referenced subtasks, in the order the stage lists them. */
   subtasks: IssueSubtask[];
-  /** The referenced agent-log entries. */
-  logs: IssueAgentLog[];
   /**
    * Refs that named nothing — a path with no matching subtask / log, plus the
    * loader's unparsable entries.
@@ -304,10 +344,8 @@ export interface PlanStageResolution {
  */
 export function resolvePlanStage(issue: Issue, stage: IssuePlanStage): PlanStageResolution {
   const subtaskByPath = new Map(issue.subtasks.map((s) => [subtaskRefPath(s), s]));
-  const logByPath = new Map(issue.agentLogs.map((l) => [logRefPath(l), l]));
 
   const subtasks: IssueSubtask[] = [];
-  const logs: IssueAgentLog[] = [];
   const missing: string[] = [...stage.unresolvedRefs];
 
   for (const ref of stage.subtaskRefs) {
@@ -315,13 +353,8 @@ export function resolvePlanStage(issue: Issue, stage: IssuePlanStage): PlanStage
     if (hit) subtasks.push(hit);
     else missing.push(ref);
   }
-  for (const ref of stage.agentLogRefs) {
-    const hit = logByPath.get(ref);
-    if (hit) logs.push(hit);
-    else missing.push(ref);
-  }
 
-  return { subtasks, logs, missing };
+  return { subtasks, missing };
 }
 
 /**
@@ -410,4 +443,72 @@ export function groupSubtasks(
     cursor.files.push(s);
   }
   return root;
+}
+
+// ---------------------------------------------------------------------------
+// The plan page as one document
+// ---------------------------------------------------------------------------
+
+/** Anchor for the overview block at the top of a plan page. */
+export const PLAN_OVERVIEW_ANCHOR = 'plan-overview';
+/** Anchor for the stage table. */
+export const PLAN_STAGES_ANCHOR = 'plan-stages';
+
+export interface PlanStageRender {
+  stage: IssuePlanStage;
+  /** Body HTML with heading ids prefixed by the stage anchor. */
+  html: string;
+}
+
+export interface PlanDocument {
+  /** Overview HTML with heading ids prefixed, or null when there is none. */
+  overviewHtml: string | null;
+  stages: PlanStageRender[];
+  /** Right-rail index: Overview → Stages → each stage → its own headings. */
+  toc: TocEntry[];
+}
+
+/**
+ * Build the plan page's HTML and its table of contents **together**.
+ *
+ * `PlanPage.astro` renders the page and `SubDocLayout.astro` renders the right
+ * rail, and they used to answer "what is on this page?" separately — the layout
+ * built the rail from `plan.stages` alone, so the overview and the stage table
+ * had no entry, and a stage's own headings were invisible to it even though the
+ * page had already assigned them ids. One function, two consumers: the rail
+ * cannot list a section the page did not render, or miss one it did.
+ *
+ * **Every id is prefixed**, because a plan page inlines the overview and every
+ * stage into ONE DOM. Stage files tend to carry the same `## Todo`, and the
+ * overview may carry `## Closed` while a stage does too; unprefixed, the second
+ * `#todo` silently shadows the first and the rail links to the wrong section.
+ *
+ * TOC levels are display depth, not source depth: the three landmarks sit at
+ * level 2 (the rail renders 1 and 2 at the same indent) and everything inside
+ * one is pushed a level below it, so the index reads as a two-tier list.
+ */
+export function planDocument(plan: IssuePlan): PlanDocument {
+  const toc: TocEntry[] = [];
+
+  const overview = plan.overviewHtml
+    ? extractAndPrefixToc(plan.overviewHtml, PLAN_OVERVIEW_ANCHOR)
+    : null;
+
+  if (overview) {
+    toc.push({ id: PLAN_OVERVIEW_ANCHOR, level: 2, text: 'Overview' });
+    for (const h of overview.toc) toc.push({ ...h, level: Math.min(h.level + 1, 6) });
+  }
+
+  if (plan.stages.length > 0) {
+    toc.push({ id: PLAN_STAGES_ANCHOR, level: 2, text: 'Stages' });
+  }
+
+  const stages = plan.stages.map((stage) => {
+    const { html, toc: inner } = extractAndPrefixToc(stage.html, stage.anchor);
+    toc.push({ id: stage.anchor, level: 2, text: stage.title });
+    for (const h of inner) toc.push({ ...h, level: Math.min(h.level + 1, 6) });
+    return { stage, html };
+  });
+
+  return { overviewHtml: overview ? overview.html : null, stages, toc };
 }

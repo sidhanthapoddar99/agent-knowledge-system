@@ -34,12 +34,12 @@ Every tracker has the same skeleton:
     │       └── NN_<subgroup>/
     │           └── NN_<slug>.md                 ← level-2 leaf
     ├── agent-log/                               ← EXECUTION — one folder per run
-    │   └── NNN_<code>_<name>/                   ← kind code: lp/au/rf/it/wf (+ custom)
+    │   └── 0NN_<code>_<name>/                   ← kind code: lp/au/rf/it/wf (+ custom)
     │       ├── settings.json                    ← optional — { "status": "…" }
-    │       ├── summary.md                       ← REQUIRED — the one conclusive file
-    │       ├── working/                         ← NNN_<name>.md — iteration + producer files
-    │       ├── debrief/                         ← what leaves the run
-    │       └── NNN_<code>_<name>/               ← a child agent log, same shape
+    │       ├── 01_summary.md                    ← REQUIRED — the one conclusive file
+    │       ├── 02_working/                      ← NNN_<name>.md — iteration + producer files
+    │       ├── 03_debrief/                      ← what leaves the run
+    │       └── NXX_<code>_<name>/               ← a child agent log (prefix ≥ 100), same shape
     └── agent-memory/                            ← AI working state (mutable, issue-scoped)
         ├── memory.md                            ← the index — read first, pinned first
         ├── knowledge/                           ← what's true (corrected in place) — optional
@@ -52,8 +52,10 @@ The two memory buckets are **lifecycle**, not subject, and you grow into them �
 issues need only `memory.md` plus a few topic files at its root. See
 [26_agent-memory.md](../20_sections/26_agent-memory.md).
 
-`working` and `debrief` are **reserved names** inside an agent log; anything matching
-`NNN_<code>_<name>/` there is a child agent log
+**Inside an agent log the numeric prefix says what a member is, and nothing else does:**
+`< 100` is one of the run's own three slots (`01_summary.md`, `02_working/`,
+`03_debrief/`), `≥ 100` is a child agent log. The bands cannot overlap, so no name is
+special — which is why a child agent log may now be called anything, `working` included
 ([24_agent-logs.md](../20_sections/24_agent-logs.md)).
 
 **Folder naming regex:** `^\d{4}-\d{2}-\d{2}-[a-z0-9-]+$` (date + kebab-case slug).

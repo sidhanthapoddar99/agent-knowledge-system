@@ -21,7 +21,7 @@ each subdoc has its own small schema:
 | `subtasks/**.md` | `title` + `status` (one of the 7 statuses) |
 | `notes/**`, `brainstorm/**`, `agent-memory/**` | `title` (+ optional `color:`) |
 | `plans/**/NN_<stage>.md` | `title` + `status`, plus `outcome`, `who`, `subtasks:`, `agent-logs:` |
-| `agent-log/**/working/*.md` | `title` + `status` + `agent` (+ optional `date`, `color:`) |
+| `agent-log/**/02_working/*.md` | `title` + `status` + `agent` (+ optional `date`, `color:`) |
 | any subdoc | optional `color:` — tints the sidebar label, issue-defined meaning |
 
 - `draft: true` hides a file from the production build (works tracker-wide).
@@ -85,7 +85,7 @@ folders and of its own name, joined by `/` — then the name:
 ```markdown
 [040/100 the migration script](../../subtasks/040_execution/100_migration-script.md)
 [70 reference by link](../../notes/70_reference-by-link-never-by-number.md)
-[020/090 the summary-shape round](./working/090_summary-shape-and-links.md)
+[020/02/090 the summary-shape round](./02_working/090_summary-shape-and-links.md)
 ```
 
 | | |
@@ -97,9 +97,14 @@ folders and of its own name, joined by `/` — then the name:
 
 **How the path is computed:** walk up from the file collecting numeric prefixes, and
 stop at the first segment that has none. So `subtasks/040_execution/100_x.md` → `040/100`,
-and `agent-log/020_wf_ship/working/090_x.md` → `090`, because `working/` has no prefix
-and ends the run. A target with no prefix at all takes no label — there is no ordering
-identity to state.
+and `agent-log/020_wf_ship/02_working/090_x.md` → `020/02/090`, the walk ending at
+`agent-log/` because that segment has no prefix. A target with no prefix at all takes no
+label — there is no ordering identity to state.
+
+**Numbering an agent log's slots lengthened these labels by one segment.** An unnumbered
+`working/` used to end the walk, so an iteration file could only ever label as `090`;
+now the whole path from the run down is stateable, and each segment matches something
+the sidebar shows.
 
 **A stale label is the failure mode to fear**, which is why it is checked rather than
 just described: the link still resolves, so nothing looks wrong. It simply tells the
@@ -249,7 +254,7 @@ prefix is **optional** for most subdocs:
 |---|---|
 | `subtasks/` | `NN_` or `NNN_` freely (leading digit can annotate a group) — see [23_subtasks.md](../20_sections/23_subtasks.md) |
 | `comments/` | `NNN_` **auto-numbered by the CLI** — the number is the comment id, never hand-gapped |
-| `agent-log/` | `NNN_<code>_<name>/` per run; inside `working/`, `NNN_` where the first two digits are the iteration — see [24_agent-logs.md](../20_sections/24_agent-logs.md) |
+| `agent-log/` | `0NN_<code>_<name>/` per run; its slots are `01_summary.md` / `02_working/` / `03_debrief/` and a nested run is `≥ 100`; inside `02_working/`, `NNN_` where the first two digits are the iteration — see [24_agent-logs.md](../20_sections/24_agent-logs.md) |
 | `plans/` | `NN_<name>/` per plan; `NN_<stage>.md` gap-spaced by ten — see [28_plans.md](../20_sections/28_plans.md) |
 | `brainstorm/`, `notes/` | optional; gap-number only when reading order matters |
 | `agent-memory/` | usually none — name by topic |

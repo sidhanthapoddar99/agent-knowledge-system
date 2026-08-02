@@ -46,9 +46,19 @@ plans/                              ← top-level issue section (Sid)
 **`plans/` contains plan folders and nothing else.** No standing files, no
 loose markdown, no exceptions — see *Standing questions*, below.
 
-**`overview.md` is a reserved name**, the same way `working/` and `debrief/` are
-reserved inside an agent log. It renders as the page intro and never appears as
-a stage row.
+**`overview.md` is a reserved name.** It renders as the page intro and never
+appears as a stage row.
+
+**Changed 2026-08-03 — this used to cite the agent log's `working/` and
+`debrief/` as the same pattern, and it can no longer.** Those two are now
+`02_working/` and `03_debrief/`, and what tells them apart from a child agent log
+is a number, not a name
+([the numbering spec](./80_agent-log-numbering-spec.md)). A plan folder does not
+need the same treatment, because it holds only one kind of thing: everything in
+it is a stage except the intro, so a prefix-versus-no-prefix split already
+separates the two, and there is no second kind of container for a number to
+discriminate against. The agent log had two, which is why it needed the
+arithmetic.
 
 ## Numbering — the prefix is both the order and the id (Sid)
 
@@ -82,8 +92,8 @@ genuinely does not.
 ## Say "stage", not "section"
 
 `section` already means a top-level issue folder. Reusing it inside a plan
-repeats the collision that forced an agent log's `notes/` → `debrief/`, and costs
-a disambiguating clause every time either word appears.
+repeats the collision that forced an agent log's `notes/` → `03_debrief/`, and
+costs a disambiguating clause every time either word appears.
 
 ---
 
@@ -99,8 +109,6 @@ status: in-progress                  # the canonical 7
 subtasks:
   - "[Mandatory catalog](../../subtasks/16_slide-type/80_mandatory-catalog.md)"
   - "[Byte stability](../../subtasks/13_memory/86_byte-stability.md)"
-agent-logs:
-  - "[Overnight, stages 3-5](../../agent-log/030_lp_overnight/summary.md)"
 ---
 
 ## Todo
@@ -323,7 +331,7 @@ more than the tidiness, and a spec quietly edited to match what shipped stops
 being evidence of anything. Three parts of it were changed the first time Sid
 looked at the built page. Each is recorded here with what replaced it and why;
 the round that made the changes is
-[the plan-table rework](../agent-log/020_wf_ship-the-split/working/120_plan-table-and-sidebar.md),
+[the plan-table rework](../agent-log/020_wf_ship-the-split/02_working/120_plan-table-and-sidebar.md),
 and the subtask is
 [the plan table rework](../subtasks/090_plan-table-rework.md).
 

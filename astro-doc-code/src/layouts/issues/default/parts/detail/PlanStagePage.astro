@@ -7,12 +7,13 @@
  * single plan page is canonical, and two entry points for one piece of content
  * is tolerable where suppressing the route would be work for no gain.
  */
-import type { Issue, IssuePlan, IssuePlanStage } from '@loaders/issues';
+import type { Issue, IssuePlan, IssuePlanStage, IssueStatus } from '@loaders/issues';
 import { sectionById } from '@loaders/issues';
 import { stateIconSvg } from '../../server/state-icon';
 import { STATUS_LABELS } from '@loaders/issue-status';
 import {
-  planUrl, planStagePanelKey, resolvePlanStage, subtaskUrl, logUrl,
+  planUrl, planStagePanelKey, resolvePlanStage, subtaskUrl,
+  subtaskOrderingPath,
 } from '../../server/helpers';
 
 interface Props {
@@ -26,7 +27,7 @@ interface Props {
 
 const { issue, plan, stage, baseUrl, statusColors, standalone = false } = Astro.props;
 const relPath = `${sectionById('plans')!.folder}/${plan.name}/${stage.name}.md`;
-const { subtasks, logs, missing } = resolvePlanStage(issue, stage);
+const { subtasks, missing } = resolvePlanStage(issue, stage);
 ---
 
 <section
@@ -57,20 +58,25 @@ const { subtasks, logs, missing } = resolvePlanStage(issue, stage);
       <p class="issue-plan__breadcrumb issue-plan__notes" set:html={stage.notesHtml} />
     )}
 
-    {(subtasks.length > 0 || logs.length > 0) && (
-      <div class="issue-plan__refs">
+    {subtasks.length > 0 && (
+      <ul class="issue-plan__refs">
         {subtasks.map((s) => (
-          <a class="issue-plan__ref" href={subtaskUrl(baseUrl, issue.id, s)} data-tip={STATUS_LABELS[s.status] ?? s.status} data-tip-always>
-            <span class="issue-plan__ref-icon" style={`color: ${statusColors[s.status] ?? 'currentColor'}`} set:html={stateIconSvg(s.status)} />
-            <span>{s.title}</span>
-          </a>
+          <li class="issue-plan__ref">
+            <span
+              class="issue-plan__ref-icon"
+              style={`color: ${statusColors[s.status] ?? 'currentColor'}`}
+              data-tip={STATUS_LABELS[s.status] ?? s.status}
+              data-tip-always
+              aria-label={STATUS_LABELS[s.status] ?? s.status}
+              set:html={stateIconSvg(s.status)}
+            />
+            <a href={subtaskUrl(baseUrl, issue.id, s)}>
+              {subtaskOrderingPath(s) && <span class="issue-plan__ref-num">{subtaskOrderingPath(s)}</span>}
+              {s.title}
+            </a>
+          </li>
         ))}
-        {logs.map((l) => (
-          <a class="issue-plan__ref issue-plan__ref--log" href={logUrl(baseUrl, issue.id, l)}>
-            <span>{l.name.replace(/[-_]/g, ' ')}</span>
-          </a>
-        ))}
-      </div>
+      </ul>
     )}
 
     {missing.length > 0 && (

@@ -47,8 +47,14 @@ This is the compressed version — enough to brief an agent manually if the skil
     ├── comments/NNN_date_author.md  thread (read if recent activity)
     ├── subtasks/NN_<slug>.md        work units, each with own state
     ├── notes/<slug>.md              design docs
-    └── agent-log/NNN_<slug>.md      iteration audit trail
+    └── agent-log/NNN_<code>_<name>/ one folder per RUN, kind code in the name
+        ├── 01_summary.md            the run's one conclusive file
+        ├── 02_working/NNN_<slug>.md one file per round
+        └── 03_debrief/              what leaves the run
 ```
+
+Inside a run, the three slots are numbered so the reading order is stated in the
+filename. A folder there prefixed `100` or above is a **child run**, not a slot.
 
 ### 2. Orientation order
 

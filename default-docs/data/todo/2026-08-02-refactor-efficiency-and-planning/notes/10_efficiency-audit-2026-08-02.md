@@ -100,6 +100,14 @@ have already been lost inside it more than once.
 reports. `03_working/` alone holds **160 committed agent-brief files** — prompts
 written as files, which is a rule, and which nobody reads afterwards.
 
+> [!NOTE]
+> **`03_working/` above is the RETIRED six-slot folder, not today's
+> `02_working/`.** These are the numbers as measured on 2026-08-02, and the names
+> are left exactly as they were counted. Since then the six slots were replaced
+> by three, and those three gained their own prefixes — under which `03_` is now
+> `03_debrief/`, an unrelated folder. See
+> [the numbering spec](./80_agent-log-numbering-spec.md).
+
 ## Root cause — every rule points one way and nothing points back
 
 This is not a discipline failure. It is a gradient with no counter-force.

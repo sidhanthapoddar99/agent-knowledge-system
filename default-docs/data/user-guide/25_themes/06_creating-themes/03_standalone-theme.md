@@ -1,6 +1,6 @@
 ---
 title: Standalone Theme
-description: A from-scratch theme — extends: null, every variable defined yourself
+description: "A from-scratch theme — extends: null, every variable defined yourself"
 sidebar_position: 3
 ---
 

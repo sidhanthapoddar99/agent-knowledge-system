@@ -51,6 +51,14 @@ re-measured.
       [`010`](./040_execution/010_code-the-plans-section.md))
 - [ ] Verify: nothing in `memory/` restates an upstream rule — links only
 - [ ] Re-measure one run afterwards and compare against the audit's numbers
+- [ ] **Added 2026-08-03 — the three slots are now numbered.** Every path those
+      files name (`<activity>/audit/<scope>.md`, the sol-brief `03_working/`, the
+      six-slot floor) has to land on `01_summary.md` / `02_working/` /
+      `03_debrief/`, and a child agent log is now *prefix `≥ 100`*
+      ([the numbering spec](../notes/80_agent-log-numbering-spec.md)). Note the
+      trap: NeuraSutra's `codex-sol.md` says `03_working/` meaning the **retired
+      six-slot** folder, and `03_` is now the debrief — a find-and-replace on the
+      number alone routes every sol brief into the wrong slot
 
 ## Part 2 — comment volume in `neurasutra-canvas`
 

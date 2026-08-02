@@ -10,7 +10,7 @@ than by the author's order.
 
 # References
 
-- [The executing half](../../agent-log/020_au_edge-cases/working/012_executing-half.md) — reproduced
+- [The executing half](../../agent-log/020_au_edge-cases/02_working/012_executing-half.md) — reproduced
 
 # Todo list
 

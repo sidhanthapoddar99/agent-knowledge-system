@@ -907,38 +907,60 @@
 .issue-plan__warning ul { margin: 0.5rem 0 0; padding-left: 1.2rem; }
 .issue-plan__warning code { font-family: var(--font-family-mono); font-size: var(--content-code); }
 
+/* A stage renders as ORDINARY MARKDOWN: the block carries `.markdown-content`,
+   so its `<h1>` and the `<hr>` under it are the same heading and rule a writer
+   gets from `#` and `---` in any page on this site. Nothing about the heading
+   is specified here beyond the number in front of it and keeping the link at
+   heading colour — a heading that is also a link should still read as a
+   heading, not as body-text link. */
 .issue-plan__stage { margin-top: 2.5rem; }
-.issue-plan__stage-heading {
-  display: flex;
-  align-items: baseline;
-  gap: 0.6rem;
-  font-size: var(--content-h1);
-  padding-bottom: 0.4rem;
-  border-bottom: 1px solid var(--color-border-default);
-}
+.issue-plan__stage h1 { margin-bottom: 0.2rem; }
+.issue-plan__stage > hr { margin: 0 0 1rem; }
+.issue-plan__stage-link { color: inherit; text-decoration: none; }
+.issue-plan__stage-link:hover { color: var(--color-brand-primary); text-decoration: none; }
 .issue-plan__stage-num {
   font-family: var(--font-family-mono);
   font-size: var(--ui-text-body);
   color: var(--color-text-muted);
+  margin-right: 0.6rem;
 }
-.issue-plan__stage-heading a { color: inherit; text-decoration: none; }
-.issue-plan__stage-heading a:hover { color: var(--color-brand-primary); }
+.issue-plan__section-heading { margin-top: 0; }
 
-.issue-plan__refs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.75rem 0 1rem; }
+/* A stage's references — a LIST, not a row of chips, in the same shape as an
+   ordering label written by hand: `<status icon> 040/100 <title>`. The number
+   is what lets a reader match the row against the sidebar, which lists by
+   number; a name alone cannot be matched against what is already on screen. */
+.issue-plan__refs {
+  list-style: none;
+  margin: 0.75rem 0 1.25rem;
+  padding: 0;
+}
 .issue-plan__ref {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  padding: 0.12rem 0;
+  font-size: var(--ui-text-body);
+}
+.issue-plan__ref a { text-decoration: none; }
+.issue-plan__ref a:hover { text-decoration: underline; }
+.issue-plan__ref-num {
+  font-family: var(--font-family-mono);
+  color: var(--color-text-muted);
+  margin-right: 0.4rem;
+}
+.issue-plan__ref-icon {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.15rem 0.5rem;
-  border: 1px solid var(--color-border-default);
-  border-radius: 10px;
-  font-size: var(--ui-text-micro);
-  color: var(--color-text-secondary);
-  text-decoration: none;
+  flex-shrink: 0;
+  /* Icons are drawn on the text baseline of the row they label; without this
+     they ride high against `align-items: baseline`. */
+  transform: translateY(2px);
 }
-.issue-plan__ref:hover { border-color: var(--color-brand-primary); color: var(--color-brand-primary); }
-.issue-plan__ref-icon { display: inline-flex; align-items: center; }
-.issue-plan__ref--log { font-family: var(--font-family-mono); }
+/* A run whose `status:` is free-form and not one of the seven draws no icon.
+   The empty box keeps its title aligned with the rows that do have one. */
+.issue-plan__ref-icon.is-none { width: 14px; height: 14px; }
+.issue-plan__ref--log a { font-family: var(--font-family-mono); }
 
 /* The active plan — the highest-numbered one that is not done or dropped. It is
    MARKED, not moved: the sidebar lists plans in plain ascending prefix order, so

@@ -12,9 +12,9 @@ because they share an owner and a fix shape, not because they are related.
 
 # References
 
-- [reader 3 — sol](../../agent-log/020_wf_ship-the-split/working/073_verdict-sol.md)
+- [reader 3 — sol](../../agent-log/020_wf_ship-the-split/02_working/073_verdict-sol.md)
   — the vocabulary-layer miscount and the two-round ambiguity
-- [reader 1 — Opus](../../agent-log/020_wf_ship-the-split/working/071_verdict-opus.md)
+- [reader 1 — Opus](../../agent-log/020_wf_ship-the-split/02_working/071_verdict-opus.md)
   — the subtask depth numbers and the plan prefix width
 
 # Todo list

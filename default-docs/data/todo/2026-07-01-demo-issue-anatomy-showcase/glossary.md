@@ -19,7 +19,7 @@ section** — the same colour can mean different things in Brainstorm than in Ag
 
 | Colour | Meaning | Example |
 |---|---|---|
-| <span style="color:#e5a663">**amber**</span> | A round that needs eyeballing on a real screen before it goes further. | [Sizing tweaks](./agent-log/010_lp_implement-sections/working/050_sizing-tweaks.md) |
+| <span style="color:#e5a663">**amber**</span> | A round that needs eyeballing on a real screen before it goes further. | [Sizing tweaks](./agent-log/010_lp_implement-sections/02_working/050_sizing-tweaks.md) |
 
 Colour carries **no framework-defined meaning** — this legend is what makes it legible,
 which is exactly why the Glossary is the right home for it.

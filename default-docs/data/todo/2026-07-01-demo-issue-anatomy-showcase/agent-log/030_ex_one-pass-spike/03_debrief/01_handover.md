@@ -6,7 +6,7 @@ title: "Handover"
 
 The one-pass reader is answered, not shelved. It needed a per-section
 discriminator regardless — see
-[the surface scope](../working/010_scope-the-surfaces.md), which names the two
+[the surface scope](../02_working/010_scope-the-surfaces.md), which names the two
 shapes that force it — so the single pass collapses into the same four functions
 with a switch in front of them, and measured 11% slower on the fixture corpus.
 

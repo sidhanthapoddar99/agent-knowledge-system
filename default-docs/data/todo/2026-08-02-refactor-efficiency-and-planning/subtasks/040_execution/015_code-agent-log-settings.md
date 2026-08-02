@@ -30,7 +30,9 @@ accepts the absent case.
       on a new `agentLogGroups` array, not on `IssueAgentLog`
 - [x] **`working` and `debrief` are RESERVED folder names** inside an agent log —
       never treated as child agent logs. Anything else matching
-      `NNN_<kind>_<name>/` is a child
+      `NNN_<kind>_<name>/` is a child. **Superseded 2026-08-03** — this is what
+      shipped, and the rule it implements no longer exists; see the replacement
+      item below
 - [x] The status is **optional** — absent stays representable (`null`), never
       defaulted at read time
 - [x] Colour source: **reuse `statusColors`** — settled by construction once
@@ -56,7 +58,29 @@ accepts the absent case.
       child whose status differs from its parent's
 - [x] `./start build` clean
 
+**Superseded 2026-08-03 — the reserved-name half of this subtask was replaced,
+and the replacement is owned elsewhere.** A folder inside an agent log is now a
+**child agent log when its numeric prefix is `≥ 100`**, and one of the run's own
+slots below that; the slots are `01_summary.md`, `02_working/` and
+`03_debrief/`. Same answer for every folder that exists today — what changes is
+that the discriminator is arithmetic the filesystem carries rather than a name
+list only the code knows, and the sidebar's *pin summary first* rule goes with
+it. Spec: [the numbering spec](../../notes/80_agent-log-numbering-spec.md).
+Execution, including the loader constant, the validator and the migration:
+[number the agent log's own slots](../100_agent-log-slot-numbering.md). **No
+open work is carried here** — the status read path this subtask shipped is
+unaffected.
+
 # Outcomes and Next Steps
+
+> [!NOTE]
+> **One thing this subtask shipped was replaced on 2026-08-03, and it is not a
+> defect in what is below.** The loader told a slot from a child agent log by a
+> **reserved-name set**; that is now a **prefix comparison**
+> ([the numbering spec](../../notes/80_agent-log-numbering-spec.md)), carried out
+> by [number the agent log's own slots](../100_agent-log-slot-numbering.md).
+> Everything else here — the status read path, the colours, the four verified
+> fixtures, the proved-able-to-fail validator — is untouched by it.
 
 **Shipped.** Every agent-log folder may declare a status; it tints the kind
 symbol already on that row, read from the same `statusColors` map as every other
@@ -81,7 +105,7 @@ not-meaningful-for-a-run error, `nonsense` gives the invalid-status error, and
 restoring returns exit 0.
 
 **Run record:**
-[`020_wf_ship-the-split/working/020_agent-log-settings.md`](../../agent-log/020_wf_ship-the-split/working/020_agent-log-settings.md).
+[`020_wf_ship-the-split/working/020_agent-log-settings.md`](../../agent-log/020_wf_ship-the-split/02_working/020_agent-log-settings.md).
 
 ## What shipped differently from the spec, and why
 

@@ -12,6 +12,24 @@ only one of them can force a consumer to act.
 marketplace listing match reality, and a consumer on the old content format is
 **stopped at startup** with a message that walks them through the migration.
 
+> [!IMPORTANT]
+> **Added 2026-08-03 — this release now carries a second content-format change,
+> and the two version numbers in the title may be short by one.** The agent log's
+> three slots gained numeric prefixes and the child-log rule became a prefix
+> comparison ([the numbering spec](../notes/80_agent-log-numbering-spec.md)),
+> shipped by
+> [number the agent log's own slots](./100_agent-log-slot-numbering.md) with its
+> own converter, `0.1.4_agent-log-slot-numbering.py`.
+>
+> It breaks a consumer the same way the status vocabulary does — existing folders
+> no longer match what the reader expects — so it belongs in this release rather
+> than a later one. Two breaking changes behind one gate is what the gate is for;
+> splitting them stops the same consumer twice. **What has to be decided here:**
+> whether `ENGINE_VERSION` and `MIN_CONTENT_VERSION` go to `0.1.3` as written
+> below or to **`0.1.4`**, to match the second migration's own filename. The
+> migration numbering already assumes `0.1.4`, and a floor below the last
+> migration is a gate that lets un-migrated content through.
+
 # References
 
 - The migration script this pairs with:

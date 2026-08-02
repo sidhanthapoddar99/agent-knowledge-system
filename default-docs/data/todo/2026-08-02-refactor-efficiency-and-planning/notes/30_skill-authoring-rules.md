@@ -54,7 +54,7 @@ is the instruction; nothing describes it.
 ### 2. *"Every file … is structured, context-setting prose, never a bare dump. Even a single-line thought gets a couple of explanatory sentences"*
 `SKILL.md:201`
 
-**Delete.** It dissolves into the templates: `summary.md`'s five headings *are*
+**Delete.** It dissolves into the templates: `01_summary.md`'s five headings *are*
 the structure, and an iteration file's template *is* its shape. A rule that
 restates what a template already enforces is a second copy of a fact the template
 owns.

@@ -21,7 +21,7 @@ every time someone read the skill.
 | **agent log** | one folder — `NNN_<kind>_<name>/` — recording one run with one goal |
 | **child agent log** | an agent log nested inside another, for a sub-goal |
 | **iteration** | one coherent round of work — a group of subtasks, executions and agents. The first two digits of a file's number |
-| **iteration file** | the round's own file inside `working/`, written by the orchestrator |
+| **iteration file** | the round's own file inside `02_working/`, written by the orchestrator |
 | **producer file** | a file written by one agent that produced something substantial, sitting beside its iteration file |
 
 The section folder stays `agent-log/` — renaming it would touch the loader,
@@ -45,15 +45,16 @@ Any proposed rule is judged against these three.
 
 ```
 agent-log/
-└── NNN_<kind>_<name>/              ← an agent log
+└── 0NN_<kind>_<name>/              ← an agent log
     ├── settings.json               ← optional: status → colours the kind symbol
-    ├── summary.md                  ← REQUIRED. The one conclusive file.
-    ├── working/                    ← one file per iteration, plus producers'
+    ├── 01_summary.md               ← REQUIRED. The one conclusive file.
+    ├── 02_working/                 ← one file per iteration, plus producers'
     │   ├── 010_<round>.md
     │   ├── 011_<what-it-produced>.md
     │   └── 020_<round>.md
-    └── debrief/                    ← what leaves this run
-        └── 01_handover.md
+    ├── 03_debrief/                 ← what leaves this run
+    │   └── 01_handover.md
+    └── 100_<kind>_<name>/          ← a CHILD agent log. Prefix ≥ 100
 ```
 
 Nested — **a sub-goal becomes a child agent log**, same shape recursively. The
@@ -62,14 +63,48 @@ A plan's stages are the common case, **not the only one** — a long-running loo
 a programme, or any investigation that decomposes into named sub-goals nests the
 same way.
 
-`working` and `debrief` are **reserved names**; anything matching
-`NNN_<kind>_<name>` is a child agent log. No ambiguity at read time.
+## The run's own slots are numbered, and the discriminator is arithmetic
+
+**Revised 2026-08-03** — the three slots were `summary.md`, `working/` and
+`debrief/`, distinguished from child agent logs by a hard-coded set of reserved
+names. Full statement and rules:
+[the numbering spec](./80_agent-log-numbering-spec.md).
+
+Two things the prefixes buy, and the second is the structural one:
+
+**The three slots always had a fixed reading order and no way to say so.**
+Summary, then working, then debrief is the order they are meant to be read in,
+and the sidebar was enforcing it with a hand-written pin-summary-first rule. The
+prefix states that order in the one place every other section in this tracker
+already states it — the filename — so nothing has to carry it separately.
+
+**"Slot or child agent log" is now a number comparison, not a name list.** Under
+the old rule a folder inside an agent log was a reserved slot if its name was in
+`{working, debrief}`, and a child agent log otherwise. That is a rule the code
+carries and the filesystem cannot see. Now:
+
+| Prefix on a folder inside an agent log | What it is |
+|---|---|
+| `< 100` (`02_`, `03_`) | one of the run's own slots |
+| `≥ 100` (`100_`, `210_`) | a **child agent log** |
+
+Nothing is ambiguous at read time, and a fourth slot can be added later — `04_` —
+without teaching any code a fourth name. It is the same preference this whole
+issue applies everywhere: **prefer making an invariant structural over
+documenting it.**
+
+It also removes a collision nobody had written down: under the name-list rule a
+child agent log could not be called `working`, because the reader would have
+classified it as the slot. That restriction existed, was never stated, and is now
+gone — the two bands cannot overlap by accident, since slots run `01`–`99` and
+children start at `100`.
 
 ## Iteration file vs child agent log — the discriminator
 
 > **Does it have its own goal?**
-> Yes → **child agent log** (its own `summary.md`).
-> No, it is work done toward the parent's goal → **iteration file** in `working/`.
+> Yes → **child agent log** (its own `01_summary.md`).
+> No, it is work done toward the parent's goal → **iteration file** in
+> `02_working/`.
 
 **This is the only rule, and it deliberately never mentions plans.** A ten-stage
 plan gives ten child agent logs; a long-running loop with four named goals gives
@@ -86,7 +121,7 @@ agent logs.
 
 ---
 
-# `summary.md`
+# `01_summary.md`
 
 **Revised (sidhantha, 2026-08-03).** The section names and the Outcome cap
 changed after reading the first log written in this shape; what the sections are
@@ -124,8 +159,8 @@ title: "Summary"
 | **Out of Scope** | What this run deliberately does not touch. **Optional** — omit it rather than writing "nothing" | List | Written once |
 | **Outcome** | What the run actually produced, what it cost, what it found. The gates it passed, with numbers | **A detail area.** As long as the run warrants | Written at close |
 
-**State first, deliberately.** Opening `summary.md` and knowing where things are
-without scrolling is purpose 1 and purpose 3 in one section.
+**State first, deliberately.** Opening `01_summary.md` and knowing where things
+are without scrolling is purpose 1 and purpose 3 in one section.
 
 **State is a callout because it is the one thing a reader must not scroll
 past.** Plain prose under a heading reads as introduction and gets skimmed; a
@@ -133,7 +168,7 @@ callout is a different visual object on the page. The severity carries meaning
 too — a run that came back reopened or blocked says so in the callout type, not
 only in the words.
 
-**No notes section.** If it is worth writing, it goes in `debrief/`.
+**No notes section.** If it is worth writing, it goes in `03_debrief/`.
 
 **The Todo list is run-local and disposable.** If an item outlives the run it
 becomes a subtask.
@@ -176,7 +211,7 @@ came to, which no iteration file is positioned to write.
 
 ---
 
-# `working/`
+# `02_working/`
 
 ## One iteration, one file — and an iteration is a GROUP
 
@@ -205,7 +240,7 @@ exactly one writer.
 the iteration file itself, `1`…`9` for a producer's own file.
 
 ```
-working/
+02_working/
 ├── 010_audit-round.md              ← iteration 01 — the orchestrator's file
 ├── 011_scope-a-byte-surface.md     ← a producer within it: an audit report
 ├── 012_scope-b-blast-radius.md     ← a producer within it
@@ -213,16 +248,21 @@ working/
 └── 030_battery.md                  ← iteration 03
 ```
 
-**`working/` is FLAT — no subdivision.** The numbering is what expresses "this
+**The slot's own `02_` prefix and the `NNN_` inside it are different numbers and
+never interact.** `02_` orders the slot against `01_summary.md` and
+`03_debrief/`; `NNN_` orders the rounds within the slot. The three-digit form
+inside is unchanged.
+
+**`02_working/` is FLAT — no subdivision.** The numbering is what expresses "this
 iteration produced several files": `011`, `012` sit beside `010`. A folder per
 iteration would be a second way to say the same thing.
 
 Add a folder only when a **single producer** makes several artifacts, and then it
 is `NNN_<name>/` holding them — still flat at the iteration level.
 
-If a stage needs so many agents that a flat `working/` becomes unreadable, that
-is evidence the **stage** should be two child agent logs, not that `working/`
-should grow a tree.
+If a stage needs so many agents that a flat `02_working/` becomes unreadable,
+that is evidence the **stage** should be two child agent logs, not that
+`02_working/` should grow a tree.
 
 ## An iteration file is SELF-CONTAINED — the required head
 
@@ -318,7 +358,7 @@ never a second copy of anything.
 - **The outcome, in the broad sense** — plus benchmark numbers if it produced any.
 - **Issues found: one line each, plus a pointer.** *"Found a refusal path that
   deletes before the user has the bytes — detail in
-  `debrief/02_recovery-gaps.md`."* Never the full write-up in place.
+  `03_debrief/02_recovery-gaps.md`."* Never the full write-up in place.
 
 **The iteration number is the filename (`011_`) and is never repeated in
 frontmatter.** Same rule as everything else here — the filename owns it.
@@ -329,12 +369,18 @@ read the same thing twice.
 
 ---
 
-# `debrief/` — what leaves the run
+# `03_debrief/` — what leaves the run
 
 **Renamed from `notes/` (sidhantha, 2026-08-02.)** Two folders called `notes/`,
 one at issue level and one inside every agent log, is a collision that costs a
 disambiguating clause every time either is mentioned — and it invited the wrong
 routing, because "notes" sounds like the issue's notes.
+
+**Revised 2026-08-03** — the folder is now `03_debrief/`. The word is unchanged
+and so is the reasoning above; the prefix was added so the slot states its own
+read position and so that "slot or child agent log" is decided by the number
+rather than by the name. See
+[the numbering spec](./80_agent-log-numbering-spec.md).
 
 **`debrief` is the word because the folder is not one thing.** It is everything
 worth telling someone after the run: what was learned, what is still open, what
@@ -342,7 +388,7 @@ someone must decide. A debrief covers all of that in ordinary English, and
 nothing else in the framework is called that.
 
 ```
-debrief/
+03_debrief/
 ├── 01_handover.md          ← conventional landing file
 ├── 02_questions-for-sid.md
 ├── 03_findings.md
@@ -372,12 +418,12 @@ lesson of the old six.
 **Anything actionable leaves the log** and becomes a subtask or a dump entry; the
 debrief keeps the pointer. A bug recorded only as log prose dies in the log.
 
-**Where `debrief/` ends and the issue's `notes/` begins** — the test is
+**Where `03_debrief/` ends and the issue's `notes/` begins** — the test is
 **audience**:
 
 | Question | Home |
 |---|---|
-| Does the next run of *this* work need it? | the agent log's `debrief/` |
+| Does the next run of *this* work need it? | the agent log's `03_debrief/` |
 | Does anyone touching *this issue* need it, ever? | the issue's `notes/` |
 
 Decision-bearing analysis that later work will cite graduates to the issue's
@@ -391,7 +437,7 @@ These are the biggest content categories by volume, and each had a home outside
 the standard slots. Naming them explicitly, because a structure that does not
 say where they go will grow a seventh slot again.
 
-**An audit report is an iteration file.** One auditor, one file in `working/`.
+**An audit report is an iteration file.** One auditor, one file in `02_working/`.
 It is bound by *thin but complete* like any other: findings with `file:line` and
 the reproduction, one line each, detail pointed at rather than inlined. The
 `<agent-log>/audit/<scope>.md` convention — a seventh slot invented outside the
@@ -412,13 +458,15 @@ result. The file's `agent:` field names the **tool**, because that is whose
 finding it is; the owner is accountable for the file existing. A finding that
 lives only in a job record dies with the run.
 
-**`summary.md` IS the brief.** A run-specific brief does not get its own file.
+**`01_summary.md` IS the brief.** A run-specific brief does not get its own file.
 `# Goal` + `# Todo` + `# Out of Scope` already *are* the brief —
-point the agent at `summary.md` and spend the prompt on the delta. Standing rules
-are referenced from `agent-memory/`, never re-typed
+point the agent at `01_summary.md` and spend the prompt on the delta. Standing
+rules are referenced from `agent-memory/`, never re-typed
 ([thread 05](../brainstorm/05_discuss_subagent-protocol.md)). This retires the
 "keep the rephrased brief as its own numbered file in `03_working/`" convention
-that produced 160 committed brief files.
+that produced 160 committed brief files — that `03_working/` is the **retired
+six-slot** folder, not today's `02_working/`, and the two are unrelated despite
+sharing a word.
 
 **Benchmarks split by weight.** The *numbers* go in the iteration file that
 produced them. The *drivers, traces and raw dumps* go to the code repo's
@@ -464,17 +512,17 @@ data/tasks/2026-08-02-nsd-phase-2/
 └── agent-log/
     └── 030_lp_overnight-stages-3-5/         # ── the loop: one run, one goal
         ├── settings.json                    #    {"status": "done"}
-        ├── summary.md                       #    State tells you where it got to
-        ├── working/                         #    the LOOP's own files — 1 or 2, no more
+        ├── 01_summary.md                    #    State tells you where it got to
+        ├── 02_working/                      #    the LOOP's own files — 1 or 2, no more
         │   └── 010_round-ledger.md          #      which workflow ran when, why order changed
-        ├── debrief/
+        ├── 03_debrief/
         │   ├── 01_handover.md               #    what the next overnight run must know
         │   └── 02_questions-for-sid.md      #    decisions the loop could not take
         │
-        ├── 010_wf_s3-decoder-swap/          # ── workflow 1 (serves plan stage 3)
-        │   ├── settings.json
-        │   ├── summary.md                   #    this IS the brief the agents were pointed at
-        │   ├── working/                     #    FLAT. first 2 digits = iteration, last = file
+        ├── 100_wf_s3-decoder-swap/          # ── workflow 1 — a CHILD log: prefix ≥ 100
+        │   ├── settings.json                #    (serves plan stage 3)
+        │   ├── 01_summary.md                #    this IS the brief the agents were pointed at
+        │   ├── 02_working/                  #    FLAT. first 2 digits = iteration, last = file
         │   │   ├── 010_plan-the-slice.md    #      iteration 01
         │   │   ├── 020_execution.md         #      iteration 02 — two executors ran; they
         │   │   │                            #      produced CODE, so no files of their own
@@ -486,14 +534,19 @@ data/tasks/2026-08-02-nsd-phase-2/
         │   │   └── 060_research-codecs/     #      one producer, several artifacts → a folder
         │   │       ├── 01_findings.md
         │   │       └── 02_decision-tree.mmd #      mermaid renders as a log entry
-        │   └── debrief/
+        │   └── 03_debrief/
         │       └── 01_handover.md
         │
-        ├── 020_wf_s3-journal-compat/        # ── workflow 2, same shape
-        ├── 030_wf_s4-retention/             # ── workflow 3 (stage 4)
-        ├── 040_wf_s4-cleanup-accounting/    # ── workflow 4
-        └── 050_wf_s5-concurrency/           # ── workflow 5 (stage 5)
+        ├── 110_wf_s3-journal-compat/        # ── workflow 2, same shape
+        ├── 120_wf_s4-retention/             # ── workflow 3 (stage 4)
+        ├── 130_wf_s4-cleanup-accounting/    # ── workflow 4
+        └── 140_wf_s5-concurrency/           # ── workflow 5 (stage 5)
 ```
+
+**Read the loop's own folder in two bands.** `01_`–`03_` are the loop's three
+slots; `100_` upwards are its five child agent logs. Sorting the folder puts the
+loop's own record first and its children after, with no rule to remember and
+nothing to look up.
 
 **The plan stage survives as a label, not a folder** — in the workflow's name
 (`s3`, `s4`, `s5`) and in the loop's Todo. A folder would be a second place
@@ -509,7 +562,7 @@ shortens it:
    Two executors writing code produce one iteration file between them; two
    auditors writing reports produce two files plus the iteration's own.
 4. One producer making several artifacts is the only reason to nest inside
-   `working/`.
+   `02_working/`.
 5. Depth stops at four.
 
 ---
@@ -529,8 +582,8 @@ Budget for the deepest realistic run:
 | Segment | Example | Level |
 |---|---|---|
 | agent log | `030_lp_overnight/` | 1 |
-| child agent log | `010_wf_decoder-swap/` | 2 |
-| `working/` | | 3 |
+| child agent log | `100_wf_decoder-swap/` | 2 |
+| `02_working/` | | 3 |
 | an agent's artifact folder | `071_research-codecs/` | 4 |
 | — | file sits here | — |
 
@@ -562,16 +615,16 @@ lose it.
 
 | Output | Home |
 |---|---|
-| One producer, several artifacts (survey + diagram + data) | `working/NNN_<name>/` — the folder form, one folder per producer |
-| A diagram supporting one iteration | `working/NNN_<name>.mmd` beside the iteration file, or inside its folder |
-| Analysis the run wants to pass forward | the agent log's `debrief/` |
+| One producer, several artifacts (survey + diagram + data) | `02_working/NNN_<name>/` — the folder form, one folder per producer |
+| A diagram supporting one iteration | `02_working/NNN_<name>.mmd` beside the iteration file, or inside its folder |
+| Analysis the run wants to pass forward | the agent log's `03_debrief/` |
 | Decision-bearing analysis another run will cite | **the issue's `notes/`** — the iteration file keeps a one-line pointer |
 | An HTML dashboard or report | **the issue's `notes/`** — agent-log will not render it |
 | Raw drivers, traces, dumps | the code repo's gitignored benchmark directory |
 
 **The discriminator is audience, not size.** If only this agent needs it, it
-stays in `working/`. If the run wants to pass it forward, `debrief/`. If a later
-run or a reader of the issue needs it, the issue's `notes/`.
+stays in `02_working/`. If the run wants to pass it forward, `03_debrief/`. If a
+later run or a reader of the issue needs it, the issue's `notes/`.
 
 # What this spec does NOT cover
 
@@ -583,9 +636,21 @@ Scoped deliberately, so the gap is visible rather than assumed closed:
   [`040_skill-efficiency-rules`](../subtasks/040_execution/040_skill-efficiency-rules.md),
   which is **still open**. This structure removes the *slots* that invited
   restatement; it does not by itself stop a single file being an essay.
-- **Migration of existing agent-log FOLDERS.** History stays as written; this
-  governs what is recorded next. Restructuring old folders is not proposed — a
-  script that did it would rewrite the record rather than migrate it.
+- **Migration of the retired SIX-SLOT folders.** History stays as written; this
+  governs what is recorded next. Restructuring `00_goal.md` … `05_notes.md` and
+  the `MNN_` milestones is not proposed — a script that did it would rewrite the
+  record rather than migrate it.
+
+  > [!NOTE]
+  > **Revised 2026-08-03 — folders written in THIS shape are a different case.**
+  > The three slots gained numeric prefixes
+  > ([the numbering spec](./80_agent-log-numbering-spec.md)), so every log
+  > already recorded as `summary.md` / `working/` / `debrief/` has to be renamed
+  > rather than left. That is not a rewrite of history: the same files keep the
+  > same contents and the same reading order, and the alternative is a tracker
+  > where the discriminator holds for some folders and not others — which is
+  > worse than either shape on its own. The retired six-slot folders are
+  > untouched by it, and the sentence above still holds for them.
 
   > [!IMPORTANT]
   > **This is not true of the status VALUES, and an earlier draft said it was.**
@@ -605,11 +670,18 @@ Counted 2026-08-02. Every place the current shape is encoded.
 | Where | Files | What must change |
 |---|---|---|
 | **Skill** — `plugins/agent-ks/skills/agent-ks-issues/` | `SKILL.md`, `references/20_sections/24_agent-logs.md` (primary), `00_anatomy/00_overview.md`, `00_anatomy/01_folder-layout.md`, `00_anatomy/03_overall-issue-tracker-vocabulary.md`, `10_writing/10_writing.md`, `60_examples/63_agent-loops.md`, `20_sections/26_agent-memory.md` | The six slots, the milestone rhythm and frontmatter, **the word *activity* → *agent log***, **`notes/` → `debrief/`**, the iteration-file head, the worked example |
-| **CLI** — `plugins/agent-ks/skills/agent-ks-docs/scripts/` | `issues/new-agent-log.mjs` (**seeds the six slots**), `issues/check.mjs`, `_manifest.mjs` | Scaffold `summary.md` + `working/` + `debrief/` + `settings.json`; emit the iteration-file head; validate the new shape and the reserved names |
+| **CLI** — `plugins/agent-ks/skills/agent-ks-docs/scripts/` | `issues/new-agent-log.mjs` (**seeds the six slots**), `issues/check.mjs`, `_manifest.mjs` | Scaffold `01_summary.md` + `02_working/` + `03_debrief/` + `settings.json`; emit the iteration-file head; validate the new shape and the `≥ 100` child-log rule |
 | **Framework** | `astro-doc-code/src/layouts/issues/default/guide.ts` (lines ~133–175) | The anatomy tree, **the six-slot list — a fourth home of the "kept present even when blank" floor**, the whole milestone block, the `#N` badge tinting, the milestone frontmatter table. Line-by-line in [the framework spec](./40_agent-log-settings-framework-spec.md) |
 | **User-guide prose** | `19_issues/05_sub-docs/05_agent-log.md` (primary), `19_issues/03_folder-structure.md`, `19_issues/01_overview.md`, `19_issues/07_ui/02_detail-view.md` | Same content for humans, same vocabulary change |
-| **`~/.claude/CLAUDE.md`** | line ~78 *"an activity folder holding one run's goal, task list and **milestones**"*; line ~298 *"Instructions as files, prompts as pointers"* | Milestones no longer exist; the word *activity* goes; the brief rule becomes "summary.md is the brief" |
+| **`~/.claude/CLAUDE.md`** | line ~78 *"an activity folder holding one run's goal, task list and **milestones**"*; line ~298 *"Instructions as files, prompts as pointers"* | Milestones no longer exist; the word *activity* goes; the brief rule becomes "`01_summary.md` is the brief" |
 | **Consumer — `neurasutra-docs`** | `memory/standing-rules.md:16,32–33,35`, `memory/orchestration.md:34,60,73`, `memory/codex-sol.md:75,101` | *"Keep all six present even when blank"* (the six-file floor), `<activity>/audit/<scope>.md`, *"keep the rephrased brief in `03_working/`"*, milestone references, the vocabulary |
+
+**This census predates the numbering change and does not include it.** It counts
+what the *shape* change touches; the prefixes add their own surfaces — the
+loader's slot rule, the sidebar's pin-summary-first, four CLI scripts and a
+structural migration. That list is in
+[the numbering spec](./80_agent-log-numbering-spec.md), which is the one to work
+from; the rows above stay as counted on 2026-08-02.
 
 **`~/.claude/CLAUDE.md` is Sid's personal global file** — propose the diff and get
 explicit sign-off; it governs every project on the workstation, not just this one.
@@ -625,7 +697,7 @@ fixing it before the skill lands puts a stale copy in the field. Subtask:
 | Scope of the decision | Home |
 |---|---|
 | Within a single iteration — *"pick A, B, C or D here"* | **the iteration file** |
-| Affects the rest of this run | **the agent log's `debrief/`** |
+| Affects the rest of this run | **the agent log's `03_debrief/`** |
 | Affects more than one run | **the issue's `notes/`** |
 
 This also settles the decision-home gap in
@@ -673,10 +745,12 @@ slots become a three-file floor for a one-line change.
 
 > **No file stores a fact another file owns.**
 
-Every cut above is an instance: `# Outcome` points rather than restates;
-an iteration file points at the debrief that holds the detail; actionable items
-leave for the subtask that owns them; standing rules are referenced, not
-re-typed. Where this is enforced structurally, duplication is impossible; where
+Every cut above is an instance: `# Outcome` points rather than restates; an
+iteration file points at the debrief that holds the detail; the slot prefix
+carries the read order instead of a pin rule stating it a second time;
+actionable items leave for the subtask that owns them; standing rules are
+referenced, not re-typed.
+Where this is enforced structurally, duplication is impossible; where
 it is only written down, it decays. Judge every future rule by which of the two
 it is.
 

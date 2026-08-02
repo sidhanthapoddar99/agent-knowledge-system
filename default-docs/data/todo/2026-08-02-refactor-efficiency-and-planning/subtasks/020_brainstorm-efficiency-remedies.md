@@ -31,9 +31,11 @@ jargon, which is worse than writing too much.
       small changes are grouped against a larger block
 - [x] Decide the **one-canonical-home rule** → *no file stores a fact another
       file owns*, plus the seven one-word section purposes
-- [x] Decide what happens to the **six standard slots** → removed; `summary.md`
-      + `working/` + `debrief/`
-- [x] Decide the **brief policy** → `summary.md` **is** the brief
+- [x] Decide what happens to the **six standard slots** → removed; three slots
+      instead. **Renamed 2026-08-03** to `01_summary.md` + `02_working/` +
+      `03_debrief/` — the count and the purposes are unchanged, only the
+      filenames ([the numbering spec](../notes/80_agent-log-numbering-spec.md))
+- [x] Decide the **brief policy** → `01_summary.md` **is** the brief
 - [x] Decide whether anything ever gets **compacted or superseded** →
       superseded wording is **deleted**, and non-contributing content is deleted
 - [x] Graduate the resolved threads into `notes/` as the rule set
@@ -66,7 +68,7 @@ agent's memory of an instruction it read at session start.
 |---|---|
 | A measured size input (lines changed) | Gameable, and wrong for a one-line fix to a frozen invariant. Replaced by a structural trigger: delegated or multi-round work opens a log, nothing else does |
 | A word or line budget | Produces jargon. The target is fewer copies, never shorter prose |
-| Shorter audit reports | Sid does not read them; depth below the summary is the agent's business. The rule became *conclusive in themselves, plus a simplified table in `summary.md`* |
+| Shorter audit reports | Sid does not read them; depth below the summary is the agent's business. The rule became *conclusive in themselves, plus a simplified table in `01_summary.md`* |
 | Dropping "areas checked and found clean" | It distinguishes *checked* from *never reached*. It becomes a table row instead of prose |
 
 **Two rules overturned by the ruling**, both recorded in the rule set: *one

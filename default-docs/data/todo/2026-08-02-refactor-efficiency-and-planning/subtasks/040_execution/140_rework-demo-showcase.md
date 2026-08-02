@@ -39,8 +39,11 @@ page loads with the expected structure.
 
 - [x] **`plans/`** — at least two plans, one active and one closed, with stages
       in every status so the table renders every colour
-- [x] **`agent-log/`** — rebuild on `summary.md` + `working/` + `debrief/`.
-      Delete the six slots and the `101_` milestones
+- [x] **`agent-log/`** — rebuild on the three slots. Delete the six slots and the
+      `101_` milestones. **Renamed 2026-08-03** to `01_summary.md` +
+      `02_working/` + `03_debrief/`
+      ([the numbering spec](../../notes/80_agent-log-numbering-spec.md)), so the
+      fixture has to be renamed with the rest of the tracker
 - [x] Demonstrate an **iteration with producer files** beside it — `010`, `011`,
       `012` — since that is the part of the numbering people get wrong
 - [x] Demonstrate a **child agent log**, and the depth limit one level below it
@@ -71,9 +74,9 @@ because breadth had become the problem rather than the point.
 
 | Fixture | Teaches |
 |---|---|
-| [The section loop](../../../2026-07-01-demo-issue-anatomy-showcase/agent-log/010_lp_implement-sections/summary.md) | the **large end** — six iterations, two producer files beside their round (`011`, `012`), a benchmark round, a **producer folder** with a report and a `.mmd`, a two-file `debrief/`, an `input-needed` round, and a **child agent log** at level 4 whose status is independent of its parent |
-| [The edge-case audit](../../../2026-07-01-demo-issue-anatomy-showcase/agent-log/020_au_edge-cases/summary.md) | an audit as **two halves of a pair** — one read, one executed, merged as a **union, not a vote**; one finding refuted on evidence and kept as refuted |
-| [The abandoned spike](../../../2026-07-01-demo-issue-anatomy-showcase/agent-log/030_ex_one-pass-spike/summary.md) | a run that **did not land** — the custom `ex` kind, `status: dropped`, `# State` as a `> [!WARNING]`, and both signals a failed run needs |
+| [The section loop](../../../2026-07-01-demo-issue-anatomy-showcase/agent-log/010_lp_implement-sections/01_summary.md) | the **large end** — six iterations, two producer files beside their round (`011`, `012`), a benchmark round, a **producer folder** with a report and a `.mmd`, a two-file debrief, an `input-needed` round, and a **child agent log** at level 4 whose status is independent of its parent |
+| [The edge-case audit](../../../2026-07-01-demo-issue-anatomy-showcase/agent-log/020_au_edge-cases/01_summary.md) | an audit as **two halves of a pair** — one read, one executed, merged as a **union, not a vote**; one finding refuted on evidence and kept as refuted |
+| [The abandoned spike](../../../2026-07-01-demo-issue-anatomy-showcase/agent-log/030_ex_one-pass-spike/01_summary.md) | a run that **did not land** — the custom `ex` kind, `status: dropped`, `# State` as a `> [!WARNING]`, and both signals a failed run needs |
 | `plans/01_` | a **closed** plan with its `## Closed` section, and a `dropped` stage |
 | `plans/02_` | the **active** plan — derived, pinned — with `in-progress`/`blocked`/`open` stages |
 | `subtasks/04_verify/` | a group as an **area**, with a `00_` index leaf and three different statuses |
@@ -89,9 +92,16 @@ Routing (9 pages 200) · the Plans group exists with both plans listed and the
 **active** one marked (`Hardening the edges`, bold) · **clicking it navigates and
 changes the DOM** · the plan table renders 3 rows with the status column
 populated (`in-progress, blocked, open`) · an agent
-log shows `summary.md`, `working/`, `debrief/` and its child log, with the open
+log shows its summary, working and debrief slots and its child log, with the open
 sub-doc marked active · a level-4 producer file renders and one level past the
 cap **404s**.
+
+**The harness asserts those three by path, so confirm it was repointed with the
+2026-08-03 rename** to `01_summary.md` / `02_working/` / `03_debrief/` — the
+rename is
+[number the agent log's own slots](../100_agent-log-slot-numbering.md), whose
+todo list does not name this harness. Same class of edit as the one-path repoint
+the fixture consolidation already cost it, below, and it fails loudly if missed.
 
 **Console errors: 1, and it is the deliberate 404 probe.**
 
@@ -135,7 +145,7 @@ Two coverage items were **deliberately given up**, and it is not free:
   the first pass.
 
 The narrative, and the four inbound links the consolidation broke, are in
-[the fixture round](../../agent-log/020_wf_ship-the-split/working/100_demo-showcase-agent-logs.md).
+[the fixture round](../../agent-log/020_wf_ship-the-split/02_working/100_demo-showcase-agent-logs.md).
 
 ## Verified
 
@@ -163,7 +173,7 @@ result reads well is Sid's call and cannot be delegated to a headless browser.
 | Every section page loads without a console error | Judge whether a layout looks right |
 | The Plans sidebar group exists and the active plan is marked in it | Judge spacing, colour or density |
 | The plan table renders one row per stage, with the status column populated | Assert on exact pixel positions |
-| An agent log page shows `summary.md`, `working/` and `debrief/` | Compare against a screenshot as a pass condition |
+| An agent log page shows `01_summary.md`, `02_working/` and `03_debrief/` | Compare against a screenshot as a pass condition |
 | The deep-nesting fixture stops rendering at the depth cap | Time anything |
 
 Anything the pass cannot decide goes to Sid as a named artefact, not as a

@@ -67,11 +67,36 @@ the `iteration:` frontmatter field moved the number into the filename and left
 nothing comparing the two — and **the migration is the only pass that ever sees
 both values**, so the disagreement check has to happen there or not at all.
 
+**The 2026-08-03 slot renumbering touched most of this group, and it is owned
+outside it.** The agent log's three slots became `01_summary.md` / `02_working/`
+/ `03_debrief/`, and *slot versus child agent log* became a prefix comparison
+rather than a reserved-name set
+([the numbering spec](../../notes/80_agent-log-numbering-spec.md)). It ships as a
+top-level subtask,
+[number the agent log's own slots](../100_agent-log-slot-numbering.md), rather
+than as edits to the twelve subtasks below — a rename that crosses every surface
+at once is one change, and splitting it across the subtasks it happens to touch
+would leave no single place that knows whether it finished.
+
+What it lands on here, so the `review` column below is read with it in view:
+
+| Subtask | What the renumbering changed in it |
+|---|---|
+| [`010`](./010_code-the-plans-section.md) | the two scaffolders write and read the prefixed folders; the old-shape lint's detector needs re-checking, because the retired six-slot shape also had a file called `01_summary.md` |
+| [`015`](./015_code-agent-log-settings.md) | the reserved-name set it shipped is replaced by the `≥ 100` rule; its status read path is untouched |
+| [`030`](./030_skill-plans-section.md) · [`040`](./040_skill-efficiency-rules.md) · [`050`](./050_docs-update-plans-section.md) | the names, swept again across the skill, `guide.ts` and the user-guide |
+| [`100`](./100_migration-script.md) | a second, **structural** converter, which that script deliberately is not |
+| [`140`](./140_rework-demo-showcase.md) | the fixture, and the Playwright harness's asserted paths |
+
+**No status was flipped here.** They are the orchestrator's to move, and a table
+that disagrees with the frontmatter it copies is worse than one that is merely
+behind.
+
 **The gates:** `./start build` clean at 948 pages; the repo's own issue validator
 clean over 51 issue folders; the four new scaffolders smoke-tested end to end.
 The link checker's 4 reported errors are all illustrative paths inside one code
 fence — see the run's
-[summary](../../agent-log/020_wf_ship-the-split/summary.md) for why that is
+[summary](../../agent-log/020_wf_ship-the-split/01_summary.md) for why that is
 stated rather than ticked.
 
 **What the audit changed about this group's own claim to be finished.** `130`

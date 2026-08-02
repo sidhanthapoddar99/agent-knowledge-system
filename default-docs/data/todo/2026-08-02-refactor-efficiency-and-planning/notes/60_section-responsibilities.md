@@ -148,13 +148,13 @@ subtasks, of executions, of agents.
 
 | | Was | Is |
 |---|---|---|
-| What a file in `working/` covers | one agent's assignment | **one iteration** — a coherent round of work |
+| What a file in `02_working/` covers | one agent's assignment | **one iteration** — a coherent round of work |
 | Who writes it | the agent, as its mailbox | **the orchestrator**, from what the round produced |
 | How many files a round makes | one per agent | **one**, plus a file per agent that produced something substantial |
 
 **What replaces the mailbox rule.** An agent that produces something
 substantial — an audit, a research survey, a measured comparison — still writes
-its own file, using the folder form `working/NNN_<name>/` already in
+its own file, using the folder form `02_working/NNN_<name>/` already in
 [the agent-log spec](./20_agent-log-structure.md). An agent that does a small
 piece of work returns, and the orchestrator records the outcome in the iteration
 file.
@@ -223,7 +223,7 @@ Sid does not read them. The rule is therefore not *write less audit* — depth,
 file count and structure below the summary are the agent's business.
 
 - Audit reports must be **conclusive in themselves**.
-- **`summary.md` carries a simplified table** of the final audit. That is the
+- **`01_summary.md` carries a simplified table** of the final audit. That is the
   only part written for a human.
 - The **benchmark** surface is different — he does read it, especially while
   optimising. It keeps its detail.

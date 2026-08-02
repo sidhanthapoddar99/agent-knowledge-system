@@ -48,7 +48,10 @@ and no surviving line licenses an essay.
 
 ## The agent-log rewrite
 
-- [x] Replace the six standard slots with `summary.md` + `working/` + `debrief/`
+- [x] Replace the six standard slots with three. **Renamed 2026-08-03** to
+      `01_summary.md` + `02_working/` + `03_debrief/`
+      ([the numbering spec](../../notes/80_agent-log-numbering-spec.md)); the
+      skill's second naming sweep is below
 - [x] Delete the milestone rhythm, the `MNN_` naming, the `iteration:`
       frontmatter and the `#N` badge prose — none of it exists any more
 - [x] Ship the **iteration-file head** — `# Goal` / `# Inputs` /
@@ -56,13 +59,20 @@ and no surviving line licenses an essay.
 - [x] State the **agent log opens only when work is delegated or runs over
       multiple rounds** rule — small changes are grouped, not filed
 - [x] State the audit-report rule: **conclusive in itself, plus a simplified
-      table in `summary.md`**; depth below that is the agent's business
+      table in `01_summary.md`**; depth below that is the agent's business
 
 ## The sweeps
 
 - [x] **Vocabulary: *activity* → *agent log*, and the agent log's `notes/` →
       `debrief/`.** Every occurrence across the skill — a half-done rename is
       worse than none
+- [x] **A second naming sweep, 2026-08-03, for the same reason and done
+      elsewhere.** The three slots gained prefixes and the child-agent-log rule
+      became *prefix `≥ 100`* rather than *not one of the reserved names*
+      ([the numbering spec](../../notes/80_agent-log-numbering-spec.md)). The
+      half-done-rename argument above applied unchanged, so the sweep ran across
+      the whole skill in one pass under
+      [number the agent log's own slots](../100_agent-log-slot-numbering.md)
 - [x] Delete the four lines that mandate maximal detail (table below)
 - [x] **No superseded wording** — apply [`110`](./110_superseded-wording-sweep.md)
       to this skill as part of the same pass
@@ -94,9 +104,17 @@ stays in brainstorm.
 ## The agent-log rewrite
 
 Gone: the six standard slots, the milestone rhythm, `MNN_` naming, the
-`iteration:` field and the `#N` badge. In their place `summary.md` (five sections,
-State first, and it **is** the brief) + `working/` + `debrief/`, with child agent
-logs for sub-goals.
+`iteration:` field and the `#N` badge. In their place `01_summary.md` (five
+sections, State first, and it **is** the brief) + `02_working/` + `03_debrief/`,
+with child agent logs for sub-goals at prefix `≥ 100`.
+
+**The three names and the child rule are as of 2026-08-03**
+([the numbering spec](../../notes/80_agent-log-numbering-spec.md)). This subtask
+shipped the skill with the unprefixed names and a reserved-name rule; the second
+sweep that renamed them is
+[number the agent log's own slots](../100_agent-log-slot-numbering.md). Nothing
+about what the three slots hold changed, which is why it was a sweep and not a
+rewrite.
 
 Two rules carry the volume reduction, and the second is the one that would have
 been easy to miss:
@@ -124,12 +142,12 @@ wrap-up" alongside it.
 ## The example bracket
 
 Both ends ship, labelled: a **two-file** agent log for a one-round change (with
-`debrief/` deliberately absent, called out as the correct shape rather than an
-unfinished one), and the **overnight-loop tree** verbatim from the spec. One
-example alone sets a floor as much as a ceiling.
+the debrief folder deliberately absent, called out as the correct shape rather
+than an unfinished one), and the **overnight-loop tree** verbatim from the spec.
+One example alone sets a floor as much as a ceiling.
 
 Templates moved into the scaffolder where it can carry them: `new-agent-log`
-emits `summary.md`'s five headings, `new-iteration` emits the four-section head
+emits the summary's five headings, `new-iteration` emits the four-section head
 with the expected-outcome line pre-filled per work unit. The skill points at the
 commands rather than restating the shapes.
 
@@ -154,6 +172,14 @@ would have read as a failure and been the wrong measurement.
 - Vocabulary sweep complete: `grep -rniE "activity|milestone|new-memory-plan|00_goal|01_summary|02_task_list|MNN_"`
   over the skill returns **one** hit, and it is the deliberate negative *"a
   phase, a stage, or a milestone"* in the subtasks rule.
+
+  > [!WARNING]
+  > **Do not re-run that pattern as-is after 2026-08-03.** `01_summary` is now a
+  > **live** filename, not a retired marker
+  > ([the numbering spec](../../notes/80_agent-log-numbering-spec.md)), so the
+  > alternation would report every correct use of the new shape as a leftover.
+  > Drop that one alternative before re-running; the result recorded above was
+  > taken when the name was genuinely retired and still stands for that day.
 - 0 broken internal links.
 - `./start build` clean; `agent-ks check issues` exit 0.
 
@@ -216,7 +242,7 @@ It teaches five things nothing else in the skill states plainly:
    Two executors writing code produce one iteration file between them; two
    auditors writing reports produce two, plus the iteration's own.
 4. One producer making several artifacts is the only reason to nest inside
-   `working/`.
+   `02_working/`.
 5. Depth stops at four.
 
 **With the small end, it is a bracket.** One example alone sets a floor as much

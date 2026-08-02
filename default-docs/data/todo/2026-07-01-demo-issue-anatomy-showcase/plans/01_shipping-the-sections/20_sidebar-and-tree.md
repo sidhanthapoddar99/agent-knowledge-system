@@ -6,7 +6,7 @@ status: done
 subtasks:
   - "[Frontend](../../subtasks/02_build/02_frontend.md)"
 agent-logs:
-  - "[Migration](../../agent-log/040_wf_migration/summary.md)"
+  - "[Codec migration](../../agent-log/010_lp_implement-sections/100_wf_codec-migration/summary.md)"
 ---
 
 ## Todo

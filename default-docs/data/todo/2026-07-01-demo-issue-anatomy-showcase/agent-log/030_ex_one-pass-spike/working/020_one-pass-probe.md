@@ -8,10 +8,12 @@ agent: claude
 Would one reader over all sections beat four readers?
 
 # Inputs
-none
+[The surface scope](./010_scope-the-surfaces.md) — in particular the two section
+shapes it names as not uniformly readable.
 
 # Expected Outcome
-Findings and a recommendation.
+Findings and a recommendation, plus before-and-after numbers against the
+four-reader shape.
 
 # Outcome
 

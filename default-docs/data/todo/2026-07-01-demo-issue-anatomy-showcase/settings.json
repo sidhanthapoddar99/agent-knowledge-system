@@ -1,6 +1,6 @@
 {
   "title": "Demo: issue anatomy showcase (fixture)",
-  "description": "A stress-test fixture exercising every issue section at maximum variety — multi-tier notes & brainstorm (including a 5-level-deep nesting demo that hits the loader's hard cap), agent-memory with folders, and all agent-log kinds (loop / audit / refactor / workflow / fast-iteration) as NNN_<name>/ activity folders with the standard six 0NN slots (00_goal / 01_summary / 02_task_list / 03_working / 04_benchmark / 05_notes — showcasing file, folder, filled, and not-applicable forms), plus a trivial flat one-off. Used to eyeball the issues layout with everything populated. Not real work.",
+  "description": "A fixture for eyeballing the issues layout with every section populated — multi-tier notes and brainstorm (including a 5-level nesting demo that hits the loader's hard cap), plans with stages, agent-memory split into knowledge and history, and THREE agent logs chosen to be realistic rather than exhaustive: a loop that ran six rounds and carries a child agent log with its own status, an audit whose pair is two files plus the merged verdict, and an experiment that was deliberately abandoned. Deliberately not a catalogue of every kind and shape — a fixture full of one- and two-file stubs teaches the wrong thing. Not real work.",
   "status": "open",
   "priority": "low",
   "component": ["layout-issues"],

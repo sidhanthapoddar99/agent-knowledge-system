@@ -28,7 +28,7 @@ page.on('pageerror', e => errors.push(`${page.url()} :: PAGEERROR ${e.message}`)
 for (const p of ['/', '/plans/02_hardening-the-edges/', '/plans/01_shipping-the-sections/',
                  '/agent-log/010_lp_implement-sections/summary/',
                  '/agent-log/010_lp_implement-sections/working/011_research-loader-shapes/',
-                 '/agent-log/040_wf_migration/010_wf_codec-migration/working/011_probe-byte-identity/01_report/',
+                 '/agent-log/010_lp_implement-sections/100_wf_codec-migration/working/011_probe-byte-identity/01_report/',
                  '/agent-memory/memory/', '/subtasks/04_verify/00_overview/',
                  '/brainstorm/05_discuss_resolved-example/']) {
   const r = await page.goto(BASE + p, { waitUntil: 'networkidle' });

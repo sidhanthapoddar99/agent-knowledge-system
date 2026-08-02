@@ -50,8 +50,9 @@ page loads with the expected structure.
       done/total count and the category filters have something to bite on
 - [x] **More brainstorm** — a resolved thread with its `Resolved →` pointer, and
       a live one, so graduation is visible
-- [x] Keep the existing deliberate edge cases (no-prefix files, deep nesting,
-      the unknown kind code) — they are the fixture's job
+- [x] Keep the deliberate edge cases that cost nothing — no-prefix files, deep
+      nesting. **The unknown kind code was later removed** on the second pass;
+      see *The second pass* below
 
 ## Verification
 
@@ -62,22 +63,17 @@ page loads with the expected structure.
 
 # Outcomes and Next Steps
 
-Reworked, not patched. The fixture went from **57 files of the old shape to 74 of
-the new one**, and every section it demonstrates now exercises something specific.
+Reworked, not patched — then reduced on a second pass. The fixture reached **74
+files of the new shape**, and the agent-log half was then cut to three logs
+because breadth had become the problem rather than the point.
 
 ## What it demonstrates now
 
 | Fixture | Teaches |
 |---|---|
-| `010_lp_implement-sections/` | the **large end** — an iteration with two producer files (`010`/`011`/`012`), an iteration with none (`020`), a benchmark round, a **producer folder** (`040_research-codecs/` with a report and a `.mmd`), and a two-file `debrief/` |
-| `020_au_edge-cases/` | an audit as **two halves of a pair** — `011` read, `012` executed, `010` merged them as a **union, not a vote**; one finding refuted on evidence |
-| `030_rf_label-parser/` | the **small end** — two files, and **no `debrief/`**, called out as the correct shape |
-| `040_wf_migration/` | a **child agent log**, and the depth budget: a producer folder at **level 4**, the deepest the loader accepts |
-| `050_it_ui/` | `input-needed` with the question inline, and why a look is not delegable |
-| `060_ex_spike/` | `dropped` — the run did not deliver; what it *found* is prose |
-| `200_it_stress/` | numbering under load: 4 iterations, 6 files |
-| `70_nt_test/` | two-digit prefix sorting as 70, and an **unknown kind code** degrading rather than throwing |
-| `300`/`310` | status declared vs **absent** — the defined grey, distinct from `open` |
+| [The section loop](../../../2026-07-01-demo-issue-anatomy-showcase/agent-log/010_lp_implement-sections/summary.md) | the **large end** — six iterations, two producer files beside their round (`011`, `012`), a benchmark round, a **producer folder** with a report and a `.mmd`, a two-file `debrief/`, an `input-needed` round, and a **child agent log** at level 4 whose status is independent of its parent |
+| [The edge-case audit](../../../2026-07-01-demo-issue-anatomy-showcase/agent-log/020_au_edge-cases/summary.md) | an audit as **two halves of a pair** — one read, one executed, merged as a **union, not a vote**; one finding refuted on evidence and kept as refuted |
+| [The abandoned spike](../../../2026-07-01-demo-issue-anatomy-showcase/agent-log/030_ex_one-pass-spike/summary.md) | a run that **did not land** — the custom `ex` kind, `status: dropped`, `# State` as a `> [!WARNING]`, and both signals a failed run needs |
 | `plans/01_` | a **closed** plan with its `## Closed` section, and a `dropped` stage |
 | `plans/02_` | the **active** plan — derived, pinned — with `in-progress`/`blocked`/`open` stages |
 | `subtasks/04_verify/` | a group as an **area**, with a `00_` index leaf and three different statuses |
@@ -115,18 +111,45 @@ fire, which is the mutation-testing discipline rather than a permanently-broken
 fixture. `plans/02_hardening-the-edges/30_*.md` now explains that reasoning in
 place, so nobody re-adds it.
 
-## The two long-standing warnings
+## The second pass — ten agent logs down to three
 
-- `70_nt_test/` — **deliberate**, and now documented as such in its own
-  `summary.md`: an unknown kind code must degrade, and the warning firing is the
-  validator doing its job.
-- `2026-04-10-issues-layout/agent-log/exploration/` — a different issue's folder,
-  out of this subtask's scope.
+**Sid, 2026-08-03:** *"reduce the amount in the demo, but make it proper… not
+just one one two two files. Have three agent logs that make it proper."*
+
+The first pass optimised for coverage and produced ten logs, six of which existed
+only to make a loader branch fire. That is a coverage matrix, not a fixture: a
+reader opening it to learn the shape met six examples a real run would never
+produce. Cut to the three in the table above — **50 files to 28, none of them a
+stub** — with every summary rewritten into the revised shape
+([`# State` as a callout, `# Todo` as links carrying detail, `# Outcome` as a
+detail area](../../notes/20_agent-log-structure.md)).
+
+Two coverage items were **deliberately given up**, and it is not free:
+
+- **Folder-level "status absent renders grey"** had an entire fake agent log to
+  exercise one loader branch.
+- **The undefined kind code** (`70_nt_test/`) tripped a validator warning on
+  every run, permanently. A fixture that keeps the gate at *"1 warning, ignore
+  that one"* trains people to ignore warnings, which costs more than the branch
+  it covered. That reverses the "keep it, it is deliberate" call recorded here on
+  the first pass.
+
+The narrative, and the four inbound links the consolidation broke, are in
+[the fixture round](../../agent-log/020_wf_ship-the-split/working/100_demo-showcase-agent-logs.md).
 
 ## Verified
 
-`./start build` clean at **933 pages** (from 915); `agent-ks check issues`
-**exit 0**, 0 errors.
+`./start build` clean at **935 pages**; the repo's own validator at 51 issue
+folders with **1 warning** — down from 2, since removing the unknown-kind fixture
+removed the warning it existed to trigger. The one that remains belongs to a
+different issue.
+
+**The Playwright pass was re-run against the reduced fixture: 24 assertions, all
+PASS.** One path in the harness needed repointing — the child agent log moved
+from `040_wf_migration/010_wf_codec-migration/` to
+`010_lp_implement-sections/100_wf_codec-migration/` — and that one edit is the
+whole cost of the consolidation to the harness. Console errors: 1, and it is
+still the deliberate past-the-cap 404 probe.
 
 # Details
 

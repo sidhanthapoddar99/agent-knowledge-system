@@ -10,7 +10,7 @@ one a headless build can answer.
 
 # References
 
-- [Sizing tweaks](../../agent-log/050_it_ui/working/010_sizing-tweaks.md)
+- [Sizing tweaks](../../agent-log/010_lp_implement-sections/working/050_sizing-tweaks.md)
 
 # Todo list
 

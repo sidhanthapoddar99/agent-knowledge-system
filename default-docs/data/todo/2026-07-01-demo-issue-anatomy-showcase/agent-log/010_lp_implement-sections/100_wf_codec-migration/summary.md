@@ -4,22 +4,46 @@ title: "Summary"
 
 # State
 
-Reader done, writer next.
+> [!NOTE]
+> **Reader done, writer next.** The read path is on the shared prefix parser and
+> byte identity is proved across the fixture corpus. The write path has not been
+> touched, so the migration is half done and this log stays `in-progress` —
+> independently of its parent, which is `done`.
 
-# Goal and Trigger
+# Goal
 
-Move the codec onto the shared prefix parser without changing any bytes it emits.
+Move the codec onto the shared prefix parser that
+[the parent run](../summary.md) built, **without changing a single byte it
+emits**.
 
-# Task List
+**Trigger:** the parser landed with two callers while the codec was still parsing
+prefixes by hand — the second implementation the parent run existed to remove.
 
-- [x] Reader
-- [ ] Writer
+**This is a child agent log, not an iteration file, because it has a goal of its
+own.** *Do not change the emitted bytes* is a constraint the parent does not
+carry, and it can succeed or fail on its own terms.
+
+# Todo
+
+- [x] [Move the read path](./working/010_reader.md) — the hand-rolled prefix
+      parse deleted, one more caller on the shared parser
+- [x] [Prove byte identity](./working/011_probe-byte-identity/01_report.md) — a
+      producer file: every fixture re-encoded and compared byte for byte
+- [ ] Move the write path — not started, and it is the half that can actually
+      change the bytes
 
 # Out of Scope
 
-The schema. That is the sibling child log.
+The schema. It travels with the writer and carries its own compatibility
+question.
 
-# Outcome Summary
+# Outcome
 
-> [!NOTE]
-> Written at close.
+Half shipped, and the half that shipped is the safe one — a read path cannot
+corrupt what it reads. Byte identity held across the whole fixture corpus; the
+method and the counts are in
+[the probe report](./working/011_probe-byte-identity/01_report.md), which is a
+producer file rather than prose in the round above it because it is evidence
+someone may need to re-check.
+
+What the next run needs is in [the handover](./debrief/01_handover.md).

@@ -14,13 +14,23 @@ It intentionally exercises:
   file to test label-only rendering.
 - **Subtasks** — prefixed, a nested `02_build/` group with its own `settings.json`, and
   an un-prefixed one.
-- **Agent Logs** — one **activity folder** per kind, kind **encoded in the folder name**
-  (`NNN_<code>_<name>/`: `lp` / `au` / `rf` / `it` / `wf`, plus a custom `ex` from
-  `settings.json` and an **undefined** `nt` to show the fallback). Each folder holds optional
-  pinned meta files (`00_goal` / `01_summary` / `02_task_list`) and `MNN_` milestones with
-  `iteration` frontmatter (so the `#N` badge shows) — including a deliberately **failed** one
-  and a colour-tinted one. (Also mixes 3-digit prefixes `010`–`060` with a 2-digit `70`.)
-- **Agent Memory** — flat topic files *and* a `01_context/` folder.
+- **Plans** — two plans, each a folder of numbered stages with an `overview.md`, so the
+  stage table and its subtask counts have something real to render.
+- **Agent Logs** — **three**, and deliberately not one per kind. A catalogue of every
+  code and shape produced a fixture full of one- and two-file stubs, which teaches the
+  wrong thing about what a log is for. What is here instead:
+  - [A loop that ran six rounds](./agent-log/010_lp_implement-sections/summary.md) —
+    producer files beside their iteration file, one producer folder holding several
+    artifacts (including a `.mmd` diagram), a debrief, and a **child agent log** whose
+    status is `in-progress` while its parent is `done`.
+  - [An audit](./agent-log/020_au_edge-cases/summary.md) — a pair is **two** files plus
+    the merged verdict, because one half reproducing a defect is not outvoted by the
+    other half finding nothing.
+  - [An abandoned experiment](./agent-log/030_ex_one-pass-spike/summary.md) — the custom
+    `ex` kind from `settings.json`, `status: dropped`, and both signals a failed run
+    needs: the colour, and the callout saying what actually happened.
+- **Agent Memory** — a `memory.md` index, a flat topic file, and the two folders the
+  section is now split into: `knowledge/` (binding) and `history/` (how it got here).
 - **Comments** — a flat evolution log (opened → scope → handoff).
 
 **Related:** [[2026-07-01-issue-anatomy-restructure]]

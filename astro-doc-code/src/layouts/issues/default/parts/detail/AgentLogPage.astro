@@ -10,10 +10,11 @@ import { logPanelKey } from '../../server/helpers';
 
 interface Props {
   log: IssueAgentLog & { toc?: TocEntry[] };
+  statusColors: Record<string, string>;
   standalone?: boolean;
 }
 
-const { log, standalone = false } = Astro.props;
+const { log, statusColors, standalone = false } = Astro.props;
 const pathDisplay = [sectionById('agent-log')!.folder, ...log.groupPath, `${log.name}.md`].join('/');
 ---
 
@@ -28,7 +29,12 @@ const pathDisplay = [sectionById('agent-log')!.folder, ...log.groupPath, `${log.
       <span class="issue-doc__path">{pathDisplay}</span>
       <div class="issue-log__meta">
         {log.agent && <span class="issue-log__chip">{log.agent}</span>}
-        {log.status && <span class={`issue-log__chip issue-log__chip--status is-${log.status.replace(/\s+/g, '-')}`}>{log.status}</span>}
+        {log.status && (
+          <span
+            class="issue-log__chip"
+            style={statusColors[log.status] ? `--badge-color: ${statusColors[log.status]}` : undefined}
+          >{log.status}</span>
+        )}
         {log.date && <span class="issue-log__chip">{log.date}</span>}
       </div>
     </div>

@@ -604,19 +604,20 @@
   border-bottom: none;
 }
 .issue-log__meta { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+/* Same treatment as the subtask/plan badge above: the status chip sets
+   `--badge-color` inline from the resolved status colours, and the chips that
+   carry no status (agent, date) inherit the neutral fallback. */
 .issue-log__chip {
   display: inline-block;
   padding: 0.1rem 0.5rem;
   border-radius: 10px;
   font-size: var(--ui-text-micro);
-  background: color-mix(in srgb, var(--color-border-default) 50%, transparent);
-  color: var(--color-text-muted);
   font-family: var(--font-family-mono);
   text-transform: capitalize;
+  background: color-mix(in srgb, var(--badge-color, var(--color-border-default)) 18%, transparent);
+  color: var(--badge-color, var(--color-text-muted));
+  border: 1px solid color-mix(in srgb, var(--badge-color, var(--color-border-default)) 35%, transparent);
 }
-.issue-log__chip--status.is-success { color: var(--color-success); background: color-mix(in srgb, var(--color-success) 15%, transparent); }
-.issue-log__chip--status.is-failed { color: var(--color-error); background: color-mix(in srgb, var(--color-error) 15%, transparent); }
-.issue-log__chip--status.is-in-progress { color: var(--color-info); background: color-mix(in srgb, var(--color-info) 15%, transparent); }
 
 /* ===== Right meta (swappable TOC panels) ===== */
 .issue-meta {

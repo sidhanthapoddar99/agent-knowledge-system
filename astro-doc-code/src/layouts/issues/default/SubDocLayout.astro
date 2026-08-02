@@ -114,7 +114,7 @@ if (freeform) {
       <NotePage note={freeform.note} standalone prefix={freeform.section.id} />
     )}
     {subDoc.kind === 'log' && (
-      <AgentLogPage log={subDoc.log} standalone />
+      <AgentLogPage log={subDoc.log} statusColors={statusColors} standalone />
     )}
     {subDoc.kind === 'plan' && (
       <PlanPage issue={issue} plan={subDoc.plan} baseUrl={baseUrl} statusColors={statusColors} standalone />

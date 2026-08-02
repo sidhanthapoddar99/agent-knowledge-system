@@ -20,7 +20,7 @@
     "input-needed": "#e8a54b",  // Review — amber (agent needs a human answer)
     "review": "#f0c674",        // Review — yellow (done, awaiting sign-off)
     "done": "#7ec699",          // Closed — green (shipped)
-    "dropped": "#c678dd"        // Closed — magenta (deliberately abandoned)
+    "dropped": "#e06c75"        // Closed — red (not done, and not going to be)
   },
 
   "fields": {

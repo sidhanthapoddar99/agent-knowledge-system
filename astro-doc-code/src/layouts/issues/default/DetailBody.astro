@@ -39,10 +39,11 @@ const closedCount = subtaskDone;
 const sortedSubtasks = sortSubtasksByState(issue.subtasks);
 const terminalStartIdx = terminalStartIndex(sortedSubtasks);
 
-// Guide panel: static template + generated islands (this issue's effective kind set).
-const guide = buildIssueGuide(issue.agentLogKinds);
-
 const statusColors = vocabulary.fields?.status?.colors || {};
+
+// Guide panel: static template + generated islands (this issue's effective kind
+// set, and the resolved status palette so its legend matches the sidebar).
+const guide = buildIssueGuide(issue.agentLogKinds, statusColors);
 
 // Comprehensive panel is the one place multiple subtasks share a DOM —
 // prefix heading ids so `#setup` anchors across subtasks don't collide.

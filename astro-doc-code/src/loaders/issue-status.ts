@@ -50,7 +50,7 @@ export const DEFAULT_STATUS_COLORS: Record<IssueStatus, string> = {
   'input-needed': '#e8a54b',
   review: '#f0c674',
   done: '#7ec699',
-  dropped: '#c678dd',
+  dropped: '#e06c75',
 };
 
 /** Legacy → canonical value map. The lifecycle field was previously the

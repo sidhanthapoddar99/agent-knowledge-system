@@ -59,23 +59,24 @@ function lifecycleLine(): string {
   ).join(' · ');
 }
 
-/** Sidebar tint per status — mirrors the `detail.css` rules (info=in-progress,
- *  warning=Review category, success/error=Closed; Not Started stays neutral). */
-const STATUS_TINTS: Record<IssueStatus, string> = {
-  open: 'var(--color-text-muted)',
-  blocked: 'var(--color-text-muted)',
-  'in-progress': 'var(--color-info)',
-  'input-needed': 'var(--color-warning)',
-  review: 'var(--color-warning)',
-  done: 'var(--color-success)',
-  dropped: 'var(--color-error)',
-};
-
-/** Generated island: the status-icon legend, built from `stateIconSvg` + the
- *  code constants so symbol, colour, and gloss can never drift from the UI. */
-function statusTable(): string {
+/**
+ * Generated island: the status-icon legend, built from `stateIconSvg` plus the
+ * **resolved** colour map, so symbol, colour and gloss cannot drift from the UI.
+ *
+ * This used to hand-write a parallel `STATUS_TINTS` map of CSS variables, under
+ * a docblock claiming the legend could never drift. It drifted: it tinted
+ * `dropped` with `--color-error` and `blocked` with `--color-text-muted`, while
+ * the palette said `#c678dd` and `#d1854f`. The guide that teaches *no file
+ * stores a fact another file owns* was keeping a second copy of the palette.
+ *
+ * `statusColors` is the tracker's *effective* map — framework defaults with any
+ * root `statusColors` override merged on — so an override restyles this legend
+ * and the sidebar together. A local map could not do that, which is why the
+ * duplicate had to go rather than just be corrected.
+ */
+function statusTable(statusColors: Record<IssueStatus, string>): string {
   const rows = STATUSES.map((s) => {
-    const icon = `<span style="color:${STATUS_TINTS[s]};display:inline-flex;vertical-align:-2px">${stateIconSvg(s)}</span>`;
+    const icon = `<span style="color:${statusColors[s]};display:inline-flex;vertical-align:-2px">${stateIconSvg(s)}</span>`;
     return `| ${icon} | \`${s}\` | ${STATUS_LABELS[s]} | ${STATUS_DESCRIPTIONS[s]} |`;
   }).join('\n');
   return `| | Status | Label | Meaning |\n|---|---|---|---|\n${rows}`;
@@ -87,7 +88,10 @@ function typeGlyph(type: string): string {
   return icon ? `<span style="display:inline-flex;vertical-align:-1px">${icon.svg}</span>` : '';
 }
 
-function guideMarkdown(kinds: Record<string, AgentLogKind>): string {
+function guideMarkdown(
+  kinds: Record<string, AgentLogKind>,
+  statusColors: Record<IssueStatus, string>,
+): string {
   return `# Issue anatomy
 
 An issue is one folder — one coherent unit of *thinking + execution*.
@@ -257,7 +261,7 @@ work; the **agent log** carries it out; the **plan** says when it runs.
   category. The UI filters by category; the badge shows the status.
 - Status icons — shown on every subtask surface; hover any icon for its name:
 
-${statusTable()}
+${statusTable(statusColors)}
 
 - Surfaces: sidebar tree · **Comprehensive** panel (all subtasks, one page) ·
   right-rail index · the overview progress bar.
@@ -361,10 +365,17 @@ The two root artifacts — together they are the Overview page.
 }
 
 /** Build the Guide panel for one issue: rendered HTML with id-stamped \`h2\`s,
- *  plus the heading list for the right-rail TOC. */
-export function buildIssueGuide(kinds: Record<string, AgentLogKind>): IssueGuide {
+ *  plus the heading list for the right-rail TOC.
+ *
+ *  `statusColors` is the tracker's resolved palette, passed in rather than
+ *  imported so the legend shows what THIS tracker actually renders, overrides
+ *  included. */
+export function buildIssueGuide(
+  kinds: Record<string, AgentLogKind>,
+  statusColors: Record<IssueStatus, string>,
+): IssueGuide {
   const headings: GuideHeading[] = [];
-  const html = renderMarkdown(guideMarkdown(kinds)).replace(
+  const html = renderMarkdown(guideMarkdown(kinds, statusColors)).replace(
     /<h2>([\s\S]*?)<\/h2>/g,
     (_m, inner: string) => {
       const text = inner.replace(/<[^>]+>/g, '').trim();

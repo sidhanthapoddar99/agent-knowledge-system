@@ -32,6 +32,8 @@ import matter from 'gray-matter';
 import { resolveTracker, listIssueFolders, readVocabulary, parseArgs, printHelp, STATUSES, TERMINAL_STATUSES, normalizeStatus, LEGACY_STATUS_MAP, MAX_SUBFOLDER_DEPTH } from './_lib.mjs';
 import { readJsonChecked, reportAndExit } from '../_check-lib.mjs';
 import { MD_LINK_RE, isIgnorableTarget, splitAnchor, orderingPathFor, parseOrderingLabel, makeFenceTracker } from '../_links.mjs';
+import { isRetiredAgentLogShape } from './_agent-log-shape.mjs';
+import { parseOrderPrefixLoose } from '../_order-prefix.mjs';
 
 const args = parseArgs(process.argv.slice(2));
 if (args.flags.help) {
@@ -211,12 +213,28 @@ function planRefTarget(entry, stageDir, issueDir) {
   return rel.split(path.sep).join('/');
 }
 
-/** Every issue-relative path that names a real file, for reference resolution. */
+/**
+ * Two indexes of issue-relative paths that name a real file: the ones a
+ * `subtasks:` ref MAY point at, and the ones it may not.
+ *
+ * **Split on purpose.** This was one flat index over `subtasks/` AND
+ * `agent-log/`, from when `agent-logs:` was a second frontmatter ref list
+ * resolved by the same helper. Retiring that list left the index wider than the
+ * only field it still guards — while the RENDERER resolves `subtasks:` against
+ * subtasks alone (`server/helpers.ts`, `resolvePlanStage`). So a stage pointing
+ * `subtasks:` at an agent-log file passed this gate clean and then drew the red
+ * "resolves to nothing" block on its own plan page.
+ *
+ * Not hypothetical: it is the exact move the `agent-logs:` retirement invites —
+ * off the retired list and into the only other structured one on the stage.
+ * `other` exists so the error can say what is actually wrong, rather than
+ * "does not exist" about a file that plainly does.
+ */
 function issueFileIndex(issueDir) {
-  const seen = new Set();
-  for (const sub of ['subtasks', 'agent-log']) {
+  const collect = (sub) => {
+    const seen = new Set();
     const root = path.join(issueDir, sub);
-    if (!fs.existsSync(root)) continue;
+    if (!fs.existsSync(root)) return seen;
     const walk = (absDir, depth) => {
       let entries;
       try { entries = fs.readdirSync(absDir, { withFileTypes: true }); }
@@ -231,8 +249,9 @@ function issueFileIndex(issueDir) {
       }
     };
     walk(root, 0);
-  }
-  return seen;
+    return seen;
+  };
+  return { subtasks: collect('subtasks'), other: collect('agent-log') };
 }
 
 /**
@@ -317,9 +336,14 @@ function lintPlans(id, issueDir) {
 
     const planDir = path.join(plansDir, e.name);
     const label = `${id}/plans/${e.name}`;
-    const prefix = e.name.match(/^(\d{1,5})[_-]/);
-    if (!prefix) {
-      warnings.push(`${label}/: no numeric prefix — sorts last, and "which plan is active" is derived from the highest number. Convention is NN_<name>/`);
+    // `parseOrderPrefixLoose`, not a hand-written regex — the grammar is 2–5
+    // digits and the LOADER uses exactly this parser. A local `\d{1,5}` used to
+    // accept `1_decoder`, so the warning below never fired while the loader read
+    // the folder as unprefixed; unprefixed sorts last, and the active plan is
+    // the last one, so a typo silently promoted the wrong plan to active.
+    const planPosition = parseOrderPrefixLoose(e.name).position;
+    if (planPosition === null) {
+      warnings.push(`${label}/: no numeric prefix (the grammar is 2–5 digits, so \`1_\` does not count) — sorts last, and "which plan is active" is derived from the highest number, so this becomes the active plan. Convention is NN_<name>/`);
     }
 
     const settingsPath = path.join(planDir, 'settings.json');
@@ -356,11 +380,15 @@ function lintPlans(id, issueDir) {
       if (!f.isFile() || !f.name.endsWith('.md') || f.name === PLAN_OVERVIEW) continue;
 
       const stageLabel = `${label}/${f.name}`;
-      const stagePrefix = f.name.match(/^(\d{1,5})[_-]/);
-      if (!stagePrefix) {
-        warnings.push(`${stageLabel}: no numeric prefix — the prefix is both the stage's ORDER and its id ("stage 20"), so a stage without one cannot be referred to`);
+      // Same parser as the loader — see the plan-folder case above. A local
+      // 1-digit-tolerant regex also recorded a stage id the loader does not
+      // have, so `5_a.md` beside `05_b.md` was reported as a duplicate that
+      // exists only in the validator.
+      const stagePos = parseOrderPrefixLoose(f.name.replace(/\.md$/, '')).position;
+      if (stagePos === null) {
+        warnings.push(`${stageLabel}: no numeric prefix (the grammar is 2–5 digits, so \`5_\` does not count) — the prefix is both the stage's ORDER and its id ("stage 20"), so a stage without one cannot be referred to`);
       } else {
-        const pos = parseInt(stagePrefix[1], 10);
+        const pos = stagePos;
         if (stagePositions.has(pos)) {
           errors.push(`${stageLabel}: stage ${pos} is also claimed by \`${stagePositions.get(pos)}\` — the prefix is the stage id, so two stages cannot share one`);
         } else {
@@ -382,26 +410,33 @@ function lintPlans(id, issueDir) {
         errors.push(`${stageLabel}: invalid status \`${fm.status}\` (fixed vocabulary: ${STATUSES.join('|')})`);
       }
       if (/^#\s+/m.test(parsed.content || '')) {
-        warnings.push(`${stageLabel}: carries an \`# H1\` — the heading is GENERATED as "<prefix> <title>" on the plan page, so this duplicates a name the frontmatter owns`);
+        warnings.push(`${stageLabel}: carries an \`# H1\` — the heading is GENERATED as "<prefix> · <title>" on the plan page, so this duplicates a name the frontmatter owns`);
       }
 
-      // The one error that matters. A ref that names nothing shrinks this
-      // stage's subtask count, and nothing downstream can tell that number
-      // from a right one.
+      // The one error that matters. A ref the RENDERER cannot resolve is drawn
+      // as a broken reference on the plan page, and nothing else says so — so
+      // this must reject exactly what `resolvePlanStage` rejects, no wider and
+      // no narrower. Two ways to miss, and they need different messages: the
+      // path names nothing at all, or it names a real file that is not a
+      // subtask (see `issueFileIndex`).
       for (const [field, raw] of [['subtasks', fm.subtasks]]) {
         const list = Array.isArray(raw) ? raw : raw == null ? [] : [raw];
         for (const entry of list) {
           const target = planRefTarget(entry, planDir, issueDir);
           if (!target) {
             errors.push(`${stageLabel}: \`${field}\` entry ${JSON.stringify(entry)} has no parsable target (expected a markdown link or a path inside the issue)`);
-          } else if (!index.has(target)) {
-            errors.push(`${stageLabel}: \`${field}\` references \`${target}\`, which does not exist — the stage's count in the plan table silently drops it`);
+          } else if (index.subtasks.has(target)) {
+            continue;
+          } else if (index.other.has(target)) {
+            errors.push(`${stageLabel}: \`${field}\` references \`${target}\`, which EXISTS but is not a subtask — this list schedules subtasks and nothing else, and the renderer resolves it against subtasks alone, so the plan page draws this as a broken reference. Link a run from the stage BODY instead, with an ordering label in the text: \`[010/01 the section loop](../../agent-log/010_lp_implement-sections/01_summary.md)\``);
+          } else {
+            errors.push(`${stageLabel}: \`${field}\` references \`${target}\`, which does not exist — the plan page draws it as a broken reference and the stage silently schedules one fewer thing than it reads as scheduling`);
           }
         }
       }
     }
 
-    plans.push({ folder: e.name, position: prefix ? parseInt(prefix[1], 10) : null, status });
+    plans.push({ folder: e.name, position: planPosition, status });
   }
 
   // One plan open at a time is CONVENTION, not enforcement (decided 2026-08-02),
@@ -695,28 +730,9 @@ for (const entry of issueFolders) {
    *  or when it has no prefix at all — an unprefixed folder is not an activity,
    *  and reading it as one would invent a run that does not exist. */
   const isSlotFolder = (name) => {
-    const m = name.match(/^(\d{1,5})[_-]/);
-    return !m || parseInt(m[1], 10) < CHILD_MIN_PREFIX;
+    const { position } = parseOrderPrefixLoose(name);
+    return position === null || position < CHILD_MIN_PREFIX;
   };
-
-  // Markers of the RETIRED six-slot shape. A folder carrying one is history and
-  // every new-shape rule below is skipped for it.
-  //
-  // **Only names UNIQUE to the retired shape may appear here**, and getting that
-  // wrong is silent in the worst direction. This was `/^0\d_(goal|summary|
-  // task_list|working|benchmark|notes)$/`, written when the current shape's
-  // slots were unnumbered. Numbering them made `01_summary` and `02_working`
-  // names that BOTH shapes use — so every new-shape agent log would have
-  // matched, been classified as history, and had all of its checks skipped.
-  // The validator would have gone quiet on the whole section and reported a
-  // clean run, which is indistinguishable from having nothing to say.
-  //
-  // `01_summary` and a bare `working` are therefore absent by necessity, not by
-  // oversight. The five below exist only in the six-slot shape: the current one
-  // has no goal / task-list / benchmark / notes slot at all, and its working
-  // folder is `02_`, never `03_`.
-  const LEGACY_SLOT = /^(00_goal|02_task_list|03_working|04_benchmark|05_notes)$/;
-  const LEGACY_MILESTONE = /^[1-9]\d{2,4}_.+\.md$/;
 
   function lintAgentLogFolder(absDir, rel, depth) {
     let files;
@@ -746,10 +762,7 @@ for (const entry of issueFolders) {
     // in the old one. Warning here would demand work that was deliberately
     // decided against, and 289 warnings nobody will act on is how a validator
     // stops being read at all, taking the real findings down with it.
-    const isLegacy = files.some(
-      (f) => LEGACY_SLOT.test(f.name.replace(/\.md$/, '')) || (f.isFile() && LEGACY_MILESTONE.test(f.name)),
-    );
-    if (isLegacy) return;
+    if (isRetiredAgentLogShape(files.map((f) => ({ name: f.name, isFile: f.isFile() })))) return;
 
     if (!files.some((f) => f.isFile() && f.name === '01_summary.md')) {
       warnings.push(`${rel}/: no \`01_summary.md\` — it is the one conclusive file for the run (State / Goal / Todo / Out of Scope / Outcome), and it IS the brief agents are pointed at`);

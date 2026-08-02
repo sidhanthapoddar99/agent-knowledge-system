@@ -5,7 +5,8 @@
  * loadIssues() shape (src/loaders/issues.ts) but stays read-light:
  * no markdown rendering, no caching, no Astro coupling.
  *
- * Run with bun (preferred) or node — both support .mjs + node:* imports.
+ * Run with BUN. Not node: `gray-matter` is imported here and there is no
+ * package.json or node_modules for node to resolve it from.
  */
 
 import fs from 'node:fs';

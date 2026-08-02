@@ -82,11 +82,22 @@ USAGE
 -----
     python3 migration/0.1.4_agent-log-slot-numbering.py detect  [--root .]
     python3 migration/0.1.4_agent-log-slot-numbering.py migrate [--root .] [--dry-run]
+    python3 migration/0.1.4_agent-log-slot-numbering.py relink  [--root .] [--dry-run]
     python3 migration/0.1.4_agent-log-slot-numbering.py verify  [--root .]
 
-`detect` changes nothing. `migrate --dry-run` prints every rename and every link
-edit without touching the disk. `migrate` is idempotent — a second run finds
-zero. `verify` exits non-zero if any unnumbered slot remains.
+`detect` changes nothing.
+
+`migrate` renames the slots and then repairs every link into them. `--dry-run`
+prints both without touching the disk. It is idempotent — a second run finds
+zero.
+
+`relink` is the REPAIR path, and renames nothing. It rewrites links into slots
+that have **already** been renamed — after a run that died between the renames
+and the link pass, or on a tracker whose folders were renamed by hand. An
+activity still holding the old names is left alone, so it is safe on a
+half-converted tree. `--dry-run` works here too.
+
+`verify` exits non-zero if any unnumbered slot remains.
 """
 
 from __future__ import annotations
@@ -212,7 +223,7 @@ SKIP_TARGET_PREFIXES = ("http://", "https://", "mailto:", "#", "/")
 
 
 def slot_targets(root: Path) -> list[tuple[Path, str, str]]:
-    """(activity folder, old slot, new slot) for every non-legacy activity.
+    """(activity folder, old slot, new slot) for every slot ALREADY renamed.
 
     Derived from the TREE, not from the renames this run happens to plan.
 
@@ -222,13 +233,27 @@ def slot_targets(root: Path) -> list[tuple[Path, str, str]]:
     re-running it, and a tracker with a hand-renamed folder kept its broken
     links forever. Deriving from the tree makes the pass idempotent and makes it
     the repair path for a partial run.
+
+    **A slot counts only once its rename has actually happened on disk** — new
+    name present, old name gone. Without that test, `relink` rewrote links
+    pointing into activities it had not renamed and never would: on a mixed tree
+    (one activity converted, a sibling still holding `working/`), every
+    `./working/x.md` inside the sibling became `./02_working/x.md`, which names
+    nothing. The command exited 0 having created exactly the broken links it
+    exists to repair.
+
+    A half-converted activity carrying BOTH names is skipped rather than guessed
+    at: either target resolves, so there is no stale reference to repair, and
+    choosing one would silently choose wrong half the time.
     """
     out: list[tuple[Path, str, str]] = []
     for activity in _iter_activities(root):
         if _is_legacy_activity(activity):
             continue
         for old_name, new_name, _is_dir in SLOT_RENAMES:
-            out.append((activity.resolve(), old_name, new_name))
+            renamed = (activity / new_name).exists() and not (activity / old_name).exists()
+            if renamed:
+                out.append((activity.resolve(), old_name, new_name))
     return out
 
 

@@ -540,10 +540,10 @@ data/todo/2026-08-02-nsd-phase-2/
         │   └── 03_debrief/
         │       └── 01_handover.md
         │
-        ├── 200_wf_s3-journal-compat/   # ── workflow 2, same shape
-        ├── 300_wf_s4-retention/
-        ├── 400_wf_s4-cleanup-accounting/
-        └── 500_wf_s5-concurrency/
+        ├── 110_wf_s3-journal-compat/   # ── workflow 2, same shape. Gap of TEN, like
+        ├── 120_wf_s4-retention/        #    every other prefix in the tracker — a sixth
+        ├── 130_wf_s4-cleanup-accounting/ #  workflow inserted between two others gets 115
+        └── 140_wf_s5-concurrency/
 ```
 
 **The plan stage survives as a label, not a folder** — in the workflow's name (`s3`,
@@ -603,7 +603,7 @@ Two examples, deliberately: one alone sets a floor as much as a ceiling.
 ## Rendering
 
 - **Detail-page sidebar** — the Agent log section lists agent logs
-  (`NN <symbol> <name> <count>`). Inside one, entries sort by prefix value like every
+  (`<symbol> NN <name> <count>` — the symbol leads, so the column is one vertical run of icons to scan). Inside one, entries sort by prefix value like every
   other section, which puts `01_summary.md`, `02_working/` and `03_debrief/` in reading
   order and any child agent logs (`100_` and up) after them. **There is no pinning rule**
   — the numbers do that job, which is why they exist. The kind symbol is tinted by the

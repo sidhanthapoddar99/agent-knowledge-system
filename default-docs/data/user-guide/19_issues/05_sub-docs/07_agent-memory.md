@@ -48,8 +48,8 @@ corrected rather than left to contradict.
 ### There is no live bucket, and nothing replaces it
 
 What is left, in what order, and who is blocked is the **plan's** job
-([Plans](./plans)) — one click away in the sidebar, with the active plan pinned at the
-top of its group.
+([Plans](./plans)) — one click away in the sidebar, where plans list in plain
+ascending prefix order and the active one is marked in bold rather than moved.
 
 The temptation is to let `memory.md` grow a "current state" section to fill the gap.
 Don't: that section competes with the plan for the same job and loses silently, because

@@ -206,8 +206,8 @@ A plan is a folder of **stages**: `plans/NN_<name>/` holding `settings.json`,
   about its siblings.
 
 ```bash
-agent-ks issue new-plan  --issue <id> --name <slug>
-agent-ks issue new-stage --issue <id> --plan <plan> --name <slug> [--after NN]
+agent-ks issue new-plan <id> --name <slug>
+agent-ks issue new-stage <id> --plan <plan> --name <slug> [--after NN]
 ```
 
 Full contract: [28_plans.md](references/20_sections/28_plans.md).

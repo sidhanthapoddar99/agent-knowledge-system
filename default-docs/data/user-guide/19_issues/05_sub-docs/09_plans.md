@@ -108,13 +108,12 @@ subtasks:
 
 | Field | Purpose |
 |---|---|
-| `title` | The stage name. The heading renders as `<prefix> <title>` — **don't write an `# H1`**, it would duplicate a name the frontmatter owns |
+| `title` | The stage name. The heading renders as `<prefix> · <title>` — **don't write an `# H1`**, it would duplicate a name the frontmatter owns |
 | `outcome` | One line: what "done" means for this stage |
 | `notes` | One line: why it sits here, what it waits on, the caveat the other columns cannot say |
 | `who` | Who the stage waits on |
 | `status` | The canonical seven |
-| `subtasks:` | Markdown links to the subtasks this stage schedules — **only these are rendered** |
-| `agent-logs:` | Links to the runs carrying it out |
+| `subtasks:` | Markdown links to the subtasks this stage schedules — **the only ref list**, and only these are rendered |
 
 `outcome` and `notes` render as **inline markdown**, so a link, `code`, emphasis or an
 emoji in either works. `notes` is the column with room to be informative — and the one
@@ -189,7 +188,7 @@ is worse than a sentence somebody reads.**
 │  │  30  Retention       open  claude …one line…   …one line… │   │
 │  └────────────────────────────────────────────────────────────┘   │
 │                                                                   │
-│  # 20 Journal compatibility        ← GENERATED heading            │
+│  # 20 · Journal compatibility      ← GENERATED heading            │
 │     …the stage file's body…                                       │
 │  # 30 Retention                                                   │
 └───────────────────────────────────────────────────────────────────┘

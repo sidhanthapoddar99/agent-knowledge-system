@@ -45,6 +45,7 @@ Exit: 0 all cases pass, 1 otherwise.
 
 from __future__ import annotations
 
+import re
 import subprocess
 import sys
 import tempfile
@@ -202,6 +203,52 @@ def main() -> int:
             capture_output=True, text=True, check=False,
         )
         check("verify exits 0 after migrating", verify.returncode == 0, verify.stdout)
+
+    # ---------------------------------------------------------------------
+    # 10. `relink` on a MIXED tree — the sol audit's finding, kept as a case.
+    #
+    # One activity already converted, a sibling still holding the old names.
+    # `relink` renames nothing, so it must rewrite links into the CONVERTED
+    # activity and leave the pending one completely alone. It used to rewrite
+    # both, exiting 0 having pointed the pending activity's links at
+    # `02_working/` — a folder that would not exist until someone ran `migrate`.
+    # ---------------------------------------------------------------------
+    with tempfile.TemporaryDirectory() as tmp:
+        root = Path(tmp) / "data"
+        issue = root / "2026-08-03-mixed"
+        write(issue / "issue.md", "---\ntitle: Mixed\n---\n")
+        # converted
+        write(issue / "agent-log" / "010_wf_done" / "01_summary.md", "---\ntitle: S\n---\n")
+        write(issue / "agent-log" / "010_wf_done" / "02_working" / "010_r.md", "---\ntitle: R\n---\n")
+        # NOT converted
+        write(issue / "agent-log" / "020_wf_pending" / "summary.md", "---\ntitle: S\n---\n")
+        write(issue / "agent-log" / "020_wf_pending" / "working" / "010_r.md", "---\ntitle: R\n---\n")
+        # one file linking into both
+        links = issue / "notes" / "10_links.md"
+        write(
+            links,
+            "---\ntitle: Links\n---\n\n"
+            "- [done](../agent-log/010_wf_done/working/010_r.md)\n"
+            "- [pending](../agent-log/020_wf_pending/working/010_r.md)\n",
+        )
+
+        out = run(root, "relink")
+        body = links.read_text()
+        check("10. relink repairs the CONVERTED activity's link",
+              "010_wf_done/02_working/010_r.md" in body, body)
+        check("10. relink leaves the PENDING activity's link untouched",
+              "020_wf_pending/working/010_r.md" in body, body)
+        # The control on this case: a rewrite that did nothing at all would pass
+        # the second check on its own, so assert the run was not a no-op.
+        check("10. CONTROL relink was not a no-op",
+              "0 file(s) rewritten" not in out, out)
+        # And every rewritten target must actually exist — the defect was that
+        # one did not.
+        broken = [
+            t for t in re.findall(r"\]\(([^)]+)\)", body)
+            if not (links.parent / t).resolve().exists()
+        ]
+        check("10. every link target on disk after relink", not broken, str(broken))
 
     print()
     if failures:

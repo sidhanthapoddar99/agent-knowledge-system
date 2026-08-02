@@ -289,7 +289,7 @@ this round. Everything else about the work lives in the subtasks its stages refe
 
 | Field | Meaning |
 |---|---|
-| \`title\` | Stage name; the heading renders as \`<prefix> <title>\`. |
+| \`title\` | Stage name; the heading renders as \`<prefix> · <title>\`. |
 | \`outcome\` | One line — what "done" means for this stage. |
 | \`notes\` | One line — why it sits here, what it waits on, the caveat the other columns cannot say. |
 | \`who\` | Who it waits on. |

@@ -83,7 +83,7 @@ subtasks:
 ```
 
 **No `# H1`.** The body starts at `## Todo`; the heading is generated as
-`<prefix> <title>`.
+`<prefix> · <title>`.
 
 **The path is truth; the link text is a reading aid.** The renderer resolves the path
 and pulls the subtask's live title and status, so stale link text costs nothing.
@@ -175,8 +175,8 @@ of one fact, and the copy is what drifts. Status hovers to name itself.
 ## One plan, one page
 
 A stage is a **section** of the plan page — an anchored heading with the stage's body
-under it — and has **no page of its own**. The heading reads `<prefix> <title>` at one
-size, exactly as `# 20 Journal compatibility` renders anywhere else on the site.
+under it — and has **no page of its own**. The heading reads `<prefix> · <title>` at one
+size — `# 20 · Journal compatibility`, the number and the name as a single heading.
 
 **Link a stage file the same way you link anything else.** `…/plans/<plan>/<stage>`
 redirects to `…/plans/<plan>#<stage>`, so an ordinary relative link lands on the stage's
@@ -234,9 +234,9 @@ subtask remains human-only.
 # Recipes
 
 ```bash
-agent-ks issue new-plan  --issue <id> --name decoder-and-retention
-agent-ks issue new-stage --issue <id> --plan 01_decoder-and-retention --name retention
-agent-ks issue new-stage --issue <id> --plan 01_decoder-and-retention --name journal-compat --after 10
+agent-ks issue new-plan <id> --name decoder-and-retention
+agent-ks issue new-stage <id> --plan 01_decoder-and-retention --name retention
+agent-ks issue new-stage <id> --plan 01_decoder-and-retention --name journal-compat --after 10
 ```
 
 `--after NN` takes the **midpoint** of the gap above `NN`, so the space stays evenly

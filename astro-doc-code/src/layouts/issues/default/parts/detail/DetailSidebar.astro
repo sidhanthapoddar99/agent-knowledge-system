@@ -58,9 +58,8 @@ const logTree = groupByPath(issue.agentLogs);
 const subtaskTree = groupSubtasks(issue.subtasks, issue.subtaskGroups);
 
 // The ACTIVE plan is derived here, at render — highest-numbered plan that is
-// not done/dropped. It is pinned at the top of the Plans group and marked, so
-// the schedule is one click from the state you land in. Nothing renders above
-// the issue body: the plan costs a click, not vertical space on every visit.
+// not done/dropped. Nothing renders above the issue body: the plan costs a
+// click, not vertical space on every visit.
 // Plans list in plain ascending prefix order — the loader already sorts them —
 // and the active one is MARKED rather than hoisted. Hoisting made the list's
 // order depend on a derived value, so the same set of plans could sit in two

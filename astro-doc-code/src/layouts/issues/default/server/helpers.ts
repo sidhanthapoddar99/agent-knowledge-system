@@ -456,8 +456,15 @@ export interface PlanDocument {
   /** Overview HTML with heading ids prefixed, or null when there is none. */
   overviewHtml: string | null;
   stages: PlanStageRender[];
-  /** Right-rail index: Overview → Stages → each stage → its own headings. */
+  /** Right-rail index: Overview → Stages → one entry per stage. Flat by design. */
   toc: TocEntry[];
+}
+
+/** How a stage is named wherever its number is shown beside it — the generated
+ *  heading, the right rail. One function so the two cannot drift into two
+ *  different separators. */
+export function stageHeadingText(stage: IssuePlanStage): string {
+  return stage.sequence === null ? stage.title : `${stage.sequence} · ${stage.title}`;
 }
 
 /**
@@ -470,14 +477,20 @@ export interface PlanDocument {
  * page had already assigned them ids. One function, two consumers: the rail
  * cannot list a section the page did not render, or miss one it did.
  *
- * **Every id is prefixed**, because a plan page inlines the overview and every
- * stage into ONE DOM. Stage files tend to carry the same `## Todo`, and the
- * overview may carry `## Closed` while a stage does too; unprefixed, the second
- * `#todo` silently shadows the first and the rail links to the wrong section.
+ * **Every id is still prefixed**, even though none of the inner headings are
+ * listed: a plan page inlines the overview and every stage into ONE DOM. Stage
+ * files tend to carry the same `## Todo`, and the overview may carry `## Closed`
+ * while a stage does too; unprefixed, the second `#todo` silently shadows the
+ * first — which breaks in-page links written by hand, not just the rail.
  *
- * TOC levels are display depth, not source depth: the three landmarks sit at
- * level 2 (the rail renders 1 and 2 at the same indent) and everything inside
- * one is pushed a level below it, so the index reads as a two-tier list.
+ * **The rail lists LANDMARKS ONLY — Overview, Stages, and one entry per stage.**
+ * A plan is a schedule, so the thing a reader navigates to is a stage; the
+ * headings inside one are that stage's own argument and belong to reading it,
+ * not to finding it. Listing them made a nine-stage plan's index longer than
+ * most of the page it indexed. Each stage entry carries its NUMBER, because
+ * that number is the stage's id — "stage 20" is how it is referred to
+ * everywhere else, and an index that drops it cannot be matched against the
+ * table above or a `subtasks:` ref below.
  */
 export function planDocument(plan: IssuePlan): PlanDocument {
   const toc: TocEntry[] = [];
@@ -486,19 +499,12 @@ export function planDocument(plan: IssuePlan): PlanDocument {
     ? extractAndPrefixToc(plan.overviewHtml, PLAN_OVERVIEW_ANCHOR)
     : null;
 
-  if (overview) {
-    toc.push({ id: PLAN_OVERVIEW_ANCHOR, level: 2, text: 'Overview' });
-    for (const h of overview.toc) toc.push({ ...h, level: Math.min(h.level + 1, 6) });
-  }
-
-  if (plan.stages.length > 0) {
-    toc.push({ id: PLAN_STAGES_ANCHOR, level: 2, text: 'Stages' });
-  }
+  if (overview) toc.push({ id: PLAN_OVERVIEW_ANCHOR, level: 2, text: 'Overview' });
+  if (plan.stages.length > 0) toc.push({ id: PLAN_STAGES_ANCHOR, level: 2, text: 'Stages' });
 
   const stages = plan.stages.map((stage) => {
-    const { html, toc: inner } = extractAndPrefixToc(stage.html, stage.anchor);
-    toc.push({ id: stage.anchor, level: 2, text: stage.title });
-    for (const h of inner) toc.push({ ...h, level: Math.min(h.level + 1, 6) });
+    const { html } = extractAndPrefixToc(stage.html, stage.anchor);
+    toc.push({ id: stage.anchor, level: 3, text: stageHeadingText(stage) });
     return { stage, html };
   });
 

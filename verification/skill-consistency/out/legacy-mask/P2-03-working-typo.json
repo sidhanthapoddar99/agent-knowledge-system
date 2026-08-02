@@ -1,0 +1,6 @@
+[
+  "2026-08-03-scratch-probe/agent-log/010_wf_ship-the-decoder/debrief: unnumbered slot — rename to `03_debrief/`. The prefix is what puts the run's own slots ahead of its child activities (which start at 100); without it this sorts lexically among them",
+  "2026-08-03-scratch-probe/agent-log/010_wf_ship-the-decoder/02_working/010_audit-round.md: carries `iteration:` — retired. The `010_` filename owns the number, and a frontmatter copy is a second place to keep it right",
+  "2026-08-03-scratch-probe/agent-log/010_wf_ship-the-decoder/03_working/: prefix is below 100, so this reads as one of the run's own slots rather than a child activity — the slots are `02_working/` and `03_debrief/`. A child activity is `NXX_<code>_<name>/` with a prefix of 100 or more",
+  "2026-08-03-scratch-probe/agent-log/010_wf_ship-the-decoder/05_wf_sneaky/: prefix is below 100, so this reads as one of the run's own slots rather than a child activity — the slots are `02_working/` and `03_debrief/`. A child activity is `NXX_<code>_<name>/` with a prefix of 100 or more"
+]

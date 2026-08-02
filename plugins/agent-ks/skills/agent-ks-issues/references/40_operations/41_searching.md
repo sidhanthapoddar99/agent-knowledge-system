@@ -33,7 +33,7 @@ This routing rule applies to every natural-language phrase the user might use. R
 
 ## Helper scripts — use these, they're the fastest path
 
-The plugin ships 8 issue-tracker CLI wrappers (`agent-ks issue list`, `agent-ks issue show`, `agent-ks issue subtasks`, `agent-ks issue agent-logs`, `agent-ks issue set-state`, `agent-ks issue add-comment`, `agent-ks issue add-agent-log`, `agent-ks issue review-queue`) on your `PATH`. **Prefer them over hand-rolled grep** — they understand the schema (subtask `status`, component-as-array, agent-log subgroups) and emit terse output by default. Each wrapper internally uses `bun` (preferred) with `node` as fallback.
+The plugin ships 8 issue-tracker CLI wrappers (`agent-ks issue list`, `agent-ks issue show`, `agent-ks issue subtasks`, `agent-ks issue agent-logs`, `agent-ks issue set-state`, `agent-ks issue add-comment`, `agent-ks issue add-agent-log`, `agent-ks issue review-queue`) on your `PATH`. **Prefer them over hand-rolled grep** — they understand the schema (subtask `status`, component-as-array, agent-log subgroups) and emit terse output by default. **Every wrapper requires `bun`** — the scripts import `gray-matter`, which node cannot resolve (there is no `package.json` and no `node_modules`), so the dispatcher refuses with an install hint rather than failing on an import.
 
 | Command (script) | What it does |
 |---|---|

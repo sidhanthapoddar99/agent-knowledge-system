@@ -47,11 +47,11 @@ iterate → iteration file → (comment if a human decision is needed) → re-it
 ```
 
 1. **Open the agent log** —
-   `agent-ks issue new-agent-log --issue <id> --kind lp --name third-sweep`. Fill in
+   `agent-ks issue new-agent-log <id> --kind lp --name third-sweep`. Fill in
    `01_summary.md`'s Goal, Todo and Out of Scope before starting; that
    file **is** the brief you point delegated agents at.
 2. **Each round is one iteration file** —
-   `agent-ks issue new-iteration --issue <id> --log 030_lp_third-sweep --name log-scan`.
+   `agent-ks issue new-iteration <id> --log 030_lp_third-sweep --name log-scan`.
    Write Goal, Inputs and Expected Outcome *before* the work; fill in Outcome when it
    lands.
 3. **An agent that produced something substantial gets its own file** beside the

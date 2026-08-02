@@ -66,7 +66,7 @@ const missingTotal = resolved.reduce((n, r) => n + r.missing.length, 0);
     <div class="issue-doc__path">{relPath}</div>
 
     <div class="issue-plan__header">
-      {plan.sequence !== null && <span class="issue-plan__num">{pad(plan.sequence)}</span>}
+      {plan.sequence !== null && <span class="issue-plan__num">{pad(plan.sequence)} ·</span>}
       <span class="issue-plan__title">{plan.title}</span>
       <span
         class="issue-plan__badge"
@@ -144,7 +144,7 @@ const missingTotal = resolved.reduce((n, r) => n + r.missing.length, 0);
     {resolved.map(({ stage, html, subtasks }) => (
       <div class="issue-plan__stage markdown-content">
         <h1 id={stage.anchor}>
-          {stage.sequence !== null && <span class="issue-plan__stage-num">{stage.sequence}</span>}
+          {stage.sequence !== null && <span class="issue-plan__stage-num">{stage.sequence} ·</span>}
           {stage.title}
         </h1>
         <hr />

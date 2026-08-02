@@ -22,7 +22,13 @@
  * output was "N errors, all false" — and a gate that can only be read with a
  * correction attached stops being read at all.
  *
- * Usage: check-skill-links.mjs [skill-dir]   (defaults to the skill root)
+ * Usage: check-skill-links.mjs [skill-dir]
+ *
+ * With no argument it checks **every skill in the marketplace**, not just the
+ * one that happens to ship this script. It used to default to its own skill
+ * root, so a bare run reported "all checks passed" having read one skill of
+ * three — a clean result that named a scope nobody could see.
+ *
  * Exit 0 = all links resolve, 1 = broken link(s) found.
  */
 
@@ -35,7 +41,17 @@ import { makeFenceTracker } from './_links.mjs';
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const JSON_OUT = process.argv.includes('--json');
 const POSITIONAL = process.argv.slice(2).find((a) => !a.startsWith('-'));
-const SKILL_ROOT = POSITIONAL || path.dirname(SCRIPT_DIR); // scripts/ → skill root
+const OWN_SKILL = path.dirname(SCRIPT_DIR);           // scripts/ → this skill's root
+const SKILLS_DIR = path.dirname(OWN_SKILL);           // …/skills/
+
+/** Every skill to check: the one named on the command line, or all of them.
+ *  A skill is a directory under `skills/` carrying a `SKILL.md`. */
+const SKILL_ROOTS = POSITIONAL
+  ? [path.resolve(POSITIONAL)]
+  : fs.readdirSync(SKILLS_DIR, { withFileTypes: true })
+      .filter((e) => e.isDirectory() && fs.existsSync(path.join(SKILLS_DIR, e.name, 'SKILL.md')))
+      .map((e) => path.join(SKILLS_DIR, e.name))
+      .sort();
 
 const errors = [];
 const warnings = [];
@@ -53,9 +69,12 @@ function listMarkdown(dir, acc = []) {
   return acc;
 }
 
+let filesScanned = 0;
+for (const SKILL_ROOT of SKILL_ROOTS) {
 for (const file of listMarkdown(SKILL_ROOT)) {
+  filesScanned++;
   const lines = fs.readFileSync(file, 'utf-8').split(/\r?\n/);
-  const relFile = path.relative(SKILL_ROOT, file);
+  const relFile = path.relative(SKILLS_DIR, file);
   const isProse = makeFenceTracker();
   lines.forEach((line, i) => {
     if (!isProse(line)) return;   // fence delimiter, or inside a fenced example
@@ -79,5 +98,20 @@ for (const file of listMarkdown(SKILL_ROOT)) {
     }
   });
 }
+}
 
-reportAndExit({ kind: 'skill-links', root: SKILL_ROOT, errors, warnings, json: JSON_OUT });
+// A scope that read nothing is not a clean run. Without this, a bad path or an
+// empty skills directory prints "all checks passed" — the same output as a real
+// pass, which is the one thing a gate may never do.
+if (filesScanned === 0) {
+  errors.push(`no markdown found under ${SKILL_ROOTS.join(', ') || '(no skills resolved)'} — nothing was checked`);
+}
+
+reportAndExit({
+  kind: 'skill-links',
+  root: SKILL_ROOTS.length === 1 ? SKILL_ROOTS[0] : `${SKILL_ROOTS.length} skills under ${SKILLS_DIR}`,
+  subtitle: `(${filesScanned} markdown file${filesScanned === 1 ? '' : 's'} scanned)`,
+  errors,
+  warnings,
+  json: JSON_OUT,
+});

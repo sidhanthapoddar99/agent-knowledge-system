@@ -563,7 +563,7 @@ What this example teaches:
 ## Open an agent log
 
 ```bash
-agent-ks issue new-agent-log --issue <id> --kind wf --name ship-the-decoder
+agent-ks issue new-agent-log <id> --kind wf --name ship-the-decoder
 ```
 
 Creates the folder with `settings.json` and `01_summary.md`. `02_working/` and
@@ -573,8 +573,8 @@ empty directory, so a scaffolded empty folder exists only for whoever ran the co
 ## Open the next iteration file
 
 ```bash
-agent-ks issue new-iteration --issue <id> --log 030_lp_overnight --name audit-round
-agent-ks issue new-iteration --issue <id> --log 030_lp_overnight --name audit-bytes --producer
+agent-ks issue new-iteration <id> --log 030_lp_overnight --name audit-round
+agent-ks issue new-iteration <id> --log 030_lp_overnight --name audit-bytes --producer
 ```
 
 Derives the number — `--producer` attaches to the current iteration (`031`), otherwise

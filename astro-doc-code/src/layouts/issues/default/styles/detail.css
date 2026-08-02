@@ -952,10 +952,11 @@
    gets from `#` and `---` in any page on this site. The heading is plain text —
    a stage has no page of its own to link to (see `planStageAliasTarget`).
 
-   The number is PART of the heading, exactly as `# 20 Eyeball the result`
-   would render: same size, same colour, monospace only so an ordering prefix
-   still looks like one. And no separator glyph — a `·` between a number and
-   the name it labels reads as two facts rather than one heading. */
+   The number is PART of the heading — `20 · Eyeball the result`, one line at
+   one size and one colour, monospace only so an ordering prefix still looks
+   like one. The `·` is markup rather than a `::before` so it copies with the
+   text and matches the right rail, which spells the stage the same way (see
+   `stageHeadingText`). */
 .issue-plan__stage { margin-top: 2.5rem; }
 .issue-plan__stage h1 { margin-bottom: 0.2rem; }
 .issue-plan__stage > hr { margin: 0 0 1rem; }

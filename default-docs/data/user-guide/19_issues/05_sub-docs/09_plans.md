@@ -177,7 +177,7 @@ count:
 | Review / input needed | `review` | `input-needed`, `review` | yellow |
 | Completed / closed | `closed` | `done`, `dropped` | green |
 
-A tracker overriding `statusColors` restyles the plan table for free.
+A theme overriding the `--status-<name>` CSS variables restyles the plan table for free.
 
 ### Individual stage pages
 

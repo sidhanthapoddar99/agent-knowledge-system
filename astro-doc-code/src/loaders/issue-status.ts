@@ -58,19 +58,42 @@ export const RUN_STATUSES = ['open', 'in-progress', 'input-needed', 'done', 'dro
 
 export type RunStatus = (typeof RUN_STATUSES)[number];
 
-/** Default colours (a tracker may override any of these in
- *  `settings.json → fields.status.colors`). Three are inherited unchanged from
- *  the old four-state palette (open/review/done≈closed) so existing trackers
- *  see minimal visual churn. */
-export const DEFAULT_STATUS_COLORS: Record<IssueStatus, string> = {
-  open: '#888888',
-  blocked: '#d1854f',
-  'in-progress': '#61afef',
-  'input-needed': '#e8a54b',
-  review: '#f0c674',
-  done: '#7ec699',
-  dropped: '#e06c75',
-};
+/**
+ * The CSS custom property carrying a status's colour — `--status-open`,
+ * `--status-in-progress`, and so on, one per value in {@link STATUSES}.
+ *
+ * The token name is derived from the status, so there is nothing to keep in
+ * sync: a status with no variable is a missing theme token, never a silent
+ * fallback to some other status's colour.
+ */
+export function statusVar(status: IssueStatus | string): string {
+  return `var(--status-${status})`;
+}
+
+/**
+ * The status→colour map every status surface reads. Values are CSS variable
+ * references, not hexes.
+ *
+ * **Colours are theme-owned and live in `styles/color.css`; they are not
+ * configurable per tracker.** This was previously a map of literal hexes that a
+ * tracker could override under a top-level `statusColors` key. Two things were
+ * wrong with that:
+ *
+ * 1. **One value had to serve both colour modes.** The shipped hexes were
+ *    dark-mode colours rendered unchanged on a light background, and JSON had
+ *    nowhere to put a second value. CSS has `[data-theme="dark"]`.
+ * 2. **A second copy of the palette drifted.** The bundled Guide hand-wrote its
+ *    own tint map and disagreed with this one on two statuses.
+ *
+ * What deliberately did NOT change: the map is still resolved once and passed
+ * down as a prop. Threading it is mildly redundant now that the values are
+ * variables any stylesheet could reach — but unpicking that touches eleven
+ * components to no visible end, so it stays until something else needs them
+ * opened. The colours being theme-owned is the part that mattered.
+ */
+export const STATUS_CSS_VARS: Record<IssueStatus, string> = Object.fromEntries(
+  STATUSES.map((s) => [s, statusVar(s)]),
+) as Record<IssueStatus, string>;
 
 /** Legacy → canonical value map. The lifecycle field was previously the
  *  four-state `open | review | closed | cancelled`; `closed`→`done` and
@@ -174,52 +197,42 @@ export function unknownStatusMessage(rawValue: string, fileHint: string): string
 }
 
 /** Message when a tracker still declares `fields.status` in its root settings.
- *  The status axis is code-fixed; the only permitted per-tracker customization
- *  is colours, which live under a top-level `statusColors` map. A stray
- *  `values` list under `fields.status` reads as authoritative and would
- *  eventually be consumed as the vocabulary — so we reject it loudly instead of
- *  ignoring it. */
+ *  The status axis is code-fixed and nothing about it is per-tracker — not the
+ *  values, and since colours moved to CSS, not those either. A stray `values`
+ *  list reads as authoritative and would eventually be consumed as the
+ *  vocabulary, so we reject it loudly instead of ignoring it. */
 export function statusFieldForbiddenMessage(fileHint: string): string {
   return [
     `[issues] "${fileHint}" declares \`fields.status\`, but statuses are fixed by the`,
     `framework and cannot be defined per-tracker. A \`values\` list here reads as`,
     `authoritative and will eventually be consumed as the vocabulary — which is wrong.`,
-    `Fix: delete the entire \`fields.status\` block. To override colours, add a`,
-    `top-level \`statusColors\` map instead — e.g. { "statusColors": { "review": "#f0c674" } }.`,
-    `Keys must be a subset of: ${STATUSES.join(' | ')}.`,
+    `Fix: delete the entire \`fields.status\` block. Colours are no longer configurable`,
+    `here either — they are theme CSS variables (\`--status-<name>\`) in color.css.`,
+    `Valid statuses: ${STATUSES.join(' | ')}.`,
     `See the migration script`,
     `(migration/0.1.2_root-settings-schema.py)`,
     `for the exact rewrite.`,
   ].join('\n');
 }
 
-/** Message when a `statusColors` override names a status outside the fixed set —
- *  a colour for a status that doesn't exist is a typo, not an override. */
-export function unknownStatusColorMessage(key: string, fileHint: string): string {
-  return [
-    `[issues] "${fileHint}" sets a colour for unknown status "${key}" under \`statusColors\`.`,
-    `A colour for a status that doesn't exist is a typo, not an override.`,
-    `Valid statuses: ${STATUSES.join(' | ')}.`,
-    `The migration script's \`detect\` subcommand flags exactly this`,
-    `(migration/0.1.2_root-settings-schema.py).`,
-  ].join('\n');
-}
-
 /**
- * Validate and merge per-tracker status-colour overrides onto the fixed
- * defaults. Throws {@link unknownStatusColorMessage} on a key outside the
- * vocabulary. Returns the resolved seven-colour map every status surface reads.
+ * Message when a tracker still carries a top-level `statusColors` map.
+ *
+ * Colours moved out of settings and into theme CSS (`--status-<name>` in
+ * `color.css`). A leftover map is rejected rather than ignored, for the same
+ * reason `fields.status` is: an override that silently stops applying is worse
+ * than a build that says why. The colours it declares are almost certainly the
+ * defaults it was copied from, so deleting the block is usually the whole fix.
  */
-export function resolveStatusColors(
-  overrides: Record<string, string> | undefined,
-  fileHint: string,
-): Record<IssueStatus, string> {
-  const resolved: Record<string, string> = { ...DEFAULT_STATUS_COLORS };
-  if (overrides && typeof overrides === 'object') {
-    for (const [key, value] of Object.entries(overrides)) {
-      if (!STATUS_SET.has(key)) throw new Error(unknownStatusColorMessage(key, fileHint));
-      if (typeof value === 'string' && value) resolved[key] = value;
-    }
-  }
-  return resolved as Record<IssueStatus, string>;
+export function statusColorsForbiddenMessage(fileHint: string): string {
+  return [
+    `[issues] "${fileHint}" declares a top-level \`statusColors\` map, but status`,
+    `colours are no longer configurable per tracker — they are theme CSS variables.`,
+    `Fix: delete the \`statusColors\` block. To restyle the lifecycle, override the`,
+    `\`--status-<name>\` variables in your theme's color.css — e.g.`,
+    `[data-theme="dark"] { --status-dropped: #ef4444; }`,
+    `One per status: ${STATUSES.map((s) => `--status-${s}`).join(' | ')}.`,
+    `CSS also lets light and dark differ, which the JSON map could not express.`,
+    `See migration/0.1.3_status-colors-to-css.py for the exact rewrite.`,
+  ].join('\n');
 }

@@ -22,19 +22,10 @@ The settings file may be plain `settings.json` **or** `settings.jsonc` — JSON 
 {
   "label": "Todo",
 
-  // Status COLORS only. The seven statuses and their four-category grouping are
-  // FIXED in framework code — a tracker can't add/rename statuses and there is
-  // deliberately no `values` list here. Keys must be a subset of the seven; omit
-  // any you keep at the default. A `fields.status` block is a hard error.
-  "statusColors": {
-    "open":         "#888888",
-    "blocked":      "#d1854f",
-    "in-progress":  "#61afef",
-    "input-needed": "#e8a54b",
-    "review":       "#f0c674",
-    "done":         "#7ec699",
-    "dropped":      "#c678dd"
-  },
+  // NOTHING about status appears here. The seven statuses and their four
+  // categories are FIXED in framework code, and their COLOURS are theme CSS
+  // variables. Both a `fields.status` block and a `statusColors` map are hard
+  // errors — see "Status colors" below.
 
   "fields": {
     "priority": {
@@ -106,15 +97,14 @@ The settings file may be plain `settings.json` **or** `settings.jsonc` — JSON 
 | Field | Type | Required | Purpose |
 |---|---|:---:|---|
 | `label` | string | — | Human name for the tracker, shown in the sidebar + page header |
-| `statusColors` | object | — | Per-status colour overrides for the fixed lifecycle — `{ "<status>": "<hex>" }`, keys a subset of the seven statuses. A **top-level** key, sibling of `fields` (not inside it). See [Status colors](#status-colors) |
-| `fields` | object | ✅ | Enum definitions for `priority`, `component`, `labels`. **Status is not defined here** — it's fixed in code (only its colors are overridable, via `statusColors`) |
+| `fields` | object | ✅ | Enum definitions for `priority`, `component`, `labels`. **Status is not defined here, and neither are its colours** — see [Status colors](#status-colors) |
 | `authors` | string[] | — | Known authors — referenced by `author` / `assignees` in per-issue settings |
 | `views` | array | — | Preset filter views (see [Preset views](#preset-views)) |
 | `draft` | bool | — | `true` → entire tracker hidden in production |
 
 ## The `fields` object
 
-Each key is a field name — `priority`, `component`, `labels`. (`status` is **not** a `fields` entry: it's fixed in framework code, with colors overridden separately via the top-level [`statusColors`](#status-colors) map.) Each value has:
+Each key is a field name — `priority`, `component`, `labels`. (`status` is **not** a `fields` entry: it's fixed in framework code, and its colours are [theme CSS](#status-colors), not settings.) Each value has:
 
 ```ts
 {
@@ -140,25 +130,47 @@ The vocabulary shape is the same for single- and multi-select fields — `values
 
 ### Status colors
 
-Statuses aren't declared under `fields` at all. The **only** per-tracker status
-customization is colors, via a top-level `statusColors` map (a sibling of `fields`):
+**Status colours are theme CSS, not settings.** Nothing about status is configurable in
+this file — not the values, not the colours.
 
-```json
-"statusColors": {
-  "open":         "#888888",
-  "blocked":      "#d1854f",
-  "in-progress":  "#61afef",
-  "input-needed": "#e8a54b",
-  "review":       "#f0c674",
-  "done":         "#7ec699",
-  "dropped":      "#c678dd"
+| You want to… | Where |
+|---|---|
+| Change what the statuses **are** | Nowhere. Fixed in framework code: seven values, four categories |
+| Change what a status **looks like** | Your theme's `color.css` — override `--status-<name>` |
+| Put either in `settings.json` | **Neither works.** `fields.status` and `statusColors` are both hard errors |
+
+One variable per status, and this is the only place light and dark can differ:
+
+```css
+:root {
+  --status-open: #6b7280;         --status-blocked: #c2410c;
+  --status-in-progress: #2563eb;  --status-input-needed: #d97706;
+  --status-review: #ca8a04;       --status-done: #16a34a;
+  --status-dropped: #dc2626;
+}
+
+[data-theme="dark"] {
+  --status-dropped: #e06c75;      /* brighter on a dark background */
 }
 ```
 
-Keys must be a **subset of the seven fixed statuses** — a color for an unknown status is a
-hard error (it's a typo, not an override). Omit any status you're happy to leave at its
-default; the map merges over the built-in defaults. There is deliberately **no `values`
-field** for status.
+Override only what you want to change — the rest inherit from the default theme. All
+seven are listed under `required_variables.colors` in `theme.yaml`.
+
+#### Why they moved out of `settings.json`
+
+They used to live here as a `statusColors` map, and that had two problems CSS doesn't:
+
+- **One value had to serve both colour modes.** The shipped hexes were dark-mode colours
+  rendered unchanged on a light background, and JSON had nowhere to put a second value.
+- **The palette got copied.** A second hand-written map inside the bundled Guide drifted
+  from the real one and disagreed on two statuses.
+
+**A leftover `statusColors` map now fails the build rather than being ignored.** An
+override that silently stops applying surfaces weeks later as *"the colours look wrong
+somehow"*, with nothing pointing at the cause. Run
+`migration/0.1.3_status-colors-to-css.py` — it reports every non-default colour it removes
+so you can re-declare it in CSS, and tells you to check the comments left behind.
 
 The seven statuses group into four categories — **Not Started** (`open`, `blocked`) ·
 **In Progress** (`in-progress`) · **Review** (`input-needed`, `review`) · **Closed**
@@ -178,12 +190,12 @@ a silent default. Migrating an old `fields.status` block? Run
 The other enums (`priority`, `component`, `labels`) are true vocabulary — read at runtime:
 add a value to `settings.json` and it shows up in filters, groupings, and chips with no
 code change. `status` is different by design: it isn't declared in `fields` at all, and
-only its **colors** are overridable (via the top-level `statusColors` map).
+nothing about it is per-tracker — the values are code, the colours are theme CSS.
 
 | Concern | Source |
 |---|---|
 | Status **names** + **category grouping** | Fixed in framework code |
-| Status **colors** | ✅ Top-level `statusColors` map overrides the code defaults (colors only) |
+| Status **colors** | Theme CSS — override `--status-<name>` in `color.css` |
 | Category **tabs** in the index view | Derived from the fixed categories |
 | Status **icons** + cycle order on subtasks | Fixed in code |
 | **Subtask** statuses | Same fixed set — issues and subtasks share one vocabulary and one field name (`status`) |
@@ -222,7 +234,7 @@ Why required: these glosses are the controlled definition every issue author and
 
 ### Colors
 
-Purely cosmetic — drive badge fills on the list view and anywhere chips render. Two maps set them: a per-field `colors` map (inside `fields.priority` / `component` / `labels`) and, for the fixed lifecycle, the top-level `statusColors` map. Omit either and the UI falls back to the built-in defaults (status) or neutral text (other fields). Per-value — only provide colors for values that need them.
+Purely cosmetic — drive badge fills on the list view and anywhere chips render. Set them with a per-field `colors` map inside `fields.priority` / `component` / `labels`; omit it and those values render as neutral text. **Status is the exception and is not set here at all** — its colours are theme CSS variables ([above](#status-colors)). Per-value: only provide colors for values that need them.
 
 Use any CSS color syntax: hex, `rgb()`, `hsl()`, or CSS variables from the theme (e.g. `"var(--color-success)"`). Hex is the safest for portability across themes.
 

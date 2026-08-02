@@ -57,7 +57,8 @@ import {
   normalizeStatus,
   unknownStatusMessage,
   statusFieldForbiddenMessage,
-  resolveStatusColors,
+  statusColorsForbiddenMessage,
+  STATUS_CSS_VARS,
   STATUSES as STATUS_LIST,
 } from './issue-status';
 
@@ -67,7 +68,8 @@ export {
   STATUSES,
   RUN_STATUSES,
   CATEGORIES,
-  DEFAULT_STATUS_COLORS,
+  STATUS_CSS_VARS,
+  statusVar,
   STATUS_LABELS,
   STATUS_DESCRIPTIONS,
   CATEGORY_DESCRIPTIONS,
@@ -594,7 +596,15 @@ function resolveVocabulary(
     throw new Error(statusFieldForbiddenMessage(fileHint));
   }
 
-  const statusColors = resolveStatusColors(vocabulary.statusColors, fileHint);
+  // Colours are theme CSS variables, not settings. A leftover `statusColors`
+  // block is rejected rather than ignored: an override that silently stops
+  // applying shows up weeks later as "the colours look wrong somehow", with
+  // nothing pointing at the cause.
+  if (vocabulary.statusColors) {
+    throw new Error(statusColorsForbiddenMessage(fileHint));
+  }
+
+  const statusColors = STATUS_CSS_VARS;
 
   for (const field of ['component', 'labels'] as const) {
     const def = fields[field];

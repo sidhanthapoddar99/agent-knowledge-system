@@ -27,15 +27,6 @@ Minimum viable:
 ```json
 {
   "label": "Bugs",
-  "statusColors": {
-    "open":         "#888888",
-    "blocked":      "#d1854f",
-    "in-progress":  "#61afef",
-    "input-needed": "#e8a54b",
-    "review":       "#f0c674",
-    "done":         "#7ec699",
-    "dropped":      "#c678dd"
-  },
   "fields": {
     "priority": {
       "values": ["low", "medium", "high", "urgent"]
@@ -62,11 +53,11 @@ Minimum viable:
 }
 ```
 
-Status colors are a **top-level** `statusColors` map (sibling of `fields`), not a field. `component` and `labels` each carry a required `descriptions` map — one entry per value.
+Status does not appear in this file at all — not its values, not its colours. `component` and `labels` each carry a required `descriptions` map — one entry per value.
 
 ### Rules
 
-- **The seven statuses are fixed in framework code** — `open / blocked / in-progress / input-needed / review / done / dropped`. You don't declare them: there is **no `fields.status` block** (adding one is a hard error), and the only override is colors, via the top-level `statusColors` map (keys a subset of the seven). An unknown status value on an issue hard-errors. The UI's category tabs and review handoff depend on this fixed vocabulary.
+- **The seven statuses are fixed in framework code** — `open / blocked / in-progress / input-needed / review / done / dropped`. You don't declare them anywhere: a `fields.status` block is a hard error, and so is a `statusColors` map, because their colours are theme CSS variables (`--status-<name>` in your theme's `color.css`) rather than settings. An unknown status value on an issue hard-errors. The UI's category tabs and review handoff depend on this fixed vocabulary.
 - **Other fields are yours to design.** Pick values that match how you actually triage.
 - **`component` and `labels` values each need a `descriptions` entry** — a parallel `"<value>": "<meaning>"` map (a missing one is a hard error). `priority` descriptions are optional. These glosses render in the tracker's **Guide** modal and steer where new issues land.
 - **Colors are optional** but useful — they drive badge fills on the list view.

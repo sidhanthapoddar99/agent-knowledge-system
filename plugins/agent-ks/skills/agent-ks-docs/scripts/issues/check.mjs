@@ -67,9 +67,13 @@ const ISSUE_SETTINGS_KEYS = new Set([
   'title', 'description', 'status', 'priority', 'component', 'labels',
   'author', 'assignees', 'draft', 'agentLogKinds',
 ]);
+// `statusColors` is listed as KNOWN even though it is a removed feature. It has
+// its own explicit error below, naming the CSS variable to use instead; leaving
+// it out of this set means a tracker carrying one gets that error AND a generic
+// "unknown key" drift warning for the same problem. One defect, one message.
 const TRACKER_ROOT_KEYS = new Set(['label', 'fields', 'authors', 'views', 'draft', 'statusColors', 'subtaskTemplate']);
-// `status` is no longer a valid field — statuses are code-fixed and colours
-// live under the top-level `statusColors` map (see the explicit check below).
+// `status` is not a valid field — statuses are code-fixed and their colours are
+// theme CSS variables (see the explicit checks below).
 const TRACKER_FIELD_KEYS = new Set(['priority', 'component', 'labels']);
 const SUBTASK_FM_KEYS = new Set(['title', 'status', 'state', 'sidebar_label']);
 const NOTE_FM_KEYS = new Set([
@@ -339,19 +343,16 @@ function lintPlans(id, issueDir) {
 reportDrift('<root>/settings.json', unknownKeys(vocab, TRACKER_ROOT_KEYS), TRACKER_ROOT_KEYS);
 reportDrift('<root>/settings.json (fields)', unknownKeys(vocab?.fields, TRACKER_FIELD_KEYS), TRACKER_FIELD_KEYS);
 
-// Statuses are code-fixed: a per-tracker `fields.status` is an error (its
-// `values` list would read as authoritative). Colours live under a top-level
-// `statusColors` map, validated against the fixed vocabulary — a colour for a
-// status that doesn't exist is a typo, not an override.
+// NOTHING about status is per-tracker. The values are code-fixed (a
+// `fields.status` block's `values` list would read as authoritative), and since
+// colours moved to theme CSS, `statusColors` is forbidden too. Both are errors
+// rather than ignored keys: a settings block that silently stops applying
+// surfaces weeks later as "the colours look wrong", with nothing pointing at it.
 if (vocab?.fields?.status) {
-  errors.push(`<root>/settings.json: remove \`fields.status\` — statuses are fixed in code; override colours via a top-level \`statusColors\` map instead (covered by a repo-root migration/ script — run the migration chain)`);
+  errors.push(`<root>/settings.json: remove \`fields.status\` — statuses are fixed in code (${STATUSES.join('|')}), and their colours are theme CSS variables, not settings (covered by a repo-root migration/ script — run the migration chain)`);
 }
-if (vocab?.statusColors && typeof vocab.statusColors === 'object') {
-  for (const key of Object.keys(vocab.statusColors)) {
-    if (!STATUSES.includes(key)) {
-      errors.push(`<root>/settings.json: \`statusColors.${key}\` is not a valid status (${STATUSES.join('|')}) — a colour for a status that doesn't exist is a typo (a repo-root migration/ script flags this via its detect pass — run the migration chain)`);
-    }
-  }
+if (vocab?.statusColors) {
+  errors.push(`<root>/settings.json: remove \`statusColors\` — status colours are no longer configurable per tracker. Override the \`--status-<name>\` CSS variables in your theme's color.css instead, e.g. \`[data-theme="dark"] { --status-dropped: #ef4444; }\` (one per status: ${STATUSES.map((s) => `--status-${s}`).join(' ')}). CSS also lets light and dark differ, which the JSON map could not. Run migration/0.1.3_status-colors-to-css.py`);
 }
 // Every component/label value must carry a description (rendered in the Guide
 // modal). priority meanings stay optional.

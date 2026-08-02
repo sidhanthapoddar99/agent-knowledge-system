@@ -30,6 +30,21 @@
   --color-warning: #ca8a04;
   --color-error: #dc2626;
   --color-info: #0891b2;
+
+  /* Issue lifecycle — one token per status in the fixed seven-value vocabulary.
+     The VALUES are theme-owned and overridable here; the STATUS NAMES are fixed
+     in `issue-status.ts` and are not configurable anywhere. A theme restyles the
+     lifecycle by redefining these; it cannot invent an eighth status.
+
+     Darkened against the dark-mode set below, because these used to be one map
+     of dark-mode hexes served unchanged to both modes. */
+  --status-open: #6b7280;
+  --status-blocked: #c2410c;
+  --status-in-progress: #2563eb;
+  --status-input-needed: #d97706;
+  --status-review: #ca8a04;
+  --status-done: #16a34a;
+  --status-dropped: #dc2626;
 }
 
 /* =================================
@@ -59,4 +74,13 @@
   --color-warning: #eab308;
   --color-error: #ef4444;
   --color-info: #06b6d4;
+
+  /* Issue lifecycle — see the light-mode block above. */
+  --status-open: #888888;
+  --status-blocked: #d1854f;
+  --status-in-progress: #61afef;
+  --status-input-needed: #e8a54b;
+  --status-review: #f0c674;
+  --status-done: #7ec699;
+  --status-dropped: #e06c75;
 }

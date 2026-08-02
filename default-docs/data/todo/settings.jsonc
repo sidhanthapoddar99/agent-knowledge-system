@@ -6,22 +6,15 @@
 {
   "label": "Todo",
 
-  // Per-tracker status COLOUR overrides only. The seven statuses and their
-  // four-category grouping are FIXED IN FRAMEWORK CODE
-  // (astro-doc-code/src/loaders/issue-status.ts) — a tracker can NO LONGER
-  // define its own statuses, and there is deliberately no `values` field here
-  // (a stray one would read as authoritative). Keys must be a subset of the
-  // fixed vocabulary; omit any you don't wish to override. Agents set
-  // `in-progress` (auto) and `review`/`input-needed`; `done` and `dropped` are
-  // human-only. Transitions are unenforced guidance.
-  "statusColors": {
-    "open": "#888888",          // Not Started — neutral grey
-    "in-progress": "#61afef",   // In Progress — active blue
-    "input-needed": "#e8a54b",  // Review — amber (agent needs a human answer)
-    "review": "#f0c674",        // Review — yellow (done, awaiting sign-off)
-    "done": "#7ec699",          // Closed — green (shipped)
-    "dropped": "#e06c75"        // Closed — red (not done, and not going to be)
-  },
+  // NOTHING about status is configurable here. The seven statuses, their
+  // four-category grouping, and their colours are all FIXED OUTSIDE THIS FILE:
+  // the values in framework code (astro-doc-code/src/loaders/issue-status.ts),
+  // the colours in theme CSS as `--status-<name>` variables (color.css). A
+  // `fields.status` block or a top-level `statusColors` map is a hard error, not
+  // an ignored key — see migration/0.1.3_status-colors-to-css.py.
+  // To restyle the lifecycle, override the CSS variables in your theme.
+  // Agents set `in-progress` (auto) and `review`/`input-needed`; `done` and
+  // `dropped` are human-only. Transitions are unenforced guidance.
 
   "fields": {
     // How much this matters / how soon. Ordering is `priority desc, updated desc`.

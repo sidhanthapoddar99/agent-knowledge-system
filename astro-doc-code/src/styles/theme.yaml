@@ -37,6 +37,17 @@ required_variables:
     - --color-warning
     - --color-error
     - --color-info
+    # Issue lifecycle — one token per status in the fixed seven-value
+    # vocabulary. A theme may restyle these; it cannot add an eighth, because
+    # the status NAMES are fixed in `issue-status.ts` and are not configurable
+    # by any tracker. Colours are theme-owned; the vocabulary is not.
+    - --status-open
+    - --status-blocked
+    - --status-in-progress
+    - --status-input-needed
+    - --status-review
+    - --status-done
+    - --status-dropped
   fonts:
     # Primitive scale — themes can override, but layouts should consume
     # the semantic tokens below instead.

@@ -110,7 +110,40 @@ Tab count styled one tier smaller than tab label (`--ui-text-micro` vs `--ui-tex
 
 ## Status + priority badges — vocabulary colours
 
-The tracker's root `settings.json` declares a colour per value: `priority` colours live under `fields.priority.colors`, while the fixed lifecycle's colours come from the top-level `statusColors` map (a colours-only override of the seven built-in defaults — the status set itself is fixed in framework code). The layout reads those at render time and applies them inline-style or as CSS custom properties:
+The two halves come from different places, and this is the distinction to get right:
+
+| Colours for | Declared in | Who can change them |
+|---|---|---|
+| `priority`, `component`, `labels` | tracker `settings.json` → `fields.<name>.colors` | that tracker only |
+| **the seven statuses** | **this theme's `color.css`** | **any theme** |
+
+**Status colours are the theme's to set.** One CSS variable per status — and because they
+are CSS, light and dark can differ, which the tracker's JSON could never express:
+
+```css
+:root {
+  --status-open: #6b7280;         --status-blocked: #c2410c;
+  --status-in-progress: #2563eb;  --status-input-needed: #d97706;
+  --status-review: #ca8a04;       --status-done: #16a34a;
+  --status-dropped: #dc2626;
+}
+
+[data-theme="dark"] {
+  --status-dropped: #e06c75;      /* brighter on a dark background */
+}
+```
+
+Override only what you want to change; the rest inherit from the default theme. All seven
+are listed under `required_variables.colors` in `theme.yaml`, so a theme redefining the
+palette wholesale gets told which it missed.
+
+**A tracker cannot override these, and trying is a hard error.** Status colours used to be
+a `statusColors` map in `settings.json`; a leftover one now fails the build and names the
+CSS variable to use instead. Converting an old tracker: run
+`migration/0.1.3_status-colors-to-css.py`, which reports each non-default colour it
+removes so you can paste it here.
+
+The layout reads the resolved values at render time and applies them inline-style or as CSS custom properties:
 
 ```astro
 <!-- In the Astro component -->

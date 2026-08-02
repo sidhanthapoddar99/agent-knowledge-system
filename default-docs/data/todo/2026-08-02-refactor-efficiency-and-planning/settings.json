@@ -1,0 +1,10 @@
+{
+  "title": "Refactor: recording efficiency & the plans section",
+  "description": "Two halves of one problem: agents spend an order of magnitude more output on recording work than on doing it, and the plan — the one file that says what is left and in what order — is buried in agent-memory/ where it has no structure and no home. The audit (measured, 2026-08-02) quantified the first half; the fix spans the agent-ks skills, the global CLAUDE.md, the framework's issue sections, and the CLI. Ships as 0.7.0.",
+  "status": "in-progress",
+  "priority": "high",
+  "component": ["layout-issues"],
+  "labels": ["refactor", "feature", "discussion"],
+  "author": "sidhantha",
+  "assignees": ["sidhantha", "claude"]
+}

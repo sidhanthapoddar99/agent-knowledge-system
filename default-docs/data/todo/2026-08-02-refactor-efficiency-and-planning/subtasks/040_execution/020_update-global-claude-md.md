@@ -1,6 +1,6 @@
 ---
 title: "Update ~/.claude/CLAUDE.md"
-status: input-needed
+status: review
 ---
 
 # Overview
@@ -12,17 +12,12 @@ subtask is a deliberate, reviewed edit to the user's own global instructions.
 **Done when** the proportionality rule, the brief policy, and the audit-report
 schema are updated, and each change names the audit finding it answers.
 
-> [!IMPORTANT]
-> **Sid — this is your file, so the diff is proposed, not applied.**
-> Four edits below, each with the exact text to find and the exact text to
-> replace it with. They are independent: take any subset. Say which, and I will
-> apply them; or paste them yourself in four minutes.
->
-> The first three are **required for consistency** — the file currently
-> describes a shape that no longer exists (activity folders, milestones, a plan
-> inside `agent-memory/`), so an agent reading it will scaffold the retired
-> structure. The fourth is the new rule and is the one you may want to argue
-> with.
+> [!NOTE]
+> **All four edits were applied on 2026-08-03, on Sid's instruction** — *"apply
+> all four edits to my CLAUDE.md"*. The four sections below are kept **verbatim
+> as proposed**, so the record still shows what was asked for and what each one
+> answers; they are now history rather than a pending diff. What actually landed
+> is in *What was applied* under Outcomes.
 
 # References
 
@@ -46,13 +41,45 @@ schema are updated, and each change names the audit finding it answers.
 - [x] Re-point the agent-memory/plans references at the new plans section —
       **edit 2**
 - [x] Re-read the whole file for rules that now contradict each other
-- [ ] **Confirm with Sid before writing** — this is his personal global file
+- [x] **Confirm with Sid before writing** — this is his personal global file.
+      Confirmed 2026-08-03; all four applied
 
 # Outcomes and Next Steps
 
-Four edits proposed below, verbatim and independently applicable. **Nothing has
-been written to `~/.claude/CLAUDE.md`** — that is the one thing this subtask must
-not do on its own, so it sits at `input-needed` rather than `review`.
+**All four edits are in `~/.claude/CLAUDE.md` as of 2026-08-03.** The file grew
+332 → 352 lines. It sits at `review` rather than `done` because the ceiling on a
+subtask is `review` — and because whether the new rules read correctly *in
+practice*, across the other projects on this workstation, is a judgment only Sid
+can make.
+
+## What was applied
+
+Each edit replaced its find-block verbatim; no other line of the file changed.
+
+| Edit | Where it landed | Net |
+|---|---|---:|
+| 2 — the issue's memory no longer holds the plan | the Agent KS bullet list | 7 → 7 lines |
+| 1 — the agent-log shape | the bullet immediately after | 3 → 9 lines |
+| 4 — proportionality | `## What makes the loop work`, after *Delegate only what is large* | +8 lines |
+| 3 — `summary.md` IS the brief | `## Agents and background work`, first bullet | 4 → 10 lines |
+
+**How that was verified.** The file was copied before the first edit, and the
+result diffed against that copy. The diff is exactly three hunks (edits 1 and 2
+are adjacent and merge into one), and every removed line belongs to a
+find-block. Nothing in Reply style, Codex Companion, Breaking code to test the
+tests, What only I can answer, or Git was touched.
+
+**One thing this deliberately did not do.** The four sections under *Details*
+below were **not** rewritten into past tense or trimmed once applied. They are
+the only place the reasoning lives — which finding each edit answers, and what
+each one deliberately keeps. A record that shrinks to *"applied"* cannot be
+audited later.
+
+## What this unblocks
+
+[`060`](../060_sidequest-neurasutra.md) — the NeuraSutra sidequest — named this
+subtask as one of three gates, and it was the last of the three outstanding. It
+is now unblocked and waiting only on Sid's word to start.
 
 ## What turned out not to be here
 

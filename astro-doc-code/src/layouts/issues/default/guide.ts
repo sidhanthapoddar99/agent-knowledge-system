@@ -18,8 +18,8 @@
  */
 import { renderMarkdown } from '@parsers/renderers';
 import {
-  CATEGORIES, STATUSES, STATUS_LABELS, STATUS_DESCRIPTIONS,
-  type AgentLogKind, type IssueStatus,
+  CATEGORIES, STATUSES, RUN_STATUSES, STATUS_LABELS, STATUS_DESCRIPTIONS,
+  type AgentLogKind, type IssueStatus, type RunStatus,
 } from '@loaders/issues';
 import { agentLogIcon } from './server/agent-log-icons';
 import { stateIconSvg } from './server/state-icon';
@@ -81,6 +81,34 @@ function statusTable(statusColors: Record<IssueStatus, string>): string {
   }).join('\n');
   return `| | Status | Label | Meaning |\n|---|---|---|---|\n${rows}`;
 }
+
+/**
+ * Generated island: the statuses that mean something for a RUN, each shown in
+ * the colour it actually renders as on the agent-log folder's symbol.
+ *
+ * The Agent log section used to describe this subset in prose — "colours the
+ * kind symbol… absent renders grey" — and show no colour anywhere, so the one
+ * surface where the tint IS the signal had no legend. The full seven-status
+ * legend lives under Subtasks, which is the wrong place to look when you are
+ * reading about runs.
+ */
+function runStatusTable(statusColors: Record<IssueStatus, string>): string {
+  const rows = RUN_STATUSES.map((s) => {
+    const dot = `<span style="color:${statusColors[s]};display:inline-flex;vertical-align:-2px">${stateIconSvg(s)}</span>`;
+    return `| ${dot} | \`${s}\` | ${RUN_STATUS_MEANING[s]} |`;
+  }).join('\n');
+  return `| | Status | On a run it means |\n|---|---|---|\n${rows}`;
+}
+
+/** What each run status asserts. Deliberately about whether the agent
+ *  FINISHED, never about whether the news was good. */
+const RUN_STATUS_MEANING: Record<RunStatus, string> = {
+  open: 'Scaffolded, not started.',
+  'in-progress': 'Running now.',
+  'input-needed': 'Stopped on a question — asked inline, where a fresh session will see it.',
+  done: '**The agent finished its assignment.** What it *concluded* is prose in `# Outcome` — an audit that completed and found five defects is `done`, not `dropped`.',
+  dropped: 'The agent did **not** finish: crashed, refused, or was superseded.',
+};
 
 /** Inline type glyph (diagram / artifact) for legend prose. */
 function typeGlyph(type: string): string {
@@ -178,9 +206,14 @@ ${kindsTable(kinds)}
 
 - Add custom kinds in \`settings.json\` — merged over the defaults above:
   \`"agentLogKinds": { "ex": { "name": "experiment", "icon": "flask", "desc": "…" } }\`
-- **\`settings.json\`** — optional, per folder: \`{"status": "…"}\` from the canonical
-  seven **minus \`blocked\`/\`review\`**, which colours the kind symbol. Not inherited,
-  so a child may be \`done\` inside a parent still \`in-progress\`. Absent renders grey.
+- **\`settings.json\`** — optional, per folder: \`{"status": "…"}\`, which **colours the
+  kind symbol**. Same vocabulary as everything else, minus \`blocked\`/\`review\` —
+  both describe a work item, not a run. Not inherited, so a child may be \`done\`
+  inside a parent still \`in-progress\`. **Absent renders a defined grey**, which is
+  deliberately distinct from \`open\`: never declared and declared-not-started are
+  different facts.
+
+${runStatusTable(statusColors)}
 - **\`summary.md\`** — required, and the one conclusive file. Five \`#\` sections, in
   order: **State** (live — where the run is right now) · **Goal and Trigger** ·
   **Task List** (headed by its references) · **Out of Scope** · **Outcome Summary**

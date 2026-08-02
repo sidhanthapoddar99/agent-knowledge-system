@@ -39,6 +39,25 @@ export const CATEGORIES = [
 
 export type CategoryId = (typeof CATEGORIES)[number]['id'];
 
+/**
+ * The statuses that mean something for a RUN — an agent-log folder. A strict
+ * subset of {@link STATUSES}: one vocabulary and one palette, fewer values,
+ * never a second set of words.
+ *
+ * `blocked` and `review` are excluded because both describe a work item rather
+ * than a run: a run does not wait on another run, and runs are not signed off —
+ * the subtask is. A run's `status` answers **did the agent finish**, not *was
+ * the news good*, which is why a completed audit that found five defects is
+ * `done`.
+ *
+ * Exported so the guide legend and the validator read one list. The same five
+ * are currently hand-written in `check.mjs` and in five places of skill prose;
+ * this is the definition they should collapse onto.
+ */
+export const RUN_STATUSES = ['open', 'in-progress', 'input-needed', 'done', 'dropped'] as const;
+
+export type RunStatus = (typeof RUN_STATUSES)[number];
+
 /** Default colours (a tracker may override any of these in
  *  `settings.json → fields.status.colors`). Three are inherited unchanged from
  *  the old four-state palette (open/review/done≈closed) so existing trackers

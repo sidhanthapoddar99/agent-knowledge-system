@@ -65,6 +65,7 @@ import {
 // from the loader barrel as before.
 export {
   STATUSES,
+  RUN_STATUSES,
   CATEGORIES,
   DEFAULT_STATUS_COLORS,
   STATUS_LABELS,
@@ -77,6 +78,7 @@ export {
   isTerminalStatus,
   type IssueStatus,
   type CategoryId,
+  type RunStatus,
 } from './issue-status';
 
 /** Re-exported from the shared `order-prefix` module — the single system-wide

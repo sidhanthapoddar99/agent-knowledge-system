@@ -49,6 +49,7 @@ import { parseOrderPrefixLoose, MAX_SUBFOLDER_DEPTH } from '../parsers/core/orde
 import { readSettings, statSettingsMtime, resolveSettingsPath } from './settings-file';
 import { diagramContainerHtml, DIAGRAM_EXTENSIONS } from './diagram-pages';
 import { artifactContainerHtml } from './artifact-pages';
+import { SECTION_FOLDERS, sectionById } from './issue-sections';
 import {
   type IssueStatus,
   type CategoryId,
@@ -83,6 +84,20 @@ export {
  *  here so existing `@loaders/issues` importers (route-match, layouts) are
  *  unaffected. See its definition for the full contract. */
 export { MAX_SUBFOLDER_DEPTH };
+
+// The section registry is re-exported through the loader barrel so layouts and
+// route code import sections from the same place they import everything else
+// about an issue.
+export {
+  ISSUE_SECTIONS,
+  SECTION_FOLDERS,
+  SUBDOC_SECTIONS,
+  FREEFORM_SECTIONS,
+  sectionById,
+  sectionForPanelKey,
+  sectionPanelKey,
+  type IssueSection,
+} from './issue-sections';
 
 export interface IssueMetadata {
   title: string;
@@ -459,12 +474,13 @@ function computeSignature(dataPath: string): number {
     sig += statMtime(path.join(folder, 'issue.md'));
     sig += statMtime(path.join(folder, 'glossary.md'));
 
-    for (const sub of ['comments', 'subtasks', 'notes', 'brainstorm', 'agent-memory', 'agent-log', 'plans']) {
+    for (const sub of SECTION_FOLDERS) {
       const subDir = path.join(folder, sub);
       sig += statMtime(subDir);
-      // All sections except comments nest up to MAX_SUBFOLDER_DEPTH levels;
-      // walk the whole supported tree so a deep edit still busts the cache.
-      const allowsNesting = sub !== 'comments';
+      // Nesting is a per-section fact declared in the registry — `comments` is
+      // flat, `plans` has its own fixed two-level shape. Walk what the section
+      // actually supports so a deep edit still busts the cache.
+      const allowsNesting = sectionById(sub)?.nested ?? true;
       const walkSig = (absDir: string, depth: number): void => {
         let items: fs.Dirent[];
         try { items = fs.readdirSync(absDir, { withFileTypes: true }); }
@@ -840,10 +856,10 @@ async function readFreeformDocs(
   issueId: string,
   subName: string,
 ): Promise<IssueNote[]> {
-  // First-class `.html` artifacts are supporting docs in notes/ and brainstorm/
-  // only — the tracker's design-thinking folders. agent-memory stays markdown +
-  // diagrams (no artifact embed there).
-  const allowArtifacts = subName === 'notes' || subName === 'brainstorm';
+  // First-class `.html` artifacts are supporting docs in the tracker's
+  // design-thinking folders only; agent-memory stays markdown + diagrams. Which
+  // ones those are is declared once, in the section registry.
+  const allowArtifacts = sectionById(subName)?.allowArtifacts ?? false;
   const extensions = allowArtifacts
     ? ['.md', '.html', ...DIAGRAM_EXTENSIONS]
     : ['.md', ...DIAGRAM_EXTENSIONS];

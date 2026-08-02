@@ -9,9 +9,9 @@
  * is empty.
  */
 import type { AgentLogKind, IssueAgentLog, IssueNote } from '@loaders/issues';
+import { ISSUE_SECTIONS, sectionPanelKey } from '@loaders/issues';
 import {
-  logPanelKey, notePanelKey, brainstormPanelKey, agentMemoryPanelKey,
-  noteUrl, logUrl, brainstormUrl, agentMemoryUrl, pad,
+  sectionEntryUrl, pad,
   type GroupedTree,
 } from '../../server/helpers';
 import { agentLogIcon } from '../../server/agent-log-icons';
@@ -45,11 +45,18 @@ interface Props {
   groupKey?: string;
 }
 
+/** The registry entry this tree is drawing. Every path, key and URL below comes
+ *  from it, so the tree cannot address a section by a name it remembered — the
+ *  way a new section's sidebar links silently pointed at `notes/`. */
+const sectionOf = (k: Props['kind']) => ISSUE_SECTIONS.find((s) => s.subDocKind === k)!;
+
 const {
   tree, kind, baseUrl, issueId, activeKey, nested = false, kindMap = {},
   statusMap = {}, statusColors = {}, groupKey = '',
-  pathPrefix = (kind === 'note' ? 'notes' : kind === 'brainstorm' ? 'brainstorm' : kind === 'memory' ? 'agent-memory' : 'agent-log'),
+  pathPrefix = sectionOf(Astro.props.kind).id,
 } = Astro.props;
+
+const section = sectionOf(kind);
 
 /** For an agent-log activity folder `NNN_<code>_<name>`: after stripping the order
  *  prefix, if the remainder starts with a known two-letter kind code + `_`, split
@@ -120,17 +127,11 @@ function leafLabel(item: IssueNote | IssueAgentLog): string {
 }
 
 function leafKey(item: IssueNote | IssueAgentLog): string {
-  if (kind === 'log') return logPanelKey(item as IssueAgentLog);
-  if (kind === 'brainstorm') return brainstormPanelKey(item as IssueNote);
-  if (kind === 'memory') return agentMemoryPanelKey(item as IssueNote);
-  return notePanelKey(item as IssueNote);
+  return sectionPanelKey(section, item.groupPath, item.name);
 }
 
 function leafHref(item: IssueNote | IssueAgentLog): string {
-  if (kind === 'log') return logUrl(baseUrl, issueId, item as IssueAgentLog);
-  if (kind === 'brainstorm') return brainstormUrl(baseUrl, issueId, item as IssueNote);
-  if (kind === 'memory') return agentMemoryUrl(baseUrl, issueId, item as IssueNote);
-  return noteUrl(baseUrl, issueId, item as IssueNote);
+  return sectionEntryUrl(baseUrl, issueId, section, item.groupPath, item.name);
 }
 
 /** Total descendants under a tree node — used for the subgroup count. */

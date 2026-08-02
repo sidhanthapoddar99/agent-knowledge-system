@@ -17,6 +17,7 @@
  * no count, so it cannot carry a stale one.
  */
 import type { Issue, IssuePlan } from '@loaders/issues';
+import { sectionById } from '@loaders/issues';
 import { stateIconSvg } from '../../server/state-icon';
 import { extractAndPrefixToc } from '../../server/toc';
 import {
@@ -33,7 +34,7 @@ interface Props {
 }
 
 const { issue, plan, baseUrl, statusColors, standalone = false } = Astro.props;
-const relPath = `plans/${plan.name}/`;
+const relPath = `${sectionById('plans')!.folder}/${plan.name}/`;
 
 // Resolve every stage once — the table and the inlined bodies read the same
 // resolution, so the count in the table and the links under the heading can

@@ -10,6 +10,7 @@
  */
 import type { IssueSubtask } from '@loaders/issues';
 import type { TocEntry } from '../../server/toc';
+import { sectionById } from '@loaders/issues';
 import { pad, subtaskPanelKey } from '../../server/helpers';
 
 interface Props {
@@ -20,7 +21,7 @@ interface Props {
 
 const { subtask: s, statusColors, standalone = false } = Astro.props;
 const panelKey = subtaskPanelKey(s);
-const relPath = ['subtasks', ...s.groupPath, `${s.slug}.md`].join('/');
+const relPath = [sectionById('subtasks')!.folder, ...s.groupPath, `${s.slug}.md`].join('/');
 ---
 
 <section

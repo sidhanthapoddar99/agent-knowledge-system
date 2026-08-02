@@ -10,7 +10,7 @@
  * same rendering code downstream.
  */
 import { loadContent } from '@loaders/index';
-import { loadIssues } from '@loaders/issues';
+import { loadIssues, SUBDOC_SECTIONS } from '@loaders/issues';
 
 type Props = Record<string, unknown>;
 type PathEntry = { params: { slug: string | undefined }; props: Props };
@@ -78,55 +78,42 @@ export async function buildStaticPaths(siteConfig: { pages?: Record<string, any>
           params: { slug: `${baseUrl}/${issue.id}/issue` },
           props: { ...common, pageType: 'issues-detail', redirectTo: `${pageConfig.base_url}/${issue.id}` },
         });
-        for (const s of issue.subtasks) {
-          const slugPath = [baseUrl, issue.id, 'subtasks', ...s.groupPath, s.slug].filter(Boolean).join('/');
-          paths.push({
-            params: { slug: slugPath },
-            props: { ...common, pageType: 'issues-subdoc', issue, vocabulary, subDoc: { kind: 'subtask', subtask: s } },
-          });
-        }
-        for (const n of issue.notes) {
-          const slugPath = [baseUrl, issue.id, 'notes', ...n.groupPath, n.name].filter(Boolean).join('/');
-          paths.push({
-            params: { slug: slugPath },
-            props: { ...common, pageType: 'issues-subdoc', issue, vocabulary, subDoc: { kind: 'note', note: n } },
-          });
-        }
-        for (const b of issue.brainstorm) {
-          const slugPath = [baseUrl, issue.id, 'brainstorm', ...b.groupPath, b.name].filter(Boolean).join('/');
-          paths.push({
-            params: { slug: slugPath },
-            props: { ...common, pageType: 'issues-subdoc', issue, vocabulary, subDoc: { kind: 'brainstorm', brainstorm: b } },
-          });
-        }
-        for (const m of issue.agentMemory) {
-          const slugPath = [baseUrl, issue.id, 'agent-memory', ...m.groupPath, m.name].filter(Boolean).join('/');
-          paths.push({
-            params: { slug: slugPath },
-            props: { ...common, pageType: 'issues-subdoc', issue, vocabulary, subDoc: { kind: 'memory', memory: m } },
-          });
-        }
-        for (const plan of issue.plans) {
-          paths.push({
-            params: { slug: [baseUrl, issue.id, 'plans', plan.name].filter(Boolean).join('/') },
-            props: { ...common, pageType: 'issues-subdoc', issue, vocabulary, subDoc: { kind: 'plan', plan } },
-          });
-          // Individual stage pages stay reachable — the sub-doc machinery gives
-          // every markdown file a route for free. Nothing links to them; the
-          // single plan page is canonical.
-          for (const stage of plan.stages) {
+        // One loop over the section registry, instead of one hand-written loop
+        // per section. A section added to the registry gets its sub-doc URLs
+        // here for free — which is the point: the old shape failed by emitting
+        // nothing, silently, for whichever section someone forgot.
+        for (const section of SUBDOC_SECTIONS) {
+          if (section.reader === 'plan') {
+            for (const plan of issue.plans) {
+              paths.push({
+                params: { slug: [baseUrl, issue.id, section.id, plan.name].filter(Boolean).join('/') },
+                props: { ...common, pageType: 'issues-subdoc', issue, vocabulary, subDoc: { kind: 'plan', plan } },
+              });
+              // Individual stage pages stay reachable — the sub-doc machinery
+              // gives every markdown file a route for free. Nothing links to
+              // them; the single plan page is canonical.
+              for (const stage of plan.stages) {
+                paths.push({
+                  params: { slug: [baseUrl, issue.id, section.id, plan.name, stage.name].filter(Boolean).join('/') },
+                  props: { ...common, pageType: 'issues-subdoc', issue, vocabulary, subDoc: { kind: 'plan-stage', plan, stage } },
+                });
+              }
+            }
+            continue;
+          }
+
+          const idKey = section.reader === 'subtask' ? 'slug' : 'name';
+          for (const entry of (issue as any)[section.field] as any[]) {
+            const slugPath = [baseUrl, issue.id, section.id, ...entry.groupPath, entry[idKey]]
+              .filter(Boolean).join('/');
             paths.push({
-              params: { slug: [baseUrl, issue.id, 'plans', plan.name, stage.name].filter(Boolean).join('/') },
-              props: { ...common, pageType: 'issues-subdoc', issue, vocabulary, subDoc: { kind: 'plan-stage', plan, stage } },
+              params: { slug: slugPath },
+              props: {
+                ...common, pageType: 'issues-subdoc', issue, vocabulary,
+                subDoc: { kind: section.subDocKind, [section.subDocKind!]: entry },
+              },
             });
           }
-        }
-        for (const log of issue.agentLogs) {
-          const slugPath = [baseUrl, issue.id, 'agent-log', ...log.groupPath, log.name].filter(Boolean).join('/');
-          paths.push({
-            params: { slug: slugPath },
-            props: { ...common, pageType: 'issues-subdoc', issue, vocabulary, subDoc: { kind: 'log', log } },
-          });
         }
       }
     }

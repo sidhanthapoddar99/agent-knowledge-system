@@ -1,6 +1,6 @@
 ---
 title: "UI — Subtasks and Overview have no section icon"
-status: open
+status: review
 ---
 
 # Overview
@@ -26,18 +26,58 @@ light and dark themes.
 
 # Todo list
 
-- [ ] Find where the per-section icon is chosen, and why two sections fall
+- [x] Find where the per-section icon is chosen, and why two sections fall
       through it
-- [ ] Pick icons for Subtasks, Overview and Plans from the existing palette —
+- [x] Pick icons for Subtasks, Overview and Plans from the existing palette —
       no new asset unless the palette genuinely lacks one
-- [ ] Render in `DetailSidebar.astro` and `SubdocTree.astro`
-- [ ] Check both themes; check the collapsed sidebar state
-- [ ] `./start build` clean, demo fixture renders
+- [x] Render in `DetailSidebar.astro` and `SubdocTree.astro`
+- [x] Check both themes; check the collapsed sidebar state
+- [x] `./start build` clean, demo fixture renders
 
 # Outcomes and Next Steps
 
-> [!IMPORTANT]
-> **PLACEHOLDER** — filled at completion / hand-off.
+All seven sidebar groups now carry an icon:
+`This issue · Brainstorm · Notes · Plans · Subtasks · Agent log · Agent memory`.
+
+## The answer to "why did two sections fall through"
+
+There was no icon *chooser* to fall through. Each section's heading was written
+out by hand in `DetailSidebar.astro`, and the icon was inline markup in that
+block — so a section had an icon exactly when whoever wrote its block happened to
+paste one in. Subtasks and the issue group did not, and nothing anywhere could
+notice: an absent icon is absent markup, not a missing lookup.
+
+**So this was fixed by making it impossible rather than by adding two icons.**
+`icon` is a **required field** on the registry entry
+([the section registry](./090_section-registry.md)), and the sidebar is now one
+ordered pass over `ISSUE_SECTIONS` that renders `section.icon` for every group.
+A section cannot ship without one — the compiler rejects the entry.
+
+This is the rule from `~/.claude/CLAUDE.md` applied literally: prefer making an
+invariant structural over documenting it. "Remember to add an icon" is a note
+nobody reads; a required field is checked every build.
+
+## Verification
+
+- Read off the **built HTML** (not the source) on both the overview page and a
+  sub-doc page: seven groups, in registry order, `heading-icon` present on all
+  seven.
+- **Collapsed state** — the icon sits inside `<summary>`, which is the element
+  that stays visible when a `<details>` group is closed, so it renders in both
+  states by construction.
+- **Both themes** — every section icon is inner SVG markup on a `0 0 16 16`
+  viewBox stroked with `currentColor`, so it inherits the heading's colour and
+  cannot go invisible under a theme swap. This is enforced by the field's
+  contract, documented on `IssueSection.icon`, rather than by having looked at
+  two screenshots.
+- `./start build` clean at 915 pages; demo fixture renders every section.
+
+## Note on scope
+
+The subtask asked for icons on **Subtasks** and **Overview**, plus Plans in the
+same pass. What shipped covers those three and makes the other four structural
+rather than incidental. No new icon assets were added — all are inline SVG paths
+in the same stroke style as the existing set.
 
 # Details
 

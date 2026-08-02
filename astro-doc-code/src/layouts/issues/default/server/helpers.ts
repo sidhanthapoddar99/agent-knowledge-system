@@ -4,9 +4,12 @@
  */
 import type {
   Issue, IssueAgentLog, IssueNote, IssueSubtask, IssueStatus,
-  IssuePlan, IssuePlanStage, CategoryId,
+  IssuePlan, IssuePlanStage, CategoryId, IssueSection,
 } from '@loaders/issues';
-import { TERMINAL_STATUSES, isTerminalStatus, categoryOf, CATEGORIES } from '@loaders/issues';
+import {
+  TERMINAL_STATUSES, isTerminalStatus, categoryOf, CATEGORIES,
+  sectionById, sectionPanelKey,
+} from '@loaders/issues';
 
 export const TERMINAL: readonly IssueStatus[] = TERMINAL_STATUSES;
 
@@ -148,34 +151,29 @@ export function initial(name: string | null | undefined): string {
   return (name || '?').trim().charAt(0).toUpperCase();
 }
 
-/** Panel key for an agent-log entry. Used only on the overview detail page
- *  where multiple sub-docs share one DOM. Sub-doc pages (their own URL) use
- *  the URL path instead. Segments are joined with `--`; root-level: `log-<name>`. */
+// ===== Panel keys =====
+// Used only on the overview detail page, where several sub-docs share one DOM;
+// sub-doc pages (their own URL) use the path instead. The prefix per section
+// comes from the registry, so there is one scheme rather than one copy of it
+// per section.
+
+const KEY = (id: string, groupPath: string[], name: string) =>
+  sectionPanelKey(sectionById(id)!, groupPath, name);
+
 export function logPanelKey(log: IssueAgentLog): string {
-  return log.groupPath.length === 0
-    ? `log-${log.name}`
-    : `log-${[...log.groupPath, log.name].join('--')}`;
+  return KEY('agent-log', log.groupPath, log.name);
 }
 
-/** Panel key for a note entry — same scheme as logPanelKey but `note-` prefix. */
 export function notePanelKey(note: IssueNote): string {
-  return note.groupPath.length === 0
-    ? `note-${note.name}`
-    : `note-${[...note.groupPath, note.name].join('--')}`;
+  return KEY('notes', note.groupPath, note.name);
 }
 
-/** Panel key for a brainstorm entry — same scheme, `brainstorm-` prefix. */
 export function brainstormPanelKey(doc: IssueNote): string {
-  return doc.groupPath.length === 0
-    ? `brainstorm-${doc.name}`
-    : `brainstorm-${[...doc.groupPath, doc.name].join('--')}`;
+  return KEY('brainstorm', doc.groupPath, doc.name);
 }
 
-/** Panel key for an agent-memory entry — same scheme, `memory-` prefix. */
 export function agentMemoryPanelKey(doc: IssueNote): string {
-  return doc.groupPath.length === 0
-    ? `memory-${doc.name}`
-    : `memory-${[...doc.groupPath, doc.name].join('--')}`;
+  return KEY('agent-memory', doc.groupPath, doc.name);
 }
 
 // ===== Sub-doc URL helpers (subtask 17) =====
@@ -192,53 +190,64 @@ export function detailUrl(baseUrl: string, issueId: string): string {
   return joinPath(baseUrl, issueId);
 }
 
-export function subtaskUrl(baseUrl: string, issueId: string, subtask: IssueSubtask): string {
-  return joinPath(baseUrl, issueId, 'subtasks', ...subtask.groupPath, subtask.slug);
+/** URL of one entry in a section. The section's URL segment comes from the
+ *  registry, so a rename lands in one place instead of eight. */
+function sectionUrl(baseUrl: string, issueId: string, id: string, ...rest: string[]): string {
+  return joinPath(baseUrl, issueId, sectionById(id)!.id, ...rest);
 }
 
-/** Panel key for a subtask — same scheme as note/log keys. Group path is
- *  joined with `--` so the key stays unique across folders. */
+/** URL of one entry, addressed by its section rather than by a per-section
+ *  wrapper. The named wrappers below stay for readability at fixed call-sites;
+ *  code that iterates the registry (the sidebar tree) uses this, so a new
+ *  section links correctly without a fifth wrapper being remembered. */
+export function sectionEntryUrl(
+  baseUrl: string, issueId: string, section: IssueSection, groupPath: string[], name: string,
+): string {
+  return joinPath(baseUrl, issueId, section.id, ...groupPath, name);
+}
+
+export function subtaskUrl(baseUrl: string, issueId: string, subtask: IssueSubtask): string {
+  return sectionUrl(baseUrl, issueId, 'subtasks', ...subtask.groupPath, subtask.slug);
+}
+
 export function subtaskPanelKey(subtask: IssueSubtask): string {
-  return subtask.groupPath.length === 0
-    ? `subtask-${subtask.slug}`
-    : `subtask-${[...subtask.groupPath, subtask.slug].join('--')}`;
+  return KEY('subtasks', subtask.groupPath, subtask.slug);
 }
 
 export function noteUrl(baseUrl: string, issueId: string, note: IssueNote): string {
-  return joinPath(baseUrl, issueId, 'notes', ...note.groupPath, note.name);
+  return sectionUrl(baseUrl, issueId, 'notes', ...note.groupPath, note.name);
 }
 
 export function brainstormUrl(baseUrl: string, issueId: string, doc: IssueNote): string {
-  return joinPath(baseUrl, issueId, 'brainstorm', ...doc.groupPath, doc.name);
+  return sectionUrl(baseUrl, issueId, 'brainstorm', ...doc.groupPath, doc.name);
 }
 
 export function agentMemoryUrl(baseUrl: string, issueId: string, doc: IssueNote): string {
-  return joinPath(baseUrl, issueId, 'agent-memory', ...doc.groupPath, doc.name);
+  return sectionUrl(baseUrl, issueId, 'agent-memory', ...doc.groupPath, doc.name);
 }
 
 export function logUrl(baseUrl: string, issueId: string, log: IssueAgentLog): string {
-  return joinPath(baseUrl, issueId, 'agent-log', ...log.groupPath, log.name);
+  return sectionUrl(baseUrl, issueId, 'agent-log', ...log.groupPath, log.name);
 }
 
 export function planUrl(baseUrl: string, issueId: string, plan: IssuePlan): string {
-  return joinPath(baseUrl, issueId, 'plans', plan.name);
+  return sectionUrl(baseUrl, issueId, 'plans', plan.name);
 }
 
 export function planStageUrl(
   baseUrl: string, issueId: string, plan: IssuePlan, stage: IssuePlanStage,
 ): string {
-  return joinPath(baseUrl, issueId, 'plans', plan.name, stage.name);
+  return sectionUrl(baseUrl, issueId, 'plans', plan.name, stage.name);
 }
 
-/** Panel key for a plan — same scheme as the other sub-doc keys. */
 export function planPanelKey(plan: IssuePlan): string {
-  return `plan-${plan.name}`;
+  return KEY('plans', [], plan.name);
 }
 
 /** Panel key for one stage page. Namespaced under its plan so two plans may
  *  carry a stage of the same name without colliding. */
 export function planStagePanelKey(plan: IssuePlan, stage: IssuePlanStage): string {
-  return `plan-${plan.name}--${stage.name}`;
+  return KEY('plans', [plan.name], stage.name);
 }
 
 // ===== Plans: the derived bits =====

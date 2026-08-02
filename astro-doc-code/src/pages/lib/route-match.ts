@@ -11,7 +11,7 @@
  * hint for the dev toolbar, and the per-layout props bag) from the match.
  */
 import { loadContent } from '@loaders/index';
-import { loadIssues, loadIssue, MAX_SUBFOLDER_DEPTH } from '@loaders/issues';
+import { loadIssues, loadIssue, MAX_SUBFOLDER_DEPTH, sectionById } from '@loaders/issues';
 
 export type PageType =
   | 'custom'
@@ -149,12 +149,15 @@ export async function matchServerRoute(
 }
 
 function resolveSubDoc(issue: any, parts: string[]): RouteProps['subDoc'] | null {
-  const [kind, ...rest] = parts;
+  const [id, ...rest] = parts;
+  const section = sectionById(id);
+  if (!section || !section.subDocKind) return null;
 
   // plans: a fixed two-level shape, not a free-form tree.
   //   /plans/<plan>          → the single plan page (canonical)
   //   /plans/<plan>/<stage>  → one stage on its own page (reachable, unlinked)
-  if (kind === 'plans' && (rest.length === 1 || rest.length === 2)) {
+  if (section.reader === 'plan') {
+    if (rest.length !== 1 && rest.length !== 2) return null;
     const plan = issue.plans?.find((p: any) => p.name === rest[0]);
     if (!plan) return null;
     if (rest.length === 1) return { kind: 'plan', plan };
@@ -162,37 +165,26 @@ function resolveSubDoc(issue: any, parts: string[]): RouteProps['subDoc'] | null
     return stage ? { kind: 'plan-stage', plan, stage } : null;
   }
 
-  // subtasks / notes / brainstorm / agent-memory / agent-log:
-  //   rest = [...groupPath, slug-or-name], groupPath is 0–MAX_SUBFOLDER_DEPTH
-  //   segments → rest length is 1 … MAX_SUBFOLDER_DEPTH + 1.
-  if (
-    (kind === 'subtasks' || kind === 'notes' || kind === 'brainstorm' || kind === 'agent-memory' || kind === 'agent-log')
-    && rest.length >= 1 && rest.length <= MAX_SUBFOLDER_DEPTH + 1
-  ) {
-    const groupPath = rest.slice(0, -1);
-    const tail = rest[rest.length - 1];
-    const matchPath = (gp: string[]) =>
-      gp.length === groupPath.length && gp.every((g, i) => g === groupPath[i]);
-    if (kind === 'subtasks') {
-      const s = issue.subtasks.find((st: any) => st.slug === tail && matchPath(st.groupPath));
-      return s ? { kind: 'subtask', subtask: s } : null;
-    }
-    if (kind === 'notes') {
-      const n = issue.notes.find((nt: any) => nt.name === tail && matchPath(nt.groupPath));
-      return n ? { kind: 'note', note: n } : null;
-    }
-    if (kind === 'brainstorm') {
-      const b = issue.brainstorm.find((d: any) => d.name === tail && matchPath(d.groupPath));
-      return b ? { kind: 'brainstorm', brainstorm: b } : null;
-    }
-    if (kind === 'agent-memory') {
-      const m = issue.agentMemory.find((d: any) => d.name === tail && matchPath(d.groupPath));
-      return m ? { kind: 'memory', memory: m } : null;
-    }
-    const log = issue.agentLogs.find((l: any) => l.name === tail && matchPath(l.groupPath));
-    return log ? { kind: 'log', log } : null;
-  }
-  return null;
+  // Everything else: rest = [...groupPath, slug-or-name], groupPath is
+  // 0–MAX_SUBFOLDER_DEPTH segments → rest length is 1 … MAX_SUBFOLDER_DEPTH + 1.
+  // Subtasks key on `slug`, every other section on `name` — the only per-section
+  // difference left, so it is the only branch.
+  if (rest.length < 1 || rest.length > MAX_SUBFOLDER_DEPTH + 1) return null;
+  const groupPath = rest.slice(0, -1);
+  const tail = rest[rest.length - 1];
+  const idKey = section.reader === 'subtask' ? 'slug' : 'name';
+  const hit = (issue[section.field] as any[] | undefined)?.find(
+    (e: any) => e[idKey] === tail
+      && e.groupPath.length === groupPath.length
+      && e.groupPath.every((g: string, i: number) => g === groupPath[i]),
+  );
+  if (!hit) return null;
+  // The prop name IS the sub-doc kind — `{ kind: 'note', note }`. This used to
+  // be a hand-written kind→prop map, which turned out to be the identity on
+  // every entry: a per-section list to maintain that said nothing. Keeping the
+  // two equal by construction is what lets the static-path builder emit the
+  // identical prop shape without importing anything from here.
+  return { kind: section.subDocKind, [section.subDocKind]: hit } as RouteProps['subDoc'];
 }
 
 // ============================================================================
@@ -266,13 +258,17 @@ export function prepareRender(props: RouteProps): RenderPlan {
     title = issue.meta.title;
     layoutProps = { issue, vocabulary, baseUrl };
   } else if (pageType === 'issues-subdoc' && issue && subDoc) {
-    const subTitle = subDoc.kind === 'subtask' ? subDoc.subtask.title
-      : subDoc.kind === 'note' ? subDoc.note.name
-      : subDoc.kind === 'brainstorm' ? subDoc.brainstorm.name
-      : subDoc.kind === 'memory' ? subDoc.memory.name
-      : subDoc.kind === 'plan' ? subDoc.plan.title
-      : subDoc.kind === 'plan-stage' ? `${subDoc.stage.title} · ${subDoc.plan.title}`
-      : subDoc.log.name;
+    // The prop name is the sub-doc kind (see `resolveSubDoc`) and every entry
+    // carries a `title` or a `name`, so the page title needs no per-section arm
+    // — the previous ladder ended in a bare `subDoc.log.name`, which meant any
+    // section someone forgot to add crashed here reading `.name` of undefined.
+    // A stage is the one composite: it is titled inside its plan.
+    const entry = (subDoc as Record<string, any>)[
+      subDoc.kind === 'plan-stage' ? 'stage' : subDoc.kind
+    ];
+    const subTitle = subDoc.kind === 'plan-stage'
+      ? `${subDoc.stage.title} · ${subDoc.plan.title}`
+      : (entry.title ?? entry.name);
     title = `${subTitle} · ${issue.meta.title}`;
     layoutProps = { issue, vocabulary, baseUrl, subDoc };
   }

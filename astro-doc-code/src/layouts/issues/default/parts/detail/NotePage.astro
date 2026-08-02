@@ -5,27 +5,29 @@
  * co-hosted under DetailBody (legacy).
  */
 import path from 'path';
-import type { IssueNote } from '@loaders/issues';
+import type { IssueNote, IssueSection } from '@loaders/issues';
+import { FREEFORM_SECTIONS, sectionById, sectionPanelKey } from '@loaders/issues';
 import type { TocEntry } from '../../server/toc';
-import { notePanelKey, brainstormPanelKey, agentMemoryPanelKey } from '../../server/helpers';
+
+/** The note-shaped sections, straight from the registry — so adding another
+ *  free-form section does not need this union edited by hand. */
+type FreeformSectionId = (typeof FREEFORM_SECTIONS)[number]['id'];
 
 interface Props {
   note: IssueNote & { toc?: TocEntry[] };
   standalone?: boolean;
-  /** Folder this doc lives under — 'notes' (default), 'brainstorm', or
-   *  'agent-memory'. Drives the path label and panel-key namespace when NotePage
-   *  is reused for those note-shaped collections. */
-  prefix?: 'notes' | 'brainstorm' | 'agent-memory';
+  /** Which free-form section this doc lives under. Drives the path label and
+   *  the panel-key namespace when NotePage is reused across them. */
+  prefix?: FreeformSectionId;
 }
 
 const { note: n, standalone = false, prefix = 'notes' } = Astro.props;
 // Use the real on-disk filename so the path label carries the true extension
 // (`.md`, `.html` for an artifact, `.mmd`/… for a diagram) rather than assuming
 // markdown.
-const pathDisplay = [prefix, ...n.groupPath, path.basename(n.filePath)].join('/');
-const panelKey = prefix === 'brainstorm' ? brainstormPanelKey(n)
-  : prefix === 'agent-memory' ? agentMemoryPanelKey(n)
-  : notePanelKey(n);
+const section = sectionById(prefix) as IssueSection;
+const pathDisplay = [section.folder, ...n.groupPath, path.basename(n.filePath)].join('/');
+const panelKey = sectionPanelKey(section, n.groupPath, n.name);
 ---
 
 <section

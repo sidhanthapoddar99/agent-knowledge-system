@@ -8,6 +8,7 @@
  * is tolerable where suppressing the route would be work for no gain.
  */
 import type { Issue, IssuePlan, IssuePlanStage } from '@loaders/issues';
+import { sectionById } from '@loaders/issues';
 import { stateIconSvg } from '../../server/state-icon';
 import {
   planUrl, planStagePanelKey, resolvePlanStage, subtaskUrl, logUrl,
@@ -23,7 +24,7 @@ interface Props {
 }
 
 const { issue, plan, stage, baseUrl, statusColors, standalone = false } = Astro.props;
-const relPath = `plans/${plan.name}/${stage.name}.md`;
+const relPath = `${sectionById('plans')!.folder}/${plan.name}/${stage.name}.md`;
 const { subtasks, logs, missing } = resolvePlanStage(issue, stage);
 ---
 

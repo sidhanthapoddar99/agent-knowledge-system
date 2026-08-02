@@ -15,40 +15,37 @@ export function knownPanel(key: string): boolean {
   return !!document.querySelector(`.issue-panel[data-panel="${CSS.escape(key)}"]`);
 }
 
-/** Rewrite old hash-panel URLs (`#subtask-foo`, `#note-bar`,
- *  `#note-<group>--<name>`, `#log-baz`, `#log-<group>--<subgroup>--<name>`)
- *  into the new sub-doc path. Segments are joined with `--`. Returns the
- *  full path + search string, or null if the hash is not a sub-doc hash. */
+/**
+ * Rewrite old hash-panel URLs (`#subtask-foo`, `#note-<group>--<name>`,
+ * `#log-<group>--<subgroup>--<name>`) into the new sub-doc path. Segments are
+ * joined with `--`. Returns the full path + search string, or null when the
+ * hash is not a sub-doc hash.
+ *
+ * The prefix → section-segment map is a **build-time copy** of the registry in
+ * `loaders/issue-sections.ts`. This module is client-side and must not pull a
+ * loader (and its `fs` imports) into the browser bundle, so the copy is
+ * deliberate — the same wall the CLI's status mirror sits behind. Longest
+ * prefix wins, so a shorter prefix added later cannot shadow `brainstorm-`.
+ */
+const PANEL_PREFIX_TO_SECTION: Record<string, string> = {
+  'subtask-': 'subtasks',
+  'note-': 'notes',
+  'brainstorm-': 'brainstorm',
+  'memory-': 'agent-memory',
+  'log-': 'agent-log',
+  'plan-': 'plans',
+};
+
 export function legacyHashRedirect(hash: string): string | null {
   const base = location.pathname.replace(/\/+$/, '');
-  if (hash.startsWith('subtask-')) {
-    const segments = hash.slice('subtask-'.length).split('--');
-    return `${base}/subtasks/${segments.join('/')}${location.search}`;
+  let best: [string, string] | null = null;
+  for (const [prefix, section] of Object.entries(PANEL_PREFIX_TO_SECTION)) {
+    if (!hash.startsWith(prefix)) continue;
+    if (!best || prefix.length > best[0].length) best = [prefix, section];
   }
-  if (hash.startsWith('note-')) {
-    const segments = hash.slice('note-'.length).split('--');
-    return `${base}/notes/${segments.join('/')}${location.search}`;
-  }
-  if (hash.startsWith('brainstorm-')) {
-    const segments = hash.slice('brainstorm-'.length).split('--');
-    return `${base}/brainstorm/${segments.join('/')}${location.search}`;
-  }
-  if (hash.startsWith('memory-')) {
-    const segments = hash.slice('memory-'.length).split('--');
-    return `${base}/agent-memory/${segments.join('/')}${location.search}`;
-  }
-  if (hash.startsWith('log-')) {
-    const segments = hash.slice('log-'.length).split('--');
-    return `${base}/agent-log/${segments.join('/')}${location.search}`;
-  }
-  // `plan-<plan>` → the plan page; `plan-<plan>--<stage>` → that stage's page.
-  // Plans never had a hash-panel era, but the key scheme is shared with every
-  // other sub-doc, so a hand-written `#plan-…` resolves the same way.
-  if (hash.startsWith('plan-')) {
-    const segments = hash.slice('plan-'.length).split('--');
-    return `${base}/plans/${segments.join('/')}${location.search}`;
-  }
-  return null;
+  if (!best) return null;
+  const segments = hash.slice(best[0].length).split('--');
+  return `${base}/${best[1]}/${segments.join('/')}${location.search}`;
 }
 
 export function expandSectionFor(panelKey: string) {

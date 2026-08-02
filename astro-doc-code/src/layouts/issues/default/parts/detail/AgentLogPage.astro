@@ -5,6 +5,7 @@
  */
 import type { IssueAgentLog } from '@loaders/issues';
 import type { TocEntry } from '../../server/toc';
+import { sectionById } from '@loaders/issues';
 import { logPanelKey } from '../../server/helpers';
 
 interface Props {
@@ -13,7 +14,7 @@ interface Props {
 }
 
 const { log, standalone = false } = Astro.props;
-const pathDisplay = ['agent-log', ...log.groupPath, `${log.name}.md`].join('/');
+const pathDisplay = [sectionById('agent-log')!.folder, ...log.groupPath, `${log.name}.md`].join('/');
 ---
 
 <section

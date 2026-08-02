@@ -11,7 +11,8 @@
  * `activeKey` marks the currently-rendered item. Subtask state icons still
  * cycle on click — handled by scripts/detail/client.ts.
  */
-import type { Issue, IssueSubtask } from '@loaders/issues';
+import type { Issue, IssueNote, IssueSubtask } from '@loaders/issues';
+import { ISSUE_SECTIONS } from '@loaders/issues';
 import { groupByPath, groupSubtasks, detailUrl, planUrl, planPanelKey, activePlan } from '../../server/helpers';
 import { stateIconSvg } from '../../server/state-icon';
 import SubdocTree from './SubdocTree.astro';
@@ -44,17 +45,16 @@ const overviewHref = detailUrl(baseUrl, issue.id);
 const comprehensiveHref = `${overviewHref}#comprehensive`;
 const isOverviewMode = mode === 'overview';
 
-const brainstormTree = groupByPath(issue.brainstorm);
-const noteTree = groupByPath(issue.notes);
-const memoryTree = groupByPath(issue.agentMemory);
+// ONE ordered pass over the registry, so declaration order IS sidebar order.
+// Three sections have a bespoke body (subtasks' tree with its done/total, plans'
+// pinned active plan, agent-log's status dots); the rest share one. Splitting
+// that into "a loop, then the special ones" is what put Agent memory between
+// Notes and Plans — the ordering came from the template rather than from the
+// registry, and no one place said what the order was.
+const SIDEBAR_SECTIONS = ISSUE_SECTIONS.filter((sec) => sec.subDocKind !== null);
+
 const logTree = groupByPath(issue.agentLogs);
 const subtaskTree = groupSubtasks(issue.subtasks, issue.subtaskGroups);
-
-const activeBrainstormGroupOpen = activeKey.startsWith('brainstorm-');
-const activeNotesGroupOpen = activeKey.startsWith('note-');
-const activeMemoryGroupOpen = activeKey.startsWith('memory-');
-const activeLogGroupOpen = activeKey.startsWith('log-');
-const activePlanGroupOpen = activeKey.startsWith('plan-');
 
 // The ACTIVE plan is derived here, at render — highest-numbered plan that is
 // not done/dropped. It is pinned at the top of the Plans group and marked, so
@@ -87,6 +87,7 @@ const tracker = baseUrl.replace(/^\/+/, '').replace(/\/+$/, '');
     <details class="issue-sidebar__section" data-collapse-key="this-issue" open>
       <summary class="issue-sidebar__heading">
         <svg class="issue-sidebar__chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
+        <span class="issue-sidebar__heading-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6.5"/><path d="M8 5v3.5"/><circle cx="8" cy="11" r="0.6" fill="currentColor" stroke="none"/></svg></span>
         <span>This issue</span>
       </summary>
       <div class="issue-sidebar__items">
@@ -169,119 +170,79 @@ const tracker = baseUrl.replace(/^\/+/, '').replace(/\/+$/, '');
       </div>
     </details>
 
-    <details class="issue-sidebar__section" data-collapse-key="brainstorm" open={activeBrainstormGroupOpen ? true : undefined}>
-      <summary class="issue-sidebar__heading">
-        <svg class="issue-sidebar__chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
-        <span class="issue-sidebar__heading-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1.5a4.5 4.5 0 0 0-3 7.8V11h6V9.3a4.5 4.5 0 0 0-3-7.8z"/><path d="M6 13h4M6.5 14.5h3"/></svg></span>
-        <span>Brainstorm</span>
-        {issue.brainstorm.length > 0 && <span class="issue-sidebar__heading-count">{issue.brainstorm.length}</span>}
-      </summary>
-      {issue.brainstorm.length === 0 ? (
-        <div class="issue-sidebar__items"><div class="issue-sidebar__empty">No brainstorm entries</div></div>
-      ) : (
-        <SubdocTree tree={brainstormTree} kind="brainstorm" baseUrl={baseUrl} issueId={issue.id} activeKey={activeKey} />
-      )}
-    </details>
-
-    <details class="issue-sidebar__section" data-collapse-key="notes" open={activeNotesGroupOpen ? true : undefined}>
-      <summary class="issue-sidebar__heading">
-        <svg class="issue-sidebar__chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
-        <span class="issue-sidebar__heading-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 1h7l3 3v11H3V1z"/><path d="M10 1v3h3"/></svg></span>
-        <span>Notes</span>
-        {issue.notes.length > 0 && <span class="issue-sidebar__heading-count">{issue.notes.length}</span>}
-      </summary>
-      {issue.notes.length === 0 ? (
-        <div class="issue-sidebar__items"><div class="issue-sidebar__empty">No notes</div></div>
-      ) : (
-        <SubdocTree tree={noteTree} kind="note" baseUrl={baseUrl} issueId={issue.id} activeKey={activeKey} />
-      )}
-    </details>
-
-    <details class="issue-sidebar__section" data-collapse-key="plans" open={activePlanGroupOpen ? true : undefined}>
-      <summary class="issue-sidebar__heading">
-        <svg class="issue-sidebar__chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
-        <span class="issue-sidebar__heading-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h2M2 8h2M2 12h2"/><path d="M6.5 4h7.5M6.5 8h7.5M6.5 12h7.5"/></svg></span>
-        <span>Plans</span>
-        {issue.plans.length > 0 && <span class="issue-sidebar__heading-count">{issue.plans.length}</span>}
-      </summary>
-      <div class="issue-sidebar__items">
-        {issue.plans.length === 0 ? (
-          <div class="issue-sidebar__empty">No plans</div>
-        ) : (
-          <>
-            {pinnedPlan && (
-              <a
-                href={planUrl(baseUrl, issue.id, pinnedPlan)}
-                class={`issue-sidebar__item is-pinned ${activeKey === planPanelKey(pinnedPlan) ? 'is-active' : ''}`}
-                aria-current={activeKey === planPanelKey(pinnedPlan) ? 'page' : undefined}
-                data-tip="The active plan — highest-numbered plan that is not done or dropped"
-              >
-                <span class="issue-sidebar__pin" aria-hidden="true">●</span>
-                <span class="issue-sidebar__label">{pinnedPlan.title}</span>
-                <span class="issue-sidebar__doctype" style={`color: ${statusColors[pinnedPlan.status] ?? 'var(--color-text-muted)'}`} set:html={stateIconSvg(pinnedPlan.status)} />
-              </a>
+    {SIDEBAR_SECTIONS.map((section) => {
+      const isSubtasks = section.reader === 'subtask';
+      const isPlans = section.reader === 'plan';
+      const entries = (issue as any)[section.field] as unknown[];
+      const count = entries.length;
+      return (
+        <details
+          class="issue-sidebar__section"
+          data-collapse-key={section.id}
+          open={isSubtasks || activeKey.startsWith(section.panelPrefix!) ? true : undefined}
+        >
+          <summary class="issue-sidebar__heading">
+            <svg class="issue-sidebar__chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
+            <span class="issue-sidebar__heading-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" set:html={section.icon} /></span>
+            <span>{section.label}</span>
+            {isSubtasks ? (
+              subtaskTotal > 0 && (
+                <span class="issue-sidebar__heading-count" id="sidebar-subtasks-count">
+                  {subtaskDone}/{subtaskTotal}
+                  {subtaskReview > 0 && <span class="issue-sidebar__review-dot" data-tip={`${subtaskReview} awaiting review`} data-tip-always aria-hidden="true"></span>}
+                </span>
+              )
+            ) : (
+              count > 0 && <span class="issue-sidebar__heading-count">{count}</span>
             )}
-            {otherPlans.map((p) => (
-              <a
-                href={planUrl(baseUrl, issue.id, p)}
-                class={`issue-sidebar__item ${activeKey === planPanelKey(p) ? 'is-active' : ''}`}
-                aria-current={activeKey === planPanelKey(p) ? 'page' : undefined}
-                data-tip={p.title}
-              >
-                {p.sequence !== null && <span class="issue-sidebar__num">{String(p.sequence).padStart(2, '0')}</span>}
-                <span class="issue-sidebar__label">{p.title}</span>
-              </a>
-            ))}
-          </>
-        )}
-      </div>
-    </details>
+          </summary>
 
-    <details class="issue-sidebar__section" data-collapse-key="subtasks" open>
-      <summary class="issue-sidebar__heading">
-        <svg class="issue-sidebar__chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
-        <span>Subtasks</span>
-        {subtaskTotal > 0 && (
-          <span class="issue-sidebar__heading-count" id="sidebar-subtasks-count">
-            {subtaskDone}/{subtaskTotal}
-            {subtaskReview > 0 && <span class="issue-sidebar__review-dot" data-tip={`${subtaskReview} awaiting review`} data-tip-always aria-hidden="true"></span>}
-          </span>
-        )}
-      </summary>
-      {subtaskTotal === 0 ? (
-        <div class="issue-sidebar__items"><div class="issue-sidebar__empty">No subtasks</div></div>
-      ) : (
-        <SubtaskTree node={subtaskTree} baseUrl={baseUrl} issueId={issue.id} activeKey={activeKey} />
-      )}
-    </details>
+          {count === 0 ? (
+            <div class="issue-sidebar__items"><div class="issue-sidebar__empty">{section.emptyLabel}</div></div>
+          ) : isSubtasks ? (
+            <SubtaskTree node={subtaskTree} baseUrl={baseUrl} issueId={issue.id} activeKey={activeKey} />
+          ) : isPlans ? (
+            <div class="issue-sidebar__items">
+              {pinnedPlan && (
+                <a
+                  href={planUrl(baseUrl, issue.id, pinnedPlan)}
+                  class={`issue-sidebar__item is-pinned ${activeKey === planPanelKey(pinnedPlan) ? 'is-active' : ''}`}
+                  aria-current={activeKey === planPanelKey(pinnedPlan) ? 'page' : undefined}
+                  data-tip="The active plan — highest-numbered plan that is not done or dropped"
+                >
+                  <span class="issue-sidebar__pin" aria-hidden="true">●</span>
+                  <span class="issue-sidebar__label">{pinnedPlan.title}</span>
+                  <span class="issue-sidebar__doctype" style={`color: ${statusColors[pinnedPlan.status] ?? 'var(--color-text-muted)'}`} set:html={stateIconSvg(pinnedPlan.status)} />
+                </a>
+              )}
+              {otherPlans.map((p) => (
+                <a
+                  href={planUrl(baseUrl, issue.id, p)}
+                  class={`issue-sidebar__item ${activeKey === planPanelKey(p) ? 'is-active' : ''}`}
+                  aria-current={activeKey === planPanelKey(p) ? 'page' : undefined}
+                  data-tip={p.title}
+                >
+                  {p.sequence !== null && <span class="issue-sidebar__num">{String(p.sequence).padStart(2, '0')}</span>}
+                  <span class="issue-sidebar__label">{p.title}</span>
+                </a>
+              ))}
+            </div>
+          ) : (
+            <SubdocTree
+              tree={section.reader === 'agent-log' ? logTree : groupByPath(entries as IssueNote[])}
+              kind={section.subDocKind as 'note' | 'brainstorm' | 'memory' | 'log'}
+              baseUrl={baseUrl}
+              issueId={issue.id}
+              activeKey={activeKey}
+              kindMap={section.reader === 'agent-log' ? issue.agentLogKinds : undefined}
+              statusMap={section.reader === 'agent-log' ? agentLogStatus : undefined}
+              statusColors={statusColors}
+            />
+          )}
+        </details>
+      );
+    })}
 
-    <details class="issue-sidebar__section" data-collapse-key="agent-log" open={activeLogGroupOpen ? true : undefined}>
-      <summary class="issue-sidebar__heading">
-        <svg class="issue-sidebar__chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
-        <span class="issue-sidebar__heading-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 4v4l3 2"/></svg></span>
-        <span>Agent log</span>
-        {issue.agentLogs.length > 0 && <span class="issue-sidebar__heading-count">{issue.agentLogs.length}</span>}
-      </summary>
-      {issue.agentLogs.length === 0 ? (
-        <div class="issue-sidebar__items"><div class="issue-sidebar__empty">No agent-log entries</div></div>
-      ) : (
-        <SubdocTree tree={logTree} kind="log" baseUrl={baseUrl} issueId={issue.id} activeKey={activeKey} kindMap={issue.agentLogKinds} statusMap={agentLogStatus} statusColors={statusColors} />
-      )}
-    </details>
-
-    <details class="issue-sidebar__section" data-collapse-key="agent-memory" open={activeMemoryGroupOpen ? true : undefined}>
-      <summary class="issue-sidebar__heading">
-        <svg class="issue-sidebar__chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
-        <span class="issue-sidebar__heading-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="8" cy="4" rx="5" ry="2"/><path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4"/><path d="M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/></svg></span>
-        <span>Agent memory</span>
-        {issue.agentMemory.length > 0 && <span class="issue-sidebar__heading-count">{issue.agentMemory.length}</span>}
-      </summary>
-      {issue.agentMemory.length === 0 ? (
-        <div class="issue-sidebar__items"><div class="issue-sidebar__empty">No agent-memory entries</div></div>
-      ) : (
-        <SubdocTree tree={memoryTree} kind="memory" baseUrl={baseUrl} issueId={issue.id} activeKey={activeKey} />
-      )}
-    </details>
   </nav>
 
   <!--

@@ -4,9 +4,10 @@ title: "Summary"
 
 # State
 
-Running, and near the end. **Every subtask under `040_execution/` has landed
-except the audit that closes the run** — seven rounds are in `working/`, and the
-three independent readers are reading now.
+**Closed.** Every subtask under `040_execution/` is at `review`, including the
+audit that ends the run. Seven rounds sit in `working/`, the three verdicts are
+stored verbatim beside the round that commissioned them, and **nothing in the
+skill was changed in response to them** — which is the condition `130` sets.
 
 Two things are deliberately NOT done and will not be: `020` sits at
 `input-needed` with a proposed diff to Sid's personal global file, which only he
@@ -45,7 +46,7 @@ Executes against
 - [x] `100` — the status-vocabulary migration
 - [x] `140` — the demo fixture
 - [~] `020` — the proposed `~/.claude/CLAUDE.md` diff
-- [ ] `130` — the three-reader audit
+- [x] `130` — the three-reader audit
 
 # Out of Scope
 
@@ -59,5 +60,47 @@ Executes against
 
 # Outcome Summary
 
-> [!IMPORTANT]
-> **PLACEHOLDER** — one sentence and a link, written at close.
+The responsibility split shipped — `plans/` as its own section, order out of
+`agent-memory/`, subtasks by category, the six agent-log slots gone — and
+[three neutral readers](./070_independent-audit.md) confirmed the design and
+found seven execution defects in it, now sitting unactioned at
+[`070_audit-followups/`](../../subtasks/070_audit-followups/00_overview.md).
+
+**Gates:** `./start build` clean at **948 pages**; the repo's own issue validator
+clean over 51 issue folders (2 long-standing warnings, one of them the deliberate
+unknown-kind fixture); the four new scaffolders smoke-tested end to end, including
+`--after` taking the midpoint of a gap.
+
+**One gate result needs stating precisely rather than as a tick.**
+`check-skill-links.mjs` reports **4 errors** against the issues skill. All four
+are inside a single `yaml` fence in `28_plans.md:64-84` — illustrative paths in
+an example stage file, pointing at an issue that does not exist by design. They
+are not links and do not render as links; the checker does not skip fenced
+regions. **No link in the skill is actually broken**, and the checker's defect is
+recorded at
+[`050`](../../subtasks/070_audit-followups/050_cli-examples-do-not-run.md).
+Reported this way because "0 broken links" and "4 errors, all false" are
+different facts, and only one of them is true.
+
+Note also that `agent-ks` **on PATH is the installed plugin 0.6.5**, which
+predates this work: it still warns about missing `iteration:` frontmatter, a
+field this issue retired, and it has none of the four new commands. Gate with the
+repo's own scripts under `plugins/agent-ks/skills/agent-ks-docs/scripts/` until
+the version bump ships.
+
+**The one number worth keeping.** The skill grew 2,412 → 2,718 lines, which reads
+like a failure for a run whose purpose was cutting recording overhead. It is not
+the right measurement: 174 of those lines are `28_plans.md`, a section that had no
+documentation at all before. Inside the file that was actually rewritten,
+`24_agent-logs.md`, **prose fell 205 → 160 lines while tables grew 15 → 67** —
+the same ground, reached by scanning instead of reading. All three readers
+independently named those tables as why the new version reads better, and two of
+them called it out despite the file being 150 lines longer.
+
+**What the audit cost and bought.** It found the thing a run cannot find about
+itself: `40_operations/` and `60_examples/` were never migrated, so the skill's
+own demonstrations still teach the model this run deleted. One reader flipped its
+overall verdict to the *old* skill on that ground alone. Nine CLI examples do not
+run. A stage's `status` has no stated meaning. **None of it was fixed** — fixing
+an audit inside the run that commissioned it is how the previous several rounds
+of this kind went wrong.

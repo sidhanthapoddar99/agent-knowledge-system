@@ -1,6 +1,6 @@
 ---
 title: "Audit — three neutral readers compare the old skill against the new"
-status: blocked
+status: review
 ---
 
 # Overview
@@ -33,20 +33,58 @@ response.
 
 # Todo list
 
-- [ ] Capture the **old** skill version somewhere both readable and clearly
+- [x] Capture the **old** skill version somewhere both readable and clearly
       labelled — a git tag or a copy outside the working tree. The comparison is
       worthless if either side is ambiguous
-- [ ] Write **one brief**, used verbatim by all three readers
-- [ ] Run **Opus** — neutral subagent, no context from this issue
-- [ ] Run **Sonnet** — same brief
-- [ ] Run **Codex sol** — same brief, `--background`, `xhigh`, read-only
-- [ ] Store all three verdicts in the issue's `agent-log/`
-- [ ] **Change nothing in response.** Anything worth fixing becomes a new subtask
+- [x] Write **one brief**, used verbatim by all three readers
+- [x] Run **Opus** — neutral subagent, no context from this issue
+- [x] Run **Sonnet** — same brief
+- [x] Run **Codex sol** — same brief, `--background`, `xhigh`, read-only
+- [x] Store all three verdicts in the issue's `agent-log/`
+- [x] **Change nothing in response.** Anything worth fixing becomes a new subtask
 
 # Outcomes and Next Steps
 
-> [!IMPORTANT]
-> **PLACEHOLDER** — the three verdicts, and any subtasks they generated.
+**Done, and the skill is untouched.** Three verdicts stored verbatim at
+[`071`](../../agent-log/020_wf_ship-the-split/working/071_verdict-opus.md) ·
+[`072`](../../agent-log/020_wf_ship-the-split/working/072_verdict-sonnet.md) ·
+[`073`](../../agent-log/020_wf_ship-the-split/working/073_verdict-sol.md), merged
+at [`070`](../../agent-log/020_wf_ship-the-split/working/070_independent-audit.md).
+
+| Reader | Q1 reads | Q2 coherent | Q3 structured | Q4 follow | Overall |
+|---|---|---|---|---|---|
+| Opus | B | B | B | B | **B** |
+| Sonnet | B | **A** | B | **A** | **A** |
+| sol | B | B | B | B | **B** |
+
+**Unanimous that the new version reads better and is better structured**, all
+three naming the `Holds / Does not hold` tables. **Not unanimous overall** —
+Sonnet preferred the old skill, on one ground: the worked examples were never
+migrated, so following the new skill can mean copying a pattern it forbids
+elsewhere. The other two found the same defect and ranked it lower.
+
+**Seven follow-up subtasks written**, all `open`, at
+[`070_audit-followups/`](../070_audit-followups/00_overview.md). None acted on.
+
+Two of them make the skill actively wrong to follow and are both mechanical:
+[the unmigrated examples](../070_audit-followups/010_migrate-the-worked-examples.md)
+and [nine CLI examples that error](../070_audit-followups/050_cli-examples-do-not-run.md).
+One is a genuine design gap:
+[what a stage's `status` means](../070_audit-followups/040_stage-status-semantics.md).
+
+**Countable claims were verified against the files before being recorded** —
+five confirmed, one reproduced, one narrowed from "flatly wrong" to an ambiguity,
+and one upgraded from a style nit to a reproduced failure. Checking whether a
+claim is true is not acting on it.
+
+**No reader attacked the design.** Every finding is an execution defect — a stale
+example, a wrong number, an unmigrated command. Sonnet, which preferred the old
+version, still called the new architecture *"genuinely better factored"*.
+
+> [!NOTE]
+> **Sid — this is at `review`, not `done`.** What is waiting on you is which of
+> the seven follow-ups to take, and in what order. Anything rejected is worth
+> `dropped` with a reason, so the next reader does not re-raise it.
 
 # Details
 

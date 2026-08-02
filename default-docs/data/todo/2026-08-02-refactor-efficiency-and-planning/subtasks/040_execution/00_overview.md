@@ -45,18 +45,42 @@ below are stable ids, not a sequence.
 | 100 | [Migration: agent-log status vocabulary](./100_migration-script.md) — the mandatory half of the release; ships with [`050`](../050_version-bump.md) | review |
 | 110 | [Sweep: delete superseded wording](./110_superseded-wording-sweep.md) — and write the rule that replaces it | review |
 | 120 | [Agent memory after plans](./120_agent-memory-after-plans.md) — what `agent-memory/` becomes once `plans/` leaves it | review |
-| 130 | [Audit: three neutral readers](./130_independent-skill-audit.md) — old skill vs new; **stored, not acted on**. Last | blocked |
+| 130 | [Audit: three neutral readers](./130_independent-skill-audit.md) — old skill vs new; **stored, not acted on**. Last | review |
 | 140 | [Rework the demo showcase](./140_rework-demo-showcase.md) — the fixture, onto the new structure, with a Playwright pass | review |
 
 **Not in this group:** the NeuraSutra sidequest moved out to the top level as
 [`060`](../060_sidequest-neurasutra.md). It targets a different pair of repos,
 runs after everything here, and now covers the consumer's source comments as well
-as its rule files.
+as its rule files. The audit's own follow-ups went to a new group,
+[`070_audit-followups/`](../070_audit-followups/00_overview.md) — findings are not
+execution work until someone decides to take them.
 
 # Conclusions and Summary
 
-> [!IMPORTANT]
-> **PLACEHOLDER** — filled when the series closes.
+**All fourteen are closed to `review` except `020`, which is `input-needed` by
+design** — it proposes a diff to `~/.claude/CLAUDE.md`, and that file is Sid's, so
+applying it is not the agent's call.
+
+**The gates:** `./start build` clean at 948 pages; the repo's own issue validator
+clean over 51 issue folders; the four new scaffolders smoke-tested end to end.
+The link checker's 4 reported errors are all illustrative paths inside one code
+fence — see the run's
+[summary](../../agent-log/020_wf_ship-the-split/summary.md) for why that is
+stated rather than ticked.
+
+**What the audit changed about this group's own claim to be finished.** `130`
+came back with the new skill winning readability and structure unanimously, and
+losing the overall verdict 2–1 on one ground: the worked examples under
+`60_examples/` were never migrated, so they still teach the model this group
+deleted. Two other execution defects are reproduced —
+[nine CLI examples that error](../070_audit-followups/050_cli-examples-do-not-run.md)
+and a
+[design gap in what a stage's `status` means](../070_audit-followups/040_stage-status-semantics.md).
+
+So the honest summary is: **the design survived three independent reads
+unchallenged, and the execution has seven known defects, none of them acted on.**
+That is what `130` was for, and it is a better position than a clean report would
+have been.
 
 # Details
 

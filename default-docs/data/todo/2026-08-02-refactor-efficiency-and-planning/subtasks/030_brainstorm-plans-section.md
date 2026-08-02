@@ -1,6 +1,6 @@
 ---
 title: "Brainstorm: the plans section"
-status: review
+status: done
 ---
 
 # Overview
@@ -36,7 +36,8 @@ coded before the shape is settled.
       `10 20 30` gap-spaced, the table is the index
 - [x] Decide **coexistence vs migration** → **none**; one consumer, by hand
 - [x] Decide what the **sidebar and route** look like, and whether the active
-      plan is pinned → one page per plan; **pinned, treatment pending Sid**
+      plan is pinned → one page per plan; **pinned at the top of a collapsible
+      sidebar group, nothing rendered above the issue body**
 - [x] Decide whether `plans/` is **agent-owned, human-owned, or shared** →
       **shared**, with the split written down
 - [x] Write the shape into `notes/` before any code is written →
@@ -64,8 +65,10 @@ overturned it — there is no indirection layer here, so a reference is a litera
 path containing the prefix. **Gap-spacing solves insertion without any
 abstraction**, so the prefix is safely both. *"Stage 20"* is correct.
 
-**Still open, and both are Sid's:** the iteration-file status vocabulary, and
-whether the active-plan pin is a sidebar link or the table rendered inline.
+**Closed 2026-08-02, signed off by Sid.** The two questions that were open — the
+iteration-file status vocabulary, and whether the active-plan pin is a sidebar
+link or the table rendered inline — were both answered: `status` means *did the
+agent finish*, and the pin is a sidebar link with nothing above the issue body.
 
 # Details
 

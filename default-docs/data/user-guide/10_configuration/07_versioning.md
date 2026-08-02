@@ -33,12 +33,6 @@ engine_version: "0.1.2"
 - **A missing `engine_version` is treated as `0.0.0`** — projects created before
   the contract trip the gate once, migrate, and are on the contract thereafter.
 
-> [!NOTE]
-> **Changed 2026-08-02.** All three places used to *not* be compared — only `X`
-> and `Y` were, so content at `0.1.0` passed a minimum of `0.1.2`. Since every
-> format change shipped so far moved only `Z`, nothing was ever actually
-> refused. It now compares all three.
-
 ## The gate
 
 On every dev / build / preview start, the engine compares your declaration

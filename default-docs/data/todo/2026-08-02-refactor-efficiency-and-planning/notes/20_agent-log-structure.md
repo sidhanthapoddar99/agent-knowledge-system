@@ -20,8 +20,9 @@ every time someone read the skill.
 |---|---|
 | **agent log** | one folder — `NNN_<kind>_<name>/` — recording one run with one goal |
 | **child agent log** | an agent log nested inside another, for a sub-goal |
-| **iteration file** | one agent's file inside `working/` |
-| **work unit** | a stage of the run; the first two digits of an iteration file's number |
+| **iteration** | one coherent round of work — a group of subtasks, executions and agents. The first two digits of a file's number |
+| **iteration file** | the round's own file inside `working/`, written by the orchestrator |
+| **producer file** | a file written by one agent that produced something substantial, sitting beside its iteration file |
 
 The section folder stays `agent-log/` — renaming it would touch the loader,
 routes, CLI and every consumer tracker for no gain. **Only the vocabulary
@@ -47,10 +48,10 @@ agent-log/
 └── NNN_<kind>_<name>/              ← an agent log
     ├── settings.json               ← optional: status → colours the kind symbol
     ├── summary.md                  ← REQUIRED. The one conclusive file.
-    ├── working/                    ← iteration files — one per agent
-    │   ├── 011_<task>.md
-    │   ├── 012_<task>.md
-    │   └── 021_<task>.md
+    ├── working/                    ← one file per iteration, plus producers'
+    │   ├── 010_<round>.md
+    │   ├── 011_<what-it-produced>.md
+    │   └── 020_<round>.md
     └── debrief/                    ← what leaves this run
         └── 01_handover.md
 ```
@@ -130,38 +131,47 @@ becomes a subtask.
 
 # `working/`
 
-## One agent, one iteration file
+## One iteration, one file — and an iteration is a GROUP
 
-**The atomic unit is an agent, not a task.** The orchestrator creates and assigns
-the iteration file; the subagent writes into it. An agent owns exactly one file
-and never spans two. The orchestrator may open a couple of its own for
-orchestration, and no more.
+**Decided by Sid, 2026-08-02** — see
+[the responsibility split](./60_section-responsibilities.md).
 
-This is what makes the mailbox concrete: **an agent's iteration file IS its
-mailbox.** It writes there and returns a few lines — what it did, its verdict,
-the path. It does not return the content again.
+**The atomic unit is an iteration, not an agent.** An iteration is a coherent
+round of work and covers a **group** — of subtasks, of executions, of agents.
+The orchestrator writes the iteration file from what the round produced.
+
+**A file per agent is not created.** An agent that produced something
+substantial — an audit, a research survey, a measured comparison — gets its own
+file, because that output has to live somewhere and re-typing it is the
+duplication this issue exists to remove. An agent that did a small piece of work
+returns, and the orchestrator records the outcome in the iteration file.
+
+**File count scales with what was produced, not with how many agents ran.**
+
+The concurrency constraint the earlier mailbox rule protected is unaffected:
+concurrent producers each write their own file, and the iteration file has
+exactly one writer.
 
 ## Numbering — `NNN_<task-name>.md`
 
-**First two digits = the work unit. Last digit = which agent within it.**
+**First two digits = the iteration. Last digit = which file within it** — `0` for
+the iteration file itself, `1`…`9` for a producer's own file.
 
 ```
 working/
-├── 011_scope-a-byte-surface.md     ← work 01 (the audit), agent 1
-├── 012_scope-b-blast-radius.md     ← work 01, agent 2
-├── 013_scope-c-oracles.md          ← work 01, agent 3
-├── 021_fix-round.md                ← work 02 (the fix), agent 1
-└── 031_battery.md                  ← work 03 (the battery), agent 1
+├── 010_audit-round.md              ← iteration 01 — the orchestrator's file
+├── 011_scope-a-byte-surface.md     ← a producer within it: an audit report
+├── 012_scope-b-blast-radius.md     ← a producer within it
+├── 020_fix-round.md                ← iteration 02 — no producer files needed
+└── 030_battery.md                  ← iteration 03
 ```
 
 **`working/` is FLAT — no subdivision.** The numbering is what expresses "this
-work unit produced several files": `011`, `012`, `013` are three agents on one
-unit, sitting side by side. That is the mechanism, and a folder per work unit
-would be a second way to say the same thing.
+iteration produced several files": `011`, `012` sit beside `010`. A folder per
+iteration would be a second way to say the same thing.
 
-Add a folder only when a **single agent** produces several artifacts, and then it
-is `NNN_<name>/` holding them — still one folder per agent, still flat at the
-work-unit level.
+Add a folder only when a **single producer** makes several artifacts, and then it
+is `NNN_<name>/` holding them — still flat at the iteration level.
 
 If a stage needs so many agents that a flat `working/` becomes unreadable, that
 is evidence the **stage** should be two child agent logs, not that `working/`
@@ -195,11 +205,12 @@ What "done" looks like for this kind of work — see the table below.
 What actually came back. Written by the agent.
 ```
 
-**The head is written by the orchestrator; the body by the agent.** Goal, Inputs
-and Expected Outcome are the work order, filled in when the file is created. The
-agent writes Outcome and everything below it. That split is what makes the
-mailbox real: the file is the assignment *and* the result, so nothing has to be
-restated in a prompt or a return value.
+**The head is written by the orchestrator.** Goal, Inputs and Expected Outcome
+are the work order, filled in when the file is created; Outcome is filled in when
+the round lands. On a **producer file** the orchestrator still writes the head
+and the producing agent writes Outcome and below — the file is then the
+assignment *and* the result, so nothing has to be restated in a prompt or a
+return value.
 
 ### `status` means "did the agent finish" — not what it concluded (Sid)
 
@@ -408,7 +419,7 @@ data/tasks/2026-08-02-nsd-phase-2/
         ├── settings.json                    #    {"status": "done"}
         ├── summary.md                       #    State tells you where it got to
         ├── working/                         #    the LOOP's own files — 1 or 2, no more
-        │   └── 011_round-ledger.md          #      which workflow ran when, why order changed
+        │   └── 010_round-ledger.md          #      which workflow ran when, why order changed
         ├── debrief/
         │   ├── 01_handover.md               #    what the next overnight run must know
         │   └── 02_questions-for-sid.md      #    decisions the loop could not take
@@ -416,18 +427,16 @@ data/tasks/2026-08-02-nsd-phase-2/
         ├── 010_wf_s3-decoder-swap/          # ── workflow 1 (serves plan stage 3)
         │   ├── settings.json
         │   ├── summary.md                   #    this IS the brief the agents were pointed at
-        │   ├── working/                     #    FLAT. first 2 digits = stage, last = agent
-        │   │   ├── 011_plan-the-slice.md    #      unit 01 · planning
-        │   │   ├── 021_exec-codec.md        #      unit 02 · execution, agent 1
-        │   │   ├── 022_exec-tests.md        #      unit 02 · agent 2
-        │   │   ├── 031_audit-bytes-read.md  #      unit 03 · audit pair A, reading half
-        │   │   ├── 032_audit-bytes-exec.md  #      unit 03 · pair A, executing half
-        │   │   ├── 033_audit-blast-read.md  #      unit 03 · pair B
-        │   │   ├── 034_audit-blast-exec.md  #      unit 03 · pair B
-        │   │   ├── 041_review-verdict.md    #      unit 04 · merged findings + fix/reject/defer
-        │   │   ├── 051_fix-round.md         #      unit 05 · fixes
-        │   │   ├── 061_bench-before-after.md#      unit 06 · the numbers
-        │   │   └── 071_research-codecs/     #      one agent, several artifacts → a folder
+        │   ├── working/                     #    FLAT. first 2 digits = iteration, last = file
+        │   │   ├── 010_plan-the-slice.md    #      iteration 01
+        │   │   ├── 020_execution.md         #      iteration 02 — two executors ran; they
+        │   │   │                            #      produced CODE, so no files of their own
+        │   │   ├── 030_audit-round.md       #      iteration 03 — concern + merged verdict
+        │   │   ├── 031_audit-bytes.md       #        producer: the byte-surface report
+        │   │   ├── 032_audit-blast.md       #        producer: the blast-radius report
+        │   │   ├── 040_fix-round.md         #      iteration 04 — what was fixed, what was not
+        │   │   ├── 050_bench-before-after.md#      iteration 05 — the numbers
+        │   │   └── 060_research-codecs/     #      one producer, several artifacts → a folder
         │   │       ├── 01_findings.md
         │   │       └── 02_decision-tree.mmd #      mermaid renders as a log entry
         │   └── debrief/
@@ -448,9 +457,11 @@ budget below cannot spare.
 shortens it:
 
 1. A schedule never becomes a folder tree.
-2. Work units are digits, not directories.
-3. A pair is two files that both survive.
-4. One agent producing several artifacts is the only reason to nest inside
+2. Iterations are digits, not directories.
+3. A file exists because something was **produced**, not because an agent ran.
+   Two executors writing code produce one iteration file between them; two
+   auditors writing reports produce two files plus the iteration's own.
+4. One producer making several artifacts is the only reason to nest inside
    `working/`.
 5. Depth stops at four.
 
@@ -504,7 +515,7 @@ lose it.
 
 | Output | Home |
 |---|---|
-| One agent, several artifacts (survey + diagram + data) | `working/NNN_<name>/` — the folder form. Still one folder per agent. |
+| One producer, several artifacts (survey + diagram + data) | `working/NNN_<name>/` — the folder form, one folder per producer |
 | A diagram supporting one iteration | `working/NNN_<name>.mmd` beside the iteration file, or inside its folder |
 | Analysis the run wants to pass forward | the agent log's `debrief/` |
 | Decision-bearing analysis another run will cite | **the issue's `notes/`** — the iteration file keeps a one-line pointer |
@@ -560,7 +571,7 @@ Subtask:
 
 **The consumer is LAST.** Its `memory/` links upstream rather than copying, so
 fixing it before the skill lands puts a stale copy in the field. Subtask:
-[`060_sidequest-neurasutra-memory`](../subtasks/040_execution/060_sidequest-neurasutra-memory.md).
+[`060_sidequest-neurasutra-memory`](../subtasks/060_sidequest-neurasutra.md).
 
 # Decision routing
 

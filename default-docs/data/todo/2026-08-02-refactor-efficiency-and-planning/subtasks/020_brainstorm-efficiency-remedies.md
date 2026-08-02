@@ -1,6 +1,6 @@
 ---
 title: "Brainstorm: how to cut the recording overhead"
-status: in-progress
+status: done
 ---
 
 # Overview
@@ -24,24 +24,62 @@ jargon, which is worse than writing too much.
 
 # Todo list
 
-- [ ] Open a `brainstorm/` thread per candidate lever (table below), argued
-      rather than asserted
-- [ ] Decide the **proportionality rule** — what size input, measured how
-- [ ] Decide the **one-canonical-home rule** — where each kind of fact belongs,
-      and what the other files write instead of a retelling
-- [ ] Decide what happens to the **six standard slots** — kept, trimmed, or made
-      conditional
-- [ ] Decide the **brief policy** — what replaces the committed verbatim prompt
-- [ ] Decide whether anything ever gets **compacted or superseded**, and by whom
-- [ ] Back-test each rule against the audited run: would it have cut 1,928 lines
-      to ~120 *without losing the defect that audit found?*
-- [ ] Graduate the resolved thread into `notes/` as the rule set
+- [x] Open a `brainstorm/` thread per candidate lever → five threads, sliced by
+      subject rather than by lever
+- [x] Decide the **proportionality rule** — **structural, not measured**: an
+      agent log opens only when work is delegated or runs over multiple rounds;
+      small changes are grouped against a larger block
+- [x] Decide the **one-canonical-home rule** → *no file stores a fact another
+      file owns*, plus the seven one-word section purposes
+- [x] Decide what happens to the **six standard slots** → removed; `summary.md`
+      + `working/` + `debrief/`
+- [x] Decide the **brief policy** → `summary.md` **is** the brief
+- [x] Decide whether anything ever gets **compacted or superseded** →
+      superseded wording is **deleted**, and non-contributing content is deleted
+- [x] Graduate the resolved threads into `notes/` as the rule set
+- [x] **Back-test against the audited run** — **not run, by Sid's call.**
+      Replaced by [`130`](./040_execution/130_independent-skill-audit.md): three
+      neutral auditors compare the old and new skill at the end of the work, and
+      the result is stored rather than acted on
 
 # Outcomes and Next Steps
 
-> [!IMPORTANT]
-> **PLACEHOLDER** — filled at completion: the agreed rule set, the levers
-> rejected and why, and the link to the graduated note.
+**The rule set:**
+[What each section is for](../notes/60_section-responsibilities.md) — the
+responsibility split, which is what the brainstorm converged on instead of the
+density rules this subtask originally scoped.
+
+**The reframe, and it is the finding worth keeping.** This was scoped as *how do
+we get agents to write less*. It is not a density problem. **Every section is
+currently permitted to hold everything, so every section holds everything** — the
+same fact written eight to twelve times because no file was ever told it was not
+that fact's home. Volume is the symptom. Give each section one purpose and the
+duplication has nowhere to go.
+
+That reframe is why the answer is enforceable: a responsibility split lives in
+templates, scaffolders and a validator, whereas a density rule lives only in an
+agent's memory of an instruction it read at session start.
+
+**Levers rejected:**
+
+| Rejected | Why |
+|---|---|
+| A measured size input (lines changed) | Gameable, and wrong for a one-line fix to a frozen invariant. Replaced by a structural trigger: delegated or multi-round work opens a log, nothing else does |
+| A word or line budget | Produces jargon. The target is fewer copies, never shorter prose |
+| Shorter audit reports | Sid does not read them; depth below the summary is the agent's business. The rule became *conclusive in themselves, plus a simplified table in `summary.md`* |
+| Dropping "areas checked and found clean" | It distinguishes *checked* from *never reached*. It becomes a table row instead of prose |
+
+**Two rules overturned by the ruling**, both recorded in the rule set: *one
+agent, one iteration file*, and *"subtasks are the what, the agent log is the
+how"* — which `guide.ts` still states.
+
+**The back-test was dropped by Sid, and replaced rather than skipped.** Instead of
+re-deriving the audited run against the new rules by hand, the check moves to the
+end of the work and becomes
+[`130` — the independent skill audit](./040_execution/130_independent-skill-audit.md):
+three neutral auditors compare the old and the new skill side by side. Better
+evidence than a self-assessment, and it costs nothing until there is something to
+compare.
 
 # Details
 

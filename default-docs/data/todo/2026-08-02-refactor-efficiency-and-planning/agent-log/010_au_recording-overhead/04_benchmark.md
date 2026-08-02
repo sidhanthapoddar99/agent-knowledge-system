@@ -12,7 +12,7 @@ re-reading the note.
 
 - **Baseline:** none — this is a first measurement, not a before/after. The
   numbers here *become* the baseline that
-  [Sidequest: NeuraSutra's memory](../../subtasks/040_execution/060_sidequest-neurasutra-memory.md) re-measures against.
+  [Sidequest: NeuraSutra's memory](../../subtasks/060_sidequest-neurasutra.md) re-measures against.
 - **Window:** 24 hours ending 2026-08-02 09:29, plus a two-hour sub-window
   isolating one run.
 - **Subject:** `neurasutra-docs` + `neurasutra-canvas`, read-only.

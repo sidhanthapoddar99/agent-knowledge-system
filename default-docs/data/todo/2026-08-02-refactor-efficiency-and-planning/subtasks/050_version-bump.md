@@ -1,5 +1,5 @@
 ---
-title: "Version bump — engine 0.1.3 (gated) + plugin 0.6.8"
+title: "Version bump — engine 0.1.3 + plugin 0.7.0"
 status: open
 ---
 
@@ -35,7 +35,7 @@ marketplace listing match reality, and a consumer on the old content format is
       `user-guide/10_configuration/07_versioning.md:22`
 - [ ] `default-docs/config/site.yaml` → `engine_version: "0.1.3"` — **last**,
       after the migration runs, never first
-- [ ] Bump `plugin.json` → `0.6.8`, and update its `description`
+- [ ] Bump `plugin.json` → `0.7.0`, and update its `description`
 - [ ] Sync the marketplace listing (drift note below)
 - [ ] Smoke-test the gate: point the engine at un-migrated content and confirm it
       **stops** with the migration message rather than rendering
@@ -62,70 +62,66 @@ Content declares `engine_version` in `site.yaml`; `loadSiteConfig()` throws at
 startup when it falls outside `[MIN_CONTENT_VERSION, ENGINE_VERSION]`. **That
 error is the only mechanism in this project that can force a consumer to act.**
 
-## The versioning scheme — Sid's, and it is the one to follow
+## The versioning rule — simple, and it is Sid's
 
-Stated 2026-08-02:
+**`X.Y.Z`. Three things in play, one comparison:**
 
-| Index | Means |
+| | |
 |---|---|
-| 1st (`0`) | **Reserved** — beta versus production. Stays `0` while the project is in beta |
-| 2nd | Major upgrades |
-| 3rd | Smaller tweaks and bug fixes |
+| the engine's current version | `ENGINE_VERSION` |
+| the oldest document version it supports | `MIN_CONTENT_VERSION` |
+| the document's own version | `engine_version` in `site.yaml` |
 
-**Every format migration this repo has ever shipped followed it** —
-`0.1.0_done-to-state` → `0.1.1_state-to-status` → `0.1.2_legacy-custom-tags`.
-Three patch bumps, no minor bump, ever.
+**The document's version must be ≥ the minimum.** That is the whole rule. All
+three numbers compare, in order. There is no "only the first two count".
 
-So this release is **`0.1.3`**, and the plugin is **`0.6.8`**.
+Which index moves is a judgement about the size of the change:
 
-## THE GATE HAS NEVER FIRED — the finding that makes this work
+| Index | For |
+|---|---|
+| 1st (`0`) | reserved — beta versus production |
+| 2nd | major upgrades |
+| 3rd | smaller additions and fixes |
 
-`compareFormatVersions` compares **major.minor only**:
+**This release:** the engine gets a new section reader and a comparator fix — a
+small addition, so **`0.1.3`**. The plugin gets a rewritten agent-log model, a new
+plans section and a new rule set — that is a major upgrade of the skills, so
+**`0.7.0`**.
 
-```js
-return aMaj - bMaj || aMin - bMin;   // patch is not compared
-```
+## What has to change in the code
 
-Two docs assert this is correct by definition — the `engine-version.ts` docstring
-(*"bump ENGINE_VERSION minor"*) and
-`user-guide/10_configuration/07_versioning.md:22` (*"a patch bump never changes
-the content format"*).
-
-**But every actual migration was a patch bump, so none of them were ever
-enforced.** Content declaring `0.1.0` compares *equal* to a floor of `0.1.2`, so
-`0.1.1_state-to-status.py` — a genuinely breaking value remap — was never once
-forced on a consumer. The only thing this gate has ever caught is content with no
-`engine_version` at all (`0.0.0`).
-
-The written rule and the shipped practice have disagreed since the contract was
-introduced, and the practice is the one that is right.
-
-**So the comparator is what changes**, not the version number:
+`compareFormatVersions` currently ignores the third number:
 
 ```js
-return aMaj - bMaj || aMin - bMin || aPatch - bPatch;
+return aMaj - bMaj || aMin - bMin;              // today
+return aMaj - bMaj || aMin - bMin || aPat - bPat;   // the fix
 ```
 
-**This does not make every patch bump mandatory.** `MIN_CONTENT_VERSION` remains
-the control: ship a genuine bugfix as `ENGINE_VERSION` `0.1.4`, leave the floor
-at `0.1.3`, and content at `0.1.3` still passes. The change only makes the floor
-*capable* of being set at patch granularity — which is the granularity every real
-migration has used.
+**Because of that, the gate has never once fired on a real migration.** Every
+format change this repo shipped moved only the third number —
+`0.1.0_done-to-state`, `0.1.1_state-to-status`, `0.1.2_legacy-custom-tags` — so
+content sitting at `0.1.0` compares *equal* to a floor of `0.1.2` and passes.
+`0.1.1_state-to-status.py` was a genuinely breaking value remap and was never
+forced on anyone. The only thing this gate has ever caught is content with no
+`engine_version` key at all.
 
-Raising the floor is justified here by the repo's own rule — *"ONLY for breaking
-changes (old content fails/misrenders without the migration)"* — and
-[`100`](./040_execution/100_migration-script.md) counts **78 files in this repo
-alone** carrying status values the new vocabulary rejects.
+Also delete the two places that assert the old rule, both from commit `e394b73`
+(2026-07-03): the `engine-version.ts` docstring (*"bump ENGINE_VERSION minor"*)
+and `user-guide/10_configuration/07_versioning.md:22` (*"a patch bump never
+changes the content format"*).
 
-## Correction — the plugin "minor bump" rule was never a convention
+**The floor stays the control.** Ship a bugfix as `0.1.4` and leave the floor at
+`0.1.3` — content at `0.1.3` still passes. Fixing the comparator does not make
+every bump mandatory; it makes the floor mean what it says.
 
-An earlier draft of this subtask said *"under this project's continuous-shipping
-convention that is a minor bump"* and put the plugin at `0.7.0`. **There is no
-such convention.** Nothing in the repo, the skills or the user-guide documents
-plugin versioning; `plugin.json` carries a `version` field that nothing reads.
-That sentence was invented and presented as inherited.
+## Correction — the plugin rule was mine, and it was wrong
 
-Under the scheme above this release is a 3rd-index bump: **`0.6.8`**.
+An earlier draft said *"under this project's continuous-shipping convention that
+is a minor bump."* **No such convention exists** — nothing documents plugin
+versioning, and `plugin.json`'s `version` is read by nothing. That sentence was
+invented and presented as inherited.
+
+`0.7.0` is still right, but for the actual reason: the skills change is major.
 
 ## The marketplace description has already drifted
 

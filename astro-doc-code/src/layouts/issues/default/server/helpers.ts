@@ -235,21 +235,13 @@ export function planUrl(baseUrl: string, issueId: string, plan: IssuePlan): stri
   return sectionUrl(baseUrl, issueId, 'plans', plan.name);
 }
 
-export function planStageUrl(
-  baseUrl: string, issueId: string, plan: IssuePlan, stage: IssuePlanStage,
-): string {
-  return sectionUrl(baseUrl, issueId, 'plans', plan.name, stage.name);
-}
-
 export function planPanelKey(plan: IssuePlan): string {
   return KEY('plans', [], plan.name);
 }
-
-/** Panel key for one stage page. Namespaced under its plan so two plans may
- *  carry a stage of the same name without colliding. */
-export function planStagePanelKey(plan: IssuePlan, stage: IssuePlanStage): string {
-  return KEY('plans', [plan.name], stage.name);
-}
+// There is no stage URL or stage panel key: a stage has no page of its own, so
+// there is nothing to address or to activate. It is one anchored heading on its
+// plan's page — `#<stage.anchor>` — and `planStageAliasTarget` in
+// `pages/lib/route-match.ts` is what keeps a link to the FILE landing there.
 
 // ===== Plans: the derived bits =====
 // Everything a plan says about the *work* is resolved here, at render, from the

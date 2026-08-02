@@ -11,14 +11,13 @@ import SubtaskPage from './parts/detail/SubtaskPage.astro';
 import NotePage from './parts/detail/NotePage.astro';
 import AgentLogPage from './parts/detail/AgentLogPage.astro';
 import PlanPage from './parts/detail/PlanPage.astro';
-import PlanStagePage from './parts/detail/PlanStagePage.astro';
 import SubDocMetaSidebar from './parts/detail/SubDocMetaSidebar.astro';
 import MetaPanel from './parts/shared/MetaPanel.astro';
 import { allStateIcons } from './server/state-icon';
 import { extractToc } from './server/toc';
-import { sortSubtasksByState, terminalStartIndex, TERMINAL, logPanelKey, subtaskPanelKey, planPanelKey, planStagePanelKey, planDocument } from './server/helpers';
+import { sortSubtasksByState, terminalStartIndex, TERMINAL, logPanelKey, subtaskPanelKey, planPanelKey, planDocument } from './server/helpers';
 import { FREEFORM_SECTIONS, sectionPanelKey } from '@loaders/issues';
-import type { Issue, IssuesVocabulary, IssueSubtask, IssueNote, IssueAgentLog, IssuePlan, IssuePlanStage } from '@loaders/issues';
+import type { Issue, IssuesVocabulary, IssueSubtask, IssueNote, IssueAgentLog, IssuePlan } from '@loaders/issues';
 import './styles/detail.css';
 
 interface Props {
@@ -31,8 +30,7 @@ interface Props {
     | { kind: 'brainstorm'; brainstorm: IssueNote }
     | { kind: 'memory'; memory: IssueNote }
     | { kind: 'log'; log: IssueAgentLog }
-    | { kind: 'plan'; plan: IssuePlan }
-    | { kind: 'plan-stage'; plan: IssuePlan; stage: IssuePlanStage };
+    | { kind: 'plan'; plan: IssuePlan };
 }
 
 const { issue, vocabulary, baseUrl, subDoc } = Astro.props;
@@ -85,9 +83,6 @@ if (freeform) {
   // headings are the part a reader is actually navigating to, and the overview
   // and the table had no entry at all.
   toc = planDocument(subDoc.plan).toc;
-} else if (subDoc.kind === 'plan-stage') {
-  activeKey = planStagePanelKey(subDoc.plan, subDoc.stage);
-  toc = extractToc(subDoc.stage.html);
 } else {
   activeKey = logPanelKey(subDoc.log);
   toc = extractToc(subDoc.log.html);
@@ -124,9 +119,6 @@ if (freeform) {
     )}
     {subDoc.kind === 'plan' && (
       <PlanPage issue={issue} plan={subDoc.plan} baseUrl={baseUrl} statusColors={statusColors} standalone />
-    )}
-    {subDoc.kind === 'plan-stage' && (
-      <PlanStagePage issue={issue} plan={subDoc.plan} stage={subDoc.stage} baseUrl={baseUrl} statusColors={statusColors} standalone />
     )}
   </main>
 

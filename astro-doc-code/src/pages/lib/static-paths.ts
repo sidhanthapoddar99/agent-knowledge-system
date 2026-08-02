@@ -11,6 +11,7 @@
  */
 import { loadContent } from '@loaders/index';
 import { loadIssues, SUBDOC_SECTIONS } from '@loaders/issues';
+import { planStageAliasUrl } from './route-match';
 
 type Props = Record<string, unknown>;
 type PathEntry = { params: { slug: string | undefined }; props: Props };
@@ -89,13 +90,18 @@ export async function buildStaticPaths(siteConfig: { pages?: Record<string, any>
                 params: { slug: [baseUrl, issue.id, section.id, plan.name].filter(Boolean).join('/') },
                 props: { ...common, pageType: 'issues-subdoc', issue, vocabulary, subDoc: { kind: 'plan', plan } },
               });
-              // Individual stage pages stay reachable — the sub-doc machinery
-              // gives every markdown file a route for free. Nothing links to
-              // them; the single plan page is canonical.
+              // A stage gets no PAGE of its own — the plan page renders every
+              // stage inline under an anchored heading. It keeps an ADDRESS,
+              // because a stage is a file and a relative markdown link to one
+              // resolves to this path; see `planStageAliasTarget`.
               for (const stage of plan.stages) {
                 paths.push({
                   params: { slug: [baseUrl, issue.id, section.id, plan.name, stage.name].filter(Boolean).join('/') },
-                  props: { ...common, pageType: 'issues-subdoc', issue, vocabulary, subDoc: { kind: 'plan-stage', plan, stage } },
+                  props: {
+                    ...common,
+                    pageType: 'issues-detail',
+                    redirectTo: planStageAliasUrl(pageConfig.base_url, issue.id, section.id, plan.name, stage.anchor),
+                  },
                 });
               }
             }

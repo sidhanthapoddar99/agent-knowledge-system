@@ -225,11 +225,16 @@ fact, and in every case where two places hold one fact, it is the copy that goes
 The names are also more useful: *which* subtask is blocked is the question a schedule
 actually has to answer.
 
-### Individual stage pages
+### A stage has no page of its own
 
-The sub-doc machinery gives every markdown file a route, so each stage is also reachable
-at `/plans/<plan>/<stage>`. Nothing links to those; **the single plan page is
-canonical**.
+**One plan, one page.** A stage is a *section* of it — a heading with the stage's body
+under it — not a document you navigate to. There is no second rendering carrying its own
+header, breadcrumb and subtask list to keep in step with the first.
+
+`/plans/<plan>/<stage>` still **resolves**, as a redirect to `/plans/<plan>#<stage>`. The
+address is kept because a stage is a *file*, and a relative markdown link to a file
+resolves to that file's path — so a link written the ordinary way lands on the stage's
+heading rather than on a 404 that no gate would have caught.
 
 ## Lifecycle
 

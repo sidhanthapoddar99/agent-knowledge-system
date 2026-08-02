@@ -77,7 +77,7 @@ special — which is why a child agent log may now be called anything, `working`
 | Issue | `/<tracker>/<issue>` |
 | Subtask | `/<tracker>/<issue>/subtasks/[<group>/[<subgroup>/]]<slug>` |
 | Note | `/<tracker>/<issue>/notes/[<group>/[<subgroup>/]]<slug>` |
-| Plan | `/<tracker>/<issue>/plans/<plan>` — the canonical page, stages inlined |
-| Plan stage | `/<tracker>/<issue>/plans/<plan>/<stage>` — reachable, nothing links to it |
+| Plan | `/<tracker>/<issue>/plans/<plan>` — one page, every stage inlined |
+| Plan stage | **no page of its own.** `…/plans/<plan>/<stage>` redirects to `…/plans/<plan>#<stage>`, so a link to the stage *file* still lands on its heading |
 
 The ordering prefix (`NN_`/`NNN_`) is **stripped from the URL slug** — same as docs (see the `agent-ks-docs` skill's `references/layouts/docs-layout.md`). `subtasks/020_implementation/010_backend.md` → `…/subtasks/implementation/backend`.

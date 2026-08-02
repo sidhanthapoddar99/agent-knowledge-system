@@ -39,8 +39,7 @@ export interface RouteProps {
     | { kind: 'brainstorm'; brainstorm: any }
     | { kind: 'memory'; memory: any }
     | { kind: 'log'; log: any }
-    | { kind: 'plan'; plan: any }
-    | { kind: 'plan-stage'; plan: any; stage: any };
+    | { kind: 'plan'; plan: any };
 }
 
 export type RouteResolution =
@@ -139,6 +138,13 @@ export async function matchServerRoute(
         };
       }
 
+      // A stage is not a page — see `planStageAliasTarget`. Checked before the
+      // sub-doc lookup because it is a routing alias, not a document.
+      const stageAlias = planStageAliasTarget(issue, parts.slice(1), pageConfig.base_url, issueId);
+      if (stageAlias) {
+        return { kind: 'render', props: { ...common, pageType: 'issues-detail', redirectTo: stageAlias } };
+      }
+
       const subDoc = resolveSubDoc(issue, parts.slice(1));
       if (!subDoc) return { kind: 'not-found' };
       return { kind: 'render', props: { ...common, pageType: 'issues-subdoc', issue, vocabulary: loaded.vocabulary, subDoc } };
@@ -148,21 +154,51 @@ export async function matchServerRoute(
   return { kind: 'not-found' };
 }
 
+/**
+ * `/<tracker>/<issue>/plans/<plan>/<stage>` — an ALIAS, not a page.
+ *
+ * A stage has no page of its own: the plan page renders every stage inline
+ * under an anchored heading, so a second URL would be a second rendering of
+ * the same content with its own header and ref list to keep in step.
+ *
+ * The alias exists anyway because a stage is a FILE, and a relative markdown
+ * link to a file resolves to its path-shaped URL (see the `issue-body-links`
+ * postprocessor). Dropping the route outright would turn every such link into
+ * a 404 that no gate reads — so the address stays and points at the anchor.
+ *
+ * Returns the redirect target, or null when `parts` is not that shape.
+ */
+export function planStageAliasTarget(
+  issue: any, parts: string[], base: string, issueId: string,
+): string | null {
+  const [id, planName, stageName, ...extra] = parts;
+  if (!stageName || extra.length > 0) return null;
+  const section = sectionById(id);
+  if (!section || section.reader !== 'plan') return null;
+  const plan = issue.plans?.find((p: any) => p.name === planName);
+  const stage = plan?.stages.find((s: any) => s.name === stageName);
+  return stage ? planStageAliasUrl(base, issueId, section.id, plan.name, stage.anchor) : null;
+}
+
+/** The one place the alias URL is spelled — `route-match` resolves it at request
+ *  time, `static-paths` emits it at build time, and they must agree. */
+export function planStageAliasUrl(
+  base: string, issueId: string, sectionId: string, planName: string, stageAnchor: string,
+): string {
+  return `${base}/${issueId}/${sectionId}/${planName}#${stageAnchor}`;
+}
+
 function resolveSubDoc(issue: any, parts: string[]): RouteProps['subDoc'] | null {
   const [id, ...rest] = parts;
   const section = sectionById(id);
   if (!section || !section.subDocKind) return null;
 
-  // plans: a fixed two-level shape, not a free-form tree.
-  //   /plans/<plan>          → the single plan page (canonical)
-  //   /plans/<plan>/<stage>  → one stage on its own page (reachable, unlinked)
+  // plans: ONE page per plan, and nothing below it. `/plans/<plan>/<stage>` is
+  // handled earlier as an alias, never here as a document.
   if (section.reader === 'plan') {
-    if (rest.length !== 1 && rest.length !== 2) return null;
+    if (rest.length !== 1) return null;
     const plan = issue.plans?.find((p: any) => p.name === rest[0]);
-    if (!plan) return null;
-    if (rest.length === 1) return { kind: 'plan', plan };
-    const stage = plan.stages.find((s: any) => s.name === rest[1]);
-    return stage ? { kind: 'plan-stage', plan, stage } : null;
+    return plan ? { kind: 'plan', plan } : null;
   }
 
   // Everything else: rest = [...groupPath, slug-or-name], groupPath is
@@ -262,14 +298,8 @@ export function prepareRender(props: RouteProps): RenderPlan {
     // carries a `title` or a `name`, so the page title needs no per-section arm
     // — the previous ladder ended in a bare `subDoc.log.name`, which meant any
     // section someone forgot to add crashed here reading `.name` of undefined.
-    // A stage is the one composite: it is titled inside its plan.
-    const entry = (subDoc as Record<string, any>)[
-      subDoc.kind === 'plan-stage' ? 'stage' : subDoc.kind
-    ];
-    const subTitle = subDoc.kind === 'plan-stage'
-      ? `${subDoc.stage.title} · ${subDoc.plan.title}`
-      : (entry.title ?? entry.name);
-    title = `${subTitle} · ${issue.meta.title}`;
+    const entry = (subDoc as Record<string, any>)[subDoc.kind];
+    title = `${entry.title ?? entry.name} · ${issue.meta.title}`;
     layoutProps = { issue, vocabulary, baseUrl, subDoc };
   }
 

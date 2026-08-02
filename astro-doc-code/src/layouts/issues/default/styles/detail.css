@@ -131,9 +131,14 @@
 }
 .issue-sidebar__icon, .issue-sidebar__check { display: inline-flex; flex-shrink: 0; }
 .issue-sidebar__heading-icon { display: inline-flex; flex-shrink: 0; color: var(--color-text-secondary); }
+/* The number is part of the row's NAME, so it takes the row's size rather than
+   setting one of its own — `010` and the title it labels were a size apart,
+   which read as two different kinds of thing on one line. Mono and muted stay:
+   those mark it as an ordering prefix without shrinking it. Inherited on
+   purpose, so a file row and a folder row each get their own size right. */
 .issue-sidebar__num {
   font-family: var(--font-family-mono);
-  font-size: var(--ui-text-micro);
+  font-size: inherit;
   color: var(--color-text-muted);
   flex-shrink: 0;
   min-width: 1.5em;
@@ -195,16 +200,20 @@
 .issue-sidebar__subgroup { border: none; }
 .issue-sidebar__subgroup > summary { list-style: none; cursor: pointer; }
 .issue-sidebar__subgroup > summary::-webkit-details-marker { display: none; }
+/* A folder row is a ROW, the same size as the files under it and the section
+   heading above it — one tree at one size. It used to be a micro uppercase
+   caption, from when a folder was a label over a list rather than a thing you
+   click; a row that is smaller than both its parent and its children reads as a
+   third kind of object, and the eye stops on it. What still marks it as a
+   container is structural: the chevron, the kind symbol, the descendant count,
+   and the heavier weight on the name. */
 .issue-sidebar__subgroup-heading {
   display: flex;
   align-items: center;
   gap: 0.3rem;
   padding: 0.2rem 0.2rem;
-  font-size: var(--ui-text-micro);
-  color: var(--color-text-muted);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  font-size: var(--ui-text-body);
+  color: var(--color-text-secondary);
   border-radius: 4px;
   margin-top: 0.35rem;
 }
@@ -846,10 +855,14 @@
   margin-bottom: 1rem;
   border-bottom: 1px solid var(--color-border-default);
 }
+/* The plan's number reads as PART of its name — `02 Hardening the edges`, one
+   heading — so it takes the title's size and colour and keeps only the mono
+   family. Sized in step with `.issue-plan__title` below; the two must not
+   drift apart, which is the whole point of the pairing. */
 .issue-plan__num {
   font-family: var(--font-family-mono);
-  font-size: var(--ui-text-body);
-  color: var(--color-text-muted);
+  font-size: var(--content-h2);
+  color: var(--color-text-primary);
 }
 .issue-plan__title {
   font-size: var(--content-h2);
@@ -909,19 +922,20 @@
 
 /* A stage renders as ORDINARY MARKDOWN: the block carries `.markdown-content`,
    so its `<h1>` and the `<hr>` under it are the same heading and rule a writer
-   gets from `#` and `---` in any page on this site. Nothing about the heading
-   is specified here beyond the number in front of it and keeping the link at
-   heading colour — a heading that is also a link should still read as a
-   heading, not as body-text link. */
+   gets from `#` and `---` in any page on this site. The heading is plain text —
+   a stage has no page of its own to link to (see `planStageAliasTarget`).
+
+   The number is PART of the heading, exactly as `# 20 Eyeball the result`
+   would render: same size, same colour, monospace only so an ordering prefix
+   still looks like one. And no separator glyph — a `·` between a number and
+   the name it labels reads as two facts rather than one heading. */
 .issue-plan__stage { margin-top: 2.5rem; }
 .issue-plan__stage h1 { margin-bottom: 0.2rem; }
 .issue-plan__stage > hr { margin: 0 0 1rem; }
-.issue-plan__stage-link { color: inherit; text-decoration: none; }
-.issue-plan__stage-link:hover { color: var(--color-brand-primary); text-decoration: none; }
 .issue-plan__stage-num {
   font-family: var(--font-family-mono);
-  font-size: var(--ui-text-body);
-  color: var(--color-text-muted);
+  font-size: inherit;
+  color: inherit;
   margin-right: 0.6rem;
 }
 .issue-plan__section-heading { margin-top: 0; }

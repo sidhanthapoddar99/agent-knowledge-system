@@ -28,7 +28,7 @@ import { sectionById } from '@loaders/issues';
 import { stateIconSvg } from '../../server/state-icon';
 import { STATUS_LABELS } from '@loaders/issue-status';
 import {
-  pad, planStageUrl, planPanelKey, resolvePlanStage, subtaskUrl,
+  pad, planPanelKey, resolvePlanStage, subtaskUrl,
   subtaskOrderingPath,
   planDocument, PLAN_OVERVIEW_ANCHOR, PLAN_STAGES_ANCHOR,
 } from '../../server/helpers';
@@ -144,10 +144,8 @@ const missingTotal = resolved.reduce((n, r) => n + r.missing.length, 0);
     {resolved.map(({ stage, html, subtasks }) => (
       <div class="issue-plan__stage markdown-content">
         <h1 id={stage.anchor}>
-          <a class="issue-plan__stage-link" href={planStageUrl(baseUrl, issue.id, plan, stage)}>
-            {stage.sequence !== null && <span class="issue-plan__stage-num">{stage.sequence}</span>}
-            {stage.title}
-          </a>
+          {stage.sequence !== null && <span class="issue-plan__stage-num">{stage.sequence}</span>}
+          {stage.title}
         </h1>
         <hr />
         {subtasks.length > 0 && (

@@ -172,6 +172,16 @@ because it is one that happens to be generated.
 under the stage's own heading — a tally of things shown one screen down is a second copy
 of one fact, and the copy is what drifts. Status hovers to name itself.
 
+## One plan, one page
+
+A stage is a **section** of the plan page — an anchored heading with the stage's body
+under it — and has **no page of its own**. The heading reads `<prefix> <title>` at one
+size, exactly as `# 20 Journal compatibility` renders anywhere else on the site.
+
+**Link a stage file the same way you link anything else.** `…/plans/<plan>/<stage>`
+redirects to `…/plans/<plan>#<stage>`, so an ordinary relative link lands on the stage's
+heading instead of a dead URL.
+
 # Lifecycle
 
 ## Which plan is active — derived, never stored

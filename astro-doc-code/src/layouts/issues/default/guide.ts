@@ -303,6 +303,10 @@ this round. Everything else about the work lives in the subtasks its stages refe
   subtask *count*: the same subtasks are listed by name, with their live status, under
   the stage's own heading. A tally of things already shown one screen down is a second
   copy of one fact, and the copy is what goes stale.
+- **One plan, one page.** A stage is a *section* of it, never a page of its own — so
+  there is no second header and second ref list to keep in step. \`…/plans/<plan>/<stage>\`
+  redirects to that stage's anchor, so you link a stage file the ordinary way and land
+  on its heading.
 
 - **The body is free-form prose.** \`## Todo\` and \`## Questions\` are conventional,
   not a schema: a stage may say why it sits where it does, what its status means in

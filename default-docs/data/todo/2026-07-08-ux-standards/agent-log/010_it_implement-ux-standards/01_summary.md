@@ -2,7 +2,7 @@
 title: "Summary — issue implemented end-to-end, handed off at review"
 agent: claude-fable-5
 date: 2026-07-08
-status: success
+status: done
 ---
 
 ## What shipped

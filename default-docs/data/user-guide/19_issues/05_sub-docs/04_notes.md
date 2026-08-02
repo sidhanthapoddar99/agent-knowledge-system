@@ -81,7 +81,7 @@ Any string the browser accepts as a CSS color: named (`red`, `salmon`), hex (`#e
 | **Deliberate — research, options, trade-offs** | **`brainstorm/`** |
 | Track a chunk of work with its own state | `subtasks/` |
 | **Capture the decided approach, ADR, or reference** | **`notes/`** |
-| Record an execution run / milestone | `agent-log/` |
+| Record an execution run, round by round | `agent-log/` |
 | Store durable AI working facts | `agent-memory/` |
 
 Notes are long-form. A comment is a paragraph or two; a note is a section, multi-heading, possibly with embedded diagrams. The distinction:

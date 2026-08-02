@@ -44,8 +44,11 @@ There is **one binary** (`agent-ks`, plus its Windows `agent-ks.cmd` twin) routi
 | `agent-ks issue set-state <id> <status>` | Set an issue status, or a subtask status via `--subtask <num\|slug>` (or a subtask path) | `--subtask <num\|slug>` · `--tracker` |
 | `agent-ks issue agent-logs <id>` | Last N agent-log entries | `--last <N>` · `--full` · `--json` · `--tracker` |
 | `agent-ks issue add-comment <id>` | Append a comment (auto-incremented prefix) | `--author <name>` · `--body <md>` · `--date` · `--slug` · `--tracker` |
-| `agent-ks issue add-agent-log <id>` | Append an agent-log entry | `--body <md>` · `--status <state>` · `--iteration <N>` · `--agent <name>` · `--group <a[/b]>` · `--date` · `--slug` · `--tracker` |
-| `agent-ks issue new-agent-log <id>` | Scaffold an activity folder with the six standard slots | `--kind <code>` · `--name <slug>` · `--group <a[/b]>` · `--prefix <NNN>` · `--goal <text>` · `--json` · `--tracker` |
+| `agent-ks issue add-agent-log <id>` | Append an agent-log entry | `--body <md>` · `--status <state>` · `--agent <name>` · `--group <a[/b]>` · `--date` · `--slug` · `--tracker` |
+| `agent-ks issue new-agent-log <id>` | Scaffold an agent log — `settings.json` + `summary.md`. `working/` and `debrief/` appear when there is something to put in them | `--kind <code>` · `--name <slug>` · `--parent <path>` (child log) · `--group <a[/b]>` · `--prefix <NNN>` · `--goal <text>` · `--json` · `--tracker` |
+| `agent-ks issue new-iteration <id>` | Open the next iteration file in an agent log's `working/`, head pre-filled | `--log <path>` · `--name <slug>` · `--producer` · `--iteration <NN>` · `--goal` · `--inputs <a,b>` · `--unit <kind>` · `--agent <name>` · `--json` · `--tracker` |
+| `agent-ks issue new-plan <id>` | Open a plan — `plans/NN_<name>/` with `settings.json` + `overview.md` | `--name <slug>` · `--title` · `--status` · `--overview` · `--prefix <NN>` · `--json` · `--tracker` |
+| `agent-ks issue new-stage <id>` | Add a stage to a plan; `--after` takes the midpoint of the gap | `--plan <folder>` · `--name <slug>` · `--outcome` · `--who` · `--status` · `--after <NN>` · `--prefix <NN>` · `--subtask <a,b>` · `--json` · `--tracker` |
 | `agent-ks issue new-subtask <id>` | Scaffold a subtask with the five-section template (Overview / References / Todo list / Outcomes and Next Steps / Details) | `--name <slug>` · `--title <text>` · `--group <a[/b]>` · `--overview <text>` · `--json` · `--tracker` |
 | `agent-ks issue review-queue` | Items awaiting review (Review-category status — `review`/`input-needed` — + any active issue w/ a Review-category subtask) | `--json` · `--tracker` |
 

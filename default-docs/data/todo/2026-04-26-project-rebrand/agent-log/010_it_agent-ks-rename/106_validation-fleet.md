@@ -1,9 +1,8 @@
 ---
 title: "M6 — 5-agent Opus validation fleet + fix pass (pre-marketplace gate)"
-iteration: 1
 agent: claude-fable-5
 date: 2026-07-08
-status: success
+status: done
 ---
 
 ## Goal

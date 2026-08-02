@@ -1,5 +1,4 @@
 ---
-iteration: 1
 title: "Milestone — research + parallel Opus writing"
 status: done
 ---

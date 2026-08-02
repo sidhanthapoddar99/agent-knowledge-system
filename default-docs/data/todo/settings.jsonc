@@ -16,7 +16,6 @@
   // human-only. Transitions are unenforced guidance.
   "statusColors": {
     "open": "#888888",          // Not Started — neutral grey
-    "blocked": "#d1854f",       // Not Started — burnt orange (depends on another item)
     "in-progress": "#61afef",   // In Progress — active blue
     "input-needed": "#e8a54b",  // Review — amber (agent needs a human answer)
     "review": "#f0c674",        // Review — yellow (done, awaiting sign-off)
@@ -74,8 +73,6 @@
     // Every value MUST carry a description (rendered in the Guide).
     "labels": {
       "values": [
-        "wip",
-        "blocked",
         "bug",
         "feature",
         "task",
@@ -89,8 +86,6 @@
         "blocked-external"
       ],
       "descriptions": {
-        "wip": "DEPRECATED — superseded by the `in-progress` status (single source of truth). Kept so old issues still validate; do not add to new issues.",
-        "blocked": "DEPRECATED as a progress signal — superseded by the `blocked` status. Kept for back-compat; prefer setting status: blocked.",
         "bug": "Behaves differently from intended.",
         "feature": "Net-new capability.",
         "task": "Concrete work that isn't a feature or bug (chore, maintenance).",
@@ -112,7 +107,7 @@
     { "name": "High priority", "filters": { "priority": ["high", "urgent"] } },
     // Presets filter priority/component/labels/assignees — never status (that's
     // the category tabs' job), so this targets the block-related labels.
-    { "name": "Blocked", "filters": { "labels": ["blocked", "blocked-external"] } },
+    { "name": "Blocked", "filters": { "labels": ["blocked-external"] } },
     { "name": "By component", "group": "component" }
   ]
 }

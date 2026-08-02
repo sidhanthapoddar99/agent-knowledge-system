@@ -1,6 +1,5 @@
 ---
 title: "M1 — variation-set section + the four SKILL.md hooks"
-iteration: 1
 ---
 
 ## Goal

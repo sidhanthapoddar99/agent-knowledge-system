@@ -14,7 +14,7 @@ The tracker-root settings file defines the enum values every issue draws from:
   "fields": {
     "priority":  { "values": ["low", "medium", "high", "urgent"], "colors": {...} }, // descriptions optional
     "component": { "values": ["architecture", "components", "..."], "descriptions": {...} }, // descriptions REQUIRED
-    "labels":    { "values": ["wip", "blocked", "feature", "bug", "..."], "descriptions": {...} } // REQUIRED; wip/blocked DEPRECATED
+    "labels":    { "values": ["feature", "bug", "..."], "descriptions": {...} } // descriptions REQUIRED
   },
   "authors": ["sidhantha", "claude"],
   "views": [ "...preset views..." ]
@@ -59,7 +59,16 @@ Keep the descriptions accurate as the taxonomy evolves — a stale gloss is wors
 1. **Tracker-wide** — root `settings.json` (above)
 2. **Per-issue** — values picked from the tracker vocabulary (see [02_per-issue-settings.md](02_per-issue-settings.md))
 3. **Per-subtask** — the `status` field uses the same seven-status vocabulary as issue `status` (one shared field name), tracked independently per subtask (see [23_subtasks.md](../20_sections/23_subtasks.md))
+4. **Per-plan-stage, per-agent-log, per-iteration-file** — the same seven, with agent
+   logs and iteration files using the five that mean something for a run (see
+   [28_plans.md](../20_sections/28_plans.md), [24_agent-logs.md](../20_sections/24_agent-logs.md))
 
-## Don't add scheduling / milestone fields
+## Don't add scheduling or release-bucket fields
 
-This tracker treats scheduling, release-buckets, and single-type fields as project-management primitives that rot under continuous AI-driven shipping. **Don't add them to the vocabulary without an explicit policy reversal** — if a future change makes one genuinely useful, that's a deliberate decision, not an oversight. (Progress and blocking *were* label-only on this same reasoning, until a deliberate 2026-07-02 reversal promoted them to the `in-progress` and `blocked` statuses — the `wip`/`blocked` labels are now deprecated.)
+This tracker treats scheduling, release-buckets and single-type fields as
+project-management primitives that rot under continuous AI-driven shipping. **Don't add
+them to the vocabulary without an explicit policy reversal.**
+
+**Execution state is a status, never a label** — `in-progress`, `blocked` and
+`input-needed` carry it. **Order is a plan**, never a field
+([28_plans.md](../20_sections/28_plans.md)).

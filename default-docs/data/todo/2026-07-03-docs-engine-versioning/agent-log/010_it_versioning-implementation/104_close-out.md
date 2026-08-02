@@ -1,8 +1,7 @@
 ---
 title: "Close-out — shipped, chain-verified, closed"
-iteration: 4
 agent: claude-fable-5
-status: success
+status: done
 date: 2026-07-03
 ---
 

@@ -1,6 +1,5 @@
 ---
 title: "M4 — graphviz/excalidraw pages closed + first-class skills & docs"
-iteration: 4
 agent: claude
 status: done
 date: 2026-07-03

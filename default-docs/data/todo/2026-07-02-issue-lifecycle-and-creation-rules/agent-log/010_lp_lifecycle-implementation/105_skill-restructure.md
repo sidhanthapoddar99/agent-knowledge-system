@@ -1,7 +1,6 @@
 ---
 title: "Milestone 5 — doc-issues skill restructure (subtask 09)"
-iteration: 5
-status: success
+status: done
 ---
 
 ## Goal

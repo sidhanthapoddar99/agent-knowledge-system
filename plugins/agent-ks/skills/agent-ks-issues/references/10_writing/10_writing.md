@@ -20,7 +20,8 @@ each subdoc has its own small schema:
 | `comments/NNN_*.md` | `author` + `date` (YYYY-MM-DD) only — no `title` needed by the loader, but harmless |
 | `subtasks/**.md` | `title` + `status` (one of the 7 statuses) |
 | `notes/**`, `brainstorm/**`, `agent-memory/**` | `title` (+ optional `color:`) |
-| `agent-log/**` milestones | `iteration`, `agent`, `status`, `date` (+ optional `color:`) |
+| `plans/**/NN_<stage>.md` | `title` + `status`, plus `outcome`, `who`, `subtasks:`, `agent-logs:` |
+| `agent-log/**/working/*.md` | `title` + `status` + `agent` (+ optional `date`, `color:`) |
 | any subdoc | optional `color:` — tints the sidebar label, issue-defined meaning |
 
 - `draft: true` hides a file from the production build (works tracker-wide).
@@ -38,8 +39,9 @@ context:
   **bolded lead** then the explanation (what/where/how, concrete paths); `##` groups
   when a flat list outgrows itself; spell out pointers (`<issue>/subtasks/05_x.md`)
   instead of shorthand.
-- **Agent-log milestones**: real `## Goal / Approach / Result / Next` headings with
-  evidence (commits, test counts, paths) — never one run-on paragraph.
+- **Iteration files**: the four-section head — `# Goal / # Inputs / # Expected Outcome
+  / # Outcome`, written by `agent-ks issue new-iteration`. Thin but complete: issues
+  found get one line each plus a pointer, never the write-up in place.
 - **Comments**: a couple of lines + a pointer (the two-paragraph tripwire — see
   [21_comments.md](../20_sections/21_comments.md)).
 - **Decision markers**: date + author decided lines (`**Decided (sidhantha,
@@ -190,6 +192,7 @@ prefix is **optional** for most subdocs:
 |---|---|
 | `subtasks/` | `NN_` or `NNN_` freely (leading digit can annotate a group) — see [23_subtasks.md](../20_sections/23_subtasks.md) |
 | `comments/` | `NNN_` **auto-numbered by the CLI** — the number is the comment id, never hand-gapped |
-| `agent-log/` | `NNN_<code>_<name>/` activities; `0NN` meta; `MNN_` milestones — see [24_agent-logs.md](../20_sections/24_agent-logs.md) |
+| `agent-log/` | `NNN_<code>_<name>/` per run; inside `working/`, `NNN_` where the first two digits are the iteration — see [24_agent-logs.md](../20_sections/24_agent-logs.md) |
+| `plans/` | `NN_<name>/` per plan; `NN_<stage>.md` gap-spaced by ten — see [28_plans.md](../20_sections/28_plans.md) |
 | `brainstorm/`, `notes/` | optional; gap-number only when reading order matters |
 | `agent-memory/` | usually none — name by topic |

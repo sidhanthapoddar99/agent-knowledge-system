@@ -1,7 +1,6 @@
 ---
 title: "Milestone 2 — root-settings schema reshape + tracker Guide modal (subtasks 11 + 12)"
-iteration: 2
-status: success
+status: done
 ---
 
 ## Goal

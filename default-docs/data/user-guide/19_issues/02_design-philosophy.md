@@ -34,14 +34,9 @@ The index sorts by `priority desc, updated desc`. That's the whole signal stack.
 
 Every issue folder is named `YYYY-MM-DD-<slug>`. The date IS the creation date — no separate `created` field, no possibility of disagreement. One source, parsed at load time.
 
-### Progress and blocking are statuses (a deliberate policy reversal)
+### Progress and blocking are statuses, not labels
 
-This tracker originally held a stricter line: the only primary statuses were
-`open / review / closed / cancelled`, and "actively working" / "stuck" were **labels**
-(`wip`, `blocked`), on the theory that transient state goes stale in a tracker field.
-
-That doctrine was **revised** (2026-07-02) for exactly two signals — in-progress and
-blocked — which are now first-class statuses. Two things forced the reversal:
+"Actively working" and "stuck" are **first-class statuses**, not tags. Two reasons:
 
 - **"In progress" must be an explicit signal, not a derived one.** Assignment doesn't
   mean work started; work often starts with nobody assigned. Any progress signal

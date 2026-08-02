@@ -1,6 +1,5 @@
 ---
 title: "M2 — embeds group closed out (skills + user-guide docs)"
-iteration: 2
 agent: claude
 status: done
 date: 2026-07-03

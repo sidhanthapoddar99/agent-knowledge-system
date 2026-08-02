@@ -21,31 +21,40 @@ Every tracker has the same skeleton:
     │   ├── <slug>.md                            ← prefix optional — curated reading order when used
     │   └── <group>/
     │       └── <slug>.md
-    ├── subtasks/                                ← the plan (up to 5 subfolder levels, up to 3 is recommended)
+    ├── plans/                                   ← ORDER — plan folders and nothing else
+    │   └── NN_<name>/                           ← one plan
+    │       ├── settings.json                    ← title + status
+    │       ├── overview.md                      ← RESERVED — the intro, never a stage
+    │       └── NN_<stage>.md                    ← a stage; prefix = order AND id
+    ├── subtasks/                                ← SCOPE — grouped by CATEGORY, not order
     │   ├── NN_<slug>.md                         ← root-level leaf
     │   └── NN_<group>/                          ← grouping folder (label only, no body file)
     │       ├── settings.json                    ← optional — { "title": "..." } display title
     │       ├── NN_<slug>.md                     ← level-1 leaf
     │       └── NN_<subgroup>/
-    │           └── NN_<slug>.md                 ← level-2 leaf (deepest accepted)
-    ├── agent-log/                               ← execution record — activity folders
+    │           └── NN_<slug>.md                 ← level-2 leaf
+    ├── agent-log/                               ← EXECUTION — one folder per run
     │   └── NNN_<code>_<name>/                   ← kind code: lp/au/rf/it/wf (+ custom)
-    │       ├── 00_goal.md                       ← pinned meta (01_summary, 02_task_list …)
-    │       └── 101_<milestone>.md               ← MNN_ milestones, M ≥ 1
+    │       ├── settings.json                    ← optional — { "status": "…" }
+    │       ├── summary.md                       ← REQUIRED — the one conclusive file
+    │       ├── working/                         ← NNN_<name>.md — iteration + producer files
+    │       ├── debrief/                         ← what leaves the run
+    │       └── NNN_<code>_<name>/               ← a child agent log, same shape
     └── agent-memory/                            ← AI working state (mutable, issue-scoped)
         ├── memory.md                            ← the index — read first, pinned first
-        ├── plans/                               ← what's left (live) — optional
-        │   ├── 0NN_plan-<three-words>.md        ← HIGHEST = ACTIVE, one open at a time
-        │   └── 1NN_<standing>.md                ← spans every plan (e.g. questions-to-answer)
-        ├── knowledge/                           ← what's true (mutable in place) — optional
+        ├── knowledge/                           ← what's true (corrected in place) — optional
         │   └── <topic>.md
         └── history/                             ← how we got here (write-once) — optional
             └── <subject>.md
 ```
 
-The three buckets are **lifecycle**, not subject, and you grow into them — most
+The two memory buckets are **lifecycle**, not subject, and you grow into them — most
 issues need only `memory.md` plus a few topic files at its root. See
 [26_agent-memory.md](../20_sections/26_agent-memory.md).
+
+`working` and `debrief` are **reserved names** inside an agent log; anything matching
+`NNN_<code>_<name>/` there is a child agent log
+([24_agent-logs.md](../20_sections/24_agent-logs.md)).
 
 **Folder naming regex:** `^\d{4}-\d{2}-\d{2}-[a-z0-9-]+$` (date + kebab-case slug).
 
@@ -66,5 +75,7 @@ issues need only `memory.md` plus a few topic files at its root. See
 | Issue | `/<tracker>/<issue>` |
 | Subtask | `/<tracker>/<issue>/subtasks/[<group>/[<subgroup>/]]<slug>` |
 | Note | `/<tracker>/<issue>/notes/[<group>/[<subgroup>/]]<slug>` |
+| Plan | `/<tracker>/<issue>/plans/<plan>` — the canonical page, stages inlined |
+| Plan stage | `/<tracker>/<issue>/plans/<plan>/<stage>` — reachable, nothing links to it |
 
 The ordering prefix (`NN_`/`NNN_`) is **stripped from the URL slug** — same as docs (see the `agent-ks-docs` skill's `references/layouts/docs-layout.md`). `subtasks/020_implementation/010_backend.md` → `…/subtasks/implementation/backend`.

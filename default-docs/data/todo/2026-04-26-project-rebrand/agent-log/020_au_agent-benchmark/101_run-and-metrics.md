@@ -1,9 +1,8 @@
 ---
 title: "M1 — benchmark run: raw metrics + graded results"
-iteration: 1
 agent: claude-fable-5
 date: 2026-07-08
-status: success
+status: done
 ---
 
 ## Goal

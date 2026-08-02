@@ -1,7 +1,6 @@
 ---
-iteration: 1
 agent: claude-opus-4-8
-status: success
+status: done
 date: 2026-06-23
 ---
 

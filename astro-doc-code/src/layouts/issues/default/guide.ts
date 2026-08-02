@@ -92,15 +92,23 @@ function guideMarkdown(kinds: Record<string, AgentLogKind>): string {
 
 An issue is one folder — one coherent unit of *thinking + execution*.
 
+**Every section has ONE purpose, and no file stores a fact another file owns.**
+
+| Section | What it is for | In a word |
+|---|---|---|
+| **Overview** | \`issue.md\` + \`settings.json\` — the problem and its metadata | the issue |
+| **Brainstorm** | Initial ideation, and the iterating that follows it | thinking |
+| **Notes** | Finalization — what is settled and binding | conclusions |
+| **Plans** | Grouping, structuring, and the order of execution | order |
+| **Subtasks** | Actionable items, their detail, and links to the notes that scope them | scope |
+| **Agent log** | Where a run is carried out, and where its outcome is recorded | execution + outcome |
+| **Agent memory** | What is worth remembering across this issue | memory |
+| **Comments** | That something happened, and when | events |
+
 - Use whichever sections fit the work — there's **no required order**.
 - Sections below are explained **most-complex-first**, not in workflow order.
-- **Overview** — \`issue.md\` + \`settings.json\`: the problem and its metadata.
-- **Comments** — the flat evolution log: what changed, hand-offs.
-- **Brainstorm** — active deliberation: the *process* of deciding.
-- **Notes** — finalized output + references: the *product*.
-- **Subtasks** — the plan: to-dos with statuses.
-- **Agent log** — the execution record: loops & workflows.
-- **Agent memory** — the AI's issue-scoped working state.
+- **The routing test for any sentence: which of those purposes is it?** One → that's
+  its home. Two → you're about to write it twice.
 - Issue-specific terms + colour conventions → this issue's **Glossary** panel
   (author markdown; suggested sections: *Colour legend* · *Key terms* · *Conventions* —
   tables and pointers over paragraphs).
@@ -110,8 +118,13 @@ its first subtask in one breath. Otherwise it's a **subtask** on an existing iss
 (one-prompt fixes always), a **brainstorm entry** in the issue it informs
 (deliberation never opens its own issue), or a **dump entry** (an \`issue-dump\`
 issue; graduated entries are promoted to real issues and *deleted*, never ticked).
-Routing between sections: thinking in motion → Brainstorm · thinking settled →
-Notes · the plan → Subtasks · how it actually went → Agent log.
+**No record for small work** — a one-line change earns neither a subtask nor an agent
+log; group it against the larger block it belongs to.
+
+The four boundaries that get crossed most: **a subtask defines the work, the agent log
+carries it out** · the plan owns **order**, the subtask owns **what the work is** · a
+note states the **conclusion**, the subtask states **what to do about it** ·
+deliberation stays in Brainstorm, only the conclusion graduates.
 
 The ideal shape at a glance:
 
@@ -127,15 +140,21 @@ YYYY-MM-DD-<slug>/                    ← the issue folder
 │   └── 02_options/…                  ← folder = one multi-file brainstorm
 ├── notes/
 │   └── 01_decided-architecture.md    ← plain NN_<slug>.md — curated order
+├── plans/
+│   └── 01_ship-the-decoder/          ← one plan — ORDER lives here, nowhere else
+│       ├── settings.json             ← title + status
+│       ├── overview.md               ← reserved — the intro, never a stage
+│       └── 10_decoder-swap.md        ← a stage; the prefix is order AND id
 ├── subtasks/
 │   ├── 01_setup.md                   ← title + status frontmatter
-│   └── 02_build/…                    ← group folder — shows done/total
+│   └── 02_build/…                    ← group folder — an AREA, not a phase
 ├── agent-log/
-│   └── 010_lp_implement-x/           ← NNN_<code>_<name>/ — code = kind
-│       ├── 00_goal.md                ← standard 0NN slots (goal/summary/task_list…
-│       ├── 03_working.md             …  03_working · 04_benchmark · 05_notes)
-│       ├── 05_notes.md               ← each a file, or a same-named folder if it grows
-│       └── 101_milestone.md          ← MNN_ + iteration frontmatter → "#1"
+│   └── 010_lp_implement-x/           ← NNN_<code>_<name>/ — one run, one goal
+│       ├── settings.json             ← optional {"status": "…"} — colours the symbol
+│       ├── summary.md                ← the one conclusive file, and the brief
+│       ├── working/010_round.md      ← first 2 digits = iteration, last = file in it
+│       ├── debrief/01_handover.md    ← what leaves the run
+│       └── 020_wf_sub-goal/          ← a child agent log — same shape, recursively
 └── agent-memory/
     ├── memory.md                     ← pinned index — read this first
     └── gotchas.md                    ← topic files, edited in place
@@ -143,48 +162,94 @@ YYYY-MM-DD-<slug>/                    ← the issue folder
 
 ## Agent log
 
-The execution record — autonomous loops & workflows for **long-running work**.
+Where a run is carried out, and where its outcome is recorded. **Execution, not scope.**
 
-- One **activity folder** per run: \`NNN_<code>_<name>/\`.
-  - \`NNN\` orders (2–5 digits, by value) · \`<code>\` is the **kind** · \`<name>\` describes.
+- **An agent log opens when work is delegated, or when it runs over multiple rounds.**
+  Nothing else opens one.
+- One folder per run: \`NNN_<code>_<name>/\` — \`NNN\` orders (2–5 digits, by value) ·
+  \`<code>\` is the **kind** · \`<name>\` describes.
 - Kinds available **in this issue** (symbol shows on the folder row):
 
 ${kindsTable(kinds)}
 
 - Add custom kinds in \`settings.json\` — merged over the defaults above:
   \`"agentLogKinds": { "ex": { "name": "experiment", "icon": "flask", "desc": "…" } }\`
-- Inside an activity folder:
-  - **Standard \`0NN\` slots first** (convention, kept present even when blank):
-    \`00_goal\` · \`01_summary\` · \`02_task_list\` · \`03_working\` (raw byproducts /
-    research the run worked on) · \`04_benchmark\` (comparable measurements) ·
-    \`05_notes\` (run handover — caveats, next-iteration issues, discoveries). Each is
-    a **file, or a same-named folder** when it grows. The set stays open — add more.
-  - **Milestones** — \`MNN_<name>.md\` (M ≥ 1), shown as **#\\<iteration\\>**.
-    A milestone is a substantial completed chunk (~3–6 per activity), not a step —
-    per kind: one per workflow phase · loop iteration (roll up rapid rounds) ·
-    audit stage · refactor move · burst chunk.
-  - Keep **failed** milestones — they're signal.
-- The \`#N\` badge is tinted by \`status\`: grey not-started · blue in-progress ·
-  green success · red failed.
-- Milestone frontmatter:
+- **\`settings.json\`** — optional, per folder: \`{"status": "…"}\` from the canonical
+  seven **minus \`blocked\`/\`review\`**, which colours the kind symbol. Not inherited,
+  so a child may be \`done\` inside a parent still \`in-progress\`. Absent renders grey.
+- **\`summary.md\`** — required, and the one conclusive file. Five \`#\` sections, in
+  order: **State** (live — where the run is right now) · **Goal and Trigger** ·
+  **Task List** (headed by its references) · **Out of Scope** · **Outcome Summary**
+  (one sentence and a link, never a paragraph). \`summary.md\` **is** the brief you
+  point a delegated agent at.
+- **\`working/\`** — one file per **iteration**, plus a file for each agent that
+  produced something substantial. An iteration is a **group** — of subtasks, of
+  executions, of agents — never one agent and never one subtask.
+  - Numbering \`NNN_<name>.md\`: **first two digits = the iteration, last digit =
+    which file within it** (\`0\` = the iteration file, \`1\`–\`9\` = producers).
+  - **A file exists because something was produced, not because an agent ran.**
+  - Flat. A folder only when one producer makes several artifacts.
+- **\`debrief/\`** — what leaves the run: handover, questions, findings, lessons,
+  caveats. Written when noticed, not only at the end. No slot is required to exist.
+- **A child agent log** is any \`NNN_<code>_<name>/\` nested inside — same shape,
+  recursively. The rule: **does it have its own goal?** Yes → child log. No → an
+  iteration file. \`working\` and \`debrief\` are reserved names.
+- Iteration-file frontmatter, and its four-section head:
 
 | Field | Meaning |
 |---|---|
-| \`iteration\` | Drives the \`#N\` badge and ordering — independent of the filename prefix. |
-| \`status\` | \`not-started\` / \`in-progress\` / \`success\` / \`failed\` — tints the badge. |
-| \`agent\` | Which agent ran the chunk. |
-| \`date\` | When it landed. |
+| \`title\` | Display title. |
+| \`status\` | The canonical seven — on a run, \`done\` means **the agent finished**, \`dropped\` means it didn't. What it *concluded* is prose in \`# Outcome\`. |
+| \`agent\` | Who wrote it. For an external tool, name the **tool**. |
+| \`date\` | Optional — when it landed. |
 
-- A flat \`NNN_<name>.md\` at the root still renders (compatibility), but activity
-  folders are the norm.
+  The head is \`# Goal\` · \`# Inputs\` · \`# Expected Outcome\` · \`# Outcome\`. The
+  first three are the work order, written when the file is created; the last is
+  filled when the round lands.
+- **Thin but complete** — issues found get one line each plus a pointer, never the
+  write-up in place. A file is complete because of what it points at.
+
+## Plans
+
+**Order.** A plan is a schedule: what runs when, what blocks what, and the scope of
+this round. Everything else about the work lives in the subtasks its stages reference.
+
+- One plan per folder: \`plans/NN_<name>/\` with \`settings.json\` (title + status),
+  a reserved \`overview.md\`, and \`NN_<stage>.md\` stage files.
+- **The prefix is both the order and the id** — "stage 20". Gap-spaced by ten;
+  inserting **spreads into the gap** rather than filling from one end.
+- **A plan stores no status of its own about the work.** A stage *references* its
+  subtasks and the renderer pulls their live status, so a plan cannot carry a stale
+  count — there is no count stored in it.
+- **The active plan is derived, never stored:** the highest-numbered plan that is not
+  \`done\`/\`dropped\`. It is pinned at the top of the Plans sidebar group.
+- A stage file has no \`# H1\` — the heading is generated. Its frontmatter:
+
+| Field | Meaning |
+|---|---|
+| \`title\` | Stage name; the heading renders as \`<prefix> <title>\`. |
+| \`outcome\` | One line — what "done" means for this stage. |
+| \`who\` | Who it waits on. |
+| \`status\` | The canonical seven. A waiting stage is \`blocked\`, with what it waits on in one line of body. |
+| \`subtasks:\` | Markdown links to the subtasks it schedules — **only these count** in the table. |
+| \`agent-logs:\` | Links to the runs carrying it out. |
+
+- Body: \`## Todo\` and \`## Questions\`. Not every todo needs a subtask.
+- **Closing a plan is yours** — it ends a *schedule*, not a sign-off on work. Write a
+  \`## Closed\` section in \`overview.md\` (what shipped, **what was dropped and why**,
+  the successor) and never edit it again. A closed plan is never deleted.
 
 ## Subtasks
 
-The plan — the *what* (agent-log records the *how*).
+**Scope** — the actionable item and the detail to execute it. A subtask defines the
+work; the **agent log** carries it out; the **plan** says when it runs.
 
 - One to-do per \`NN_<slug>.md\`.
-- Group folders \`NN_<group>/\` = plan chapters — display title in their
-  \`settings.json\`, sidebar shows a **done/total** count.
+- **Grouped by CATEGORY, never by order.** A group folder is an **area** of work — a
+  noun. A number is a stable id and a sort key inside that area. **Neither implies
+  sequence**, and the same subtask may be scheduled by several plans or by none.
+- Group folders \`NN_<group>/\` — display title in their \`settings.json\`, sidebar
+  shows a **done/total** count.
 - Status is the shared lifecycle vocabulary (same as the issue) — **${STATUSES.length} statuses
   in ${CATEGORIES.length} categories**: ${lifecycleLine()}.
   Agents auto-set \`in-progress\`, hand off at \`review\` (or \`input-needed\` with the
@@ -205,16 +270,23 @@ ${statusTable()}
 
 ## Agent memory
 
-AI-mutable working state — durable facts worth not rediscovering.
+**Memory** — what is worth remembering across this issue.
 
-- \`memory.md\` is the **pinned index** — one line per topic; read it first.
-- Topic files hold the facts (\`gotchas.md\`, \`decisions.md\`) — **edited in
-  place**, not appended; wrong memories get corrected or removed.
+- \`memory.md\` is the **pinned index** — one line per topic; read it first. It
+  **routes and stores nothing**; an index that grows a "current state" section
+  competes with the plan and loses silently.
+- Two lifecycle buckets you grow into: \`knowledge/\` (what is true and binding —
+  corrected in place) and \`history/\` (how we got here — write-once). Most issues
+  need only the index and a few topic files at its root.
+- **Precedence when they disagree: \`knowledge/\` > \`history/\`**, and the loser gets
+  corrected rather than left to contradict.
 - Agent-managed and **always-on** — maintained during any work on the issue.
-- **Belongs:** gotchas, dead ends ("this approach failed because…"),
-  expensive-to-find pointers, decisions not to re-litigate.
-- **Doesn't:** anything the repo, git history, or notes already record —
-  memory complements, never mirrors.
+- **Belongs:** gotchas, environment quirks, dead ends ("this approach failed
+  because…"), expensive-to-find pointers.
+- **Doesn't:** the plan (that's Plans), decisions (those are Notes), or anything the
+  repo, git history or notes already record — memory complements, never mirrors.
+- **A superseded section is DELETED, not annotated as stale.** If it's worth keeping,
+  it belongs in \`history/\`.
 
 ## Brainstorm
 
@@ -231,7 +303,10 @@ Active deliberation — the *process* of deciding what to do.
 
 ## Notes
 
-Finalized output + durable references — what we *know*.
+**Conclusions** — what is settled and binding, plus the reference material a decision
+rests on. A note states the conclusion and the one clause of *why*; it does not carry
+the deliberation that produced it (Brainstorm) or the steps that act on it (Subtasks).
+**A note that reads like a work order is a subtask.**
 
 - Plain \`NN_<slug>.md\` — the numbering is the author's **curated reading
   order**, not a timeline.
@@ -276,8 +351,12 @@ The two root artifacts — together they are the Overview page.
   sidebar label — no framework meaning, so document your colours in the
   **Glossary**.
 
-> For the full operating manual — when to log a milestone, the explicit-save
-> rules, worked examples — see the **agent-ks-issues** skill.
+> **Superseded wording is deleted, never kept.** Correct in place; no struck-through
+> text, no "this previously said…". Where the history matters it belongs to the
+> tracker — the issue that made the change — never to the file being corrected.
+>
+> For the full operating manual — the worked examples, the explicit-save rules, the
+> CLI recipes — see the **agent-ks-issues** skill.
 `;
 }
 

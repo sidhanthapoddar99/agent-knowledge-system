@@ -1,7 +1,6 @@
 ---
 title: "Milestone 3 — displayed status inherits review (subtask 10)"
-iteration: 3
-status: success
+status: done
 ---
 
 ## Goal

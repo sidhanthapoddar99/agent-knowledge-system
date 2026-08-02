@@ -1,7 +1,6 @@
 ---
 title: "Iteration 2 — code ↔ user-guide bidirectional audit"
-iteration: 2
-status: success
+status: done
 ---
 
 ## Goal

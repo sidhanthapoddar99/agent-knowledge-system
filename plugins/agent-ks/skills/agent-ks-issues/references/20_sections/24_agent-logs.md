@@ -1,341 +1,491 @@
-# Agent-log — `agent-log/NNN_<code>_<name>/` — **read these first when picking up work**
+# Agent logs — `agent-log/` — execution and outcome
 
-The execution record: how an agent (Claude or otherwise) actually ran the work — for
-observability, resumability, and not repeating failed approaches. **Always read before
-starting work** — past activities may have tried something you'd otherwise repeat.
 
-Agent-logs are for **long-running work**; the first level is **activity folders**, one
-per loop / audit / refactor / etc. That's the ideal structure to reach for by default.
-A flat `NNN_<name>.md` at the root still parses (backward compatibility, quick one-off
-fixes) but is not the going-forward convention.
+**One purpose in two sequential halves:** the run is carried out here, round by round,
+and its outcome lands here when it finishes. It is also your own workspace — somewhere
+to organise, and to continue an iterative loop across rounds.
 
-## The activity folder — `NNN_<code>_<name>/`
+**Read the agent log before starting work.** Don't repeat an approach that already
+failed.
+
+| Holds | Does not hold |
+|---|---|
+| The **concern** — what this run is trying to solve | **The scope.** That is the subtask's |
+| The **reason it was started** — essential for ad-hoc work like an audit, which no subtask covers | The subtask's details, re-typed |
+| The **execution** — each round, what it did, visible while it runs | The **order** of rounds as a schedule — that is the plan's |
+| **What is solved**, and what is not | How the code was edited, step by step |
+| **What broke as a result**, and what problems now exist | Twenty lines explaining two lines of code |
+| **New todos** the run generated | Its own list of micro-steps |
+| A todo list that **references** subtasks or plan stages | |
+
+**The line:** the agent log carries **execution**, not **scope**. Code is easier to do
+than to explain.
+
+## When an agent log opens at all
+
+> **When work is delegated, or when it runs over multiple rounds.**
+
+Nothing else opens one. A change you make inline gets a line in the plan and no folder.
+Without this rule, three files become a three-file floor for a one-line change.
+
+## Vocabulary
+
+| Term | Means |
+|---|---|
+| **agent log** | one folder — `NNN_<kind>_<name>/` — recording one run with one goal |
+| **child agent log** | an agent log nested inside another, for a sub-goal |
+| **iteration** | one coherent round of work — a group of subtasks, executions and agents |
+| **iteration file** | the round's own file in `working/`, written by the orchestrator |
+| **producer file** | a file written by one agent that produced something substantial, beside its iteration file |
+
+## The shape
 
 ```
 agent-log/
-├── 010_lp_implement-limiter/    ← activity folder: NNN_<code>_<name>/
-│   ├── 00_goal.md               ← pinned meta — generic names, kind is on the folder
-│   ├── 01_summary.md            ← outcome TL;DR (written when the run wraps)
-│   ├── 02_task_list.md          ← live checklist / status (update as you go)
-│   ├── 03_working.md            ← raw byproducts worked on (file → 03_working/ if it grows)
-│   ├── 04_benchmark.md          ← comparable measurements (perf/evals/A-B); template below
-│   ├── 05_notes.md              ← run handover — caveats, next-iteration issues, discoveries
-│   ├── 101_token-bucket.md      ← milestone: MNN_<name>, M ≥ 1 → shown "#<iteration> token bucket"
-│   └── 102_redis-backing.md
-├── 020_au_edge-cases/
-└── 030_rf_extract-helper/
+└── NNN_<kind>_<name>/              ← an agent log
+    ├── settings.json               ← optional: status → colours the kind symbol
+    ├── summary.md                  ← REQUIRED. The one conclusive file.
+    ├── working/                    ← one file per iteration, plus producers'
+    │   ├── 010_<round>.md
+    │   ├── 011_<what-it-produced>.md
+    │   └── 020_<round>.md
+    ├── debrief/                    ← what leaves this run
+    │   └── 01_handover.md
+    └── 010_wf_<sub-goal>/          ← a child agent log — same shape, recursively
 ```
 
-- **`NNN`** orders (2–5 digit prefix, by value, gap-spaced); **`<code>`** is the kind;
-  **`<name>`** describes the run.
-- **Pinned `0NN` slots** (no `iteration` frontmatter; each shows its neutral `NN` order prefix in the sidebar, not the status-tinted `#N` badge, which is milestone-only). The
-  recommended **standard set of six** — a convention, not code-enforced — keeps every
-  activity uniform so the next agent knows exactly where each thing lives:
-  `00_goal` · `01_summary` · `02_task_list` · `03_working` (raw byproducts / research /
-  sub-agent reports / scratch / discussion) · `04_benchmark` (comparable measurements) ·
-  `05_notes` (run handover — caveats, issues to fix next iteration, future-useful
-  discoveries). The set stays **open** — add more `0NN` slots (`06_references`, an
-  `attention-needed` escalation file) as a run needs them.
-- **File or folder.** Each slot is a **file** by default (`03_working.md`) and becomes a
-  same-named **folder** (`03_working/…`) only when its content must split across files —
-  common for `03`–`05`. File → pinned row; folder → nested subsection; same `0NN` prefix.
-- **Present even when blank.** By convention the standard slots are kept present even
-  empty — a stub with `title` frontmatter and a short callout stating what the slot is
-  for (and, for `03`–`05`, that it can grow into a folder). A not-applicable slot keeps
-  the stub but says so, so a reviewer sees it was considered, not forgotten. `00`–`02`
-  are near-always filled; `03`–`05` are the ones that most often sit blank-with-callout.
-- **Milestones** are `MNN_<name>.md` with `M ≥ 1` (`101_`, `102_`, … `201_`…): the
-  leading non-zero digit is what separates them from `0NN` slots. Displayed as
-  `#<iteration> <name>` — `iteration` is a frontmatter field independent of the file
-  prefix (prefix orders on disk; `iteration` drives the badge).
-- **Don't scaffold empty *activity* folders** — create an activity on demand; but once
-  an activity exists, the blank-with-callout slots above are the going-forward shape.
+`working` and `debrief` are **reserved names**; anything matching `NNN_<kind>_<name>` is
+a child agent log.
 
-## Kinds — the code in the folder name
+Kind codes: `lp` loop · `au` audit · `rf` refactor · `it` iteration · `wf` workflow.
+Custom codes via `agentLogKinds` in the issue's `settings.json`.
 
-| Code | Kind | Use for |
+### Iteration file, or child agent log?
+
+> **Does it have its own goal?**
+> Yes → **child agent log**, with its own `summary.md`.
+> No, it is work done toward the parent's goal → **iteration file** in `working/`.
+
+That is the only rule. A ten-stage plan gives ten child agent logs; a loop with four
+named goals gives four; the agents running inside any of them give iteration files.
+
+**Nesting may mirror a structure that exists; it may never invent one.** A child agent
+log with no goal of its own is an iteration file wearing a folder.
+
+**Depth budget — the loader silently drops anything deeper than 5 levels below
+`agent-log/`.** Two levels of child agent log is the working ceiling:
+
+| Segment | Level |
+|---|---|
+| agent log — `030_lp_overnight/` | 1 |
+| child agent log — `010_wf_decoder-swap/` | 2 |
+| `working/` | 3 |
+| a producer's artifact folder — `061_research-codecs/` | 4 |
+
+---
+
+# `summary.md`
+
+Always present. **Five `#` sections, in this order. Nothing else.**
+
+| Section | Holds | Changes |
 |---|---|---|
-| `lp` | loop | Autonomous multi-iteration runs toward one goal. |
-| `au` | audit | Systematic review / inspection sweeps. |
-| `rf` | refactor | Structural rework with no behaviour change. |
-| `it` | iteration | Rapid ad-hoc change bursts. |
-| `wf` | workflow | Multi-stage orchestrated pipelines. |
+| **State** | Where this run is right now and what happens next, in a few lines | **Live** — the only section rewritten during the run |
+| **Goal and Trigger** | Purpose in plain language, context, expected outcome. Trigger only when it is not obvious | Written once |
+| **Task List** | The run's checklist, **headed by its references** — the plan stage and subtask this executes against, plus the scoping notes | Ticked as work lands |
+| **Out of Scope** | What this run deliberately does not touch | Written once |
+| **Outcome Summary** | **One sentence and a link.** Never a paragraph | Written at close |
 
-The 5 defaults come free. **Custom kinds** are declared per-issue in `settings.json`
-under `agentLogKinds` — `{ "ex": { "name": "experiment", "icon": "flask" } }`, or
-shorthand `"hf": "hotfix"` for a generic icon. The dictionary only adds/overrides; the
-issue's **Guide panel** lists the effective set (symbol · code · name · use-for).
-Kinds render as a **symbol on the folder row** (name on hover). An unknown two-letter
-code degrades gracefully: no symbol, name keeps the code.
+**State comes first** so opening the file tells you where things are without scrolling.
 
-## Milestone shape
+**`summary.md` IS the brief.** Goal and Trigger + Task List + Out of Scope already *are*
+the brief — point a delegated agent at the file and spend the prompt on the delta.
+Standing rules are referenced from `agent-memory/`, never re-typed. Never write a
+separate brief file.
 
-**The frontmatter below is required on every milestone, written at creation time —
-not optional metadata.** `iteration` is what renders the `#N` badge; a milestone
-without it is malformed (the validator warns). `status` uses the **milestone**
-vocabulary — `not-started | in-progress | success | failed` — never the subtask
-vocabulary (`done` on a milestone is wrong).
+**No notes section.** If it is worth writing, it goes in `debrief/`.
+
+**The one-sentence Outcome Summary is a rule, not a style preference** — it is the seam
+most likely to regrow the whole story.
+
+**The task list is run-local and disposable.** An item that outlives the run becomes a
+subtask.
+
+---
+
+# `working/`
+
+## One iteration, one file — and an iteration is a GROUP
+
+The atomic unit is an **iteration**, not an agent: a coherent round of work covering a
+group of subtasks, executions and agents. The orchestrator writes the iteration file
+from what the round produced.
+
+**A file per agent is not created.** An agent that produced something substantial — an
+audit, a research survey, a measured comparison — gets its own file, because that output
+has to live somewhere and re-typing it is duplication. An agent that did a small piece
+of work returns, and the orchestrator records the outcome in the iteration file.
+
+> **File count scales with what was produced, not with how many agents ran.**
+
+Concurrent producers each write their own file; the iteration file has exactly one
+writer.
+
+## Numbering — `NNN_<task-name>.md`
+
+**First two digits = the iteration. Last digit = which file within it** — `0` for the
+iteration file itself, `1`…`9` for a producer's own file.
+
+```
+working/
+├── 010_audit-round.md              ← iteration 01 — the orchestrator's file
+├── 011_scope-a-byte-surface.md     ←   producer: an audit report
+├── 012_scope-b-blast-radius.md     ←   producer: an audit report
+├── 020_fix-round.md                ← iteration 02 — no producer files needed
+└── 030_battery.md                  ← iteration 03
+```
+
+**`working/` is FLAT.** The numbering already says "this iteration produced several
+files". Add a folder only when a **single producer** makes several artifacts, and then
+it is `NNN_<name>/` holding them.
+
+If a round needs so many agents that a flat `working/` becomes unreadable, that is
+evidence the **goal** should be two child agent logs — not that `working/` should grow a
+tree.
+
+## The iteration-file head
+
+`agent-ks issue new-iteration` writes this for you. Four `#` sections; everything after
+them is free-form.
 
 ```markdown
 ---
-iteration: 1            # → shown as "#1"; independent of the 101_ filename prefix
-agent: claude-opus-4-8
-status: success         # not-started | in-progress | success | failed — tints the #N badge
-date: 2026-06-30
-color: "#7aa2f7"        # optional, user-defined — preserve when editing
+title: "Scope A — the byte surface"
+status: done           # the canonical 7 — see below
+agent: sol             # who wrote it
 ---
 
-# <short milestone title>
+# Goal
+The problem this agent was given, in one or two lines. Stands alone — a reader who
+has opened nothing else understands what was being solved.
 
-## Goal
-What this chunk set out to do.
+# Inputs
+What to read first, as paths. `none` when there are none.
 
-## Approach
-- Key decisions / steps — bullets, not prose.
+# Expected Outcome
+What "done" looks like for this kind of work.
 
-## Result
-- What landed, **with evidence**: commits, test counts, file paths.
-- A **Mermaid or ASCII diagram** when it aids visibility (architecture, flow, before/after).
-
-## Next
-What's next — or `—` if this chunk is closed.
+# Outcome
+What actually came back.
 ```
 
-The `#N` badge tints by `status`: grey `not-started` · blue `in-progress` · green
-`success` · red `failed`. **Failed milestones are kept — they're signal.** When closing
-an issue, the final entry should reference the shipped commit / PR.
+**The orchestrator writes the head** — Goal, Inputs and Expected Outcome are the work
+order, filled in when the file is created. On a producer file the producing agent writes
+Outcome and below, so the file is the assignment *and* the result, and nothing has to be
+restated in a prompt or a return value.
 
-> **Readability is the point.** These logs exist for a human to skim later. Use real
-> `##` headings on their own lines — crammed run-on prose defeats the purpose. The most
-> common way logs get flattened is funnelling them through a `--body "…"` CLI string;
-> **write the file directly instead** (below).
+**`# Inputs` is what stops a review reading half a pair.** Without it, *"read 031–034
+before writing the verdict"* lives only in a prompt, where it leaves no trace that it
+was ever said.
 
-## Every file is structured prose, never a dump
+### `status` means "did the agent finish" — not what it concluded
 
-This applies to **all** activity files — `00_goal.md`, `01_summary.md`,
-`02_task_list.md`, and every milestone — not just milestones:
+| Value | On an iteration file |
+|---|---|
+| `open` | created and assigned, not started |
+| `in-progress` | running |
+| `input-needed` | the agent stopped to ask; the question is in the body |
+| `done` | the agent **finished its assignment** |
+| `dropped` | the agent did **not** finish — crashed, refused, superseded |
 
-- **Set context first.** Each file opens with a sentence or two a cold reader needs:
-  what this run is, why it exists, what decision or subtask it serves (with the
-  pointer spelled out). The reader six weeks from now has none of your session
-  context.
-- **A goal is not a one-liner.** `00_goal.md` states the objective *and* the framing —
-  what triggered it, what "done" looks like, links to the notes/subtask it executes.
-- **A summary is not a bullet dump.** `01_summary.md` opens with what the run was,
-  then what landed (with evidence and pointers) and where things stand.
-- **Even a genuinely small entry gets a little explanation** — a single-line thought
-  becomes two or three sentences with its context, not a bare fragment pasted in.
+**What the run found goes in `# Outcome`.** An audit that finished and found two real
+defects is `status: done` — the agent did its job. An audit refused mid-flight is
+`status: dropped`, with the reason in `# Outcome`.
 
-## Log milestones, not steps
+### What each kind of work unit is expected to produce
 
-One entry per **substantial, noticeable chunk** of completed work — a feature landing,
-a phase finishing, a hard bug fixed. A typical activity produces **~3–6 milestones
-total, regardless of subtask count** — logs are not synced to subtasks. One entry per
-tiny step buries the signal; each milestone should stand alone as a summary a human
-can skim months later.
+| Work unit | Expected Outcome |
+|---|---|
+| **planning** | the ordered task list the later units execute against |
+| **execution** | the change, and what it touched |
+| **audit / review-by-reading** | findings — each with `file:line`, the failure scenario, and whether it was reproduced |
+| **decide** | a verdict per finding: fix / reject / defer / not-ready |
+| **fix** | the fix, and which finding it closes |
+| **research** | findings and a recommendation |
+| **benchmark** | before-and-after numbers, with units |
+| **test / battery** | survivors and kills, the exact command, the collected count |
 
-### The mapping unit — what one milestone corresponds to, per kind
+State it even when it is obvious — it is the line that makes a half-finished file
+legible as half-finished.
 
-The two failure modes are symmetric: logging every step buries the signal, but
-squashing a whole multi-phase run into a single milestone loses the iteration
-points entirely. What "one milestone" means depends on the kind:
+## What the body holds
 
-| Kind | One milestone = | Notes |
-|---|---|---|
-| `wf` workflow | one top-level phase | build / verify / fix each get their own milestone; a trailing audit-and-fix phase is its own; a phase with 5 sub-agents is still **one** milestone — agent counts and per-stream detail go as bullets under Approach/Result |
-| `lp` loop (large iterations) | one loop iteration | 1:1 mapping |
-| `lp` loop (small/rapid) | several iterations rolled up | consolidation threshold is case-by-case; a rolled-up milestone still gets one `iteration:` number |
-| `au` audit | one stage: sweep → findings → fixes | fixes milestone omitted when the audit is read-only |
-| `rf` refactor | one structural move | each Result proves behaviour preserved (tests/build green) |
-| `it` iteration burst | one coherent chunk of the burst | mechanical bursts belong in a subtask checklist instead |
+**Thin but complete: essentials plus references.**
 
-`iteration:` counts sequentially within the activity (1, 2, 3…), independent of
-the `101_` file prefix — the prefix orders on disk, the frontmatter drives the badge.
+- What it did.
+- The outcome in the broad sense, plus benchmark numbers if it produced any.
+- **Issues found: one line each, plus a pointer.** Never the full write-up in place.
 
-### Reference tree — the default shape per kind
+> An iteration file is complete because of what it points at, not because of what it
+> repeats.
 
-**A default, not a straitjacket.** Match this shape unless the run has a reason
-not to; what's non-negotiable is only the invariants (milestone frontmatter, one
-milestone per mapping unit, summary at wrap). Meta files beyond `00_goal.md` are
-add-as-needed; names and counts flex with the run.
+---
+
+# `debrief/` — what leaves the run
+
+```
+debrief/
+├── 01_handover.md          ← conventional landing file
+├── 02_questions-for-sid.md
+└── 03_findings.md
+```
+
+| Content | Example |
+|---|---|
+| **Handover** | what the next run must know to pick this up |
+| **Questions for the user** | a decision the run could not take |
+| **Findings and analysis** | what the run learned, including finished analysis files |
+| **What is fixed and what is not** | the honest state of the change |
+| **Lessons** | what failed and should not be retried |
+| **Mid-run observations** | something noticed while working that matters later, but not now |
+| **Caveats, dead ends, out-of-scope discoveries** | anything deliberately not done |
+
+**Written during the run, not only at the end** — a mid-run observation goes in when it
+is noticed.
+
+`01_handover.md` is a convention, not a mandate. **No slot is required to exist.**
+
+**Anything actionable leaves the log** and becomes a subtask or a dump entry; the
+debrief keeps the pointer. A bug recorded only as log prose dies in the log.
+
+**`debrief/` or the issue's `notes/`?** The test is audience:
+
+| Question | Home |
+|---|---|
+| Does the next run of *this* work need it? | the agent log's `debrief/` |
+| Does anyone touching *this issue* need it, ever? | the issue's `notes/` |
+
+---
+
+# Four cases stated explicitly
+
+**An audit report is an iteration file.** One auditor, one file in `working/`, bound by
+*thin but complete* like any other: findings with `file:line` and the reproduction, one
+line each, detail pointed at rather than inlined. There is no separate `audit/` folder.
+
+**A pair is two files, never one.** Two reviewers on one concern share the iteration
+digits — `011_scope-a-reader.md` and `012_scope-a-executor.md`. Findings merge as a
+**union, not a vote**: one half reproducing a crash is not outvoted by the other half
+finding nothing, and that comparison needs both files.
+
+**An external tool gets a named owner who writes its file.** Where one half cannot write
+into the tracker itself — a separate CLI, a hosted model — a named agent owns the job,
+waits for it to reach a terminal state, and writes the iteration file from the returned
+result. `agent:` names the **tool**, because the finding is the tool's; the owner is
+accountable for the file existing.
+
+**Benchmarks split by weight.** The *numbers* go in the iteration file that produced
+them. The *drivers, traces and raw dumps* go to the code repo's gitignored benchmark
+directory — never the tracker.
+
+# Where research, analysis and diagrams live
+
+| Output | Home |
+|---|---|
+| One producer, several artifacts | `working/NNN_<name>/` — the folder form |
+| A diagram supporting one iteration | `working/NNN_<name>.mmd` beside the iteration file |
+| Analysis the run passes forward | the agent log's `debrief/` |
+| Decision-bearing analysis another run will cite | the issue's `notes/` — the iteration file keeps a one-line pointer |
+| An HTML dashboard or report | the issue's `notes/` — agent-log will not render it |
+| Raw drivers, traces, dumps | the code repo's gitignored benchmark directory |
+
+**The discriminator is audience, not size.**
+
+`agent-log/` renders `.md` plus `.mmd` `.mermaid` `.dot` `.gv` `.excalidraw` as log
+entries. `.html` artifacts render only in `notes/` and `brainstorm/`, so a run that
+produces a dashboard graduates it to the issue's `notes/`.
+
+---
+
+# `settings.json` — status as data
+
+Per agent log and per child agent log. Optional; absent renders grey.
+
+```json
+{ "status": "in-progress" }
+```
+
+- **Vocabulary:** the canonical seven **minus `blocked` and `review`**.
+- **Not inherited.** Each folder's status is set independently — a child may be `done`
+  inside a parent that is still `in-progress`.
+- **Status only.** The kind is the two-letter code in the folder name, which draws the
+  symbol; `settings.json` gives that symbol a colour.
+
+**Two carriers, no overlap:** `settings.json` is per **folder**, frontmatter is per
+**file**. Neither repeats what the folder name already says.
+
+> `done` on an **agent log** means the run finished, and you may set it. `done` on a
+> **subtask** is human-only and means the work is signed off. Same word, same
+> vocabulary, opposite authority.
+
+---
+
+# The worked examples
+
+Two, deliberately. One example alone sets a floor as much as a ceiling.
+
+## The small end — a one-round change, two files
+
+A subtask asked for one validator rule. One round, one executor, nothing produced but
+the change itself.
 
 ```
 agent-log/
-├── 010_wf_feature-build/               ← workflow: 1 milestone per top-level phase
-│   ├── 00_goal.md   01_summary.md   02_task_list.md
-│   ├── 101_research.md                  phase 1 — sub-agents as bullets inside     #1
-│   ├── 102_build.md                     phase 2                                    #2
-│   ├── 103_verify.md                    phase 3 — findings listed                  #3
-│   └── 104_fix.md                       phase 4 — fixes against #3                 #4
-├── 020_lp_harden-loader/               ← loop, large iterations: 1:1
-│   ├── 00_goal.md   01_summary.md   02_task_list.md
-│   ├── 101_baseline.md                                                              #1
-│   └── 102_edge-cases.md                exit condition met                          #2
-├── 030_lp_lint-sweep/                  ← loop, rapid rounds: rolled up
-│   ├── 00_goal.md   01_summary.md
-│   ├── 101_bulk-cleanup.md              round → outcome table inside                #1
-│   └── 102_convergence.md                                                           #2
-├── 040_au_consistency-audit/           ← audit: sweep → findings → fixes
-│   ├── 00_goal.md   01_summary.md
-│   ├── 101_sweep.md                                                                #1
-│   ├── 102_findings.md                  verdicts with evidence                     #2
-│   └── 103_fixes.md                     omit when read-only                        #3
-├── 050_rf_extract-shared-loader/       ← refactor: 1 milestone per structural move
-│   ├── 00_goal.md   01_summary.md   02_task_list.md
-│   ├── 101_extract-core.md              + behaviour-preserved evidence             #1
-│   └── 102_migrate-callers.md                                                      #2
-└── 060_it_polish-burst/                ← iteration burst: 1 per coherent chunk
-    ├── 00_goal.md   01_summary.md
-    ├── 101_theme-desync-fix.md                                                     #1
-    └── 102_full-width-view.md                                                      #2
+└── 040_it_reject-empty-refs/
+    ├── settings.json                   {"status": "done"}
+    ├── summary.md
+    └── working/
+        └── 010_add-the-rule.md
 ```
 
-(`#N` = that file carries `iteration: N` frontmatter.)
+`010_add-the-rule.md`, in full:
 
-**Name milestones by what the chunk did, never by its number** — no
-`iteration-1-…` / `rounds-3-7-…` filenames. The `1NN_` prefix orders on disk and
-`iteration:` renders the `#N` badge; a number in the name is triple redundancy.
-Which rounds a rolled-up milestone covers belongs inside the file, not in its name.
+```markdown
+---
+title: "Add the rule"
+status: done
+agent: claude
+---
 
-## The run rhythm — scaffold, stub, update, wrap
+# Goal
+A plan stage referencing a subtask that no longer exists under-counts silently.
 
-The default lifecycle for a live run. It's a rhythm, not a ritual — collapse
-steps when the run is small (a burst logged after the fact is fine); what must
-survive any adaptation is the invariants: full milestone frontmatter, one
-milestone per mapping unit, summary at wrap.
+# Inputs
+- `subtasks/030_validator/020_broken-refs.md`
 
-1. **Scaffold before starting.** Run
-   `agent-ks issue new-agent-log <issue-id> --kind <code> --name <slug>` — it picks the
-   next gap-spaced `NNN_` prefix and creates `NNN_<code>_<name>/` pre-seeded with all six
-   standard slots (blank + callout; `04_benchmark` carries the full template). Pass
-   `--goal "…"` to fill `00_goal` in one shot. If the issue groups its activities into
-   subfolders (e.g. one long-running series in `agent-log/refactor/`), pass
-   `--group <folder>` — numbering is scoped to that group — and `--prefix <NNN>` when the
-   series numbers sequentially (001, 002, …) instead of gap-spaced. Then fill `00_goal`
-   (what triggered the run, what "done" looks like) and delete the callouts as you fill
-   each slot. (By hand: `ls <issue>/agent-log/` → next value → create the folder and
-   slot files yourself.)
-2. **Stub the milestone when its unit begins** — a phase kicks off, a loop
-   iteration starts: write the `1NN_` file with full frontmatter,
-   `status: in-progress`, and a couple of lines on what it's attempting. Now the
-   badge shows live state, and a dead session still leaves a trace on disk.
-3. **Update it when the unit completes** — flip `status` to `success`/`failed`,
-   fill in Approach / Result (with evidence) / Next. Never one file for the
-   whole run at the end.
-4. **Wrap with `01_summary.md`** — every run, no exceptions; an activity that
-   ends without a summary is unfinished bookkeeping.
+# Expected Outcome
+The change, and what it touched.
 
-### Rich outputs graduate to `notes/` — link, don't inline
+# Outcome
+`check.mjs` errors on an unresolvable `subtasks:` ref; the plan page lists the broken
+refs in red. Mutated the rule to confirm it fires: broken ref → 1 error, exit 1;
+restored → exit 0.
+```
 
-A milestone records *how it went*; it is not the home for the deliverable
-itself. When a run produces something dense and durable — an architecture
-write-up, a settled design, a diagram, an HTML artifact (dashboard, visual
-explainer — built with the **agent-ks-artifacts** sibling skill) — put it in
-`notes/` (or `brainstorm/` if still in flux) and have the milestone link to it.
-Rule of thumb: if a section outgrows its bullets, it's a note wearing a
-milestone's hat.
+**No `debrief/`** — nothing left the run. That is the correct shape, not an unfinished
+one.
 
-### Nothing durable stays trapped in the run — persist as you produce
+## The large end — a plan, an overnight loop, five workflows
 
-The run itself — its transcript, its prompts, an orchestrated agent's return
-value — is **ephemeral**; the tracker is the durable memory. Anything produced
-or discovered inside a run that outlives the run must be written into the issue
-**when it's produced, before or as downstream work consumes it** — not at
-wrap-up. A run that dies mid-flight must not take its reasoning with it, and a
-future session must be able to resume from the tracker alone.
+The scenario: a plan with 8 stages, 4–5 subtasks each. An overnight loop covering stages
+3–5. The loop runs 5 workflows. Each workflow has planning, execution, audit, review,
+fix and benchmark units inside it.
 
-This is an inclusive rule; when in doubt, persist. Route by nature, not by a
-checklist of formats:
+**The mapping decision comes first, because it is the whole answer:**
 
-- **Decision-bearing material → `notes/`** (or `brainstorm/` while still in
-  flux). If a future reader would need it to answer *"why did we do it this
-  way — what did we look at, and what was the thesis?"*, it belongs in `notes/`.
-  Typical shapes, far from exhaustive: research with its sources and data,
-  comparisons/benchmarks/prior art, the rationale behind a decision or
-  conclusion, and the plans or contracts downstream work executes against (API
-  shapes, schemas, specs, file-ownership splits). A workflow whose planner
-  settles a contract writes it to `notes/` before the builders run — the
-  builders' prompts then *point at* the note rather than being its only home.
-- **Run narrative → `agent-log/`** — what was attempted, in what order, what
-  happened, with evidence.
+- **The plan and its 8 stages do not appear in `agent-log/` at all.** A plan is a
+  schedule — order and blocking. `agent-log/` is execution.
+- **The overnight loop is one agent log** — one run, one starting state, one outcome.
+- **Each workflow is a child agent log** — it has its own goal.
+- **The workflow's stages are NOT folders.** They are the iteration digits.
 
-Orchestrated runs (workflows, loops, subagent fan-outs) either have the
-orchestrator write these files or explicitly instruct their agents to — an
-agent's final message is not persistence.
+```
+data/tasks/2026-08-02-nsd-phase-2/
+├── plans/
+│   └── 020_decoder-and-retention/      # the 8 stages: order + what blocks what
+├── subtasks/                           # the 4-5 per stage — filed by CATEGORY, not order
+├── notes/                              # analysis that outlives the run
+└── agent-log/
+    └── 030_lp_overnight-stages-3-5/    # ── the loop: one run, one goal
+        ├── settings.json               #    {"status": "done"}
+        ├── summary.md                  #    State tells you where it got to
+        ├── working/                    #    the LOOP's own files — 1 or 2, no more
+        │   └── 010_round-ledger.md     #      which workflow ran when, why order changed
+        ├── debrief/
+        │   ├── 01_handover.md          #    what the next overnight run must know
+        │   └── 02_questions-for-sid.md #    decisions the loop could not take
+        │
+        ├── 010_wf_s3-decoder-swap/     # ── workflow 1 (serves plan stage 3)
+        │   ├── settings.json
+        │   ├── summary.md              #    this IS the brief the agents were pointed at
+        │   ├── working/                #    FLAT. first 2 digits = iteration, last = file
+        │   │   ├── 010_plan-the-slice.md     # iteration 01
+        │   │   ├── 020_execution.md          # iteration 02 — two executors ran; they
+        │   │   │                             #   produced CODE, so no files of their own
+        │   │   ├── 030_audit-round.md        # iteration 03 — concern + merged verdict
+        │   │   ├── 031_audit-bytes.md        #   producer: the byte-surface report
+        │   │   ├── 032_audit-blast.md        #   producer: the blast-radius report
+        │   │   ├── 040_fix-round.md          # iteration 04 — what was fixed, what was not
+        │   │   ├── 050_bench-before-after.md # iteration 05 — the numbers
+        │   │   └── 060_research-codecs/      # one producer, several artifacts → a folder
+        │   │       ├── 01_findings.md
+        │   │       └── 02_decision-tree.mmd  #   mermaid renders as a log entry
+        │   └── debrief/
+        │       └── 01_handover.md
+        │
+        ├── 020_wf_s3-journal-compat/   # ── workflow 2, same shape
+        ├── 030_wf_s4-retention/        # ── workflow 3 (stage 4)
+        ├── 040_wf_s4-cleanup-accounting/
+        └── 050_wf_s5-concurrency/      # ── workflow 5 (stage 5)
+```
 
-### The `03`–`05` slots — what each holds
+**The plan stage survives as a label, not a folder** — in the workflow's name (`s3`,
+`s4`, `s5`) and in the loop's Task List. A folder would be a second place storing what
+the plan already owns.
 
-The three lower `0NN` slots (each a file, or a same-named folder when it grows):
+What this example teaches:
 
-- **`03_working`** — raw byproducts the run worked on: research, sub-agent reports,
-  scratch analyses, discussion. It's the **raw vs curated** split against the issue's
-  top-level `notes/`: `03_working` is the provenance a note is *built from* (*what you
-  examined*), `notes/` is the synthesis a reader cites (*what you concluded*), and a
-  milestone links both. When a raw report *is itself* the durable citable artifact, it
-  goes straight to `notes/` — `03_working` earns folder-hood only on a raw-then-curate
-  split. Folder files: descriptive names (`research-01_<topic>.md`), each with `title`.
-- **`04_benchmark`** — comparable measurements (perf, evals, A/B). The value is
-  **comparability**, so use a fixed template (Method / Results table / Claim-vs-measured
-  / Artifacts) so a reviewer can scan a whole cycle's trend. Numbers inline in
-  `04_benchmark.md`; promote to a `04_benchmark/` folder only when it produces heavy
-  artifacts (traces, CSVs, before/after screenshots).
-- **`05_notes`** — the run's **handover to the next run**: caveats and gotchas, issues
-  found but deferred, discoveries useful later. Disambiguate: durable output/decisions →
-  issue `notes/`; facts that stay true across runs → `agent-memory/`; run-to-next-run
-  notes → `05_notes`.
+1. A schedule never becomes a folder tree.
+2. Iterations are digits, not directories.
+3. A file exists because something was **produced**, not because an agent ran. Two
+   executors writing code produce one iteration file between them; two auditors writing
+   reports produce two, plus the iteration's own.
+4. One producer making several artifacts is the only reason to nest inside `working/`.
+5. Depth stops at four.
 
-A slot promoted to a folder sits at the activity's **second level**
-(`agent-log/<activity>/03_working/<f>`). The loader allows nesting up to 5 levels, but
-**up to 3 is the recommended convention** — keep slot folders flat (files directly inside)
-unless the content demands more; anything beyond level 5 is warned + ignored. Full template + worked example:
-user-guide `19_issues/05_sub-docs/05_agent-log.md` (the canonical source — when this and
-the user-guide disagree, the user-guide wins).
+---
 
-### Detail bar — reconstructable without the transcript
+# Recipes
 
-Structured prose is the floor; **substance is the bar**. Each milestone (and
-the goal/summary) carries the concrete, line-level specifics a reader needs to
-reconstruct the run with the transcript gone: what was examined, the actual
-findings and verdicts (not "issues were found"), counts and measurements,
-commands run and their outcomes, file paths, and pointers to the evidence. A
-milestone of three vague bullets is malformed even with perfect frontmatter —
-if you can't say what specifically happened, the unit isn't done being logged.
+## Open an agent log
 
-### Optional one-liner convenience
+```bash
+agent-ks issue new-agent-log --issue <id> --kind wf --name ship-the-decoder
+```
 
-`agent-ks issue add-agent-log <issue-id> [--group <activity-folder>] --status …
---body "…"` exists for a **single-line** entry only (e.g. "rebased onto main, harness
-green") — it auto-increments and writes valid frontmatter but **flattens any multi-line
-body into one paragraph**. Never use it for a real milestone.
+Creates the folder with `settings.json` and `summary.md`. `working/` and `debrief/`
+appear when there is something to put in them — git does not track an empty directory,
+so a scaffolded empty folder exists only for whoever ran the command.
 
-## Fast bursts — subtask running-log vs an `it` activity
+## Open the next iteration file
 
-For rapid ad-hoc changes landed in a burst, pick the logging home by how much
-**nuance** each change carries:
+```bash
+agent-ks issue new-iteration --issue <id> --log 030_lp_overnight --name audit-round
+agent-ks issue new-iteration --issue <id> --log 030_lp_overnight --name audit-bytes --producer
+```
 
-- **Low-nuance / mechanical** → one **subtask** used as a running checklist — create
-  once, append a line per change, check them off.
-- **Carries reasoning / decisions** → an agent-log activity of kind **`it`** — the
-  milestone shape preserves what a checklist line would lose.
-- **When ambiguous, ask the user which mode they want** — don't default silently.
+Derives the number — `--producer` attaches to the current iteration (`031`), otherwise
+it opens the next one (`040`) — and writes the head. Fill in Goal, Inputs and Expected
+Outcome **before** the work starts; that is what makes the file a work order rather than
+a report.
 
-## Boundaries
+## Append to a file already open
 
-- **`02_task_list.md` vs `subtasks/`** — subtasks are the issue's durable *plan*
-  (first-class, stateful, counted); an activity's task-list is the working checklist
-  for one run. **Plan vs execution** — never recreate one inside the other.
-- **Working dialogue vs `comments/` vs `brainstorm/`** — durable decisions and
-  hand-offs go to `comments/`; deliberation goes to `brainstorm/` (kind `discuss`).
-  In-run dialogue is saved **only when the user explicitly asks** — offer when it turns
-  dense or decision-bearing, never persist on your own initiative.
-- **`agent-memory/` is not part of agent-log** — it's a first-class sibling section
-  (see [26_agent-memory.md](26_agent-memory.md)): the log records *what happened*,
-  memory holds *what's still true*.
+`agent-ks issue add-agent-log` appends and writes valid frontmatter, but flattens a
+multi-line body into one paragraph. Use it for a genuine one-liner; write anything
+longer directly to the file.
 
-## When NOT to edit
+## Rapid ad-hoc changes
 
-- Don't rewrite history — append; prior milestones stay as written.
-- Don't scaffold empty *activity* folders — create an activity on demand. (Within an
-  activity, the blank-with-callout standard slots are the intended shape, not clutter.)
+Landing several small changes in a burst: group them against the block they belong to.
+If they carry reasoning worth keeping, that is one agent log of kind `it` with one
+iteration file — not one folder per change.
 
-For a worked example of a long autonomous run, see [63_agent-loops.md](../60_examples/63_agent-loops.md).
+# Boundaries
+
+- **Never rewrite history.** Iteration files are write-once by nature; `# State` in
+  `summary.md` is the only live text in an agent log.
+- **`agent-memory/` is not part of `agent-log/`.** The log records what happened; memory
+  holds what is still true ([26_agent-memory.md](26_agent-memory.md)).
+- **The run's task list is not the subtask list.** Subtasks are durable and counted; the
+  task list in `summary.md` is disposable.

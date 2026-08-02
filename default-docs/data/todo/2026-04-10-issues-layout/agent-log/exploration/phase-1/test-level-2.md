@@ -1,7 +1,6 @@
 ---
-iteration: 11
 agent: claude
-status: success
+status: done
 date: 2026-04-29
 ---
 

@@ -1,11 +1,16 @@
-# Comments — `comments/NNN_<slug>.md`
+# Comments — `comments/NNN_<slug>.md` — events
 
-The lean **flat evolution log** of the issue — what changed, status shifts, scope
-changes, hand-offs, supersessions. Like a changelog, **not** a discussion forum: a
-comment records *that* something happened and the hand-off context, never the debate
-that produced it (that's `brainstorm/` — see [25_brainstorm.md](25_brainstorm.md)).
-**Append-only** — never rewrite a prior comment. `comments/` stays flat (no
-subfolders, no threading); the `NNN_` prefix is the comment's `#NNN` id.
+The lean **flat evolution log** of the issue: that something happened, and when.
+
+| Holds | Does not hold |
+|---|---|
+| That something changed — status shifts, scope changes, hand-offs, supersessions | The **debate** that produced it — that is `brainstorm/` |
+| A couple of lines plus a pointer | The **specification** of what changed — that is `notes/` or the subtask |
+| Who the work is now with | A run's narrative — that is the agent log's |
+
+Like a changelog, **not** a discussion forum. **Append-only** — never rewrite a prior
+comment. `comments/` stays flat (no subfolders, no threading); the `NNN_` prefix is the
+comment's `#NNN` id.
 
 **The tripwire: a comment is a couple of lines plus a pointer.** The moment you're
 writing a second paragraph you're in the wrong section — debating belongs in

@@ -1,6 +1,5 @@
 ---
 title: "M2 — read-only Haiku fleet validation + fix pass"
-iteration: 1
 ---
 
 ## Goal

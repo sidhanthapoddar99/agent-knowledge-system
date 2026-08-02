@@ -1,7 +1,6 @@
 ---
-iteration: 2
 agent: claude-opus-4-8
-status: success
+status: done
 date: 2026-07-01
 ---
 # Milestone — sidebar sections + heading icons

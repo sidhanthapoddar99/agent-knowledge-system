@@ -1,9 +1,8 @@
 ---
 title: "M3 — plugin rename: plugins/agent-ks + live-surface sweep + cache repair"
-iteration: 1
 agent: claude-fable-5
 date: 2026-07-08
-status: success
+status: done
 ---
 
 ## Goal

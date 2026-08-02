@@ -1,9 +1,8 @@
 ---
 title: "M2 — worktree-escape fix applied (A: boundary-stop + B: skill mandate)"
-iteration: 1
 agent: claude-fable-5
 date: 2026-07-08
-status: success
+status: done
 ---
 
 ## Goal

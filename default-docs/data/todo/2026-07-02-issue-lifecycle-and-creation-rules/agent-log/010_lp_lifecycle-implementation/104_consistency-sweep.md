@@ -1,7 +1,6 @@
 ---
 title: "Milestone 4 — post-completion consistency sweep (subtask 08)"
-iteration: 4
-status: success
+status: done
 ---
 
 ## Goal

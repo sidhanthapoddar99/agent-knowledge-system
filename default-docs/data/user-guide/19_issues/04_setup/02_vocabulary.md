@@ -72,13 +72,11 @@ The settings file may be plain `settings.json` **or** `settings.jsonc` — JSON 
     },
     "labels": {
       "values": [
-        "wip", "blocked", "bug", "feature", "task", "performance", "refactor",
+        "bug", "feature", "task", "performance", "refactor",
         "docs", "idea", "duplicate", "good-first-issue", "discussion", "blocked-external"
       ],
       // REQUIRED — same rule as component: every value carries a description.
       "descriptions": {
-        "wip":              "DEPRECATED — superseded by the `in-progress` status; kept for back-compat.",
-        "blocked":          "DEPRECATED — superseded by the `blocked` status; kept for back-compat.",
         "bug":              "Behaves differently from intended.",
         "feature":          "Net-new capability.",
         "task":             "Concrete work that isn't a feature/bug.",
@@ -134,7 +132,7 @@ The loader expects these three fields under `fields` at minimum. Adding more is 
 |---|:---:|---|
 | `priority` | — | Urgency (low / medium / high / urgent) |
 | `component` | ✅ | Which part of the codebase / product. Convention is one entry per issue; multi-component is allowed for cross-cutting work |
-| `labels` | ✅ | Everything orthogonal — `wip`, `blocked`, `bug`, `feature`, `docs`, `idea`, … |
+| `labels` | ✅ | Everything orthogonal to lifecycle — `bug`, `feature`, `docs`, `idea`, … Execution state is a **status**, never a label |
 
 The vocabulary shape is the same for single- and multi-select fields — `values: string[]`, an optional (or, for `component` / `labels`, required) `descriptions` map, and optional `colors`. Whether issues consume each value singly or as a list is up to per-issue `settings.json`.
 

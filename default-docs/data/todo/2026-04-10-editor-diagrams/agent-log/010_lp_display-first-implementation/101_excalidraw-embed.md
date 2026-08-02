@@ -1,6 +1,5 @@
 ---
 title: "M1 — excalidraw embed shipped (spike + implementation + verification)"
-iteration: 1
 agent: claude
 status: done
 date: 2026-07-03

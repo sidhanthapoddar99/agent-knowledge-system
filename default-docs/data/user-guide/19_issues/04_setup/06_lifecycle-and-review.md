@@ -145,7 +145,7 @@ See [List View](./ui/list-view) for the full index-page tour.
    `issue.md`, and four subtasks all `open`.
 2. **Pickup** — agent reads `issue.md` + existing agent-log, sets the issue and the first
    subtask to `in-progress`, writes `agent-log/…` scoping the approach.
-3. **Work subtask 01** — agent implements, logs a milestone, flips subtask 01 to `review`.
+3. **Work subtask 01** — agent implements, records the round in its agent log, flips subtask 01 to `review`.
 4. **Continue** — subtasks 02, 03 follow the same pattern; each advances to `review`.
    If the agent needs a decision, it sets that subtask `input-needed` and writes the
    question inline, then moves to the next unblocked subtask.
@@ -181,21 +181,20 @@ Leave the folder on disk — the audit trail is valuable. Don't `rm -rf` dropped
 
 ## Status vs labels
 
-Progress and blocking are now **statuses**, not labels. The old `wip` and `blocked`
-labels are **deprecated** (kept so historical issues still validate, but superseded):
+**Execution state is a status, never a label.**
 
 | Intent | Use |
 |---|---|
-| "Someone's actively on this" | **`status: in-progress`** (not the `wip` label) |
-| "Stuck on another issue/subtask" | **`status: blocked`** (not the `blocked` label) |
+| "Someone's actively on this" | **`status: in-progress`** |
+| "Stuck on another issue/subtask" | **`status: blocked`** |
 | "Stuck on a human's answer" | **`status: input-needed`** (question inline) |
 | "Stuck on an external/third-party dependency" | Label `blocked-external` (still a label — outside the repo) |
 | "Waiting for sign-off" | **`status: review`** |
 | "Decided not to do" | **`status: dropped`** (human, with a comment) |
 
-The rule: the lifecycle status is now the single source of truth for where a piece of
-work stands. Labels remain for genuinely cross-cutting tags (`bug`, `feature`, `docs`,
-`blocked-external`, …).
+The rule: the lifecycle status is the single source of truth for where a piece of work
+stands. Labels are for genuinely cross-cutting tags (`bug`, `feature`, `docs`,
+`blocked-external`, …), and **order is a [plan](../sub-docs/plans)**, never a field.
 
 ## See also
 

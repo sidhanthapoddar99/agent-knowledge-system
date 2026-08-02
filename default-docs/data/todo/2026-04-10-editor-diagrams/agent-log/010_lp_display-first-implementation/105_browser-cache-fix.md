@@ -1,6 +1,5 @@
 ---
 title: "M5 — browser-cache fix + showcase page (review feedback)"
-iteration: 5
 agent: claude
 status: done
 date: 2026-07-03

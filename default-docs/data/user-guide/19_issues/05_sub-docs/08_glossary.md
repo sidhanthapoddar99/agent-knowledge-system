@@ -47,7 +47,7 @@ freely. Prefer **tables and pointers over paragraphs**:
 ### Agent log
 | Colour | Meaning | Example |
 |---|---|---|
-| amber  | milestone to eyeball | agent-log/050_it_ui/101_sizing-tweaks |
+| amber  | round to eyeball | agent-log/050_it_ui/working/010_sizing-tweaks |
 
 ## Key terms
 | Term | Meaning |
@@ -64,7 +64,7 @@ freely. Prefer **tables and pointers over paragraphs**:
   (`var(--color-success)`, …) so tints survive dark/light mode.
 - **Scope tables per anatomy section** (`###` sub-headings: Brainstorm / Agent log /
   Notes / …) whenever a meaning differs by section — blue on a brainstorm row and blue
-  on a milestone are *different vocabularies*. Issue-wide meanings can keep one flat
+  on an iteration file are *different vocabularies*. Issue-wide meanings can keep one flat
   table. The same scoping applies to any glossary section.
 - **Key terms** — issue-specific vocabulary.
 - **Conventions** — badge semantics, naming patterns, prose meaning of custom kinds.

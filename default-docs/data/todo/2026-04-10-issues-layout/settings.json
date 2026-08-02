@@ -5,7 +5,6 @@
   "priority": "high",
   "component": ["layout-issues"],
   "labels": [
-    "wip",
     "feature"
   ],
   "author": "sidhantha",

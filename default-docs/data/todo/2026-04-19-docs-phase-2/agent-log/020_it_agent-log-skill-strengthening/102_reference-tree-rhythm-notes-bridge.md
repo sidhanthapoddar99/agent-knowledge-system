@@ -1,7 +1,6 @@
 ---
-iteration: 2
 agent: claude-fable-5
-status: success
+status: done
 date: 2026-07-08
 ---
 

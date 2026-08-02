@@ -1,7 +1,6 @@
 ---
-iteration: 1
 agent: claude-opus-4-8
-status: failed
+status: dropped
 date: 2026-07-01
 ---
 # Milestone — parallel fan-out (kept as signal)

@@ -1,5 +1,4 @@
 ---
-iteration: 1
 agent: claude-opus-4-8
 status: in-progress
 date: 2026-07-01

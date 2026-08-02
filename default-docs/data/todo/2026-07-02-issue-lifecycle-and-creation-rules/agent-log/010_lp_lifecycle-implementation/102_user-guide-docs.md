@@ -1,7 +1,6 @@
 ---
 title: "Milestone 2 — user-guide docs propagated (subtask 04)"
-iteration: 2
-status: success
+status: done
 ---
 
 ## Goal

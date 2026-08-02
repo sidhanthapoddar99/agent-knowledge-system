@@ -1,9 +1,8 @@
 ---
 title: "M4 — repo move (60) + GitHub URL / folder-name sweep (70) + shallow clones (90)"
-iteration: 1
 agent: claude-fable-5
 date: 2026-07-08
-status: success
+status: done
 ---
 
 ## Goal

@@ -1,7 +1,6 @@
 ---
 title: "Milestone 1 — loop sign-off + subtask 13 CLI fix"
-iteration: 1
-status: success
+status: done
 ---
 
 ## Goal

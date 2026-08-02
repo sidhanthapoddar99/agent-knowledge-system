@@ -1,8 +1,7 @@
 ---
 title: "Policy hardening — never bump past the gate; floor discipline everywhere"
-iteration: 3
 agent: claude-fable-5
-status: success
+status: done
 date: 2026-07-03
 ---
 

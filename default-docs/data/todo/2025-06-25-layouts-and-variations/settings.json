@@ -5,7 +5,6 @@
   "priority": "medium",
   "component": ["layout-general"],
   "labels": [
-    "wip",
     "feature"
   ],
   "author": "sidhantha",

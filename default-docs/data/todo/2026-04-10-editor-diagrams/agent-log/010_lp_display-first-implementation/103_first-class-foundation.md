@@ -1,6 +1,5 @@
 ---
 title: "M3 — first-class loader foundation shipped (mermaid pathfinder)"
-iteration: 3
 agent: claude
 status: done
 date: 2026-07-03

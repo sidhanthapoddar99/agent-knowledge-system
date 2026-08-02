@@ -1,9 +1,8 @@
 ---
 title: "M5 — retire documentation-template: deprecation commit, archive, main promotion"
-iteration: 1
 agent: claude-fable-5
 date: 2026-07-08
-status: success
+status: done
 ---
 
 ## Goal

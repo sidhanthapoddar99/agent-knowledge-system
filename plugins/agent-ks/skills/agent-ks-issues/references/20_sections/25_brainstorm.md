@@ -1,8 +1,17 @@
-# Brainstorm — `brainstorm/NN_[<kind>_]<slug>.md`
+# Brainstorm — `brainstorm/NN_[<kind>_]<slug>.md` — thinking
 
-Active deliberation — research, exploration, discussion, ideation. The *process* of
-deciding what to do; its conclusion graduates into `notes/`. Defined by contrast:
-brainstorm is *what we're figuring out*, notes are *what we know*.
+Initial ideation and the iterating that follows it — research, exploration, discussion.
+The *process* of deciding what to do; its conclusion graduates into `notes/`. Defined by
+contrast: brainstorm is *what we are figuring out*, notes are *what we know*.
+
+| Holds | Does not hold |
+|---|---|
+| The argument, the options, and the ones rejected | The **conclusion** as ground truth — that graduates to `notes/` |
+| Reversals, dead ends, changes of mind | Anything downstream work cites directly |
+| Deliberation about *what to do* | The work itself, or its order |
+
+**Unbounded by design.** This is the one section with no volume rule — argument is what
+it is for.
 
 ## Shape — vocabulary, not architecture
 

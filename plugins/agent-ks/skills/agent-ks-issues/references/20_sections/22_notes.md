@@ -1,18 +1,30 @@
-# Notes — `notes/[<group>/[<subgroup>/]]<slug>.md`
+# Notes — `notes/[<group>/[<subgroup>/]]<slug>.md` — conclusions
 
-**Finalized output + durable references** — the decided approach you build on, plus
-reference material. The *product*, defined by contrast with `brainstorm/`: brainstorm
-is *what we're figuring out*, notes are *what we know*. Content arrives by
-**graduating** out of a resolved brainstorm (the conclusion distilled, the trail left
-behind with a `**Resolved →**` marker), fully formed (a spec, a how-to, a link
-dump), or **out of an executing run** — research, evidence, rationale, or a
-plan/contract produced inside a workflow or loop that a decision or downstream work
-rests on (see the persistence rule in [24_agent-logs.md](24_agent-logs.md)). The
-inclusive test for whether something is a note: would a future reader need it to
-answer *"why did we do it this way?"* or to execute against it? Then it belongs
-here, not in a transcript or prompt. Once here it should be **stable** — a note
-that keeps changing is a brainstorm wearing the wrong hat; demote it back (see
-[25_brainstorm.md](25_brainstorm.md)).
+**What is settled and binding**, plus the reference material a decision rests on.
+Defined by contrast with `brainstorm/`: brainstorm is *what we are figuring out*, notes
+are *what we know*.
+
+| Holds | Does not hold |
+|---|---|
+| The **conclusion**, and the one clause of *why* that stops it reading as arbitrary | The **deliberation** that produced it — that stays in `brainstorm/` |
+| Decisions that outlive a single run | The **steps that act on it** — those are subtasks |
+| Research, evidence and measurements a decision rests on | A detailed account of what to do |
+| Contracts downstream work executes against — API shapes, schemas, ownership splits | The narration of the run that produced it — that is the agent log's |
+
+**The test:** would a future reader need it to answer *"why did we do it this way?"*, or
+to execute against it? Then it is a note — not a transcript, not a prompt.
+
+**A note that reads like a work order is a subtask.** Notes and subtasks both describing
+the same work is the most common duplication in a tracker: the note states the
+conclusion, the subtask states what to do about it.
+
+Content arrives by **graduating** out of a resolved brainstorm (the conclusion
+distilled, the trail left behind with a `**Resolved →**` marker), fully formed (a spec,
+a how-to), or **out of an executing run** — see the persistence rule in
+[24_agent-logs.md](24_agent-logs.md).
+
+Once here a note should be **stable** — one that keeps changing is a brainstorm wearing
+the wrong hat; demote it back (see [25_brainstorm.md](25_brainstorm.md)).
 
 ## Shape
 

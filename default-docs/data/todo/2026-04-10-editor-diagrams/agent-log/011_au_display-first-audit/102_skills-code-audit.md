@@ -1,6 +1,5 @@
 ---
 title: "M2 — skills + code audit (Opus): skills clean, 3 medium code findings"
-iteration: 2
 agent: claude
 status: done
 date: 2026-07-04

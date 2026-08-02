@@ -1,8 +1,7 @@
 ---
 title: "Framework — custom-tags deleted, GFM alerts shipped"
-iteration: 1
 agent: claude-opus-4-8
-status: success
+status: done
 date: 2026-07-03
 ---
 

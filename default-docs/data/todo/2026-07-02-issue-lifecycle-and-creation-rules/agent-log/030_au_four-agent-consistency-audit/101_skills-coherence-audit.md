@@ -1,7 +1,6 @@
 ---
 title: "Iteration 1 — skills coherence audit (agent: skills vs code)"
-iteration: 1
-status: success
+status: done
 ---
 
 ## Goal

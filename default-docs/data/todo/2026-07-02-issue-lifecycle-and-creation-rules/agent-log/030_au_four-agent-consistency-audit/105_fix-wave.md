@@ -1,7 +1,6 @@
 ---
 title: "Iteration 5 — fix wave: all actionable findings closed"
-iteration: 5
-status: success
+status: done
 ---
 
 ## Goal

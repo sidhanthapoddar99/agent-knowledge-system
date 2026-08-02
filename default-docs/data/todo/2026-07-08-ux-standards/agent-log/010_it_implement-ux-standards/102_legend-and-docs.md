@@ -2,8 +2,7 @@
 title: "Guide legend, user-guide updates, dev-docs UX-standards + tooltip pages, CLAUDE.md pointer"
 agent: claude-fable-5
 date: 2026-07-08
-iteration: 2
-status: success
+status: done
 ---
 
 ## Goal

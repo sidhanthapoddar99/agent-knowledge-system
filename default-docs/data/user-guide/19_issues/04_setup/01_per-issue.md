@@ -69,7 +69,7 @@ Backward-compatible: `"component": "live-editor"` is still accepted and normalis
 
 ### `labels`
 
-Multi-select. Use labels for anything orthogonal to status — `wip`, `blocked`, `bug`, `feature`, `refactor`, `docs`, `idea`, etc. You can stack any number.
+Multi-select. Use labels for anything orthogonal to lifecycle — `bug`, `feature`, `refactor`, `docs`, `idea`, etc. You can stack any number. **Execution state is a status, never a label.**
 
 Labels carry the categorical signal — `bug`, `feature`, `refactor`, `docs`, etc. — alongside the orthogonal flags. Real work is usually composite (a perf fix is `bug + performance + refactor`), so multi-select beats a single primary category. See [Design Philosophy](../design-philosophy).
 
@@ -115,7 +115,7 @@ Optional dictionary declaring **custom agent-log kind codes** for this issue. Ea
   "status": "open",
   "priority": "high",
   "component": ["docs"],
-  "labels": ["docs", "task", "wip"],
+  "labels": ["docs", "task"],
   "author": "sidhantha",
   "assignees": ["sidhantha", "claude"]
 }

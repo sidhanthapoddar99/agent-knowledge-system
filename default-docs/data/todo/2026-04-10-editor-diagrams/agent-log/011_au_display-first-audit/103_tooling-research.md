@@ -1,6 +1,5 @@
 ---
 title: "M3 — diagram tooling research (Opus): build the CLI, adopt the renderers"
-iteration: 3
 agent: claude
 status: done
 date: 2026-07-04

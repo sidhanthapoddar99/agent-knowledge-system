@@ -21,18 +21,27 @@ not a project-management tool. An issue is a folder that captures one coherent u
 of *thinking + execution*. The value is the recorded reasoning, not "what's left to
 do".
 
-The natural flow inside an issue (no required order — sections are organized by what
-they *hold*): **deliberate** (`brainstorm/`) → **write down** (`notes/`) → **plan**
-(`subtasks/`) → **execute** (`agent-log/`). `comments/` is the flat evolution log of
-the issue itself; `agent-memory/` is the AI's always-on, issue-scoped working state.
-Subtasks are the AI-handoff units — each one an explicit "did this happen yet?"
-checkbox the next agent (or human reviewer) can pick up cold.
+**Every section has ONE purpose, and no file stores a fact another file owns.**
+
+| Section | Purpose | In a word |
+|---|---|---|
+| `brainstorm/` | Initial ideation, and the iterating that follows it | **thinking** |
+| `notes/` | Finalization — what is settled and binding | **conclusions** |
+| `plans/` | Grouping, structuring, and the order of execution | **order** |
+| `subtasks/` | Actionable items, their detail, and the links to the notes that scope them | **scope** |
+| `agent-log/` | Where a run is carried out, and where its outcome is recorded | **execution + outcome** |
+| `agent-memory/` | What is worth remembering across this issue | **memory** |
+| `comments/` | That something happened, and when | **events** |
+
+The natural flow inside an issue, with no required order: **deliberate**
+(`brainstorm/`) → **write down** (`notes/`) → **scope** (`subtasks/`) → **order**
+(`plans/`) → **execute** (`agent-log/`). Subtasks are the AI-handoff units — each an
+explicit "did this happen yet?" a next agent can pick up cold.
 
 **Ordering is `priority` desc, then recency (`updated`) desc. Recency is derived from
 git** (most recent commit touching any file under the issue folder). `created` comes
-from the folder slug. Transient execution state (actively-working, stuck) is now carried
-by the **status** itself — `in-progress`, `blocked`, `input-needed` — not by a label; the
-old `wip` label is deprecated in place.
+from the folder slug. Execution state (actively-working, stuck) is carried by the
+**status** itself — `in-progress`, `blocked`, `input-needed` — never by a label.
 
 **Best-practice rules** (convention, not enforcement):
 - **One component per issue.** Multi-component is allowed for genuinely cross-cutting
@@ -52,8 +61,8 @@ rot under continuous AI-driven shipping.
 
 ## Lifecycle — 7 statuses, 4 categories & AI rules
 
-**7 statuses in 4 categories**, shared by issue `status` and subtask `status` (one field,
-one vocabulary — both fixed in framework code):
+**7 statuses in 4 categories** — one field, one vocabulary, across issues, subtasks,
+plan stages, agent logs and iteration files. Fixed in framework code:
 
 | Category | Statuses | Notes |
 |---|---|---|
@@ -64,6 +73,10 @@ one vocabulary — both fixed in framework code):
 
 Transitions are **unenforced** — any jump is legal. The category grouping is what the UI
 filters by; the status is the per-row badge.
+
+**Agent logs and iteration files use five of the seven** — `blocked` and `review` mean
+nothing for a run. There, `done` means the agent finished its assignment and `dropped`
+means it did not; what the run *concluded* is prose, never the status.
 
 ### AI rules — the most important rules in the whole skill
 
@@ -115,19 +128,20 @@ contents.
 | [20_issue-md.md](../20_sections/20_issue-md.md) | `issue.md` — the goal/context body |
 | [21_comments.md](../20_sections/21_comments.md) | comments — flat evolution log, **+ add-a-comment recipe** |
 | [22_notes.md](../20_sections/22_notes.md) | notes — finalized output, **+ add-a-note recipe** |
-| [23_subtasks.md](../20_sections/23_subtasks.md) | subtasks — numbering, groups, statuses, **+ create/update recipes** |
-| [24_agent-logs.md](../20_sections/24_agent-logs.md) | agent-log — **activity folders**, kinds, milestones, **+ add-entry recipe** |
+| [23_subtasks.md](../20_sections/23_subtasks.md) | subtasks — **categories**, numbering, statuses, **+ create/update recipes** |
+| [24_agent-logs.md](../20_sections/24_agent-logs.md) | agent-log — the folder shape, iteration files, **+ worked examples** |
 | [25_brainstorm.md](../20_sections/25_brainstorm.md) | brainstorm — kinds, threads, the graduation marker |
 | [26_agent-memory.md](../20_sections/26_agent-memory.md) | agent-memory — index + topic files, always-on rules |
 | [27_guide-and-glossary.md](../20_sections/27_guide-and-glossary.md) | the Guide panel + per-issue `glossary.md` |
-| **`40_operations/` — tools / activity** | |
+| [28_plans.md](../20_sections/28_plans.md) | plans — stages, references, the active plan |
+| **`40_operations/` — tools and operations** | |
 | [41_searching.md](../40_operations/41_searching.md) | search scope, the no-`Grep` rule, subagent patterns |
 | [42_updating.md](../40_operations/42_updating.md) | creation rules (litmus test, dump), duplicate-check, validating |
 | [43_moving-restructuring.md](../40_operations/43_moving-restructuring.md) | `agent-ks move` + promoting/splitting/merging issues |
 | **`60_examples/` — worked examples** | |
 | [61_multiple-subtasks.md](../60_examples/61_multiple-subtasks.md) | a standard implementation issue with several subtasks |
 | [62_research-focused.md](../60_examples/62_research-focused.md) | a research/design issue — heavy deliberation, few code subtasks |
-| [63_agent-loops.md](../60_examples/63_agent-loops.md) | an issue worked across many agent-log iterations |
+| [63_agent-loops.md](../60_examples/63_agent-loops.md) | an issue worked across many rounds of agent work |
 | [64_phase-index.md](../60_examples/64_phase-index.md) | the phase / index issue — subtasks promoted to their own issues |
 
 ---

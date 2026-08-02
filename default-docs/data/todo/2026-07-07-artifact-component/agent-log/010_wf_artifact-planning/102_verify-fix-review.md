@@ -1,5 +1,4 @@
 ---
-iteration: 2
 title: "Milestone — adversarial verify, fixes, main-session review"
 status: done
 ---

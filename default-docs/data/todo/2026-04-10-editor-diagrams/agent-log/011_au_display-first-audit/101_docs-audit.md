@@ -1,6 +1,5 @@
 ---
 title: "M1 — docs audit (Haiku fleet: user-guide, dev-docs, audience split)"
-iteration: 1
 agent: claude
 status: done
 date: 2026-07-04

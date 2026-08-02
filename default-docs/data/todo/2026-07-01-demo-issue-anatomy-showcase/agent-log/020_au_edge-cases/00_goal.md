@@ -1,6 +1,6 @@
 ---
 agent: claude-opus-4-8
-status: success
+status: done
 date: 2026-07-01
 ---
 # Goal — audit the layout edge cases

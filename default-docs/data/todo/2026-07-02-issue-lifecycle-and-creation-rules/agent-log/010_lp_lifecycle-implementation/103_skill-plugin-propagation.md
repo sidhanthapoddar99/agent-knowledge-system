@@ -1,7 +1,6 @@
 ---
 title: "Milestone 3 — skill-plugin propagation + CLI naming unification (subtask 06)"
-iteration: 3
-status: success
+status: done
 ---
 
 ## Goal

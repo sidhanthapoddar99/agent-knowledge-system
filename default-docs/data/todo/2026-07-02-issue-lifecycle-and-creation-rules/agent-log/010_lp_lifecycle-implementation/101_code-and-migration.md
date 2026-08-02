@@ -1,7 +1,6 @@
 ---
 title: "Milestone 1 — code + migration landed (subtasks 03 + 07)"
-iteration: 1
-status: success
+status: done
 ---
 
 ## Goal

@@ -1,8 +1,7 @@
 ---
 title: "Version gate live in the engine"
-iteration: 1
 agent: claude-fable-5
-status: success
+status: done
 date: 2026-07-03
 ---
 

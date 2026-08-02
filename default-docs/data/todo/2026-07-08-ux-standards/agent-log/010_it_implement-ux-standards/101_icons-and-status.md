@@ -2,8 +2,7 @@
 title: "File-type icons on both sidebars + completed status icon set"
 agent: claude-fable-5
 date: 2026-07-08
-iteration: 1
-status: success
+status: done
 ---
 
 ## Goal

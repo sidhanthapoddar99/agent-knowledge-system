@@ -1,7 +1,6 @@
 ---
 title: "Iteration 3 — error ↔ migration ↔ guide.ts coherence audit"
-iteration: 3
-status: success
+status: done
 ---
 
 ## Goal

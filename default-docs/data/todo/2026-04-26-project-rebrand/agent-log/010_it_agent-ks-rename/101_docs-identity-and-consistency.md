@@ -1,6 +1,5 @@
 ---
 title: "M1 — subtasks 20/30/40: identity sweep, open-issue consistency, legacy note"
-iteration: 1
 ---
 
 ## Goal

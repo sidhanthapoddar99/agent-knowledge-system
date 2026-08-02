@@ -1,7 +1,6 @@
 ---
 title: "Iteration 4 — assignees-history narration sweep"
-iteration: 4
-status: success
+status: done
 ---
 
 ## Goal

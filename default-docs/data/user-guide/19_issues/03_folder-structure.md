@@ -78,10 +78,11 @@ Examples:
 │       └── 02_polish/                         ← level-2 group
 │           └── 01_styles.md
 ├── agent-log/                       ← execution record (optional)
-│   └── 010_lp_implement-x/                    ← activity folder: NNN_<code>_<name>/
-│       ├── 00_goal.md                         ← pinned meta files
-│       ├── 01_summary.md
-│       └── 101_milestone.md                   ← MNN_ + iteration frontmatter → "#1"
+│   └── 010_lp_implement-x/                    ← an agent log: NNN_<code>_<name>/
+│       ├── settings.json                      ← optional {"status": "…"}
+│       ├── summary.md                         ← the one conclusive file
+│       ├── working/010_round.md               ← first 2 digits = iteration, last = file
+│       └── debrief/01_handover.md             ← what leaves the run
 └── agent-memory/                    ← AI working state (optional)
     ├── memory.md                              ← pinned index — routes, never stores
     ├── plans/                                 ← what's left (live)
@@ -102,7 +103,8 @@ Examples:
 | `brainstorm/` | — | Active deliberation — the *process* of deciding. `NN_<kind>_<slug>.md` with optional full-word kinds; folder = one brainstorm. See [Brainstorm](./sub-docs/brainstorm). |
 | `notes/` | — | Finalized output + durable references — the *product*. **Up to 5 levels (up to 3 recommended).** See [Notes](./sub-docs/notes). |
 | `subtasks/` | — | The plan — atomic units of work with `NN_<slug>.md` naming and frontmatter state. **Up to 5 levels of grouping subfolders (up to 3 recommended)** — folder = label only (sidebar shows its **done/total**), leaves are first-class subtasks. See [Subtasks](./sub-docs/subtasks). |
-| `agent-log/` | — | Execution record — `NNN_<code>_<name>/` **activity folders** (kind code in the name), pinned `0NN_` meta files + `MNN_` milestones inside. Flat files parse for backward compat only. See [Agent Log](./sub-docs/agent-log). |
+| `plans/` | — | **Order** — `NN_<name>/` plan folders, each with `overview.md` and `NN_<stage>.md` stages that reference the subtasks they schedule. See [Plans](./sub-docs/plans). |
+| `agent-log/` | — | **Execution + outcome** — `NNN_<code>_<name>/` per run (kind code in the name), holding `summary.md`, `working/` and `debrief/`. See [Agent Log](./sub-docs/agent-log). |
 | `agent-memory/` | — | AI-mutable working state — a pinned `memory.md` index that **routes and never stores**, plus up to three **lifecycle** buckets: `plans/` (what's left — `0NN_plan-<slug>.md`, highest is active, one open at a time), `knowledge/` (what's true), `history/` (how we got here, write-once). Grow into them. See [Agent Memory](./sub-docs/agent-memory). |
 
 ### Subfolder rules (`subtasks/`, `notes/`, `brainstorm/`, `agent-memory/`, `agent-log/`)
@@ -121,10 +123,10 @@ All content sections except `comments/` accept nested subfolders up to 5 levels 
 
 **Notes / brainstorm / agent-memory specifics:**
 - Folder + file names are freeform; the `NN_` prefix is optional. Brainstorm files can carry a full-word kind (`NN_<kind>_<slug>.md`); agent-memory's `memory.md` pins first in the sidebar.
-- **One exception where numbering is load-bearing:** `agent-memory/plans/` reserves `0NN_` for the plan sequence (highest number = the active plan) and `1NN_` for standing files that span every plan. Memory is a map everywhere else — this one folder is a sequence.
+- **Two places where numbering is load-bearing:** a plan's stage prefix is both its **order and its id** ("stage 20"), and inside an agent log's `working/` the first two digits are the **iteration** while the last is which file within it. `agent-memory/` is a map, so numbering there is pointless.
 
 **Agent-log specifics:**
-- The first level is **activity folders** `NNN_<code>_<name>/` — the 2-letter code is the kind (symbol in the sidebar; mapping via `agentLogKinds` in `settings.json`). Inside: `0NN_` meta files pin to the top (showing their `NN` prefix, no status tint), `MNN_` milestones show `#<iteration>` tinted by `status`.
+- The first level is one folder per run, `NNN_<code>_<name>/` — the 2-letter code is the kind (symbol in the sidebar; mapping via `agentLogKinds` in `settings.json`), tinted by that folder's optional `settings.json` status. Inside: `summary.md` pins first, then the reserved `working/` and `debrief/` folders, then any **child agent log** — anything else matching `NNN_<code>_<name>/`.
 
 `comments/` stays flat — it doesn't accept subfolders.
 

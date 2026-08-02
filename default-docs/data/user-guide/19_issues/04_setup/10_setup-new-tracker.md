@@ -82,7 +82,7 @@ Some guidance:
 |---|---|---|
 | `priority` | "How urgent is this?" | `low / medium / high / urgent` — 4 levels is plenty |
 | `component` | "Which part of the system?" | Match your team's mental model — `frontend / backend / infra`, or `auth / payments / profile`, etc. |
-| `labels` | "Cross-cutting tags" | Status-adjacent flags (`wip`, `blocked`), type tags (`bug`, `feature`), quality (`good-first-issue`) |
+| `labels` | "Cross-cutting tags" | Type tags (`bug`, `feature`), quality (`good-first-issue`), external dependencies (`blocked-external`). **Never execution state** — that is a status |
 
 Stick to the four enum fields above. The schema is intentionally narrow — `priority` + `status` are the ordering signals; `labels` carry composite categorical work; `updated` is derived from git. Don't add scheduling or release-bucket fields without an explicit policy reversal — they tend to rot under continuous AI-driven shipping. See [Design Philosophy](./design-philosophy).
 
@@ -222,7 +222,7 @@ Most projects need exactly one tracker (`todo/`). Cases where two makes sense:
 | `roadmap/` | Public-facing roadmap — what's planned, what's shipping |
 | `ideas/` | Idea parking lot — `draft: true` at root, never promoted to prod |
 
-Each tracker has its own vocabulary. A bug tracker might have `labels: [reproduced, needs-repro, regression]` — semantically different from the engineering `labels: [wip, blocked, feature]`.
+Each tracker has its own vocabulary. A bug tracker might have `labels: [reproduced, needs-repro, regression]` — semantically different from the engineering `labels: [feature, refactor, docs]`.
 
 **Don't split unnecessarily.** If you can't articulate a reason the same vocabulary wouldn't serve both, keep them together.
 

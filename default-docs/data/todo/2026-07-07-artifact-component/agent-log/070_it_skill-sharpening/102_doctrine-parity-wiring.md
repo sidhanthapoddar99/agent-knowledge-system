@@ -1,6 +1,5 @@
 ---
 title: "M2 — design-memory doctrine, vocab preference, README, parity + records"
-iteration: 1
 ---
 
 ## Goal

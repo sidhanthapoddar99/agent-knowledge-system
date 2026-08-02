@@ -1,7 +1,6 @@
 ---
-iteration: 12
 agent: claude
-status: failed
+status: dropped
 date: 2026-04-29
 ---
 

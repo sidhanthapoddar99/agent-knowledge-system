@@ -1,6 +1,5 @@
 ---
 title: "M4 — gap fixes: dev-docs internals written, skills de-historied, lean-skills rule"
-iteration: 4
 agent: claude
 status: done
 date: 2026-07-04

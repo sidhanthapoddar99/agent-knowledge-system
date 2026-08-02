@@ -1,6 +1,6 @@
 ---
 name: agent-ks-issues
-description: Use this skill for ANY work in an agent-knowledge-system issue tracker (data/todo/ or any folder-per-issue tracker) — creating, updating, searching, or restructuring issues, subtasks, comments, brainstorms, notes, agent-logs, agent-memory, glossaries, the tracker vocabulary (settings.json/.jsonc), review queues, and the issues dump. It ALSO fires on the execution verbs against a tracked issue — "audit this", "refactor this", run a loop / ultracode / autonomous or iterative run, "let's discuss this point" — and whenever agent progress (goals, task-lists, milestones) or issue-scoped agent memory should be recorded. Trigger eagerly whenever the user mentions issues, tickets, subtasks, the tracker, backlogs, priorities, components, labels, lifecycle states, or any file under a tracker folder — even if they don't say "issue tracker" explicitly. For docs pages, blog posts, site configuration, themes, images, or markdown writing OUTSIDE the tracker, use the agent-ks-docs skill instead.
+description: Use this skill for ANY work in an agent-knowledge-system issue tracker (data/todo/ or any folder-per-issue tracker) — creating, updating, searching, or restructuring issues, subtasks, comments, brainstorms, notes, plans, agent-logs, agent-memory, glossaries, the tracker vocabulary (settings.json/.jsonc), review queues, and the issues dump. It ALSO fires on the execution verbs against a tracked issue — "audit this", "refactor this", run a loop / ultracode / autonomous or iterative run, "let's discuss this point" — and whenever agent progress (goals, task lists, rounds of work) or issue-scoped agent memory should be recorded. Trigger eagerly whenever the user mentions issues, tickets, subtasks, the tracker, backlogs, priorities, components, labels, lifecycle states, or any file under a tracker folder — even if they don't say "issue tracker" explicitly. For docs pages, blog posts, site configuration, themes, images, or markdown writing OUTSIDE the tracker, use the agent-ks-docs skill instead.
 ---
 
 # agent-ks-issues — the issue-tracker skill
@@ -47,26 +47,61 @@ The tracker is **comprehensive memory of thought-work for AI-augmented developme
 not a project-management tool. An issue is a folder capturing one coherent unit of
 *thinking + execution*; the value is the recorded reasoning, not "what's left to do".
 
-The natural flow (no required order — sections are organized by what they *hold*):
-**deliberate** (`brainstorm/`) → **write down** (`notes/`) → **plan** (`subtasks/`) →
-**execute** (`agent-log/`), with `comments/` as the flat evolution log of the issue
-itself and `agent-memory/` as the always-on, agent-owned working state.
+### The one rule underneath everything
 
-| Section | Owner | Lifecycle | Holds |
+> **No file stores a fact another file owns.**
+
+Every section has **one** purpose. Write each fact in the section that owns it, and
+point at it from anywhere else that needs it.
+
+| Section | What it is for | In a word | Reference |
 |---|---|---|---|
-| `issue.md` + `settings.json` | both | — | Problem, context, metadata ([20](references/20_sections/20_issue-md.md), [02](references/00_anatomy/02_per-issue-settings.md)) |
-| `brainstorm/` | human + AI | in-flux | Active deliberation ([25](references/20_sections/25_brainstorm.md)) |
-| `notes/` | human + AI | finalized | Finalized output + references ([22](references/20_sections/22_notes.md)) |
-| `subtasks/` | both | plan | The checklist of what's to be done ([23](references/20_sections/23_subtasks.md)) |
-| `agent-log/` | AI | append-only | Execution record, activity folders ([24](references/20_sections/24_agent-logs.md)) |
-| `agent-memory/` | AI | mutable | Issue-scoped agent working state ([26](references/20_sections/26_agent-memory.md)) |
-| `comments/` | both | append, flat | Evolution log, not a forum ([21](references/20_sections/21_comments.md)) |
-| `glossary.md` (optional) | human | — | This issue's colour legend / terms ([27](references/20_sections/27_guide-and-glossary.md)) |
+| `issue.md` + `settings.json` | The problem, its context, its metadata | **the issue** | [20](references/20_sections/20_issue-md.md) · [02](references/00_anatomy/02_per-issue-settings.md) |
+| `brainstorm/` | Initial ideation, and the iterating that follows it | **thinking** | [25](references/20_sections/25_brainstorm.md) |
+| `notes/` | Finalization — what is settled and binding | **conclusions** | [22](references/20_sections/22_notes.md) |
+| `plans/` | Grouping, structuring, and the order of execution | **order** | [28](references/20_sections/28_plans.md) |
+| `subtasks/` | Actionable items, their detail, and the links to the notes that scope them | **scope** | [23](references/20_sections/23_subtasks.md) |
+| `agent-log/` | Where a run is carried out, and where its outcome is recorded | **execution + outcome** | [24](references/20_sections/24_agent-logs.md) |
+| `agent-memory/` | What is worth remembering across this issue | **memory** | [26](references/20_sections/26_agent-memory.md) |
+| `comments/` | That something happened, and when | **events** | [21](references/20_sections/21_comments.md) |
+| `glossary.md` (optional) | This issue's colour legend / terms | — | [27](references/20_sections/27_guide-and-glossary.md) |
 
-Ordering is `priority` desc, then recency (`updated`, derived from git) desc; `created`
-comes from the folder slug. Transient execution state ("actively working", stuck) is now
-carried by the **status** itself (`in-progress`, `blocked`, `input-needed`), not a label —
-the old `wip` label is deprecated in place.
+**Routing test, for any sentence you are about to write: which of those purposes is
+it?** One → that is its home. Two → you are about to write it twice; split it, or you
+have it in the wrong file.
+
+`agent-log/` is the only section that carries two purposes, and they are sequential
+rather than overlapping: the run is executed there, and its outcome lands there.
+
+Each `references/20_sections/` page opens with a **Holds / Does not hold** table. Read
+the "does not hold" half — it is the half that stops duplication.
+
+### The four boundaries that get crossed most
+
+| Boundary | The line |
+|---|---|
+| `subtasks/` ↔ `agent-log/` | **A subtask defines the work; the agent log carries it out.** Scope in one, execution in the other |
+| `plans/` ↔ `subtasks/` | The plan owns **order and blocking**; a subtask owns **what the work is**. A subtask never states when it runs |
+| `notes/` ↔ `subtasks/` | A note states the **conclusion**; the subtask states **what to do about it**. A note that reads like a work order is a subtask |
+| `brainstorm/` ↔ `notes/` | Deliberation stays in `brainstorm/`; only the conclusion graduates |
+
+Ordering on the index is `priority` desc, then recency (`updated`, derived from git)
+desc; `created` comes from the folder slug. Execution state (actively working, stuck) is
+carried by the **status**, not a label.
+
+### Superseded wording is deleted, never kept
+
+Correct in place and keep nothing. No struck-through text, no *"this previously
+said…"*, no annotated-stale section. Where the history matters it belongs to the
+tracker — the issue that made the change — never to the file being corrected.
+
+This applies to what is already there, not only to what you write next: when you edit
+a file and find a historical aside, **delete it**.
+
+### Content that does not contribute is deleted
+
+Nothing has to be kept. Delete it when it does not contribute to the issue, was never
+implemented, or is redundant.
 
 ## Creation rules — when a thought earns what
 
@@ -81,12 +116,8 @@ breath?** If not, it isn't an issue yet — it's one of:
   never opens its own issue);
 - a **dump entry** if it has no home yet (see below).
 
-**Routing between sections** — two questions, four boxes:
-
-| | In motion | Settled |
-|---|---|---|
-| **Thinking** | `brainstorm/` | `notes/` |
-| **Doing** | `subtasks/` (the plan) | `agent-log/` (how it went) |
+**No record for small work.** A one-line change earns neither a subtask nor an agent
+log. Group small changes against the larger block they belong to.
 
 **Graduation:** a brainstorm graduates into `notes/` the moment something downstream
 needs to cite its conclusion — mark it `**Resolved →** <target>` and leave the trail in
@@ -101,6 +132,10 @@ one-line body is acceptable only for a genuinely one-line mechanical task. Detai
 exists only in a conversation, a workflow prompt, or an agent's plan does not count as
 scoped work; the subtask (or a note it links to) is where that detail lives. Full
 contract: [23_subtasks.md](references/20_sections/23_subtasks.md).
+
+**Subtasks are filed by CATEGORY, never by order.** A group is an *area* of work; a
+number is a stable id and a sort key inside that area. Neither implies sequence — order
+lives in a plan, and the same subtask may appear in several plans or in none.
 
 **Comments tripwire:** a comment records *that* something happened, in a couple of
 lines plus a pointer. Writing a second paragraph? You're debating (→ brainstorm) or
@@ -118,8 +153,9 @@ entry graduates to a real issue exactly when it passes the litmus test — and i
 
 ## Lifecycle — statuses & AI rules
 
-**7 statuses in 4 categories** (issues and subtasks share one vocabulary and one field,
-`status`; both fixed in framework code — a tracker overrides only colors):
+**One status vocabulary across the whole tracker** — issues, subtasks, plan stages,
+agent logs and iteration files all use these seven values in the `status` field. Fixed
+in framework code; a tracker overrides only colors.
 
 | Category | Statuses |
 |---|---|
@@ -128,90 +164,134 @@ entry graduates to a real issue exactly when it passes the litmus test — and i
 | **Review** | `input-needed` (stuck, question inline) · `review` (done, awaiting sign-off) |
 | **Closed** | `done` · `dropped` |
 
+**Agent logs and iteration files use five of the seven** — `blocked` and `review` mean
+nothing for a run. On a run, `done` means *the agent finished its assignment* and
+`dropped` means it did not (crashed, refused, superseded). **What the run concluded is
+prose in `# Outcome`, never the status.** An audit that finished and found two real
+defects is `status: done`.
+
 The AI rules are the most important rules in this skill:
 
 1. **Manage `in-progress` yourself; hand off at the Review category, never `done`.** Set
    `in-progress` when you start executing. Your ceiling is `review` (or `input-needed`) —
-   `done`/`dropped` are **human-only** transitions. Hand off with a verifiable artefact
-   (PR, diff, screenshot, test output).
-2. **Hit a wall → `input-needed`, not `blocked`.** Write the actual question **inline in
+   `done`/`dropped` are **human-only** transitions on an issue or subtask. Hand off with
+   a verifiable artefact (PR, diff, screenshot, test output).
+2. **`done` on an agent log is yours to set.** Same word, opposite authority: an agent
+   log is your record of your own run, so you close it. Never self-certify a subtask.
+3. **Hit a wall → `input-needed`, not `blocked`.** Write the actual question **inline in
    the subtask/issue body** so a fresh session sees it; reserve `blocked` for a structural
    dependency on another issue/subtask.
-3. **Default search scope is everything not Closed** (open, blocked, in-progress,
+4. **Default search scope is everything not Closed** (open, blocked, in-progress,
    input-needed, review) — skip the Closed category (`done`/`dropped`) unless explicitly asked.
-4. **Review-debt promotion:** an active (non-closed) issue with any subtask in the
+5. **Review-debt promotion:** an active (non-closed) issue with any subtask in the
    **Review category** (`review` or `input-needed`) surfaces as "needs review" — it lands on
    the Review tab and **displays a `review` badge on the index** (display-only; the stored
    status is unchanged and the CLI/`--json` still report it, reverting once the subtask moves
    on). `blocked` never promotes — it rests, reason read in place.
-5. **`dropped` requires a comment** explaining why, first (human-only).
+6. **`dropped` requires a comment** explaining why, first (human-only).
 
-## Executing work — agent-log, memory, discussion
+## Executing work — plans, agent logs, memory
 
-When you run substantive work against an issue (a loop, audit, refactor, or any dense
-execution), record it in `agent-log/` as an **activity folder** —
-`NNN_<code>_<name>/` with the kind code in the folder name (`lp` loop · `au` audit ·
-`rf` refactor · `it` iteration · `wf` workflow; custom codes via `agentLogKinds` in the
-issue's `settings.json`). Inside: `00_goal.md` / `01_summary.md` / `02_task_list.md`
-meta files, then `MNN_` milestone files (`101_…`, `102_…`).
+### Plans — where order lives
 
-- **Read the agent-log before starting work** — don't repeat failed approaches.
-- **Log milestones, not steps** (~3–6 per activity), keep failed ones, **write files
-  directly** with real `## Goal / Approach / Result / Next` headings — never funnel a
-  multi-line body through `--body "…"`.
-- **One milestone per natural unit of the kind** — `wf`: one per top-level phase
-  (build / verify / fix each get their own — never one file for the whole run);
-  `lp`: one per iteration (roll up small/rapid rounds); `au`: sweep → findings →
-  fixes; `rf`: one per structural move; `it`: one per coherent chunk. Sub-steps are
-  bullets inside a milestone, never their own files. **Default rhythm** (flex it,
-  keep the invariants): scaffold folder + goal before starting → stub the milestone
-  `in-progress` when its unit begins → update to `success`/`failed` with results on
-  completion. Dense deliverables a run produces (architecture write-ups, diagrams,
-  HTML artifacts via the **agent-ks-artifacts** skill) graduate to `notes/` —
-  the milestone links to them, never inlines them. An activity's pinned `0NN` slots
-  follow a **standard set of six** (convention, not enforced): `00_goal` · `01_summary`
-  · `02_task_list` · `03_working` (raw byproducts/research the run worked on) ·
-  `04_benchmark` (comparable measurements) · `05_notes` (run handover — caveats,
-  next-iteration issues, discoveries). Each is a **file, or a same-named folder** when it
-  grows, and is kept **present even when blank** (stub + a fill-me callout). See
-  [24_agent-logs.md](references/20_sections/24_agent-logs.md).
-- **The tracker is the durable home — a run's transcript is not.** Anything produced
-  *inside* a run (a workflow, loop, or subagent) that outlives the run must be written
-  into the issue, not left in prompts, transcripts, or agent return values. This is an
-  inclusive rule — whenever in doubt, persist. It covers, non-exhaustively: research
-  and the sources/data behind it, comparisons and benchmarks, the thesis or rationale
-  behind a decision or conclusion, plans and contracts that downstream work executes
-  against (API shapes, schemas, file-ownership splits), and discovered constraints or
-  findings. Route by nature: **decision-bearing material — anything a future reader
-  would need to answer "why did we do it this way?" — goes to `notes/`** (or
-  `brainstorm/` while still in flux); the run narrative (what was attempted, what
-  happened) goes to `agent-log/`. Persist it **when it's produced — before or as
-  downstream work consumes it** — not at wrap-up; a run that dies must not take its
-  reasoning with it. Orchestrators (workflows/loops) either write these files
-  themselves or instruct their agents to.
-- **Agent-log files are detailed, line-rich records** — a milestone carries the
-  concrete specifics (findings, verdicts, counts, paths, commands, evidence) a reader
-  needs to reconstruct the run without the transcript; a few vague bullets is a
-  malformed milestone.
-- **Milestone frontmatter is required, not optional:** `iteration:` (drives the `#N`
-  badge, counts 1, 2, 3… within the activity), `agent:`, `date:`, and `status:` from
-  `not-started | in-progress | success | failed` — never the subtask vocabulary
-  (`done` on a milestone is wrong). And **`01_summary.md` at wrap, every run**.
-- **Every file — goal, summary, task-list, milestone, subtask — is structured,
-  context-setting prose, never a bare dump.** Even a single-line thought gets a
-  couple of explanatory sentences a cold reader can follow.
-- **Agent-memory is always on:** maintain `agent-memory/` continuously — it's
-  agent-autonomous and mutable in place. A `memory.md` index that **routes and
-  never stores**, plus up to three lifecycle buckets: `plans/` (what's left —
-  numbered, highest is active, **one open at a time**), `knowledge/` (what's
-  true), `history/` (how we got here, write-once). Grow into them; most issues
-  need only the index and a few topic files.
-- **Discussion is explicit-save-only:** working dialogue is saved (as a `discuss`
-  brainstorm or a comment) **only when the user asks**; when it turns dense or
-  decision-bearing you may *offer* — never persist on your own initiative.
+A plan is a folder of **stages**: `plans/NN_<name>/` holding `settings.json`,
+`overview.md`, and `NN_<stage>.md` files gap-spaced by ten.
 
-Full detail + recipes: [24_agent-logs.md](references/20_sections/24_agent-logs.md),
-[26_agent-memory.md](references/20_sections/26_agent-memory.md).
+- **A stage references the subtasks it schedules; it never restates them.** The renderer
+  resolves those references live, so a plan cannot carry a stale count.
+- **The active plan is the highest-numbered plan that is not `done` or `dropped`** —
+  derived, never stored. One open at a time.
+- **A plan is not a second copy of the subtask list.** It is the *ordering* and the
+  *blocking* — exactly what a subtask cannot express, because a subtask does not know
+  about its siblings.
+
+```bash
+agent-ks issue new-plan  --issue <id> --name <slug>
+agent-ks issue new-stage --issue <id> --plan <plan> --name <slug> [--after NN]
+```
+
+Full contract: [28_plans.md](references/20_sections/28_plans.md).
+
+### Agent logs — where runs are carried out
+
+**An agent log opens when work is delegated, or when it runs over multiple rounds.**
+Nothing else opens one. Work you do inline gets a line in the plan and no folder.
+
+```
+agent-log/NNN_<kind>_<name>/     ← one run, one goal
+├── settings.json                ←   optional: status → colours the kind symbol
+├── summary.md                   ←   REQUIRED. The one conclusive file.
+├── working/                     ←   one file per iteration, plus producers'
+│   ├── 010_<round>.md           ←     iteration 01 — the orchestrator's file
+│   ├── 011_<what-it-produced>.md←     a producer within it
+│   └── 020_<round>.md           ←     iteration 02
+├── debrief/                     ←   what leaves this run
+│   └── 01_handover.md
+└── 010_wf_<sub-goal>/           ←   a child agent log — same shape, recursively
+```
+
+Kind codes go in the folder name: `lp` loop · `au` audit · `rf` refactor · `it`
+iteration · `wf` workflow; custom codes via `agentLogKinds` in the issue's
+`settings.json`.
+
+- **Read the agent log before starting work** — don't repeat an approach that failed.
+- **`summary.md` IS the brief.** Point a delegated agent at it and spend the prompt on
+  the delta. Never write a separate brief file.
+- **An iteration is a GROUP** — of subtasks, of executions, of agents — not one agent
+  and not one subtask. The orchestrator writes the iteration file from what the round
+  produced.
+- **A file exists because something was produced, not because an agent ran.** Two
+  executors writing code produce one iteration file between them; two auditors writing
+  reports produce two, plus the iteration's own.
+- **Own goal → child agent log. No own goal → iteration file.** That is the only
+  nesting rule. Nesting may mirror a structure that exists; it may never invent one.
+- **Actionable items leave the log** and become subtasks. The debrief keeps a pointer.
+
+`agent-ks issue new-agent-log` scaffolds the folder and emits the file headings —
+open what it made rather than reading a template here. Shape, numbering, the
+iteration-file head and the worked examples:
+[24_agent-logs.md](references/20_sections/24_agent-logs.md).
+
+### The tracker is the durable home — a run's transcript is not
+
+Anything produced *inside* a run (a workflow, loop, or subagent) that outlives the run
+is written into the issue, not left in prompts, transcripts, or agent return values:
+research and its sources, comparisons and benchmarks, the reasoning behind a decision,
+contracts downstream work executes against (API shapes, schemas, ownership splits),
+discovered constraints, findings.
+
+**Persist it when it is produced** — before or as downstream work consumes it, never at
+wrap-up. A run that dies must not take its reasoning with it. Orchestrators either write
+these files themselves or instruct their agents to.
+
+**When in doubt, persist — and the doubt is about *where*, not *how much*.** Route it:
+
+| Scope | Home |
+|---|---|
+| Within one round — *"pick A, B, C or D here"* | the iteration file |
+| Affects the rest of this run | the agent log's `debrief/` |
+| Affects more than one run, or answers *"why did we do it this way?"* | the issue's `notes/` |
+| Still in flux | the issue's `brainstorm/` |
+
+One line plus a pointer in the places that reference it; the full text in its home,
+once.
+
+### Agent memory — always on
+
+Maintain `agent-memory/` continuously; it is agent-owned and mutable in place.
+`memory.md` is an **index that routes and stores nothing**, plus two buckets you grow
+into: `knowledge/` (what is true and binding here, corrected in place) and `history/`
+(how we got here, write-once). Most issues need only the index and a few topic files.
+Precedence when two disagree: `knowledge/` > `history/`, and the loser gets corrected.
+
+**Agent memory holds no plan and no decision record.** Order is the plan's; decisions
+are `notes/`.
+
+### Discussion is explicit-save-only
+
+Working dialogue is saved (as a `discuss` brainstorm or a comment) **only when the user
+asks**. When it turns dense or decision-bearing you may *offer* — never persist on your
+own initiative.
 
 ## Triage — which reference to read
 
@@ -224,11 +304,12 @@ Full detail + recipes: [24_agent-logs.md](references/20_sections/24_agent-logs.m
 | `issue.md` body | [20_issue-md.md](references/20_sections/20_issue-md.md) |
 | Comments (+ add-a-comment recipe) | [21_comments.md](references/20_sections/21_comments.md) |
 | Notes (+ add-a-note recipe) | [22_notes.md](references/20_sections/22_notes.md) |
-| Subtasks: numbering, groups, states (+ recipes) | [23_subtasks.md](references/20_sections/23_subtasks.md) |
-| Agent-log activity folders (+ add-entry recipe) | [24_agent-logs.md](references/20_sections/24_agent-logs.md) |
+| Subtasks: categories, numbering, states (+ recipes) | [23_subtasks.md](references/20_sections/23_subtasks.md) |
+| Agent logs: shape, iteration files, worked examples | [24_agent-logs.md](references/20_sections/24_agent-logs.md) |
 | Brainstorm: kinds, threads, graduation | [25_brainstorm.md](references/20_sections/25_brainstorm.md) |
-| Agent-memory: index + topics | [26_agent-memory.md](references/20_sections/26_agent-memory.md) |
+| Agent-memory: index + buckets | [26_agent-memory.md](references/20_sections/26_agent-memory.md) |
 | Guide panel & glossary.md | [27_guide-and-glossary.md](references/20_sections/27_guide-and-glossary.md) |
+| Plans: stages, references, the active plan | [28_plans.md](references/20_sections/28_plans.md) |
 | Searching (scope, no-Grep rule, subagent patterns) | [41_searching.md](references/40_operations/41_searching.md) |
 | Creating issues, duplicate checks, validating | [42_updating.md](references/40_operations/42_updating.md) |
 | Moving / promoting / splitting / merging | [43_moving-restructuring.md](references/40_operations/43_moving-restructuring.md) |
@@ -237,19 +318,23 @@ Full detail + recipes: [24_agent-logs.md](references/20_sections/24_agent-logs.m
 ## The CLI — `agent-ks`
 
 The plugin ships one entrypoint, **`agent-ks`**, on `PATH`. Tracker work uses the
-`issue` group — `agent-ks issue list / show / subtasks / agent-logs / set-state /
-add-comment / add-agent-log / new-agent-log / new-subtask / new-memory-plan /
-review-queue`
-(`new-agent-log` scaffolds a fresh activity folder with the six standard slots;
-`new-subtask` scaffolds a subtask with the five-section template — Overview /
-References / Todo list / Outcomes and Next Steps / Details; `new-memory-plan`
-opens the next `agent-memory/plans/` file and **refuses while the current one is
-still open**) — plus `agent-ks check issues`,
-`agent-ks find`, and `agent-ks move` (link-aware). Discover with `agent-ks help`;
-uniform contract (`--help`, `--json`, exit codes 0/1/2). **Inside a git
-worktree** (agent sandboxes): the CLI's `.env` search stops at the worktree
-root — write a worktree-local `.env` or pass `--tracker` explicitly before
-any write, so tracker paths resolve inside YOUR checkout.
+`issue` group:
+
+| Command | Does |
+|---|---|
+| `list` · `show` · `subtasks` · `agent-logs` · `review-queue` | read |
+| `set-state` · `add-comment` · `add-agent-log` | write |
+| `new-subtask` | scaffolds a subtask — Overview / References / Todo list / Outcomes and Next Steps / Details |
+| `new-agent-log` | scaffolds an agent log — `settings.json` + `summary.md`, and `working/` + `debrief/` as work lands |
+| `new-iteration` | opens the next iteration file in `working/`, head already written (`--producer` for a producer file) |
+| `new-plan` · `new-stage` | opens a plan, and a stage inside it (`--after` inserts) |
+
+Plus `agent-ks check issues`, `agent-ks find`, and `agent-ks move` (link-aware).
+Discover with `agent-ks help`; uniform contract (`--help`, `--json`, exit codes 0/1/2).
+
+**Inside a git worktree** (agent sandboxes): the CLI's `.env` search stops at the
+worktree root — write a worktree-local `.env` or pass `--tracker` explicitly before any
+write, so tracker paths resolve inside YOUR checkout.
 
 **Search the tracker with `agent-ks issue list` (or `agent-ks find`), never the
 `Grep` tool** — the CLI understands the schema (vocabulary, subtask states,
@@ -264,6 +349,7 @@ for a tight report — patterns in [41_searching.md](references/40_operations/41
 - **Ordering prefix** `NN_`/`NNN_` — 2–5 digits, sorted by numeric value, `_` canonical,
   gap-spaced. Optional for issue subdocs (required by convention only for subtasks'
   ordering); both 2- and 3-digit are conventional in the tracker.
+- **The prefix owns the number.** Never repeat it in frontmatter.
 - **Frontmatter `title`** on every markdown file (Astro builds fail without it).
 - **`settings.json` may be `.jsonc`** (comments + trailing commas) — prefer `.jsonc`
   for the tracker root and annotate what each component/label means.

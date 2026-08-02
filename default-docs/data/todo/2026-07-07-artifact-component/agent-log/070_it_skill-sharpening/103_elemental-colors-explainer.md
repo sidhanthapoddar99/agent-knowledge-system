@@ -1,6 +1,5 @@
 ---
 title: "M3 — site-mode elemental-colors doctrine + the live explainer artifact"
-iteration: 1
 ---
 
 ## Goal

@@ -1,6 +1,6 @@
 ---
 title: "Migration — agent-log status vocabulary → the canonical seven"
-status: review
+status: in-progress
 ---
 
 # Overview
@@ -37,10 +37,38 @@ shows the exact rewrites, migrate is idempotent (a second run finds zero), and
 - [x] Run it on `default-docs/` and commit the result in the same change
 - [x] `agent-ks check issues` clean afterwards; `./start build` clean
 
+**Added 2026-08-03, after the field was already dropped — see
+[Where the number went](#where-the-number-went-and-what-the-migration-is-the-only-chance-to-check).**
+
+- [ ] **Report every file whose `iteration:` value disagrees with its filename
+      prefix, before dropping the field.** The migration is the only pass that
+      ever sees both numbers; after it runs the frontmatter value is gone and a
+      disagreement is unrecoverable
+- [ ] Decide what a disagreement means — the honest default is **report and keep
+      the filename**, never rename a file to match a field being deleted
+- [ ] Follow-up, not this script: **lint the `NNN_` digit rule** now that nothing
+      does. `0` = the iteration file, `1`–`9` = producers, and no second `NN0_`
+      within one iteration
+
 # Outcomes and Next Steps
 
 `migration/0.1.3_agent-log-status-vocabulary.py` ships, and has been **run against
 this repo's own `default-docs/`** with the result committed in the same change.
+
+> [!IMPORTANT]
+> **Back to `in-progress` on 2026-08-03 — it was at `review`.** Three todo items
+> were added after the original scope was complete and verified, so "done,
+> awaiting sign-off" stopped being true. The shipped script is unchanged and
+> everything in *Acceptance* below still holds; what is open is the
+> prefix-versus-field disagreement check described in
+> [Where the number went](#where-the-number-went-and-what-the-migration-is-the-only-chance-to-check),
+> plus a lint that is explicitly a follow-up rather than part of this script.
+>
+> **The check has a deadline that is not a date.** It is only runnable *before*
+> this migration runs on a consumer tracker — after that the `iteration:` values
+> are gone and there is nothing left to compare the filenames against. It ships
+> with [`050`](../050_version-bump.md), which is held on Sid's word, so there is
+> still room.
 
 ## Three changes in one pass, not two
 
@@ -98,6 +126,58 @@ parse and render as ordinary markdown. History stays as written; a script that
 restructured old folders would rewrite the record rather than migrate it.
 
 # Details
+
+## Where the number went, and what the migration is the only chance to check
+
+**The `iteration:` field is removed; the iteration number is not.** It moved into
+the filename, which is the half that was already there:
+
+```
+working/
+├── 010_audit-round.md       ← iteration 01, the orchestrator's file
+├── 011_audit-bytes.md       ← iteration 01, a producer's own file
+├── 020_fix-round.md         ← iteration 02
+└── 030_battery.md           ← iteration 03
+```
+
+First two digits are the iteration, last digit is which file within it — `0` for
+the round's own file, `1`–`9` for agents that produced something substantial.
+
+**Why the field went rather than the number.** The value was stored in two
+places, the prefix and the frontmatter, and **nothing kept them agreeing.** A
+file could be `020_fix.md` carrying `iteration: 3`, and neither the build nor the
+validator would say a word: the sidebar badge would read 3 and the sort order
+would read 2. Taking the number from the filename leaves nowhere for the two to
+disagree — the same move as a plan stage pulling its subtasks' live status
+instead of storing a copy.
+
+### The check this script is uniquely placed to run
+
+`drop iteration:` and `read the filename prefix` happen in the same pass over the
+same file, which makes this **the only moment both numbers exist at once.** After
+migration the frontmatter value is gone from every consumer tracker and any
+disagreement between the two is unrecoverable — not hard to find, *gone*.
+
+So the script should report the disagreements as it drops the field. Not fix
+them: renaming a file to match a value that is being deleted is trusting the half
+we decided was untrustworthy, and a rename breaks every link pointing at it.
+**Report, keep the filename, let a human look.**
+
+Cheap to add — the detect pass already walks every agent-log file and already
+parses both the prefix and the field.
+
+### What is not fixed by any of this
+
+The numbering now carries meaning by **digit position**, and nothing lints it.
+One of the [three readers](./130_independent-skill-audit.md) named exactly that
+as a reason to prefer the old scheme: the old one at least warned on a missing
+`iteration:` field, where the new one silently accepts `031_` in an iteration
+with no `030_`.
+
+That trade is real and it is recorded rather than argued away. It does not change
+the call — a lint for the digit rule is straightforward to add, and two stored
+values that silently disagree cannot be fixed at all — but the lint does not
+exist yet, and until it does this is a convention with no enforcement.
 
 ## The validator accepts FOURTEEN status values today — a third vocabulary
 

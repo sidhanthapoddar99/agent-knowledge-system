@@ -4,14 +4,17 @@ title: "Summary"
 
 # State
 
-**Closed.** Every subtask under `040_execution/` is at `review`, including the
-audit that ends the run. Seven rounds sit in `working/`, the three verdicts are
-stored verbatim beside the round that commissioned them, and **nothing in the
-skill was changed in response to them** — which is the condition `130` sets.
+**Closed, with one subtask reopened after the fact.** Twelve of the fourteen
+under `040_execution/` are at `review`, including the audit that ends the run.
+Seven rounds sit in `working/`, the three verdicts are stored verbatim beside the
+round that commissioned them, and **nothing in the skill was changed in response
+to them** — which is the condition `130` sets.
 
-Two things are deliberately NOT done and will not be: `020` sits at
-`input-needed` with a proposed diff to Sid's personal global file, which only he
-may apply; and `050_version-bump` is outside this folder and held on his word.
+Three things are NOT done, all deliberately: `020` sits at `input-needed` with a
+proposed diff to Sid's personal global file, which only he may apply;
+`050_version-bump` is outside this folder and held on his word; and `100` went
+back to `in-progress` on 2026-08-03 when the `iteration:` question surfaced three
+items it is the only place able to run.
 
 This log is itself the first thing written in the shape it ships — the six slots
 are gone, `working/` carries one file per round, and nothing here restates what
@@ -43,7 +46,10 @@ Executes against
 - [x] `030` / `040` / `080` / `110` — the skill
 - [x] `050` / `120` — `guide.ts` and the user-guide
 - [x] `070` — sidebar icons
-- [x] `100` — the status-vocabulary migration
+- [~] `100` — the status-vocabulary migration. **Shipped and verified, then
+      reopened 2026-08-03**: dropping `iteration:` left the filename as the only
+      carrier of the number, and the migration is the one pass that sees both
+      values before one is destroyed, so the disagreement check belongs there
 - [x] `140` — the demo fixture
 - [~] `020` — the proposed `~/.claude/CLAUDE.md` diff
 - [x] `130` — the three-reader audit

@@ -42,7 +42,7 @@ below are stable ids, not a sequence.
 | 070 | [UI: Subtasks and Overview have no icon](./070_ui-subtasks-overview-icons.md) — **not gated**; do it in the same pass as the Plans icon | review |
 | 080 | [Skill: subtasks by category, not order](./080_skill-subtasks-by-category.md) — the other half of the plans idea | review |
 | 090 | [Framework: a section registry](./090_section-registry.md) — **after** `010`, never merged into it | review |
-| 100 | [Migration: agent-log status vocabulary](./100_migration-script.md) — the mandatory half of the release; ships with [`050`](../050_version-bump.md) | review |
+| 100 | [Migration: agent-log status vocabulary](./100_migration-script.md) — the mandatory half of the release; ships with [`050`](../050_version-bump.md) | in-progress |
 | 110 | [Sweep: delete superseded wording](./110_superseded-wording-sweep.md) — and write the rule that replaces it | review |
 | 120 | [Agent memory after plans](./120_agent-memory-after-plans.md) — what `agent-memory/` becomes once `plans/` leaves it | review |
 | 130 | [Audit: three neutral readers](./130_independent-skill-audit.md) — old skill vs new; **stored, not acted on**. Last | review |
@@ -57,9 +57,15 @@ execution work until someone decides to take them.
 
 # Conclusions and Summary
 
-**All fourteen are closed to `review` except `020`, which is `input-needed` by
-design** — it proposes a diff to `~/.claude/CLAUDE.md`, and that file is Sid's, so
-applying it is not the agent's call.
+**Twelve of fourteen are at `review`.** Two are not, both deliberately: `020` is
+`input-needed` because it proposes a diff to `~/.claude/CLAUDE.md`, and that file
+is Sid's; `100` went **back** to `in-progress` on 2026-08-03 when three todo
+items were added to it after its original scope was already complete.
+
+The `100` reopening is worth a line rather than a silent status flip. Dropping
+the `iteration:` frontmatter field moved the number into the filename and left
+nothing comparing the two — and **the migration is the only pass that ever sees
+both values**, so the disagreement check has to happen there or not at all.
 
 **The gates:** `./start build` clean at 948 pages; the repo's own issue validator
 clean over 51 issue folders; the four new scaffolders smoke-tested end to end.

@@ -22,7 +22,7 @@ then has to apologise for.
 - Design gates: `subtasks/020_brainstorm-efficiency-remedies`,
   `subtasks/030_brainstorm-plans-section`
 - Test bed for the section work: `2026-07-01-demo-issue-anatomy-showcase`
-- Ships as: [Version bump — engine 0.2.0 + plugin 0.7.0](../050_version-bump.md)
+- Ships as: [Version bump — engine 0.1.3 + plugin 0.6.8](../050_version-bump.md)
 
 # Subtasks
 

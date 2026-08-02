@@ -5,7 +5,7 @@ status: open
 
 # Overview
 
-Ship `migration/0.2.0_agent-log-status-vocabulary.py`, which rewrites every
+Ship `migration/0.1.3_agent-log-status-vocabulary.py`, which rewrites every
 agent-log file's `status:` onto the canonical seven and drops the now-dead
 `iteration:` field.
 

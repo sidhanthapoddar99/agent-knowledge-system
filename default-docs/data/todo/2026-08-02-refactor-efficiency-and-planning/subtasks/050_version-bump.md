@@ -1,5 +1,5 @@
 ---
-title: "Version bump — engine 0.2.0 (gated) + plugin 0.7.0"
+title: "Version bump — engine 0.1.3 (gated) + plugin 0.6.8"
 status: open
 ---
 
@@ -25,13 +25,17 @@ marketplace listing match reality, and a consumer on the old content format is
 
 # Todo list
 
-- [ ] `ENGINE_VERSION` `0.1.2` → **`0.2.0`** — a MINOR bump; see why a patch
-      cannot work, below
-- [ ] `MIN_CONTENT_VERSION` `0.1.2` → **`0.2.0`** — this is what makes upgrading
-      mandatory
-- [ ] `default-docs/config/site.yaml` → `engine_version: "0.2.0"` — **last**,
+- [ ] **`compareFormatVersions` must compare the PATCH segment.** Without this
+      the floor below does nothing — see *The gate has never fired*, first
+- [ ] `ENGINE_VERSION` `0.1.2` → **`0.1.3`**
+- [ ] `MIN_CONTENT_VERSION` `0.1.2` → **`0.1.3`** — with the comparator fixed,
+      this is what makes upgrading mandatory
+- [ ] Fix the two doc claims that say a patch bump cannot change the format:
+      `engine-version.ts` docstring, and
+      `user-guide/10_configuration/07_versioning.md:22`
+- [ ] `default-docs/config/site.yaml` → `engine_version: "0.1.3"` — **last**,
       after the migration runs, never first
-- [ ] Bump `plugin.json` → `0.7.0`, and update its `description`
+- [ ] Bump `plugin.json` → `0.6.8`, and update its `description`
 - [ ] Sync the marketplace listing (drift note below)
 - [ ] Smoke-test the gate: point the engine at un-migrated content and confirm it
       **stops** with the migration message rather than rendering
@@ -58,31 +62,70 @@ Content declares `engine_version` in `site.yaml`; `loadSiteConfig()` throws at
 startup when it falls outside `[MIN_CONTENT_VERSION, ENGINE_VERSION]`. **That
 error is the only mechanism in this project that can force a consumer to act.**
 
-## A +0.0.1 patch bump CANNOT be made mandatory — by design
+## The versioning scheme — Sid's, and it is the one to follow
 
-From `compareFormatVersions` in `engine-version.ts`:
+Stated 2026-08-02:
 
-> *"Numeric per-segment comparison on **major.minor ONLY** — a patch bump never
-> changes content format by definition, so it never trips the gate."*
+| Index | Means |
+|---|---|
+| 1st (`0`) | **Reserved** — beta versus production. Stays `0` while the project is in beta |
+| 2nd | Major upgrades |
+| 3rd | Smaller tweaks and bug fixes |
 
-So `0.1.2 → 0.1.3` is invisible to the gate no matter what `MIN_CONTENT_VERSION`
-is set to. **Making the upgrade mandatory requires a minor bump: `0.2.0`.** That
-is not a scope increase — it is the smallest bump the mechanism can enforce.
+**Every format migration this repo has ever shipped followed it** —
+`0.1.0_done-to-state` → `0.1.1_state-to-status` → `0.1.2_legacy-custom-tags`.
+Three patch bumps, no minor bump, ever.
 
-The repo's own rule agrees on when to raise the floor:
+So this release is **`0.1.3`**, and the plugin is **`0.6.8`**.
 
-> *"Raise `MIN_CONTENT_VERSION` ONLY for breaking changes (old content
-> fails/misrenders without the migration)."*
+## THE GATE HAS NEVER FIRED — the finding that makes this work
 
-This qualifies — see [`100`](./040_execution/100_migration-script.md): **78 files
-in this repo alone** carry status values the new vocabulary rejects.
+`compareFormatVersions` compares **major.minor only**:
 
-## Why the plugin still goes to 0.7.0, not 0.6.8
+```js
+return aMaj - bMaj || aMin - bMin;   // patch is not compared
+```
 
-The plugin version gates nothing, so it does not need to be minimal — it needs to
-be **honest**. Consumers must act on this release: run a migration, stop using
-`new-memory-plan`, relearn the agent-log shape. Shipping that as a patch would be
-a false signal even though nothing enforces it.
+Two docs assert this is correct by definition — the `engine-version.ts` docstring
+(*"bump ENGINE_VERSION minor"*) and
+`user-guide/10_configuration/07_versioning.md:22` (*"a patch bump never changes
+the content format"*).
+
+**But every actual migration was a patch bump, so none of them were ever
+enforced.** Content declaring `0.1.0` compares *equal* to a floor of `0.1.2`, so
+`0.1.1_state-to-status.py` — a genuinely breaking value remap — was never once
+forced on a consumer. The only thing this gate has ever caught is content with no
+`engine_version` at all (`0.0.0`).
+
+The written rule and the shipped practice have disagreed since the contract was
+introduced, and the practice is the one that is right.
+
+**So the comparator is what changes**, not the version number:
+
+```js
+return aMaj - bMaj || aMin - bMin || aPatch - bPatch;
+```
+
+**This does not make every patch bump mandatory.** `MIN_CONTENT_VERSION` remains
+the control: ship a genuine bugfix as `ENGINE_VERSION` `0.1.4`, leave the floor
+at `0.1.3`, and content at `0.1.3` still passes. The change only makes the floor
+*capable* of being set at patch granularity — which is the granularity every real
+migration has used.
+
+Raising the floor is justified here by the repo's own rule — *"ONLY for breaking
+changes (old content fails/misrenders without the migration)"* — and
+[`100`](./040_execution/100_migration-script.md) counts **78 files in this repo
+alone** carrying status values the new vocabulary rejects.
+
+## Correction — the plugin "minor bump" rule was never a convention
+
+An earlier draft of this subtask said *"under this project's continuous-shipping
+convention that is a minor bump"* and put the plugin at `0.7.0`. **There is no
+such convention.** Nothing in the repo, the skills or the user-guide documents
+plugin versioning; `plugin.json` carries a `version` field that nothing reads.
+That sentence was invented and presented as inherited.
+
+Under the scheme above this release is a 3rd-index bump: **`0.6.8`**.
 
 ## The marketplace description has already drifted
 
@@ -102,7 +145,7 @@ permanent payoff, and this is when the drift becomes visible.
 2. Ship the migration script.
 3. Raise `ENGINE_VERSION` and `MIN_CONTENT_VERSION`.
 4. Run the migration on this repo's own `default-docs/`.
-5. **Only then** set `engine_version: "0.2.0"` in `site.yaml`.
+5. **Only then** set `engine_version: "0.1.3"` in `site.yaml`.
 
 Bumping `site.yaml` first defeats the gate's purpose — it tells the engine the
 content is already migrated when it is not, and moves the breakage somewhere

@@ -525,9 +525,17 @@ Scoped deliberately, so the gap is visible rather than assumed closed:
   [`040_skill-efficiency-rules`](../subtasks/040_execution/040_skill-efficiency-rules.md),
   which is **still open**. This structure removes the *slots* that invited
   restatement; it does not by itself stop a single file being an essay.
-- **Migration of existing agent-log folders.** History stays as written; this
-  governs what is recorded next. A migration would be optional and is not
-  proposed.
+- **Migration of existing agent-log FOLDERS.** History stays as written; this
+  governs what is recorded next. Restructuring old folders is not proposed — a
+  script that did it would rewrite the record rather than migrate it.
+
+  > [!IMPORTANT]
+  > **This is not true of the status VALUES, and an earlier draft said it was.**
+  > The validator accepts fourteen aliases today (`success`, `failed`, `wip`,
+  > `complete`…); moving to the canonical seven makes 78 files in this repo alone
+  > invalid. That needs a real migration —
+  > [`100`](../subtasks/040_execution/100_migration-script.md). Structure needs
+  > none; vocabulary does.
 
 Logs need no decay rule: iteration files are write-once by nature, and `# State`
 is the only live text in an agent log.

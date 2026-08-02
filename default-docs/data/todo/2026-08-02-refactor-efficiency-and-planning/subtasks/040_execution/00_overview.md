@@ -22,7 +22,7 @@ then has to apologise for.
 - Design gates: `subtasks/020_brainstorm-efficiency-remedies`,
   `subtasks/030_brainstorm-plans-section`
 - Test bed for the section work: `2026-07-01-demo-issue-anatomy-showcase`
-- Ships as: [Version bump to 0.7.0](../050_version-bump.md)
+- Ships as: [Version bump — engine 0.2.0 + plugin 0.7.0](../050_version-bump.md)
 
 # Subtasks
 
@@ -50,6 +50,7 @@ below are stable ids, not a sequence.
 | 070 | [UI: Subtasks and Overview have no icon](./070_ui-subtasks-overview-icons.md) — **not gated**; do it in the same pass as the Plans icon | open |
 | 080 | [Skill: subtasks by category, not order](./080_skill-subtasks-by-category.md) — the other half of the plans idea | open |
 | 090 | [Framework: a section registry](./090_section-registry.md) — **after** `010`, never merged into it | open |
+| 100 | [Migration: agent-log status vocabulary](./100_migration-script.md) — the mandatory half of the release; ships with [`050`](../050_version-bump.md) | open |
 
 # Conclusions and Summary
 

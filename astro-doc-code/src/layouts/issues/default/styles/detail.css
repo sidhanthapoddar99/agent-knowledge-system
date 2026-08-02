@@ -30,6 +30,12 @@
 
 /* ===== Left sidebar ===== */
 .issue-sidebar {
+  /* ONE GLYPH COLUMN. A row leads with a collapse chevron (a 10px drawing), a
+     status icon or a kind symbol (14px), or a section icon (12px) — three
+     widths, so the text after them started at a different x depending on which
+     kind of row it was. The BOX is now one width for all of them; each drawing
+     keeps its own size and is centred inside it. Change it here, not per icon. */
+  --sidebar-glyph: 14px;
   border-right: 1px solid var(--color-border-default);
   padding: 1.25rem 0.75rem;
   position: sticky;
@@ -72,6 +78,18 @@
   border-radius: 4px;
 }
 .issue-sidebar__heading:hover { background: color-mix(in srgb, var(--color-border-default) 30%, transparent); }
+/* The glyph column — see `--sidebar-glyph` on `.issue-sidebar`. `width` on the
+   chevron widens its BOX, not its drawing: the `viewBox` keeps its aspect ratio
+   and centres, so the arrow stays 10px and simply sits in a 14px slot. */
+.issue-sidebar__chevron,
+.issue-sidebar__icon,
+.issue-sidebar__check,
+.issue-sidebar__kind,
+.issue-sidebar__heading-icon {
+  width: var(--sidebar-glyph);
+  min-width: var(--sidebar-glyph);
+  justify-content: center;
+}
 .issue-sidebar__chevron { transition: transform 0.12s ease; flex-shrink: 0; }
 .issue-sidebar__section:not([open]) .issue-sidebar__chevron { transform: rotate(-90deg); }
 .issue-sidebar__heading-count {

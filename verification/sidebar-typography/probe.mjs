@@ -66,10 +66,24 @@ const seen = await page.evaluate(() => {
       fileRow: size('.issue-sidebar__item'),
       number: size('.issue-sidebar__num'),
     },
+    // The leading glyph column — the BOX each icon occupies, measured, not the
+    // declared width. A drawing may be any size inside it; what has to be
+    // constant is the slot, or the text after it starts at a different x.
+    glyphs: Object.fromEntries(['chevron', 'icon', 'check', 'kind', 'heading-icon']
+      .map((k) => {
+        const el = document.querySelector(`.issue-sidebar__${k}`);
+        return [k, el ? +el.getBoundingClientRect().width.toFixed(2) : null];
+      })),
     // Read in the SAME pass as the sizes it controls. A control taken from a
     // second page load, or after the server is closed, is measuring something
     // else and will happily certify a dead check.
     mainTitleSize: size('.issue-main__title'),
+    // CONTROL for the glyph check: a trailing glyph is deliberately NOT in the
+    // column, so a comparison that finds everything equal is caught.
+    trailingGlyph: (() => {
+      const el = document.querySelector('.issue-sidebar__count');
+      return el ? +el.getBoundingClientRect().width.toFixed(2) : null;
+    })(),
   };
 });
 
@@ -93,6 +107,17 @@ for (const [what, got] of [['file label', seen.label], ['folder label', seen.fol
 
 const sizes = Object.values(seen.sizes);
 say('every sidebar row is the same size', new Set(sizes).size === 1, JSON.stringify(seen.sizes));
+
+// The glyph column. `present` guards against the check passing on a page where
+// none of these rendered — one measured width is trivially "all equal".
+const glyphs = Object.entries(seen.glyphs).filter(([, w]) => w !== null);
+say('at least two leading glyph kinds were on the page', glyphs.length >= 2,
+  JSON.stringify(seen.glyphs));
+say('every leading glyph occupies the same width',
+  new Set(glyphs.map(([, w]) => w)).size === 1, JSON.stringify(seen.glyphs));
+say('CONTROL a trailing element is NOT in the glyph column',
+  seen.trailingGlyph !== null && seen.trailingGlyph !== glyphs[0]?.[1],
+  `glyph ${glyphs[0]?.[1]} vs count chip ${seen.trailingGlyph}`);
 
 // CONTROL — the size comparison must be able to fail. The main column's title
 // is deliberately a different size, so a comparison that always reports "equal"

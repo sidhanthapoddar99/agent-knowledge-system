@@ -86,29 +86,72 @@ log with no goal of its own is an iteration file wearing a folder.
 
 # `summary.md`
 
-Always present. **Five `#` sections, in this order. Nothing else.**
+Always present, and **the one file a reader opens first** — so it is the one file
+allowed to be detailed. **Five `#` sections, in this order. Nothing else.** Four are
+required; *Out of Scope* is optional.
 
-| Section | Holds | Changes |
-|---|---|---|
-| **State** | Where this run is right now and what happens next, in a few lines | **Live** — the only section rewritten during the run |
-| **Goal and Trigger** | Purpose in plain language, context, expected outcome. Trigger only when it is not obvious | Written once |
-| **Task List** | The run's checklist, **headed by its references** — the plan stage and subtask this executes against, plus the scoping notes | Ticked as work lands |
-| **Out of Scope** | What this run deliberately does not touch | Written once |
-| **Outcome Summary** | **One sentence and a link.** Never a paragraph | Written at close |
+```markdown
+---
+title: "Summary"
+---
+
+# State
+
+> [!NOTE]
+> Where the run is right now, and what happens next.
+
+# Goal
+
+# Todo
+
+# Out of Scope
+
+# Outcome
+```
+
+| Section | Holds | Shape | Changes |
+|---|---|---|---|
+| **State** | Where this run is right now and what happens next. Not a status token — that lives in `settings.json` | **A callout.** `> [!NOTE]` normally; `> [!WARNING]` / `> [!IMPORTANT]` when the run is stuck, reopened or failed | **Live** — the only section rewritten during the run |
+| **Goal** | Purpose in plain language, context, expected outcome, **and the trigger** — who asked, when, in what words | Prose | Written once |
+| **Todo** | The run's checklist, **headed by its references** — the plan stage and subtask this executes against, plus the scoping notes | **A linked list with a line of detail per item, or a table** | Ticked as work lands |
+| **Out of Scope** | What this run deliberately does not touch. **Optional** — omit it rather than writing "nothing" | List | Written once |
+| **Outcome** | What the run produced, what it cost, what it found, which gates it passed — with numbers | **A detail area**, as long as the run warrants | Written at close |
 
 **State comes first** so opening the file tells you where things are without scrolling.
+**It is a callout** because prose under a heading reads as introduction and gets
+skimmed. The callout *type* carries meaning too: a reopened or blocked run says so with
+`> [!WARNING]`, not only in the words.
 
-**`summary.md` IS the brief.** Goal and Trigger + Task List + Out of Scope already *are*
-the brief — point a delegated agent at the file and spend the prompt on the delta.
-Standing rules are referenced from `agent-memory/`, never re-typed. Never write a
-separate brief file.
+## The Todo section — two rules that are really one
+
+```markdown
+- [x] `010` — the plans section                                     ← WRONG, twice
+- [x] [The plans section](../../subtasks/040_execution/010_code-the-plans-section.md)
+      — framework, CLI and validator; four new scaffolders           ← RIGHT
+```
+
+- **Every item is a LINK, never a bare number** — see
+  [Linking](../10_writing/10_writing.md#linking). `agent-ks move` rewrites markdown
+  links when files move; a backticked `` `010` `` is prose to every tool that exists.
+- **Every item carries a line of what it actually did**, not just a title. A reader
+  should not have to open ten subtasks to learn what the run accomplished. A checklist
+  of titles is an index; a checklist with outcomes is a summary.
+
+Use `[~]` for an item that shipped and then reopened, with the reason on the item.
+
+**`summary.md` IS the brief.** Goal + Todo + Out of Scope already *are* the brief —
+point a delegated agent at the file and spend the prompt on the delta. Standing rules
+are referenced from `agent-memory/`, never re-typed. Never write a separate brief file.
 
 **No notes section.** If it is worth writing, it goes in `debrief/`.
 
-**The one-sentence Outcome Summary is a rule, not a style preference** — it is the seam
-most likely to regrow the whole story.
+**`# Outcome` is detailed, and that is deliberate.** The rule it must obey is *point at
+detail rather than copying it* — link the iteration file that holds the working, do not
+re-narrate it. Length is not the constraint; restatement is. An earlier version of this
+skill capped Outcome at one sentence, which aimed at restatement and hit the summary
+instead: the file a reader opens first was the one forbidden to say anything.
 
-**The task list is run-local and disposable.** An item that outlives the run becomes a
+**The Todo list is run-local and disposable.** An item that outlives the run becomes a
 subtask.
 
 ---
@@ -465,7 +508,7 @@ data/tasks/2026-08-02-nsd-phase-2/
 ```
 
 **The plan stage survives as a label, not a folder** — in the workflow's name (`s3`,
-`s4`, `s5`) and in the loop's Task List. A folder would be a second place storing what
+`s4`, `s5`) and in the loop's Todo. A folder would be a second place storing what
 the plan already owns.
 
 What this example teaches:

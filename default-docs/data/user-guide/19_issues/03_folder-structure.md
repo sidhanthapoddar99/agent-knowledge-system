@@ -130,6 +130,36 @@ All content sections except `comments/` accept nested subfolders up to 5 levels 
 
 `comments/` stays flat — it doesn't accept subfolders.
 
+### Reference by link, never by number
+
+:::warning[The one rule about prefixes that is easy to get wrong]
+A prefix orders a file. It does **not** name it. When one file refers to another, write
+a markdown link whose text says what the target *is* — never the number.
+:::
+
+```markdown
+Blocked by `050` until the version bump ships.          ← WRONG
+Blocked by [the version bump](../050_version-bump.md).  ← RIGHT
+```
+
+Three reasons, and the third is the one people miss:
+
+| | |
+|---|---|
+| **It breaks silently** | `agent-ks move` rewrites real markdown links when a file moves. A backticked `` `050` `` is ordinary prose to every tool that exists — the file moves, the text stays, and nothing reports it |
+| **A number is not a name** | *"`050` blocks `100`"* is unreadable to anyone who has not already opened both files |
+| **Renumbering is normal** | Prefixes are gap-spaced precisely so `015` can be inserted between `010` and `020` later. The moment a number is quoted somewhere else, renumbering stops being free |
+
+A link reading `[050](../050_version-bump.md)` is still a number, just clickable — the
+link text has to name the thing. A number *alongside* a named link is fine. And where
+the number genuinely is the subject (*"the first two digits are the iteration"*), it
+stays.
+
+This applies to every file the tracker holds, and to docs pages too. It is not
+validated: a checker cannot tell a backticked `` `010` `` that means a file from one
+that means a digit sequence, and a rule that fired on both would be switched off within
+a week.
+
 ### Stray files warned, not crashed
 
 Any `.md` file at the issue root other than `issue.md` and `glossary.md` produces a **warning** (visible in the error-logger dev-toolbar app). The loader doesn't fail the build, but the file won't be rendered anywhere — move it into `notes/`, `subtasks/`, or rename it to `issue.md`.

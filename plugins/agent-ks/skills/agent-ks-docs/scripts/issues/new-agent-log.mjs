@@ -7,8 +7,8 @@
  *
  *   settings.json   {"status": "open"} — the run's status, which colours its
  *                   kind symbol in the sidebar
- *   summary.md      the one conclusive file: State · Goal and Trigger ·
- *                   Task List · Out of Scope · Outcome Summary
+ *   summary.md      the one conclusive file: State · Goal · Todo ·
+ *                   Out of Scope (optional) · Outcome
  *
  * **No other slot is seeded, and that is deliberate.** The previous version of
  * this script created six files whether or not the run had anything to put in
@@ -43,8 +43,8 @@ if (args.flags.help || !id || !kind || !rawName) {
     '<issue-id> --kind <code> --name <slug> [--group <a[/b]>] [--prefix <NNN>] [--goal <text>] [--parent <path>] [--json] [--tracker <path>]',
     '',
     'Scaffold an agent log at agent-log/[<group>/]NNN_<code>_<name>/ with settings.json',
-    '({"status": "open"}) and summary.md (State / Goal and Trigger / Task List /',
-    'Out of Scope / Outcome Summary). Nothing else is seeded: working/ appears with',
+    '({"status": "open"}) and summary.md (State / Goal / Todo / Out of Scope /',
+    'Outcome). Nothing else is seeded: working/ appears with',
     'the first iteration file (issue new-iteration), debrief/ when the run has',
     'something to hand over.',
     '',
@@ -57,7 +57,7 @@ if (args.flags.help || !id || !kind || !rawName) {
     '          Use when the sub-goal has a goal of its OWN; work done toward the',
     '          parent\'s goal is an iteration file, not a child log',
     '--prefix  explicit number (digits, e.g. 013) instead of the next gap-spaced one',
-    '--goal    text to seed the Goal and Trigger section',
+    '--goal    text to seed the Goal section',
     '--json    print the created folder + files as JSON',
   ]);
   process.exit(id && kind && rawName ? 0 : 1);
@@ -151,7 +151,7 @@ if (fs.existsSync(dir)) {
 
 const goalBody = args.flags.goal && args.flags.goal !== true
   ? `${String(args.flags.goal).trim()}\n`
-  : `> [!NOTE]\n> Fill this in. What this run is for, in plain language, plus the trigger when\n> it is not obvious. Written once — it does not change as the run proceeds.\n`;
+  : `> [!NOTE]\n> Fill this in. What this run is for, in plain language, plus the trigger — who\n> asked, when, in what words. Written once; it does not change as the run\n> proceeds.\n`;
 
 const summary = `---
 title: "Summary"
@@ -164,27 +164,36 @@ title: "Summary"
 > section rewritten during the run. Not a status token — that lives in
 > \`settings.json\`.
 
-# Goal and Trigger
+# Goal
 
 ${goalBody}
-# Task List
+# Todo
 
 > [!NOTE]
 > This run's checklist, headed by its references — the plan stage and subtask it
 > executes against, plus the notes that scope it. References live here because
 > they are what the tasks execute against. Run-local and disposable: an item
 > that outlives the run becomes a subtask.
+>
+> **Every item is a markdown LINK, never a bare number**, and carries a line of
+> what it actually did — a checklist of titles is an index, not a summary:
+>
+> \`- [x] [The plans section](../../subtasks/010_plans.md) — framework, CLI and
+> validator; four new scaffolders\`
 
 # Out of Scope
 
 > [!NOTE]
-> What this run deliberately does not touch. Written once.
+> What this run deliberately does not touch. Written once. **Optional** — delete
+> this section rather than writing "nothing".
 
-# Outcome Summary
+# Outcome
 
-> [!IMPORTANT]
-> **One sentence and a link.** Never a paragraph — this is the seam most likely
-> to regrow the whole story, and the iteration files already hold it.
+> [!NOTE]
+> What the run produced, what it cost, what it found, and which gates it passed,
+> with numbers. **A detail area** — as long as the run warrants. The one rule is
+> *point at detail rather than copying it*: link the iteration file that holds
+> the working instead of re-narrating it.
 `;
 
 fs.mkdirSync(dir, { recursive: true });

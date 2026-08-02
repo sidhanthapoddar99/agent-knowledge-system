@@ -109,5 +109,24 @@ same reasoning that removed the deliberate broken-ref fixture from this issue's
 own test data earlier in the run: a gate whose clean state is not zero is not a
 gate.
 
-Fix is to skip fenced regions when extracting links, which is a few lines in the
-extractor and makes the checker's clean state genuinely zero.
+### Fixed 2026-08-03 — this half only
+
+The extractor now tracks fenced-block state and skips lines inside one. A fence
+opens on 3+ backticks or tildes and closes only on the **same character at
+equal-or-greater length**, so a ```` block containing ``` lines does not close
+early.
+
+**Why this half was taken now rather than waiting with the rest of this
+subtask.** Writing the worked examples for the summary-shape round added four
+more illustrative links inside fences, taking the checker from 4 false errors to
+8 — so the same session that would have left it alone made it materially worse.
+Cleaning up after that is not a scheduling decision.
+
+**Control-tested, because a checker that stops reporting is indistinguishable
+from a checker that has nothing to report.** A fixture with two genuinely broken
+links outside fences, three illustrative ones inside, and a four-backtick block
+wrapping a three-backtick block: it reported exactly the two real ones. All three
+skills now pass at zero.
+
+**The nine CLI examples that error are untouched** and remain this subtask's
+actual scope, still `open` and still Sid's call.

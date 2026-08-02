@@ -13,6 +13,15 @@
  * Links inside inline code spans (`` `...` ``) are ignored — there the link is
  * being shown as literal text (e.g. a `docs-move` example), not used to navigate.
  *
+ * FENCED BLOCKS ARE SKIPPED ENTIRELY, for the same reason. A skill teaches by
+ * example, and its examples are illustrative paths into a tracker that does not
+ * exist — `[Stage 80](../../subtasks/16_slide-type/80_mandatory-catalog.md)`
+ * inside a ```markdown fence is a demonstration of the syntax, not a link. They
+ * do not render as links and cannot be navigated. Before this, every worked
+ * example a reference file gained reported as a broken link, so the checker's
+ * output was "N errors, all false" — and a gate that can only be read with a
+ * correction attached stops being read at all.
+ *
  * Usage: check-skill-links.mjs [skill-dir]   (defaults to the skill root)
  * Exit 0 = all links resolve, 1 = broken link(s) found.
  */
@@ -43,10 +52,22 @@ function listMarkdown(dir, acc = []) {
   return acc;
 }
 
+// A fence opens with 3+ backticks or tildes and closes with at least as many of
+// the SAME character — so a ```` block may contain ``` lines without closing.
+const FENCE_RE = /^\s{0,3}(`{3,}|~{3,})/;
+
 for (const file of listMarkdown(SKILL_ROOT)) {
   const lines = fs.readFileSync(file, 'utf-8').split(/\r?\n/);
   const relFile = path.relative(SKILL_ROOT, file);
+  let fence = null; // the open fence's marker, or null outside a block
   lines.forEach((line, i) => {
+    const marker = line.match(FENCE_RE)?.[1];
+    if (fence) {
+      // Inside a block: only a same-char marker of equal-or-greater length closes it.
+      if (marker && marker[0] === fence[0] && marker.length >= fence.length) fence = null;
+      return;
+    }
+    if (marker) { fence = marker; return; }
     // Drop inline code spans first (double-backtick before single) so links
     // shown as literal text inside `...` aren't mistaken for real links.
     const scan = line.replace(/``.+?``/g, '').replace(/`[^`]*`/g, '');

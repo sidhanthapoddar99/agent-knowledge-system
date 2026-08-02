@@ -137,7 +137,7 @@ export const MANIFEST = [
       { name: 'group', value: 'a[/b]', desc: 'nest under a grouping folder path (created if missing; numbering scoped to the group)' },
       { name: 'parent', value: 'path', desc: 'create as a CHILD agent log inside an existing one (a sub-goal with its own goal)' },
       { name: 'prefix', value: 'NNN', desc: 'explicit number (2–5 digits) instead of the next gap-spaced one' },
-      { name: 'goal', value: 'text', desc: 'seed summary.md’s Goal and Trigger section' },
+      { name: 'goal', value: 'text', desc: 'seed summary.md’s Goal section' },
       { name: 'json', desc: 'structured JSON output' },
       { name: 'tracker', value: 'path', desc: 'non-default tracker' },
     ],

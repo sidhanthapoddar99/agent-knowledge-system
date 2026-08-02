@@ -23,7 +23,7 @@ record itself* is substantial. This is the issue type that earns several agent l
 └── agent-log/                       EXECUTION
     ├── 010_lp_first-sweep/
     │   ├── settings.json            {"status": "done"}
-    │   ├── summary.md               State · Goal and Trigger · Task List · Out of Scope · Outcome Summary
+    │   ├── summary.md               State · Goal · Todo · Out of Scope · Outcome
     │   ├── working/
     │   │   ├── 010_log-scan.md      iteration 01
     │   │   ├── 020_timeout-fixes.md iteration 02 — kept even though it failed
@@ -45,7 +45,7 @@ iterate → iteration file → (comment if a human decision is needed) → re-it
 
 1. **Open the agent log** —
    `agent-ks issue new-agent-log --issue <id> --kind lp --name third-sweep`. Fill in
-   `summary.md`'s Goal and Trigger, Task List and Out of Scope before starting; that
+   `summary.md`'s Goal, Todo and Out of Scope before starting; that
    file **is** the brief you point delegated agents at.
 2. **Each round is one iteration file** —
    `agent-ks issue new-iteration --issue <id> --log 030_lp_third-sweep --name log-scan`.

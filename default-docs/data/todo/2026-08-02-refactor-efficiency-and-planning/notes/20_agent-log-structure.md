@@ -88,8 +88,14 @@ agent logs.
 
 # `summary.md`
 
+**Revised (sidhantha, 2026-08-03).** The section names and the Outcome cap
+changed after reading the first log written in this shape; what the sections are
+*for* did not. The previous names are recorded under *What changed and why*
+below, because a spec that silently renames its own sections leaves every earlier
+file looking malformed for no stated reason.
+
 Single-file convention, always present. **Five sections, all `#` level 1, in this
-order.** Nothing else.
+order.** Four are required; *Out of Scope* is optional. Nothing else.
 
 ```markdown
 ---
@@ -98,34 +104,75 @@ title: "Summary"
 
 # State
 
-# Goal and Trigger
+> [!NOTE]
+> Where the run is right now, and what happens next.
 
-# Task List
+# Goal
+
+# Todo
 
 # Out of Scope
 
-# Outcome Summary
+# Outcome
 ```
 
-| Section | Holds | Changes |
-|---|---|---|
-| **State** | **Summary of current state** — where this run is right now and what happens next, in a few lines. Not a status token; the token is in `settings.json`. | **Live** — the only section rewritten during the run |
-| **Goal and Trigger** | Purpose in plain language, context, expected outcome. Trigger only when it is not obvious. | Written once |
-| **Task List** | The run's checklist, **headed by its references** — the plan step and subtask this executes against, plus scoping notes/brainstorms. References live here because they are *what the tasks execute against*. | Ticked as work lands |
-| **Out of Scope** | What this run deliberately does not touch. | Written once |
-| **Outcome Summary** | **One sentence and a link.** Never a paragraph. | Written at close |
+| Section | Holds | Shape | Changes |
+|---|---|---|---|
+| **State** | Where this run is right now and what happens next. Not a status token; the token is in `settings.json` | **A callout.** `> [!NOTE]` normally; `> [!WARNING]` or `> [!IMPORTANT]` when the run is stuck, reopened or failed | **Live** — the only section rewritten during the run |
+| **Goal** | Purpose in plain language, context, expected outcome, **and the trigger** — who asked, when, in what words, where it is not obvious | Prose | Written once |
+| **Todo** | The run's checklist, **headed by its references** — the plan stage and subtask this executes against, plus the scoping notes | **A list with a little detail per item, or a table.** Whichever the run needs | Ticked as work lands |
+| **Out of Scope** | What this run deliberately does not touch. **Optional** — omit it rather than writing "nothing" | List | Written once |
+| **Outcome** | What the run actually produced, what it cost, what it found. The gates it passed, with numbers | **A detail area.** As long as the run warrants | Written at close |
 
 **State first, deliberately.** Opening `summary.md` and knowing where things are
 without scrolling is purpose 1 and purpose 3 in one section.
 
+**State is a callout because it is the one thing a reader must not scroll
+past.** Plain prose under a heading reads as introduction and gets skimmed; a
+callout is a different visual object on the page. The severity carries meaning
+too — a run that came back reopened or blocked says so in the callout type, not
+only in the words.
+
 **No notes section.** If it is worth writing, it goes in `debrief/`.
 
-**The Outcome Summary cap is a rule, not a style preference** — it is the seam
-most likely to regrow the whole story. One sentence orients; a paragraph is a
-copy of the iteration that produced it.
-
-**The task list is run-local and disposable.** If an item outlives the run it
+**The Todo list is run-local and disposable.** If an item outlives the run it
 becomes a subtask.
+
+## Every Todo item is a LINK, and carries what it did
+
+Two rules, and they are the same rule seen twice — see
+[reference by link, never by number](./70_reference-by-link-never-by-number.md).
+
+```markdown
+- [x] `010` — the plans section                                     ← WRONG
+- [x] [The plans section](../../subtasks/040_execution/010_code-the-plans-section.md)
+      — framework, CLI and validator; four new scaffolders           ← RIGHT
+```
+
+- **Link, never a bare number.** `agent-ks move` rewrites markdown links when
+  files move; a backticked `` `010` `` is prose to every tool that exists.
+- **A line of detail per item, not just a title.** The reason this section
+  exists is that a reader should not have to open ten subtasks to learn what the
+  run did. A checklist of titles is an index; a checklist with outcomes is a
+  summary.
+
+Both were violated by the first log written in this shape, which is what
+prompted the revision.
+
+## What changed and why
+
+| Was | Now | Why |
+|---|---|---|
+| `# Goal and Trigger` | `# Goal` | The trigger is part of the goal, not a co-equal subject. The compound name invited two paragraphs where one was needed |
+| `# Task List` | `# Todo` | Matches the word used everywhere else in the tracker (`# Todo list` on subtasks). One vocabulary |
+| `# Outcome Summary` — *one sentence and a link, never a paragraph* | `# Outcome` — a detail area | **The cap was wrong.** It was aimed at restatement, and it hit the summary instead: the one file a reader opens first was the one forbidden to say anything. The anti-restatement rule survives as *point at detail rather than copying it* — which is `# Outcome`'s job, at whatever length that takes |
+| *Out of Scope* required | optional | A required section with nothing to say gets filled with "nothing", which is worse than absent |
+
+**The Outcome change is a reversal of an earlier decision in this same note, and
+it is recorded rather than edited away.** The original reasoning — *"a paragraph
+is a copy of the iteration that produced it"* — is still true of a paragraph
+that restates. It is not true of a paragraph that reports what the whole run
+came to, which no iteration file is positioned to write.
 
 ---
 
@@ -366,7 +413,7 @@ finding it is; the owner is accountable for the file existing. A finding that
 lives only in a job record dies with the run.
 
 **`summary.md` IS the brief.** A run-specific brief does not get its own file.
-`# Goal and Trigger` + `# Task List` + `# Out of Scope` already *are* the brief —
+`# Goal` + `# Todo` + `# Out of Scope` already *are* the brief —
 point the agent at `summary.md` and spend the prompt on the delta. Standing rules
 are referenced from `agent-memory/`, never re-typed
 ([thread 05](../brainstorm/05_discuss_subagent-protocol.md)). This retires the
@@ -449,7 +496,7 @@ data/tasks/2026-08-02-nsd-phase-2/
 ```
 
 **The plan stage survives as a label, not a folder** — in the workflow's name
-(`s3`, `s4`, `s5`) and in the loop's Task List. A folder would be a second place
+(`s3`, `s4`, `s5`) and in the loop's Todo. A folder would be a second place
 storing what the plan already owns, and it would cost a nesting level the depth
 budget below cannot spare.
 
@@ -626,7 +673,7 @@ slots become a three-file floor for a one-line change.
 
 > **No file stores a fact another file owns.**
 
-Every cut above is an instance: the Outcome Summary links rather than restates;
+Every cut above is an instance: `# Outcome` points rather than restates;
 an iteration file points at the debrief that holds the detail; actionable items
 leave for the subtask that owns them; standing rules are referenced, not
 re-typed. Where this is enforced structurally, duplication is impossible; where

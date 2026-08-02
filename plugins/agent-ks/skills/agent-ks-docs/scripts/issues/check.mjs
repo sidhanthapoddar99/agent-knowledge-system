@@ -654,7 +654,7 @@ for (const entry of issueFolders) {
     if (isLegacy) return;
 
     if (!files.some((f) => f.isFile() && f.name === 'summary.md')) {
-      warnings.push(`${rel}/: no \`summary.md\` — it is the one conclusive file for the run (State / Goal and Trigger / Task List / Out of Scope / Outcome Summary), and it IS the brief agents are pointed at`);
+      warnings.push(`${rel}/: no \`summary.md\` — it is the one conclusive file for the run (State / Goal / Todo / Out of Scope / Outcome), and it IS the brief agents are pointed at`);
     }
 
     // Iteration files. First two digits = the iteration, last = which file

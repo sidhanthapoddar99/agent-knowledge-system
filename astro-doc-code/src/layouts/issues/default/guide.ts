@@ -144,6 +144,11 @@ An issue is one folder — one coherent unit of *thinking + execution*.
 - Issue-specific terms + colour conventions → this issue's **Glossary** panel
   (author markdown; suggested sections: *Colour legend* · *Key terms* · *Conventions* —
   tables and pointers over paragraphs).
+- **Reference by LINK, never by number.** One file refers to another with a markdown
+  link whose text says what the target *is* — \`[the version bump](../050_version-bump.md)\`,
+  never \`\\\`050\\\`\`. Prefixes are gap-spaced so files can be inserted between them, and
+  \`agent-ks move\` rewrites real links when a file moves; a backticked number is prose
+  to every tool that exists, so it breaks silently and reports nothing.
 
 **When does a thought earn an issue?** Litmus test: you can name its component and
 its first subtask in one breath. Otherwise it's a **subtask** on an existing issue
@@ -215,10 +220,12 @@ ${kindsTable(kinds)}
 
 ${runStatusTable(statusColors)}
 - **\`summary.md\`** — required, and the one conclusive file. Five \`#\` sections, in
-  order: **State** (live — where the run is right now) · **Goal and Trigger** ·
-  **Task List** (headed by its references) · **Out of Scope** · **Outcome Summary**
-  (one sentence and a link, never a paragraph). \`summary.md\` **is** the brief you
-  point a delegated agent at.
+  order: **State** (live, and written as a callout — where the run is right now) ·
+  **Goal** (purpose and trigger) · **Todo** (headed by its references; every item a
+  markdown **link**, never a bare number, each carrying a line of what it did) ·
+  **Out of Scope** (optional) · **Outcome** (a detail area — point at the iteration
+  file rather than re-narrating it). \`summary.md\` **is** the brief you point a
+  delegated agent at.
 - **\`working/\`** — one file per **iteration**, plus a file for each agent that
   produced something substantial. An iteration is a **group** — of subtasks, of
   executions, of agents — never one agent and never one subtask.

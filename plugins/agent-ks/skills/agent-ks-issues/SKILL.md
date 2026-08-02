@@ -350,6 +350,28 @@ for a tight report — patterns in [41_searching.md](references/40_operations/41
   gap-spaced. Optional for issue subdocs (required by convention only for subtasks'
   ordering); both 2- and 3-digit are conventional in the tracker.
 - **The prefix owns the number.** Never repeat it in frontmatter.
+- **REFERENCE BY LINK, NEVER BY NUMBER — everywhere, no exceptions.** Another file is
+  identified by a markdown link whose text says what it *is*, never by its ordering
+  prefix. Applies to every file this framework touches: subtasks, notes, agent logs,
+  plans, comments, the skill's own references, and docs pages.
+
+  ```markdown
+  - [x] `010` — the plans section                                    ← WRONG
+  - [x] [The plans section](./010_code-the-plans-section.md) — framework,
+        CLI and validator                                            ← RIGHT
+  ```
+
+  Three reasons, and the third is the one people miss. **`agent-ks move` rewrites real
+  markdown links when a file moves; a backticked `` `010` `` is prose to every tool that
+  exists**, so it breaks silently. **A number is not a name** — *"`050` blocks `100`"*
+  is unreadable to anyone who has not already opened both. And **renumbering is
+  normal**: gap-spaced prefixes exist precisely so `015` can be inserted later, and a
+  number quoted in another file makes the numbering immutable.
+
+  A link reading `[010](./010_thing.md)` is still a number, just a clickable one — the
+  link text must name the thing. Keeping a number *alongside* a named link is fine; what
+  is banned is the number standing alone as the identifier. Where the number genuinely
+  is the subject (*"the first two digits are the iteration"*), it stays.
 - **Frontmatter `title`** on every markdown file (Astro builds fail without it).
 - **`settings.json` may be `.jsonc`** (comments + trailing commas) — prefer `.jsonc`
   for the tracker root and annotate what each component/label means.

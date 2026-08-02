@@ -50,10 +50,39 @@ context:
 
 ## Linking
 
+> **Reference by link, never by number.** This is the rule most often broken, and it
+> is broken by files that are otherwise well written.
+
+Another file is identified by a markdown link whose text says what the target *is* —
+never by its ordering prefix:
+
+```markdown
+- [x] `010` — the plans section                                    ← WRONG
+- [x] [The plans section](./010_code-the-plans-section.md) — framework,
+      CLI and validator                                            ← RIGHT
+
+Blocked by `050` until the version bump ships.                     ← WRONG
+Blocked by [the version bump](../050_version-bump.md).             ← RIGHT
+```
+
+| Why | |
+|---|---|
+| **It breaks silently** | `agent-ks move` rewrites real markdown links when a file moves. A backticked `` `010` `` is prose to every tool that exists — the file moves, the text stays, nothing reports it |
+| **A number is not a name** | *"`050` blocks `100`"* is unreadable to anyone who has not already opened both. Nothing in a body may require having read another file to parse the sentence |
+| **Renumbering is normal** | Gap-spaced prefixes exist so `015` can be inserted later. A number quoted in another file makes the numbering immutable — the opposite of why it is spaced |
+
+**A link reading `[010](./010_thing.md)` is still a number, just clickable.** The link
+text has to name the thing. A number *alongside* a named link is fine
+(`[the plans section (010)](./010_code-the-plans-section.md)`); a number standing alone
+as the identifier is not. Where the number genuinely is the subject — *"the first two
+digits are the iteration"* — it stays.
+
 - **Cross-issue / cross-file links**: standard markdown relative links
   (`../2026-05-08-runtime-stack-migration/issue.md`) or backticked repo paths in
   prose. `agent-ks move` rewrites real markdown links when files move — prefer them
   over bare prose paths for anything load-bearing.
+- **A repo file that is not a tracker page** has nothing to link to, so a backticked
+  path is correct there: `` `src/loaders/issues.ts` ``. That is a path, not a number.
 - **`Related:` lines** at the end of a body are the convention for soft references
   (duplicate-check hits, sibling subtasks, superseded issues).
 - Ordering prefixes are **stripped from URL slugs** (`subtasks/020_impl/010_backend.md`

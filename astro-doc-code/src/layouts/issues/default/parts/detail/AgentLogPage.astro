@@ -1,6 +1,6 @@
 ---
 /**
- * AgentLogPage — full-page view of one agent-log/ iteration entry.
+ * AgentLogPage — full-page view of one file inside an agent log.
  * Renders in standalone mode (its own URL) or as a hidden panel (legacy).
  */
 import type { IssueAgentLog } from '@loaders/issues';
@@ -26,7 +26,6 @@ const pathDisplay = ['agent-log', ...log.groupPath, `${log.name}.md`].join('/');
     <div class="issue-log__header">
       <span class="issue-doc__path">{pathDisplay}</span>
       <div class="issue-log__meta">
-        {log.iteration !== null && <span class="issue-log__chip">iter {log.iteration}</span>}
         {log.agent && <span class="issue-log__chip">{log.agent}</span>}
         {log.status && <span class={`issue-log__chip issue-log__chip--status is-${log.status.replace(/\s+/g, '-')}`}>{log.status}</span>}
         {log.date && <span class="issue-log__chip">{log.date}</span>}

@@ -32,9 +32,24 @@ interface Props {
   pathPrefix?: string;
   /** Agent-log kind code → {name, icon} (effective map). Only used for `kind==='log'`. */
   kindMap?: Record<string, AgentLogKind>;
+  /** Agent-log folder path (joined with `/`, relative to `agent-log/`) → its
+   *  status, or `null` when the folder ships no `settings.json`. A folder absent
+   *  from this map and a folder mapped to `null` mean the same thing and render
+   *  the same defined grey. Only used for `kind==='log'`. */
+  statusMap?: Record<string, string | null>;
+  /** Resolved seven-status colour map — the same one every other status surface
+   *  reads, so a tracker overriding `fields.status.colors` restyles this too. */
+  statusColors?: Record<string, string>;
+  /** This node's path relative to `agent-log/` — the key into `statusMap`.
+   *  Accumulated on the way down; `''` at the root. */
+  groupKey?: string;
 }
 
-const { tree, kind, baseUrl, issueId, activeKey, nested = false, kindMap = {}, pathPrefix = (kind === 'note' ? 'notes' : kind === 'brainstorm' ? 'brainstorm' : kind === 'memory' ? 'agent-memory' : 'agent-log') } = Astro.props;
+const {
+  tree, kind, baseUrl, issueId, activeKey, nested = false, kindMap = {},
+  statusMap = {}, statusColors = {}, groupKey = '',
+  pathPrefix = (kind === 'note' ? 'notes' : kind === 'brainstorm' ? 'brainstorm' : kind === 'memory' ? 'agent-memory' : 'agent-log'),
+} = Astro.props;
 
 /** For an agent-log activity folder `NNN_<code>_<name>`: after stripping the order
  *  prefix, if the remainder starts with a known two-letter kind code + `_`, split
@@ -69,33 +84,35 @@ function prefixValue(name: string): number {
   return p === null ? Number.POSITIVE_INFINITY : p;
 }
 
-/** Milestone status → sidebar `#<iteration>` badge colour class. Agent-log only.
- *  Status tint is a *milestone* signal: a non-iteration `0NN` meta/slot file
- *  shows a neutral order prefix (like a folder), never a status colour. */
-function logStatusModifier(item: IssueNote | IssueAgentLog): string {
-  if (kind !== 'log') return '';
-  if ((item as IssueAgentLog).iteration === null) return '';
-  const s = ((item as IssueAgentLog).status ?? '').toLowerCase().replace(/\s+/g, '-');
-  if (s === 'in-progress' || s === 'wip' || s === 'active') return 'is-in-progress';
-  if (s === 'success' || s === 'completed' || s === 'complete' || s === 'done') return 'is-success';
-  if (s === 'failed' || s === 'fail' || s === 'error') return 'is-failed';
-  if (s === 'not-started' || s === 'todo' || s === 'pending' || s === 'planned') return 'is-not-started';
-  return '';
+/**
+ * Leading badge for a leaf — the padded `NN` prefix, one rule for every kind.
+ *
+ * Agent-log entries used to override this with a `#<iteration>` badge tinted by
+ * per-file `status`. Both are gone: milestones no longer exist, the `NNN_`
+ * filename owns the iteration number, and the status signal now belongs to the
+ * agent-log FOLDER (see `folderStatusColor`). Historic files that still carry
+ * `iteration:` frontmatter render their filename prefix like everything else —
+ * the number is still on screen, and nothing in the record changed.
+ */
+function leafNum(item: IssueNote | IssueAgentLog): string {
+  return prefixNum(item.name);
 }
 
-/** Leading badge for a leaf — mirrors the subtask `__num` treatment. Common rule
- *  is {@link prefixNum}; agent-log layers a precedence override on top (its
- *  `#<iteration>` wins when set). */
-function leafNum(item: IssueNote | IssueAgentLog): string {
-  if (kind === 'log') {
-    // A milestone shows its `#<iteration>` badge; a non-iteration entry (a `0NN`
-    // meta / slot file: goal, summary, task_list, working, benchmark, notes)
-    // falls back to its padded `NN` order prefix — same as folders and the other
-    // kinds, so it's no longer prefix-less in the sidebar.
-    const it = (item as IssueAgentLog).iteration;
-    if (it !== null) return `#${it}`;
-  }
-  return prefixNum(item.name);
+/**
+ * Colour for an agent-log folder's status dot.
+ *
+ * Absent status resolves to a **defined** muted token rather than falling
+ * through to "no colour": a folder that never declared a status must be
+ * visually distinguishable from one that declared `open`, or the signal is lost
+ * in exactly the case nobody writes a fixture for.
+ */
+const AGENT_LOG_STATUS_UNSET = 'var(--color-text-muted)';
+function folderStatusColor(key: string): { color: string; label: string } | null {
+  if (kind !== 'log') return null;
+  if (!(key in statusMap)) return null;          // a plain grouping folder — no dot at all
+  const status = statusMap[key];
+  if (!status) return { color: AGENT_LOG_STATUS_UNSET, label: 'no status set' };
+  return { color: statusColors[status] ?? AGENT_LOG_STATUS_UNSET, label: status };
 }
 
 function leafLabel(item: IssueNote | IssueAgentLog): string {
@@ -154,24 +171,18 @@ const entries: SubdocEntry[] = [
   ...Array.from(treeGroups, ([groupName, child]): SubdocEntry => ({ kind: 'group', sortName: groupName, groupName, child })),
 ];
 
-/** Frontmatter `iteration` for an entry, or null. Only leaf agent-log files
- *  carry one — folders and every other kind are always null. This is what
- *  splits agent-log entries into the two sort buckets below. */
-function entryIteration(entry: SubdocEntry): number | null {
-  if (kind !== 'log' || entry.kind !== 'leaf') return null;
-  return (entry.item as IssueAgentLog).iteration;
-}
-
 /**
  * Ordering — precedence chain:
  *   0. `memory.md` pin (agent-memory only): the section's index / entry point
  *      always sorts first.
- *   1. Bucket (agent-log only): entries with no `iteration` (goal / summary /
- *      task-list, and folders) come first; `iteration` entries come after.
- *   2. Iteration number (agent-log only): within the iteration bucket, by `#N`.
- *   3. Numeric prefix *value* — so mixed widths (`20_` vs `100_`) order by value,
+ *   1. `summary.md` pin (agent-log only): the run's one conclusive file sorts
+ *      first inside its folder, for the same reason — it is the entry point.
+ *   2. Numeric prefix *value* — so mixed widths (`20_` vs `100_`) order by value,
  *      not lexically. Unprefixed sorts last (+∞).
- *   4. Lexicographic on the raw name — the final tie-break.
+ *   3. Lexicographic on the raw name — the final tie-break.
+ *
+ * The old iteration bucket is gone with milestones: every agent-log entry now
+ * orders by its filename prefix, which is the number the file already carries.
  */
 entries.sort((a, b) => {
   if (kind === 'memory') {
@@ -180,14 +191,13 @@ entries.sort((a, b) => {
     if (aPin !== bPin) return aPin - bPin;                                 // 0. index pin
   }
   if (kind === 'log') {
-    const ai = entryIteration(a);
-    const bi = entryIteration(b);
-    if ((ai === null) !== (bi === null)) return ai === null ? -1 : 1;      // 1. bucket
-    if (ai !== null && bi !== null && ai !== bi) return ai - bi;           // 2. iteration
+    const aPin = a.kind === 'leaf' && a.sortName === 'summary' ? 0 : 1;
+    const bPin = b.kind === 'leaf' && b.sortName === 'summary' ? 0 : 1;
+    if (aPin !== bPin) return aPin - bPin;                                 // 1. summary pin
   }
   const av = prefixValue(a.sortName), bv = prefixValue(b.sortName);
-  if (av !== bv) return av - bv;                                           // 3. prefix value
-  return a.sortName.localeCompare(b.sortName);                            // 4. lexicographic
+  if (av !== bv) return av - bv;                                           // 2. prefix value
+  return a.sortName.localeCompare(b.sortName);                            // 3. lexicographic
 });
 ---
 
@@ -199,7 +209,6 @@ entries.sort((a, b) => {
       const isActive = activeKey === key;
       const label = leafLabel(item);
       const num = leafNum(item);
-      const statusMod = logStatusModifier(item);
       const color = (item as { color?: string | null }).color ?? null;
       // Type marker: non-markdown sub-docs (`.html` artifacts, first-class
       // diagrams) get a small glyph so they're distinguishable from a markdown
@@ -213,7 +222,7 @@ entries.sort((a, b) => {
           aria-current={isActive ? 'page' : undefined}
           data-tip={label}
         >
-          {num && <span class={`issue-sidebar__num ${statusMod}`}>{num}</span>}
+          {num && <span class="issue-sidebar__num">{num}</span>}
           <span class="issue-sidebar__label" style={color ? `color: ${color}` : undefined}>{label}</span>
           {typeIcon && (
             <span class="issue-sidebar__doctype" data-tip={typeIcon.label} data-tip-always aria-label={typeIcon.label} set:html={typeIcon.svg} />
@@ -225,8 +234,10 @@ entries.sort((a, b) => {
     const child = entry.child!;
     const open = containsActive(child);
     const childPath = `${pathPrefix}/${groupName}`;
+    const childGroupKey = groupKey ? `${groupKey}/${groupName}` : groupName;
     const { kind: groupKind, label: groupLabel } = logFolderParts(groupName);
     const groupNum = prefixNum(groupName);
+    const folderStatus = folderStatusColor(childGroupKey);
     // Row: `NN  <symbol>  <name>  …  <count>` — numeric prefix, then the kind symbol
     // up front (fast custom tooltip = name), the clean name, and the file count on the
     // right. No recognised kind → no symbol, name keeps the code.
@@ -236,7 +247,13 @@ entries.sort((a, b) => {
           <svg class="issue-sidebar__chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
           {groupNum && <span class="issue-sidebar__num">{groupNum}</span>}
           {groupKind && (
-            <span class="issue-sidebar__kind" data-tip={groupKind.name} data-tip-always aria-label={groupKind.name}>
+            <span
+              class="issue-sidebar__kind"
+              style={folderStatus ? `color: ${folderStatus.color}` : undefined}
+              data-tip={folderStatus ? `${groupKind.name} · ${folderStatus.label}` : groupKind.name}
+              data-tip-always
+              aria-label={folderStatus ? `${groupKind.name}, ${folderStatus.label}` : groupKind.name}
+            >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={agentLogIcon(groupKind.icon)} />
             </span>
           )}
@@ -251,7 +268,10 @@ entries.sort((a, b) => {
           activeKey={activeKey}
           nested={true}
           pathPrefix={childPath}
+          groupKey={childGroupKey}
           kindMap={kindMap}
+          statusMap={statusMap}
+          statusColors={statusColors}
         />
       </details>
     );

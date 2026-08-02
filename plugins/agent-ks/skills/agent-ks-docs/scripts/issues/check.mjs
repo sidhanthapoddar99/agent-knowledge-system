@@ -91,6 +91,11 @@ const PLAN_STAGE_FM_KEYS = new Set([
   'title', 'outcome', 'who', 'status', 'subtasks', 'agent-logs', 'sidebar_label', 'color',
 ]);
 const PLAN_SETTINGS_KEYS = new Set(['title', 'status', 'description']);
+// An agent log's status is a SUBSET of the one canonical vocabulary — the same
+// seven values, minus the two that describe a work item rather than a run.
+// One vocabulary, one palette; the subset is a convention this validator holds,
+// not a second status axis.
+const AGENT_LOG_STATUSES = ['open', 'in-progress', 'input-needed', 'done', 'dropped'];
 const COMMENT_FM_KEYS = new Set(['author', 'date', 'title', 'sidebar_label']);
 
 // Known issue sub-folders (the anatomy) + colocated assets. Anything else at
@@ -615,6 +620,23 @@ for (const entry of issueFolders) {
     let files;
     try { files = fs.readdirSync(absDir, { withFileTypes: true }); }
     catch { return; }
+
+    // Folder-level settings.json — OPTIONAL by design. Absent is not a finding:
+    // an agent log without one renders a defined grey, which is deliberately
+    // distinct from `open`. What is a finding is a status the vocabulary does
+    // not contain, or one of the two that mean nothing for a run.
+    const logSettings = files.find((f) => f.isFile() && /^settings\.jsonc?$/.test(f.name));
+    if (logSettings) {
+      const settings = readJsonChecked(path.join(absDir, logSettings.name), `${rel}/${logSettings.name}`, errors);
+      if (settings && settings.status !== undefined) {
+        const norm = normalizeStatus(settings.status);
+        if (!norm) {
+          errors.push(`${rel}/${logSettings.name}: invalid status \`${settings.status}\` (fixed vocabulary: ${STATUSES.join('|')})`);
+        } else if (!AGENT_LOG_STATUSES.includes(norm)) {
+          errors.push(`${rel}/${logSettings.name}: status \`${norm}\` is not meaningful for a RUN — an agent log is open, running, waiting on an answer, finished, or abandoned (${AGENT_LOG_STATUSES.join('|')}). \`blocked\` and \`review\` describe work items, not runs`);
+        }
+      }
+    }
 
     // Existing agent logs are NOT migrated: "history stays as written; this
     // governs what is recorded next" (notes/20_agent-log-structure.md). So the

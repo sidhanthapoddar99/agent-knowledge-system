@@ -143,8 +143,6 @@ export interface IssueAgentLog {
   /** Numeric prefix if filename starts with "NNN_", else the sort order.
    *  Sequence resets per subgroup folder (001, 002, … per leaf folder). */
   sequence: number;
-  /** Frontmatter `iteration` field (falls back to sequence) */
-  iteration: number | null;
   /** Frontmatter `agent` — which agent wrote this log */
   agent: string | null;
   /** Frontmatter `status` — free-form (in-progress / success / failed / …) */
@@ -257,6 +255,31 @@ export interface IssueSubtask {
 }
 
 /**
+ * One folder under `agent-log/` — an agent log, a child agent log, a reserved
+ * `working/` / `debrief/` folder, or a plain grouping label.
+ *
+ * Folder-level metadata lives here rather than on {@link IssueAgentLog}, which
+ * is per FILE. Mirrors {@link SubtaskGroupMeta}, the existing pattern for
+ * "things a folder knows about itself".
+ */
+export interface AgentLogGroupMeta {
+  /** Folder segments below `agent-log/` — 1…MAX_SUBFOLDER_DEPTH entries. */
+  groupPath: string[];
+  /**
+   * Status from the folder's optional `settings.json`.
+   *
+   * **`null` when the file is absent, and that must stay representable.** An
+   * agent log with no status renders a *defined* grey, which is deliberately
+   * distinct from `open` — defaulting to `open` at read time would assert
+   * something the folder never said.
+   */
+  status: IssueStatus | null;
+  /** True for the reserved `working/` and `debrief/` names, which are parts of
+   *  an agent log rather than agent logs of their own. */
+  reserved: boolean;
+}
+
+/**
  * One folder under `subtasks/` (or a nested folder) — the metadata needed to
  * render a labelled section in the sidebar. Group has no body file; only
  * leaf `.md` files are subtasks.
@@ -327,6 +350,8 @@ export interface Issue {
   plans: IssuePlan[];
   /** Agent logs — iterative AI execution notes under agent-log/ */
   agentLogs: IssueAgentLog[];
+  /** Folders under `agent-log/`, with each one's optional status. */
+  agentLogGroups: AgentLogGroupMeta[];
   /** Effective agent-log kind map (code → {name, icon}): framework defaults
    *  merged with the issue's settings.json `agentLogKinds`. */
   agentLogKinds: Record<string, AgentLogKind>;
@@ -677,6 +702,7 @@ async function loadIssueFolder(folderPath: string, dataPath: string): Promise<Is
 
   // Agent logs: same nested shape as notes; sequence resets per leaf folder
   const agentLogs = await readAgentLogs(path.join(folderPath, 'agent-log'), dataPath, id);
+  const agentLogGroups = readAgentLogGroups(path.join(folderPath, 'agent-log'), dataPath);
 
   // Effective agent-log kind map: framework defaults + this issue's overrides.
   // Each override is `"code": "name"` (shorthand) or `"code": { name, icon }`.
@@ -737,6 +763,7 @@ async function loadIssueFolder(folderPath: string, dataPath: string): Promise<Is
     agentMemory,
     plans,
     agentLogs,
+    agentLogGroups,
     agentLogKinds,
   };
 }
@@ -911,7 +938,6 @@ async function readAgentLogs(
       return {
         name: base,
         sequence: parseOrderPrefixLoose(base).position ?? fallbackSeq,
-        iteration: null,
         agent: null,
         status: null,
         date: null,
@@ -925,12 +951,11 @@ async function readAgentLogs(
 
     const base = path.basename(abs).replace(/\.md$/, '');
     const sequence = parseOrderPrefixLoose(base).position ?? fallbackSeq;
-    let fm: { iteration?: number; agent?: string; status?: string; date?: unknown; color?: string } = {};
+    let fm: { agent?: string; status?: string; date?: unknown; color?: string } = {};
     try { fm = matter(fs.readFileSync(abs, 'utf-8')).data as typeof fm; } catch {}
     return {
       name: base,
       sequence,
-      iteration: typeof fm.iteration === 'number' ? fm.iteration : null,
       agent: fm.agent || null,
       status: fm.status || null,
       date: fmDateString(fm.date),
@@ -1102,6 +1127,51 @@ async function readPlans(
   }
 
   return plans;
+}
+
+/** Reserved folder names inside an agent log. Anything else nested there is a
+ *  CHILD agent log, so there is no ambiguity at read time. */
+export const AGENT_LOG_RESERVED_FOLDERS = new Set(['working', 'debrief']);
+
+/**
+ * Walk `agent-log/` for folders and read each one's optional `settings.json`.
+ *
+ * A **new read path**, not a new field: `readAgentLogs` reads markdown files
+ * only, and folder-level settings were previously read for subtask groups
+ * alone. Absence is fine everywhere — the file is optional by design, and a
+ * folder without one is representable (`status: null`) rather than defaulted.
+ */
+function readAgentLogGroups(logsDir: string, dataPath: string): AgentLogGroupMeta[] {
+  if (!fs.existsSync(logsDir)) return [];
+  const out: AgentLogGroupMeta[] = [];
+
+  const walk = (absDir: string, groupPath: string[]): void => {
+    let entries: fs.Dirent[];
+    try { entries = fs.readdirSync(absDir, { withFileTypes: true }); }
+    catch { return; }
+    for (const entry of entries) {
+      if (!entry.isDirectory()) continue;
+      if (groupPath.length >= MAX_SUBFOLDER_DEPTH) continue;   // loader cap; warned by readAgentLogs
+      const childAbs = path.join(absDir, entry.name);
+      const childPath = [...groupPath, entry.name];
+      const reserved = AGENT_LOG_RESERVED_FOLDERS.has(entry.name);
+
+      let status: IssueStatus | null = null;
+      if (!reserved) {
+        const settingsPath = resolveSettingsPath(childAbs);
+        const settings = readJson<{ status?: string }>(settingsPath);
+        if (settings && settings.status != null && settings.status !== '') {
+          status = resolveStatus(settings.status, path.relative(dataPath, settingsPath));
+        }
+      }
+
+      out.push({ groupPath: childPath, status, reserved });
+      walk(childAbs, childPath);
+    }
+  };
+
+  walk(logsDir, []);
+  return out;
 }
 
 /** Convert a folder slug ("02_impl-and-polish") into a human label ("impl and polish"). */

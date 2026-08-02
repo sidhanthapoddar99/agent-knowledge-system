@@ -1,6 +1,6 @@
 ---
 title: "Code per-agent-log settings.json (framework)"
-status: open
+status: review
 ---
 
 # Overview
@@ -25,41 +25,84 @@ accepts the absent case.
 
 # Todo list
 
-- [ ] `readAgentLogs` reads an optional `settings.json` per agent log **and per
-      child agent log** — copy the subtask-group reader at `issues.ts:874`
-- [ ] **`working` and `debrief` are RESERVED folder names** inside an agent log —
+- [x] A new `readAgentLogGroups` walk reads an optional `settings.json` per agent
+      log **and per child agent log** — see *What shipped differently*: it lands
+      on a new `agentLogGroups` array, not on `IssueAgentLog`
+- [x] **`working` and `debrief` are RESERVED folder names** inside an agent log —
       never treated as child agent logs. Anything else matching
       `NNN_<kind>_<name>/` is a child
-- [ ] `IssueAgentLog` gains an **optional** status — absent must stay
-      representable, never defaulted at read time
+- [x] The status is **optional** — absent stays representable (`null`), never
+      defaulted at read time
 - [x] Colour source: **reuse `statusColors`** — settled by construction once
       iteration files moved to the canonical 7. Same value set, one palette
-- [ ] Grey as an explicit token for the absent case, visually distinct from
-      `open`
-- [ ] Render on the agent log in `DetailSidebar.astro` and `SubdocTree.astro`,
-      alongside the kind icon
-- [ ] **`guide.ts`** — the bundled anatomy legend: retire the six-slot list and
-      the whole milestone block, move the `#N` badge tinting onto the agent log,
-      replace the milestone frontmatter table with the iteration-file one
-      ([what changes, line by line](../../notes/40_agent-log-settings-framework-spec.md))
+- [x] Grey as an explicit token (`AGENT_LOG_STATUS_UNSET`) for the absent case,
+      visually distinct from `open`
+- [x] Render on the agent log in `DetailSidebar.astro` and `SubdocTree.astro` —
+      the kind symbol itself carries the tint, so no new row furniture
+- [ ] **`guide.ts`** — owned by [`050`](./050_docs-update-plans-section.md), not
+      here. One file, one owner
 - [x] **Status vocabulary settled (Sid, 2026-08-02)** — the canonical 7
       everywhere. `status` = did the agent finish; the finding goes in
       `# Outcome`. No second vocabulary to build
-- [ ] `agent-ks check issues`: accept a missing `settings.json`, reject a status
-      outside the five-value subset
-- [ ] **`check issues` ERRORS on depth overflow.** `MAX_SUBFOLDER_DEPTH = 5` is
-      enforced by the loader as a `console.warn` + skip — a file that vanishes
-      from the site with no validator signal. Fail loudly instead
-      ([the limits section](../../notes/20_agent-log-structure.md))
-- [ ] *(no work needed — `readAgentLogs` already reads `agent` / `status` /
-      `date` / `color` frontmatter; only `iteration:` becomes dead)*
-- [ ] Demo fixture gains agent logs **with and without** `settings.json`
-- [ ] `./start build` clean
+- [x] `agent-ks check issues`: accepts a missing `settings.json`, errors on a
+      status outside the five-value subset **and** on one outside the seven
+- [x] **`check issues` ERRORS on depth overflow** (shipped with
+      [`010`](./010_code-the-plans-section.md)'s validator rewrite) — the loader
+      only `console.warn`s and skips, which is a file vanishing from the site
+      with no signal
+- [x] *(no work needed — `readAgentLogs` already reads `agent` / `status` /
+      `date` / `color` frontmatter)*
+- [x] Demo fixture gains agent logs **with and without** `settings.json`, plus a
+      child whose status differs from its parent's
+- [x] `./start build` clean
 
 # Outcomes and Next Steps
 
-> [!IMPORTANT]
-> **PLACEHOLDER** — filled at completion / hand-off.
+**Shipped.** Every agent-log folder may declare a status; it tints the kind
+symbol already on that row, read from the same `statusColors` map as every other
+status surface.
+
+**All four cases verified from the built HTML**, because the absent case is the
+one that regresses silently and an argument is not a fixture:
+
+| Fixture | Renders |
+|---|---|
+| `300_lp_status-shown` (`in-progress`) | `#61afef` · "loop · in-progress" |
+| `010_wf_child-independent` (`done`, nested inside it) | `#7ec699` · "workflow · done" |
+| `310_au_status-absent` (no `settings.json`) | `var(--color-text-muted)` · "audit · no status set" |
+| `020_au_edge-cases` (a legacy folder) | the same defined grey, no throw |
+
+The child renders `done` while its parent renders `in-progress` — status is read
+per folder and never derived from children, which is exactly what a "helpful"
+derivation would have broken.
+
+**The subset error was proved able to fail**, both ways: `review` gives the
+not-meaningful-for-a-run error, `nonsense` gives the invalid-status error, and
+restoring returns exit 0.
+
+**Run record:**
+[`020_wf_ship-the-split/working/020_agent-log-settings.md`](../../agent-log/020_wf_ship-the-split/working/020_agent-log-settings.md).
+
+## What shipped differently from the spec, and why
+
+**The status lives on a new `agentLogGroups` array, not on `IssueAgentLog`.**
+The spec said *"`IssueAgentLog` gains an optional status field"*, written when
+it looked like `IssueAgentLog` described a folder. It describes a **file**. A
+folder's status copied onto each of its files is N copies of one fact, and they
+can disagree. `agentLogGroups: AgentLogGroupMeta[]` mirrors the existing
+`subtaskGroups` — the framework's established pattern for what a folder knows
+about itself.
+
+**Two things were deleted rather than left working.** Applying the
+superseded-wording rule to code:
+
+- `IssueAgentLog.iteration` and the `#N` badge it drove. The `NNN_` filename
+  owns the number now. Historic files that still carry `iteration:` frontmatter
+  render their filename prefix like every other entry — the number is still on
+  screen and the record is untouched, but there is no longer a second badge
+  scheme keeping a retired field alive forever.
+- The four `.issue-sidebar__num.is-*` CSS rules that tinted that badge, replaced
+  by the folder-level tint.
 
 # Details
 

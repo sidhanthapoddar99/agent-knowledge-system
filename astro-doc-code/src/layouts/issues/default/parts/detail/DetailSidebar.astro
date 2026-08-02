@@ -29,11 +29,15 @@ interface Props {
   mode?: 'overview' | 'subdoc';
   /** Panel key of the currently-active item (e.g. 'overview', 'subtask-foo'). */
   activeKey?: string;
+  /** Resolved seven-status colour map, for the agent-log status dots and the
+   *  pinned plan. Empty is safe — each surface falls back to a defined muted
+   *  token rather than to no colour at all. */
+  statusColors?: Record<string, string>;
 }
 
 const {
   baseUrl, issue, subtaskDone, subtaskReview,
-  mode = 'overview', activeKey = 'overview',
+  mode = 'overview', activeKey = 'overview', statusColors = {},
 } = Astro.props;
 const subtaskTotal = issue.subtasks.length;
 const overviewHref = detailUrl(baseUrl, issue.id);
@@ -58,6 +62,16 @@ const activePlanGroupOpen = activeKey.startsWith('plan-');
 // the issue body: the plan costs a click, not vertical space on every visit.
 const pinnedPlan = activePlan(issue.plans);
 const otherPlans = issue.plans.filter((p) => p !== pinnedPlan);
+
+// Agent-log folder → its status. The reserved working/ and debrief/ folders are
+// parts of a run rather than runs, so they carry no status of their own and are
+// left out. A folder present here with a null status is a folder that shipped no
+// settings.json; it renders a DEFINED grey, distinct from `open`.
+const agentLogStatus: Record<string, string | null> = Object.fromEntries(
+  issue.agentLogGroups
+    .filter((g) => !g.reserved)
+    .map((g) => [g.groupPath.join('/'), g.status]),
+);
 
 // Tracker slug (e.g. `todo`) — namespaces the collapse cache alongside the issue id.
 const tracker = baseUrl.replace(/^\/+/, '').replace(/\/+$/, '');
@@ -204,7 +218,7 @@ const tracker = baseUrl.replace(/^\/+/, '').replace(/\/+$/, '');
               >
                 <span class="issue-sidebar__pin" aria-hidden="true">●</span>
                 <span class="issue-sidebar__label">{pinnedPlan.title}</span>
-                <span class="issue-sidebar__doctype" style={`color: var(--color-text-muted)`} set:html={stateIconSvg(pinnedPlan.status)} />
+                <span class="issue-sidebar__doctype" style={`color: ${statusColors[pinnedPlan.status] ?? 'var(--color-text-muted)'}`} set:html={stateIconSvg(pinnedPlan.status)} />
               </a>
             )}
             {otherPlans.map((p) => (
@@ -251,7 +265,7 @@ const tracker = baseUrl.replace(/^\/+/, '').replace(/\/+$/, '');
       {issue.agentLogs.length === 0 ? (
         <div class="issue-sidebar__items"><div class="issue-sidebar__empty">No agent-log entries</div></div>
       ) : (
-        <SubdocTree tree={logTree} kind="log" baseUrl={baseUrl} issueId={issue.id} activeKey={activeKey} kindMap={issue.agentLogKinds} />
+        <SubdocTree tree={logTree} kind="log" baseUrl={baseUrl} issueId={issue.id} activeKey={activeKey} kindMap={issue.agentLogKinds} statusMap={agentLogStatus} statusColors={statusColors} />
       )}
     </details>
 

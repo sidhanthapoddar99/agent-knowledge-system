@@ -95,6 +95,9 @@ const PLAN_STAGE_FM_KEYS = new Set([
   'title', 'outcome', 'who', 'status', 'subtasks', 'agent-logs', 'sidebar_label', 'color',
 ]);
 const PLAN_SETTINGS_KEYS = new Set(['title', 'status', 'description']);
+// GitHub-flavoured callout opener, any kind. Used to check that a round marked
+// `dropped` says why in prose as well as in its status.
+const ROUND_FAILURE_CALLOUT = /^\s*>\s*\[!(NOTE|IMPORTANT|WARNING|CAUTION|TIP)\]/m;
 // An agent log's status is a SUBSET of the one canonical vocabulary — the same
 // seven values, minus the two that describe a work item rather than a run.
 // One vocabulary, one palette; the subset is a convention this validator holds,
@@ -676,14 +679,28 @@ for (const entry of issueFolders) {
         byIteration.set(key, list);
 
         if (!isDoc) continue;
-        let fm;
-        try { fm = matter(fs.readFileSync(path.join(workingDir, f.name), 'utf-8')).data || {}; }
-        catch { continue; } // malformed fm already reported by the generic walk
+        let fm, body;
+        try {
+          const parsed = matter(fs.readFileSync(path.join(workingDir, f.name), 'utf-8'));
+          fm = parsed.data || {};
+          body = parsed.content || '';
+        } catch { continue; } // malformed fm already reported by the generic walk
         if (fm.iteration !== undefined) {
           warnings.push(`${rel}/working/${f.name}: carries \`iteration:\` — retired. The \`${pm[1]}${pm[2]}_\` filename owns the number, and a frontmatter copy is a second place to keep it right`);
         }
-        if (fm.status !== undefined && !normalizeStatus(fm.status)) {
+        const iterStatus = normalizeStatus(fm.status);
+        if (fm.status !== undefined && !iterStatus) {
           errors.push(`${rel}/working/${f.name}: invalid status \`${fm.status}\` (fixed vocabulary: ${STATUSES.join('|')}). \`status\` says whether the agent FINISHED; what it found goes in \`# Outcome\``);
+        } else if (iterStatus && !AGENT_LOG_STATUSES.includes(iterStatus)) {
+          errors.push(`${rel}/working/${f.name}: status \`${iterStatus}\` is not meaningful for a ROUND (${AGENT_LOG_STATUSES.join('|')}). \`blocked\` and \`review\` describe a work item — a round either ran or it did not`);
+        }
+        // A round that did not land carries TWO signals, and they do different
+        // jobs: `status: dropped` is the scannable one, the callout is the one
+        // that says why. Neither substitutes for the other — a bare `dropped`
+        // compresses the only useful facts (what failed, what it cost, what was
+        // learned) into a word that reads as if it already told you them.
+        if (iterStatus === 'dropped' && !ROUND_FAILURE_CALLOUT.test(body)) {
+          warnings.push(`${rel}/working/${f.name}: \`status: dropped\` with no callout — a round that did not land says why in a \`> [!WARNING]\` / \`> [!IMPORTANT]\` callout. The status makes it scannable; the callout is what a reader actually needs`);
         }
       }
       for (const [iteration, list] of byIteration) {

@@ -236,13 +236,18 @@ ${runStatusTable(statusColors)}
 | Field | Meaning |
 |---|---|
 | \`title\` | Display title. |
-| \`status\` | The canonical seven — on a run, \`done\` means **the agent finished**, \`dropped\` means it didn't. What it *concluded* is prose in \`# Outcome\`. |
+| \`status\` | The five that mean something for a run. **Tints this file's prefix number** — the round-level signal, where the folder's dot is the run-level one. \`done\` means the agent finished; what it *concluded* is prose in \`# Outcome\`. Absent = untinted, which is distinct from \`open\`. |
 | \`agent\` | Who wrote it. For an external tool, name the **tool**. |
 | \`date\` | Optional — when it landed. |
 
   The head is \`# Goal\` · \`# Inputs\` · \`# Expected Outcome\` · \`# Outcome\`. The
   first three are the work order, written when the file is created; the last is
   filled when the round lands.
+- **A round that did NOT land carries two signals, and needs both.**
+  \`status: dropped\` tints the number — scannable, but it says only that the run
+  did not deliver. A \`> [!WARNING]\` callout in \`# Outcome\` says *what* failed and
+  what it cost. A bare \`dropped\` compresses that into a word which reads as if it
+  already told you. \`agent-ks check issues\` warns when one is missing.
 - **Thin but complete** — issues found get one line each plus a pointer, never the
   write-up in place. A file is complete because of what it points at.
 

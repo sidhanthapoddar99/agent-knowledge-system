@@ -94,15 +94,43 @@ function prefixValue(name: string): number {
 /**
  * Leading badge for a leaf — the padded `NN` prefix, one rule for every kind.
  *
- * Agent-log entries used to override this with a `#<iteration>` badge tinted by
- * per-file `status`. Both are gone: milestones no longer exist, the `NNN_`
- * filename owns the iteration number, and the status signal now belongs to the
- * agent-log FOLDER (see `folderStatusColor`). Historic files that still carry
- * `iteration:` frontmatter render their filename prefix like everything else —
- * the number is still on screen, and nothing in the record changed.
+ * Agent-log entries used to override this with a separate `#<iteration>` badge,
+ * numbered from `iteration:` frontmatter. That badge is gone — milestones no
+ * longer exist and the `NNN_` filename owns the number, so historic files still
+ * carrying `iteration:` render their filename prefix like everything else.
+ *
+ * The number is TINTED by the file's own `status` where it declares one (see
+ * `leafNumColor`), which is the round-level signal: the agent-log folder's dot
+ * says how the whole run went, and a round inside it can have failed while the
+ * run finished. One number, doing both jobs, instead of a second badge.
  */
 function leafNum(item: IssueNote | IssueAgentLog): string {
   return prefixNum(item.name);
+}
+
+/**
+ * Colour for a leaf's prefix number, when the file declares a status.
+ *
+ * **Both halves must be present**: a parseable `NNN_` prefix (there is nothing
+ * to tint otherwise) and a `status` in frontmatter that is one of the fixed
+ * seven. A file with no status keeps the default number colour — untinted means
+ * "said nothing", which has to stay distinguishable from any status it might
+ * have declared.
+ *
+ * This is the round-level signal. The agent-log FOLDER's dot
+ * (`folderStatusColor`) says how the whole run went; a round inside it can have
+ * failed while the run finished, and that fact had nowhere to show before.
+ *
+ * A status is deliberately NOT the whole story on a failed round: the validator
+ * also asks for a callout saying what failed, because a colour is scannable but
+ * says nothing about why.
+ */
+function leafNumColor(item: IssueNote | IssueAgentLog): { color: string; label: string } | null {
+  const status = (item as { status?: string | null }).status;
+  if (!status) return null;
+  const color = statusColors[status];
+  if (!color) return null;                       // unknown value — the validator reports it
+  return { color, label: status };
 }
 
 /**
@@ -223,7 +251,13 @@ entries.sort((a, b) => {
           aria-current={isActive ? 'page' : undefined}
           data-tip={label}
         >
-          {num && <span class="issue-sidebar__num">{num}</span>}
+          {num && (
+            <span
+              class="issue-sidebar__num"
+              style={leafNumColor(item) ? `color: ${leafNumColor(item)!.color}` : undefined}
+              data-tip={leafNumColor(item)?.label}
+            >{num}</span>
+          )}
           <span class="issue-sidebar__label" style={color ? `color: ${color}` : undefined}>{label}</span>
           {typeIcon && (
             <span class="issue-sidebar__doctype" data-tip={typeIcon.label} data-tip-always aria-label={typeIcon.label} set:html={typeIcon.svg} />

@@ -202,6 +202,41 @@ was ever said.
 defects is `status: done` — the agent did its job. An audit refused mid-flight is
 `status: dropped`, with the reason in `# Outcome`.
 
+**The status tints the prefix number** in the sidebar, wherever the file declares one.
+That is the round-level signal: the agent-log folder's own dot says how the whole *run*
+went, and a round inside it can have failed while the run finished. A file with no
+`status` keeps the default number colour — untinted means *said nothing*, which has to
+stay distinguishable from any status it might have declared.
+
+### A dropped round carries TWO signals — both are required
+
+```markdown
+---
+title: "One-pass probe"
+status: dropped
+---
+
+# Outcome
+
+> [!WARNING]
+> **This round did not land.** The benchmark half was never run — the prototype
+> settled the question before it was reached, so the numbers this round existed
+> to produce do not exist.
+```
+
+| Signal | Job |
+|---|---|
+| `status: dropped` | **Scannable.** Tints the number; says the run did not deliver |
+| The callout | **Readable.** Says *what* failed, and what it cost |
+
+**Neither substitutes for the other, which is the whole point.** A bare `dropped`
+compresses the only useful facts — what failed, what it cost, what was learned — into
+one word that reads as if it already told you them. A callout with no status is
+invisible until someone opens the file.
+
+`agent-ks check issues` **warns on `status: dropped` with no callout.** It does not check
+the reverse, because a callout on a round that succeeded is a caveat, which is fine.
+
 ### What each kind of work unit is expected to produce
 
 | Work unit | Expected Outcome |

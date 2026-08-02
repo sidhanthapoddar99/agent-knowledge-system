@@ -140,6 +140,39 @@ Optional, per agent log **and** per child agent log.
 **Two carriers, no overlap:** `settings.json` is per **folder**, frontmatter is per
 **file**. Neither duplicates the other, and neither repeats what the name already says.
 
+### Where each one shows up
+
+| Carrier | Renders as |
+|---|---|
+| Folder `settings.json` | a **dot** beside the folder's kind symbol — how the whole run went |
+| File frontmatter | tints that file's **prefix number** — how that round went |
+
+Genuinely different facts: a run can finish `done` with its second round having failed,
+and before the number was tinted, that had nowhere to show. A file with no `status` keeps
+the default number colour — untinted means *said nothing*, which has to stay
+distinguishable from any status it might have declared.
+
+### A dropped round needs a callout as well as a status
+
+```markdown
+---
+status: dropped
+---
+
+# Outcome
+
+> [!WARNING]
+> **This round did not land.** The benchmark half was never run — the prototype
+> settled the question first, so the numbers do not exist.
+```
+
+The status is the **scannable** half; the callout is the **readable** half. A bare
+`dropped` compresses what failed, what it cost and what was learned into one word that
+reads as though it already told you them — and you have to open the file anyway.
+
+`agent-ks check issues` warns on `status: dropped` with no callout. Not the reverse: a
+callout on a round that succeeded is just a caveat.
+
 :::note
 `done` on an **agent log** means the run finished, and an agent may set it. `done` on a
 **subtask** is human-only and means the work is signed off. Same word, same vocabulary,

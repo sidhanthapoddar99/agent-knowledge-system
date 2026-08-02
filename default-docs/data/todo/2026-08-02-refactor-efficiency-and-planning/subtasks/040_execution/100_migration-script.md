@@ -1,6 +1,6 @@
 ---
 title: "Migration — agent-log status vocabulary → the canonical seven"
-status: open
+status: review
 ---
 
 # Overview
@@ -28,19 +28,74 @@ shows the exact rewrites, migrate is idempotent (a second run finds zero), and
 
 # Todo list
 
-- [ ] Detect pass — report file **and line** for every affected `status:` and
+- [x] Detect pass — report file **and line** for every affected `status:` and
       `iteration:`, and change nothing
-- [ ] Remap `status:` per the table below
-- [ ] Drop `iteration:` — the `NNN_` filename owns the number now
-- [ ] `--dry-run`, and idempotent: a second run finds zero instances
-- [ ] Python, stdlib only, module docstring carries purpose + usage
-- [ ] Run it on `default-docs/` and commit the result in the same change
-- [ ] `agent-ks check issues` clean afterwards; `./start build` clean
+- [x] Remap `status:` per the table below
+- [x] Drop `iteration:` — the `NNN_` filename owns the number now
+- [x] `--dry-run`, and idempotent: a second run finds zero instances
+- [x] Python, stdlib only, module docstring carries purpose + usage
+- [x] Run it on `default-docs/` and commit the result in the same change
+- [x] `agent-ks check issues` clean afterwards; `./start build` clean
 
 # Outcomes and Next Steps
 
-> [!IMPORTANT]
-> **PLACEHOLDER** — filled at completion / hand-off.
+`migration/0.1.3_agent-log-status-vocabulary.py` ships, and has been **run against
+this repo's own `default-docs/`** with the result committed in the same change.
+
+## Three changes in one pass, not two
+
+The subtask scoped two (status values, `iteration:`). A third joined it from
+[`110`](./110_superseded-wording-sweep.md): the `wip`/`blocked` **labels**. Same
+class of change — a vocabulary edit that invalidates existing files — and doing
+it as a separate doc edit would have left 14 issues carrying a value the
+vocabulary no longer declared.
+
+| Change | Points | Files |
+|---|---:|---:|
+| `status:` remapped to the canonical seven | 75 | 75 |
+| `iteration:` dropped | 86 | 86 |
+| `wip` / `blocked` labels removed | 20 | 17 |
+| **Total** | **181** | **110** |
+
+## Measured, and one correction to this subtask
+
+**The blast radius was 75 files, not 78.** This subtask recorded 78 and named it
+as the acceptance test.
+`grep -rlE "^status: *(success|failed|not-started) *$"` returns 75, and the
+script's own detect agrees. The number is corrected here rather than left to be
+re-derived.
+
+## Acceptance, each item run
+
+| Check | Result |
+|---|---|
+| detect reports file **and line** for every point | 181 points, 110 files, grouped by kind |
+| `--dry-run` shows the exact rewrites, changes nothing | verified on a copy first |
+| migrate applied | 110 files rewritten |
+| **idempotent** — second run finds zero | `rewrote 0 file(s)` |
+| `verify` exits 0 | clean |
+| every `settings.json`/`.jsonc` still parses | **59 of 59**, comments and formatting intact |
+| `agent-ks check issues` | exit 0 |
+| `./start build` | clean |
+
+**Run on a copy before the real tree.** A textual JSON edit that silently
+produced invalid JSON would have been invisible until a build much later, and the
+tracker root is a `.jsonc` whose comments a `json.loads`/`dumps` round-trip would
+have destroyed — which is why the script edits textually and why the copy came
+first.
+
+## `failed → dropped`, in the docstring
+
+The mapping people will question is explained where they will read it: `status`
+answers *did the agent finish its assignment*, not *was the news good*. An audit
+that completed and found five defects is `done`. What it found is prose in
+`# Outcome`.
+
+## Scope held
+
+Folder structure untouched — the retired six-slot folders and `MNN_` files still
+parse and render as ordinary markdown. History stays as written; a script that
+restructured old folders would rewrite the record rather than migrate it.
 
 # Details
 

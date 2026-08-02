@@ -1,6 +1,6 @@
 ---
 title: "Skill — the responsibility split, and the agent-log rewrite"
-status: open
+status: review
 ---
 
 # Overview
@@ -38,51 +38,124 @@ and no surviving line licenses an essay.
 
 ## The split
 
-- [ ] State the **seven section purposes** in `SKILL.md`, as one table
-- [ ] Give every `references/20_sections/2N_*.md` a **"does not hold"** block —
+- [x] State the **seven section purposes** in `SKILL.md`, as one table
+- [x] Give every `references/20_sections/2N_*.md` a **"does not hold"** block —
       the half that is missing today
-- [ ] Rewrite the routing guidance around the split: *which of the seven is this
+- [x] Rewrite the routing guidance around the split: *which of the seven is this
       sentence?* replaces *thinking in motion / thinking settled*
-- [ ] State the subtask ↔ agent-log boundary explicitly: **a subtask defines the
+- [x] State the subtask ↔ agent-log boundary explicitly: **a subtask defines the
       work, the agent log carries it out.** Scope in one, execution in the other
 
 ## The agent-log rewrite
 
-- [ ] Replace the six standard slots with `summary.md` + `working/` + `debrief/`
-- [ ] Delete the milestone rhythm, the `MNN_` naming, the `iteration:`
+- [x] Replace the six standard slots with `summary.md` + `working/` + `debrief/`
+- [x] Delete the milestone rhythm, the `MNN_` naming, the `iteration:`
       frontmatter and the `#N` badge prose — none of it exists any more
-- [ ] Ship the **iteration-file head** — `# Goal` / `# Inputs` /
+- [x] Ship the **iteration-file head** — `# Goal` / `# Inputs` /
       `# Expected Outcome` / `# Outcome`, plus the kind → expected-outcome table
-- [ ] State the **agent log opens only when work is delegated or runs over
+- [x] State the **agent log opens only when work is delegated or runs over
       multiple rounds** rule — small changes are grouped, not filed
-- [ ] State the audit-report rule: **conclusive in itself, plus a simplified
+- [x] State the audit-report rule: **conclusive in itself, plus a simplified
       table in `summary.md`**; depth below that is the agent's business
 
 ## The sweeps
 
-- [ ] **Vocabulary: *activity* → *agent log*, and the agent log's `notes/` →
+- [x] **Vocabulary: *activity* → *agent log*, and the agent log's `notes/` →
       `debrief/`.** Every occurrence across the skill — a half-done rename is
       worse than none
-- [ ] Delete the four lines that mandate maximal detail (table below)
-- [ ] **No superseded wording** — apply [`110`](./110_superseded-wording-sweep.md)
+- [x] Delete the four lines that mandate maximal detail (table below)
+- [x] **No superseded wording** — apply [`110`](./110_superseded-wording-sweep.md)
       to this skill as part of the same pass
 
 ## Examples and enforcement
 
-- [ ] Ship the **large worked example** — the overnight-loop tree in
+- [x] Ship the **large worked example** — the overnight-loop tree in
       [the spec](../../notes/20_agent-log-structure.md), verbatim
-- [ ] Ship the **small** end of the bracket — a two-file agent log for a
+- [x] Ship the **small** end of the bracket — a two-file agent log for a
       one-round change
-- [ ] Move every template the scaffolder can carry **into the scaffolder**, and
+- [x] Move every template the scaffolder can carry **into the scaffolder**, and
       point the skill at it rather than restating it
-- [ ] `agent-ks check skill-links` clean
-- [ ] Re-read `SKILL.md` whole: does any surviving line still license an essay?
-- [ ] Report the skill's line count before and after
+- [x] `agent-ks check skill-links` clean
+- [x] Re-read `SKILL.md` whole: does any surviving line still license an essay?
+- [x] Report the skill's line count before and after
 
 # Outcomes and Next Steps
 
-> [!IMPORTANT]
-> **PLACEHOLDER** — filled at completion / hand-off.
+The split is in `SKILL.md` as one table of seven purposes, under the rule it
+follows from: **no file stores a fact another file owns.** Every
+`references/20_sections/2N_*.md` now opens with a **Holds / Does not hold**
+table — the half that was missing, and the half that stops duplication.
+
+The four boundaries that get crossed most are stated outright rather than left to
+be inferred: subtask defines / agent log carries out · plan owns order / subtask
+owns what · note states the conclusion / subtask states what to do · deliberation
+stays in brainstorm.
+
+## The agent-log rewrite
+
+Gone: the six standard slots, the milestone rhythm, `MNN_` naming, the
+`iteration:` field and the `#N` badge. In their place `summary.md` (five sections,
+State first, and it **is** the brief) + `working/` + `debrief/`, with child agent
+logs for sub-goals.
+
+Two rules carry the volume reduction, and the second is the one that would have
+been easy to miss:
+
+- **An agent log opens only when work is delegated or runs over multiple rounds.**
+- **An iteration is a GROUP, and a file exists because something was PRODUCED,
+  not because an agent ran.** The retired "one agent, one file" rule guaranteed a
+  file per agent whether or not it had anything to say — the same defect as the
+  six-slot floor, one level down. Deleting the slots without this would have left
+  half the volume in place.
+
+## The four essay-mandating lines
+
+| Line | What happened |
+|---|---|
+| *"detailed, line-rich records… a few vague bullets is a malformed milestone"* | **Deleted.** A quality adjective with no referent; replaced by the worked-example pair |
+| *"Every file … is structured, context-setting prose, never a bare dump"* | **Deleted.** It restated what the templates enforce |
+| *"Keep all six present even when blank"* | **Deleted with the slots.** `new-agent-log` now emits two files, not six |
+| *"whenever in doubt, persist"* | **Kept, with what doubt resolves to changed** — from *how much* to *where*, and a routing table for it |
+
+The rule that had to survive intact — *the tracker is the durable home; a run's
+transcript is not* — survives verbatim, with "persist when it is produced, not at
+wrap-up" alongside it.
+
+## The example bracket
+
+Both ends ship, labelled: a **two-file** agent log for a one-round change (with
+`debrief/` deliberately absent, called out as the correct shape rather than an
+unfinished one), and the **overnight-loop tree** verbatim from the spec. One
+example alone sets a floor as much as a ceiling.
+
+Templates moved into the scaffolder where it can carry them: `new-agent-log`
+emits `summary.md`'s five headings, `new-iteration` emits the four-section head
+with the expected-outcome line pre-filled per work unit. The skill points at the
+commands rather than restating the shapes.
+
+## Line count — measured, and the raw number is not the story
+
+| | Before | After |
+|---|---:|---:|
+| Skill total | 2,412 | 2,718 |
+| — of which `28_plans.md`, a section that did not exist | — | 174 |
+| `24_agent-logs.md` | 341 | 492 |
+| — prose | **205** | **160** |
+| — fenced example | 68 | **125** |
+| — table | 15 | **67** |
+
+**Prose fell 22% in the file the audit named, while example lines grew 84% and
+table lines 4.5×.** That is the authoring rule applied rather than violated:
+spend tokens on examples and structure, not prose. Reporting the total alone
+would have read as a failure and been the wrong measurement.
+
+## Verified
+
+- Vocabulary sweep complete: `grep -rniE "activity|milestone|new-memory-plan|00_goal|01_summary|02_task_list|MNN_"`
+  over the skill returns **one** hit, and it is the deliberate negative *"a
+  phase, a stage, or a milestone"* in the subtasks rule.
+- 0 broken internal links.
+- `./start build` clean; `agent-ks check issues` exit 0.
 
 # Details
 

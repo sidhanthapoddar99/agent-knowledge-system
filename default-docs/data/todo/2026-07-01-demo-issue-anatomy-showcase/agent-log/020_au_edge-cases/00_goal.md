@@ -1,7 +1,0 @@
----
-agent: claude-opus-4-8
-status: done
-date: 2026-07-01
----
-# Goal — audit the layout edge cases
-Sweep for un-prefixed files, deep nesting, and missing-color fallbacks.

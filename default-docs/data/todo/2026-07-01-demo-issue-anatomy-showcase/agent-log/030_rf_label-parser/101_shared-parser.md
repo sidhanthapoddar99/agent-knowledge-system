@@ -1,9 +1,0 @@
----
-agent: claude-opus-4-8
-status: done
-date: 2026-07-01
----
-# Milestone — one shared label parser
-Collapsed per-kind label logic into `cleanLabel` + `prefixNum`, with agent-log's
-`#<iteration>` as a precedence override. Files and folders share it. (This folder omits the
-meta files on purpose — they're optional.)

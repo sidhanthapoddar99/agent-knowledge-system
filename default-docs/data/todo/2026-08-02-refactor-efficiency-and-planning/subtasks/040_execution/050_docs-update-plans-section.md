@@ -1,6 +1,6 @@
 ---
 title: "Docs — define what every section is FOR, in the guide and the user-guide"
-status: open
+status: review
 ---
 
 # Overview
@@ -34,32 +34,72 @@ overturned.
 
 # Todo list
 
-- [ ] `guide.ts` — rewrite the **section one-liners** (~L96–103) to the seven
+- [x] `guide.ts` — rewrite the **section one-liners** (~L96–103) to the seven
       purposes
-- [ ] `guide.ts` — fix the **routing line** (~L114): *"the plan → Subtasks"* is
+- [x] `guide.ts` — fix the **routing line** (~L114): *"the plan → Subtasks"* is
       wrong, the plan is `plans/`. **Leave *"how it actually went → Agent log"* —
       that half is correct**
-- [ ] `guide.ts` — replace the `## Subtasks` opener (~L183): a subtask is
+- [x] `guide.ts` — replace the `## Subtasks` opener (~L183): a subtask is
       **scope**, not the plan, and *"agent-log records the how"* reads as
       *method*, which is the thing it must not carry
-- [ ] `guide.ts` — rewrite `## Agent log` as **execution + outcome**: the run is
+- [x] `guide.ts` — rewrite `## Agent log` as **execution + outcome**: the run is
       carried out and made visible there, the outcome is recorded there, the
       scope stays in the subtask, and its todo list references subtasks or plan
       stages
-- [ ] `guide.ts` — add `## Plans`, and the section to the anatomy tree
-- [ ] `guide.ts` — the six standard slots, the milestone block and the milestone
+- [x] `guide.ts` — add `## Plans`, and the section to the anatomy tree
+- [x] `guide.ts` — the six standard slots, the milestone block and the milestone
       frontmatter table all go (they no longer exist)
-- [ ] User-guide — the same seven purposes on the anatomy overview, and a
+- [x] User-guide — the same seven purposes on the anatomy overview, and a
       *"what does NOT belong here"* line on each per-section page
-- [ ] User-guide — the design-philosophy page: why the plan is not agent-memory
-- [ ] Grep the user-guide for `agent-memory/plans` and fix every hit
-- [ ] Rebuild and read the Guide panel on the demo fixture
-- [ ] `agent-ks check section` / `check issues` clean
+- [x] User-guide — the design-philosophy page: why the plan is not agent-memory
+- [x] Grep the user-guide for `agent-memory/plans` and fix every hit
+- [x] Rebuild and read the Guide panel on the demo fixture
+- [x] `agent-ks check section` / `check issues` clean
 
 # Outcomes and Next Steps
 
-> [!IMPORTANT]
-> **PLACEHOLDER** — filled at completion / hand-off.
+Both twins updated in the same pass, so neither ships a contradiction.
+
+## `guide.ts` — the bundled anatomy guide
+
+Rewritten where it stated the old shapes: the section one-liners became the
+**seven-purpose table**, the routing line became **the four boundaries**, the
+anatomy tree gained `plans/` and the new agent-log shape, and the whole
+**milestone block** (`MNN_` naming, the `#N` badge tinting, the milestone
+frontmatter table, the six standard slots) is gone.
+
+Two overturned statements corrected, and in **different directions**, which is
+the part that was easy to get wrong:
+
+- *"Subtasks are the plan"* → subtasks are **scope**; `plans/` is the plan.
+- *"The agent log records the how"* → it records **how it went** — the execution
+  and the outcome. It does not record how to do the work, which is the subtask's.
+
+New `## Plans` block; `## Agent memory` down to two buckets with the reason the
+index must not grow a state section; `## Notes` restated as **conclusions**, with
+the line that catches the most common duplication — *a note that reads like a
+work order is a subtask*.
+
+## `default-docs/data/user-guide/19_issues/`
+
+| Page | Change |
+|---|---|
+| `05_sub-docs/05_agent-log.md` | **Rewritten** — the whole new shape, both worked examples, the `settings.json` contract, the four explicit cases, decision routing |
+| `05_sub-docs/09_plans.md` | **New** — the section had no user-guide page at all |
+| `05_sub-docs/07_agent-memory.md` | Two buckets; ~150 lines of plan-file documentation removed |
+| `01_overview.md`, `03_folder-structure.md` | trees, section table and the numbering note |
+| `07_ui/02_detail-view.md` | how the sidebar renders agent-log status and the pinned plan |
+| `04_setup/02_vocabulary.md`, `06_lifecycle-and-review.md`, `10_setup-new-tracker.md`, `01_per-issue.md`, `02_design-philosophy.md` | the retired labels |
+| `05_sub-docs/04_notes.md`, `08_glossary.md` | vocabulary |
+
+## Verified
+
+- `./start build` clean, **933 pages**.
+- Vocabulary sweep across the whole user guide returns no stale term; the one
+  remaining hit is *"Branch-scoped WIP"* in the design-philosophy trade-off
+  table, which is ordinary English.
+- The guide panel renders from `guide.ts` on every issue page — confirmed live,
+  no console errors.
 
 # Details
 

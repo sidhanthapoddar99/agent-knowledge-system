@@ -1,6 +1,6 @@
 ---
 title: "Skill — subtasks are grouped by CATEGORY, not execution order"
-status: open
+status: review
 ---
 
 # Overview
@@ -27,22 +27,58 @@ against it flags the places that got it wrong.
 
 # Todo list
 
-- [ ] State the rule in `23_subtasks.md`: **groups are areas (nouns), numbers are
+- [x] State the rule in `23_subtasks.md`: **groups are areas (nouns), numbers are
       stable ids and sort keys within an area. Neither implies sequence**
-- [ ] Give the grouping test — by **area**, one level, no group for fewer than
+- [x] Give the grouping test — by **area**, one level, no group for fewer than
       ~3 leaves
-- [ ] Say outright that a subtask may run in several plans, or in none
-- [ ] Add the counter-example: a group whose overview says *"reading order is
+- [x] Say outright that a subtask may run in several plans, or in none
+- [x] Add the counter-example: a group whose overview says *"reading order is
       execution order"* is the failure this rule prevents
-- [ ] Cross-link from the plans skill work so the two do not drift
-- [ ] Fix this issue's own `040_execution/00_overview.md`, which currently gets
+- [x] Cross-link from the plans skill work so the two do not drift
+- [x] Fix this issue's own `040_execution/00_overview.md`, which currently gets
       it wrong (see below)
-- [ ] `agent-ks check skill-links` clean
+- [x] `agent-ks check skill-links` clean
 
 # Outcomes and Next Steps
 
-> [!IMPORTANT]
-> **PLACEHOLDER** — filled at completion / hand-off.
+The rule is stated in three places and never restated twice in the same words:
+
+- `23_subtasks.md` — the rule, the means/does-not-mean table, and the grouping
+  test (**by area, one level, no group for fewer than ~3 leaves**).
+- `SKILL.md` — one line in the creation rules, where an agent filing a subtask
+  will hit it.
+- `guide.ts` — one line in the `## Subtasks` block, for consumers without the
+  plugin.
+
+> **A subtask's number is a stable id and a sort key within its category. It does
+> not imply sequence.**
+
+Plus the two consequences the subtask asked for outright: **a subtask may be
+scheduled by several plans, or by none**, and the counter-example — *a group whose
+overview says "reading order is execution order" and then lists a dependency
+chain*, with the concrete path that produced
+(`09_rf_memory/022_wf_stage-6.10/113_slice3-build.md`, *when* the work ran encoded
+in a filename).
+
+## This issue's own counter-example is fixed
+
+`subtasks/040_execution/00_overview.md` said *"Reading order is execution order"*
+and listed a dependency chain. It now says these are **execution work, and that
+is all the grouping says**.
+
+The note narrating the old wording has also been deleted — under the rule
+[`110`](./110_superseded-wording-sweep.md) writes, superseded wording goes, and
+the history is this issue and its git log.
+
+## Verified
+
+- The demo fixture demonstrates it: `subtasks/04_verify/` is an **area** with a
+  `00_` index leaf and three leaves in three different statuses
+  (`input-needed` / `open` / `done`), and its overview says outright that the
+  number is a sort key and order is the active plan's.
+- Live DOM: the group renders its done/total count and the section header its
+  review dot, so the mixed statuses have something to bite on.
+- `./start build` clean; `agent-ks check issues` exit 0.
 
 # Details
 

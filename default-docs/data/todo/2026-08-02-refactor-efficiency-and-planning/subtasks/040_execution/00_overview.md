@@ -35,18 +35,18 @@ below are stable ids, not a sequence.
 |---|---------|--------|
 | 010 | [Code the plans section](./010_code-the-plans-section.md) — framework sections, routes, CLI, validator | review |
 | 015 | [Code per-agent-log settings.json](./015_code-agent-log-settings.md) — status as data; **ships independently of the plans section** | review |
-| 020 | [Update ~/.claude/CLAUDE.md](./020_update-global-claude-md.md) — the global operating rules | open |
-| 030 | [Skill: the plans section](./030_skill-plans-section.md) — teach `plans/`, delete the old shape | open |
-| 040 | [Skill: the responsibility split](./040_skill-efficiency-rules.md) — the split, plus the agent-log rewrite. **The one that fixes the measured problem** | open |
-| 050 | [Docs: user-guide + bundled guide](./050_docs-update-plans-section.md) — user-guide prose + bundled `guide.ts` | open |
+| 020 | [Update ~/.claude/CLAUDE.md](./020_update-global-claude-md.md) — the global operating rules | input-needed |
+| 030 | [Skill: the plans section](./030_skill-plans-section.md) — teach `plans/`, delete the old shape | review |
+| 040 | [Skill: the responsibility split](./040_skill-efficiency-rules.md) — the split, plus the agent-log rewrite. **The one that fixes the measured problem** | review |
+| 050 | [Docs: user-guide + bundled guide](./050_docs-update-plans-section.md) — user-guide prose + bundled `guide.ts` | review |
 | 070 | [UI: Subtasks and Overview have no icon](./070_ui-subtasks-overview-icons.md) — **not gated**; do it in the same pass as the Plans icon | review |
-| 080 | [Skill: subtasks by category, not order](./080_skill-subtasks-by-category.md) — the other half of the plans idea | open |
+| 080 | [Skill: subtasks by category, not order](./080_skill-subtasks-by-category.md) — the other half of the plans idea | review |
 | 090 | [Framework: a section registry](./090_section-registry.md) — **after** `010`, never merged into it | review |
-| 100 | [Migration: agent-log status vocabulary](./100_migration-script.md) — the mandatory half of the release; ships with [`050`](../050_version-bump.md) | open |
-| 110 | [Sweep: delete superseded wording](./110_superseded-wording-sweep.md) — and write the rule that replaces it | open |
-| 120 | [Agent memory after plans](./120_agent-memory-after-plans.md) — what `agent-memory/` becomes once `plans/` leaves it | open |
+| 100 | [Migration: agent-log status vocabulary](./100_migration-script.md) — the mandatory half of the release; ships with [`050`](../050_version-bump.md) | review |
+| 110 | [Sweep: delete superseded wording](./110_superseded-wording-sweep.md) — and write the rule that replaces it | review |
+| 120 | [Agent memory after plans](./120_agent-memory-after-plans.md) — what `agent-memory/` becomes once `plans/` leaves it | review |
 | 130 | [Audit: three neutral readers](./130_independent-skill-audit.md) — old skill vs new; **stored, not acted on**. Last | blocked |
-| 140 | [Rework the demo showcase](./140_rework-demo-showcase.md) — the fixture, onto the new structure, with a Playwright pass | blocked |
+| 140 | [Rework the demo showcase](./140_rework-demo-showcase.md) — the fixture, onto the new structure, with a Playwright pass | review |
 
 **Not in this group:** the NeuraSutra sidequest moved out to the top level as
 [`060`](../060_sidequest-neurasutra.md). It targets a different pair of repos,

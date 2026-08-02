@@ -1,0 +1,9 @@
+flowchart TD
+    A[a folder name] --> B{leading digits?}
+    B -->|no| C[freeform: sorts by name]
+    B -->|yes| D{2-5 digits?}
+    D -->|no| C
+    D -->|yes| E[ordered: sorts by numeric value]
+    E --> F{separator}
+    F -->|underscore| G[canonical]
+    F -->|dash| H[tolerated]

@@ -1,6 +1,6 @@
 ---
 title: "Agent memory — what it becomes once plans/ leaves it"
-status: open
+status: review
 ---
 
 # Overview
@@ -33,25 +33,66 @@ memory, and nothing has grown a replacement "current state" store.
 
 # Todo list
 
-- [ ] Cut `plans/` from the three-bucket model everywhere it is taught — it is
+- [x] Cut `plans/` from the three-bucket model everywhere it is taught — it is
       **two** buckets now, plus the index
-- [ ] Move the plan-file format documentation out of the agent-memory page and
+- [x] Move the plan-file format documentation out of the agent-memory page and
       into the plans section's own docs
-- [ ] Retire or repoint `agent-ks issue new-memory-plan` — it scaffolds into the
+- [x] Retire or repoint `agent-ks issue new-memory-plan` — it scaffolds into the
       old location and emits the never-delete rule
       ([`110`](./110_superseded-wording-sweep.md))
-- [ ] Fix the graduated levels: `memory.md` alone → plus flat topic files → plus
+- [x] Fix the graduated levels: `memory.md` alone → plus flat topic files → plus
       `knowledge/` and `history/`
-- [ ] Fix the precedence line — `knowledge/` > `history/`, with `plans/` gone
-- [ ] **Check nothing grew a replacement.** Specifically that `memory.md` is not
+- [x] Fix the precedence line — `knowledge/` > `history/`, with `plans/` gone
+- [x] **Check nothing grew a replacement.** Specifically that `memory.md` is not
       given a "current state" section to fill the gap
-- [ ] `guide.ts`'s agent-memory block, and the skill's `26_agent-memory.md`
-- [ ] `./start build` clean; `agent-ks check issues` clean
+- [x] `guide.ts`'s agent-memory block, and the skill's `26_agent-memory.md`
+- [x] `./start build` clean; `agent-ks check issues` clean
 
 # Outcomes and Next Steps
 
-> [!IMPORTANT]
-> **PLACEHOLDER** — filled at completion / hand-off.
+`agent-memory/` is an **index plus two lifecycle buckets** — `knowledge/` (true
+and binding, corrected in place) and `history/` (how we got here, write-once).
+Precedence `knowledge/` > `history/`, loser corrected. Tiers collapse to three:
+`memory.md` alone → plus flat topic files (**where most issues stop**) → plus the
+two buckets.
+
+## Nothing takes over the live bucket, and that is stated as a rule
+
+The temptation the source note warned about is named in all three places
+(`26_agent-memory.md`, the user-guide page, `guide.ts`):
+
+> **`memory.md` routes and stores nothing.** An index that grows a "current
+> state" section competes with the plan for the same job and loses silently,
+> because nothing tells a reader which of the two is current. The plan is one
+> click away; the index stays a map.
+
+Two "does not hold" entries carry the rest: **no plan** (order is `plans/`) and
+**no decisions** (those are `notes/` — a decision recorded only in mutable
+working state is one that gets re-litigated the next time the memory is corrected
+in place).
+
+## What moved out
+
+~180 lines from the skill's `26_agent-memory.md` and ~150 from the user-guide
+page: the plan-file template, the cycle definition, the `## Execution order`
+table, the column spec, the identity-vs-order rule, and the numbering-bands
+section. None of it was rewritten elsewhere — the plans section has its own
+model, and carrying two would have been the duplication this issue exists to
+remove.
+
+## Demonstrated, not just documented
+
+The fixture's `agent-memory/` is now `memory.md` + a root-level `gotchas.md`
+(tier 1) + `knowledge/loader-facts.md` + `history/origins.md`. Its
+`decisions.md` was **deleted** — a deliberate demonstration that decisions are
+`notes/`, with the index saying so in as many words.
+
+Live DOM confirms the index links both buckets and that `decisions` no longer
+resolves.
+
+## Verified
+
+`./start build` clean; `agent-ks check issues` exit 0; 0 broken skill links.
 
 # Details
 

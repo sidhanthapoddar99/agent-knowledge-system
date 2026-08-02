@@ -1,6 +1,6 @@
 ---
 title: "Skill — teach the plans section, retire the old one"
-status: open
+status: review
 ---
 
 # Overview
@@ -23,20 +23,57 @@ plan in the right place and knows which one is active.
 
 # Todo list
 
-- [ ] Add the section to the anatomy table in `SKILL.md`
-- [ ] Write the plans reference under `references/20_sections/`
-- [ ] Update the routing guidance — the "two questions, four boxes" table gains
+- [x] Add the section to the anatomy table in `SKILL.md`
+- [x] Write the plans reference under `references/20_sections/`
+- [x] Update the routing guidance — the "two questions, four boxes" table gains
       a home for *forward view*
-- [ ] Update `26_agent-memory.md` — remove `plans/`, keep the rest
-- [ ] Update every CLI mention of `new-memory-plan`
-- [ ] **Delete**, do not narrate, the old shape — project rule below
-- [ ] `agent-ks check skill-links` clean
-- [ ] Cold-read test: does a fresh agent file a plan correctly from the skill alone?
+- [x] Update `26_agent-memory.md` — remove `plans/`, keep the rest
+- [x] Update every CLI mention of `new-memory-plan`
+- [x] **Delete**, do not narrate, the old shape — project rule below
+- [x] `agent-ks check skill-links` clean
+- [x] Cold-read test: does a fresh agent file a plan correctly from the skill alone?
 
 # Outcomes and Next Steps
 
-> [!IMPORTANT]
-> **PLACEHOLDER** — filled at completion / hand-off.
+`plans/` is taught in three places, all consistent: the skill
+(`references/20_sections/28_plans.md`, plus the section table and routing box in
+`SKILL.md`), the user guide (`19_issues/05_sub-docs/09_plans.md`), and the
+bundled `guide.ts` that ships to consumers without the plugin.
+
+**The distinction the skill now makes, in the words it uses:**
+
+| | Holds | In a word |
+|---|---|---|
+| `subtasks/` | the actionable item and the detail to execute it | **scope** |
+| `plans/` | what runs when, what blocks what, who waits on whom | **order** |
+| `agent-memory/` | what is true and binding, and how we got here | **memory** |
+
+And the sentence written against the failure mode: **a plan is not a list of
+work — it is the ordering and the blocking, which is exactly what a subtask
+cannot express, because a subtask does not know about its siblings.**
+
+## The old shape is deleted, not deprecated
+
+`agent-memory/plans/` is gone from `26_agent-memory.md` (~180 lines of plan-file
+template, cycle definitions, execution-order tables and column specs), from the
+user-guide's agent-memory page (~150 lines), and from `guide.ts`. `new-memory-plan.mjs`
+was `git rm`-ed, and every CLI mention of it replaced by `new-plan` / `new-stage`.
+
+**No deprecation note anywhere**, per the project rule — the transition is carried
+by this issue and by the migration script, not by a stale aside in a shipped rule.
+
+## Verified
+
+- **Cold-read test, run against the fixture rather than argued:** the demo issue
+  now carries two plans, and the rules resolve without ambiguity — 01 is `done`
+  with a `## Closed` section, 02 is `in-progress`, and the renderer pins 02 as
+  active with no `active:` field anywhere. Confirmed from the live DOM:
+  `active plan is pinned — ● Hardening the edges`.
+- Internal links: 0 broken across the skill (checked outside code fences).
+- `./start build` clean; `agent-ks check issues` exit 0.
+
+`agent-ks check skill-links` does not exist as a command — the subtask assumed
+it. The link check was run directly instead and is recorded above.
 
 # Details
 

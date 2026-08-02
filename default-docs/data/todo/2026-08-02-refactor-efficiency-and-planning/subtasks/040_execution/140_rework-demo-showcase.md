@@ -86,9 +86,9 @@ Harness committed at `verification/fixture-render/check.mjs`; it serves `dist/`
 from inside its own process, so nothing outlives the run.
 
 Routing (9 pages 200) · the Plans group exists with both plans listed and the
-**active** one pinned (`● Hardening the edges`) · **clicking it navigates and
+**active** one marked (`Hardening the edges`, bold) · **clicking it navigates and
 changes the DOM** · the plan table renders 3 rows with the status column
-populated (`in-progress, blocked, open`) and **12 live count badges** · an agent
+populated (`in-progress, blocked, open`) · an agent
 log shows `summary.md`, `working/`, `debrief/` and its child log, with the open
 sub-doc marked active · a level-4 producer file renders and one level past the
 cap **404s**.
@@ -161,7 +161,7 @@ result reads well is Sid's call and cannot be delegated to a headless browser.
 | Check with Playwright | Do not |
 |---|---|
 | Every section page loads without a console error | Judge whether a layout looks right |
-| The Plans sidebar group exists and the active plan is pinned in it | Judge spacing, colour or density |
+| The Plans sidebar group exists and the active plan is marked in it | Judge spacing, colour or density |
 | The plan table renders one row per stage, with the status column populated | Assert on exact pixel positions |
 | An agent log page shows `summary.md`, `working/` and `debrief/` | Compare against a screenshot as a pass condition |
 | The deep-nesting fixture stops rendering at the depth cap | Time anything |

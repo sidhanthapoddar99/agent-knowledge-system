@@ -93,7 +93,7 @@ const AGENT_LOG_FM_KEYS = new Set([
   'title', 'iteration', 'agent', 'status', 'date', 'sidebar_label', 'color',
 ]);
 const PLAN_STAGE_FM_KEYS = new Set([
-  'title', 'outcome', 'who', 'status', 'subtasks', 'agent-logs', 'sidebar_label', 'color',
+  'title', 'outcome', 'notes', 'who', 'status', 'subtasks', 'agent-logs', 'sidebar_label', 'color',
 ]);
 const PLAN_SETTINGS_KEYS = new Set(['title', 'status', 'description']);
 // GitHub-flavoured callout opener, any kind. Used to check that a round marked

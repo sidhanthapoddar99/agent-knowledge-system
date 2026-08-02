@@ -43,11 +43,14 @@ and a fresh plan can be scaffolded with one command.
       `<prefix> <title>` heading. **Anchor on the title, never the prefix**
 - [x] Framework: **the Subtasks column** — resolve `subtasks:` refs, group by the
       `category` they already carry, count. Reuse `CATEGORIES` and the existing
-      status colours; add nothing
-- [x] Framework: **the active-plan pin** — a `Plans` sidebar group with the
+      status colours; add nothing.
+      **Removed 2026-08-03** — see [the plan table rework](../090_plan-table-rework.md).
+      The refs are still resolved; they render as named chips, not a tally
+- [x] Framework: **the active-plan marker** — a `Plans` sidebar group with the
       active plan (highest not `done`/`dropped`, derived at render, never
-      stored) pinned and marked at its top. **Nothing renders above the issue
-      body** (Sid, 2026-08-02)
+      stored) marked. **Nothing renders above the issue body** (Sid, 2026-08-02).
+      Shipped as a top-of-group pin; **changed 2026-08-03** to a bold mark with
+      the list left in ascending prefix order
 - [x] CLI: scaffold verbs — `issue new-plan` and `issue new-stage`
 - [x] CLI: **`new-agent-log.mjs` stops seeding the six slots** — see *What
       shipped differently*, below: it creates two files, not four

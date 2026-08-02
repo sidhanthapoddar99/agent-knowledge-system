@@ -4,10 +4,10 @@
  */
 import type {
   Issue, IssueAgentLog, IssueNote, IssueSubtask, IssueStatus,
-  IssuePlan, IssuePlanStage, CategoryId, IssueSection,
+  IssuePlan, IssuePlanStage, IssueSection,
 } from '@loaders/issues';
 import {
-  TERMINAL_STATUSES, isTerminalStatus, categoryOf, CATEGORIES,
+  TERMINAL_STATUSES, isTerminalStatus, categoryOf,
   sectionById, sectionPanelKey,
 } from '@loaders/issues';
 
@@ -285,24 +285,22 @@ export interface PlanStageResolution {
   subtasks: IssueSubtask[];
   /** The referenced agent-log entries. */
   logs: IssueAgentLog[];
-  /** Count per framework category, in {@link CATEGORIES} display order. */
-  counts: { id: CategoryId; label: string; count: number }[];
   /**
    * Refs that named nothing — a path with no matching subtask / log, plus the
    * loader's unparsable entries.
    *
-   * Surfaced rather than dropped **on purpose**. A missing ref silently shrinks
-   * the count beside it, and a wrong count reads exactly like a right one; the
-   * whole value of the Subtasks column is that you can trust it without opening
-   * anything. `agent-ks check issues` errors on the same condition.
+   * Surfaced rather than dropped **on purpose**. A stage that lists four
+   * subtasks and renders three chips reads exactly like a stage that lists
+   * three: the omission has no shape of its own. `agent-ks check issues` errors
+   * on the same condition.
    */
   missing: string[];
 }
 
 /**
  * Resolve one stage's references against the issue. Pure in-memory lookup —
- * `IssueSubtask` already carries `status` and `category`, so the column is
- * "resolve, group by the category they already have, count".
+ * `IssueSubtask` already carries `status` and `category`, so rendering a chip
+ * needs no second read.
  */
 export function resolvePlanStage(issue: Issue, stage: IssuePlanStage): PlanStageResolution {
   const subtaskByPath = new Map(issue.subtasks.map((s) => [subtaskRefPath(s), s]));
@@ -323,32 +321,8 @@ export function resolvePlanStage(issue: Issue, stage: IssuePlanStage): PlanStage
     else missing.push(ref);
   }
 
-  const counts = CATEGORIES.map((c) => ({
-    id: c.id as CategoryId,
-    label: c.label,
-    count: subtasks.filter((s) => s.category === c.id).length,
-  }));
-
-  return { subtasks, logs, counts, missing };
+  return { subtasks, logs, missing };
 }
-
-/**
- * The status whose colour stands for a whole category in the plan table.
- *
- * A category has two member statuses in three of the four cases, so it has no
- * colour of its own; picking one keeps the plan table reading from the SAME
- * `statusColors` map as every other status surface, which means a tracker that
- * overrides `fields.status.colors` restyles the plan table for free. Chosen so
- * the four chips are the four colours the section was specified with
- * (grey / blue / yellow / green) rather than whichever status happens to sort
- * first inside its category.
- */
-export const CATEGORY_REPRESENTATIVE: Record<CategoryId, IssueStatus> = {
-  'in-progress': 'in-progress',
-  review: 'review',
-  'not-started': 'open',
-  closed: 'done',
-};
 
 /**
  * Nested tree: files at this folder + a map of named subgroups, each itself a

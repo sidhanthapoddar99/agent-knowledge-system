@@ -1,6 +1,7 @@
 ---
 title: "Eyeball the result"
 outcome: "It reads well on a real screen, not just in a headless build"
+notes: "🚚 Dropped, not failed — carried into [the next plan](../02_hardening-the-edges/overview.md)"
 who: sid
 status: dropped
 subtasks:

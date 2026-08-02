@@ -76,7 +76,7 @@ Each section lists its files as links to **their own URLs** (`/<issue>/notes/<na
 
   Group folders show a **done/total** count; the section header shows the issue-wide done/total with an amber dot when anything is in the Review category. The same legend renders live (real symbols, real colors) on every issue's **Guide** panel.
 - **Agent log** — each run's folder renders `NN <symbol> <name> … <count>`; the kind symbol's tooltip names the kind and its colour comes from that folder's optional `settings.json` status (a folder without one renders a defined grey, distinct from `open`). Inside, `summary.md` pins first, then `working/` and `debrief/`, then any child agent log.
-- **Plans** — the active plan (highest-numbered not `done`/`dropped`) is pinned at the top of the group and marked; clicking one swaps the main panel to its page, table first.
+- **Plans** — rows read `<status icon> NN <name>`, in plain ascending prefix order. The active plan (highest-numbered not `done`/`dropped`) is **marked in bold, not moved**; clicking one swaps the main panel to its page, table first.
 - **Agent memory** — `memory.md` pins first.
 - Ordering everywhere: bucket (agent-log meta first) → iteration → numeric prefix value → name. Ascending, one rule for all sections.
 - Collapse state of sections and folders persists per issue.

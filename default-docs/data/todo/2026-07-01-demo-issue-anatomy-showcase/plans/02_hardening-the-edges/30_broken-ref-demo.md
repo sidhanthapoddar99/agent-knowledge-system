@@ -1,6 +1,7 @@
 ---
 title: "Insert with room to spare"
 outcome: "The numbering still has somewhere to go"
+notes: "Room for two more stages after this one before a renumber is needed"
 who: claude
 status: open
 subtasks:

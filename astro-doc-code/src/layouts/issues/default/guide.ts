@@ -273,20 +273,30 @@ this round. Everything else about the work lives in the subtasks its stages refe
 - **The prefix is both the order and the id** — "stage 20". Gap-spaced by ten;
   inserting **spreads into the gap** rather than filling from one end.
 - **A plan stores no status of its own about the work.** A stage *references* its
-  subtasks and the renderer pulls their live status, so a plan cannot carry a stale
-  count — there is no count stored in it.
+  subtasks; the renderer resolves them and pulls their live status, so a plan cannot
+  show a state the work has moved on from — it stores none.
 - **The active plan is derived, never stored:** the highest-numbered plan that is not
-  \`done\`/\`dropped\`. It is pinned at the top of the Plans sidebar group.
+  \`done\`/\`dropped\`. The sidebar **marks it in bold rather than moving it** — rows read
+  \`<status icon> NN <name>\` in plain ascending order.
 - A stage file has no \`# H1\` — the heading is generated. Its frontmatter:
 
 | Field | Meaning |
 |---|---|
 | \`title\` | Stage name; the heading renders as \`<prefix> <title>\`. |
 | \`outcome\` | One line — what "done" means for this stage. |
+| \`notes\` | One line — why it sits here, what it waits on, the caveat the other columns cannot say. |
 | \`who\` | Who it waits on. |
 | \`status\` | The canonical seven. A waiting stage is \`blocked\`, with what it waits on in one line of body. |
-| \`subtasks:\` | Markdown links to the subtasks it schedules — **only these count** in the table. |
+| \`subtasks:\` | Markdown links to the subtasks it schedules — rendered as live-status chips under the stage. |
 | \`agent-logs:\` | Links to the runs carrying it out. |
+
+- \`outcome\` and \`notes\` render as **inline markdown**, so a link, \`code\` or an emoji
+  in them works. A link is the right way to name another file from a note — a bare
+  number or a path is not.
+- The table columns are **# · Stage · Status · Who · Outcome · Notes**. There is no
+  subtask *count*: the same subtasks are listed by name, with their live status, under
+  the stage's own heading. A tally of things already shown one screen down is a second
+  copy of one fact, and the copy is what goes stale.
 
 - Body: \`## Todo\` and \`## Questions\`. Not every todo needs a subtask.
 - **Closing a plan is yours** — it ends a *schedule*, not a sign-off on work. Write a

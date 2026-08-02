@@ -875,48 +875,24 @@
   margin: 0 0 1rem;
 }
 
-.issue-plan__table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 1.25rem 0 2rem;
-  font-size: var(--ui-text-body);
-}
-.issue-plan__table th,
-.issue-plan__table td {
-  text-align: left;
-  padding: 0.45rem 0.6rem;
-  border-bottom: 1px solid var(--color-border-default);
-  vertical-align: top;
-}
-.issue-plan__table th {
-  font-size: var(--ui-text-micro);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--color-text-muted);
-  font-weight: 600;
-}
+/* The table is wrapped in `.markdown-content > .table-wrapper` in PlanPage.astro,
+   so borders, header fill, zebra striping and — the point — LINK COLOUR all come
+   from src/styles/markdown.css. It is an ordinary markdown table that happens to
+   be generated. Only column sizing and the two cells with non-text content are
+   specified here; anything else restated would drift from markdown.css. */
+.issue-plan__table-wrap { margin: 1.25rem 0 2rem; }
 .issue-plan__col-id,
-.issue-plan__col-status { width: 1%; white-space: nowrap; }
+.issue-plan__col-status,
+.issue-plan__col-who { width: 1%; white-space: nowrap; }
 .issue-plan__col-id { font-family: var(--font-family-mono); color: var(--color-text-muted); }
-.issue-plan__col-who { width: 1%; white-space: nowrap; color: var(--color-text-secondary); }
-.issue-plan__col-subtasks { width: 1%; white-space: nowrap; }
-.issue-plan__outcome { color: var(--color-text-secondary); }
+.issue-plan__col-who { color: var(--color-text-secondary); }
+/* The status cell holds one icon, so centring it under its header is what makes
+   the column scan as a column rather than a ragged left edge. Qualified by the
+   table class ON PURPOSE: `.markdown-content th/td { text-align: left }` is one
+   element more specific than a bare class, so the unqualified form loses. */
+.issue-plan__table .issue-plan__col-status { text-align: center; }
+.issue-plan__notes { color: var(--color-text-secondary); }
 
-.issue-plan__count {
-  font-family: var(--font-family-mono);
-  font-size: var(--ui-text-micro);
-  color: var(--count-color, var(--color-text-muted));
-}
-.issue-plan__count + .issue-plan__count::before {
-  content: '/';
-  color: var(--color-text-muted);
-  opacity: 0.5;
-}
-.issue-plan__count.is-missing {
-  color: var(--color-error);
-  margin-left: 0.4rem;
-  font-weight: 600;
-}
 .issue-plan__state { display: inline-flex; align-items: center; }
 
 .issue-plan__warning {
@@ -964,11 +940,7 @@
 .issue-plan__ref-icon { display: inline-flex; align-items: center; }
 .issue-plan__ref--log { font-family: var(--font-family-mono); }
 
-/* The active plan, pinned at the top of its sidebar group. */
-.issue-sidebar__item.is-pinned { font-weight: 600; }
-.issue-sidebar__pin {
-  font-size: 0.55rem;
-  line-height: 1;
-  color: var(--color-brand-primary);
-  flex-shrink: 0;
-}
+/* The active plan — the highest-numbered one that is not done or dropped. It is
+   MARKED, not moved: the sidebar lists plans in plain ascending prefix order, so
+   the position of a row never depends on something derived. */
+.issue-sidebar__item.is-current { font-weight: 600; }

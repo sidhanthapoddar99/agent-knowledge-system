@@ -10,6 +10,7 @@
 import type { Issue, IssuePlan, IssuePlanStage } from '@loaders/issues';
 import { sectionById } from '@loaders/issues';
 import { stateIconSvg } from '../../server/state-icon';
+import { STATUS_LABELS } from '@loaders/issue-status';
 import {
   planUrl, planStagePanelKey, resolvePlanStage, subtaskUrl, logUrl,
 } from '../../server/helpers';
@@ -48,14 +49,18 @@ const { subtasks, logs, missing } = resolvePlanStage(issue, stage);
 
     <p class="issue-plan__breadcrumb">
       Stage of <a href={planUrl(baseUrl, issue.id, plan)}>{plan.title}</a>
-      {stage.outcome && <> — <em>{stage.outcome}</em></>}
+      {stage.outcomeHtml && <> — <em set:html={stage.outcomeHtml} /></>}
       {stage.who && <> · waits on <strong>{stage.who}</strong></>}
     </p>
+
+    {stage.notesHtml && (
+      <p class="issue-plan__breadcrumb issue-plan__notes" set:html={stage.notesHtml} />
+    )}
 
     {(subtasks.length > 0 || logs.length > 0) && (
       <div class="issue-plan__refs">
         {subtasks.map((s) => (
-          <a class="issue-plan__ref" href={subtaskUrl(baseUrl, issue.id, s)} data-tip={s.status}>
+          <a class="issue-plan__ref" href={subtaskUrl(baseUrl, issue.id, s)} data-tip={STATUS_LABELS[s.status] ?? s.status} data-tip-always>
             <span class="issue-plan__ref-icon" style={`color: ${statusColors[s.status] ?? 'currentColor'}`} set:html={stateIconSvg(s.status)} />
             <span>{s.title}</span>
           </a>

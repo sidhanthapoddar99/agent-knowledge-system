@@ -28,8 +28,9 @@ const rawName = args.flags.name && args.flags.name !== true ? String(args.flags.
 
 if (args.flags.help || !id || !planRaw || !rawName) {
   printHelp('issue new-stage', [
-    '<issue-id> --plan <folder> --name <slug> [--title <text>] [--outcome <text>] [--who <name>]',
-    '           [--status <state>] [--after <NN>] [--prefix <NN>] [--subtask <path,…>] [--json] [--tracker <path>]',
+    '<issue-id> --plan <folder> --name <slug> [--title <text>] [--outcome <text>] [--notes <text>]',
+    '           [--who <name>] [--status <state>] [--after <NN>] [--prefix <NN>] [--subtask <path,…>]',
+    '           [--json] [--tracker <path>]',
     '',
     'Add a stage file to a plan. The prefix is both the stage id and its order;',
     'stages are gap-spaced by ten so there is room to insert later.',
@@ -38,6 +39,8 @@ if (args.flags.help || !id || !planRaw || !rawName) {
     '--name      kebab-case stage name — required',
     '--title     frontmatter title (default: de-kebabed name)',
     '--outcome   one line: what "done" means for this stage',
+    '--notes     one line: why the stage sits here, what it waits on, the caveat the',
+    '            other columns cannot say. Inline markdown — links and emoji render',
     '--who       who the stage waits on',
     `--status    one of ${STATUSES.join('|')} (default open)`,
     '--after     insert after stage NN — takes the MIDPOINT of the gap that follows,',
@@ -156,6 +159,7 @@ const fm = [
   '---',
   `title: ${JSON.stringify(title)}`,
   ...(args.flags.outcome && args.flags.outcome !== true ? [`outcome: ${JSON.stringify(String(args.flags.outcome))}`] : []),
+  ...(args.flags.notes && args.flags.notes !== true ? [`notes: ${JSON.stringify(String(args.flags.notes))}`] : []),
   ...(args.flags.who && args.flags.who !== true ? [`who: ${String(args.flags.who)}`] : []),
   `status: ${status}`,
   ...(subtaskRefs.length ? ['subtasks:', ...subtaskRefs] : []),

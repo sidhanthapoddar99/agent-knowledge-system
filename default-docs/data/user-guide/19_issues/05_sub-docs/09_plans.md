@@ -89,6 +89,7 @@ is usually two plans.
 ---
 title: "Journal compatibility"
 outcome: "6.7 journals still open in the new reader"
+notes: "⏸ Held until [the codec lands](../01_decoder/20_codec.md) — reader half only"
 who: sid                             # who it waits on
 status: in-progress                  # the canonical 7
 subtasks:
@@ -111,21 +112,27 @@ agent-logs:
 |---|---|
 | `title` | The stage name. The heading renders as `<prefix> <title>` — **don't write an `# H1`**, it would duplicate a name the frontmatter owns |
 | `outcome` | One line: what "done" means for this stage |
+| `notes` | One line: why it sits here, what it waits on, the caveat the other columns cannot say |
 | `who` | Who the stage waits on |
 | `status` | The canonical seven |
-| `subtasks:` | Markdown links to the subtasks this stage schedules — **only these are counted** |
+| `subtasks:` | Markdown links to the subtasks this stage schedules — **only these are rendered** |
 | `agent-logs:` | Links to the runs carrying it out |
+
+`outcome` and `notes` render as **inline markdown**, so a link, `code`, emphasis or an
+emoji in either works. `notes` is the column with room to be informative — and the one
+place in the table you can point somewhere from. Point with a **link**, never a number:
+a note reading *"blocked on 14"* stops meaning anything the moment 14 is renumbered.
 
 - **The path is truth; the link text is a reading aid.** The renderer resolves the path
   and pulls the subtask's live title and status, so stale link text renders nothing and
   costs nothing.
 - **Not every todo links to a subtask.** Small things are not forced into a folder of
   their own.
-- **Only the `subtasks:` list counts** in the plan table. Unlinked todos are todos —
-  counting them would make the column silently measure two different things.
+- **Only the `subtasks:` list is rendered** under the stage. Unlinked todos are todos.
 - **A broken `subtasks:` reference is a validator error**, and the plan page lists the
-  broken refs in red. A reference resolving to nothing would otherwise under-count a
-  stage's progress with no visible symptom.
+  broken refs in red. A reference resolving to nothing would otherwise just vanish: a
+  stage listing four subtasks and rendering three looks exactly like a stage that
+  listed three.
 
 ### No `blocked-by:` field
 
@@ -145,10 +152,10 @@ is worse than a sentence somebody reads.**
 │  overview.md — what this plan is for                              │
 │                                                                   │
 │  ┌─ THE PLAN TABLE ───────────────────────────────────────────┐   │
-│  │  id   Stage            Outcome        Who    Subtasks  ▸   │   │
-│  │  10   Decoder swap     …one line…     claude 0/1/0/3  done │   │
-│  │  20   Journal compat   …one line…     sid    2/1/1/0  prog │   │
-│  │  30   Retention        …one line…     claude 4/0/0/0  open │   │
+│  │  #   Stage           ▸     Who    Outcome      Notes     │   │
+│  │  10  Decoder swap    done  claude …one line…   …one line… │   │
+│  │  20  Journal compat  prog  sid    …one line…   …one line… │   │
+│  │  30  Retention       open  claude …one line…   …one line… │   │
 │  └────────────────────────────────────────────────────────────┘   │
 │                                                                   │
 │  # 20 Journal compatibility        ← GENERATED heading            │
@@ -165,19 +172,27 @@ links to the stage's anchor; that is the index.
 `#20-journal-compatibility`. `move` rewrites paths but not anchors, so a number in the
 anchor would break silently the first time a stage is inserted above it.
 
-### The Subtasks column
+### It looks like a markdown table because it is one
 
-Resolve the `subtasks:` references, group by the category each subtask already carries,
-count:
+The table is rendered inside the same `.markdown-content` styles as the prose around it,
+so its borders, header fill, striping and **link colour** are whatever an ordinary
+markdown table in this site looks like. Nothing about it is restated in the issues
+stylesheet, so it cannot drift away from the tables beside it.
 
-| Bucket | Category | Statuses | Default colour |
-|---|---|---|---|
-| Open | `not-started` | `open`, `blocked` | grey |
-| Progress | `in-progress` | `in-progress` | blue |
-| Review / input needed | `review` | `input-needed`, `review` | yellow |
-| Completed / closed | `closed` | `done`, `dropped` | green |
+The **Status** column is one icon, centred, coloured from the `--status-<name>` CSS
+variables — a theme overriding those restyles the plan table for free. **Hover it and it
+names itself** ("In progress", "Input needed"): a coloured glyph is fast to scan once you
+know the vocabulary and opaque until you do.
 
-A theme overriding the `--status-<name>` CSS variables restyles the plan table for free.
+### There is no subtask count
+
+An earlier version of this table carried a `0/1/0/3` tally per stage. It was removed.
+
+The same subtasks appear **by name, with their live status icons, under the stage's own
+heading** — one screen down. A count of things listed just below is a second copy of one
+fact, and in every case where two places hold one fact, it is the copy that goes wrong.
+The names are also more useful: *which* subtask is blocked is the question a schedule
+actually has to answer.
 
 ### Individual stage pages
 
@@ -197,7 +212,11 @@ ambiguous.
 
 **One active plan at a time is convention, not enforcement.** Nothing validates it.
 
-The active plan is **pinned at the top of the Plans sidebar group** and marked. Nothing
+In the sidebar, plans list as `<status icon> NN <name>` in **plain ascending prefix order**, and
+the active one is **marked in bold rather than hoisted to the top** — a list whose order
+depends on a derived value puts the same set of plans in two different orders depending
+on which one is open, and the number down the left is the only ordering a reader can
+predict. Nothing
 renders above the issue body — the plan costs one click, not vertical space on every
 visit.
 

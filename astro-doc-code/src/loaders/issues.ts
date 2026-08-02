@@ -44,6 +44,7 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import { createIssuesParser } from '../parsers/content-types/issues';
+import { createMarkedInstance } from '../parsers/renderers/marked';
 import { getIssueDate } from './issue-dates';
 import { parseOrderPrefixLoose, MAX_SUBFOLDER_DEPTH } from '../parsers/core/order-prefix';
 import { readSettings, statSettingsMtime, resolveSettingsPath } from './settings-file';
@@ -197,8 +198,12 @@ export interface IssuePlanStage {
   sequence: number | null;
   /** Display title (frontmatter `title`, else slug-derived). */
   title: string;
-  /** One-line `outcome:` — what "done" means for this stage. */
-  outcome: string | null;
+  /** One-line `outcome:` — what "done" means for this stage. Inline HTML, so a
+   *  writer can link, emphasise or `code` inside it. */
+  outcomeHtml: string | null;
+  /** One-line `notes:` — why the stage sits where it does, what it is waiting
+   *  on, anything the other columns cannot say. Inline HTML, same reason. */
+  notesHtml: string | null;
   /** `who:` — who the stage waits on. */
   who: string | null;
   status: IssueStatus;
@@ -634,6 +639,21 @@ function getParser() {
 async function renderMarkdown(filePath: string, basePath: string): Promise<string> {
   const parsed = await getParser().parse(filePath, basePath);
   return parsed?.content ?? '';
+}
+
+// Inline renderer for one-line frontmatter fields (`outcome:`, `notes:`).
+// `parseInline` emits no block wrapper, so the result drops straight into a
+// table cell — and the field gets links, `code`, emphasis and emoji for free
+// rather than being a second, weaker kind of text nobody can reference from.
+let inlineParser: ReturnType<typeof createMarkedInstance> | null = null;
+function renderInline(text: string): string {
+  if (!inlineParser) inlineParser = createMarkedInstance();
+  return inlineParser.parseInline(text) as string;
+}
+
+/** One-line frontmatter field → inline HTML, or null when absent/empty. */
+function inlineField(value: unknown): string | null {
+  return typeof value === 'string' && value.length > 0 ? renderInline(value) : null;
 }
 
 function readComments(commentsDir: string): IssueComment[] {
@@ -1111,7 +1131,7 @@ async function readPlans(
       const stageAbs = path.join(abs, file);
       const name = file.replace(/\.md$/, '');
       let fm: {
-        title?: string; outcome?: string; who?: string; status?: string;
+        title?: string; outcome?: string; notes?: string; who?: string; status?: string;
         subtasks?: unknown; 'agent-logs'?: unknown;
       } = {};
       try { fm = matter(fs.readFileSync(stageAbs, 'utf-8')).data as typeof fm; } catch {}
@@ -1127,7 +1147,8 @@ async function readPlans(
         name,
         sequence: parseOrderPrefixLoose(name).position,
         title,
-        outcome: typeof fm.outcome === 'string' && fm.outcome.length > 0 ? fm.outcome : null,
+        outcomeHtml: inlineField(fm.outcome),
+        notesHtml: inlineField(fm.notes),
         who: typeof fm.who === 'string' && fm.who.length > 0 ? fm.who : null,
         status: stageStatus,
         category: categoryOf(stageStatus),

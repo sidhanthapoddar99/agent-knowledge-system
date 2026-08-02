@@ -1,6 +1,7 @@
 ---
 title: "Sidebar and tree"
 outcome: "The sidebar mirrors the folder shape at every depth"
+notes: "⚠️ Depth cap is the loader's, not the sidebar's — see [the depth guard](../../subtasks/04_verify/20_depth-guard.md)"
 who: claude
 status: done
 subtasks:

@@ -13,16 +13,23 @@
  *      paths on a renumber but not anchors, so `#20-journal-compatibility`
  *      would break silently the first time a stage is inserted above it.
  *
- * The Subtasks column is resolved live from `issue.subtasks` — the plan stores
- * no count, so it cannot carry a stale one.
+ *   3. **The table is styled as an ordinary markdown table**, by wrapping it in
+ *      `.markdown-content` rather than restating those rules under a bespoke
+ *      class. A hand-copied border and link colour is the same duplication
+ *      defect as any other: it drifts the first time the markdown styles move,
+ *      and a table that looks *almost* like the prose around it reads as a bug.
+ *
+ * The stage's subtasks are NOT summarised as counts here. They are listed by
+ * name, with live status icons, under the stage's own heading below — the same
+ * fact, linked instead of tallied.
  */
 import type { Issue, IssuePlan } from '@loaders/issues';
 import { sectionById } from '@loaders/issues';
 import { stateIconSvg } from '../../server/state-icon';
 import { extractAndPrefixToc } from '../../server/toc';
+import { STATUS_LABELS } from '@loaders/issue-status';
 import {
   pad, planStageUrl, planPanelKey, resolvePlanStage, subtaskUrl, logUrl,
-  CATEGORY_REPRESENTATIVE,
 } from '../../server/helpers';
 
 interface Props {
@@ -36,9 +43,9 @@ interface Props {
 const { issue, plan, baseUrl, statusColors, standalone = false } = Astro.props;
 const relPath = `${sectionById('plans')!.folder}/${plan.name}/`;
 
-// Resolve every stage once — the table and the inlined bodies read the same
-// resolution, so the count in the table and the links under the heading can
-// never disagree.
+// Resolve every stage once — the broken-reference warning above the stages and
+// the chips under each heading read the same resolution, so the warning can
+// never name a ref the chips silently rendered anyway.
 //
 // Stage bodies are inlined into ONE DOM here, so their heading ids are prefixed
 // with the stage name: every stage file tends to carry the same `## Todo` and
@@ -86,43 +93,43 @@ const missingTotal = resolved.reduce((n, r) => n + r.missing.length, 0);
         </p>
       </div>
     ) : (
-      <table class="issue-plan__table">
-        <thead>
-          <tr>
-            <th class="issue-plan__col-id">#</th>
-            <th>Stage</th>
-            <th>Outcome</th>
-            <th class="issue-plan__col-who">Who</th>
-            <th class="issue-plan__col-subtasks">Subtasks</th>
-            <th class="issue-plan__col-status">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {resolved.map(({ stage, counts, missing }) => (
-            <tr>
-              <td class="issue-plan__col-id">{stage.sequence !== null ? stage.sequence : '—'}</td>
-              <td><a href={`#${stage.anchor}`}>{stage.title}</a></td>
-              <td class="issue-plan__outcome">{stage.outcome ?? ''}</td>
-              <td class="issue-plan__col-who">{stage.who ?? ''}</td>
-              <td class="issue-plan__col-subtasks">
-                {counts.map((c) => (
-                  <span
-                    class="issue-plan__count"
-                    data-tip={c.label}
-                    style={`--count-color: ${statusColors[CATEGORY_REPRESENTATIVE[c.id]] ?? 'currentColor'}`}
-                  >{c.count}</span>
-                ))}
-                {missing.length > 0 && (
-                  <span class="issue-plan__count is-missing" data-tip={`${missing.length} reference${missing.length > 1 ? 's' : ''} resolve to nothing`}>!{missing.length}</span>
-                )}
-              </td>
-              <td class="issue-plan__col-status">
-                <span class="issue-plan__state" style={`color: ${statusColors[stage.status] ?? 'currentColor'}`} data-tip={stage.status} set:html={stateIconSvg(stage.status)} />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div class="markdown-content issue-plan__table-wrap">
+        <div class="table-wrapper">
+          <table class="issue-plan__table">
+            <thead>
+              <tr>
+                <th class="issue-plan__col-id">#</th>
+                <th>Stage</th>
+                <th class="issue-plan__col-status">Status</th>
+                <th class="issue-plan__col-who">Who</th>
+                <th>Outcome</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              {resolved.map(({ stage }) => (
+                <tr>
+                  <td class="issue-plan__col-id">{stage.sequence !== null ? stage.sequence : '—'}</td>
+                  <td><a href={`#${stage.anchor}`}>{stage.title}</a></td>
+                  <td class="issue-plan__col-status">
+                    <span
+                      class="issue-plan__state"
+                      style={`color: ${statusColors[stage.status] ?? 'currentColor'}`}
+                      data-tip={STATUS_LABELS[stage.status] ?? stage.status}
+                      data-tip-always
+                      aria-label={STATUS_LABELS[stage.status] ?? stage.status}
+                      set:html={stateIconSvg(stage.status)}
+                    />
+                  </td>
+                  <td class="issue-plan__col-who">{stage.who ?? ''}</td>
+                  <td set:html={stage.outcomeHtml ?? ''} />
+                  <td class="issue-plan__notes" set:html={stage.notesHtml ?? ''} />
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     )}
 
     {missingTotal > 0 && (
@@ -147,7 +154,7 @@ const missingTotal = resolved.reduce((n, r) => n + r.missing.length, 0);
         {(subtasks.length > 0 || logs.length > 0) && (
           <div class="issue-plan__refs">
             {subtasks.map((s) => (
-              <a class="issue-plan__ref" href={subtaskUrl(baseUrl, issue.id, s)} data-tip={s.status}>
+              <a class="issue-plan__ref" href={subtaskUrl(baseUrl, issue.id, s)} data-tip={STATUS_LABELS[s.status] ?? s.status} data-tip-always>
                 <span class="issue-plan__ref-icon" style={`color: ${statusColors[s.status] ?? 'currentColor'}`} set:html={stateIconSvg(s.status)} />
                 <span>{s.title}</span>
               </a>

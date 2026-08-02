@@ -1,6 +1,7 @@
 ---
 title: "Eyeball the result"
 outcome: "It reads well on a real screen, not just in a headless build"
+notes: "⏸ Waiting on a person at a screen. `blocked` while the plan is live"
 who: sid
 status: blocked
 subtasks:

@@ -286,7 +286,7 @@ h3.ns-sub { font-size: var(--ui-text-body, 14px); font-weight: 600; text-transfo
 
     <!-- Agent-log kind symbols -->
     <div class="ns-fam">Agent-log kind symbols</div>
-    <p class="ns-say">An agent-log activity folder is named <code>NNN_&lt;code&gt;_&lt;name&gt;</code>. When the two-letter code is a recognised kind, its symbol is drawn between the folder's <code>NN</code> badge and its name. Five kinds ship as framework defaults; a project can declare more in an issue's <code>settings.json</code> (<code>agentLogKinds</code>) drawing from a curated symbol palette. Unrecognised code → no symbol, and the name keeps the raw code.</p>
+    <p class="ns-say">An agent-log activity folder is named <code>NNN_&lt;code&gt;_&lt;name&gt;</code>. When the two-letter code is a recognised kind, its symbol is drawn <strong>first</strong>, before the folder's <code>NN</code> badge and its name. Five kinds ship as framework defaults; a project can declare more in an issue's <code>settings.json</code> (<code>agentLogKinds</code>) drawing from a curated symbol palette. Unrecognised code → no symbol, and the name keeps the raw code.</p>
     <div class="ns-glyphs">
 
       <div class="ns-glyph">
@@ -691,7 +691,7 @@ h3.ns-sub { font-size: var(--ui-text-body, 14px); font-weight: 600; text-transfo
     <p class="ns-say">
       This is the richest section. An <strong>activity folder</strong> is named
       <code>NNN_&lt;code&gt;_&lt;name&gt;/</code> — a 2-letter kind code between the order prefix and
-      the name. In the sidebar it renders as <strong>NN badge + kind symbol + clean name + count</strong>.
+      the name. In the sidebar it renders as <strong>kind symbol + NN badge + clean name + count</strong> &mdash; symbol first, matching the subtask rows above, so the icons form one column to scan instead of sitting at a different offset on every row.
       An <strong>unknown</strong> code gets no symbol and the label keeps the code.
     </p>
     <div class="ns-split">
@@ -944,7 +944,7 @@ h3.ns-sub { font-size: var(--ui-text-body, 14px); font-weight: 600; text-transfo
           <td><code>agent-log/</code></td>
           <td><code>NNN_&lt;code&gt;_&lt;name&gt;/</code> · slots <code>0NN_</code> · milestones carry <code>iteration:</code></td>
           <td><span class="ns-tag opt">optional</span></td>
-          <td>Folder: NN + kind symbol + name + count. Slot: neutral NN. Milestone: status-tinted <code>#N</code></td>
+          <td>Folder: kind symbol + NN + name + count. Slot: neutral NN. Milestone: status-tinted <code>#N</code></td>
         </tr>
         <tr>
           <td><code>agent-memory/</code></td>

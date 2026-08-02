@@ -1,6 +1,7 @@
 ---
 title: "Loader and routes"
 outcome: "Every section loads and every sub-doc has a URL"
+notes: "Foundational — nothing below it can start until routes exist"
 who: claude
 status: done
 subtasks:

@@ -15,6 +15,7 @@ import type { Issue, IssueNote, IssueSubtask } from '@loaders/issues';
 import { ISSUE_SECTIONS } from '@loaders/issues';
 import { groupByPath, groupSubtasks, detailUrl, planUrl, planPanelKey, activePlan } from '../../server/helpers';
 import { stateIconSvg } from '../../server/state-icon';
+import { STATUS_LABELS } from '@loaders/issue-status';
 import SubdocTree from './SubdocTree.astro';
 import SubtaskTree from './SubtaskTree.astro';
 
@@ -60,8 +61,12 @@ const subtaskTree = groupSubtasks(issue.subtasks, issue.subtaskGroups);
 // not done/dropped. It is pinned at the top of the Plans group and marked, so
 // the schedule is one click from the state you land in. Nothing renders above
 // the issue body: the plan costs a click, not vertical space on every visit.
-const pinnedPlan = activePlan(issue.plans);
-const otherPlans = issue.plans.filter((p) => p !== pinnedPlan);
+// Plans list in plain ascending prefix order — the loader already sorts them —
+// and the active one is MARKED rather than hoisted. Hoisting made the list's
+// order depend on a derived value, so the same set of plans could sit in two
+// different orders depending on which was open; the number down the left is the
+// only ordering a reader can predict.
+const currentPlan = activePlan(issue.plans);
 
 // Agent-log folder → its status. The reserved working/ and debrief/ folders are
 // parts of a run rather than runs, so they carry no status of their own and are
@@ -203,25 +208,23 @@ const tracker = baseUrl.replace(/^\/+/, '').replace(/\/+$/, '');
             <SubtaskTree node={subtaskTree} baseUrl={baseUrl} issueId={issue.id} activeKey={activeKey} />
           ) : isPlans ? (
             <div class="issue-sidebar__items">
-              {pinnedPlan && (
-                <a
-                  href={planUrl(baseUrl, issue.id, pinnedPlan)}
-                  class={`issue-sidebar__item is-pinned ${activeKey === planPanelKey(pinnedPlan) ? 'is-active' : ''}`}
-                  aria-current={activeKey === planPanelKey(pinnedPlan) ? 'page' : undefined}
-                  data-tip="The active plan — highest-numbered plan that is not done or dropped"
-                >
-                  <span class="issue-sidebar__pin" aria-hidden="true">●</span>
-                  <span class="issue-sidebar__label">{pinnedPlan.title}</span>
-                  <span class="issue-sidebar__doctype" style={`color: ${statusColors[pinnedPlan.status] ?? 'var(--color-text-muted)'}`} set:html={stateIconSvg(pinnedPlan.status)} />
-                </a>
-              )}
-              {otherPlans.map((p) => (
+              {issue.plans.map((p) => (
                 <a
                   href={planUrl(baseUrl, issue.id, p)}
-                  class={`issue-sidebar__item ${activeKey === planPanelKey(p) ? 'is-active' : ''}`}
+                  class={`issue-sidebar__item ${p === currentPlan ? 'is-current' : ''} ${activeKey === planPanelKey(p) ? 'is-active' : ''}`}
                   aria-current={activeKey === planPanelKey(p) ? 'page' : undefined}
-                  data-tip={p.title}
+                  data-tip={p === currentPlan
+                    ? `${p.title} — the active plan (highest-numbered one that is not done or dropped)`
+                    : p.title}
                 >
+                  <span
+                    class="issue-sidebar__kind"
+                    style={`color: ${statusColors[p.status] ?? 'var(--color-text-muted)'}`}
+                    data-tip={STATUS_LABELS[p.status] ?? p.status}
+                    data-tip-always
+                    aria-label={STATUS_LABELS[p.status] ?? p.status}
+                    set:html={stateIconSvg(p.status)}
+                  />
                   {p.sequence !== null && <span class="issue-sidebar__num">{String(p.sequence).padStart(2, '0')}</span>}
                   <span class="issue-sidebar__label">{p.title}</span>
                 </a>

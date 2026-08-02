@@ -1,6 +1,7 @@
 ---
 title: "Fix the audit findings"
 outcome: "The two confirmed defects stop being reachable"
+notes: "Both defects were **reproduced**, not just reported — the audit names the command"
 who: claude
 status: in-progress
 subtasks:

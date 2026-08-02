@@ -35,8 +35,13 @@ what it should be when the subtasks it references disagree.
       at all — say that, and say who sets it
 - [ ] Check the same gap does not exist for a plan's own `status` in
       `settings.json`
-- [ ] Confirm the Subtasks column's four buckets are visibly a *different* thing
-      from the stage's `status`, since they sit in the same table row
+- [x] Confirm the Subtasks column's four buckets are visibly a *different* thing
+      from the stage's `status`, since they sit in the same table row —
+      **resolved by deletion, 2026-08-03.** The counts column is gone
+      ([the plan table rework](../090_plan-table-rework.md)), so the two
+      status-shaped things no longer sit side by side. The rest of this subtask
+      still stands: the stage's own `status` is still undocumented as *stored,
+      not derived*
 
 # Outcomes and Next Steps
 

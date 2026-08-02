@@ -313,3 +313,36 @@ translate, and a tracker overriding `fields.status.colors` restyles all five
 surfaces together.
 
 This spec is complete. Build it: [`010`](../subtasks/040_execution/010_code-the-plans-section.md).
+
+---
+
+# Revised on first contact — 2026-08-03
+
+Everything above is the spec **as designed**, kept intact: the reasoning is worth
+more than the tidiness, and a spec quietly edited to match what shipped stops
+being evidence of anything. Three parts of it were changed the first time Sid
+looked at the built page. Each is recorded here with what replaced it and why;
+the round that made the changes is
+[the plan-table rework](../agent-log/020_wf_ship-the-split/working/120_plan-table-and-sidebar.md),
+and the subtask is
+[the plan table rework](../subtasks/090_plan-table-rework.md).
+
+| Spec said | Ships as | Why |
+|---|---|---|
+| Table: `# · Stage · Outcome · Who · Subtasks · Status` | `# · Stage · Status · Who · Outcome · Notes` | Status is the column you scan for, so it moved left. `Notes` is new — see below |
+| A per-stage subtask tally, `0/1/0/3` | **No tally.** The same subtasks are listed by name with live status icons under the stage heading | The tally summarised things shown one screen down. Two places holding one fact, and the derived one is always the one that misleads: `2/1/1/0` cannot say *which* subtask is blocked, which is the question a schedule exists to answer |
+| Active plan **pinned at the top** of the sidebar group | Active plan **marked in bold**, list stays in ascending prefix order | Hoisting made list order depend on a derived value, so the same plans sat in two different orders depending on which was open. The prefix is the only ordering a reader can predict |
+
+**What was added: a `notes:` field, rendered as the last column.** The four
+original columns are all *structural* — id, name, definition-of-done, owner —
+and there was nowhere to write the thing a reader actually needs on arrival:
+what this stage is waiting on, why it sits at this position, the caveat that
+would otherwise live only in someone's head. It renders as **inline markdown**,
+so it can point at another file with a real link rather than a bare number.
+
+`outcome:` became inline markdown at the same time, for one implementation
+rather than two kinds of one-line field.
+
+**The Subtasks-column bucket table above is now history.** The four categories it
+describes are still real — they drive the subtask counts elsewhere in the UI —
+but nothing in the plan section reads them any more.

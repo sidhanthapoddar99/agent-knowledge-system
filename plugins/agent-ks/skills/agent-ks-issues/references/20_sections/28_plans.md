@@ -65,6 +65,7 @@ is usually two plans.
 ---
 title: "Journal compatibility"
 outcome: "6.7 journals still open in the new reader"
+notes: "⏸ Held until [the codec lands](../01_decoder/20_codec.md) — reader half only"
 who: sid                             # who it waits on
 status: in-progress                  # the canonical 7
 subtasks:
@@ -92,10 +93,26 @@ and pulls the subtask's live title and status, so stale link text costs nothing.
 **Not every todo links to a subtask.** Small things are not forced into a folder of
 their own.
 
-**Only the `subtasks:` list counts** in the plan table. Unlinked todos are todos.
+**Only the `subtasks:` list is rendered** under the stage. Unlinked todos are todos.
 
-**A broken `subtasks:` ref is a validator error**, and the plan page lists it in red — a
-reference resolving to nothing would otherwise under-count a stage's progress silently.
+**A broken `subtasks:` ref is a validator error**, and the plan page lists it in red. A
+reference resolving to nothing would otherwise vanish: a stage listing four subtasks and
+rendering three looks exactly like a stage that listed three.
+
+## `outcome` and `notes` are inline markdown
+
+Both are one-liners, and both render as **inline markdown** — a link, `code`, emphasis
+or an emoji in either works.
+
+| Field | Answers |
+|---|---|
+| `outcome` | What does "done" mean here? |
+| `notes` | Why does it sit here, what is it waiting on, what would surprise a reader? |
+
+`notes` is the column with room to be informative, and the one place in the table where
+you can point somewhere. **Point with a link, never a number** — see
+[Linking](../10_writing/10_writing.md#linking); a note reading *"blocked on 14"* is
+unreadable the moment 14 is renumbered.
 
 ## Status is the canonical seven
 
@@ -104,16 +121,14 @@ Same vocabulary, icons and colours as issues and subtasks. A stage that is waiti
 `blocked-by:` field, because a dependency graph nobody maintains is worse than a
 sentence somebody reads.
 
-## The Subtasks column
+## The plan table
 
-Resolve the `subtasks:` refs, group by the category each already carries, count:
+**# · Stage · Status · Who · Outcome · Notes.** Styled as an ordinary markdown table,
+because it is one that happens to be generated.
 
-| Bucket | Category | Statuses |
-|---|---|---|
-| Open | `not-started` | `open`, `blocked` |
-| Progress | `in-progress` | `in-progress` |
-| Review / input needed | `review` | `input-needed`, `review` |
-| Completed / closed | `closed` | `done`, `dropped` |
+**There is no subtask count.** The same subtasks appear by name, with live status icons,
+under the stage's own heading — a tally of things shown one screen down is a second copy
+of one fact, and the copy is what drifts. Status hovers to name itself.
 
 # Lifecycle
 
@@ -124,7 +139,9 @@ Resolve the `subtasks:` refs, group by the category each already carries, count:
 No field, nothing to keep in sync. One active plan at a time is convention, not
 enforcement.
 
-The active plan is **pinned at the top of the `Plans` sidebar group** and marked.
+In the sidebar, plans list as `<status icon> NN <name>` in plain ascending prefix order.
+The active one is **marked in bold, not hoisted** — the number is the only ordering a
+reader can predict, so nothing derived is allowed to reorder the list.
 Nothing renders above the issue body.
 
 ## Closing a plan

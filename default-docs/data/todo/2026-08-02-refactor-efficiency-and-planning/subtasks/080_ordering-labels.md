@@ -47,17 +47,42 @@ reported rather than left to rot.
       and the in-app guide
 - [x] Control-tested: correct label silent, stale group warns, stale leaf warns,
       unlabelled silent, fenced example silent
-- [ ] **Adopt it in this repo's own tracker.** Nothing is labelled yet — the
-      convention ships unused, which is honest but means it has never been read
-      in anger
-- [ ] Consider a `--relabel` pass that adds or repairs labels in bulk, once there
-      is enough usage to know whether it is wanted
+- [x] **Backfilling existing links — decided against, by Sid, 2026-08-03.** See
+      *No backfill, and why that costs nothing* below
+- [ ] Consider a `--relabel` pass that adds or repairs labels in bulk — **only if
+      a real need appears.** With no backfill there is nothing to bulk-process
+      today, so this stays unscheduled rather than pending
 
 # Outcomes and Next Steps
 
-Shipped and gated. Two open items above, both deliberate: the convention is
-**optional**, so nothing forced a bulk rewrite of existing links, and a bulk
-tool is premature before anyone has lived with it.
+Shipped and gated. Nothing is owed on existing content.
+
+## No backfill, and why that costs nothing
+
+**Sid, 2026-08-03:** *"you have noted the convention in skill right and also the
+move command hold it true right? so it fine no need to move existing ones."*
+
+Both premises hold — the convention is in both skills, the writing reference, the
+user-guide and the in-app guide, and `agent-ks move` recomputes labels
+(control-tested by renumbering a group).
+
+The reason the conclusion follows, stated because it is the non-obvious half:
+
+- **`move` never ADDS a label.** `relabelOrdering` returns text unchanged when
+  there is no label to rewrite. An unlabelled link survives any number of moves
+  as an unlabelled link.
+- **The validator only checks labels that EXIST.** No label, nothing to compare,
+  no warning.
+
+So the two mechanisms act exclusively on links someone chose to label. There is
+no half-migrated state to manage and no pressure to finish a sweep — labels
+appear where a writer wants navigation, and the guards keep those honest. A
+convention that only costs something when used is one that can be adopted at
+whatever pace it earns.
+
+**What this gives up, and it is small:** the label check has still never fired on
+real content, only on the control fixture. It is proven correct, not proven
+useful. That will only change as labels get written.
 
 ## The design call, and the part that was added to the proposal
 

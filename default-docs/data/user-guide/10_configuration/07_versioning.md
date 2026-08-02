@@ -18,11 +18,28 @@ misread an older content format.
 engine_version: "0.1.2"
 ```
 
-- Format is `N.N.N` (major stays `0` while the project is in beta). Only
-  major.minor participate in compatibility — a patch bump never changes the
-  content format.
+- Format is `X.Y.Z`. **Described by position, not by the words "minor" and
+  "patch"** — those name different places to different readers, and the
+  ambiguity has already caused one wrong version call here.
+
+  | Place | Moves for |
+  |---|---|
+  | `X` | reserved — beta (`0`) versus production |
+  | `Y` | major upgrades |
+  | `Z` | small additions and fixes |
+
+  **The rule is simply: your content's version must be at least the minimum the
+  engine supports.** All three numbers count.
 - **A missing `engine_version` is treated as `0.0.0`** — projects created before
   the contract trip the gate once, migrate, and are on the contract thereafter.
+
+> [!WARNING]
+> **Known defect: the gate currently ignores `Z`.** `compareFormatVersions`
+> compares `X` and `Y` only, so content at `0.1.0` passes a floor of `0.1.2`.
+> Since every format migration shipped so far moved only `Z`, **the gate has
+> never actually enforced one** — it has only ever caught content with no
+> `engine_version` key at all. Tracked in
+> `2026-08-02-refactor-efficiency-and-planning`, subtask 050.
 
 ## The gate
 

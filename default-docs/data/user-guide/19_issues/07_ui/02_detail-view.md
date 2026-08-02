@@ -30,7 +30,7 @@ The detail view renders at `/<base>/<YYYY-MM-DD-slug>`. It's the surface for wor
 │ Subtasks 1/3 │                                        │            │
 │  ○ 01 setup  │                                        │            │
 │ Agent log    │                                        │            │
-│  ⟳ 10 impl 5 │                                        │            │
+│  10 ⟳ impl 5 │                                        │            │
 │ Agent memory │                                        │            │
 │  · memory    │                                        │            │
 └──────────────┴────────────────────────────────────────┴────────────┘
@@ -77,7 +77,7 @@ Each section lists its files as links to **their own URLs** (`/<issue>/notes/<na
   | cross | `dropped` | red (`--color-error`) |
 
   Group folders show a **done/total** count; the section header shows the issue-wide done/total with an amber dot when anything is in the Review category. The same legend renders live (real symbols, real colors) on every issue's **Guide** panel.
-- **Agent log** — each run's folder renders `<symbol> NN <name> … <count>` — the symbol leads, matching the status icon on the rows above it; the kind symbol's tooltip names the kind and its colour comes from that folder's optional `settings.json` status (a folder without one renders a defined grey, distinct from `open`). Inside, nothing is pinned: the run's slots are numbered, so plain prefix order gives `01_summary.md`, `02_working/`, `03_debrief/`, then any child agent log (prefix `100` and up).
+- **Agent log** — each run's folder renders `NN <symbol> <name> … <count>` — the **number** leads, because an activity is referred to by its number ("run 020") while its kind is a property of the run; the subtask and plan rows above it still lead with their status icon, being read for state rather than identity; the kind symbol's tooltip names the kind and its colour comes from that folder's optional `settings.json` status (a folder without one renders a defined grey, distinct from `open`). Inside, nothing is pinned: the run's slots are numbered, so plain prefix order gives `01_summary.md`, `02_working/`, `03_debrief/`, then any child agent log (prefix `100` and up).
 - **Plans** — rows read `<status icon> NN <name>`, in plain ascending prefix order. The active plan (highest-numbered not `done`/`dropped`) is **marked in bold, not moved**; clicking one swaps the main panel to its page, table first.
 - **Agent memory** — `memory.md` pins first.
 - Ordering everywhere: the `memory.md` index pin (agent-memory only, since it carries no prefix) → numeric prefix value → name. Ascending, one rule for all sections — the agent log has no special case, because its slots carry the numbers that used to need one.

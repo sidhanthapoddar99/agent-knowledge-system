@@ -603,7 +603,7 @@ Two examples, deliberately: one alone sets a floor as much as a ceiling.
 ## Rendering
 
 - **Detail-page sidebar** — the Agent log section lists agent logs
-  (`<symbol> NN <name> <count>` — the symbol leads, so the column is one vertical run of icons to scan). Inside one, entries sort by prefix value like every
+  (`NN <symbol> <name> <count>` — the NUMBER leads. An activity is referred to by its number everywhere else ("run 020"), so that is what a reader is looking for; its kind is a property of the run, not its name. The subtask and plan rows still lead with their status icon, because those are read for state rather than identity). Inside one, entries sort by prefix value like every
   other section, which puts `01_summary.md`, `02_working/` and `03_debrief/` in reading
   order and any child agent logs (`100_` and up) after them. **There is no pinning rule**
   — the numbers do that job, which is why they exist. The kind symbol is tinted by the

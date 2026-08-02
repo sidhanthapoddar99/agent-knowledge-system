@@ -274,18 +274,24 @@ entries.sort((a, b) => {
     const { kind: groupKind, label: groupLabel } = logFolderParts(groupName);
     const groupNum = prefixNum(groupName);
     const folderStatus = folderStatusColor(childGroupKey);
-    // Row: `<symbol>  NN  <name>  …  <count>` — the kind symbol leads, then the
-    // numeric prefix, the clean name, and the file count on the right.
+    // Row: `NN  <symbol>  <name>  …  <count>` — the numeric prefix leads, then
+    // the kind symbol, the clean name, and the file count on the right.
     //
-    // Symbol before number ON PURPOSE. The symbol is the row's only *categorical*
-    // mark and it is status-coloured, so leading with it gives the column a single
-    // vertical run of icons to scan; a number in front pushes each icon to a
-    // different x-offset (`9`, `010`) and there is nothing left to scan down.
-    // No recognised kind → no symbol, and the name keeps the code.
+    // Number before symbol, decided by Sid on the built page after a round with
+    // it the other way round. The case for symbol-first was that a
+    // status-coloured icon gives the column one vertical run to scan; on screen,
+    // the number turned out to be what a reader is looking for here, because an
+    // activity is referred to BY its number everywhere else — "run 020" — while
+    // its kind is a property of the run rather than its name.
+    //
+    // Deliberately NOT the arrangement on subtask and plan rows, where the status
+    // icon still leads. Those are read for STATE ("what is left"); an activity row
+    // is read for IDENTITY ("which run"). One tree, two questions.
     return (
       <details class="issue-sidebar__subgroup" data-collapse-key={childPath} open={open ? true : undefined}>
         <summary class="issue-sidebar__subgroup-heading" data-tip={groupLabel}>
           <svg class="issue-sidebar__chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
+          {groupNum && <span class="issue-sidebar__num">{groupNum}</span>}
           {groupKind && (
             <span
               class="issue-sidebar__kind"
@@ -297,7 +303,6 @@ entries.sort((a, b) => {
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={agentLogIcon(groupKind.icon)} />
             </span>
           )}
-          {groupNum && <span class="issue-sidebar__num">{groupNum}</span>}
           <span class="issue-sidebar__subgroup-name">{groupLabel}</span>
           <span class="issue-sidebar__heading-count">{descendantCount(child)}</span>
         </summary>

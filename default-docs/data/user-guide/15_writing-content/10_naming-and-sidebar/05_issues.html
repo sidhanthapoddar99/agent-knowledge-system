@@ -691,7 +691,7 @@ h3.ns-sub { font-size: var(--ui-text-body, 14px); font-weight: 600; text-transfo
     <p class="ns-say">
       This is the richest section. An <strong>activity folder</strong> is named
       <code>NNN_&lt;code&gt;_&lt;name&gt;/</code> — a 2-letter kind code between the order prefix and
-      the name. In the sidebar it renders as <strong>kind symbol + NN badge + clean name + count</strong> &mdash; symbol first, matching the subtask rows above, so the icons form one column to scan instead of sitting at a different offset on every row.
+      the name. In the sidebar it renders as <strong>NN badge + kind symbol + clean name + count</strong> &mdash; the number first, because an activity is referred to by its number (&ldquo;run 020&rdquo;) while its kind is a property of the run. The subtask rows above still lead with their status icon: those rows are read for state, an activity row for identity.
       An <strong>unknown</strong> code gets no symbol and the label keeps the code.
     </p>
     <div class="ns-split">

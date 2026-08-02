@@ -17,9 +17,18 @@
  * mirror the new target too, so the rendered text never disagrees with where it
  * points. Descriptive text (`[the guide](../a/b.md)`) is left untouched.
  *
+ * ORDERING LABELS are recomputed the same way. Text that opens with the
+ * target's ordering path — `[040/100 the migration script](…)`, the numbers a
+ * reader matches against the sidebar — has that path rebuilt from the target's
+ * NEW location, so renumbering a folder or moving a file between groups never
+ * leaves a label pointing at where something used to sit. Text with no label
+ * never gains one; the convention is optional.
+ *
  * Links are matched with a regex but every candidate is resolved as a real
  * filesystem path before deciding to rewrite — external (http/mailto),
  * site-absolute (`/...`) and pure-anchor (`#...`) links are left untouched.
+ * FENCED BLOCKS are skipped: a link inside one is sample syntax, not a link,
+ * and rewriting it edits someone's worked example to point somewhere else.
  *
  *   agent-ks move <from> <to> [--dry-run] [--no-git] [--root <dir>] [--help]
  *
@@ -31,7 +40,10 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { resolveProjectContext } from '../_env.mjs';
-import { MD_LINK_RE, isIgnorableTarget, splitAnchor, collectMarkdownFiles } from '../_links.mjs';
+import {
+  MD_LINK_RE, isIgnorableTarget, splitAnchor, collectMarkdownFiles,
+  orderingPathFor, relabelOrdering, makeFenceTracker,
+} from '../_links.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 
@@ -218,8 +230,10 @@ for (const file of scanFiles) {
   try { content = fs.readFileSync(file, 'utf-8'); }
   catch { continue; }
   const lines = content.split('\n');
+  const isProse = makeFenceTracker();
 
   lines.forEach((lineText, idx) => {
+    if (!isProse(lineText)) return;   // inside a fenced example — not a link
     let m;
     LINK_RE.lastIndex = 0;
     while ((m = LINK_RE.exec(lineText)) !== null) {
@@ -242,7 +256,12 @@ for (const file of scanFiles) {
       // FINAL location.
       const newRel = relLink(finalDir, targetAbsFinal);
       const newTarget = newRel + anchor;
-      const newText = mirrorText(text, target, rel, newTarget, newRel);
+      // Two text rewrites, and they are mutually exclusive in practice: a
+      // path-mirror has no ordering label, and a labelled link is descriptive
+      // rather than a mirror. Applied in sequence so neither has to know about
+      // the other.
+      const mirrored = mirrorText(text, target, rel, newTarget, newRel);
+      const newText = relabelOrdering(mirrored, orderingPathFor(targetAbsFinal));
 
       const newFull = `${bang}[${newText}](${newTarget})`;
       if (newFull === full) continue; // neither target nor text changed

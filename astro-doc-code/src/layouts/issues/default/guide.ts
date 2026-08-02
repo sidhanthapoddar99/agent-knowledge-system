@@ -149,6 +149,11 @@ An issue is one folder — one coherent unit of *thinking + execution*.
   never \`\\\`050\\\`\`. Prefixes are gap-spaced so files can be inserted between them, and
   \`agent-ks move\` rewrites real links when a file moves; a backticked number is prose
   to every tool that exists, so it breaks silently and reports nothing.
+- **To keep the number too, open the link text with the target's ORDERING PATH** —
+  \`[040/100 the migration script](…/subtasks/040_execution/100_migration-script.md)\`.
+  The sidebar lists entries by number, so the label is what lets you match a link
+  against what is already on screen. Optional; \`agent-ks move\` recomputes it and the
+  validator warns when one has drifted.
 
 **When does a thought earn an issue?** Litmus test: you can name its component and
 its first subtask in one breath. Otherwise it's a **subtask** on an existing issue

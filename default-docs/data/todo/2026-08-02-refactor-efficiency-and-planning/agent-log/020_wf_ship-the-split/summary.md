@@ -95,6 +95,11 @@ Executes against
 - [x] [The demo fixture, ten agent logs down to three](./100_demo-showcase-agent-logs.md)
       — 50 files to 28, no stubs, and the tracker-wide validator warning count
       from 2 down to 1
+- [x] [Ordering labels](./110_ordering-labels.md) — the number comes back into
+      link text as `040/100 <name>`, because the sidebar lists by number and a
+      name alone cannot be matched against it. Shipped with **two** guards, not
+      the one proposed: `move` recomputes it, and the validator warns when it
+      drifts. Scoped at [the subtask](../../subtasks/080_ordering-labels.md)
 
 # Out of Scope
 

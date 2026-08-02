@@ -369,9 +369,30 @@ for a tight report — patterns in [41_searching.md](references/40_operations/41
   number quoted in another file makes the numbering immutable.
 
   A link reading `[010](./010_thing.md)` is still a number, just a clickable one — the
-  link text must name the thing. Keeping a number *alongside* a named link is fine; what
-  is banned is the number standing alone as the identifier. Where the number genuinely
-  is the subject (*"the first two digits are the iteration"*), it stays.
+  link text must name the thing. Where the number genuinely is the subject (*"the first
+  two digits are the iteration"*), it stays.
+- **Keeping the number as well is not only allowed, it has a form — the ORDERING
+  LABEL.** Open the link text with the target's ordering path (the numeric prefixes of
+  its folders and of its own name, joined by `/`), then the name:
+
+  ```markdown
+  [040/100 the migration script](../../subtasks/040_execution/100_migration-script.md)
+  [70 reference by link](../../notes/70_reference-by-link-never-by-number.md)
+  ```
+
+  **Why it earns its keep:** the sidebar lists entries by number, so the label is what
+  lets a reader match a link against what they can already see there — without following
+  it. Number *and* name; neither alone does the job.
+
+  **Optional, and kept honest by two things when used.** `agent-ks move` recomputes the
+  label whenever it rewrites the target, and `agent-ks check issues` **warns** when a
+  label disagrees with where its target actually sits. Without that pair it would be the
+  same fact in two places with nothing comparing them — and a stale label is invisible,
+  because the link still resolves and only lies about position.
+
+  A segment with no numeric prefix contributes nothing and ends the run, so a file under
+  `working/` labels as `090`, not `020/090`. A target with no prefix takes no label at
+  all — it has no ordering identity to state.
 - **Frontmatter `title`** on every markdown file (Astro builds fail without it).
 - **`settings.json` may be `.jsonc`** (comments + trailing commas) — prefer `.jsonc`
   for the tracker root and annotate what each component/label means.

@@ -30,6 +30,7 @@ import path from 'node:path';
 import matter from 'gray-matter';
 import { resolveTracker, listIssueFolders, readVocabulary, parseArgs, printHelp, STATUSES, TERMINAL_STATUSES, normalizeStatus, LEGACY_STATUS_MAP, MAX_SUBFOLDER_DEPTH } from './_lib.mjs';
 import { readJsonChecked, reportAndExit } from '../_check-lib.mjs';
+import { MD_LINK_RE, isIgnorableTarget, splitAnchor, orderingPathFor, parseOrderingLabel, makeFenceTracker } from '../_links.mjs';
 
 const args = parseArgs(process.argv.slice(2));
 if (args.flags.help) {
@@ -227,6 +228,68 @@ function issueFileIndex(issueDir) {
     walk(root, 0);
   }
   return seen;
+}
+
+/**
+ * ORDERING LABELS — link text that opens with the target's numeric path, e.g.
+ * `[040/100 the migration script](../../subtasks/040_execution/100_x.md)`. The
+ * numbers let a reader match the link to the numbered entry in the sidebar.
+ *
+ * The label is derived from the target, so it is the same fact in two places —
+ * and a stale one is INVISIBLE, because the link still resolves and only lies
+ * about where the target sits. `agent-ks move` keeps labels current for moves
+ * it performs; this catches the rest (a hand `git mv`, an editor rename, a
+ * hand-typed label).
+ *
+ * A WARNING rather than an error, on purpose. The convention is optional, and
+ * link text that legitimately opens with a bare number and a space — rare, but
+ * possible — would otherwise block the gate over wording. The fix for such a
+ * false positive is to reword; the message says so.
+ */
+function lintOrderingLabels(id, issueDir) {
+  const walk = (absDir, depth) => {
+    let entries;
+    try { entries = fs.readdirSync(absDir, { withFileTypes: true }); }
+    catch { return; }
+    for (const e of entries) {
+      const abs = path.join(absDir, e.name);
+      if (e.isDirectory()) {
+        if (!e.name.startsWith('.') && depth < MAX_SUBFOLDER_DEPTH + 2) walk(abs, depth + 1);
+        continue;
+      }
+      if (!e.isFile() || !e.name.endsWith('.md')) continue;
+
+      let lines;
+      try { lines = fs.readFileSync(abs, 'utf-8').split(/\r?\n/); }
+      catch { continue; }
+
+      const isProse = makeFenceTracker();
+      lines.forEach((lineText, idx) => {
+        if (!isProse(lineText)) return;   // illustrative link in a fenced example
+        MD_LINK_RE.lastIndex = 0;
+        let m;
+        while ((m = MD_LINK_RE.exec(lineText)) !== null) {
+          const [, , text, target] = m;
+          const label = parseOrderingLabel(text);
+          if (!label) continue;
+          if (isIgnorableTarget(target)) continue;
+          const { rel } = splitAnchor(target);
+          if (!rel) continue;
+          const targetAbs = path.resolve(path.dirname(abs), rel);
+          if (!fs.existsSync(targetAbs)) continue;   // broken link — a different lint's job
+          const actual = orderingPathFor(targetAbs);
+          if (!actual || actual === label.orderingPath) continue;
+          const where = `${id}/${path.relative(issueDir, abs).split(path.sep).join('/')}:${idx + 1}`;
+          warnings.push(
+            `${where}: ordering label \`${label.orderingPath}\` does not match its target — ` +
+            `\`${rel}\` sits at \`${actual}\`. Fix the label, or reword the link text if the ` +
+            `number was never an ordering label`,
+          );
+        }
+      });
+    }
+  };
+  walk(issueDir, 0);
 }
 
 function lintPlans(id, issueDir) {
@@ -606,6 +669,7 @@ for (const entry of issueFolders) {
   // plans/: the schedule section. `plans/` holds plan folders and nothing else,
   // each exactly one level deep.
   lintPlans(id, folder);
+  lintOrderingLabels(id, folder);
 
   // agent-log grammar. An agent log is NNN_<code>_<name>/ — one run, one goal —
   // holding summary.md (required), the reserved working/ and debrief/ folders,

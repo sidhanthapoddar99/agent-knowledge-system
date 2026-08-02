@@ -72,10 +72,38 @@ Blocked by [the version bump](../050_version-bump.md).             ← RIGHT
 | **Renumbering is normal** | Gap-spaced prefixes exist so `015` can be inserted later. A number quoted in another file makes the numbering immutable — the opposite of why it is spaced |
 
 **A link reading `[010](./010_thing.md)` is still a number, just clickable.** The link
-text has to name the thing. A number *alongside* a named link is fine
-(`[the plans section (010)](./010_code-the-plans-section.md)`); a number standing alone
-as the identifier is not. Where the number genuinely is the subject — *"the first two
+text has to name the thing. Where the number genuinely is the subject — *"the first two
 digits are the iteration"* — it stays.
+
+### The ordering label — how to keep the number too
+
+The number is genuinely useful: **the sidebar lists entries by number**, so a link
+carrying one can be matched against what a reader already has on screen. Keep it by
+opening the link text with the target's **ordering path** — the numeric prefixes of its
+folders and of its own name, joined by `/` — then the name:
+
+```markdown
+[040/100 the migration script](../../subtasks/040_execution/100_migration-script.md)
+[70 reference by link](../../notes/70_reference-by-link-never-by-number.md)
+[020/090 the summary-shape round](./working/090_summary-shape-and-links.md)
+```
+
+| | |
+|---|---|
+| **Optional** | A plain descriptive link is never wrong. This adds navigation, it does not replace naming — the name still has to be there |
+| **Derived, never invented** | The label states only what the target's path already says. If they disagree, the label is what is wrong |
+| **`agent-ks move` keeps it current** | It recomputes the label whenever it rewrites the target, so renumbering a group or moving a file between them fixes every label pointing at it |
+| **The validator catches the rest** | `agent-ks check issues` **warns** on a label that disagrees with its target — a hand `git mv`, an editor rename, a typo. Warning rather than error because link text that legitimately opens with a bare number and a space would otherwise block the gate over wording |
+
+**How the path is computed:** walk up from the file collecting numeric prefixes, and
+stop at the first segment that has none. So `subtasks/040_execution/100_x.md` → `040/100`,
+and `agent-log/020_wf_ship/working/090_x.md` → `090`, because `working/` has no prefix
+and ends the run. A target with no prefix at all takes no label — there is no ordering
+identity to state.
+
+**A stale label is the failure mode to fear**, which is why it is checked rather than
+just described: the link still resolves, so nothing looks wrong. It simply tells the
+reader the target is somewhere it is not.
 
 - **Cross-issue / cross-file links**: standard markdown relative links
   (`../2026-05-08-runtime-stack-migration/issue.md`) or backticked repo paths in

@@ -30,6 +30,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { reportAndExit } from './_check-lib.mjs';
+import { makeFenceTracker } from './_links.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const JSON_OUT = process.argv.includes('--json');
@@ -52,22 +53,12 @@ function listMarkdown(dir, acc = []) {
   return acc;
 }
 
-// A fence opens with 3+ backticks or tildes and closes with at least as many of
-// the SAME character — so a ```` block may contain ``` lines without closing.
-const FENCE_RE = /^\s{0,3}(`{3,}|~{3,})/;
-
 for (const file of listMarkdown(SKILL_ROOT)) {
   const lines = fs.readFileSync(file, 'utf-8').split(/\r?\n/);
   const relFile = path.relative(SKILL_ROOT, file);
-  let fence = null; // the open fence's marker, or null outside a block
+  const isProse = makeFenceTracker();
   lines.forEach((line, i) => {
-    const marker = line.match(FENCE_RE)?.[1];
-    if (fence) {
-      // Inside a block: only a same-char marker of equal-or-greater length closes it.
-      if (marker && marker[0] === fence[0] && marker.length >= fence.length) fence = null;
-      return;
-    }
-    if (marker) { fence = marker; return; }
+    if (!isProse(line)) return;   // fence delimiter, or inside a fenced example
     // Drop inline code spans first (double-backtick before single) so links
     // shown as literal text inside `...` aren't mistaken for real links.
     const scan = line.replace(/``.+?``/g, '').replace(/`[^`]*`/g, '');

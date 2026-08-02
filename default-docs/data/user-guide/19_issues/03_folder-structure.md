@@ -85,9 +85,6 @@ Examples:
 │       └── debrief/01_handover.md             ← what leaves the run
 └── agent-memory/                    ← AI working state (optional)
     ├── memory.md                              ← pinned index — routes, never stores
-    ├── plans/                                 ← what's left (live)
-    │   ├── 001_plan-finish-the-codec.md       ← 0NN_ band — HIGHEST = ACTIVE
-    │   └── 101_questions-to-answer.md         ← 1NN_ band — standing
     ├── knowledge/                             ← what's true, edited in place
     │   └── gotchas.md
     └── history/                               ← how we got here, write-once
@@ -105,7 +102,7 @@ Examples:
 | `subtasks/` | — | The plan — atomic units of work with `NN_<slug>.md` naming and frontmatter state. **Up to 5 levels of grouping subfolders (up to 3 recommended)** — folder = label only (sidebar shows its **done/total**), leaves are first-class subtasks. See [Subtasks](./sub-docs/subtasks). |
 | `plans/` | — | **Order** — `NN_<name>/` plan folders, each with `overview.md` and `NN_<stage>.md` stages that reference the subtasks they schedule. See [Plans](./sub-docs/plans). |
 | `agent-log/` | — | **Execution + outcome** — `NNN_<code>_<name>/` per run (kind code in the name), holding `summary.md`, `working/` and `debrief/`. See [Agent Log](./sub-docs/agent-log). |
-| `agent-memory/` | — | AI-mutable working state — a pinned `memory.md` index that **routes and never stores**, plus up to three **lifecycle** buckets: `plans/` (what's left — `0NN_plan-<slug>.md`, highest is active, one open at a time), `knowledge/` (what's true), `history/` (how we got here, write-once). Grow into them. See [Agent Memory](./sub-docs/agent-memory). |
+| `agent-memory/` | — | AI-mutable working state — a pinned `memory.md` index that **routes and never stores**, plus two **lifecycle** buckets: `knowledge/` (what's true and binding) and `history/` (how we got here, write-once). Order is not here: it lives in the top-level `plans/` section. See [Agent Memory](./sub-docs/agent-memory). |
 
 ### Subfolder rules (`subtasks/`, `notes/`, `brainstorm/`, `agent-memory/`, `agent-log/`)
 
@@ -155,10 +152,40 @@ link text has to name the thing. A number *alongside* a named link is fine. And 
 the number genuinely is the subject (*"the first two digits are the iteration"*), it
 stays.
 
-This applies to every file the tracker holds, and to docs pages too. It is not
-validated: a checker cannot tell a backticked `` `010` `` that means a file from one
+This applies to every file the tracker holds, and to docs pages too. The rule itself is
+not validated: a checker cannot tell a backticked `` `010` `` that means a file from one
 that means a digit sequence, and a rule that fired on both would be switched off within
 a week.
+
+#### Keeping the number as well — the ordering label
+
+The number is genuinely useful, because **the sidebar lists entries by number** — a link
+carrying one can be matched against what you already have on screen. Keep it by opening
+the link text with the target's **ordering path**: the numeric prefixes of its folders
+and of its own name, joined by `/`.
+
+```markdown
+[040/100 the migration script](../../subtasks/040_execution/100_migration-script.md)
+[70 reference by link](../../notes/70_reference-by-link-never-by-number.md)
+```
+
+The path is computed by walking up from the file collecting numeric prefixes and
+stopping at the first segment without one — so `subtasks/040_execution/100_x.md` is
+`040/100`, while `agent-log/020_wf_ship/working/090_x.md` is just `090`, because
+`working/` has no prefix and ends the run. A target with no prefix takes no label; it has
+no ordering identity to state.
+
+:::note[Two things keep it honest, and they are the reason this is a convention rather than a suggestion]
+`agent-ks move` recomputes the label whenever it rewrites the target, so renumbering a
+group fixes every label pointing into it. And `agent-ks check issues` **warns** when a
+label disagrees with where its target sits — catching a hand `git mv`, an editor rename,
+or a typo. Without that pair the label would be the same fact in two places with nothing
+comparing them, and **a stale label is invisible**: the link still resolves, it just says
+the target is somewhere it is not.
+
+It is a warning rather than an error because link text can legitimately open with a bare
+number and a space, and wording should not block a gate.
+:::
 
 ### Stray files warned, not crashed
 

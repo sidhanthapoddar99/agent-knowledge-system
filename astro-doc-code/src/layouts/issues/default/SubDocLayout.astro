@@ -10,12 +10,14 @@ import DetailSidebar from './parts/detail/DetailSidebar.astro';
 import SubtaskPage from './parts/detail/SubtaskPage.astro';
 import NotePage from './parts/detail/NotePage.astro';
 import AgentLogPage from './parts/detail/AgentLogPage.astro';
+import PlanPage from './parts/detail/PlanPage.astro';
+import PlanStagePage from './parts/detail/PlanStagePage.astro';
 import SubDocMetaSidebar from './parts/detail/SubDocMetaSidebar.astro';
 import MetaPanel from './parts/shared/MetaPanel.astro';
 import { allStateIcons } from './server/state-icon';
 import { extractToc } from './server/toc';
-import { sortSubtasksByState, terminalStartIndex, TERMINAL, logPanelKey, notePanelKey, brainstormPanelKey, agentMemoryPanelKey, subtaskPanelKey } from './server/helpers';
-import type { Issue, IssuesVocabulary, IssueSubtask, IssueNote, IssueAgentLog } from '@loaders/issues';
+import { sortSubtasksByState, terminalStartIndex, TERMINAL, logPanelKey, notePanelKey, brainstormPanelKey, agentMemoryPanelKey, subtaskPanelKey, planPanelKey, planStagePanelKey } from './server/helpers';
+import type { Issue, IssuesVocabulary, IssueSubtask, IssueNote, IssueAgentLog, IssuePlan, IssuePlanStage } from '@loaders/issues';
 import './styles/detail.css';
 
 interface Props {
@@ -27,7 +29,9 @@ interface Props {
     | { kind: 'note'; note: IssueNote }
     | { kind: 'brainstorm'; brainstorm: IssueNote }
     | { kind: 'memory'; memory: IssueNote }
-    | { kind: 'log'; log: IssueAgentLog };
+    | { kind: 'log'; log: IssueAgentLog }
+    | { kind: 'plan'; plan: IssuePlan }
+    | { kind: 'plan-stage'; plan: IssuePlan; stage: IssuePlanStage };
 }
 
 const { issue, vocabulary, baseUrl, subDoc } = Astro.props;
@@ -60,6 +64,16 @@ if (subDoc.kind === 'subtask') {
 } else if (subDoc.kind === 'memory') {
   activeKey = agentMemoryPanelKey(subDoc.memory);
   toc = extractToc(subDoc.memory.html);
+} else if (subDoc.kind === 'plan') {
+  activeKey = planPanelKey(subDoc.plan);
+  // The plan page's outline is its STAGES, not the headings inside them — nine
+  // stages each carrying `## Todo` would make the rail unreadable and say
+  // nothing. Built from the stage list directly rather than scraped back out of
+  // the rendered HTML.
+  toc = subDoc.plan.stages.map((s) => ({ id: s.anchor, level: 1, text: s.title }));
+} else if (subDoc.kind === 'plan-stage') {
+  activeKey = planStagePanelKey(subDoc.plan, subDoc.stage);
+  toc = extractToc(subDoc.stage.html);
 } else {
   activeKey = logPanelKey(subDoc.log);
   toc = extractToc(subDoc.log.html);
@@ -98,6 +112,12 @@ if (subDoc.kind === 'subtask') {
     )}
     {subDoc.kind === 'log' && (
       <AgentLogPage log={subDoc.log} standalone />
+    )}
+    {subDoc.kind === 'plan' && (
+      <PlanPage issue={issue} plan={subDoc.plan} baseUrl={baseUrl} statusColors={statusColors} standalone />
+    )}
+    {subDoc.kind === 'plan-stage' && (
+      <PlanStagePage issue={issue} plan={subDoc.plan} stage={subDoc.stage} baseUrl={baseUrl} statusColors={statusColors} standalone />
     )}
   </main>
 

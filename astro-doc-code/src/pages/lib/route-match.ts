@@ -38,7 +38,9 @@ export interface RouteProps {
     | { kind: 'note'; note: any }
     | { kind: 'brainstorm'; brainstorm: any }
     | { kind: 'memory'; memory: any }
-    | { kind: 'log'; log: any };
+    | { kind: 'log'; log: any }
+    | { kind: 'plan'; plan: any }
+    | { kind: 'plan-stage'; plan: any; stage: any };
 }
 
 export type RouteResolution =
@@ -148,6 +150,18 @@ export async function matchServerRoute(
 
 function resolveSubDoc(issue: any, parts: string[]): RouteProps['subDoc'] | null {
   const [kind, ...rest] = parts;
+
+  // plans: a fixed two-level shape, not a free-form tree.
+  //   /plans/<plan>          → the single plan page (canonical)
+  //   /plans/<plan>/<stage>  → one stage on its own page (reachable, unlinked)
+  if (kind === 'plans' && (rest.length === 1 || rest.length === 2)) {
+    const plan = issue.plans?.find((p: any) => p.name === rest[0]);
+    if (!plan) return null;
+    if (rest.length === 1) return { kind: 'plan', plan };
+    const stage = plan.stages.find((s: any) => s.name === rest[1]);
+    return stage ? { kind: 'plan-stage', plan, stage } : null;
+  }
+
   // subtasks / notes / brainstorm / agent-memory / agent-log:
   //   rest = [...groupPath, slug-or-name], groupPath is 0–MAX_SUBFOLDER_DEPTH
   //   segments → rest length is 1 … MAX_SUBFOLDER_DEPTH + 1.
@@ -256,6 +270,8 @@ export function prepareRender(props: RouteProps): RenderPlan {
       : subDoc.kind === 'note' ? subDoc.note.name
       : subDoc.kind === 'brainstorm' ? subDoc.brainstorm.name
       : subDoc.kind === 'memory' ? subDoc.memory.name
+      : subDoc.kind === 'plan' ? subDoc.plan.title
+      : subDoc.kind === 'plan-stage' ? `${subDoc.stage.title} · ${subDoc.plan.title}`
       : subDoc.log.name;
     title = `${subTitle} · ${issue.meta.title}`;
     layoutProps = { issue, vocabulary, baseUrl, subDoc };

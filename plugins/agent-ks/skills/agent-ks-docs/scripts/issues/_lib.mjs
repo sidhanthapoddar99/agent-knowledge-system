@@ -490,6 +490,40 @@ function parseGrepLikeOutput(output) {
 
 // ---------- Filename helpers ------------------------------------------------
 
+/**
+ * Sanitise one `--group` path segment.
+ *
+ * **`_` is preserved, and that is the whole point of this helper existing.**
+ * The underscore is this framework's canonical ordering-prefix separator
+ * (`040_execution/`, `010_lp_overnight/`), so folding it to `-` does not
+ * normalise the name — it names a DIFFERENT folder. The scaffolders then create
+ * `040-execution/` beside the existing `040_execution/` and report success,
+ * which is the worst shape a bug can take: a plausible result, silently wrong.
+ *
+ * Everything else still collapses to `-`, so a group typed with spaces or
+ * punctuation lands somewhere legal.
+ */
+export function sanitizeGroupSegment(segment) {
+  return String(segment)
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]+/g, '-')
+    .replace(/^[-]+|[-]+$/g, '');
+}
+
+/** Split a `--group a/b` value into sanitised segments. */
+export function parseGroupSegments(raw) {
+  if (!raw || raw === true) return [];
+  return String(raw).split('/').map(sanitizeGroupSegment).filter(Boolean);
+}
+
+/** Sanitise a `--name` value to the tracker's kebab slug grammar. Unlike a group
+ *  segment this DOES fold `_` — a leaf name carries no ordering prefix of its
+ *  own (the scaffolder prepends one). */
+export function sanitizeName(raw) {
+  return String(raw).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
 export function nextNumericPrefix(dir) {
   if (!fs.existsSync(dir)) return 1;
   let max = 0;

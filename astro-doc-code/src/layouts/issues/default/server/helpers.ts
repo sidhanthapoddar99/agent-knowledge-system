@@ -2,8 +2,11 @@
  * Small server-side utilities shared across the detail-page components.
  * Kept here so the .astro files stay focused on templating.
  */
-import type { Issue, IssueAgentLog, IssueNote, IssueSubtask, IssueStatus } from '@loaders/issues';
-import { TERMINAL_STATUSES, isTerminalStatus, categoryOf } from '@loaders/issues';
+import type {
+  Issue, IssueAgentLog, IssueNote, IssueSubtask, IssueStatus,
+  IssuePlan, IssuePlanStage, CategoryId,
+} from '@loaders/issues';
+import { TERMINAL_STATUSES, isTerminalStatus, categoryOf, CATEGORIES } from '@loaders/issues';
 
 export const TERMINAL: readonly IssueStatus[] = TERMINAL_STATUSES;
 
@@ -216,6 +219,127 @@ export function agentMemoryUrl(baseUrl: string, issueId: string, doc: IssueNote)
 export function logUrl(baseUrl: string, issueId: string, log: IssueAgentLog): string {
   return joinPath(baseUrl, issueId, 'agent-log', ...log.groupPath, log.name);
 }
+
+export function planUrl(baseUrl: string, issueId: string, plan: IssuePlan): string {
+  return joinPath(baseUrl, issueId, 'plans', plan.name);
+}
+
+export function planStageUrl(
+  baseUrl: string, issueId: string, plan: IssuePlan, stage: IssuePlanStage,
+): string {
+  return joinPath(baseUrl, issueId, 'plans', plan.name, stage.name);
+}
+
+/** Panel key for a plan — same scheme as the other sub-doc keys. */
+export function planPanelKey(plan: IssuePlan): string {
+  return `plan-${plan.name}`;
+}
+
+/** Panel key for one stage page. Namespaced under its plan so two plans may
+ *  carry a stage of the same name without colliding. */
+export function planStagePanelKey(plan: IssuePlan, stage: IssuePlanStage): string {
+  return `plan-${plan.name}--${stage.name}`;
+}
+
+// ===== Plans: the derived bits =====
+// Everything a plan says about the *work* is resolved here, at render, from the
+// live subtask list. That is the whole design: a plan stores no status of its
+// own, so it cannot drift from reality — there is no reality stored in it.
+
+/**
+ * The ACTIVE plan: the highest-numbered plan whose status is not `done` or
+ * `dropped`. Derived, never stored — so there is no field to keep in sync, and
+ * it degrades correctly: with two plans open the higher number wins and the
+ * convention is *visibly* being broken rather than silently ambiguous.
+ *
+ * `plans` arrives from the loader already in prefix order.
+ */
+export function activePlan(plans: IssuePlan[]): IssuePlan | null {
+  for (let i = plans.length - 1; i >= 0; i--) {
+    if (!isTerminalStatus(plans[i].status)) return plans[i];
+  }
+  return null;
+}
+
+/** Issue-relative path of a subtask — the form `subtasks:` refs resolve to. */
+function subtaskRefPath(s: IssueSubtask): string {
+  return ['subtasks', ...s.groupPath, `${s.slug}.md`].join('/');
+}
+
+/** Issue-relative path of an agent-log entry. */
+function logRefPath(l: IssueAgentLog): string {
+  return ['agent-log', ...l.groupPath, `${l.name}.md`].join('/');
+}
+
+export interface PlanStageResolution {
+  /** The referenced subtasks, in the order the stage lists them. */
+  subtasks: IssueSubtask[];
+  /** The referenced agent-log entries. */
+  logs: IssueAgentLog[];
+  /** Count per framework category, in {@link CATEGORIES} display order. */
+  counts: { id: CategoryId; label: string; count: number }[];
+  /**
+   * Refs that named nothing — a path with no matching subtask / log, plus the
+   * loader's unparsable entries.
+   *
+   * Surfaced rather than dropped **on purpose**. A missing ref silently shrinks
+   * the count beside it, and a wrong count reads exactly like a right one; the
+   * whole value of the Subtasks column is that you can trust it without opening
+   * anything. `agent-ks check issues` errors on the same condition.
+   */
+  missing: string[];
+}
+
+/**
+ * Resolve one stage's references against the issue. Pure in-memory lookup —
+ * `IssueSubtask` already carries `status` and `category`, so the column is
+ * "resolve, group by the category they already have, count".
+ */
+export function resolvePlanStage(issue: Issue, stage: IssuePlanStage): PlanStageResolution {
+  const subtaskByPath = new Map(issue.subtasks.map((s) => [subtaskRefPath(s), s]));
+  const logByPath = new Map(issue.agentLogs.map((l) => [logRefPath(l), l]));
+
+  const subtasks: IssueSubtask[] = [];
+  const logs: IssueAgentLog[] = [];
+  const missing: string[] = [...stage.unresolvedRefs];
+
+  for (const ref of stage.subtaskRefs) {
+    const hit = subtaskByPath.get(ref);
+    if (hit) subtasks.push(hit);
+    else missing.push(ref);
+  }
+  for (const ref of stage.agentLogRefs) {
+    const hit = logByPath.get(ref);
+    if (hit) logs.push(hit);
+    else missing.push(ref);
+  }
+
+  const counts = CATEGORIES.map((c) => ({
+    id: c.id as CategoryId,
+    label: c.label,
+    count: subtasks.filter((s) => s.category === c.id).length,
+  }));
+
+  return { subtasks, logs, counts, missing };
+}
+
+/**
+ * The status whose colour stands for a whole category in the plan table.
+ *
+ * A category has two member statuses in three of the four cases, so it has no
+ * colour of its own; picking one keeps the plan table reading from the SAME
+ * `statusColors` map as every other status surface, which means a tracker that
+ * overrides `fields.status.colors` restyles the plan table for free. Chosen so
+ * the four chips are the four colours the section was specified with
+ * (grey / blue / yellow / green) rather than whichever status happens to sort
+ * first inside its category.
+ */
+export const CATEGORY_REPRESENTATIVE: Record<CategoryId, IssueStatus> = {
+  'in-progress': 'in-progress',
+  review: 'review',
+  'not-started': 'open',
+  closed: 'done',
+};
 
 /**
  * Nested tree: files at this folder + a map of named subgroups, each itself a

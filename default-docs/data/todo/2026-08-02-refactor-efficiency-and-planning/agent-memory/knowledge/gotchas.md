@@ -32,6 +32,24 @@ shape, or they open `git status` to changes they did not stage.
 It is link-aware and worth using over `mv` — one move rewrote 8 links across 5
 files, including ones inside frontmatter.
 
+## `agent-ks` on PATH is the INSTALLED plugin, not this repo
+
+`which agent-ks` resolves into the marketplace cache (0.6.7 as of 2026-08-02).
+So running `agent-ks check issues` after editing `check.mjs` **validates with the
+old code and reports clean** — which is exactly what a passing run looks like.
+
+Run the repo copy explicitly:
+
+```
+bun plugins/agent-ks/skills/agent-ks-docs/scripts/issues/check.mjs --tracker default-docs/data/todo
+```
+
+## The framework build output is `astro-doc-code/dist/`, not `dist/`
+
+`./start build` runs from the repo root but Astro's `outDir` is inside the
+engine folder. Looking for `dist/` at the root reports "no such directory" over
+a build that succeeded.
+
 ## `ls` is aliased to indent its output
 
 So it hides files in some listings and corrupts any path built from it. Use

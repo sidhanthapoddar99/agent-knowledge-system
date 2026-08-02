@@ -834,3 +834,143 @@
   padding: 0;
   word-break: break-all;
 }
+
+/* ===== Plans =====
+   The plan page is one page per plan: overview, the table (which IS the index —
+   no second generated list), then every stage inlined under a generated
+   heading. Status colours come from the resolved `statusColors` map via inline
+   custom properties, so a tracker overriding them restyles this table too. */
+.issue-plan__header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--color-border-default);
+}
+.issue-plan__num {
+  font-family: var(--font-family-mono);
+  font-size: var(--ui-text-body);
+  color: var(--color-text-muted);
+}
+.issue-plan__title {
+  font-size: var(--content-h2);
+  color: var(--color-text-primary);
+  flex: 1;
+  min-width: 0;
+}
+.issue-plan__badge {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  border-radius: 10px;
+  font-size: var(--ui-text-micro);
+  font-family: var(--font-family-mono);
+  text-transform: capitalize;
+  background: color-mix(in srgb, var(--badge-color, var(--color-border-default)) 18%, transparent);
+  color: var(--badge-color, var(--color-text-muted));
+  border: 1px solid color-mix(in srgb, var(--badge-color, var(--color-border-default)) 35%, transparent);
+  flex-shrink: 0;
+}
+.issue-plan__breadcrumb {
+  font-size: var(--ui-text-body);
+  color: var(--color-text-secondary);
+  margin: 0 0 1rem;
+}
+
+.issue-plan__table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.25rem 0 2rem;
+  font-size: var(--ui-text-body);
+}
+.issue-plan__table th,
+.issue-plan__table td {
+  text-align: left;
+  padding: 0.45rem 0.6rem;
+  border-bottom: 1px solid var(--color-border-default);
+  vertical-align: top;
+}
+.issue-plan__table th {
+  font-size: var(--ui-text-micro);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+.issue-plan__col-id,
+.issue-plan__col-status { width: 1%; white-space: nowrap; }
+.issue-plan__col-id { font-family: var(--font-family-mono); color: var(--color-text-muted); }
+.issue-plan__col-who { width: 1%; white-space: nowrap; color: var(--color-text-secondary); }
+.issue-plan__col-subtasks { width: 1%; white-space: nowrap; }
+.issue-plan__outcome { color: var(--color-text-secondary); }
+
+.issue-plan__count {
+  font-family: var(--font-family-mono);
+  font-size: var(--ui-text-micro);
+  color: var(--count-color, var(--color-text-muted));
+}
+.issue-plan__count + .issue-plan__count::before {
+  content: '/';
+  color: var(--color-text-muted);
+  opacity: 0.5;
+}
+.issue-plan__count.is-missing {
+  color: var(--color-error);
+  margin-left: 0.4rem;
+  font-weight: 600;
+}
+.issue-plan__state { display: inline-flex; align-items: center; }
+
+.issue-plan__warning {
+  border: 1px solid color-mix(in srgb, var(--color-error) 40%, transparent);
+  background: color-mix(in srgb, var(--color-error) 8%, transparent);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-md);
+  margin: 0 0 2rem;
+  font-size: var(--ui-text-body);
+  color: var(--color-text-secondary);
+}
+.issue-plan__warning ul { margin: 0.5rem 0 0; padding-left: 1.2rem; }
+.issue-plan__warning code { font-family: var(--font-family-mono); font-size: var(--content-code); }
+
+.issue-plan__stage { margin-top: 2.5rem; }
+.issue-plan__stage-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  font-size: var(--content-h1);
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--color-border-default);
+}
+.issue-plan__stage-num {
+  font-family: var(--font-family-mono);
+  font-size: var(--ui-text-body);
+  color: var(--color-text-muted);
+}
+.issue-plan__stage-heading a { color: inherit; text-decoration: none; }
+.issue-plan__stage-heading a:hover { color: var(--color-brand-primary); }
+
+.issue-plan__refs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.75rem 0 1rem; }
+.issue-plan__ref {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.15rem 0.5rem;
+  border: 1px solid var(--color-border-default);
+  border-radius: 10px;
+  font-size: var(--ui-text-micro);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+}
+.issue-plan__ref:hover { border-color: var(--color-brand-primary); color: var(--color-brand-primary); }
+.issue-plan__ref-icon { display: inline-flex; align-items: center; }
+.issue-plan__ref--log { font-family: var(--font-family-mono); }
+
+/* The active plan, pinned at the top of its sidebar group. */
+.issue-sidebar__item.is-pinned { font-weight: 600; }
+.issue-sidebar__pin {
+  font-size: 0.55rem;
+  line-height: 1;
+  color: var(--color-brand-primary);
+  flex-shrink: 0;
+}

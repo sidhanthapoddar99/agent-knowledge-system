@@ -1,6 +1,6 @@
 ---
 title: "Code the plans section (framework + CLI)"
-status: open
+status: review
 ---
 
 # Overview
@@ -30,45 +30,97 @@ and a fresh plan can be scaffolded with one command.
 
 # Todo list
 
-- [ ] Framework: add the section to the loader enumeration and reader; a plan is
+- [x] Framework: add the section to the loader enumeration and reader; a plan is
       a **folder** — `settings.json` + reserved `overview.md` + `NN_<name>.md`
       stage files
-- [ ] Framework: routes — `route-match.ts`, `static-paths.ts`
-- [ ] Framework: presentation — sidebar group, `SubdocTree` prefix map,
-      `NotePage` prefix union, `SubDocLayout`, panel keys + URL builders
-- [ ] Framework: **the single-page plan view** — `overview.md`, then the
+- [x] Framework: routes — `route-match.ts`, `static-paths.ts`
+- [x] Framework: presentation — sidebar group, `SubDocLayout`, panel keys + URL
+      builders. (`SubdocTree`/`NotePage` are untouched: plans are a fixed
+      two-level shape, not a free-form nested tree, so they get their own two
+      components rather than joining the tree machinery)
+- [x] Framework: **the single-page plan view** — `overview.md`, then the
       generated table, then every stage inlined with a generated
       `<prefix> <title>` heading. **Anchor on the title, never the prefix**
-- [ ] Framework: **the Subtasks column** — resolve `subtasks:` refs, group by the
+- [x] Framework: **the Subtasks column** — resolve `subtasks:` refs, group by the
       `category` they already carry, count. Reuse `CATEGORIES` and the existing
       status colours; add nothing
-- [ ] Framework: **the active-plan pin** — a `Plans` sidebar group with the
+- [x] Framework: **the active-plan pin** — a `Plans` sidebar group with the
       active plan (highest not `done`/`dropped`, derived at render, never
       stored) pinned and marked at its top. **Nothing renders above the issue
       body** (Sid, 2026-08-02)
-- [ ] CLI: scaffold verbs — a new plan (folder + `settings.json` +
-      `overview.md`), and a new stage (frontmatter pre-filled)
-- [ ] CLI: **`new-agent-log.mjs` stops seeding the six slots** — `summary.md` +
-      `working/` + `debrief/` + `settings.json`, per
-      [the agent-log spec](../../notes/20_agent-log-structure.md)
-- [ ] CLI: a verb that **creates an iteration file with its head pre-filled**
-      (`# Goal` / `# Inputs` / `# Expected Outcome` / `# Outcome`). The head is
-      the orchestrator's work order, so the tool should write it rather than
-      leaving four headings to be remembered
-- [ ] CLI: `check issues` learns the section **and the new agent log shape**.
-      **Do NOT validate "one active plan"** — it is convention, not enforcement
-- [ ] *(moved out — agent log `settings.json` is now
-      [`015`](./015_code-agent-log-settings.md), a new read path rather than a
-      field, and it ships independently of this subtask)*
-- [ ] **CLI bug**: `--group` sanitises `_` → `-` and creates a duplicate folder;
-      fix the shared path sanitiser (see Details)
-- [ ] Update the demo fixture to exercise the new section
-- [ ] Verify: `./start build` clean, fixture renders, links resolve
+- [x] CLI: scaffold verbs — `issue new-plan` and `issue new-stage`
+- [x] CLI: **`new-agent-log.mjs` stops seeding the six slots** — see *What
+      shipped differently*, below: it creates two files, not four
+- [x] CLI: `issue new-iteration` — **creates an iteration file with its head
+      pre-filled** (`# Goal` / `# Inputs` / `# Expected Outcome` / `# Outcome`)
+      and derives the `NNN` from what is already in `working/`
+- [x] CLI: `check issues` learns the section **and the new agent log shape**.
+      One active plan stays a hint, never an error
+- [x] *(moved out — agent log `settings.json` is
+      [`015`](./015_code-agent-log-settings.md))*
+- [x] **CLI bug**: `--group` sanitising `_` → `-` — fixed in the shared
+      sanitiser (`sanitizeGroupSegment` in `issues/_lib.mjs`)
+- [x] Update the demo fixture to exercise the new section — one plan, four
+      stages, all four status categories represented
+- [x] Verify: build clean, fixture renders, links resolve
 
 # Outcomes and Next Steps
 
-> [!IMPORTANT]
-> **PLACEHOLDER** — filled at completion / hand-off.
+**Shipped.** The plans section exists end to end: loader, routes, the single plan
+page, the sidebar pin, four CLI verbs, and validation.
+
+**Verified rather than assumed.** Page count 902 → 907 on the same tracker — one
+plan page plus four stage pages. The table resolves live subtask status
+(`0/0/0/2` · `0/1/0/0` · `0/0/0/0` · `0/0/1/0`), anchors are titles
+(`#loader-and-routes`), and stage-body headings are prefixed
+(`loader-and-routes-todo`) so four stages each carrying a `## Todo` do not
+shadow one another. The new validator error was **proved able to fail**:
+renaming one `subtasks:` target gave exactly one error and exit 1; restoring it
+gave exit 0.
+
+**Run record:**
+[`020_wf_ship-the-split/working/010_plans-section.md`](../../agent-log/020_wf_ship-the-split/working/010_plans-section.md).
+
+**Next:** [`015`](./015_code-agent-log-settings.md), then
+[`090`](./090_section-registry.md) — deliberately a separate diff.
+
+## What shipped differently from the spec, and why
+
+**A reference that resolves to nothing is an ERROR.** The spec left this open.
+It is the one thing about a plan that can go silently wrong: the Subtasks column
+is the only number on the page, a dropped ref shrinks it, and a wrong count is
+indistinguishable from a right one. So `check issues` errors, and the plan page
+names the broken refs in red rather than quietly rendering a smaller number.
+
+**`new-agent-log` creates two files, not four.** The todo above said
+`summary.md` + `working/` + `debrief/` + `settings.json`. Only the two *files*
+are created. Git does not track an empty directory, so scaffolding `working/`
+and `debrief/` produces a shape that exists for whoever ran the command and for
+nobody who clones — and creating files nobody needs is the exact defect the
+six-slot floor was. The folders appear when something goes in them:
+`new-iteration` creates `working/`, and `debrief/` is written when the run has
+something to hand over. The command prints the `new-iteration` line as its next
+step.
+
+**The new agent-log lint skips old-shape folders, silently.** Existing agent
+logs are not migrated — *"history stays as written; this governs what is
+recorded next."* Linting them anyway produced **289 warnings** on the first run,
+which is how a validator stops being read at all, taking the two real findings
+with it. Detection is by the retired markers themselves (`0N_goal`…, `MNN_`
+milestones), so a genuinely new folder is still checked.
+
+**`SubdocTree` and `NotePage` were not touched.** The Details table below listed
+them as required. They are the free-form *nested tree* machinery; a plan is a
+fixed two-level shape whose page is a table plus inlined stages, so it gets
+`PlanPage.astro` and `PlanStagePage.astro` instead. Joining the tree components
+would have meant teaching them a shape they will never otherwise render.
+
+**`agent-ks issue new-memory-plan` is deleted, not renamed.** The old
+`agent-memory/plans/` shape is dropped outright, so there was nothing to
+repoint. Its replacement is `new-plan`, which writes to a different section
+entirely. The skill and user-guide references to it are swept by
+[`030`](./030_skill-plans-section.md) and
+[`120`](./120_agent-memory-after-plans.md).
 
 # Details
 

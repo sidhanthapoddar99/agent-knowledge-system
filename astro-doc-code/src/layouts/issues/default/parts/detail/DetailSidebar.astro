@@ -12,7 +12,8 @@
  * cycle on click — handled by scripts/detail/client.ts.
  */
 import type { Issue, IssueSubtask } from '@loaders/issues';
-import { groupByPath, groupSubtasks, detailUrl } from '../../server/helpers';
+import { groupByPath, groupSubtasks, detailUrl, planUrl, planPanelKey, activePlan } from '../../server/helpers';
+import { stateIconSvg } from '../../server/state-icon';
 import SubdocTree from './SubdocTree.astro';
 import SubtaskTree from './SubtaskTree.astro';
 
@@ -49,6 +50,14 @@ const activeBrainstormGroupOpen = activeKey.startsWith('brainstorm-');
 const activeNotesGroupOpen = activeKey.startsWith('note-');
 const activeMemoryGroupOpen = activeKey.startsWith('memory-');
 const activeLogGroupOpen = activeKey.startsWith('log-');
+const activePlanGroupOpen = activeKey.startsWith('plan-');
+
+// The ACTIVE plan is derived here, at render — highest-numbered plan that is
+// not done/dropped. It is pinned at the top of the Plans group and marked, so
+// the schedule is one click from the state you land in. Nothing renders above
+// the issue body: the plan costs a click, not vertical space on every visit.
+const pinnedPlan = activePlan(issue.plans);
+const otherPlans = issue.plans.filter((p) => p !== pinnedPlan);
 
 // Tracker slug (e.g. `todo`) — namespaces the collapse cache alongside the issue id.
 const tracker = baseUrl.replace(/^\/+/, '').replace(/\/+$/, '');
@@ -172,6 +181,46 @@ const tracker = baseUrl.replace(/^\/+/, '').replace(/\/+$/, '');
       ) : (
         <SubdocTree tree={noteTree} kind="note" baseUrl={baseUrl} issueId={issue.id} activeKey={activeKey} />
       )}
+    </details>
+
+    <details class="issue-sidebar__section" data-collapse-key="plans" open={activePlanGroupOpen ? true : undefined}>
+      <summary class="issue-sidebar__heading">
+        <svg class="issue-sidebar__chevron" width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3l3 3 3-3"/></svg>
+        <span class="issue-sidebar__heading-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h2M2 8h2M2 12h2"/><path d="M6.5 4h7.5M6.5 8h7.5M6.5 12h7.5"/></svg></span>
+        <span>Plans</span>
+        {issue.plans.length > 0 && <span class="issue-sidebar__heading-count">{issue.plans.length}</span>}
+      </summary>
+      <div class="issue-sidebar__items">
+        {issue.plans.length === 0 ? (
+          <div class="issue-sidebar__empty">No plans</div>
+        ) : (
+          <>
+            {pinnedPlan && (
+              <a
+                href={planUrl(baseUrl, issue.id, pinnedPlan)}
+                class={`issue-sidebar__item is-pinned ${activeKey === planPanelKey(pinnedPlan) ? 'is-active' : ''}`}
+                aria-current={activeKey === planPanelKey(pinnedPlan) ? 'page' : undefined}
+                data-tip="The active plan — highest-numbered plan that is not done or dropped"
+              >
+                <span class="issue-sidebar__pin" aria-hidden="true">●</span>
+                <span class="issue-sidebar__label">{pinnedPlan.title}</span>
+                <span class="issue-sidebar__doctype" style={`color: var(--color-text-muted)`} set:html={stateIconSvg(pinnedPlan.status)} />
+              </a>
+            )}
+            {otherPlans.map((p) => (
+              <a
+                href={planUrl(baseUrl, issue.id, p)}
+                class={`issue-sidebar__item ${activeKey === planPanelKey(p) ? 'is-active' : ''}`}
+                aria-current={activeKey === planPanelKey(p) ? 'page' : undefined}
+                data-tip={p.title}
+              >
+                {p.sequence !== null && <span class="issue-sidebar__num">{String(p.sequence).padStart(2, '0')}</span>}
+                <span class="issue-sidebar__label">{p.title}</span>
+              </a>
+            ))}
+          </>
+        )}
+      </div>
     </details>
 
     <details class="issue-sidebar__section" data-collapse-key="subtasks" open>

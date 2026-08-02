@@ -41,6 +41,13 @@ export function legacyHashRedirect(hash: string): string | null {
     const segments = hash.slice('log-'.length).split('--');
     return `${base}/agent-log/${segments.join('/')}${location.search}`;
   }
+  // `plan-<plan>` → the plan page; `plan-<plan>--<stage>` → that stage's page.
+  // Plans never had a hash-panel era, but the key scheme is shared with every
+  // other sub-doc, so a hand-written `#plan-…` resolves the same way.
+  if (hash.startsWith('plan-')) {
+    const segments = hash.slice('plan-'.length).split('--');
+    return `${base}/plans/${segments.join('/')}${location.search}`;
+  }
   return null;
 }
 

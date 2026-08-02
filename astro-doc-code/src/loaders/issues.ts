@@ -9,6 +9,13 @@
  *     subtasks/<group>/…/*.md                  (checklist items, optional — nested tree)
  *     notes/<group>/…/*.md                      (supporting documents, optional — nested tree)
  *     agent-log/<group>/…/*.md                  (iterative AI agent notes, optional — nested tree)
+ *     plans/NN_<name>/                          (schedules, optional — one folder per plan)
+ *
+ * `plans/` is the one section that is NOT a free-form nested tree: it holds plan
+ * FOLDERS and nothing else, each exactly one level deep — `settings.json`, a
+ * reserved `overview.md`, and `NN_<stage>.md` stage files. A plan stores no
+ * status of its own about the work: its stages *reference* subtasks and the
+ * renderer pulls their live status, so the plan cannot drift from reality.
  *
  * Subtasks, notes, and agent-log all support subfoldering up to
  * `MAX_SUBFOLDER_DEPTH` (5) levels deep — a hard cap. The recommended
@@ -157,6 +164,70 @@ export interface IssueAgentLog {
   html: string;
 }
 
+/**
+ * One stage inside a plan — `plans/<plan>/NN_<name>.md`.
+ *
+ * The numeric prefix is BOTH the order and the id ("stage 20"), so it is never
+ * repeated in frontmatter. Everything the stage says about the work it schedules
+ * is a *reference*: `subtaskRefs` are issue-relative paths the renderer resolves
+ * against the live subtask list, which is why a plan can never hold a stale
+ * count.
+ */
+export interface IssuePlanStage {
+  /** Filename without extension, e.g. "20_journal-compat". */
+  name: string;
+  /** Numeric prefix — the stage id AND its order. */
+  sequence: number | null;
+  /** Display title (frontmatter `title`, else slug-derived). */
+  title: string;
+  /** One-line `outcome:` — what "done" means for this stage. */
+  outcome: string | null;
+  /** `who:` — who the stage waits on. */
+  who: string | null;
+  status: IssueStatus;
+  category: CategoryId;
+  /** `subtasks:` entries resolved to ISSUE-relative posix paths
+   *  (`subtasks/16_slide-type/80_mandatory-catalog.md`). Entries that point
+   *  outside the issue, or carry no parsable target, land in
+   *  {@link unresolvedRefs} instead — never silently dropped, because a
+   *  dropped ref would under-count the stage and read as a real number. */
+  subtaskRefs: string[];
+  /** `agent-logs:` entries, same resolution. */
+  agentLogRefs: string[];
+  /** Raw entries whose target could not be parsed or fell outside the issue.
+   *  Rendered visibly and errored by `agent-ks check issues`. */
+  unresolvedRefs: string[];
+  /** Heading anchor — slugified from the TITLE, never the prefix, so that
+   *  renumbering a stage (a `move`, which rewrites paths but not anchors)
+   *  cannot silently break inbound links. */
+  anchor: string;
+  filePath: string;
+  relativePath: string;
+  html: string;
+}
+
+/**
+ * One plan — a folder under `plans/`. A plan is a *schedule*: order, blocking,
+ * current focus, and the scope of this round of work. Which plan is ACTIVE is
+ * derived at render (highest-numbered, not `done`/`dropped`), never stored.
+ */
+export interface IssuePlan {
+  /** Folder name, e.g. "01_decoder-and-retention" — the plan's id. */
+  name: string;
+  sequence: number | null;
+  /** Display title (folder `settings.json` `title`, else slug-derived). */
+  title: string;
+  status: IssueStatus;
+  category: CategoryId;
+  /** Rendered `overview.md` — the plan's intro. Null when the file is absent. */
+  overviewHtml: string | null;
+  /** Stages in prefix order. */
+  stages: IssuePlanStage[];
+  folderPath: string;
+  /** Path relative to dataPath. */
+  relativePath: string;
+}
+
 /** @deprecated Use `IssueStatus`. Retained as an alias while call-sites migrate. */
 export type SubtaskState = IssueStatus;
 
@@ -252,6 +323,8 @@ export interface Issue {
   /** Agent memory — AI-mutable working state under agent-memory/.
    *  Same free-form, nested shape as notes (up to MAX_SUBFOLDER_DEPTH). */
   agentMemory: IssueNote[];
+  /** Plans — schedules under plans/, one folder each, in prefix order. */
+  plans: IssuePlan[];
   /** Agent logs — iterative AI execution notes under agent-log/ */
   agentLogs: IssueAgentLog[];
   /** Effective agent-log kind map (code → {name, icon}): framework defaults
@@ -361,7 +434,7 @@ function computeSignature(dataPath: string): number {
     sig += statMtime(path.join(folder, 'issue.md'));
     sig += statMtime(path.join(folder, 'glossary.md'));
 
-    for (const sub of ['comments', 'subtasks', 'notes', 'brainstorm', 'agent-memory', 'agent-log']) {
+    for (const sub of ['comments', 'subtasks', 'notes', 'brainstorm', 'agent-memory', 'agent-log', 'plans']) {
       const subDir = path.join(folder, sub);
       sig += statMtime(subDir);
       // All sections except comments nest up to MAX_SUBFOLDER_DEPTH levels;
@@ -599,6 +672,9 @@ async function loadIssueFolder(folderPath: string, dataPath: string): Promise<Is
   // Agent memory: AI-mutable working state; same free-form nested shape as notes
   const agentMemory = await readFreeformDocs(path.join(folderPath, 'agent-memory'), dataPath, id, 'agent-memory');
 
+  // Plans: one folder per plan, exactly one level deep (not a free-form tree)
+  const plans = await readPlans(path.join(folderPath, 'plans'), folderPath, dataPath);
+
   // Agent logs: same nested shape as notes; sequence resets per leaf folder
   const agentLogs = await readAgentLogs(path.join(folderPath, 'agent-log'), dataPath, id);
 
@@ -659,6 +735,7 @@ async function loadIssueFolder(folderPath: string, dataPath: string): Promise<Is
     notes,
     brainstorm,
     agentMemory,
+    plans,
     agentLogs,
     agentLogKinds,
   };
@@ -864,6 +941,167 @@ async function readAgentLogs(
       html: await renderMarkdown(abs, dataPath),
     };
   }, ['.md', ...DIAGRAM_EXTENSIONS]);
+}
+
+// ============================================================================
+// plans/ — the schedule section
+// ============================================================================
+
+/** Reserved filename inside a plan folder: the plan's intro, never a stage. */
+const PLAN_OVERVIEW = 'overview.md';
+
+/**
+ * Slugify a stage title into its heading anchor.
+ *
+ * Deliberately built from the TITLE and never from the numeric prefix:
+ * `agent-ks move` rewrites paths on a renumber but does not rewrite anchors, so
+ * `#20-journal-compatibility` would break silently the first time a stage is
+ * inserted above it. `#journal-compatibility` survives.
+ */
+export function planStageAnchor(title: string): string {
+  return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+/**
+ * Resolve one `subtasks:` / `agent-logs:` frontmatter entry to an
+ * issue-relative posix path.
+ *
+ * Entries are markdown links — `[Byte stability](../../subtasks/13/86_x.md)` —
+ * because **the path is the truth and the link text is a reading aid**: the
+ * renderer pulls the referenced item's live title and status, so stale link
+ * text costs nothing. A bare path is accepted too.
+ *
+ * Returns null when there is no parsable target or the target escapes the issue
+ * folder. The caller keeps those in `unresolvedRefs` rather than dropping them —
+ * a dropped reference would quietly shrink a stage's subtask count, and a wrong
+ * count is indistinguishable from a right one.
+ */
+function planRefTarget(entry: unknown, stageDir: string, issueDir: string): string | null {
+  if (typeof entry !== 'string') return null;
+  const link = entry.match(/\]\(([^)]+)\)/);
+  const raw = (link ? link[1] : entry).trim().split('#')[0].trim();
+  if (!raw) return null;
+  const rel = path.relative(issueDir, path.resolve(stageDir, raw));
+  if (!rel || rel.startsWith('..') || path.isAbsolute(rel)) return null;
+  return rel.split(path.sep).join('/');
+}
+
+/** Split a frontmatter ref list into resolved targets + the entries that did not
+ *  resolve. A non-array value (a single string, or a typo) is treated as a
+ *  one-entry list rather than ignored. */
+function readPlanRefs(
+  raw: unknown,
+  stageDir: string,
+  issueDir: string,
+): { refs: string[]; unresolved: string[] } {
+  const entries = Array.isArray(raw) ? raw : raw == null ? [] : [raw];
+  const refs: string[] = [];
+  const unresolved: string[] = [];
+  for (const entry of entries) {
+    const target = planRefTarget(entry, stageDir, issueDir);
+    if (target) refs.push(target);
+    else unresolved.push(typeof entry === 'string' ? entry : JSON.stringify(entry));
+  }
+  return { refs, unresolved };
+}
+
+/** Order plan folders and stage files by prefix VALUE (so `100_` sorts after
+ *  `20_`, not before it). Unprefixed sorts last, then lexicographically. */
+function byPrefixValue(a: string, b: string): number {
+  const av = parseOrderPrefixLoose(a).position ?? Number.POSITIVE_INFINITY;
+  const bv = parseOrderPrefixLoose(b).position ?? Number.POSITIVE_INFINITY;
+  if (av !== bv) return av - bv;
+  return a.localeCompare(b);
+}
+
+/**
+ * Read `plans/` — plan folders and nothing else, each exactly one level deep.
+ *
+ * Loose files at `plans/` root and folders nested inside a plan are skipped
+ * here and reported by `agent-ks check issues`: the loader's job is to render
+ * what is well-formed, the validator's is to name what is not.
+ */
+async function readPlans(
+  plansDir: string,
+  issueDir: string,
+  dataPath: string,
+): Promise<IssuePlan[]> {
+  if (!fs.existsSync(plansDir)) return [];
+  let entries: fs.Dirent[];
+  try { entries = fs.readdirSync(plansDir, { withFileTypes: true }); }
+  catch { return []; }
+
+  const plans: IssuePlan[] = [];
+  const folders = entries.filter((e) => e.isDirectory()).map((e) => e.name).sort(byPrefixValue);
+
+  for (const folder of folders) {
+    const abs = path.join(plansDir, folder);
+    const settingsPath = resolveSettingsPath(abs);
+    const settings = readJson<{ title?: string; status?: string }>(settingsPath);
+    const status = resolveStatus(settings?.status, path.relative(dataPath, settingsPath));
+
+    const overviewAbs = path.join(abs, PLAN_OVERVIEW);
+    const overviewHtml = fs.existsSync(overviewAbs)
+      ? await renderMarkdown(overviewAbs, dataPath)
+      : null;
+
+    let stageNames: string[] = [];
+    try {
+      stageNames = fs.readdirSync(abs, { withFileTypes: true })
+        .filter((e) => e.isFile() && e.name.endsWith('.md') && e.name !== PLAN_OVERVIEW)
+        .map((e) => e.name)
+        .sort(byPrefixValue);
+    } catch { /* unreadable plan folder — renders with no stages */ }
+
+    const stages: IssuePlanStage[] = [];
+    for (const file of stageNames) {
+      const stageAbs = path.join(abs, file);
+      const name = file.replace(/\.md$/, '');
+      let fm: {
+        title?: string; outcome?: string; who?: string; status?: string;
+        subtasks?: unknown; 'agent-logs'?: unknown;
+      } = {};
+      try { fm = matter(fs.readFileSync(stageAbs, 'utf-8')).data as typeof fm; } catch {}
+
+      const title = typeof fm.title === 'string' && fm.title.length > 0
+        ? fm.title
+        : slugToLabel(name);
+      const stageStatus = resolveStatus(fm.status, path.relative(dataPath, stageAbs));
+      const subtasks = readPlanRefs(fm.subtasks, abs, issueDir);
+      const logs = readPlanRefs(fm['agent-logs'], abs, issueDir);
+
+      stages.push({
+        name,
+        sequence: parseOrderPrefixLoose(name).position,
+        title,
+        outcome: typeof fm.outcome === 'string' && fm.outcome.length > 0 ? fm.outcome : null,
+        who: typeof fm.who === 'string' && fm.who.length > 0 ? fm.who : null,
+        status: stageStatus,
+        category: categoryOf(stageStatus),
+        subtaskRefs: subtasks.refs,
+        agentLogRefs: logs.refs,
+        unresolvedRefs: [...subtasks.unresolved, ...logs.unresolved],
+        anchor: planStageAnchor(title),
+        filePath: stageAbs,
+        relativePath: path.relative(dataPath, stageAbs),
+        html: await renderMarkdown(stageAbs, dataPath),
+      });
+    }
+
+    plans.push({
+      name: folder,
+      sequence: parseOrderPrefixLoose(folder).position,
+      title: settings?.title && settings.title.length > 0 ? settings.title : slugToLabel(folder),
+      status,
+      category: categoryOf(status),
+      overviewHtml,
+      stages,
+      folderPath: abs,
+      relativePath: path.relative(dataPath, abs),
+    });
+  }
+
+  return plans;
 }
 
 /** Convert a folder slug ("02_impl-and-polish") into a human label ("impl and polish"). */

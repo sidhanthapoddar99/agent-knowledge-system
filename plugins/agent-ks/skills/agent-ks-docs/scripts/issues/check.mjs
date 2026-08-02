@@ -12,12 +12,13 @@
  *   • `agentLogKinds` well-formed (2-letter codes, string or {name, icon, desc})
  *   • Subtasks have valid `status` (open|blocked|in-progress|input-needed|review|done|dropped)
  *   • Sub-folders are the known anatomy: subtasks / notes / brainstorm /
- *     agent-log / agent-memory / comments (unknown dirs → warning)
- *   • Agent-log grammar: NNN_<code>_<name>/ activity folders, 0NN meta files
- *     vs milestone files (milestones carry `iteration`; status vocabulary)
+ *     plans / agent-log / agent-memory / comments (unknown dirs → warning)
+ *   • Agent-log grammar: NNN_<code>_<name>/ folders, a required summary.md, the
+ *     reserved working/ + debrief/ names, and iteration-file numbering
+ *   • Plans: plan folders only, the reserved overview.md, stage numbering, and
+ *     — the one ERROR here — every `subtasks:` reference resolving to a real
+ *     subtask, because a broken reference silently under-counts a stage
  *   • Agent-memory has a memory.md index
- *   • Agent-memory plans: 0NN_plan-<slug>.md band, one plan open at a time,
- *     cycle slugs present, dependencies resolve, done/total matches the boxes
  *   • Comments / agent-logs follow naming conventions (warned, not errored)
  *   • Stray .md at folder root (other than issue.md) → warning
  *
@@ -75,19 +76,27 @@ const NOTE_FM_KEYS = new Set([
   'title', 'description', 'sidebar_label', 'author', 'date', 'created', 'tags',
   'color',
 ]);
-// agent-memory shares the notes surface, plus the plan-file lifecycle fields
-// (`plan: open|closed` is what makes one-plan-open-at-a-time machine-checkable).
-const AGENT_MEMORY_FM_KEYS = new Set([...NOTE_FM_KEYS, 'plan', 'opened', 'closed']);
+// agent-memory shares the notes surface exactly. `plans/` moved out to a
+// top-level section, so the plan-file lifecycle fields are gone from here.
+const AGENT_MEMORY_FM_KEYS = new Set([...NOTE_FM_KEYS]);
+// `iteration` is retired — the `011_` filename owns the number, and a
+// frontmatter copy is a second place to keep it right. It stays in this set
+// because it is all over the historic record, which is NOT migrated; the
+// retirement is enforced on new-shape files only (under `working/`), where it
+// is an actual mistake rather than a fact about how things used to be written.
 const AGENT_LOG_FM_KEYS = new Set([
-  'title', 'iteration', 'agent', 'status', 'date', 'sidebar_label',
-  'color',
+  'title', 'iteration', 'agent', 'status', 'date', 'sidebar_label', 'color',
 ]);
+const PLAN_STAGE_FM_KEYS = new Set([
+  'title', 'outcome', 'who', 'status', 'subtasks', 'agent-logs', 'sidebar_label', 'color',
+]);
+const PLAN_SETTINGS_KEYS = new Set(['title', 'status', 'description']);
 const COMMENT_FM_KEYS = new Set(['author', 'date', 'title', 'sidebar_label']);
 
 // Known issue sub-folders (the anatomy) + colocated assets. Anything else at
 // the issue root is probably a typo — the loader silently ignores it.
 const KNOWN_SUBFOLDERS = new Set([
-  'subtasks', 'notes', 'brainstorm', 'agent-log', 'agent-memory', 'comments', 'assets',
+  'subtasks', 'notes', 'brainstorm', 'plans', 'agent-log', 'agent-memory', 'comments', 'assets',
 ]);
 
 // Agent-log kind machinery — mirrors src/loaders/issues.ts (defaults, code
@@ -98,13 +107,6 @@ const ICON_PALETTE = new Set([
   'repeat', 'search', 'wrench', 'refresh-cw', 'git-branch',
   'flask', 'zap', 'flag', 'star', 'book', 'shield', 'layers', 'clock',
   'target', 'check-circle', 'bug', 'tag',
-]);
-// Milestone `status` vocabulary — aliases accepted by SubdocTree's colour map.
-const MILESTONE_STATUSES = new Set([
-  'not-started', 'todo', 'pending', 'planned',
-  'in-progress', 'wip', 'active',
-  'success', 'completed', 'complete', 'done',
-  'failed', 'fail', 'error',
 ]);
 
 const errors = [];
@@ -167,189 +169,164 @@ function lintSubtaskTemplate(fileLabel, content, rawStatus) {
   }
 }
 
-// ---- agent-memory/plans/ ---------------------------------------------------
-// Two reserved bands: 0NN_ plan files (sequential, HIGHEST = ACTIVE) and 1NN_
-// standing files. Every rule below exists because breaking it fails SILENTLY —
-// a second open plan restores the "which one is live?" ambiguity the numbering
-// was introduced to remove, and a stale count still reads as authoritative.
-const PLAN_FILE = /^(\d{2,5})_plan-([a-z0-9-]+)\.md$/;
-const PLAN_UNSLUGGED = /^(\d{2,5})_plan\.md$/;
+// ---- plans/ ----------------------------------------------------------------
+// A plan is a SCHEDULE, and its whole design is that it stores no status of its
+// own about the work: stages REFERENCE subtasks and the renderer pulls their
+// live status. That makes exactly one thing able to go silently wrong, and it
+// is the one thing errored here — a reference that resolves to nothing.
+//
+// It shrinks the count beside it in the plan table, and a wrong count reads
+// exactly like a right one. Every other rule in this section is a warning.
 
-function planIsClosed(raw, fm) {
-  return String(fm.plan || '').toLowerCase() === 'closed' || /^##\s+Closed\s*$/m.test(raw);
+const PLAN_OVERVIEW = 'overview.md';
+
+/** Resolve one `subtasks:`/`agent-logs:` entry (a markdown link, or a bare
+ *  path) to an issue-relative posix path. Mirrors `planRefTarget` in the
+ *  loader — both sides of the wall parse the same grammar. */
+function planRefTarget(entry, stageDir, issueDir) {
+  if (typeof entry !== 'string') return null;
+  const link = entry.match(/\]\(([^)]+)\)/);
+  const raw = (link ? link[1] : entry).trim().split('#')[0].trim();
+  if (!raw) return null;
+  const rel = path.relative(issueDir, path.resolve(stageDir, raw));
+  if (!rel || rel.startsWith('..') || path.isAbsolute(rel)) return null;
+  return rel.split(path.sep).join('/');
 }
 
-/** Parse the cycle table: returns [{ n, slug, deps, done, total, status }]. Bails
- *  to [] on anything it doesn't recognise — a free-form plan is not a defect. */
-function parseCycleTable(raw) {
-  const lines = raw.split(/\r?\n/);
-  const headIdx = lines.findIndex((l) => /^\s*\|/.test(l) && /\bCycle\b/i.test(l) && /\bStatus\b/i.test(l));
-  if (headIdx < 0) return [];
-  const cols = lines[headIdx].split('|').slice(1, -1).map((c) => c.trim().toLowerCase());
-  const at = (nameRe) => cols.findIndex((c) => nameRe.test(c));
-  const iNum = at(/^#$/), iCycle = at(/^cycle$/), iDeps = at(/depends/), iSub = at(/subtask/), iStat = at(/^status$/);
-  if (iCycle < 0) return [];
-  const rows = [];
-  for (let i = headIdx + 2; i < lines.length; i++) {
-    if (!/^\s*\|/.test(lines[i])) break;
-    const cells = lines[i].split('|').slice(1, -1).map((c) => c.trim());
-    if (cells.length < cols.length) continue;
-    const cycleCell = cells[iCycle] || '';
-    // `<angle-bracket>` cells are the scaffolded template's placeholder row —
-    // a freshly opened plan must not lint dirty before anyone has filled it in.
-    if (/<[^>]*>/.test(cycleCell)) continue;
-    const slugM = cycleCell.match(/`([a-z0-9-]+)`/);
-    const subM = iSub >= 0 ? (cells[iSub] || '').match(/(\d+)\s*\/\s*(\d+)/) : null;
-    rows.push({
-      line: i + 1,
-      n: iNum >= 0 ? (cells[iNum] || '').replace(/\D/g, '') : '',
-      cycle: cycleCell,
-      slug: slugM ? slugM[1] : null,
-      deps: iDeps >= 0 ? (cells[iDeps] || '') : '',
-      done: subM ? parseInt(subM[1], 10) : null,
-      total: subM ? parseInt(subM[2], 10) : null,
-      status: iStat >= 0 ? (cells[iStat] || '').replace(/[`*]/g, '').trim() : '',
-    });
+/** Every issue-relative path that names a real file, for reference resolution. */
+function issueFileIndex(issueDir) {
+  const seen = new Set();
+  for (const sub of ['subtasks', 'agent-log']) {
+    const root = path.join(issueDir, sub);
+    if (!fs.existsSync(root)) continue;
+    const walk = (absDir, depth) => {
+      let entries;
+      try { entries = fs.readdirSync(absDir, { withFileTypes: true }); }
+      catch { return; }
+      for (const e of entries) {
+        const abs = path.join(absDir, e.name);
+        if (e.isFile() && e.name.endsWith('.md')) {
+          seen.add(path.relative(issueDir, abs).split(path.sep).join('/'));
+        } else if (e.isDirectory() && depth < MAX_SUBFOLDER_DEPTH) {
+          walk(abs, depth + 1);
+        }
+      }
+    };
+    walk(root, 0);
   }
-  return rows;
+  return seen;
 }
 
-/** The OPTIONAL `## Execution order` section. `#` in the cycle table is a stable
- *  identifier that is never renumbered, so when the running order diverges the
- *  correct move is this section — and then it, not the numbering, is the order.
- *  Returns { body, rows: [cellText] } or null. HTML comments are stripped first
- *  so the scaffold's commented-out example is not mistaken for a live section. */
-function parseExecutionOrder(raw) {
-  const clean = raw.replace(/<!--[\s\S]*?-->/g, '');
-  const head = clean.match(/^##\s+Execution order\b.*$/m);
-  if (!head) return null;
-  const after = clean.slice(clean.indexOf(head[0]) + head[0].length);
-  const end = after.search(/^##\s+/m);
-  const body = end < 0 ? after : after.slice(0, end);
-  const lines = body.split(/\r?\n/);
-  const headIdx = lines.findIndex((l) => /^\s*\|/.test(l) && /\border\b/i.test(l));
-  const rows = [];
-  if (headIdx >= 0) {
-    const cols = lines[headIdx].split('|').slice(1, -1).map((c) => c.trim().toLowerCase());
-    const iCycle = cols.findIndex((c) => /cycle|stage/.test(c));
-    for (let i = headIdx + 2; i < lines.length; i++) {
-      if (!/^\s*\|/.test(lines[i])) break;
-      const cells = lines[i].split('|').slice(1, -1).map((c) => c.trim());
-      const cell = iCycle >= 0 ? (cells[iCycle] || '') : cells.join(' ');
-      if (/<[^>]*>/.test(cell)) continue; // template placeholder row
-      rows.push(cell);
-    }
-  }
-  return { body, rows };
-}
-
-/** Checkbox counts inside the `## <n> · <name>` section for one cycle row. */
-function cycleSectionBoxes(raw, n) {
-  if (!n) return null;
-  const re = new RegExp(`^##\\s+${n}\\s*[·.)\\-—]\\s*.*$`, 'm');
-  const m = raw.match(re);
-  if (!m) return null;
-  const start = raw.indexOf(m[0]) + m[0].length;
-  const rest = raw.slice(start);
-  const end = rest.search(/^##\s+/m);
-  const body = end < 0 ? rest : rest.slice(0, end);
-  const boxes = body.match(/^\s*[-*]\s+\[[ xX]\]/gm) || [];
-  const done = body.match(/^\s*[-*]\s+\[[xX]\]/gm) || [];
-  return { total: boxes.length, done: done.length };
-}
-
-function lintMemoryPlans(id, plansDir) {
+function lintPlans(id, issueDir) {
+  const plansDir = path.join(issueDir, 'plans');
   if (!fs.existsSync(plansDir)) return;
-  const files = fs.readdirSync(plansDir).filter((f) => f.endsWith('.md'));
+
+  let entries;
+  try { entries = fs.readdirSync(plansDir, { withFileTypes: true }); }
+  catch { return; }
+
+  const index = issueFileIndex(issueDir);
   const plans = [];
 
-  for (const f of files) {
-    if (PLAN_UNSLUGGED.test(f)) {
-      warnings.push(`${id}/agent-memory/plans/${f}: plan file has no slug — name it \`NNN_plan-<three-words>.md\`; a closed plan's whole value is being identifiable without opening it`);
-    }
-    const m = f.match(PLAN_FILE);
-    if (!m) continue;
-    const num = parseInt(m[1], 10);
-    if (num >= 100) {
-      warnings.push(`${id}/agent-memory/plans/${f}: plan files belong in the \`0NN_\` band (sequence); \`1NN_\` and above is reserved for standing files that span every plan`);
+  for (const e of entries) {
+    if (e.isFile()) {
+      warnings.push(`${id}/plans/${e.name}: plans/ holds plan FOLDERS and nothing else — a loose file here is never rendered. Standing questions that outlive every plan belong in the issue's notes/`);
       continue;
     }
-    const abs = path.join(plansDir, f);
-    let raw; let fm = {};
-    try { raw = fs.readFileSync(abs, 'utf-8'); fm = matter(raw).data || {}; }
+    if (!e.isDirectory()) continue;
+
+    const planDir = path.join(plansDir, e.name);
+    const label = `${id}/plans/${e.name}`;
+    const prefix = e.name.match(/^(\d{1,5})[_-]/);
+    if (!prefix) {
+      warnings.push(`${label}/: no numeric prefix — sorts last, and "which plan is active" is derived from the highest number. Convention is NN_<name>/`);
+    }
+
+    const settingsPath = path.join(planDir, 'settings.json');
+    let status = 'open';
+    if (fs.existsSync(settingsPath)) {
+      const settings = readJsonChecked(settingsPath, `${label}/settings.json`, errors);
+      if (settings) {
+        reportDrift(`${label}/settings.json`, unknownKeys(settings, PLAN_SETTINGS_KEYS), PLAN_SETTINGS_KEYS);
+        if (!settings.title) warnings.push(`${label}/settings.json: no \`title\` — the sidebar falls back to the folder slug`);
+        if (settings.status !== undefined) {
+          const norm = normalizeStatus(settings.status);
+          if (!norm) errors.push(`${label}/settings.json: invalid status \`${settings.status}\` (fixed vocabulary: ${STATUSES.join('|')})`);
+          else status = norm;
+        }
+      }
+    } else {
+      warnings.push(`${label}/: no settings.json — the plan renders with a slug-derived title and status \`open\``);
+    }
+
+    if (!fs.existsSync(path.join(planDir, PLAN_OVERVIEW))) {
+      warnings.push(`${label}/: no ${PLAN_OVERVIEW} — it renders at the top of the plan page and is where the \`## Closed\` record goes when the plan ends`);
+    }
+
+    let planEntries;
+    try { planEntries = fs.readdirSync(planDir, { withFileTypes: true }); }
     catch { continue; }
-    plans.push({ file: f, num, slug: m[2], raw, fm, closed: planIsClosed(raw, fm) });
+
+    const stagePositions = new Map();
+    for (const f of planEntries) {
+      if (f.isDirectory()) {
+        warnings.push(`${label}/${f.name}/: a plan folder holds stage FILES only — nested folders are not read. If this is a body of work of its own it is another plan`);
+        continue;
+      }
+      if (!f.isFile() || !f.name.endsWith('.md') || f.name === PLAN_OVERVIEW) continue;
+
+      const stageLabel = `${label}/${f.name}`;
+      const stagePrefix = f.name.match(/^(\d{1,5})[_-]/);
+      if (!stagePrefix) {
+        warnings.push(`${stageLabel}: no numeric prefix — the prefix is both the stage's ORDER and its id ("stage 20"), so a stage without one cannot be referred to`);
+      } else {
+        const pos = parseInt(stagePrefix[1], 10);
+        if (stagePositions.has(pos)) {
+          errors.push(`${stageLabel}: stage ${pos} is also claimed by \`${stagePositions.get(pos)}\` — the prefix is the stage id, so two stages cannot share one`);
+        } else {
+          stagePositions.set(pos, f.name);
+        }
+      }
+
+      let parsed;
+      try { parsed = matter(fs.readFileSync(path.join(planDir, f.name), 'utf-8')); }
+      catch (err) { errors.push(`${stageLabel}: malformed frontmatter (${err.message})`); continue; }
+      const fm = parsed.data || {};
+      reportDrift(stageLabel, unknownKeys(fm, PLAN_STAGE_FM_KEYS), PLAN_STAGE_FM_KEYS);
+
+      if (!fm.title) warnings.push(`${stageLabel}: no \`title\` — the generated heading and its anchor both come from it, so a missing title makes the stage un-linkable by name`);
+      if (fm.status !== undefined && !normalizeStatus(fm.status)) {
+        errors.push(`${stageLabel}: invalid status \`${fm.status}\` (fixed vocabulary: ${STATUSES.join('|')})`);
+      }
+      if (/^#\s+/m.test(parsed.content || '')) {
+        warnings.push(`${stageLabel}: carries an \`# H1\` — the heading is GENERATED as "<prefix> <title>" on the plan page, so this duplicates a name the frontmatter owns`);
+      }
+
+      // The one error that matters. A ref that names nothing shrinks this
+      // stage's subtask count, and nothing downstream can tell that number
+      // from a right one.
+      for (const [field, raw] of [['subtasks', fm.subtasks], ['agent-logs', fm['agent-logs']]]) {
+        const list = Array.isArray(raw) ? raw : raw == null ? [] : [raw];
+        for (const entry of list) {
+          const target = planRefTarget(entry, planDir, issueDir);
+          if (!target) {
+            errors.push(`${stageLabel}: \`${field}\` entry ${JSON.stringify(entry)} has no parsable target (expected a markdown link or a path inside the issue)`);
+          } else if (!index.has(target)) {
+            errors.push(`${stageLabel}: \`${field}\` references \`${target}\`, which does not exist — the stage's count in the plan table silently drops it`);
+          }
+        }
+      }
+    }
+
+    plans.push({ folder: e.name, position: prefix ? parseInt(prefix[1], 10) : null, status });
   }
 
-  if (!plans.length) return;
-  plans.sort((a, b) => a.num - b.num);
-  const active = plans[plans.length - 1];
-
-  for (const p of plans) {
-    const label = `${id}/agent-memory/plans/${p.file}`;
-    const declared = String(p.fm.plan || '').toLowerCase();
-    if (declared && declared !== 'open' && declared !== 'closed') {
-      warnings.push(`${label}: frontmatter \`plan: ${p.fm.plan}\` — expected \`open\` or \`closed\``);
-    }
-    if (declared === 'open' && /^##\s+Closed\s*$/m.test(p.raw)) {
-      warnings.push(`${label}: frontmatter says \`plan: open\` but the file carries a \`## Closed\` section — one of them is wrong, and both read as authoritative`);
-    }
-    // One plan open at a time: everything below the highest number must be closed.
-    if (p !== active && !p.closed) {
-      warnings.push(`${label}: superseded by \`${active.file}\` but still OPEN — a closed plan needs \`plan: closed\` + a \`## Closed\` section (what shipped, what was dropped and why), then it is never edited again`);
-    }
-
-    // Cycle table: slugs are identity, `#` is only order. Warn on the two ways
-    // that silently rots — a dependency naming no cycle, and a count that has
-    // drifted from the boxes it summarises.
-    const rows = parseCycleTable(p.raw);
-    if (!rows.length) continue;
-    const slugs = new Set(rows.map((r) => r.slug).filter(Boolean));
-    for (const r of rows) {
-      // A missing slug is one defect, not a reason to stop checking the row —
-      // its status and its count are just as wrong-able without one.
-      const who = r.slug ? `\`${r.slug}\`` : `"${r.cycle.replace(/[*|]/g, '').trim() || `row ${r.line}`}"`;
-      if (!r.slug) {
-        warnings.push(`${label}: cycle ${who} has no \`slug\` — a reference from another file cannot cite \`#${r.n || '?'}\`, which means nothing outside this plan`);
-      }
-      for (const dep of (r.deps.match(/[a-z0-9-]{2,}/g) || [])) {
-        if (!slugs.has(dep)) {
-          warnings.push(`${label}: cycle ${who} depends on \`${dep}\`, which matches no cycle in this plan`);
-        }
-      }
-      if (r.status && !VALID_SUBTASK_STATES.includes(normalizeStatus(r.status))) {
-        warnings.push(`${label}: cycle ${who} has status "${r.status}" — use the tracker vocabulary (${VALID_SUBTASK_STATES.join('|')}); "ready" is derived (open + no unmet dependency), never written`);
-      }
-      if (r.total !== null) {
-        const boxes = cycleSectionBoxes(p.raw, r.n);
-        if (boxes && (boxes.total !== r.total || boxes.done !== r.done)) {
-          warnings.push(`${label}: cycle ${who} table says ${r.done}/${r.total} subtasks but its section has ${boxes.done}/${boxes.total} ticked boxes — the count is derived, not asserted`);
-        }
-      }
-    }
-
-    // The optional `## Execution order` section is a SECOND table over the same
-    // cycles, so it can drift from the first. Both directions matter: a row
-    // naming a cycle that doesn't exist is a leftover from a reorder, and a
-    // cycle missing from the order reads as forgotten rather than parallel.
-    const order = parseExecutionOrder(p.raw);
-    if (!order) continue;
-    const numbered = rows.filter((r) => r.n);
-    const known = new Set(numbered.map((r) => r.n));
-    const placed = new Set();
-    for (const cell of order.rows) {
-      for (const ref of (cell.match(/\d+/g) || [])) {
-        if (known.has(ref)) placed.add(ref);
-        else warnings.push(`${label}: the execution order names cycle \`${ref}\`, which is not in the cycle table — left over from a reorder?`);
-      }
-    }
-    for (const r of numbered) {
-      // The escape hatch is deliberately cheap: naming the cycle anywhere in the
-      // section ("cycle 2 is a parallel track") is enough to clear this.
-      if (placed.has(r.n)) continue;
-      if (r.slug && order.body.includes(r.slug)) continue;
-      warnings.push(`${label}: cycle ${r.slug ? `\`${r.slug}\`` : `#${r.n}`} is in the table but nowhere in the execution order — place it, or say in that section that it is deliberately outside the sequence (a parallel track), or it reads as forgotten`);
-    }
+  // One plan open at a time is CONVENTION, not enforcement (decided 2026-08-02),
+  // so this is a hint. The derivation still degrades correctly with two open:
+  // the higher number wins, visibly, rather than becoming ambiguous.
+  const open = plans.filter((p) => !TERMINAL_STATUSES.includes(p.status));
+  if (open.length > 1) {
+    warnings.push(`${id}/plans/: ${open.length} plans are open (${open.map((p) => p.folder).join(', ')}) — the active plan is derived as the highest-numbered non-closed one, so the lower ones read as forgotten. Close them, or say so in their overview.md`);
   }
 }
 
@@ -617,29 +594,121 @@ for (const entry of issueFolders) {
     warnings.push(`${id}/agent-memory/: no \`memory.md\` index — agents read it first; add one line per topic file`);
   }
 
-  // agent-memory/plans/: the live picture. Two reserved bands — 0NN_ plan files
-  // (sequential, highest = active) and 1NN_ standing files. The rules linted
-  // here are the ones that fail SILENTLY when broken: a second open plan makes
-  // "which one is live?" ambiguous again, and an unslugged or self-contradicting
-  // plan reads as authoritative either way.
-  lintMemoryPlans(id, path.join(memDir, 'plans'));
+  // plans/: the schedule section. `plans/` holds plan folders and nothing else,
+  // each exactly one level deep.
+  lintPlans(id, folder);
 
-  // agent-log grammar: the norm is NNN_<code>_<name>/ activity folders (kind
-  // code in the folder name), with 0NN_ pinned meta files and milestone files
-  // (leading digit ≥ 1, `iteration` frontmatter) inside. Flat files and
-  // code-less folders still parse — hints only.
+  // agent-log grammar. An agent log is NNN_<code>_<name>/ — one run, one goal —
+  // holding summary.md (required), the reserved working/ and debrief/ folders,
+  // and any number of CHILD agent logs matching the same pattern. Everything
+  // else nested inside is a child log by construction, so there is no ambiguity
+  // at read time.
   const logDir = path.join(folder, 'agent-log');
+  const LOG_RESERVED = new Set(['working', 'debrief']);
+
+  // Markers of the RETIRED six-slot shape: the pinned `0NN` slots and the
+  // `MNN_` milestone files. A folder carrying either is history.
+  const LEGACY_SLOT = /^0\d_(goal|summary|task_list|working|benchmark|notes)$/;
+  const LEGACY_MILESTONE = /^[1-9]\d{2,4}_.+\.md$/;
+
+  function lintAgentLogFolder(absDir, rel, depth) {
+    let files;
+    try { files = fs.readdirSync(absDir, { withFileTypes: true }); }
+    catch { return; }
+
+    // Existing agent logs are NOT migrated: "history stays as written; this
+    // governs what is recorded next" (notes/20_agent-log-structure.md). So the
+    // new-shape rules are skipped entirely — and silently — on a folder written
+    // in the old one. Warning here would demand work that was deliberately
+    // decided against, and 289 warnings nobody will act on is how a validator
+    // stops being read at all, taking the real findings down with it.
+    const isLegacy = files.some(
+      (f) => LEGACY_SLOT.test(f.name.replace(/\.md$/, '')) || (f.isFile() && LEGACY_MILESTONE.test(f.name)),
+    );
+    if (isLegacy) return;
+
+    if (!files.some((f) => f.isFile() && f.name === 'summary.md')) {
+      warnings.push(`${rel}/: no \`summary.md\` — it is the one conclusive file for the run (State / Goal and Trigger / Task List / Out of Scope / Outcome Summary), and it IS the brief agents are pointed at`);
+    }
+
+    // Iteration files. First two digits = the iteration, last = which file
+    // within it (0 = the iteration file, 1-9 = a producer's own file).
+    const workingDir = path.join(absDir, 'working');
+    if (fs.existsSync(workingDir)) {
+      const byIteration = new Map();
+      for (const f of fs.readdirSync(workingDir, { withFileTypes: true })) {
+        const isDoc = f.isFile() && f.name.endsWith('.md');
+        if (!isDoc && !f.isDirectory()) continue;
+        const base = f.name.replace(/\.md$/, '');
+        const pm = base.match(/^(\d{2})(\d)[_-]/);
+        if (!pm) {
+          if (/^\d/.test(base)) {
+            warnings.push(`${rel}/working/${f.name}: prefix is not NNN_ — the first two digits are the iteration and the last is which file within it (0 = the iteration file, 1-9 = producers)`);
+          }
+          continue;
+        }
+        const key = pm[1];
+        const list = byIteration.get(key) || [];
+        list.push({ name: f.name, digit: parseInt(pm[2], 10) });
+        byIteration.set(key, list);
+
+        if (!isDoc) continue;
+        let fm;
+        try { fm = matter(fs.readFileSync(path.join(workingDir, f.name), 'utf-8')).data || {}; }
+        catch { continue; } // malformed fm already reported by the generic walk
+        if (fm.iteration !== undefined) {
+          warnings.push(`${rel}/working/${f.name}: carries \`iteration:\` — retired. The \`${pm[1]}${pm[2]}_\` filename owns the number, and a frontmatter copy is a second place to keep it right`);
+        }
+        if (fm.status !== undefined && !normalizeStatus(fm.status)) {
+          errors.push(`${rel}/working/${f.name}: invalid status \`${fm.status}\` (fixed vocabulary: ${STATUSES.join('|')}). \`status\` says whether the agent FINISHED; what it found goes in \`# Outcome\``);
+        }
+      }
+      for (const [iteration, list] of byIteration) {
+        if (list.length > 1 && !list.some((f) => f.digit === 0)) {
+          warnings.push(`${rel}/working/: iteration ${iteration} has ${list.length} producer files but no iteration file (\`${iteration}0_…\`) — the round's own record is what ties them together`);
+        }
+      }
+    }
+
+    for (const f of files) {
+      if (f.isFile() && f.name.endsWith('.md') && f.name !== 'summary.md') {
+        warnings.push(`${rel}/${f.name}: loose file at the agent log's root — iteration files go in working/, anything leaving the run goes in debrief/`);
+        continue;
+      }
+      if (!f.isDirectory() || LOG_RESERVED.has(f.name)) continue;
+
+      // A nested folder that is not reserved is a CHILD agent log.
+      const childRel = `${rel}/${f.name}`;
+      const m = f.name.match(/^(\d{2,5})_(.+)$/);
+      const codeMatch = m ? m[2].match(/^([a-z]{2})_(.+)$/) : null;
+      if (!m) {
+        warnings.push(`${childRel}/: no numeric order prefix — sorts last; a child agent log is NNN_<code>_<name>/`);
+      } else if (!codeMatch) {
+        warnings.push(`${childRel}/: no kind code after the prefix — renders without a symbol (codes: ${[...effectiveKindCodes].sort().join('/')})`);
+      } else if (!effectiveKindCodes.has(codeMatch[1])) {
+        warnings.push(`${childRel}/: kind code \`${codeMatch[1]}\` not in the effective set (${[...effectiveKindCodes].sort().join('/')}) — declare it in settings.json \`agentLogKinds\` or it renders without a symbol`);
+      }
+      // Depth budget: agent-log/<log>/<child>/working/<producer-folder>/ already
+      // reaches the loader's cap. Overflow is SILENT there — no page, no error,
+      // just a console warning nobody reads — so it is an ERROR here.
+      if (depth + 2 >= MAX_SUBFOLDER_DEPTH) {
+        errors.push(`${childRel}/: nesting reaches the loader's ${MAX_SUBFOLDER_DEPTH}-level cap, past which content is silently DROPPED (no page, no error). Two levels of child agent log is the working ceiling — deeper means the nesting is encoding when work happened rather than what it was for`);
+        continue;
+      }
+      lintAgentLogFolder(path.join(absDir, f.name), childRel, depth + 1);
+    }
+  }
+
   if (fs.existsSync(logDir)) {
     for (const e of fs.readdirSync(logDir, { withFileTypes: true })) {
       if (e.isFile() && e.name.endsWith('.md')) {
-        warnings.push(`${id}/agent-log/${e.name}: flat file at agent-log root — parses, but the convention is an NNN_<code>_<name>/ activity folder`);
+        warnings.push(`${id}/agent-log/${e.name}: flat file at agent-log root — parses, but the convention is an NNN_<code>_<name>/ agent-log folder`);
         continue;
       }
       if (!e.isDirectory()) continue;
 
       const m = e.name.match(/^(\d{2,5})_(.+)$/);
-      const rest = m ? m[2] : e.name;
-      const codeMatch = rest.match(/^([a-z]{2})_(.+)$/);
+      const codeMatch = m ? m[2].match(/^([a-z]{2})_(.+)$/) : null;
       if (!m) {
         warnings.push(`${id}/agent-log/${e.name}/: no numeric order prefix — sorts last; convention is NNN_<code>_<name>/`);
       } else if (!codeMatch) {
@@ -648,33 +717,9 @@ for (const entry of issueFolders) {
         warnings.push(`${id}/agent-log/${e.name}/: kind code \`${codeMatch[1]}\` not in the effective set (${[...effectiveKindCodes].sort().join('/')}) — declare it in settings.json \`agentLogKinds\` or it renders without a symbol`);
       }
 
-      // Inside an activity folder: 0NN_ = pinned meta (no iteration),
-      // leading digit ≥ 1 = milestone (iteration drives the #N badge).
-      let files;
-      try { files = fs.readdirSync(path.join(logDir, e.name), { withFileTypes: true }); }
-      catch { continue; }
-      for (const f of files) {
-        if (!f.isFile() || !f.name.endsWith('.md')) continue;
-        const rel = `${id}/agent-log/${e.name}/${f.name}`;
-        const pm = f.name.match(/^(\d{2,5})_/);
-        if (!pm) continue; // unprefixed — generic drift walk already covers fm
-        const isMeta = pm[1][0] === '0';
-        let fm;
-        try { fm = matter(fs.readFileSync(path.join(logDir, e.name, f.name), 'utf-8')).data || {}; }
-        catch { continue; } // malformed fm already reported by the generic walk
-        if (isMeta && fm.iteration !== undefined) {
-          warnings.push(`${rel}: 0NN_ meta file carries \`iteration\` — meta files show a plain \`NN\` prefix (no \`#N\` badge); milestones use a leading digit ≥ 1`);
-        }
-        if (!isMeta && fm.iteration === undefined) {
-          warnings.push(`${rel}: milestone without \`iteration:\` frontmatter — no #N badge; falls back to sequence`);
-        }
-        if (fm.status !== undefined) {
-          const s = String(fm.status).toLowerCase().replace(/\s+/g, '-');
-          if (!MILESTONE_STATUSES.has(s)) {
-            warnings.push(`${rel}: status \`${fm.status}\` not in the milestone vocabulary (not-started | in-progress | success | failed) — badge won't be tinted`);
-          }
-        }
-      }
+      // A grouping folder (no kind code) holds agent logs rather than being one;
+      // recursing into it as a log would demand a summary.md it should not have.
+      if (codeMatch) lintAgentLogFolder(path.join(logDir, e.name), `${id}/agent-log/${e.name}`, 1);
     }
   }
 }

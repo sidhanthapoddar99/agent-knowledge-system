@@ -24,6 +24,7 @@ import path from 'node:path';
 import {
   resolveTracker, isInsideAllowed, readIssueMeta, pad,
   parseArgs, printHelp, relForLog, MAX_SUBFOLDER_DEPTH,
+  parseGroupSegments, sanitizeName,
 } from './_lib.mjs';
 
 const args = parseArgs(process.argv.slice(2));
@@ -51,7 +52,8 @@ if (args.flags.help || !id || !rawName) {
     '--name      kebab-case subtask name (sanitised to [a-z0-9-]) — required unless --index (default: overview)',
     '--title     frontmatter title (default: name, de-kebabed and capitalised)',
     '--group     nest under a grouping folder path (created if missing; label only;',
-    '            segments sanitised to [a-z0-9-]; max 4 levels — loader depth cap)',
+    '            segments sanitised to [a-z0-9_-] — `_` is preserved, it is the',
+    '            ordering-prefix separator; max 4 levels — loader depth cap)',
     '--overview  seed the Overview section with this text instead of its callout',
     '--index     scaffold the series index leaf (00_) instead of a work order',
     '--json      print the created file as JSON',
@@ -69,18 +71,17 @@ if (!meta) {
 }
 
 // Sanitise the name to the tracker's slug grammar.
-const name = rawName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+const name = sanitizeName(rawName);
 if (!name) {
   console.error(`--name "${rawName}" sanitises to empty; give a name with letters or digits.`);
   process.exit(1);
 }
 
-// Optional grouping folders — labels only, sanitised segment by segment.
+// Optional grouping folders — labels only. `_` survives sanitising: it is the
+// ordering-prefix separator, so folding it would silently name a NEW folder
+// beside the intended one (see sanitizeGroupSegment).
 const groupRaw = args.flags.group && args.flags.group !== true ? String(args.flags.group) : '';
-const groupSegments = groupRaw
-  .split('/')
-  .map((s) => s.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''))
-  .filter(Boolean);
+const groupSegments = parseGroupSegments(groupRaw);
 
 if (groupSegments.length >= MAX_SUBFOLDER_DEPTH) {
   console.error(

@@ -106,6 +106,21 @@ export async function buildStaticPaths(siteConfig: { pages?: Record<string, any>
             props: { ...common, pageType: 'issues-subdoc', issue, vocabulary, subDoc: { kind: 'memory', memory: m } },
           });
         }
+        for (const plan of issue.plans) {
+          paths.push({
+            params: { slug: [baseUrl, issue.id, 'plans', plan.name].filter(Boolean).join('/') },
+            props: { ...common, pageType: 'issues-subdoc', issue, vocabulary, subDoc: { kind: 'plan', plan } },
+          });
+          // Individual stage pages stay reachable — the sub-doc machinery gives
+          // every markdown file a route for free. Nothing links to them; the
+          // single plan page is canonical.
+          for (const stage of plan.stages) {
+            paths.push({
+              params: { slug: [baseUrl, issue.id, 'plans', plan.name, stage.name].filter(Boolean).join('/') },
+              props: { ...common, pageType: 'issues-subdoc', issue, vocabulary, subDoc: { kind: 'plan-stage', plan, stage } },
+            });
+          }
+        }
         for (const log of issue.agentLogs) {
           const slugPath = [baseUrl, issue.id, 'agent-log', ...log.groupPath, log.name].filter(Boolean).join('/');
           paths.push({

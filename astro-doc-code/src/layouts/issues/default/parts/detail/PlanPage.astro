@@ -1,0 +1,165 @@
+---
+/**
+ * PlanPage — the single page for one plan: `overview.md`, then the plan table,
+ * then every stage inlined under a generated heading.
+ *
+ * Two things here are load-bearing rather than cosmetic:
+ *
+ *   1. **The table IS the index.** A separate generated list of the same stages
+ *      would be duplication in the UI, which is the same defect as duplication
+ *      on disk. The Stage cell links to the stage's anchor; that is the index.
+ *
+ *   2. **Headings anchor on the TITLE, never the prefix.** `move` rewrites
+ *      paths on a renumber but not anchors, so `#20-journal-compatibility`
+ *      would break silently the first time a stage is inserted above it.
+ *
+ * The Subtasks column is resolved live from `issue.subtasks` — the plan stores
+ * no count, so it cannot carry a stale one.
+ */
+import type { Issue, IssuePlan } from '@loaders/issues';
+import { stateIconSvg } from '../../server/state-icon';
+import { extractAndPrefixToc } from '../../server/toc';
+import {
+  pad, planStageUrl, planPanelKey, resolvePlanStage, subtaskUrl, logUrl,
+  CATEGORY_REPRESENTATIVE,
+} from '../../server/helpers';
+
+interface Props {
+  issue: Issue;
+  plan: IssuePlan;
+  baseUrl: string;
+  statusColors: Record<string, string>;
+  standalone?: boolean;
+}
+
+const { issue, plan, baseUrl, statusColors, standalone = false } = Astro.props;
+const relPath = `plans/${plan.name}/`;
+
+// Resolve every stage once — the table and the inlined bodies read the same
+// resolution, so the count in the table and the links under the heading can
+// never disagree.
+//
+// Stage bodies are inlined into ONE DOM here, so their heading ids are prefixed
+// with the stage name: every stage file tends to carry the same `## Todo` and
+// `## Questions`, and without this the second `#todo` silently shadows the
+// first. Same treatment the Comprehensive panel gives co-hosted subtasks. The
+// *generated* stage heading keeps its bare title anchor — that one is the
+// stable, linkable id, and it is unique because titles name distinct stages.
+const resolved = plan.stages.map((stage) => ({
+  stage,
+  html: extractAndPrefixToc(stage.html, stage.anchor).html,
+  ...resolvePlanStage(issue, stage),
+}));
+const missingTotal = resolved.reduce((n, r) => n + r.missing.length, 0);
+---
+
+<section
+  class={`issue-panel ${standalone ? 'is-active' : ''}`}
+  data-panel={planPanelKey(plan)}
+  role="tabpanel"
+  hidden={!standalone}
+>
+  <div class="issue-doc">
+    <div class="issue-doc__path">{relPath}</div>
+
+    <div class="issue-plan__header">
+      {plan.sequence !== null && <span class="issue-plan__num">{pad(plan.sequence)}</span>}
+      <span class="issue-plan__title">{plan.title}</span>
+      <span
+        class="issue-plan__badge"
+        style={statusColors[plan.status] ? `--badge-color: ${statusColors[plan.status]}` : undefined}
+      >{plan.status}</span>
+    </div>
+
+    {plan.overviewHtml && (
+      <div class="issue-doc__body markdown-content" set:html={plan.overviewHtml} />
+    )}
+
+    {plan.stages.length === 0 ? (
+      <div class="issue-doc__empty">
+        <p class="issue-doc__empty-title">No stages yet</p>
+        <p>
+          A plan is a folder of stages — <code>NN_&lt;name&gt;.md</code>, gap-spaced by
+          ten so there is room to insert. Add one, or scaffold it with
+          <code>agent-ks issue new-stage</code>.
+        </p>
+      </div>
+    ) : (
+      <table class="issue-plan__table">
+        <thead>
+          <tr>
+            <th class="issue-plan__col-id">#</th>
+            <th>Stage</th>
+            <th>Outcome</th>
+            <th class="issue-plan__col-who">Who</th>
+            <th class="issue-plan__col-subtasks">Subtasks</th>
+            <th class="issue-plan__col-status">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {resolved.map(({ stage, counts, missing }) => (
+            <tr>
+              <td class="issue-plan__col-id">{stage.sequence !== null ? stage.sequence : '—'}</td>
+              <td><a href={`#${stage.anchor}`}>{stage.title}</a></td>
+              <td class="issue-plan__outcome">{stage.outcome ?? ''}</td>
+              <td class="issue-plan__col-who">{stage.who ?? ''}</td>
+              <td class="issue-plan__col-subtasks">
+                {counts.map((c) => (
+                  <span
+                    class="issue-plan__count"
+                    data-tip={c.label}
+                    style={`--count-color: ${statusColors[CATEGORY_REPRESENTATIVE[c.id]] ?? 'currentColor'}`}
+                  >{c.count}</span>
+                ))}
+                {missing.length > 0 && (
+                  <span class="issue-plan__count is-missing" data-tip={`${missing.length} reference${missing.length > 1 ? 's' : ''} resolve to nothing`}>!{missing.length}</span>
+                )}
+              </td>
+              <td class="issue-plan__col-status">
+                <span class="issue-plan__state" style={`color: ${statusColors[stage.status] ?? 'currentColor'}`} data-tip={stage.status} set:html={stateIconSvg(stage.status)} />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )}
+
+    {missingTotal > 0 && (
+      <div class="issue-plan__warning">
+        <strong>{missingTotal} reference{missingTotal > 1 ? 's' : ''} in this plan resolve to nothing.</strong>
+        A stage that references a subtask which no longer exists silently under-counts
+        its own progress, so the broken refs are named here rather than dropped:
+        <ul>
+          {resolved.flatMap(({ stage, missing }) =>
+            missing.map((ref) => <li><code>{stage.name}</code> → <code>{ref}</code></li>),
+          )}
+        </ul>
+      </div>
+    )}
+
+    {resolved.map(({ stage, html, subtasks, logs }) => (
+      <div class="issue-plan__stage">
+        <h1 id={stage.anchor} class="issue-plan__stage-heading">
+          {stage.sequence !== null && <span class="issue-plan__stage-num">{stage.sequence}</span>}
+          <a href={planStageUrl(baseUrl, issue.id, plan, stage)}>{stage.title}</a>
+        </h1>
+        {(subtasks.length > 0 || logs.length > 0) && (
+          <div class="issue-plan__refs">
+            {subtasks.map((s) => (
+              <a class="issue-plan__ref" href={subtaskUrl(baseUrl, issue.id, s)} data-tip={s.status}>
+                <span class="issue-plan__ref-icon" style={`color: ${statusColors[s.status] ?? 'currentColor'}`} set:html={stateIconSvg(s.status)} />
+                <span>{s.title}</span>
+              </a>
+            ))}
+            {logs.map((l) => (
+              <a class="issue-plan__ref issue-plan__ref--log" href={logUrl(baseUrl, issue.id, l)}>
+                <span>{l.name.replace(/[-_]/g, ' ')}</span>
+              </a>
+            ))}
+          </div>
+        )}
+        <div class="issue-doc__body markdown-content" set:html={html} />
+      </div>
+    ))}
+  </div>
+</section>

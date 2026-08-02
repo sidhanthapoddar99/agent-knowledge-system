@@ -1,15 +1,23 @@
 #!/usr/bin/env bun
 /**
- * new-agent-log.mjs — scaffold a new agent-log ACTIVITY folder for an issue,
- * pre-seeded with the standard six 0NN slots (blank + callout).
+ * new-agent-log.mjs — scaffold a new AGENT LOG folder for an issue.
  *
- * Distinct from add-agent-log (which appends a single milestone/entry): this
- * creates the folder `agent-log/[<group>/]NNN_<code>_<name>/` and the uniform
- * slot set so every activity starts from the same shape with no guesswork:
- *   00_goal · 01_summary · 02_task_list · 03_working · 04_benchmark · 05_notes
- * Each slot is a file with `title` frontmatter and a placeholder callout; the
- * lower three note that they can be promoted to a same-named folder if they
- * grow. No milestone is stubbed — those are created on demand as work lands.
+ * An agent log is `agent-log/[<group>/]NNN_<code>_<name>/` — one run, one goal.
+ * It is created with exactly two files:
+ *
+ *   settings.json   {"status": "open"} — the run's status, which colours its
+ *                   kind symbol in the sidebar
+ *   summary.md      the one conclusive file: State · Goal and Trigger ·
+ *                   Task List · Out of Scope · Outcome Summary
+ *
+ * **No other slot is seeded, and that is deliberate.** The previous version of
+ * this script created six files whether or not the run had anything to put in
+ * them, which is how a one-line change acquired a three-file floor. `working/`
+ * appears when the first iteration file is written (`agent-ks issue
+ * new-iteration`); `debrief/` appears when the run has something to hand over.
+ *
+ * `summary.md` IS the brief: point an agent at it and spend the prompt on the
+ * delta, rather than committing a separate brief file per run.
  */
 
 import fs from 'node:fs';
@@ -17,6 +25,7 @@ import path from 'node:path';
 import {
   resolveTracker, isInsideAllowed, readIssueMeta, pad,
   parseArgs, printHelp, relForLog, MAX_SUBFOLDER_DEPTH,
+  parseGroupSegments, sanitizeName,
 } from './_lib.mjs';
 
 // Framework-default kinds (mirror of src/loaders/issues.ts). An issue may add
@@ -31,22 +40,24 @@ const rawName = args.flags.name && args.flags.name !== true ? String(args.flags.
 
 if (args.flags.help || !id || !kind || !rawName) {
   printHelp('issue new-agent-log', [
-    '<issue-id> --kind <code> --name <slug> [--group <a[/b]>] [--prefix <NNN>] [--goal <text>] [--json] [--tracker <path>]',
+    '<issue-id> --kind <code> --name <slug> [--group <a[/b]>] [--prefix <NNN>] [--goal <text>] [--parent <path>] [--json] [--tracker <path>]',
     '',
-    'Scaffold a new agent-log activity folder agent-log/[<group>/]NNN_<code>_<name>/',
-    'pre-seeded with the standard six slots (00_goal 01_summary 02_task_list 03_working',
-    '04_benchmark 05_notes), each a blank file with a title + placeholder callout.',
-    '04_benchmark carries the full benchmark template. No milestone is created — add',
-    'those on demand as work lands.',
+    'Scaffold an agent log at agent-log/[<group>/]NNN_<code>_<name>/ with settings.json',
+    '({"status": "open"}) and summary.md (State / Goal and Trigger / Task List /',
+    'Out of Scope / Outcome Summary). Nothing else is seeded: working/ appears with',
+    'the first iteration file (issue new-iteration), debrief/ when the run has',
+    'something to hand over.',
     '',
-    `--kind    activity kind code (defaults: ${Object.keys(DEFAULT_KINDS).join('/')}; custom via settings.json agentLogKinds)`,
+    `--kind    agent-log kind code (defaults: ${Object.keys(DEFAULT_KINDS).join('/')}; custom via settings.json agentLogKinds)`,
     '--name    kebab-case run name (sanitised to [a-z0-9-])',
-    '--group   nest under a grouping folder path, e.g. a per-series group like',
-    '          "refactor" (created if missing; segments sanitised to [a-z0-9-];',
+    '--group   nest under a grouping folder path (created if missing; `_` preserved;',
     '          numbering is scoped to the group folder)',
-    '--prefix  explicit activity number (digits, e.g. 013) instead of the next',
-    '          gap-spaced one — for series that number sequentially',
-    '--goal    optional text to seed 00_goal.md instead of its placeholder callout',
+    '--parent  create this as a CHILD agent log inside an existing one — pass the',
+    '          parent folder path relative to agent-log/ (e.g. 030_lp_overnight).',
+    '          Use when the sub-goal has a goal of its OWN; work done toward the',
+    '          parent\'s goal is an iteration file, not a child log',
+    '--prefix  explicit number (digits, e.g. 013) instead of the next gap-spaced one',
+    '--goal    text to seed the Goal and Trigger section',
     '--json    print the created folder + files as JSON',
   ]);
   process.exit(id && kind && rawName ? 0 : 1);
@@ -69,28 +80,35 @@ if (!effective.has(kind)) {
   console.error(`warning: kind "${kind}" is not in this issue's effective set (${[...effective].sort().join('/')}) — it will render without a symbol. Declare it in settings.json agentLogKinds to give it one.`);
 }
 
-// Sanitise the name to the tracker's slug grammar.
-const name = rawName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+const name = sanitizeName(rawName);
 if (!name) {
   console.error(`--name "${rawName}" sanitises to empty; give a name with letters or digits.`);
   process.exit(1);
 }
 
-// Optional grouping folders — labels only (e.g. a per-series group like
-// "refactor/"), sanitised segment by segment, same grammar as subtask groups.
+// Grouping folders and `--parent` both nest below agent-log/; they differ only
+// in meaning (a label vs. a real parent run), so they compose into one path.
 const groupRaw = args.flags.group && args.flags.group !== true ? String(args.flags.group) : '';
-const groupSegments = groupRaw
-  .split('/')
-  .map((s) => s.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''))
-  .filter(Boolean);
+const parentRaw = args.flags.parent && args.flags.parent !== true ? String(args.flags.parent) : '';
+const groupSegments = [...parseGroupSegments(groupRaw), ...parseGroupSegments(parentRaw)];
 
 if (groupSegments.length >= MAX_SUBFOLDER_DEPTH) {
   console.error(
-    `--group "${groupRaw}" nests ${groupSegments.length} folder levels; the loader ` +
-    `reads at most ${MAX_SUBFOLDER_DEPTH - 1} grouping levels below agent-log/ ` +
-    `(depth cap ${MAX_SUBFOLDER_DEPTH}). Flatten the grouping.`
+    `--group/--parent nests ${groupSegments.length} folder levels; the loader ` +
+    `reads at most ${MAX_SUBFOLDER_DEPTH - 1} levels below agent-log/ ` +
+    `(depth cap ${MAX_SUBFOLDER_DEPTH}). Two levels of child agent log is the ` +
+    `working ceiling — deeper is a sign the nesting is encoding WHEN work happened ` +
+    `rather than WHAT it was for.`
   );
   process.exit(1);
+}
+
+if (parentRaw) {
+  const parentDir = path.join(tracker, id, 'agent-log', ...parseGroupSegments(groupRaw), ...parseGroupSegments(parentRaw));
+  if (!fs.existsSync(parentDir)) {
+    console.error(`--parent "${parentRaw}" does not exist under ${relForLog(path.join(tracker, id, 'agent-log'))}/`);
+    process.exit(1);
+  }
 }
 
 // Optional explicit prefix — for series that number sequentially (001, 002, …)
@@ -103,14 +121,14 @@ if (prefixRaw && !/^\d{2,5}$/.test(prefixRaw)) {
 
 const baseDir = path.join(tracker, id, 'agent-log', ...groupSegments);
 
-// Next activity prefix — gap-spaced by 10 (010, 020, …) to leave insert room,
-// matching the convention. Scans existing DIRECTORIES (activity folders), not
-// files, so it's independent of add-agent-log's file-level numbering.
+// Next prefix — gap-spaced by 10 (010, 020, …) to leave insert room. Scans
+// DIRECTORIES only: `working/` and `debrief/` are reserved names, not runs.
+const RESERVED = new Set(['working', 'debrief']);
 function nextActivityPrefix(dir) {
   let max = 0;
   if (fs.existsSync(dir)) {
     for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
-      if (!e.isDirectory()) continue;
+      if (!e.isDirectory() || RESERVED.has(e.name)) continue;
       const m = e.name.match(/^(\d+)[_-]/);
       if (m) max = Math.max(max, parseInt(m[1], 10));
     }
@@ -127,52 +145,52 @@ if (!isInsideAllowed(dir, tracker)) {
   process.exit(1);
 }
 if (fs.existsSync(dir)) {
-  console.error(`Activity folder already exists: ${relForLog(dir)}`);
+  console.error(`Agent log already exists: ${relForLog(dir)}`);
   process.exit(1);
 }
 
 const goalBody = args.flags.goal && args.flags.goal !== true
   ? `${String(args.flags.goal).trim()}\n`
-  : `> [!NOTE]\n> Blank — fill this in. **What this run is trying to achieve**: what triggered\n> it, what "done" looks like, and links to the subtask/notes it executes against.\n`;
+  : `> [!NOTE]\n> Fill this in. What this run is for, in plain language, plus the trigger when\n> it is not obvious. Written once — it does not change as the run proceeds.\n`;
 
-// Each slot: [filename, title, body]. 00–02 near-always filled; 03–05 most
-// often sit blank-with-callout until the run produces something.
-const SLOTS = [
-  ['00_goal.md', 'Goal', goalBody],
-  ['01_summary.md', 'Summary',
-    `> [!NOTE]\n> Blank — write at wrap. **Outcome TL;DR**: what the run was, what landed\n> (with evidence and pointers), and where things stand.\n`],
-  ['02_task_list.md', 'Task list',
-    `> [!NOTE]\n> Blank — the run's live checklist (working state for THIS run, not the\n> issue's durable subtasks). Add items and tick them off as you go.\n`],
-  ['03_working.md', 'Working',
-    `> [!NOTE]\n> Blank — raw byproducts this run worked on: research, sub-agent reports,\n> scratch analyses, discussion. The provenance a note is built from; the curated\n> conclusion goes to the issue's \`notes/\`. **If this grows, convert to a\n> \`03_working/\` folder** and split across files (\`research-01_<topic>.md\`, …).\n`],
-  ['04_benchmark.md', 'Benchmark',
-    `> [!NOTE]\n> Comparable measurements for this run (perf / evals / A-B). Fill the template\n> below, or state "Not applicable" if this run produced none. **If it grows heavy\n> artifacts** (traces, CSVs, screenshots), convert to a \`04_benchmark/\` folder.\n\n` +
-    `# Benchmark — <what was measured>\n\n` +
-    `## Method\n` +
-    `- Baseline: <commit/branch before> vs <commit/branch after>\n` +
-    `- Hardware: <cpu / gpu / RAM — the reference floor>\n` +
-    `- Scenario: <exact repro: doc size, input pattern, iterations, tool>\n` +
-    `- Instrument: <deterministic unit measure / Playwright + performance.memory / DevTools trace>\n\n` +
-    `## Results\n` +
-    `| Metric | Before | After | Delta | Notes |\n` +
-    `|--------|--------|-------|-------|-------|\n` +
-    `|  |  |  |  |  |\n\n` +
-    `## Claim vs measured\n` +
-    `<the stage claimed X; measured Y; verdict: confirmed / partial / regression / no-change —\n` +
-    `for a non-perf stage, "no regression" is the passing result>\n\n` +
-    `## Artifacts\n` +
-    `<links to heavy artifacts — traces, screenshots, CSVs>\n`],
-  ['05_notes.md', 'Notes',
-    `> [!NOTE]\n> Blank — the run's **handover to the next run**: caveats and gotchas, issues\n> found but deferred (fix next iteration), and discoveries useful later.\n> Disambiguate: durable decisions/output → the issue's \`notes/\`; facts that stay\n> true across runs → \`agent-memory/\`; run-to-next-run notes → here. **If this\n> grows, convert to a \`05_notes/\` folder.**\n`],
-];
+const summary = `---
+title: "Summary"
+---
+
+# State
+
+> [!NOTE]
+> Where this run is RIGHT NOW and what happens next, in a few lines. The only
+> section rewritten during the run. Not a status token — that lives in
+> \`settings.json\`.
+
+# Goal and Trigger
+
+${goalBody}
+# Task List
+
+> [!NOTE]
+> This run's checklist, headed by its references — the plan stage and subtask it
+> executes against, plus the notes that scope it. References live here because
+> they are what the tasks execute against. Run-local and disposable: an item
+> that outlives the run becomes a subtask.
+
+# Out of Scope
+
+> [!NOTE]
+> What this run deliberately does not touch. Written once.
+
+# Outcome Summary
+
+> [!IMPORTANT]
+> **One sentence and a link.** Never a paragraph — this is the seam most likely
+> to regrow the whole story, and the iteration files already hold it.
+`;
 
 fs.mkdirSync(dir, { recursive: true });
-const written = [];
-for (const [file, title, body] of SLOTS) {
-  const abs = path.join(dir, file);
-  fs.writeFileSync(abs, `---\ntitle: "${title}"\n---\n\n${body}`);
-  written.push(file);
-}
+fs.writeFileSync(path.join(dir, 'settings.json'), `{\n  "status": "open"\n}\n`);
+fs.writeFileSync(path.join(dir, 'summary.md'), summary);
+const written = ['settings.json', 'summary.md'];
 
 if (args.flags.json) {
   console.log(JSON.stringify({
@@ -183,5 +201,6 @@ if (args.flags.json) {
     files: written,
   }, null, 2));
 } else {
-  console.log(`Created ${relForLog(dir)}/ with ${written.length} slots: ${written.join(' ')}`);
+  console.log(`Created ${relForLog(dir)}/ — ${written.join(' ')}`);
+  console.log(`  next: agent-ks issue new-iteration ${id} --log ${[...groupSegments, folderName].join('/')} --name <round>`);
 }

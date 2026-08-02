@@ -39,11 +39,13 @@ const server = http.createServer((req, res) => {
 });
 await new Promise((r) => server.listen(4488, '127.0.0.1', r));
 
+const ISSUE = 'http://127.0.0.1:4488/todo/2026-07-01-demo-issue-anatomy-showcase';
+
 const browser = await chromium.launch();
 const page = await browser.newPage();
-await page.goto('http://127.0.0.1:4488/todo/2026-07-01-demo-issue-anatomy-showcase/');
+await page.goto(`${ISSUE}/`);
 
-const seen = await page.evaluate(() => {
+const measure = () => page.evaluate(() => {
   const px = (el, pseudo) => (el ? getComputedStyle(el, pseudo ?? null) : null);
   // A label whose SOURCE text starts lowercase — the only kind that can prove
   // the transform fired. Picking any label would pass on an authored title that
@@ -60,11 +62,16 @@ const seen = await page.evaluate(() => {
   return {
     label: read(lower('.issue-sidebar__label')),
     folder: read(lower('.issue-sidebar__subgroup-name')),
+    // Both rails, in one set. They flank the same page and are both dense
+    // navigation, so they are one size — a TOC larger than the tree opposite it
+    // reads as the more important of the two.
     sizes: {
       sectionHeading: size('.issue-sidebar__heading'),
       folderRow: size('.issue-sidebar__subgroup-heading'),
       fileRow: size('.issue-sidebar__item'),
       number: size('.issue-sidebar__num'),
+      rightRailToc: size('.issue-meta-toc__link'),
+      rightRailIndex: size('.issue-meta-index__link'),
     },
     // The leading glyph column — the BOX each icon occupies, measured, not the
     // declared width. A drawing may be any size inside it; what has to be
@@ -87,6 +94,17 @@ const seen = await page.evaluate(() => {
   };
 });
 
+// The detail page carries the subtask/comment INDEX in its right rail; a
+// sub-doc page carries the TOC. Neither page has both, so measuring one page
+// would leave half the rail unchecked — and an unmeasured selector reads as
+// `null`, which a size comparison silently ignores. Merge the two.
+const seen = await measure();
+await page.goto(`${ISSUE}/plans/02_hardening-the-edges/`);
+const onPlanPage = await measure();
+for (const [k, v] of Object.entries(onPlanPage.sizes)) {
+  if (seen.sizes[k] === null) seen.sizes[k] = v;
+}
+
 await browser.close();
 server.close();
 
@@ -105,8 +123,14 @@ for (const [what, got] of [['file label', seen.label], ['folder label', seen.fol
   say(`${what} uppercases its first letter`, got.firstLetterTransform === 'uppercase', got.firstLetterTransform);
 }
 
-const sizes = Object.values(seen.sizes);
-say('every sidebar row is the same size', new Set(sizes).size === 1, JSON.stringify(seen.sizes));
+// `null` means the selector never rendered on either page. Dropping those
+// silently would let the check pass on one measurement, so the count is
+// asserted first.
+const measured = Object.entries(seen.sizes).filter(([, v]) => v !== null);
+const sizes = measured.map(([, v]) => v);
+say('every row selector was measured somewhere',
+  measured.length === Object.keys(seen.sizes).length, JSON.stringify(seen.sizes));
+say('both rails are one size', new Set(sizes).size === 1, JSON.stringify(seen.sizes));
 
 // The glyph column. `present` guards against the check passing on a page where
 // none of these rendered — one measured width is trivially "all equal".

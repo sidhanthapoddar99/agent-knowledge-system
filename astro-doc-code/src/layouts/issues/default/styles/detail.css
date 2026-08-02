@@ -693,7 +693,7 @@
   border-radius: 4px;
   text-decoration: none;
   color: var(--color-text-secondary);
-  font-size: var(--ui-text-body);
+  font-size: var(--ui-text-micro);
 }
 .issue-meta-index__link:hover {
   background: color-mix(in srgb, var(--color-border-default) 35%, transparent);
@@ -712,7 +712,7 @@
 .issue-meta-index__icon { display: inline-flex; flex-shrink: 0; color: var(--color-text-muted); }
 .issue-meta-index__num {
   font-family: var(--font-family-mono);
-  font-size: var(--ui-text-micro);
+  font-size: inherit;
   color: var(--color-text-muted);
   flex-shrink: 0;
   min-width: 1.5em;
@@ -725,7 +725,14 @@
   white-space: nowrap;
 }
 
-/* TOC list — sub-doc headings + overview comment index */
+/* TOC list — sub-doc headings + overview comment index.
+
+   THE RIGHT RAIL IS ONE SIZE, `--ui-text-micro`, exactly like the left sidebar
+   (see `--sidebar-glyph` and the note above `.issue-sidebar__heading`). Both
+   rails are dense navigation, not prose, and they flank the same page — a TOC
+   a size larger than the tree opposite it reads as the more important of the
+   two, which is backwards. Depth is shown by indent and colour; never by size,
+   which is why the level-3 and level-4+ font-size overrides are gone. */
 .issue-meta-toc {
   list-style: none;
   padding: 0;
@@ -740,7 +747,7 @@
   border-left: 2px solid transparent;
   color: var(--color-text-secondary);
   text-decoration: none;
-  font-size: var(--ui-text-body);
+  font-size: var(--ui-text-micro);
   line-height: 1.35;
   border-radius: 0 4px 4px 0;
   transition: color 0.08s ease, background 0.08s ease, border-color 0.08s ease;
@@ -759,12 +766,11 @@
 }
 .issue-meta-toc__level-1 .issue-meta-toc__link,
 .issue-meta-toc__level-2 .issue-meta-toc__link { padding-left: 0.5rem; }
-.issue-meta-toc__level-3 .issue-meta-toc__link { padding-left: 1.15rem; font-size: calc(var(--ui-text-body) * 0.95); }
+.issue-meta-toc__level-3 .issue-meta-toc__link { padding-left: 1.15rem; }
 .issue-meta-toc__level-4 .issue-meta-toc__link,
 .issue-meta-toc__level-5 .issue-meta-toc__link,
 .issue-meta-toc__level-6 .issue-meta-toc__link {
   padding-left: 1.8rem;
-  font-size: var(--ui-text-micro);
   color: var(--color-text-muted);
 }
 .issue-meta-toc__section-label {

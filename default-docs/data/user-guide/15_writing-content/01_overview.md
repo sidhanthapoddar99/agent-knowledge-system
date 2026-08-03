@@ -12,12 +12,12 @@ This section covers the markdown conventions that apply to **every** content typ
 
 | Type | Authoring guide | Folder | URL shape |
 |------|-----------------|--------|-----------|
-| **Docs** | [/user-guide/docs/overview](/user-guide/docs/overview) | `data/<doc-name>/` | `/<base>/<slug>` |
-| **Blogs** | [/user-guide/blogs/overview](/user-guide/blogs/overview) | `data/<blog-name>/` | `/<base>` + `/<base>/<slug>` |
-| **Issues** | [/user-guide/issues/overview](/user-guide/issues/overview) | `data/<issues-name>/` | `/<base>` + `/<base>/<id>` |
+| **Docs** | [/user-guide/docs/overview](../17_docs/01_overview.md) | `data/<doc-name>/` | `/<base>/<slug>` |
+| **Blogs** | [/user-guide/blogs/overview](../18_blogs/01_overview.md) | `data/<blog-name>/` | `/<base>` + `/<base>/<slug>` |
+| **Issues** | [/user-guide/issues/overview](../19_issues/01_overview.md) | `data/<issues-name>/` | `/<base>` + `/<base>/<id>` |
 | **Custom pages** | via `site.yaml pages:` | `data/pages/` | configurable |
 
-Folder names (`docs`, `blog`, `issues`, `pages`) are convention — the actual paths come from `site.yaml paths:` aliases. See [Data Structure](/user-guide/getting-started/data-structure) for the full picture.
+Folder names (`docs`, `blog`, `issues`, `pages`) are convention — the actual paths come from `site.yaml paths:` aliases. See [Data Structure](../05_getting-started/04_data-structure.md) for the full picture.
 
 ## What this section covers
 
@@ -29,13 +29,13 @@ Folder names (`docs`, `blog`, `issues`, `pages`) are convention — the actual p
 | [Drafts](./drafts) | `draft: true` — visible in dev, hidden in production |
 | [Naming & the Sidebar](./naming-and-sidebar/overview) | How files and folders are named, and exactly what shows in the navigation sidebar for each content type — a shared prefix-grammar reference plus visual file-tree → sidebar artifacts for docs, blogs, and issues |
 
-For the broader dev vs prod runtime story (what differs when you run `./start dev` vs `./start build`, and how to hide whole sections / navbar items), see [Dev Mode](/user-guide/configuration/dev-mode) in the Configuration section.
+For the broader dev vs prod runtime story (what differs when you run `./start dev` vs `./start build`, and how to hide whole sections / navbar items), see [Dev Mode](../10_configuration/06_dev-mode.md) in the Configuration section.
 
 ## What this section does **not** cover
 
 - **Frontmatter fields** — each content type defines its own (title, description, date, status, etc.). See the relevant authoring guide.
-- **Folder structure and `settings.json`** — covered under [Docs](/user-guide/docs/overview) and [Issues](/user-guide/issues/overview) respectively. Blogs are flat and need neither.
-- **Layouts** — [Layout System](/user-guide/layout-system/overview) explains how content renders.
+- **Folder structure and `settings.json`** — covered under [Docs](../17_docs/01_overview.md) and [Issues](../19_issues/01_overview.md) respectively. Blogs are flat and need neither.
+- **Layouts** — [Layout System](../16_layout-system/01_overview.md) explains how content renders.
 
 ## Common processing pipeline
 

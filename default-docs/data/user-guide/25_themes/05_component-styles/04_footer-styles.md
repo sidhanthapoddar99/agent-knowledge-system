@@ -139,6 +139,6 @@ Note the size tier step-down — `--ui-text-body` for nav links, `--ui-text-micr
 
 ## See also
 
-- [Footer Configuration](/user-guide/configuration/footer) — the content side (what columns/links appear)
+- [Footer Configuration](../../10_configuration/05_footer.md) — the content side (what columns/links appear)
 - [Typography](../tokens/typography) — the 3-tier UI text model
 - [Colors](../tokens/colors) — what `--color-text-*` and `--color-bg-*` resolve to

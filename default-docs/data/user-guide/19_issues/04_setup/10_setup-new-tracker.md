@@ -135,7 +135,7 @@ pages:
 | `layout_detail` | Layout for the single-issue page |
 | `data` | Path alias resolving to the tracker's folder |
 
-Full page-entry schema: [Page Configuration](/user-guide/configuration/site/page).
+Full page-entry schema: [Page Configuration](../../10_configuration/03_site/08_page.md).
 
 ## 5. (Optional) Add to the navbar
 
@@ -148,7 +148,7 @@ items:
     href: "/bugs"
 ```
 
-See [Navbar Configuration](/user-guide/configuration/navbar).
+See [Navbar Configuration](../../10_configuration/04_navbar.md).
 
 ## 6. Run dev and verify
 
@@ -200,7 +200,7 @@ If you're setting up a new tracker but don't want it visible in production yet:
 
 `"draft": true` at the **root** hides the whole tracker from production builds while keeping it visible in dev. Flip to `false` when ready to ship.
 
-For per-issue draft behaviour (one specific issue hidden in prod, rest of tracker visible), use `"draft": true` in that issue's own `settings.json`. See [Drafts](/user-guide/writing-content/drafts).
+For per-issue draft behaviour (one specific issue hidden in prod, rest of tracker visible), use `"draft": true` in that issue's own `settings.json`. See [Drafts](../../15_writing-content/05_drafts.md).
 
 ## Multiple trackers — when and why
 
@@ -220,6 +220,6 @@ Each tracker has its own vocabulary. A bug tracker might have `labels: [reproduc
 ## See also
 
 - [Vocabulary](./settings/vocabulary) — full root `settings.json` schema
-- [Page Configuration](/user-guide/configuration/site/page) — `site.yaml pages:` details
-- [Navbar Configuration](/user-guide/configuration/navbar) — adding nav entries
-- [Drafts](/user-guide/writing-content/drafts) — draft flag semantics at both levels
+- [Page Configuration](../../10_configuration/03_site/08_page.md) — `site.yaml pages:` details
+- [Navbar Configuration](../../10_configuration/04_navbar.md) — adding nav entries
+- [Drafts](../../15_writing-content/05_drafts.md) — draft flag semantics at both levels

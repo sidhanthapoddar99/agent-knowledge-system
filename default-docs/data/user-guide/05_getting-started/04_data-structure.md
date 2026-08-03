@@ -7,7 +7,7 @@ description: How your content, configuration, and assets are organised at your p
 
 This page covers **your project's content folders** — `config/`, `data/`, `assets/`, `themes/`. These live at the root of *your* docs project (the parent of the framework folder), and they're the only files you actually author or edit. Everything inside the framework folder (`astro-doc-code/`, `default-docs/`, `plugins/`) is shipped by the framework and shouldn't be touched.
 
-For the framework's internal code layout, see the [dev-docs](/dev-docs/overview/code-structure). For what `default-docs/` is and why it ships inside the framework, see the [Overview](./overview).
+For the framework's internal code layout, see the [dev-docs](../../dev-docs/01_overview/02_code-structure.md). For what `default-docs/` is and why it ships inside the framework, see the [Overview](./overview).
 
 ## What the framework actually requires
 
@@ -91,7 +91,7 @@ config/
 └── footer.yaml    # Footer columns and links
 ```
 
-See [Configuration](/user-guide/configuration/overview) for field-by-field reference.
+See [Configuration](../10_configuration/01_overview.md) for field-by-field reference.
 
 ## 2. Static assets — `assets/`
 
@@ -149,10 +149,10 @@ The file-level structure *inside* each content type is specific to its layout fa
 
 | Default folder | URL base | Naming pattern | Layout family | Authoring guide |
 |---|---|---|---|---|
-| `data/docs/` | `/docs` | `NN_folder/NN_file.md` (also `.mmd`/`.dot`/`.excalidraw` — [diagram pages](/user-guide/writing-content/diagram-pages)) | `@docs/*` | [Docs section](/user-guide/docs/overview) |
-| `data/blog/` | `/blog` | `YYYY-MM-DD-slug.md` | `@blog/*` | [Blogs section](/user-guide/blogs/overview) |
-| `data/issues/` | `/issues` | `YYYY-MM-DD-slug/` (folder) | `@issues/*` | [Issues section](/user-guide/issues/overview) |
-| `data/pages/` | (per page) | Any `.yaml` / `.md` | `@custom/*` | [Custom Pages section](/user-guide/custom-pages/overview) |
+| `data/docs/` | `/docs` | `NN_folder/NN_file.md` (also `.mmd`/`.dot`/`.excalidraw` — [diagram pages](../15_writing-content/06_diagram-pages.md)) | `@docs/*` | [Docs section](../17_docs/01_overview.md) |
+| `data/blog/` | `/blog` | `YYYY-MM-DD-slug.md` | `@blog/*` | [Blogs section](../18_blogs/01_overview.md) |
+| `data/issues/` | `/issues` | `YYYY-MM-DD-slug/` (folder) | `@issues/*` | [Issues section](../19_issues/01_overview.md) |
+| `data/pages/` | (per page) | Any `.yaml` / `.md` | `@custom/*` | [Custom Pages section](../20_custom-pages/01_overview.md) |
 
 ## 4. Themes — `themes/`
 
@@ -164,4 +164,4 @@ themes/
     └── font.css
 ```
 
-Custom themes inherit from the default via `extends: "@theme/default"` in `theme.yaml`. The framework's bundled themes live under `default-docs/themes/` and are automatically picked up — point `theme_paths:` in `site.yaml` at both your folder AND `@root/default-docs/themes` to see all of them. See [Themes](/user-guide/themes/overview).
+Custom themes inherit from the default via `extends: "@theme/default"` in `theme.yaml`. The framework's bundled themes live under `default-docs/themes/` and are automatically picked up — point `theme_paths:` in `site.yaml` at both your folder AND `@root/default-docs/themes` to see all of them. See [Themes](../25_themes/01_overview.md).

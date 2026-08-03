@@ -8,7 +8,7 @@ sidebar_position: 1
 
 Documentation files are `.md` files stored under `data/<doc-name>/` (the actual path is whatever you register via `site.yaml pages:` and resolve through the `@data` alias — the default convention is `data/docs/` but you can have multiple doc sections, e.g. `data/user-guide/`, `data/dev-docs/`). This section covers everything you need to know to create well-organized documentation.
 
-Sibling content types: [Blogs](/user-guide/blogs/overview) for date-ordered posts, [Issues](/user-guide/issues/overview) for the folder-per-item tracker.
+Sibling content types: [Blogs](../18_blogs/01_overview.md) for date-ordered posts, [Issues](../19_issues/01_overview.md) for the folder-per-item tracker.
 
 ## Quick Reference
 

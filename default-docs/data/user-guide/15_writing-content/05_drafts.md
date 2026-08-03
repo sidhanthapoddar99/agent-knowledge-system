@@ -57,7 +57,7 @@ You can scan the error-logger for outstanding drafts any time. They don't block 
 
 ## Relationship to dev-only content
 
-Drafts are **per-file** — you set `draft: true` on the one page you want to hide. For hiding an **entire doc section**, a **navbar item**, or a **whole tracker** from production in one place, see [Dev Mode](/user-guide/configuration/dev-mode). The two features are designed to work together:
+Drafts are **per-file** — you set `draft: true` on the one page you want to hide. For hiding an **entire doc section**, a **navbar item**, or a **whole tracker** from production in one place, see [Dev Mode](../10_configuration/06_dev-mode.md). The two features are designed to work together:
 
 | Granularity | Use |
 |-------------|-----|
@@ -78,5 +78,5 @@ Pick whichever matches the granularity of what you want to hide — marking ever
 
 ## See also
 
-- [Dev Mode](/user-guide/configuration/dev-mode) — the broader picture of what changes between dev and prod, plus how to hide whole sections or navbar items.
-- Per-content-type frontmatter references: [Docs](/user-guide/docs/frontmatter), [Blogs](/user-guide/blogs/frontmatter), [Issues](/user-guide/issues/overview).
+- [Dev Mode](../10_configuration/06_dev-mode.md) — the broader picture of what changes between dev and prod, plus how to hide whole sections or navbar items.
+- Per-content-type frontmatter references: [Docs](../17_docs/04_frontmatter.md), [Blogs](../18_blogs/04_frontmatter.md), [Issues](../19_issues/01_overview.md).

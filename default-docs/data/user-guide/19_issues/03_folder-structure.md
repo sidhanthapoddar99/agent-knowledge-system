@@ -220,14 +220,14 @@ Every sub-doc has **its own page**:
 
 ## Draft flag at two levels
 
-The standard `draft: true` filter (see [Drafts](/user-guide/writing-content/drafts)) applies in two ways for issues:
+The standard `draft: true` filter (see [Drafts](../15_writing-content/05_drafts.md)) applies in two ways for issues:
 
 | Scope | Where | Effect in production |
 |---|---|---|
 | **One issue** | `"draft": true` in `<issue-folder>/settings.json` | That issue disappears from index + its URL 404s |
 | **Whole tracker** | `"draft": true` in `<tracker-root>/settings.json` | Entire tracker is empty — useful while staging a new tracker before going live |
 
-Both visible in dev, hidden in prod. See [Drafts](/user-guide/writing-content/drafts) for the broader semantics.
+Both visible in dev, hidden in prod. See [Drafts](../15_writing-content/05_drafts.md) for the broader semantics.
 
 ## See also
 

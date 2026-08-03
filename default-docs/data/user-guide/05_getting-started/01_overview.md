@@ -101,6 +101,6 @@ It automatically appears at `/docs/getting-started/hello` in the sidebar.
 
 ## What's Next?
 
-1. **[Installation](/user-guide/getting-started/installation)** — set up your project
-2. **[Configuration](/user-guide/configuration/overview)** — configure your site
-3. **[Data Structure](/user-guide/getting-started/data-structure)** — understand your `data/` layout (docs sections, blog, issues, pages)
+1. **[Installation](./02_installation.md)** — set up your project
+2. **[Configuration](../10_configuration/01_overview.md)** — configure your site
+3. **[Data Structure](./04_data-structure.md)** — understand your `data/` layout (docs sections, blog, issues, pages)

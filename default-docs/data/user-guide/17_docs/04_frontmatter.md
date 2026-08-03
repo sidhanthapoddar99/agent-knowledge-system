@@ -96,7 +96,7 @@ draft: true
 - Page is hidden in production builds
 - Useful for work-in-progress documentation
 
-See [Drafts](/user-guide/writing-content/drafts) for full details on how drafts behave across all content types.
+See [Drafts](../15_writing-content/05_drafts.md) for full details on how drafts behave across all content types.
 
 ### `tags`
 

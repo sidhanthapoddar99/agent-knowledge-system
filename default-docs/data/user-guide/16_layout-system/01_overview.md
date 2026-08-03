@@ -21,7 +21,7 @@ This section covers the user-facing side of layouts: what's available, how to sw
 
 A single layout can render radically differently under different themes (light/dark, minimal/full-width). A single theme can apply across many layouts. They're orthogonal.
 
-See [Themes](/user-guide/themes/overview) for the styling side.
+See [Themes](../25_themes/01_overview.md) for the styling side.
 
 ## The four content types
 
@@ -138,7 +138,7 @@ Common customisation paths, in order of how often you'll reach for each:
 
 | Want to change | Use |
 |---|---|
-| Colours, fonts, spacing | [Theme](/user-guide/themes/overview) override — no layout work |
+| Colours, fonts, spacing | [Theme](../25_themes/01_overview.md) override — no layout work |
 | Component styling (navbar look, footer feel) | Theme override of `navbar.css` / `footer.css` |
 | Switch to a simpler docs chrome (no sidebar) | `layout: "@docs/compact"` in `site.yaml` |
 | Swap navbar / footer style | `layout_navbar: "@navbar/minimal"` etc. in `site.yaml` |
@@ -155,6 +155,6 @@ Most projects never write a custom layout. **If theme overrides + style switchin
 
 ## See also
 
-- [Themes](/user-guide/themes/overview) — styling layer (where most customisation happens)
-- [Docs content type](/user-guide/docs/overview) · [Blogs](/user-guide/blogs/overview) · [Issues](/user-guide/issues/overview) · [Custom pages](/user-guide/custom-pages/overview)
-- [Page Configuration](/user-guide/configuration/site/page) — full `pages:` entry schema in `site.yaml`
+- [Themes](../25_themes/01_overview.md) — styling layer (where most customisation happens)
+- [Docs content type](../17_docs/01_overview.md) · [Blogs](../18_blogs/01_overview.md) · [Issues](../19_issues/01_overview.md) · [Custom pages](../20_custom-pages/01_overview.md)
+- [Page Configuration](../10_configuration/03_site/08_page.md) — full `pages:` entry schema in `site.yaml`

@@ -19,7 +19,7 @@ The rule lives in the script, not in the markup:
 | `data-tip="…"` | Only when the element's text is **actually cropped** — the element or any descendant overflows horizontally (`scrollWidth > clientWidth + 1`) |
 | `data-tip="…" data-tip-always` | Always — for icons, symbols, and dots whose meaning isn't visible as text |
 
-This is the framework's [tooltips-only-when-needed standard](/dev-docs/architecture/layout-internals/ux-standards): fully visible text never gets a tooltip, because it would repeat what's already on screen. Non-text triggers (a status icon, an agent-log kind symbol, a file-type glyph) opt in with `data-tip-always` since they always need naming.
+This is the framework's [tooltips-only-when-needed standard](../05_architecture/05_layout-internals/08_ux-standards.md): fully visible text never gets a tooltip, because it would repeat what's already on screen. Non-text triggers (a status icon, an agent-log kind symbol, a file-type glyph) opt in with `data-tip-always` since they always need naming.
 
 ## Mechanism
 

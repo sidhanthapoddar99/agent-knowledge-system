@@ -171,4 +171,4 @@ Note the fallback pattern for `--font-size-xs` — required if your theme might 
 
 - [Layout Dimensions](../tokens/layout-dimensions) — `--sidebar-width`, `--outline-width`, `--navbar-height`
 - [Typography](../tokens/typography) — `--ui-text-*` tiers used in sidebar + outline
-- [Docs Content Type](/user-guide/docs/overview) — the content side (what's in the sidebar)
+- [Docs Content Type](../../17_docs/01_overview.md) — the content side (what's in the sidebar)

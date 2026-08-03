@@ -18,7 +18,7 @@ Before you reach for this, exhaust simpler options:
 
 | Symptom | Probably fixed by |
 |---|---|
-| "I want different colours / fonts / spacing" | [Theme override](/user-guide/themes/creating-themes/quick-start) |
+| "I want different colours / fonts / spacing" | [Theme override](../25_themes/06_creating-themes/01_quick-start.md) |
 | "I want the navbar to look different" | Theme's `navbar.css` override |
 | "I want a simpler docs layout (no sidebar)" | `layout: "@docs/compact"` — already ships |
 | "I want a different blog card style" | Theme override of blog CSS |
@@ -226,5 +226,5 @@ The layout appears at `@docs/kanban` and works identically.
 
 - [Layout System Overview](./overview) — the four content types + alias resolution
 - [Switching Layout Styles](./switching-styles) — picking between styles in `site.yaml`
-- [Custom Pages](/user-guide/custom-pages/overview) — the custom content type, which uses these same layout patterns for page-specific renderers
+- [Custom Pages](../20_custom-pages/01_overview.md) — the custom content type, which uses these same layout patterns for page-specific renderers
 - dev-docs / layout-system — `parts/` pattern, client JS conventions, `:global()` gotcha (developer-facing)

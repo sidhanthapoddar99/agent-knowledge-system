@@ -25,7 +25,7 @@ Every documentation folder (except the root doc folder) requires a `settings.jso
 | `label` | `string` | Yes | - | Display name shown in sidebar |
 | `isCollapsible` | `boolean` | No | `true` | Whether the section can be collapsed |
 | `collapsed` | `boolean` | No | `false` | Initial collapsed state |
-| `allow_diagram_pages` | `boolean` | No | `true` | **Section root only.** Set `false` to stop `.mmd`/`.dot`/`.excalidraw` files rendering as [first-class pages](/user-guide/writing-content/diagram-pages) in this section |
+| `allow_diagram_pages` | `boolean` | No | `true` | **Section root only.** Set `false` to stop `.mmd`/`.dot`/`.excalidraw` files rendering as [first-class pages](../15_writing-content/06_diagram-pages.md) in this section |
 
 ## Field Details
 

@@ -316,9 +316,9 @@ No alias is registered for this route: a serving route is neither a layout nor a
 need no `@artifacts` entry.
 
 The loader side (how an `.html` file becomes a page and gets its `data-src`) is
-in [Data Loading Engine](/dev-docs/architecture/data-loading#artifact-pages-the-same-seam-a-second-time);
+in [Data Loading Engine](./03_data-loading.md#artifact-pages-the-same-seam-a-second-time);
 the client renderer and theme handshake are in
-[Artifacts Script](/dev-docs/scripts/artifacts).
+[Artifacts Script](../15_scripts/12_artifacts.md).
 
 ## Reserved Base URLs
 

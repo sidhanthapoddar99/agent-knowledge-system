@@ -8,7 +8,7 @@ sidebar_position: 1
 
 Blog posts are `.md` files stored under `data/<blog-name>/` (convention: `data/blog/`, but the path is whatever you register via `site.yaml pages:` + the `@data` alias). This section covers everything you need to know to create and manage blog content.
 
-Sibling content types: [Docs](/user-guide/docs/overview) for hierarchical documentation, [Issues](/user-guide/issues/overview) for the folder-per-item tracker.
+Sibling content types: [Docs](../17_docs/01_overview.md) for hierarchical documentation, [Issues](../19_issues/01_overview.md) for the folder-per-item tracker.
 
 ## Quick Reference
 

@@ -78,6 +78,6 @@ Blog posts are flat and sort by **date, newest first**. There is **no blog sideb
 
 ## See also
 
-- [Docs → Structure](/user-guide/docs/structure) · [Blogs → Structure](/user-guide/blogs/structure)
-- Issue folders: [Comments](/user-guide/issues/sub-docs/comments) · [Notes](/user-guide/issues/sub-docs/notes) · [Brainstorm](/user-guide/issues/sub-docs/brainstorm) · [Subtasks](/user-guide/issues/sub-docs/subtasks) · [Agent Log](/user-guide/issues/sub-docs/agent-log) · [Agent Memory](/user-guide/issues/sub-docs/agent-memory)
-- [Detail View](/user-guide/issues/ui/detail-view) — the live issue sidebar these rules render into
+- [Docs → Structure](../../17_docs/02_structure.md) · [Blogs → Structure](../../18_blogs/03_structure.md)
+- Issue folders: [Comments](../../19_issues/05_sub-docs/02_comments.md) · [Notes](../../19_issues/05_sub-docs/04_notes.md) · [Brainstorm](../../19_issues/05_sub-docs/06_brainstorm.md) · [Subtasks](../../19_issues/05_sub-docs/03_subtasks.md) · [Agent Log](../../19_issues/05_sub-docs/05_agent-log.md) · [Agent Memory](../../19_issues/05_sub-docs/07_agent-memory.md)
+- [Detail View](../../19_issues/07_ui/02_detail-view.md) — the live issue sidebar these rules render into

@@ -5,7 +5,7 @@ description: Configure site theme and theme inheritance in site.yaml
 
 # Theme Configuration
 
-This page covers the `theme` and `theme_paths` fields in `site.yaml` — how to **select** a theme. For the full theme system (token contract, creating themes, variable reference), see the [Themes section](/user-guide/themes/overview).
+This page covers the `theme` and `theme_paths` fields in `site.yaml` — how to **select** a theme. For the full theme system (token contract, creating themes, variable reference), see the [Themes section](../../25_themes/01_overview.md).
 
 The `theme` field specifies which theme to use for the site's styling. The value is a **theme name** (not an alias).
 
@@ -47,4 +47,4 @@ extends: "@theme/default"  # Inherit from default
 supports_dark_mode: true
 ```
 
-See [Themes section](/user-guide/themes/overview) for complete details on creating and using themes, the token contract, and available variables.
+See [Themes section](../../25_themes/01_overview.md) for complete details on creating and using themes, the token contract, and available variables.

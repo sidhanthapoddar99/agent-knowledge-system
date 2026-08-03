@@ -374,6 +374,15 @@ for a tight report — patterns in [41_searching.md](references/40_operations/41
   normal**: gap-spaced prefixes exist precisely so `015` can be inserted later, and a
   number quoted in another file makes the numbering immutable.
 
+  **The same three reasons apply to a backticked *path*, and to a site-absolute
+  link.** `` `subtasks/040_execution/00_overview.md` `` is unmaintainable, unclickable
+  and un-searchable for exactly the same mechanical reason a backticked number is.
+  `[…](/todo/…)` is worse, because it renders as a working link and `move` skips
+  every target beginning with `/` — so it looks maintained and is not. **Relative
+  markdown link, or nothing.** The one exception is a file with nothing to link to
+  (outside the site, or a path being discussed as a value) — see the universal
+  conventions in `references/10_writing/10_writing.md`.
+
   A link reading `[010](./010_thing.md)` is still a number, just a clickable one — the
   link text must name the thing. Where the number genuinely is the subject (*"the first
   two digits are the iteration"*), it stays.

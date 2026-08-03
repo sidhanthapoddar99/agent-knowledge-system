@@ -243,7 +243,7 @@ files:
 
 ## See also
 
-- [Issues Content Type](/user-guide/issues/overview) — the content + data side
-- [Issues List View](/user-guide/issues/ui/list-view) — what the filter bar / state tabs look like
-- [Issues Detail View](/user-guide/issues/ui/detail-view) — three-column layout details
+- [Issues Content Type](../../19_issues/01_overview.md) — the content + data side
+- [Issues List View](../../19_issues/07_ui/01_list-view.md) — what the filter bar / state tabs look like
+- [Issues Detail View](../../19_issues/07_ui/02_detail-view.md) — three-column layout details
 - [Colors](../tokens/colors) — the `--color-*` tokens the badges consume

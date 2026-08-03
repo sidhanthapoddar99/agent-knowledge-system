@@ -88,7 +88,7 @@ The flow:
 > breakage somewhere the engine can no longer point at it.
 
 See `migration/README.md` for the script convention, and the dev-docs
-[Versioning section](/dev-docs/versioning/overview) for the full engineering
+[Versioning section](../../dev-docs/30_versioning/01_overview.md) for the full engineering
 detail (gate mechanics, floor discipline, authoring migrations).
 
 ## For engine maintainers — only breaking changes move the floor

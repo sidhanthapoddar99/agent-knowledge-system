@@ -69,7 +69,7 @@ The external directory mirrors the `src/layouts/` structure:
 
 > **Important:** External `.astro` files must use Vite aliases for imports (e.g., `@layouts/`, `@loaders/`) instead of relative paths, since they live outside `src/`.
 
-See [Layout System](/user-guide/layout-system/overview) for details on creating external layouts.
+See [Layout System](../16_layout-system/01_overview.md) for details on creating external layouts.
 
 ## Server Settings
 

@@ -19,7 +19,7 @@ For choosing and configuring layouts in `site.yaml`, see the [User Guide → Lay
 
 ## Data Interface Pattern
 
-The route handler passes different props to each layout type. See [Architecture → Data Loading](/dev-docs/architecture/data-loading) for the full flow.
+The route handler passes different props to each layout type. See [Architecture → Data Loading](../05_architecture/03_data-loading.md) for the full flow.
 
 | Layout | Pre-rendered content | Path passed | Loads internally |
 |--------|---------------------|-------------|-----------------|

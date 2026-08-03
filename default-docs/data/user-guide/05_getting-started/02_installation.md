@@ -97,9 +97,9 @@ PORT=3088
 HOST=true
 ```
 
-If you're working *on the framework itself* (editing the bundled `default-docs/`), switch to dogfood mode by changing `CONFIG_DIR` to `./default-docs/config`. See [Environment Variables](/user-guide/configuration/env) for both modes.
+If you're working *on the framework itself* (editing the bundled `default-docs/`), switch to dogfood mode by changing `CONFIG_DIR` to `./default-docs/config`. See [Environment Variables](../10_configuration/02_env.md) for both modes.
 
-Directory paths for content, assets, and themes are configured in `site.yaml`'s `paths:` section (see [Site Configuration](/user-guide/configuration/site/overview)).
+Directory paths for content, assets, and themes are configured in `site.yaml`'s `paths:` section (see [Site Configuration](../10_configuration/03_site/01_overview.md)).
 
 ## Step 4: Start Development
 
@@ -168,4 +168,4 @@ Check the error message for the specific file and line number.
 
 ## Next Steps
 
-Continue to [Configuration](/user-guide/configuration/overview) to customize your site.
+Continue to [Configuration](../10_configuration/01_overview.md) to customize your site.

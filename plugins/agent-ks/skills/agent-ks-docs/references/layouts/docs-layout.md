@@ -200,12 +200,26 @@ The outline is built from `##` and `###` headings in the page body. Use `#` only
 
 ## Cross-linking between docs pages
 
-Use relative paths or the resolved URL:
+**Every reference to a file in this project is a relative markdown link. There is no second option.**
 
 ```markdown
 See [installation](../getting-started/installation) for setup.
-See [installation](/user-guide/getting-started/installation) — also works.
 ```
+
+| Form | Means | Use for |
+|---|---|---|
+| `./x` · `../x` | relative to **this file's own directory** | every internal reference, including across sections |
+| `/x` | site-absolute, from the site root | nothing internal — see below |
+| `https://…` | external | services and pages outside this project |
+
+**Why the rule is not a preference.** `agent-ks move` keeps links alive when files move by resolving each target to a real filesystem path — and it **skips every link starting with `/`** (see *Move* below). A site-absolute link renders perfectly, works in a browser, and has silently opted out of link maintenance forever. It then rots on the next file move with nothing left to catch it.
+
+**Relative works across sections too** — `../../05_getting-started/03_aliases.md` from inside `10_configuration/03_site/` is resolved and rewritten correctly. There is no cross-section exception; the rule is one rule.
+
+**Write the path, not the URL.** Link the source file (`../getting-started/02_installation.md`) rather than its published slug. The renderer strips `NN_` prefixes and `.md` extensions and adjusts the URL depth for you, and `move` can only follow a link it can resolve on disk.
+
+> [!WARNING]
+> If a relative link 404s on the built site, that is a **renderer** bug, not an authoring one — do not "fix" it by converting to `/`. This exact mistake was made once: 341 content links were converted on that diagnosis before anyone opened the transform, and all 341 had to be reverted. See `astro-doc-code/src/parsers/postprocessors/internal-links.ts`.
 
 ## Validate
 
@@ -245,6 +259,9 @@ It rewrites links on **both sides** in one atomic pass:
 - **Text-mirror** — when a link's visible text is *itself the path* (optionally wrapped in a single pair of backticks, with or without the `#anchor`) — e.g. `` [`../a/b.md`](../a/b.md) ``, common in index tables — the text is rewritten to mirror the new target too, so the rendered text never disagrees with where it points. Descriptive labels (`[the guide](../a/b.md)`) are left untouched.
 
 External links (`http://`, `https://`, `mailto:` …), site-absolute links (leading `/`, including `/assets/…`), and pure-anchor links (`#section`) are left untouched. Every candidate link is resolved as a real filesystem path before being rewritten, so it never string-replaces a coincidental match.
+
+> [!IMPORTANT]
+> **"Left untouched" is why the link form above is a rule and not a style.** A site-absolute link is not maintained by anything — `move` cannot know what URL prefix a section publishes under, so it correctly declines, and the link is on its own from then on. This is the consequence half of *Cross-linking between docs pages*; the two used to sit 44 lines apart with nothing joining them, and that gap is how 341 links got converted to a form nothing could maintain.
 
 Flags:
 

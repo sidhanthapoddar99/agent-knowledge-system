@@ -214,7 +214,7 @@ What differs across scopes is just a boolean entry in each scope's `settings.jso
 }
 ```
 
-For a deep dive on the cache vs. the per-scope registration, see the dev-docs page on [plugin storage and scope](/dev-docs/plugins/storage-and-scope).
+For a deep dive on the cache vs. the per-scope registration, see the dev-docs page on [plugin storage and scope](../../dev-docs/25_plugins/02_storage-and-scope.md).
 
 ## Why three skills, not one or five?
 
@@ -227,4 +227,4 @@ If a future release adds something else genuinely orthogonal (custom themes, cus
 ## See also
 
 - [Installation](./02_installation.md) — full project install (clone + dependencies + run dev)
-- Dev-docs section on [plugins](/dev-docs/plugins/overview) — for the architecture of plugins themselves (how they work, how to author one)
+- Dev-docs section on [plugins](../../dev-docs/25_plugins/01_overview.md) — for the architecture of plugins themselves (how they work, how to author one)

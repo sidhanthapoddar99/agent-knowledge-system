@@ -59,4 +59,4 @@ procedure (see [The Version Gate](./version-gate)).
 | [Authoring Migrations](./authoring-migrations) | Writing a new migration script, testing it, shipping it |
 
 Consumer-facing summary: the user-guide's
-[Versioning & Migrations](/user-guide/configuration/versioning) page.
+[Versioning & Migrations](../../user-guide/10_configuration/07_versioning.md) page.

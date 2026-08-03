@@ -114,12 +114,20 @@ the sidebar shows.
 just described: the link still resolves, so nothing looks wrong. It simply tells the
 reader the target is somewhere it is not.
 
-- **Cross-issue / cross-file links**: standard markdown relative links
-  (`../2026-05-08-runtime-stack-migration/issue.md`) or backticked repo paths in
-  prose. `agent-ks move` rewrites real markdown links when files move — prefer them
-  over bare prose paths for anything load-bearing.
+- **Every reference to a page in this tracker is a relative markdown link**
+  (`[the migration script](../040_execution/100_migration-script.md)`). Not a
+  site-absolute `/todo/…` link, and not a backticked path. Three things a
+  backticked path costs, all of them silent: `agent-ks move` cannot rewrite it, so
+  it rots on the next file move; a reader cannot click it and gets no title, only
+  a path; an agent has to run a find-and-search to resolve it. **A site-absolute
+  link costs the first of those and hides it behind a link that renders perfectly.**
+- **Link text is free — use it.** `[the execution group's overview](../040_execution/00_overview.md)`
+  reads inside a sentence; `` `subtasks/040_execution/00_overview.md` `` interrupts
+  one and tells the reader nothing they did not already have.
 - **A repo file that is not a tracker page** has nothing to link to, so a backticked
-  path is correct there: `` `src/loaders/issues.ts` ``. That is a path, not a number.
+  path is correct there: `` `src/loaders/issues.ts` ``. That is the exception, and
+  it is about reachability — the file is outside the site — not about convenience.
+  The same applies to a path being discussed as a value rather than pointed at.
 - **`Related:` lines** at the end of a body are the convention for soft references
   (duplicate-check hits, sibling subtasks, superseded issues).
 - Ordering prefixes are **stripped from URL slugs** (`subtasks/020_impl/010_backend.md`

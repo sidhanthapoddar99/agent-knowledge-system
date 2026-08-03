@@ -144,4 +144,4 @@ Each of these freezes a value that should flow through the theme. The last one i
 
 - [Typography](../tokens/typography) — `--content-*` tokens the markdown styles consume
 - [Colors](../tokens/colors) — `--color-*` tokens for links, code backgrounds, borders
-- [Writing Content / Markdown Basics](/user-guide/writing-content/markdown-basics) — what the rendered output looks like from the author side
+- [Writing Content / Markdown Basics](../../15_writing-content/02_markdown-basics.md) — what the rendered output looks like from the author side

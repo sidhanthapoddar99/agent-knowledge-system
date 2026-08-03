@@ -248,6 +248,16 @@ export const MANIFEST = [
     summary: 'Maintainer tool: verify relative links between skill .md files resolve',
     flags: [{ name: 'json', desc: 'structured findings' }],
   },
+  {
+    bin: 'docs-check-links', group: 'check', verb: 'links', category: 2, script: 'check-content-links.mjs', runtime: 'mjs',
+    summary: 'Verify links between content pages resolve (run ./start build first)',
+    flags: [
+      { name: 'section', desc: 'check one page from site.yaml instead of all' },
+      { name: 'all', desc: 'include trackers (type: issues) — excluded by default' },
+      { name: 'dist', desc: 'built site to check against, if not auto-found' },
+      { name: 'json', desc: 'structured findings' },
+    ],
+  },
 
   // ---- docs content (group: doc) -------------------------------------------
   {

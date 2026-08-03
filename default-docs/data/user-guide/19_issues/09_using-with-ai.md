@@ -10,7 +10,7 @@ The tracker is designed to be AI-native — every file is plain markdown in a pr
 
 ## The `agent-ks-issues` skill
 
-The skill ships inside the **`agent-ks` Claude Code plugin** and **triggers on its own** — there is nothing to invoke. Naming an issue, a subtask, the backlog, a status, or any file under a tracker folder is enough, and so are the execution verbs: *audit this*, *refactor this*, *run a loop on this*, *let's discuss this point*. Install the plugin once per machine and every project picks it up — see [Claude Code Plugin](/user-guide/getting-started/claude-skills).
+The skill ships inside the **`agent-ks` Claude Code plugin** and **triggers on its own** — there is nothing to invoke. Naming an issue, a subtask, the backlog, a status, or any file under a tracker folder is enough, and so are the execution verbs: *audit this*, *refactor this*, *run a loop on this*, *let's discuss this point*. Install the plugin once per machine and every project picks it up — see [Claude Code Plugin](../05_getting-started/05_claude-skills.md).
 
 It teaches the agent:
 
@@ -228,7 +228,7 @@ A well-briefed agent, equipped with the skill and the CLI, can run for hours aut
 
 ## See also
 
-- [Claude Code Plugin](/user-guide/getting-started/claude-skills) — installing the skills and the CLI
+- [Claude Code Plugin](../05_getting-started/05_claude-skills.md) — installing the skills and the CLI
 - [Lifecycle and Review](./setup/lifecycle-and-review) — the seven-status / four-category model the skill enforces
 - [Agent Log](./sub-docs/agent-log) — the run shape, the round-file head, the worked examples
 - [Plans](./sub-docs/plans) — where order lives, and what a stage may reference

@@ -8,11 +8,11 @@ sidebar_position: 8
 
 The rules behind the framework's interaction details. They were first shipped in the issues layout and are now the standard for **every** layout surface — a new layout (or a change to an existing one) should follow them, and a reviewer should be able to point at this page when one is violated.
 
-These are *rules with rationale*, not a feature changelog. The concrete symbol legends live where users look for them: the issue **Guide** panel (generated from code constants) and the [user-guide detail-view page](/user-guide/issues/ui/detail-view).
+These are *rules with rationale*, not a feature changelog. The concrete symbol legends live where users look for them: the issue **Guide** panel (generated from code constants) and the [user-guide detail-view page](../../../user-guide/19_issues/07_ui/02_detail-view.md).
 
 ## 1. Tooltips only when they add information
 
-A tooltip that repeats fully visible text is noise. The site-wide tooltip (`src/scripts/tooltip.ts`, see [Scripts → Tooltip](/dev-docs/scripts/tooltip)) enforces this centrally:
+A tooltip that repeats fully visible text is noise. The site-wide tooltip (`src/scripts/tooltip.ts`, see [Scripts → Tooltip](../../15_scripts/18_tooltip.md)) enforces this centrally:
 
 - **Text rows** carry `data-tip` unconditionally, but the tip shows **only when the text is actually cropped** (ellipsis). The markup declares *what* the tip says; the script decides *whether* it's needed.
 - **Icons, symbols, dots** carry `data-tip-always` — their meaning is never visible as text, so they always need naming (a status icon says "In Progress", an agent-log kind symbol says "audit", a type glyph says "Diagram").

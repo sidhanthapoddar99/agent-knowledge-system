@@ -149,6 +149,12 @@ An issue is one folder — one coherent unit of *thinking + execution*.
   never \`\\\`050\\\`\`. Prefixes are gap-spaced so files can be inserted between them, and
   \`agent-ks move\` rewrites real links when a file moves; a backticked number is prose
   to every tool that exists, so it breaks silently and reports nothing.
+- **The link is RELATIVE — \`./x\` or \`../x\`, never a leading \`/\`.** A backticked
+  *path* costs the same three things a backticked number does: nothing maintains it,
+  nobody can click it, and an agent has to go searching. A site-absolute
+  \`[…](/todo/…)\` is worse — it renders as a working link, and \`agent-ks move\`
+  skips every target beginning with \`/\`, so it looks maintained and is not. The one
+  exception is a file with nothing to link to, such as source code outside the site.
 - **To keep the number too, open the link text with the target's ORDERING PATH** —
   \`[040/100 the migration script](…/subtasks/040_execution/100_migration-script.md)\`.
   The sidebar lists entries by number, so the label is what lets you match a link

@@ -8,7 +8,7 @@ sidebar_position: 5
 
 Blog posts use a **central assets folder** organized by post slug. This differs from docs where assets are relative to each file.
 
-For the general `[[path]]` syntax (shared across content types), see [Asset Embedding](/user-guide/writing-content/asset-embedding).
+For the general `[[path]]` syntax (shared across content types), see [Asset Embedding](../15_writing-content/03_asset-embedding.md).
 
 ## Assets Folder Structure
 

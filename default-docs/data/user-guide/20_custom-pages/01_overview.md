@@ -18,9 +18,9 @@ A custom page is **one YAML file rendered by a layout that knows its schema**. U
 | About / contact / legal page | **Custom** (`@custom/info`) |
 | Event countdown / milestone banner | **Custom** (`@custom/countdown`) |
 | Dashboard / status board / changelog-hero | **Custom** (build your own layout) |
-| A document with headings, prose, code blocks | [Docs](/user-guide/docs/overview) |
-| A dated post (article, announcement) | [Blog](/user-guide/blogs/overview) |
-| A work item with metadata + state | [Issues](/user-guide/issues/overview) |
+| A document with headings, prose, code blocks | [Docs](../17_docs/01_overview.md) |
+| A dated post (article, announcement) | [Blog](../18_blogs/01_overview.md) |
+| A work item with metadata + state | [Issues](../19_issues/01_overview.md) |
 
 The rule of thumb: **if the page is primarily structured (hero + features, timer + target, form + fields), it's custom.** If the page is primarily prose (paragraphs + headings + code), it's docs or blog.
 
@@ -152,7 +152,7 @@ Three pages, same layout, different data files. Standard pattern.
 
 ## See also
 
-- [Layout System Overview](/user-guide/layout-system/overview) — how layouts are picked in general
-- [Layout System / Custom Layout Styles](/user-guide/layout-system/custom-layout-styles) — shipping layouts via `LAYOUT_EXT_DIR`
-- [Page Configuration](/user-guide/configuration/site/page) — full `pages:` entry schema
-- [Data Structure](/user-guide/getting-started/data-structure) — where `data/pages/` sits
+- [Layout System Overview](../16_layout-system/01_overview.md) — how layouts are picked in general
+- [Layout System / Custom Layout Styles](../16_layout-system/03_custom-layout-styles.md) — shipping layouts via `LAYOUT_EXT_DIR`
+- [Page Configuration](../10_configuration/03_site/08_page.md) — full `pages:` entry schema
+- [Data Structure](../05_getting-started/04_data-structure.md) — where `data/pages/` sits

@@ -58,7 +58,7 @@ draft: true
 ---
 ```
 
-Visible in dev, hidden in prod. Full details in [Drafts](/user-guide/writing-content/drafts) — including the tracker-wide `"draft": true` in an issues root `settings.json`, which hides a whole issues tracker from prod.
+Visible in dev, hidden in prod. Full details in [Drafts](../15_writing-content/05_drafts.md) — including the tracker-wide `"draft": true` in an issues root `settings.json`, which hides a whole issues tracker from prod.
 
 ### Whole section (pages + navbar items) — planned
 
@@ -123,7 +123,7 @@ Part of the same feature ship: dev-mode visual indicators — badges or icons on
 
 ## See also
 
-- [Drafts](/user-guide/writing-content/drafts) — the per-file flag, detailed usage
-- [Page Configuration](/user-guide/configuration/site/page) — where page entries are declared in `site.yaml`
-- [Navbar Configuration](/user-guide/configuration/navbar) — where navbar items are declared
+- [Drafts](../15_writing-content/05_drafts.md) — the per-file flag, detailed usage
+- [Page Configuration](./03_site/08_page.md) — where page entries are declared in `site.yaml`
+- [Navbar Configuration](./04_navbar.md) — where navbar items are declared
 - Issue `2025-06-25-dev-only-content` — tracks the planned `hideInProd` work

@@ -197,7 +197,7 @@ Fail soft, log the problem, keep the page rendering.
 
 ## Consuming theme tokens
 
-**Never hardcode colours, font sizes, or spacing** in a custom layout. The whole framework depends on this discipline — see [Rules for Layout Authors](/user-guide/themes/rules-for-layout-authors).
+**Never hardcode colours, font sizes, or spacing** in a custom layout. The whole framework depends on this discipline — see [Rules for Layout Authors](../25_themes/10_rules-for-layout-authors.md).
 
 ```astro
 <style>
@@ -228,7 +228,7 @@ Fail soft, log the problem, keep the page rendering.
 </style>
 ```
 
-Full token list: [The Theme Contract](/user-guide/themes/the-theme-contract).
+Full token list: [The Theme Contract](../25_themes/02_the-theme-contract.md).
 
 ### Display vs UI tokens
 
@@ -248,7 +248,7 @@ And for rendered prose (if you embed markdown), use **content tokens**:
 
 - `--content-body`, `--content-h1` through `--content-h6`, `--content-code`
 
-Picking the right token tier matters. See [Typography](/user-guide/themes/tokens/typography).
+Picking the right token tier matters. See [Typography](../25_themes/04_tokens/03_typography.md).
 
 ## Where to put your layout
 
@@ -272,7 +272,7 @@ layouts/custom/<style-name>/
 
 `layouts/` lives at your project root (sibling of `config/` and `data/`). Set `LAYOUT_EXT_DIR=../layouts` in `.env` (the path is relative to the framework folder where `.env` lives — `../layouts` reaches up to your project root). The layout is immediately available at `@custom/<style-name>` in `site.yaml`.
 
-Full setup: [Custom Layout Styles](/user-guide/layout-system/custom-layout-styles).
+Full setup: [Custom Layout Styles](../16_layout-system/03_custom-layout-styles.md).
 
 ### Import rules when outside `src/`
 
@@ -390,6 +390,6 @@ Minimum verification before shipping:
 ## See also
 
 - [Using Built-in Layouts](./using-built-in-layouts) — study `home`, `info`, `countdown` as references
-- [Layout System / Custom Layout Styles](/user-guide/layout-system/custom-layout-styles) — the `LAYOUT_EXT_DIR` + `@ext-layouts` mechanism
-- [Themes / Rules for Layout Authors](/user-guide/themes/rules-for-layout-authors) — the no-hardcoded-values discipline
-- [Themes / Tokens](/user-guide/themes/tokens/overview) — what tokens to consume, which to avoid
+- [Layout System / Custom Layout Styles](../16_layout-system/03_custom-layout-styles.md) — the `LAYOUT_EXT_DIR` + `@ext-layouts` mechanism
+- [Themes / Rules for Layout Authors](../25_themes/10_rules-for-layout-authors.md) — the no-hardcoded-values discipline
+- [Themes / Tokens](../25_themes/04_tokens/01_overview.md) — what tokens to consume, which to avoid

@@ -35,7 +35,7 @@ Every issue folder has a `settings.json` at its root. It holds the metadata — 
 | `labels` | string[] | ✅ | Multi-select from `fields.labels.values` — any subset |
 | `author` | string | ✅ | The person who filed it. From `authors[]` in the tracker root |
 | `assignees` | string[] | ✅ | From `authors[]`. Empty array is fine |
-| `draft` | bool | — | `true` → issue hidden in prod builds (see [Drafts](/user-guide/writing-content/drafts)) |
+| `draft` | bool | — | `true` → issue hidden in prod builds (see [Drafts](../../15_writing-content/05_drafts.md)) |
 | `agentLogKinds` | object | — | Custom agent-log kind codes for this issue, merged over the framework defaults. See below. |
 
 Enum fields are validated at load time — the tracker-defined fields (`priority`, `component`, `labels`) against the tracker's root `settings.json` vocabulary, and `status` against the framework's fixed lifecycle set. An unknown tracker-field value produces a warning (visible in the error-logger dev-toolbar app); the issue still loads, but the value may not render cleanly. An unknown `status`, by contrast, is a hard error — the lifecycle vocabulary can't be extended per-tracker.
@@ -91,7 +91,7 @@ Both modes compose the same way as every other filter — AND across fields, OR 
 
 ### `draft`
 
-Same flag used by docs and blogs (see [Drafts](/user-guide/writing-content/drafts)). Per-issue `"draft": true` hides the one issue in production while keeping it visible in dev. To hide a whole tracker, set `"draft": true` in the tracker's **root** `settings.json` (see [Vocabulary](./vocabulary)).
+Same flag used by docs and blogs (see [Drafts](../../15_writing-content/05_drafts.md)). Per-issue `"draft": true` hides the one issue in production while keeping it visible in dev. To hide a whole tracker, set `"draft": true` in the tracker's **root** `settings.json` (see [Vocabulary](./vocabulary)).
 
 ### `agentLogKinds`
 
@@ -145,4 +145,4 @@ Three flags shape the output:
 
 - [Vocabulary](./vocabulary) — the tracker-root `settings.json` that defines enum values and colors
 - [Folder Structure](../folder-structure) — where this file sits
-- [Drafts](/user-guide/writing-content/drafts) — the draft flag in the broader framework
+- [Drafts](../../15_writing-content/05_drafts.md) — the draft flag in the broader framework

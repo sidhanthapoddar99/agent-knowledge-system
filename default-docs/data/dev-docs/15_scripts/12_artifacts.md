@@ -12,9 +12,9 @@ Turns each server-emitted `.artifact-html` placeholder into a same-origin
 `<iframe>` pointing at the reserved `/artifacts/<path>` route, propagates the
 site theme into it, and hangs the embed affordances off it. It is the
 client-side half of the artifact content type; the loader that emits the
-placeholder is [`artifact-pages.ts`](/dev-docs/architecture/data-loading#artifact-pages-the-same-seam-a-second-time)
+placeholder is [`artifact-pages.ts`](../05_architecture/03_data-loading.md#artifact-pages-the-same-seam-a-second-time)
 and the route it points at is the
-[reserved artifact route](/dev-docs/architecture/routing#the-reserved-artifact-route).
+[reserved artifact route](../05_architecture/02_routing.md#the-reserved-artifact-route).
 
 ## How It Works
 
@@ -70,7 +70,7 @@ full-page view (this script's propagation would leave the full-page view untheme
 its own), with no flash of unthemed content. `theme: "self"` (the default) is served
 byte-for-byte. The mechanism, the head-start insertion point, and the content-hash
 ETag that busts on a theme change are documented in
-[the reserved artifact route](/dev-docs/architecture/routing#the-reserved-artifact-route);
+[the reserved artifact route](../05_architecture/02_routing.md#the-reserved-artifact-route);
 authoring the two modes lives in the `agent-ks-artifacts` skill, and
 `agent-ks theme tokens --json` prints the live variable→value map the route injects
 (it resolves the active theme the same way the engine does — `site.yaml` name →
@@ -85,7 +85,7 @@ theming section.
 
 > **Why not the diagram invert filter?** Diagrams get dark mode via a blanket
 > `filter: invert(1) hue-rotate(180deg)` on the rendered SVG (see
-> [Diagrams](/dev-docs/scripts/diagrams#dark-mode)). That is correct for
+> [Diagrams](./10_diagrams.md#dark-mode)). That is correct for
 > monochrome SVG but would **destroy** an artifact's photographs, gradients, and
 > brand colors. Artifacts are never inverted — the attribute handshake is the
 > only theme mechanism, and honoring it is the artifact's own job.
@@ -146,7 +146,7 @@ Registered in `BaseLayout.astro` beside the other content scripts:
 
 This exact script and CSS also drive artifacts **inside the issue tracker** —
 nothing here is docs-specific. The issues loader
-([`src/loaders/issues.ts`](/dev-docs/architecture/data-loading#artifact-pages-the-same-seam-a-second-time))
+([`src/loaders/issues.ts`](../05_architecture/03_data-loading.md#artifact-pages-the-same-seam-a-second-time))
 treats a `.html` file in an issue's `notes/` or `brainstorm/` folder as a
 supporting doc and emits the identical `.artifact-html` container by calling the
 shared `artifactContainerHtml()` from `artifact-pages.ts` — same `<name>.meta.json`

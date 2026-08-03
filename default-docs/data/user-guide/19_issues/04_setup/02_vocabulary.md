@@ -286,7 +286,7 @@ All fields except `name` are optional — a preset with just `group` applied to 
 - **In dev**: tracker loads normally, every issue visible.
 - **In prod**: loader returns `{ vocabulary, rootDraft: true, issues: [] }`. The tracker's URL shows an empty index; individual issue URLs 404.
 
-Use for trackers that are **never meant for public view** (internal roadmaps, draft trackers being staged). For per-issue dev-only, use `"draft": true` in an individual issue's `settings.json` instead. See [Drafts](/user-guide/writing-content/drafts) and [Dev Mode](/user-guide/configuration/dev-mode).
+Use for trackers that are **never meant for public view** (internal roadmaps, draft trackers being staged). For per-issue dev-only, use `"draft": true` in an individual issue's `settings.json` instead. See [Drafts](../../15_writing-content/05_drafts.md) and [Dev Mode](../../10_configuration/06_dev-mode.md).
 
 ## See also
 

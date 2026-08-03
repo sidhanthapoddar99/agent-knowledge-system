@@ -89,7 +89,7 @@ print("hello")
 ### Links
 
 ```markdown
-[Internal Link](/user-guide/getting-started/overview)
+[Internal Link](../05_getting-started/01_overview.md)
 [External Link](https://github.com)
 [Anchor Link](#headings)
 ```

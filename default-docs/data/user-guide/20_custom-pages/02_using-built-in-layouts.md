@@ -84,7 +84,7 @@ pages:
 - **Hero** — title (large display text), subtitle below, CTA buttons underneath
 - **Features** — responsive grid (3 columns desktop, 1 on mobile), each card with icon + title + description
 
-Buttons, typography, and card styling all consume theme tokens — the layout reskins automatically with different themes. See [Themes](/user-guide/themes/overview).
+Buttons, typography, and card styling all consume theme tokens — the layout reskins automatically with different themes. See [Themes](../25_themes/01_overview.md).
 
 ### Tips
 
@@ -276,6 +276,6 @@ Flat directory, one file per page. Named to match the URL slug where possible (e
 ## See also
 
 - [Creating Custom Layouts](./creating-custom-layouts) — write your own when the three built-ins don't fit
-- [Layout System / Switching Styles](/user-guide/layout-system/switching-styles) — `layout:` field mechanics
-- [Page Configuration](/user-guide/configuration/site/page) — full `pages:` entry schema
-- [Themes](/user-guide/themes/overview) — how the countdown's colours, hero display-size, and card styling get themed
+- [Layout System / Switching Styles](../16_layout-system/02_switching-styles.md) — `layout:` field mechanics
+- [Page Configuration](../10_configuration/03_site/08_page.md) — full `pages:` entry schema
+- [Themes](../25_themes/01_overview.md) — how the countdown's colours, hero display-size, and card styling get themed

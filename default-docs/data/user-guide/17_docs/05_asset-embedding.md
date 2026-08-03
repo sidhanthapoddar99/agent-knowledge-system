@@ -8,7 +8,7 @@ sidebar_position: 5
 
 The `assets` folder stores external files like code snippets and images. This page covers asset management specific to documentation.
 
-For the general `[[path]]` syntax (shared across content types), see [Asset Embedding](/user-guide/writing-content/asset-embedding).
+For the general `[[path]]` syntax (shared across content types), see [Asset Embedding](../15_writing-content/03_asset-embedding.md).
 
 ## Assets Folder Structure
 

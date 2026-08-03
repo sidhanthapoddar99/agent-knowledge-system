@@ -82,7 +82,7 @@ One style ships by default — the blog surface is flat enough that multiple var
 |---|---|
 | `@issues/default` | Filter bar + state tabs + sortable list on index · three-column detail (sidebar + tabs + metadata form) |
 
-One style ships. See [Issues List View](/user-guide/issues/ui/list-view) and [Issues Detail View](/user-guide/issues/ui/detail-view) for the full detail-page tour.
+One style ships. See [Issues List View](../19_issues/07_ui/01_list-view.md) and [Issues Detail View](../19_issues/07_ui/02_detail-view.md) for the full detail-page tour.
 
 ### Custom
 
@@ -94,7 +94,7 @@ One layout **per page type**, not per content-type collection:
 | `@custom/info` | Title + description + optional content — about/contact pattern |
 | `@custom/countdown` | Live countdown timer — event landing pattern |
 
-These are less "styles of the same layout" and more "distinct layouts for distinct page intents." Each consumes its own YAML schema. See [Custom Pages / Using Built-in Layouts](/user-guide/custom-pages/using-built-in-layouts).
+These are less "styles of the same layout" and more "distinct layouts for distinct page intents." Each consumes its own YAML schema. See [Custom Pages / Using Built-in Layouts](../20_custom-pages/02_using-built-in-layouts.md).
 
 ### Navbar
 
@@ -176,5 +176,5 @@ A few rules of thumb:
 
 - [Layout System Overview](./overview) — the four content types and how resolution works
 - [Custom Layout Styles](./custom-layout-styles) — ship your own style via `@ext-layouts`
-- [Page Configuration](/user-guide/configuration/site/page) — the full `pages:` entry schema
-- [Navbar Configuration](/user-guide/configuration/navbar) · [Footer Configuration](/user-guide/configuration/footer)
+- [Page Configuration](../10_configuration/03_site/08_page.md) — the full `pages:` entry schema
+- [Navbar Configuration](../10_configuration/04_navbar.md) · [Footer Configuration](../10_configuration/05_footer.md)

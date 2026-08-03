@@ -156,5 +156,5 @@ The last one is especially dangerous — in dark mode, your navbar stays white.
 ## See also
 
 - [Layout Dimensions](../tokens/layout-dimensions) — `--navbar-height` and why sticky elements depend on it
-- [Navbar Configuration](/user-guide/configuration/navbar) — content side (what goes in the bar)
+- [Navbar Configuration](../../10_configuration/04_navbar.md) — content side (what goes in the bar)
 - [Dark Mode](../dark-mode) — the `[data-theme="dark"]` pattern

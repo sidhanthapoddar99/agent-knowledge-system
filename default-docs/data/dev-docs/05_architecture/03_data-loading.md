@@ -189,7 +189,7 @@ loadContent(dataPath, 'docs')
 The render trick is the diagram trick again: an artifact page's `content` is a
 container `<div>`, and the BaseLayout client script (`scripts/artifacts.ts`)
 turns it into an `<iframe>` at runtime — see
-[Artifacts Script](/dev-docs/scripts/artifacts). Because the artifact carries
+[Artifacts Script](../15_scripts/12_artifacts.md). Because the artifact carries
 `headings: []`, the outline column auto-hides and the artifact gets the full
 content width.
 
@@ -253,9 +253,9 @@ under `artifact:` is passed straight through onto `entry.data.artifact`.
 
 Consumer-facing view: user-guide `15_writing-content/08_artifact-pages.md` and
 the live `20_examples/02_artifact-showcase.md`. The route that serves the iframe `src` and
-the reserved-URL guard are in [Routing System](/dev-docs/architecture/routing);
+the reserved-URL guard are in [Routing System](./02_routing.md);
 the client renderer, theme handshake, and full design rationale are in
-[Artifacts Script](/dev-docs/scripts/artifacts).
+[Artifacts Script](../15_scripts/12_artifacts.md).
 
 ## loadFile — Single File Load
 

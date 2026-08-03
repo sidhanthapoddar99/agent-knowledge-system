@@ -1,6 +1,6 @@
 ---
 title: "Silent-failure defects — three gates that passed what they should have refused"
-status: in-progress
+status: done
 ---
 
 # Overview
@@ -43,10 +43,14 @@ the defect is reintroduced — not merely a note describing it.
       executed rather than transcribed
 - [x] `020` — `loadSiteConfig()` now refuses a `pages.*.data` path that does not
       exist, reporting every offender at once
-- [x] `030` — the skill-link gate now anchors on the current directory, falls
-      back to the installed copy **with a warning**, and names which tree it read
+- [x] `030` — the skill-link gate stopped reading the installed plugin. Its own
+      fix — a walk-up from the current directory — was itself a guess, corrected
+      by [`040`](./040_two-commands-not-one-guess.md)
 - [x] Sid signed off on all three, 2026-08-03 — `010`, `020` and `030` are `done`
-- [ ] `040` — two commands instead of one guess, and the walk-up reverted
+- [x] `040` — two commands instead of one guess, the walk-up reverted, and
+      `agent-ks --version` built after the record claimed it. Closed by the
+      reinstall: run from inside this repo, `agent-ks` now reports the plugin
+      cache where it used to report the repo
 
 # Outcomes and Next Steps
 

@@ -6,6 +6,7 @@ status: open
 subtasks:
   - "[Relative links are the contract](../../subtasks/100_link-integrity/020_relative-links-are-the-contract.md)"
   - "[Link it, don't name it](../../subtasks/100_link-integrity/080_link-it-dont-name-it.md)"
+  - "[Links whose target does not exist](../../subtasks/100_link-integrity/100_links-whose-target-does-not-exist.md)"
 ---
 
 ## Todo

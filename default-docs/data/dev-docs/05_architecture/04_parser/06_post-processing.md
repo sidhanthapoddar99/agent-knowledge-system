@@ -75,7 +75,7 @@ const customHeadingIds = createHeadingIdsPostprocessor({
 
 ### Internal Links
 
-Rewrites relative markdown links to match the generated URL slugs by stripping `NN_` position prefixes and `.md`/`.mdx` file extensions:
+Rewrites relative markdown links to match the generated URL slugs — stripping `NN_` position prefixes and `.md`/`.mdx` file extensions, and shifting the link **up one level** to cancel the segment the page's own URL adds:
 
 ```html
 <!-- Input -->
@@ -83,8 +83,8 @@ Rewrites relative markdown links to match the generated URL slugs by stripping `
 <a href="../03_advanced/01_setup.md#config">Setup</a>
 
 <!-- Output -->
-<a href="./consensus-mechanism">Consensus</a>
-<a href="../advanced/setup#config">Setup</a>
+<a href="../consensus-mechanism">Consensus</a>
+<a href="../../advanced/setup#config">Setup</a>
 ```
 
 **What it does:**
@@ -95,6 +95,23 @@ Rewrites relative markdown links to match the generated URL slugs by stripping `
 | Strip `NN_` prefix | `./02_getting-started` | `./getting-started` |
 | Strip `/index` suffix | `./section/index` | `./section` |
 | Preserve fragments | `./02_guide.md#setup` | `./guide#setup` |
+| **Shift up one level** | `./guide` | `../guide` |
+
+#### Why the level shift exists
+
+Links are authored against **the file's own directory on disk** — that is what a markdown editor previews, what a link checker resolves, and what `agent-ks move` recomputes when a file moves. But a page is emitted as `<slug>/index.html` and served with a trailing slash, so the file's own *name* becomes a directory segment in the URL:
+
+| | Path | Base a browser resolves against |
+|---|---|---|
+| Source | `05_getting-started/02_installation.md` | `05_getting-started/` |
+| URL | `/user-guide/getting-started/installation/` | `…/getting-started/installation/` |
+
+The URL base is one level deeper than the source directory, so `./claude-skills` would resolve to `…/installation/claude-skills` and 404. Prepending one `..` cancels exactly that.
+
+**Index pages are exempt.** `DocsParser.generateSlug` collapses a trailing `/index`, so `a/index.md` publishes at `a` and its URL base already *is* its source directory. Shifting those would break them in the opposite direction — it is the only special case in the transform.
+
+> [!WARNING]
+> **Do not "fix" this in the content by writing site-absolute links.** They render correctly and `agent-ks move` skips every link starting with `/`, so a converted link silently leaves link maintenance and rots on the next file move. Relative links are the authoring contract; this transform is what makes them resolve.
 | Skip absolute URLs | `https://example.com` | *(unchanged)* |
 | Skip root-relative | `/docs/guide` | *(unchanged)* |
 

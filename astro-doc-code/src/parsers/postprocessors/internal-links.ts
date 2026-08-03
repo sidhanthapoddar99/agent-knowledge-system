@@ -4,10 +4,36 @@
  *   - Strips .md/.mdx extensions
  *   - Strips XX_ position prefixes from path segments
  *   - Preserves fragment identifiers (#section)
+ *   - Shifts the link up one level, because the page's URL is one level deeper
+ *     than its source directory (see below)
  *
- * Example: ./02_consensus-mechanism.md#overview → ./consensus-mechanism#overview
+ * Example: ./02_consensus-mechanism.md#overview → ../consensus-mechanism#overview
+ *
+ * THE URL-DEPTH SHIFT, which is the whole reason this file is not a simple
+ * string strip. Links are authored against the file's own directory on disk —
+ * that is what an editor previews, what a link checker resolves, and what
+ * `agent-ks move` recomputes. But a page is emitted as `<slug>/index.html` and
+ * served with a trailing slash, so the file's own NAME has become a directory
+ * segment in the URL:
+ *
+ *   source  05_getting-started/02_installation.md   base: 05_getting-started/
+ *   URL     /user-guide/getting-started/installation/   base: …/installation/
+ *
+ * So `./05_claude-skills.md` — correct on disk, sitting right beside the file —
+ * resolved to …/installation/claude-skills and 404'd. Every relative link on
+ * every non-index page was broken this way.
+ *
+ * This was originally diagnosed as an authoring problem and 341 content links
+ * were rewritten to site-absolute form before anyone opened this file. Do not do
+ * that: `agent-ks move` skips links starting with `/`, so the absolute form
+ * renders fine and silently leaves link maintenance forever.
+ *
+ * INDEX PAGES ARE EXEMPT. `DocsParser.generateSlug` collapses a trailing
+ * `/index`, so `a/index.md` publishes at `a` and its URL base already IS its
+ * source directory. Shifting those would break them in the opposite direction.
  */
 
+import path from 'node:path';
 import type { Processor, ProcessContext } from '../types';
 import { stripOrderPrefix } from '../core/order-prefix';
 
@@ -19,9 +45,27 @@ function stripPrefix(segment: string): string {
 }
 
 /**
- * Rewrite a relative href to match the generated slug
+ * Does this page's slug collapse onto its own source directory?
+ *
+ * Mirrors `DocsParser.generateSlug`, which strips the extension and then applies
+ * `.replace(/\/index$/, '')`. The leading slash in that pattern matters: a
+ * content-root-level `index.md` has no parent segment, so it is NOT collapsed
+ * and is NOT exempt. Kept as a mirror of that one line rather than a guess about
+ * it — if the slug rule changes, this has to change with it.
  */
-function rewriteHref(href: string): string {
+function isIndexPage(context: ProcessContext): boolean {
+  if (!context.basePath || !context.filePath) return false;
+  const rel = path.relative(context.basePath, context.filePath).replace(/\\/g, '/');
+  return /\/index$/.test(rel.replace(/\.(mdx|md)$/, ''));
+}
+
+/**
+ * Rewrite a relative href to match the generated slug.
+ *
+ * `addLevel` prepends one `..` to compensate for the page's URL being one
+ * segment deeper than its source directory. False only for index pages.
+ */
+function rewriteHref(href: string, addLevel: boolean): string {
   // Only process relative links (./  ../  or bare filenames ending in .md)
   if (!href.startsWith('./') && !href.startsWith('../') && !href.match(/\.mdx?($|#)/)) {
     return href;
@@ -44,6 +88,13 @@ function rewriteHref(href: string): string {
   // Remove /index suffix (index pages resolve to parent)
   pathPart = pathPart.replace(/\/index$/, '');
 
+  // Shift up one level to cancel the segment the page's own URL adds.
+  // path.posix.join normalises all three input shapes correctly:
+  //   ./x → ../x     ../x → ../../x     x → ../x
+  if (addLevel && pathPart) {
+    pathPart = path.posix.join('..', pathPart);
+  }
+
   return pathPart + fragment;
 }
 
@@ -63,6 +114,8 @@ export const internalLinksPostprocessor: Processor = {
       );
     }
 
+    const addLevel = !isIndexPage(context);
+
     return content.replace(
       /<a\s+([^>]*?)href\s*=\s*["']([^"']+)["']([^>]*)>/gi,
       (match, before, href, after) => {
@@ -71,7 +124,7 @@ export const internalLinksPostprocessor: Processor = {
           return match;
         }
 
-        const newHref = rewriteHref(href);
+        const newHref = rewriteHref(href, addLevel);
         if (newHref === href) return match;
 
         return `<a ${before}href="${newHref}"${after}>`;

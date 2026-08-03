@@ -1,6 +1,6 @@
 ---
 title: "Relative links render one level too deep — the renderer, not the content"
-status: open
+status: review
 ---
 
 # Overview
@@ -44,29 +44,76 @@ content file had to change to make it true.
 
 # Todo list
 
-- [ ] Add the URL-depth adjustment to `rewriteHref()` in `internal-links.ts`:
-      prepend one level (`path.posix.join('..', pathPart)`) for every page whose
-      slug does **not** collapse to its own directory
-- [ ] Exempt index pages — `generateSlug` maps `a/index.md` to `a`, so an index
-      page's URL base already **is** its source directory and must not be shifted
-- [ ] **Control test, both directions.** A relative link must resolve after the
-      fix, and reverting the fix must make the same link 404. A test that only
-      passes after the change proves nothing about whether it can fail
-- [ ] Verify against the built site over real HTTP, not by reasoning about paths
-      — serve `dist/` and assert the status code
-- [ ] Re-measure the sections [`150`](./040_site-wide-link-rot.md) counted
-      (`user-guide` 243, `dev-docs` 70) and record the after numbers beside the
-      before ones
-- [ ] Confirm **zero content files changed** as part of this fix. If any content
-      edit is needed to make a link resolve, the fix is in the wrong place
-- [ ] Update the page documenting this transform:
-      `default-docs/data/dev-docs/05_architecture/04_parser/06_post-processing.md`
+- [x] Add the URL-depth adjustment to `rewriteHref()` —
+      `path.posix.join('..', pathPart)`, gated on `addLevel`
+- [x] Exempt index pages — `isIndexPage()` mirrors `generateSlug`'s
+      `.replace(/\/index$/, '')` line for line, including the leading slash
+- [x] **Control test, both directions** — 418 errors with the shift disabled, 55
+      with it enabled, same tree and the same 15,589 links
+- [x] Verify over real HTTP against a served `dist/`
+- [x] Re-measure and record before/after
+- [x] Confirm **zero content files changed**
+- [x] Update `default-docs/data/dev-docs/05_architecture/04_parser/06_post-processing.md`
 
 # Outcomes and Next Steps
 
-> [!IMPORTANT]
-> **PLACEHOLDER** — cause identified and the revert landed; the fix itself is not
-> written. Next action is the `rewriteHref()` change plus its control test.
+**Fixed 2026-08-03. Three lines of logic, and the diagnosis it replaces cost a
+day and 341 reverted edits.**
+
+### The measurement, both directions, on one tree
+
+| Build | Broken in-body links | Pages | Links checked |
+|---|---:|---:|---:|
+| shift **disabled** (the shipped behaviour) | **418** | 173 | 15,589 |
+| shift **enabled** | **55** | 173 | 15,589 |
+
+The control was run by editing one line to `const addLevel = false`, rebuilding,
+re-measuring, then restoring and rebuilding again — so both numbers come from the
+same content, the same checker and the same 15,589 links. **A fix that only
+produces a good number after it is applied proves nothing about whether it could
+have failed.**
+
+### Traced end to end over HTTP, before and after
+
+The check that would have prevented this whole group, run properly this time:
+
+| | Request | Result |
+|---|---|---|
+| The page | `/user-guide/getting-started/installation` | `301 → …/installation/` — **the trailing slash is what creates the extra level** |
+| Before | `…/installation/claude-skills` (where `./claude-skills` resolved) | `404` |
+| Intended | `/user-guide/getting-started/claude-skills` | exists |
+| After | rebuilt page emits `href="../claude-skills"` | **`200`** |
+
+The redirect in the first row is the mechanism made visible. It was never checked
+before the 341-link rewrite, and it costs one request.
+
+### Zero content files changed
+
+`git status` over `default-docs/data/user-guide` and `dev-docs` after the fix:
+nothing. The only edits are the transform, its dev-docs page, and this record.
+
+# The 55 that remain, and why they are not this subtask's
+
+**They are real, and none of them is a rendering defect.** Categorised from the
+checker's JSON:
+
+| Count | Kind |
+|---:|---|
+| 46 | Relative links whose target genuinely does not exist |
+| 4 | `/blog/tag/…` — a feature that was never built |
+| 3 | Stale `/docs/…` base from a section rename |
+| 2 | Other site-absolute links with a missing target |
+
+Spot-checked one to make sure the fix was not creating them:
+`user-guide/19_issues/01_overview.md:105` writes
+`[Lifecycle and Review](./lifecycle-and-review)`, but that file lives at
+`19_issues/04_setup/06_lifecycle-and-review.md`. The link was written pointing at
+the wrong directory. It was invisible while **every** relative link was broken,
+and it is visible now — which is the fix working.
+
+**These need their own home.** They are content corrections, not renderer work,
+and folding them in here would repeat exactly the mistake this group exists to
+correct: fixing content because a rendering measurement pointed at it.
 
 # Details
 

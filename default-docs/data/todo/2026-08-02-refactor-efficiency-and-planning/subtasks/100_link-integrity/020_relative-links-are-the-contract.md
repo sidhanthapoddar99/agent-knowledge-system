@@ -284,17 +284,43 @@ under *Cross-linking between docs pages*.
       relative link that 404s is a renderer bug — do not convert it to `/`"),
       drop the incident and the number.
 
-- [ ] **5. Test cross-root portability.** The "no exception" proof ran inside one
-      content root. The six `user-guide` ↔ `dev-docs` links resolve only because
-      every data folder here happens to be named like its `base_url`; Codex tried
-      a hypothetical `/internals` base and got a 404. Not known broken — never
-      tested.
+- [ ] **5. Cross-root portability — checked 2026-08-04, and the coupling is
+      real.** The question was whether a URL is derived from the folder name. It
+      is not. `site.yaml` carries **two independent values** per section:
 
-- [ ] **6. Count the restatements before deduplicating them.** The audit said the
-      `move`-skips-`/` fact is asserted in eleven places. A loose grep on
-      2026-08-04 hit 19 lines across 13 files and **over-matches**, so neither
-      number is usable yet. `_links.mjs:28` is the single line that decides it;
-      run a tight count first, then cut.
+      ```yaml
+      dev-docs:
+        base_url: "/dev-docs"     # what the browser sees
+        data: "@data/dev-docs"    # what a relative link walks through
+      ```
+
+      Nothing ties them. A cross-section relative link climbs `../../` through the
+      **folder** name and lands on a URL built from **`base_url`**, so it resolves
+      only while those two strings match. They match in this repo because someone
+      named them alike — that is a convention, not a rule, and Codex reproduced
+      the 404 against a hypothetical `/internals` base.
+
+      **No fix here.** [`2026-06-09` `03`](../../../2026-06-09-issue-link-resolution/subtasks/03_comprehensive-panel-subdoc-links.md)
+      removes it structurally: resolving links to absolute at render time reads
+      `base_url` directly, so the folder name stops being load-bearing. Recorded
+      as a constraint for that subtask rather than patched here.
+
+- [ ] **6. Repeat the fact deliberately — do NOT deduplicate it.** Sid, 2026-08-04:
+      **the fact belongs in three or four places in the skill, and five or six
+      more across docs, the tracker and the code is fine.** The audit's
+      "asserted in eleven places" was framed as duplication to cut; that is the
+      wrong read. A rule an author meets once, in a file they may never open, is
+      a rule that gets missed — which is how 341 links were converted by someone
+      who had read both skill files.
+
+      **The condition is weight, not count.** Every restatement carries the
+      *reason* with it, not just the instruction — a bare "links must be
+      relative" repeated eleven times is eleven chances to read past it. What
+      must stay single is the **mechanism**: `_links.mjs:28` is the one line that
+      decides it, and no restatement may re-implement or contradict it.
+
+      Audit each occurrence for *reason and weight*, strengthen the thin ones,
+      and add the fact where an author would look and not find it.
 
 - [ ] **7. Check the two smallest findings** — `guide.ts` states the exception one
       clause narrower than the skill, and "a file with nothing to link to"

@@ -27,6 +27,9 @@ export interface RouteProps {
   pageType: PageType;
   /** When set, `[...slug].astro` redirects here instead of rendering a layout. */
   redirectTo?: string;
+  /** The URL matched a section but no document in it. Renders the section's
+   *  own not-found page, and the response carries a 404 status. */
+  notFound?: boolean;
   doc?: any;
   post?: any;
   issue?: any;
@@ -58,6 +61,30 @@ function isInternalSlug(slug: string): boolean {
     // claiming these, so the shadowing is defence in depth.)
     slug === 'artifacts' || slug.startsWith('artifacts/')
   );
+}
+
+/**
+ * The SOURCE-FORM url of a content item — its path on disk, minus the
+ * extension. `19_issues/01_overview.md` → `19_issues/01_overview`.
+ *
+ * Docs strip `NN_` ordering prefixes from their slugs and blog strips the date,
+ * so a link written against the file tree names a URL that does not exist. This
+ * project's rule is that content is authored against the filesystem and the
+ * router adapts (see the project `CLAUDE.md`) — so both spellings resolve, and
+ * the source form REDIRECTS to the clean slug, which stays canonical.
+ *
+ * Derived from `relativePath` rather than by stripping prefixes from the slug:
+ * matching the real file is exact, where a strip-and-retry heuristic has to
+ * re-implement the slug transform and drifts the moment either side changes.
+ */
+export function sourceFormSlug(item: { relativePath?: string }): string | null {
+  if (!item?.relativePath) return null;
+  return item.relativePath.replace(/\\/g, '/').replace(/\.(mdx?|ya?ml|json)$/i, '');
+}
+
+/** The canonical URL of a content item under a page's base. */
+export function canonicalContentUrl(base: string, slug: string): string {
+  return `${base}/${slug}`;
 }
 
 export async function matchServerRoute(
@@ -94,7 +121,22 @@ export async function matchServerRoute(
       }
       const docSlug = slug.slice(baseUrl.length + 1);
       const doc = allContent.find((d: any) => d.slug === docSlug);
-      return { kind: 'render', props: { ...common, pageType: 'docs', doc, allContent } };
+      if (doc) return { kind: 'render', props: { ...common, pageType: 'docs', doc, allContent } };
+
+      const bySource = allContent.find((d: any) => sourceFormSlug(d) === docSlug);
+      if (bySource) {
+        return {
+          kind: 'render',
+          props: {
+            ...common, pageType: 'docs', allContent,
+            redirectTo: canonicalContentUrl(pageConfig.base_url, bySource.slug),
+          },
+        };
+      }
+      // Render the styled not-found page, but with an honest STATUS. It used
+      // to answer 200, so every link checker that trusts the status code — the
+      // obvious way to write one — reported dead links as healthy.
+      return { kind: 'render', props: { ...common, pageType: 'docs', allContent, notFound: true } };
     }
 
     if (pageConfig.type === 'blog') {
@@ -108,7 +150,19 @@ export async function matchServerRoute(
       }
       const postSlug = slug.slice(baseUrl.length + 1);
       const post = allContent.find((p: any) => p.slug === postSlug);
-      return { kind: 'render', props: { ...common, pageType: 'blog-post', post } };
+      if (post) return { kind: 'render', props: { ...common, pageType: 'blog-post', post } };
+
+      const bySource = allContent.find((p: any) => sourceFormSlug(p) === postSlug);
+      if (bySource) {
+        return {
+          kind: 'render',
+          props: {
+            ...common, pageType: 'blog-post',
+            redirectTo: canonicalContentUrl(pageConfig.base_url, bySource.slug),
+          },
+        };
+      }
+      return { kind: 'render', props: { ...common, pageType: 'blog-post', notFound: true } };
     }
 
     if (pageConfig.type === 'issues') {
@@ -176,8 +230,15 @@ export function planStageAliasTarget(
   const section = sectionById(id);
   if (!section || section.reader !== 'plan') return null;
   const plan = issue.plans?.find((p: any) => p.name === planName);
-  const stage = plan?.stages.find((s: any) => s.name === stageName);
-  return stage ? planStageAliasUrl(base, issueId, section.id, plan.name, stage.anchor) : null;
+  if (!plan) return null;
+  const stage = plan.stages.find((s: any) => s.name === stageName);
+  if (stage) return planStageAliasUrl(base, issueId, section.id, plan.name, stage.anchor);
+
+  // Any OTHER file under the plan folder — `overview.md` above all, which is
+  // the plan's own body and so has no page separate from the plan's. A link to
+  // it names a real file by its real path, which is the form this project
+  // requires; it lands on the plan rather than 404ing.
+  return `${base}/${issueId}/${section.id}/${plan.name}`;
 }
 
 /** The one place the alias URL is spelled — `route-match` resolves it at request

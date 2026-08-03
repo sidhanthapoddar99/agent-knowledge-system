@@ -46,6 +46,13 @@ if (routeProps.redirectTo) {
   return Astro.redirect(routeProps.redirectTo);
 }
 
+// A URL inside a section that names no document still renders that section's
+// not-found page — but says so in the status. Answering 200 made every dead
+// link look healthy to anything checking by status code.
+if (routeProps.notFound) {
+  Astro.response.status = 404;
+}
+
 // docs-index: redirect to the first doc (it has no layout of its own).
 if (routeProps.pageType === 'docs-index' && routeProps.allContent?.length) {
   return Astro.redirect(`${routeProps.pageConfig.base_url}/${routeProps.allContent[0].slug}`);

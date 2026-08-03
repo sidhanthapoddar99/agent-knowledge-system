@@ -1,6 +1,6 @@
 ---
-title: "A plan's files have no URLs of their own — any file under a plan should resolve to the plan"
-status: open
+title: "Any file under a plan resolves to the plan — overview.md included"
+status: review
 ---
 
 **Decision (2026-08-03, Sid):** *"plans section auto resolution to the overview
@@ -42,19 +42,50 @@ than a 404 — though see the open question below.
 
 # Todo list
 
-- [ ] Redirect `plans/<plan>/<anything>` → `plans/<plan>`, in both
-      `route-match.ts` and `static-paths.ts`
-- [ ] **Open question — should a stage deep-link instead?** The plan page already
-      renders every stage inline, so `plans/<plan>/20_fix-the-renderer` could
-      redirect to `plans/<plan>#20-fix-the-renderer` and land on the right
-      section rather than the top. Strictly better if the anchor ids are stable;
-      needs checking against how the plan page builds its headings
-- [ ] Check the same collapse for any **other** section that renders a folder as
-      one page — the fix should be a rule about collapsed folders, not a
-      special case for `plans/`
-- [ ] Control-test: the link in
+- [x] `plans/<plan>/<anything>` → `plans/<plan>`, in both `route-match.ts` and
+      `static-paths.ts`
+- [x] **The open question was already answered in the code.** A stage *does*
+      deep-link — `planStageAliasTarget` has redirected `plans/<plan>/<stage>`
+      to `plans/<plan>#<anchor>` since this issue's earlier work. Nothing to
+      decide; the gap was only the files that are **not** stages
+- [x] Control-tested against row 8 of
       [`110 the live check`](../../2026-08-02-refactor-efficiency-and-planning/subtasks/100_link-integrity/110_live-check.md)
-      (row 8) is the exact repro and must go from 404 to the plan page
+      — the exact repro
+- [ ] The same collapse in any **other** section that renders a folder as one
+      page. None exists today; worth revisiting when one is added, so the rule
+      is about collapsed folders rather than a special case for `plans/`
+
+# Outcomes and Next Steps
+
+**Shipped 2026-08-03, and it was four lines.**
+
+| URL | Before | After |
+|---|---|---|
+| `…/plans/01_fix-the-tools-then-the-links/overview` | **`404`** | `302` → the plan page |
+| `…/plans/01_fix-the-tools-then-the-links/20_fix-the-renderer` | `302` → the stage anchor | unchanged |
+| `…/plans/01_fix-the-tools-then-the-links` | `200` | unchanged |
+
+Verified on the dev server and in `dist/` after a clean build (1,168 pages, 3
+plan-overview alias pages emitted).
+
+### Why it was so small — the mechanism already existed
+
+`planStageAliasTarget` in `route-match.ts` already turned a stage file's path
+into a redirect at the plan's anchor, with a comment explaining exactly the
+reasoning this subtask re-derived: *"a stage is a FILE, and a relative markdown
+link to a file resolves to its path-shaped URL… dropping the route outright
+would turn every such link into a 404 that no gate reads."*
+
+It returned `null` for anything that was not a stage, so `overview.md` — the
+plan's own body, and the most obvious file to link at — fell through to a 404.
+**The right principle was already written down and applied one case too
+narrowly.** The fix is to fall back to the plan page when the plan exists and
+the file is not a stage.
+
+**Worth noting for the class:** this is the third time on this issue that a file
+rendered one segment shallower than it sits on disk has produced a 404 —
+`issue.md`, plan stages, and now `overview.md`. Each was fixed as its own case.
+A rule about collapsed folders would have covered all three at once.
 
 # References
 

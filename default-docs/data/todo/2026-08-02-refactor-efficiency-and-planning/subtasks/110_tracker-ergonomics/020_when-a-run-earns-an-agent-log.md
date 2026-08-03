@@ -30,20 +30,23 @@ still has to invent the missing half, and two readers invent different ones.
 
 # The rule — decided with Sid, 2026-08-03
 
-**The test is STAGES, not effort and not file count.**
+**It is a judgement over five factors — never effort, and never file count.**
 
-> **An agent log records work that was large enough not to fit in one pass AND
-> genuinely staged** — where a later step acted on what an earlier one *found*.
-> Both, not either. **A single pass with checks attached is not staged**,
-> however long it took or however many files it touched; it belongs in the
-> subtask's own Outcomes.
+> **An agent log records the PATH, when the finished work does not show it.**
+> Whether a piece of work earns one is a judgement over five factors weighed
+> together — **stages, marginal cost, difficulty, future impact, whose hands** —
+> and no single factor decides. A single pass with checks attached is not a
+> staged run, however long it took or however many files it touched; it belongs
+> in the subtask's own Outcomes.
 >
-> **Two things always earn one:** work meeting that bar, and anything Sid
-> explicitly asks to have recorded.
+> **One thing always earns a log regardless:** anything Sid explicitly asks to
+> have recorded.
 
-The load-bearing distinction is **verify vs audit** — a check you can predict
-the answer to is not a stage. Spelled out under *It is a combination* below,
-along with why reaching for an audit on a small change is itself the error.
+Two load-bearing distinctions, both spelled out under *It is a combination*
+below: **a verify is not a stage** (a check whose answer you can predict changes
+nothing about what you did), and **marginal cost decides most real cases** —
+appending to an open run costs a line, opening one costs an explanation of the
+whole issue.
 
 Sid's own framing of the trigger, which is the clearest statement of it:
 
@@ -61,12 +64,12 @@ all rather than a single always-rule:
 
 | | When |
 |---|---|
-| 🟢 **Required** | the work has stages, or Sid asked for a record |
-| ⬜ **Not required** | one self-contained pass — no stage acted on another's output |
+| 🟢 **Required** | the factors point that way, a run is already open and this belongs to it, or Sid asked for a record |
+| ⬜ **Not required** | one self-contained pass, and opening a log would cost more than the work it records |
 | 🟡 **Ask** | the interactive mode, and anything whose value only becomes clear from what it produced |
 
-**Never make it a validator error.** Whether a run had stages is a judgement, and
-a gate that fails on judgement gets worked around. A hint at most.
+**Never make it a validator error.** This is a judgement over five factors, and a
+gate that fails on judgement gets worked around. A hint at most.
 
 ## Eight cases, answered
 
@@ -74,7 +77,7 @@ Worked through with Sid so the rule has instances and not only a principle.
 
 | Case | Verdict | Why |
 |---|---|---|
-| Plan execution, single or multi level | 🟢 Required | stages by construction |
+| Plan execution, single or multi level | 🟢 Required | stages by construction — and a log is usually already open, so the marginal cost is a line |
 | Loop over 3–4 subtasks | 🟢 Required | one log |
 | Loop over 30–40 subtasks | 🟢 Required | one log, possibly nested |
 | Multi-stage or multi-level audit; a built workflow | 🟢 Required | the canonical case |
@@ -89,7 +92,7 @@ Worked through with Sid so the rule has instances and not only a principle.
 | **The interactive sitting** — subtasks one by one for an hour | 🟡 Ask | the mode Sid named as needing caution. **Hint once for the session, never per subtask** |
 | **A discussion that settles a design decision**, no code | 🟡 Ask | matches how the skill already treats discussion — offer when dense, never auto-save. The decision goes in the subtask either way; the question is only whether the reasoning earns its own file |
 
-## Why "stages" is the test — reason from this, not from the table
+## Why these factors — the reasoning to apply when the table does not fit
 
 **The table above will never cover the case in front of you.** It is instances;
 this is the thing to apply when none of them matches.
@@ -101,8 +104,9 @@ never *how big was this* or *how long did it take*. It is:
 
 > **Is there something here that the finished work does not show?**
 
-Stages are the reliable signal for that, because a stage boundary is exactly
-where information was produced and acted on. If stage two did something
+**Every factor above is an approximation of that one question.** Stages are the
+most reliable signal for it, because a stage boundary is exactly where
+information was produced and acted on. If stage two did something
 different because of what stage one returned, that "because" exists nowhere in
 the diff. **A single pass has no such moment: the work and the record of the
 work are the same object, and a log can only restate it.**
@@ -131,32 +135,30 @@ enough to be misleading. An hour of grinding through one mechanical change has
 no stages and earns nothing; ten minutes that overturned an assumption has one
 and earns a log. **Ask what was learned, not what was spent.**
 
-## It is a combination, not one factor — and a verify is not a stage
+## It is a combination — five factors, and no single one decides
 
-**Sid, 2026-08-03:** *"You won't do an audit just for a small change like a URL
-slug update — you would verify. There is a difference."*
+**Sid, 2026-08-03:** *"I think the factors are stages, size of the whole thing,
+size of the issue — how difficult, impact on the future."* And the case that
+prompted it: *"You won't do an audit just for a small change like a URL slug
+update — you would verify. There is a difference."*
 
-Stages alone over-trigger, because almost any change can be described as having
-steps. The two factors have to hold together:
+**Weigh them together.** Any one of these on its own either over-triggers or
+misses; the judgement is what they say jointly.
 
-| | Earns a log | Does not |
-|---|---|---|
-| **Scale** | large enough that the **work** does not fit in one pass | small enough that one pass does it |
-| **Process** | genuinely staged — a later step acted on what an earlier one *found* | a single pass with checks attached |
+| # | Factor | Ask | Pushes toward a log when |
+|---|---|---|---|
+| 1 | **Stages** | did a later step act on what an earlier one *found*? | the work changed course because of something it learned |
+| 2 | **Marginal cost** | is there already a log open, and does this fit inside it? | a log exists — then even one line is nearly free. **This is the factor that decides most real cases** |
+| 3 | **Difficulty** | how hard was it to get right? | the answer was not obvious, or the obvious answer was wrong |
+| 4 | **Future impact** | will anyone need this later, and can they get it elsewhere? | the reasoning is not recoverable from the diff, the tracker or git |
+| 5 | **Whose hands** | did you watch it happen? | someone else did it, or it ran unattended |
 
-**"Scale" means the work, not the diff** — this is the one place the two come
-apart, and it is why the four-line bug fix earns a log while a thirty-file
-rename does not. An hour and three wrong diagnoses did not fit in one pass; the
-rename did.
+### 1 · Stages — and the distinction that does the work
 
-**Worked the other way, on today's routing fixes:** read the code, edit, curl,
-build, done. Small work, and every check was a verify — nothing came back that
-changed the approach. One pass. No log, which is what Sid said before the rule
-existed to say it.
+Stages alone over-trigger, because almost any change can be narrated as having
+steps. **A VERIFY is not a stage.**
 
-**The distinction that does the work: a VERIFY is not a stage.**
-
-| | What it is | Does it earn a log? |
+| | What it is | A stage? |
 |---|---|---|
 | **Verify** | *did I break it* — a check whose expected answer is "no". Typecheck, build, gate, one curl against the fixed URL | **No.** The answer changes nothing about what you did; it only says whether you may stop |
 | **Audit / review** | *what is wrong here* — an open question whose answer you cannot predict, and which redirects the work | **Yes.** Its output is information that did not exist before |
@@ -164,6 +166,70 @@ existed to say it.
 So `edit → build → curl → done` is **one pass**, however many commands it took.
 `audit → findings → fix → re-audit` is **staged**, because the findings changed
 what got fixed.
+
+### 2 · Marginal cost — the factor that settles most cases
+
+**Sid's framing:** *"Is this a one-line addition to an already-present agent log,
+or is this demanding an agent log in itself? If it is part of a plan and a stage
+has one working file and this is just one line — add it. But if there is no
+agent log and nothing is coming after this, it is not worth explaining the whole
+issue."*
+
+**Almost all of a log's cost is the setup, not the content** — creating it,
+establishing the context, explaining what the issue even is to a reader arriving
+cold. Appending a line to a run already in flight costs a line.
+
+So the same piece of work lands differently depending on what is already open:
+
+| Situation | Verdict |
+|---|---|
+| A run is open and this belongs to it | **Add it**, even one line. Never start a second log for work that belongs to the first |
+| No run open, and nothing follows this | **No log.** The setup exceeds the work, and a log that explains an issue in order to record one line is net negative |
+| No run open, but this is the first step of several | **Open one now.** Cheaper than reconstructing it at step four, when the early reasoning has already been lost |
+
+### 3 · Difficulty — the work, not the diff
+
+**This is the one place scale and diff come apart**, and it is why the four-line
+trailing-slash fix earns a log while a thirty-file rename does not. An hour and
+three wrong diagnoses did not fit in one pass; the rename did.
+
+The signal: *"four lines? that's it?"* from a reader of the diff means the
+interesting part is the path, and the path has no other home.
+
+**Worked the other way, on today's routing fixes:** read the code, edit, curl,
+build, done. Every check was a verify — nothing came back that changed the
+approach. One pass. No log, which is what Sid said before the rule existed to
+say it.
+
+### 4 · Future impact — can it be recovered from anywhere else?
+
+A log is only worth its cost if what it holds is **not reconstructable**. Rank
+by that, not by how significant the work felt:
+
+| | Recoverable later from | Needs a log? |
+|---|---|---|
+| What changed | the diff | no |
+| What it was for | the subtask | no |
+| **What was tried and discarded** | **nothing** | **yes** — this is the category that disappears silently |
+| **Why an alternative was rejected** | nothing | yes |
+| **What a measurement returned** | only if re-run, and often the tree has moved | usually |
+
+Weight this up sharply for anything that **changes a rule, an instruction or a
+skill.** Those are applied by people and agents who will not re-derive them, they
+outlive the code that motivated them, and when one turns out wrong the only way
+to withdraw it is to find the reasoning that produced it. This issue is the
+instance: the retraction worked *because* two reviews had been written down and
+could be named and overturned. **A finding nobody recorded cannot be withdrawn —
+it just quietly keeps being believed.**
+
+### 5 · Whose hands — you cannot vouch for what you did not watch
+
+Delegated or unattended work has a gap that attended work does not: **the only
+account of what happened is the one the worker gives.** That is not automatically
+a log — one bounded job, one round, nothing found, is still one pass (case 1
+above). But it raises the weight of factor 4, because a completion message is not
+evidence, and it is worth recording what was actually run when nobody was
+looking.
 
 ### The corollary, which matters more than the rule
 

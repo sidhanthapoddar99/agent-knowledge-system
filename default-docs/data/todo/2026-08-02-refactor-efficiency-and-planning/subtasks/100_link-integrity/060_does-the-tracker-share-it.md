@@ -1,6 +1,6 @@
 ---
-title: "Unverified: does the tracker pipeline share the same off-by-one?"
-status: open
+title: "Answered: the tracker does not share the off-by-one, and does not need to"
+status: review
 ---
 
 # Overview
@@ -49,9 +49,44 @@ scoped or the question is closed as "the tracker is fine".
 
 # Outcomes and Next Steps
 
-> [!IMPORTANT]
-> **PLACEHOLDER — open question, deliberately unanswered.** One probe, one
-> contradiction, no verdict.
+**Answered 2026-08-03 by clicking, in [`110`](./110_live-check.md). No.**
+
+**The tracker does not share the docs off-by-one, and the reason is that it does
+not have the condition that causes it.** Two properties, both verified by
+request:
+
+| Property | Docs | Tracker |
+|---|---|---|
+| Page URL ends in a slash | yes, in the built site | no |
+| URL keeps the `NN_` prefix | no — stripped | **yes** |
+
+With no trailing slash, the browser already resolves `./x` against the parent
+directory, which is where the author meant it. With prefixes kept, the source
+path and the URL path are the same string. So a relative link written against the
+filesystem is correct as written, and a shift would break it.
+
+Twelve of fifteen links opened the right page, covering every within-tracker
+shape: sibling, cross-group, up-two, up-three into another issue, nested,
+anchored, and slug-form.
+
+### What the 1,372 actually was
+
+Not link rot, and not a second transform bug. It is what `dist/` reports for a
+tracker whose links resolve correctly in a browser — **the built site adds the
+trailing slash the dev server omits**, so a static read of `dist/` and a live
+request disagree about what every relative href means. That gap is the real
+defect and it is now [`120`](./120_dev-and-build-disagree-on-the-base.md).
+
+The tracker exclusion in both gates therefore **stands, but for a new reason**:
+not "tracker links are broken and we are hiding it", but "the gate reads the one
+environment where the question cannot be asked."
+
+### What is genuinely broken, and it is not this subtask's subject
+
+A tracker link that **leaves** the tracker — into docs or blog — keeps the source
+spelling, because the target section's slug transform is never applied. Plus a
+plan's `overview.md`, which is not a route of its own. Both on
+[`120`](./120_dev-and-build-disagree-on-the-base.md).
 
 # Details
 

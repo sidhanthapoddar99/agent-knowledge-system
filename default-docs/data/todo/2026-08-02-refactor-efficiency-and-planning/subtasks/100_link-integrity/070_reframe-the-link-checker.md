@@ -80,10 +80,17 @@ second transform bug is untriaged — that is
 [`060`](./060_does-the-tracker-share-it.md), and the header now says so instead of
 asserting a principle.
 
-**One signal worth carrying to `060`:** the tracker failures are dominated by
-*relative* links that do not resolve, and the issues pipeline has its own
-re-rooting pass (`issue-body-links.ts`). The docs level-shift does not apply to
-it. That is a real lead, not a conclusion.
+~~**One signal worth carrying to `060`:** the tracker failures are dominated by
+*relative* links that do not resolve.~~ **Retracted 2026-08-03.** They resolve
+fine — [`110`](./110_live-check.md) clicked fifteen of them. What this row
+actually measures is the **built** site, and the built site adds a trailing
+slash the dev server does not, so the tool and the browser disagree about what a
+relative href means. The 1,372 is not a count of broken tracker links; it is the
+size of that disagreement. See
+[`120`](./120_dev-and-build-disagree-on-the-base.md).
+
+**And the gate cannot currently see the failure that is real:** a missing page
+answers HTTP `200` with a *Page Not Found* body, so status alone proves nothing.
 
 # Details
 

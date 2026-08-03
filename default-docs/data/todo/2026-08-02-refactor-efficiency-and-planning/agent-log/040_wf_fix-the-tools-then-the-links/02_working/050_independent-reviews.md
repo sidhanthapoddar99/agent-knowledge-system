@@ -38,9 +38,29 @@ with or fixed. Merge as a union: one reviewer finding something is a finding.
 Recorded below as reported. **Nothing has been fixed and nothing has been
 disputed yet** — Sid asked to have both audits in hand before discussing them.
 
+> [!CAUTION]
+> **Retracted 2026-08-03 — the finding below is wrong, and both reviewers held
+> it.** Sid clicked fifteen tracker links on the dev server; twelve opened the
+> right page, including every within-tracker shape this section says is broken.
+> Record: [`110`](../../../subtasks/100_link-integrity/110_live-check.md).
+>
+> **The tracker needs no shift, because its pages are served without a trailing
+> slash** — the browser already resolves `./x` against the parent — **and its
+> URLs keep their `NN_` prefixes**, so source path and URL path are the same
+> string. The reproduction below reads the *built* site, which adds the trailing
+> slash; the dev server does not. That gap is the real defect, written up as
+> [`120`](../../../subtasks/100_link-integrity/120_dev-and-build-disagree-on-the-base.md),
+> and it means the docs shift shipped in this run is wrong in dev.
+>
+> **The process lesson is sharper than the technical one.** This was the one
+> finding both reviews reached independently, and that agreement is what made it
+> feel settled. It should not have: both reasoned over the same `dist/` tree and
+> the same `contentType` gate, and **neither opened a URL.** Two methods that
+> share an assumption are one method. What settled it cost fifteen clicks.
+
 ## The finding that matters most
 
-### 🔴 The new tracker rule mandates a link form that 404s in the tracker today
+### 🔴 ~~The new tracker rule mandates a link form that 404s in the tracker today~~ — retracted, see above
 
 `guide.ts:152` · `agent-ks-issues/SKILL.md:377-383` ·
 `10_writing.md:117-124`
@@ -279,6 +299,12 @@ than asserted.
 # Next
 
 - [x] Both audits recorded, as reported, with nothing fixed or disputed
-- [ ] **Discuss with Sid.** The tracker-renderer question is his — fix the issues
-      pipeline the same way the docs one was fixed, or caveat the rule and leave
-      the renderer alone. Everything else is mine to fix once that is settled
+- [x] ~~**Discuss with Sid.** The tracker-renderer question is his~~ — done, and
+      it dissolved the question: the tracker was never broken. What replaces it
+      is the dev-vs-build split in
+      [`120`](../../../subtasks/100_link-integrity/120_dev-and-build-disagree-on-the-base.md),
+      which is still his call
+- [ ] **Re-read the rest of both reviews with the retraction in mind.** The
+      headline finding was wrong; the other rows were reached by different
+      methods and are not affected by it, but none has been re-checked against a
+      live URL either

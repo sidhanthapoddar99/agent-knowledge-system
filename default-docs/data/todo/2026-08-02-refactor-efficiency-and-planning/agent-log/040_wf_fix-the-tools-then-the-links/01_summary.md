@@ -19,13 +19,24 @@ title: "Summary"
 — commissioned after the fact on Sid's prompt, because the rule requiring them
 did not fire during the run.
 
-**Two independent reviewers, two methods, one conclusion on the worst finding:**
-the rule this run wrote into the three tracker surfaces mandates a link form that
-**404s in the tracker today**, because the issues pipeline has the same off-by-one
-that was fixed for docs. Codex measured it at **1,410 errors** with `--all`, which
-the default gates hide by excluding trackers. That is this run's own named defect
-— *a rule that returns a plausible result when obeyed* — committed inside the
-change meant to remove it.
+> [!CAUTION]
+> **Retracted 2026-08-03.** ~~Two independent reviewers, two methods, one
+> conclusion on the worst finding: the rule this run wrote into the three tracker
+> surfaces mandates a link form that **404s in the tracker today**. Codex
+> measured it at **1,410 errors** with `--all`.~~
+>
+> **It does not 404.** Sid clicked fifteen tracker links; twelve opened the right
+> page, and every failure was a link *leaving* the tracker, not one inside it —
+> [`110`](../../subtasks/100_link-integrity/110_live-check.md). Tracker pages are
+> served without a trailing slash and keep their `NN_` prefixes, so relative
+> links already land where the author meant.
+>
+> **The two methods were one method.** Both reviewers read the same `dist/` and
+> the same `contentType` gate; neither opened a URL. Their agreement is what made
+> the finding feel settled, and it was worth nothing — the built site adds a
+> trailing slash the dev server does not, so `dist/` cannot answer this question
+> at all. The real defect, including a docs regression this run shipped, is
+> [`120`](../../subtasks/100_link-integrity/120_dev-and-build-disagree-on-the-base.md).
 
 **Three of my own reported numbers were wrong in kind, and the executing review
 is what caught them:**
@@ -60,7 +71,10 @@ files was reading the installed plugin rather than the tree being edited.
       command you type states which tree you mean
 - [x] [Stage 20 — fix the renderer](../../plans/01_fix-the-tools-then-the-links/20_fix-the-renderer.md)
       — one-level URL-depth shift, index pages exempt; 418 → 55 broken links with
-      **zero content files changed**
+      **zero content files changed**. ⚠️ Both numbers were measured against the
+      **built** site; the shift is wrong on the dev server, where the same page
+      is served without a trailing slash —
+      [`120`](../../subtasks/100_link-integrity/120_dev-and-build-disagree-on-the-base.md)
 - [x] [Stage 30 — one link rule, everywhere](../../plans/01_fix-the-tools-then-the-links/30_one-link-rule-everywhere.md)
       — the cross-section exception was checked and does not exist; 129 links
       converted, 55 → 0
@@ -71,10 +85,15 @@ files was reading the installed plugin rather than the tree being edited.
 
 # Out of Scope
 
-- **The tracker's 1,372 broken links.** Measured during the run, deliberately not
-  acted on — different pipeline, and
-  [`060`](../../subtasks/100_link-integrity/060_does-the-tracker-share-it.md)
-  owns the triage.
+- ~~**The tracker's 1,372 broken links.**~~ **Corrected 2026-08-03.** They are
+  not broken links. The figure is what `dist/` reports for a tracker whose pages
+  resolve correctly in the browser — it measures the trailing-slash gap between
+  the built site and the dev server, not link rot. Twelve of fifteen clicked
+  links opened the right page
+  ([`110`](../../subtasks/100_link-integrity/110_live-check.md)); the diagnosis
+  is [`120`](../../subtasks/100_link-integrity/120_dev-and-build-disagree-on-the-base.md),
+  and [`060`](../../subtasks/100_link-integrity/060_does-the-tracker-share-it.md)
+  is answered rather than pending.
 - **The backticked-path content sweep.** The rule landed on every surface; the
   ~44 existing instances need judgement per instance, and stay on
   [`080`](../../subtasks/100_link-integrity/080_link-it-dont-name-it.md).

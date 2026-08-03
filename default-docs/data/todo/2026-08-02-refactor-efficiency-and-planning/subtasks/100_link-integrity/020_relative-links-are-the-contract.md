@@ -202,12 +202,14 @@ relative link would be rewritten correctly before enshrining the exception.
 just the code. Full record in
 [the review round](../../agent-log/040_wf_fix-the-tools-then-the-links/02_working/050_independent-reviews.md).
 
-- 🔴 **The rule is wrong for the tracker.** It says "always relative, no second
-  option", and relative links 404 in the tracker today. Blocked on the decision
-  in [`060`](./060_does-the-tracker-share-it.md) — and note that
-  `2026-06-09-issue-link-resolution` already argues the opposite position, that
-  tracker links should resolve root-absolute, because a sub-doc body is rendered
-  at **two** depths and no relative form is right for both.
+- 🟢 ~~**The rule is wrong for the tracker.** It says "always relative, no second
+  option", and relative links 404 in the tracker today.~~ **Retracted
+  2026-08-03 — this was my error, not the rule's.** Fifteen links clicked in
+  [`110`](./110_live-check.md): every within-tracker shape resolved correctly.
+  The rule stands as written. What actually fails is a tracker link that
+  **leaves** the tracker, because the target section's slug transform is never
+  applied — see [`120`](./120_dev-and-build-disagree-on-the-base.md). Note this
+  finding was carried by *both* independent reviews; neither opened a URL.
 - 🔴 **The rule conflates a page link with an asset reference.** Sid's
   correction: there are two asset kinds and they are different *routes*, not two
   styles — `/assets/…` is the **site** assets folder (favicon, logos, one global

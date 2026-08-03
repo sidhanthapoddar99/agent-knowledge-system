@@ -1,6 +1,6 @@
 ---
 title: "Two files disagree on who may close an agent log"
-status: review
+status: done
 ---
 
 # Overview

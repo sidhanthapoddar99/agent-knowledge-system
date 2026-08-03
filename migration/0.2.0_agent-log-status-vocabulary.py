@@ -108,7 +108,51 @@ VALUE_MAP = {
 RETIRED_LABELS = ("wip", "blocked")
 
 STATUS_RE = re.compile(r"^(?P<pre>\s*status\s*:\s*)(?P<q>[\"']?)(?P<value>[A-Za-z-]+)(?P=q)(?P<post>\s*(?:#.*)?)$")
-ITERATION_RE = re.compile(r"^\s*iteration\s*:\s*\S+\s*(?:#.*)?$", re.IGNORECASE)
+ITERATION_RE = re.compile(r"^\s*iteration\s*:\s*(?P<value>\S+)\s*(?:#.*)?$", re.IGNORECASE)
+
+# Leading `NNN_` ordering prefix on a filename.
+PREFIX_RE = re.compile(r"^(?P<digits>\d{2,5})[_-]")
+
+
+def _iteration_from_prefix(path: Path) -> int | None:
+    """The iteration a filename's prefix claims, under the CURRENT rule.
+
+    `NN0_` is the iteration's own file and `NN1_`..`NN9_` are producers beside
+    it, so the iteration is the prefix minus its last digit: `020_` and `021_`
+    are both iteration 2.
+
+    ONLY meaningful for a file in the new `02_working/` shape — see
+    `_is_new_shape_round_file()`. Applying this rule to an old milestone file is
+    a category error, not a comparison.
+
+    Returns None when the filename carries no prefix, or one too short to split.
+    """
+    m = PREFIX_RE.match(path.name)
+    if not m:
+        return None
+    digits = m.group("digits")
+    if len(digits) < 3:
+        return None
+    return int(digits[:-1])
+
+
+def _is_new_shape_round_file(path: Path) -> bool:
+    """Is this a round file in the CURRENT agent-log shape?
+
+    The discriminator is structural: the numbered `02_working/` slot only exists
+    in the new shape. The old shape put milestone files at the activity root, or
+    under an unnumbered `working/`.
+
+    **This gate is what makes the mismatch check honest, and it was added after
+    measuring.** Comparing the prefix to `iteration:` across every agent-log file
+    reports 83 "disagreements" out of 83 in this repo's own pre-migration tree —
+    because in the OLD shape the two numbers were never two copies of one fact.
+    `MNN_` counted MILESTONES and `iteration:` counted ROUNDS, so a file numbered
+    `102_` sitting in iteration 1 is correct, not drifted. Only in the new shape
+    do the prefix and the field claim the same thing, and only there can they
+    contradict each other.
+    """
+    return any(p == "02_working" for p in path.parts)
 
 
 @dataclass
@@ -169,9 +213,31 @@ def scan_file(path: Path) -> list[Hit]:
                     old = m.group("value")
                     hits.append(Hit(path, line_no, "log-status",
                                     f"status: {old} -> {VALUE_MAP[old.lower()]}"))
-                elif ITERATION_RE.match(line):
-                    hits.append(Hit(path, line_no, "log-iteration",
-                                    f"drop `{line.strip()}` — the NNN_ filename owns the number"))
+                else:
+                    it = ITERATION_RE.match(line)
+                    if it:
+                        hits.append(Hit(path, line_no, "log-iteration",
+                                        f"drop `{line.strip()}` — the NNN_ filename owns the number"))
+                        # THE ONE-WAY DOOR. This pass is the only moment both
+                        # numbers exist: after it, the field is gone from every
+                        # consumer tracker and a disagreement is not hard to
+                        # find, it is GONE. So report it before dropping — and
+                        # only report. Renaming to match a value we just decided
+                        # was untrustworthy would trust the wrong half, and a
+                        # rename breaks every link pointing at the file.
+                        claimed = (_iteration_from_prefix(path)
+                                   if _is_new_shape_round_file(path) else None)
+                        raw = it.group("value").strip("\"'")
+                        try:
+                            stated = int(raw)
+                        except ValueError:
+                            stated = None
+                        if claimed is not None and stated is not None and claimed != stated:
+                            hits.append(Hit(
+                                path, line_no, "iteration-mismatch",
+                                f"filename prefix says iteration {claimed}, "
+                                f"frontmatter says {stated} — KEEPING THE FILENAME",
+                            ))
 
     if _is_settings(path):
         for offset, line in enumerate(text.splitlines()):

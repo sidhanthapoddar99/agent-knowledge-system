@@ -1,6 +1,6 @@
 ---
 title: "24_agent-logs.md contradicts itself in four places"
-status: review
+status: done
 ---
 
 # Overview

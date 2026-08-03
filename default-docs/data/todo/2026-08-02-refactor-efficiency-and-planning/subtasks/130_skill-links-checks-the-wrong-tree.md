@@ -1,6 +1,6 @@
 ---
 title: "The skill-links gate reads the installed plugin, not the working tree"
-status: open
+status: review
 ---
 
 # Overview
@@ -28,26 +28,79 @@ or refuses to run, and the fix is control-tested in both directions.
 
 # Todo list
 
-- [ ] Decide the resolution rule. **Recommended: resolve from the content root
+- [x] Decide the resolution rule. **Recommended: resolve from the content root
       (the `.env` / `CONFIG_DIR` the other `agent-ks` commands already use) and
       fall back to the script's own location only when no repo is found** — that
       makes the invariant structural rather than documented
-- [ ] Make it **loud when it cannot find a repo skills dir**, rather than
+- [x] Make it **loud when it cannot find a repo skills dir**, rather than
       silently checking the install. A gate that cannot see the tree must fail,
       not pass
-- [ ] Print the resolved scan root as an assertion, not a header. The current run
+- [x] Print the resolved scan root as an assertion, not a header. The current run
       already prints its root and it still fooled a reader
-- [ ] Control-test both directions: a broken link in the **repo** must fail, and
+- [x] Control-test both directions: a broken link in the **repo** must fail, and
       a run with no repo present must refuse rather than pass
-- [ ] Audit the sibling checkers for the same pattern — `check-legacy-tags.mjs`
+- [x] Audit the sibling checkers for the same pattern — `check-legacy-tags.mjs`
       resolves its root the same way and may have the same defect
-- [ ] Re-run the gate on this issue's shipped work and record what it says, since
+- [x] Re-run the gate on this issue's shipped work and record what it says, since
       no prior green covers the committed tree
 
 # Outcomes and Next Steps
 
-> [!IMPORTANT]
-> **PLACEHOLDER** — filled at completion.
+**Fixed 2026-08-03.** The anchor moved from **where the script lives** to **where
+you are standing**.
+
+`resolveSkillsDir()` walks up from the CWD looking for
+`plugins/agent-ks/skills/` holding at least one `SKILL.md`. Found → that is the
+scope. Not found → it falls back to the copy beside the script, which is correct
+for a consumer who has no source tree, **and emits a warning** saying so. The
+banner now names the tree in words — `[source tree]` or `[FALLBACK — the copy
+beside this script, not a tree you are in]` — because the old banner *did* print
+its root and still fooled a reader.
+
+The existing `filesScanned === 0` guard already covered the empty case, so the
+"cannot see anything" path was never the risk. The risk was seeing something
+else and calling it clean.
+
+### The fix cannot take effect until the plugin is reinstalled
+
+**Verified, and it is the defect demonstrating itself.** `agent-ks` on `PATH`
+dispatches to the installed plugin, so it runs the installed *copy of this
+script* — which still has the old resolution. Running `agent-ks check
+skill-links` from the repo root immediately after the fix still reported the
+install path.
+
+So until `/plugin install` is re-run, the working-tree invocation is:
+
+```bash
+bun plugins/agent-ks/skills/agent-ks-docs/scripts/check-skill-links.mjs
+```
+
+After a reinstall the bare `agent-ks check skill-links` becomes correct on its
+own, because the installed copy will then walk up from the CWD like everything
+else.
+
+### Control test — four paths, both directions
+
+| Run from | Resolved | Verdict |
+|---|---|---|
+| repo root | repo `plugins/agent-ks/skills` `[source tree]` | ✓ |
+| a subdirectory (`default-docs/data`) | same — walk-up works | ✓ |
+| outside any repo (`/tmp`) | fallback + **warning** | ✓ |
+| repo, with a probe file carrying one broken link | 45 files, **1 error naming the repo file** | ✓ |
+| repo, probe removed | 44 files, clean | ✓ |
+
+The file-count change (44 ↔ 45) is the part that matters: it proves the checker
+read the directory the probe was written into.
+
+### `check-legacy-tags.mjs` does NOT have this defect — checked
+
+It resolves via `resolveProjectContext(SCRIPT_DIR)`, which walks up from the
+script **and then falls back to `process.cwd()`**. Since it resolves *content*
+rather than *skills*, the cwd fallback lands on the user's real tracker. Named
+here as a clean area, because "we also checked X and it was fine" is signal and
+silence is not.
+
+## Why it was not a release blocker
 
 **Not a release blocker, and worth saying why.** `./start build` and
 `agent-ks check issues` both read the working tree correctly, and those are the

@@ -30,17 +30,25 @@
  */
 
 /** What this engine currently is. Major stays 0 while the project is in beta. */
-export const ENGINE_VERSION = '0.2.0';
+export const ENGINE_VERSION = '0.2.1';
 
 /**
  * Oldest content version this engine still parses.
  *
- * Equal to ENGINE_VERSION as of 0.2.0, and deliberately so: every format change
- * in this release is breaking. 0.1.x content declares agent-log statuses from a
+ * **Deliberately BEHIND ENGINE_VERSION as of 0.2.1 — the first release where the
+ * two differ, and the first demonstration that the floor is a real control
+ * rather than a copy of the engine version.** 0.2.1 changes no content format:
+ * it adds a startup refusal for a `site.yaml` page whose data path is missing,
+ * two agent-log numbering lints, and a report inside an existing migration.
+ * Content written for 0.2.0 is byte-for-byte valid, so nobody is asked to
+ * migrate and the floor stays put.
+ *
+ * It was equal to ENGINE_VERSION at 0.2.0 because every format change in *that*
+ * release was breaking: 0.1.x content declares agent-log statuses from a
  * vocabulary that no longer exists, carries `statusColors` in tracker settings
  * (now a hard error), and names its agent-log slots `summary.md` / `working/` /
  * `debrief/` where the reader expects the numbered forms. None of that degrades
- * — it misreads — so 0.1.x content must migrate before it loads.
+ * — it misreads — so 0.1.x content must still migrate before it loads.
  */
 export const MIN_CONTENT_VERSION = '0.2.0';
 

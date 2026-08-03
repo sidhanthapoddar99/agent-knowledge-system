@@ -24,10 +24,17 @@
  *
  * Usage: check-skill-links.mjs [skill-dir]
  *
- * With no argument it checks **every skill in the marketplace**, not just the
- * one that happens to ship this script. It used to default to its own skill
- * root, so a bare run reported "all checks passed" having read one skill of
- * three — a clean result that named a scope nobody could see.
+ * With no argument it checks **every skill in the plugin source tree found by
+ * walking up from the CWD**, falling back to the installed plugin (with a
+ * warning) when there is no source tree — which is the normal case for a
+ * consumer. See `resolveSkillsDir()` for why the CWD is the anchor.
+ *
+ * THIS SCOPE HAS BEEN WRONG TWICE, in the same mechanism, both times reporting a
+ * clean pass over something nobody meant to check:
+ *   1. It defaulted to its own SKILL root — one skill of three.
+ *   2. It defaulted to its own INSTALL — a published copy, never the working tree.
+ * Both were fixed by widening what it looks at while leaving *what it anchors on*
+ * alone. If a third turns up, change the anchor rather than the radius.
  *
  * Exit 0 = all links resolve, 1 = broken link(s) found.
  */
@@ -41,20 +48,62 @@ import { makeFenceTracker } from './_links.mjs';
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const JSON_OUT = process.argv.includes('--json');
 const POSITIONAL = process.argv.slice(2).find((a) => !a.startsWith('-'));
-const OWN_SKILL = path.dirname(SCRIPT_DIR);           // scripts/ → this skill's root
-const SKILLS_DIR = path.dirname(OWN_SKILL);           // …/skills/
 
-/** Every skill to check: the one named on the command line, or all of them.
- *  A skill is a directory under `skills/` carrying a `SKILL.md`. */
-const SKILL_ROOTS = POSITIONAL
-  ? [path.resolve(POSITIONAL)]
-  : fs.readdirSync(SKILLS_DIR, { withFileTypes: true })
-      .filter((e) => e.isDirectory() && fs.existsSync(path.join(SKILLS_DIR, e.name, 'SKILL.md')))
-      .map((e) => path.join(SKILLS_DIR, e.name))
-      .sort();
+/** The skills under `dir` — a skill is a subdirectory carrying a `SKILL.md`. */
+function skillsIn(dir) {
+  if (!dir || !fs.existsSync(dir)) return [];
+  return fs.readdirSync(dir, { withFileTypes: true })
+    .filter((e) => e.isDirectory() && fs.existsSync(path.join(dir, e.name, 'SKILL.md')))
+    .map((e) => path.join(dir, e.name))
+    .sort();
+}
+
+/**
+ * Which `skills/` directory to check — anchored on the CWD, NOT on this script.
+ *
+ * The script's own location is the wrong anchor, and getting this wrong is
+ * invisible. `agent-ks` on PATH dispatches to the INSTALLED plugin, so resolving
+ * from `import.meta.url` meant every bare `agent-ks check skill-links` scanned
+ * `~/.claude/plugins/cache/…` — a published copy that no working-tree edit can
+ * reach. It reported "3 skills, 44 files, all checks passed" over a round of
+ * edits it had never read, and every such green in the record before 2026-08-03
+ * describes the installed copy rather than what was committed.
+ *
+ * So: walk up from the CWD for a plugin source tree and check that. Falling back
+ * to the install is still correct for a consumer, who has no source tree at all —
+ * but it is a WARNING, because "I checked something else" must never look like
+ * "I checked your work".
+ */
+function resolveSkillsDir() {
+  let dir = path.resolve(process.cwd());
+  for (;;) {
+    const candidate = path.join(dir, 'plugins', 'agent-ks', 'skills');
+    if (skillsIn(candidate).length) return { dir: candidate, source: 'repo' };
+    const parent = path.dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  const own = path.dirname(path.dirname(SCRIPT_DIR));   // scripts/ → <skill>/ → skills/
+  return { dir: own, source: skillsIn(own).length ? 'installed' : 'none' };
+}
+
+const RESOLVED = POSITIONAL
+  ? { dir: path.dirname(path.resolve(POSITIONAL)), source: 'explicit' }
+  : resolveSkillsDir();
+const SKILLS_DIR = RESOLVED.dir;
+
+/** Every skill to check: the one named on the command line, or all of them. */
+const SKILL_ROOTS = POSITIONAL ? [path.resolve(POSITIONAL)] : skillsIn(SKILLS_DIR);
 
 const errors = [];
 const warnings = [];
+
+if (RESOLVED.source === 'installed') {
+  warnings.push(
+    `no plugin source tree found walking up from ${process.cwd()} — scanned the ` +
+    `INSTALLED plugin at ${SKILLS_DIR}. Working-tree edits are NOT covered by this run.`,
+  );
+}
 
 // Markdown inline link: [text](target). We only care about the target.
 const LINK_RE = /\[[^\]]*\]\(([^)]+)\)/g;
@@ -107,9 +156,15 @@ if (filesScanned === 0) {
   errors.push(`no markdown found under ${SKILL_ROOTS.join(', ') || '(no skills resolved)'} — nothing was checked`);
 }
 
+// Name the TREE, not just the path. The old banner did print its root and still
+// fooled a reader into taking an install-scoped pass as a working-tree pass, so
+// the mode is stated in words rather than left to be inferred from a path.
+const MODE = { repo: ' [source tree]', installed: ' [FALLBACK — the copy beside this script, not a tree you are in]',
+               explicit: ' [explicit path]', none: '' }[RESOLVED.source] ?? '';
+
 reportAndExit({
   kind: 'skill-links',
-  root: SKILL_ROOTS.length === 1 ? SKILL_ROOTS[0] : `${SKILL_ROOTS.length} skills under ${SKILLS_DIR}`,
+  root: (SKILL_ROOTS.length === 1 ? SKILL_ROOTS[0] : `${SKILL_ROOTS.length} skills under ${SKILLS_DIR}`) + MODE,
   subtitle: `(${filesScanned} markdown file${filesScanned === 1 ? '' : 's'} scanned)`,
   errors,
   warnings,

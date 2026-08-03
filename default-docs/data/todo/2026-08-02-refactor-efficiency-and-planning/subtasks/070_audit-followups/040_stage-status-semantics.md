@@ -1,6 +1,6 @@
 ---
 title: "A stage's status has no stated meaning in the skill"
-status: review
+status: done
 ---
 
 # Overview

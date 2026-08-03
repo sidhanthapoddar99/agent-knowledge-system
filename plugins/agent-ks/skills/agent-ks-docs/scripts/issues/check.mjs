@@ -826,9 +826,20 @@ for (const entry of issueFolders) {
           warnings.push(`${rel}/02_working/${f.name}: \`status: dropped\` with no callout — a round that did not land says why in a \`> [!WARNING]\` / \`> [!IMPORTANT]\` callout. The status makes it scannable; the callout is what a reader actually needs`);
         }
       }
+      // The digit rule, enforced. Until this existed the numbering carried
+      // meaning by position with nothing checking it — one of the three skill
+      // readers named exactly that as a reason to prefer the retired scheme,
+      // which at least warned on a missing `iteration:` field.
       for (const [iteration, list] of byIteration) {
-        if (list.length > 1 && !list.some((f) => f.digit === 0)) {
-          warnings.push(`${rel}/02_working/: iteration ${iteration} has ${list.length} producer files but no iteration file (\`${iteration}0_…\`) — the round's own record is what ties them together`);
+        const rounds = list.filter((f) => f.digit === 0);
+        if (rounds.length === 0) {
+          // Was `list.length > 1`, which let a LONE producer through — the same
+          // defect with one file instead of two, and the more likely mistake:
+          // an agent that produced one artifact and never wrote the round up.
+          const n = list.length;
+          warnings.push(`${rel}/02_working/: iteration ${iteration} has ${n} producer file${n === 1 ? '' : 's'} but no iteration file (\`${iteration}0_…\`) — the round's own record is what ties them together`);
+        } else if (rounds.length > 1) {
+          warnings.push(`${rel}/02_working/: iteration ${iteration} has ${rounds.length} files ending \`0\` (${rounds.map((f) => f.name).join(', ')}) — only ONE file per iteration is the round's own record. A producer's file ends 1-9`);
         }
       }
     }

@@ -1,6 +1,6 @@
 ---
 title: "Defects present in BOTH versions — not regressions"
-status: review
+status: done
 ---
 
 # Overview

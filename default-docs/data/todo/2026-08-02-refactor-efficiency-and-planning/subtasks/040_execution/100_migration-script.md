@@ -1,6 +1,6 @@
 ---
 title: "Migration — agent-log status vocabulary → the canonical seven"
-status: in-progress
+status: review
 ---
 
 # Overview
@@ -40,35 +40,107 @@ shows the exact rewrites, migrate is idempotent (a second run finds zero), and
 **Added 2026-08-03, after the field was already dropped — see
 [Where the number went](#where-the-number-went-and-what-the-migration-is-the-only-chance-to-check).**
 
-- [ ] **Report every file whose `iteration:` value disagrees with its filename
+- [x] **Report every file whose `iteration:` value disagrees with its filename
       prefix, before dropping the field.** The migration is the only pass that
       ever sees both numbers; after it runs the frontmatter value is gone and a
-      disagreement is unrecoverable
-- [ ] Decide what a disagreement means — the honest default is **report and keep
-      the filename**, never rename a file to match a field being deleted
-- [ ] Follow-up, not this script: **lint the `NNN_` digit rule** now that nothing
+      disagreement is unrecoverable — **shipped in 0.2.1, and scoped to
+      new-shape files only; see [What the measurement changed](#what-the-measurement-changed-and-it-overturned-this-subtasks-premise)**
+- [x] Decide what a disagreement means — the honest default is **report and keep
+      the filename**, never rename a file to match a field being deleted —
+      **implemented exactly so; the hit text says `KEEPING THE FILENAME`**
+- [x] Follow-up, not this script: **lint the `NNN_` digit rule** now that nothing
       does. `0` = the iteration file, `1`–`9` = producers, and no second `NN0_`
-      within one iteration
+      within one iteration — **mostly already existed; two gaps closed in 0.2.1**
 
 # Outcomes and Next Steps
 
 `migration/0.2.0_agent-log-status-vocabulary.py` ships, and has been **run against
 this repo's own `default-docs/`** with the result committed in the same change.
 
-> [!IMPORTANT]
-> **Back to `in-progress` on 2026-08-03 — it was at `review`.** Three todo items
-> were added after the original scope was complete and verified, so "done,
-> awaiting sign-off" stopped being true. The shipped script is unchanged and
-> everything in *Acceptance* below still holds; what is open is the
-> prefix-versus-field disagreement check described in
-> [Where the number went](#where-the-number-went-and-what-the-migration-is-the-only-chance-to-check),
-> plus a lint that is explicitly a follow-up rather than part of this script.
+## What the measurement changed — and it overturned this subtask's premise
+
+**Closed 2026-08-03 in the 0.2.1 release**
+([the round](../../agent-log/020_wf_ship-the-split/02_working/180_release-0-2-1.md)).
+The check shipped, but **not** in the form this subtask asked for, and the reason
+is the most useful thing here.
+
+The premise above is that the prefix and `iteration:` are *two copies of one
+fact* that nothing kept agreeing, so the migration should report where they
+drifted. **Measured against this repo's own pre-migration tree — 83 files
+carrying both, recovered from git at `8f0ce28` — a blanket comparison reports 83
+disagreements out of 83.** Every one is false.
+
+They were never two copies of one fact. In the retired shape, `MNN_` counted
+**milestones** and `iteration:` counted **rounds**:
+
+| File | Field | Reading |
+|---|---|---|
+| `101_step-a.md` | `iteration: 1` | milestone 1, round 1 |
+| `102_doctrine-parity-wiring.md` | `iteration: 1` | milestone **2**, round **1** — correct, not drifted |
+
+Applying the current rule (first two digits = the iteration) to those files is a
+category error, not a comparison. Even reading them under the old rule, 8 of 83
+"disagree" — and those 8 are just activities with several milestones in one
+round, which is exactly what the old numbering was for.
+
+**So the check is gated on `_is_new_shape_round_file()`** — the file must sit in
+a numbered `02_working/`, which only exists in the current shape. There, and only
+there, do the prefix and the field claim the same thing and can contradict.
+
+The discriminator is **structural rather than a heuristic**: the slot name is
+present or it is not. That is the same move as taking the number from the
+filename in the first place.
+
+### Controls, both directions
+
+| Control | Expected | Got |
+|---|---|---|
+| Real pre-migration tree, 83 old-shape files (`git archive 8f0ce28`) | **0** mismatches — all are convention, not drift | **0** ✓ |
+| Same run still detects the field itself | 86 `log-iteration` drops, 181 points / 110 files | identical to the original recorded run ✓ |
+| Constructed new-shape file: `020_round-two.md` with `iteration: 7` | **1** mismatch | **1** ✓ |
+| Beside it, `021_producer.md` with `iteration: 2` | not flagged | not flagged ✓ |
+
+The middle row is the one that matters for safety: **181 points across 110 files,
+byte-identical to the run recorded in *Acceptance* above.** The addition is
+report-only and regressed nothing.
+
+## The digit lint — already existed, and had two holes
+
+The third todo assumed nothing linted the `NNN_` rule. Most of it **already did**,
+built with the slot numbering: a malformed prefix, a retired `iteration:` field, a
+non-round status, and a `dropped` round with no callout all warn already.
+
+Two real gaps, both closed:
+
+- **A lone producer with no iteration file passed.** The guard read
+  `list.length > 1`, so one orphaned `031_` file was invisible — and that is the
+  *likelier* of the two mistakes, being what an agent leaves behind when it
+  produces one artifact and never writes the round up.
+- **Two files ending `0` in one iteration were never checked at all**, so
+  `040_round-a.md` and `040_round-b.md` could both claim to be that round's own
+  record.
+
+Proved with a before/after on one fixture — **1 warning on the pre-fix code, 3 on
+the fixed code** — and the real tracker stays at its single pre-existing warning,
+so neither rule added noise.
+
+> [!NOTE]
+> **Status history, kept because the round-trip is the point.** This was at
+> `review`, went **back to `in-progress`** on 2026-08-03 when three todo items
+> were added after the original scope had already been verified — "done, awaiting
+> sign-off" stopped being true — and returned to `review` the same day once
+> 0.2.1 closed all three.
 >
-> **The check has a deadline that is not a date.** It is only runnable *before*
-> this migration runs on a consumer tracker — after that the `iteration:` values
-> are gone and there is nothing left to compare the filenames against. It ships
-> with [`050`](../050_version-bump.md), which is held on Sid's word, so there is
-> still room.
+> The reopening was correct and worth imitating: a subtask that grows new scope
+> after reaching `review` is not still awaiting sign-off, and quietly leaving it
+> there would have shipped the release with an open item reading as finished.
+>
+> **The deadline that was not a date has now passed safely.** The disagreement
+> check was only runnable *before* this migration ran on a consumer tracker;
+> afterwards the `iteration:` values are gone and there is nothing to compare
+> against. It made it into 0.2.1 — and the measurement then showed the check was
+> worth far less than feared, because the two numbers were never comparable in
+> the old shape at all.
 
 ## Three changes in one pass, not two
 

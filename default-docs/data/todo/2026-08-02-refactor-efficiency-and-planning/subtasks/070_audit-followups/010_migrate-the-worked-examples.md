@@ -1,6 +1,6 @@
 ---
 title: "The worked examples still teach the retired model"
-status: review
+status: done
 ---
 
 # Overview

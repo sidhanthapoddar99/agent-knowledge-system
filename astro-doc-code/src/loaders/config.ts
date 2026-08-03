@@ -206,12 +206,54 @@ export function loadSiteConfig(): SiteConfig {
     config.theme = resolveThemeName(config.theme);
   }
 
-  // Resolve page data paths to absolute paths
+  // Resolve page data paths to absolute paths, and REFUSE a page whose data
+  // directory does not exist.
+  //
+  // Why this is a hard stop rather than a warning: a page pointing at a missing
+  // folder renders as an EMPTY SECTION — no error, no warning, and no visual
+  // difference from a section whose content was legitimately deleted. The
+  // failure looks exactly like a correct outcome, which is the one shape a
+  // loader must never produce. `agent-ks check config` already called this an
+  // error while the build passed it, so the validator and the loader disagreed
+  // about the same declaration — and the one that runs on every build was the
+  // permissive one.
+  //
+  // Same precedent as the version gate below and the missing-theme throw: a
+  // `site.yaml` declaration naming something the engine cannot honour stops
+  // startup. The cost is that a section cannot be registered before its folder
+  // exists; `/agent-ks-add-section` creates the folder first, so that ordering
+  // is already the normal one.
   if (config.pages) {
-    for (const pageConfig of Object.values(config.pages)) {
-      if (pageConfig.data && pageConfig.data.startsWith('@')) {
-        pageConfig.data = resolveAliasPath(pageConfig.data);
+    const missing: string[] = [];
+    for (const [pageName, pageConfig] of Object.entries(config.pages)) {
+      if (!pageConfig.data) continue;
+      const declared = pageConfig.data;
+      if (declared.startsWith('@')) {
+        pageConfig.data = resolveAliasPath(declared);
       }
+      // EXISTENCE only — deliberately not "is a directory". A section page
+      // (`docs`, `issues`, `blog`) points at a folder, but a single-page type
+      // points at one YAML FILE: `pages.home.data: "@data/pages/home.yaml"`.
+      // An earlier draft of this guard asserted isDirectory() and rejected
+      // `home` and `about`, which are correct as written — caught by the control
+      // test rather than by review, and the reason that test exists.
+      const resolved = path.resolve(pageConfig.data);
+      if (!fs.existsSync(resolved)) {
+        missing.push(
+          `  pages.${pageName}.data: "${declared}"\n` +
+          `    resolved to: ${resolved}\n` +
+          `    but no such file or directory exists.`,
+        );
+      }
+    }
+    if (missing.length > 0) {
+      throw new Error(
+        `site.yaml declares ${missing.length} page(s) whose data path does not exist:\n\n` +
+        missing.join('\n\n') +
+        `\n\nA page whose data path is missing renders as an EMPTY SECTION — no error, ` +
+        `no warning, and indistinguishable from a section you meant to empty. Either ` +
+        `create it, or remove the entry from the \`pages:\` block in site.yaml.`,
+      );
     }
   }
 

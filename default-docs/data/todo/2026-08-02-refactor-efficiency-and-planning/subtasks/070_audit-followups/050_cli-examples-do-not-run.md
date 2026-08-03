@@ -1,6 +1,6 @@
 ---
 title: "Every new CLI example is a command that errors"
-status: review
+status: done
 ---
 
 # Overview

@@ -1,6 +1,6 @@
 ---
 title: "Countable defects — a heading that miscounts, and three numbers that disagree"
-status: review
+status: done
 ---
 
 # Overview

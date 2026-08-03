@@ -1,6 +1,6 @@
 ---
 title: "A page whose data folder does not exist builds green"
-status: open
+status: review
 ---
 
 # Overview
@@ -37,23 +37,69 @@ caused by that work.**
 
 # Todo list
 
-- [ ] Decide what `issues-test` was for. If it was a scratch tracker that lived
+- [x] Decide what `issues-test` was for. If it was a scratch tracker that lived
       only on Sid's disk, **delete the entry**; if it is wanted, add the folder
       with a root `settings.json`
-- [ ] Decide the general rule: should `loadSiteConfig()` **refuse** a page whose
+- [x] Decide the general rule: should `loadSiteConfig()` **refuse** a page whose
       resolved `data` path does not exist, the way it refuses a bad
       `engine_version`? Or is an empty section legitimate — a section registered
       before its content is written?
-- [ ] If it should refuse — implement it, and give the error the missing path
+- [x] If it should refuse — implement it, and give the error the missing path
       **and** the `site.yaml` key that named it
-- [ ] If empty is legitimate — say so in `check config`'s message and downgrade
+- [x] If empty is legitimate — say so in `check config`'s message and downgrade
       it from error to warning, so the validator and the loader stop disagreeing
 
 # Outcomes and Next Steps
 
-> [!IMPORTANT]
-> **PLACEHOLDER** — nothing done. This is a proposal, and its first item is a
-> question only Sid can answer.
+**Done 2026-08-03.** Both halves — the entry deleted and the general rule
+implemented.
+
+**Sid answered the question this was waiting on:** *"issues-test was a scratch
+tracker on my disk, delete it."* The `site.yaml` comment agreed — *"Phase 1
+testbed — throwaway data"* — and the design note that spawned it
+([the issues restructure design](../../2026-04-10-issues-layout/notes/01_issues-restructure-design.md))
+describes it as a throwaway testbed. Entry removed.
+
+**The loader now refuses**, per the recommendation in Details. `loadSiteConfig()`
+throws when any `pages.*.data` resolves to a path that does not exist, naming the
+alias as written, the resolved absolute path, and the `site.yaml` key — and it
+collects **all** offenders into one error rather than failing on the first.
+
+Same precedent as the version gate and the missing-theme throw: a `site.yaml`
+declaration naming something the engine cannot honour hard-stops startup.
+
+## The control test caught a false invariant I had just written
+
+The first draft also asserted the resolved path was a **directory**. Running it
+against the real config, the build refused **three** pages — the deliberate probe
+plus `home` and `about`, both of which are correct as written:
+
+```
+pages.home.data: "@data/pages/home.yaml"   ← a single-page type points at a FILE
+```
+
+**A page's `data` is not always a folder.** Section types (`docs`, `issues`,
+`blog`) point at a directory; single-page types point at one YAML file. The
+`isDirectory()` half was an invariant I invented, and it would have broken two
+working pages on every consumer's build.
+
+Worth stating plainly because the guard's whole purpose is to stop a plausible
+wrong answer, and its first draft *was* one. It was caught by the control test,
+not by review — the check was existence-only afterwards, and the comment in the
+code says why so the next reader does not "tighten" it back.
+
+## Evidence
+
+| Check | Before | After |
+|---|---|---|
+| `./start build` with a missing-dir page | 948 pages, **Complete** | **refuses**, naming the key and both paths |
+| `./start build`, clean config | 952 pages | **951** — one fewer, and that one was `issues-test`'s empty index |
+| `agent-ks check config` | ✗ `pages.issues-test.data: resolved path does not exist` | ✓ all checks passed |
+
+**That 952 → 951 is the finding in miniature.** The missing folder was not
+producing nothing; it was producing an *index page for an empty section* —
+rendering successfully, looking exactly like a section whose content had been
+deleted on purpose. Nothing anywhere said otherwise.
 
 # Details
 

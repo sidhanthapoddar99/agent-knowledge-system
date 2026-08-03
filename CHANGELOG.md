@@ -11,6 +11,7 @@ and is stated inside each note.
 
 | Version | Date | What it is | Forces action? |
 |---|---|---|---|
+| **[0.2.1](./releases/0.2.1.md)** | 2026-08-03 | Three gates that passed what they should have refused: a missing page `data` path, the skill-links checker reading the installed plugin, two agent-log numbering cases | **No migration** — floor stays `0.2.0`. A `site.yaml` page pointing at a missing folder now fails the build |
 | **[0.2.0](./releases/0.2.0.md)** | 2026-08-03 | Plans section · one status vocabulary across every file kind · status colours in theme CSS · numbered agent-log slots | **Yes** — floor raised to `0.2.0`; three migrations |
 | **[0.1.2](./releases/0.1.2.md)** | 2026-07-03 | The version contract itself: `engine_version` in `site.yaml`, the startup gate, root-owned `migration/` | **Yes** — a tree with no declaration is refused |
 | **[0.1.1](./releases/0.1.1.md)** | 2026-07-02 | One lifecycle vocabulary: seven statuses, four categories, `state:` → `status:` | **Yes**, quietly — old values are mapped on read, so the disk drifts instead of failing |
@@ -20,6 +21,11 @@ and is stated inside each note.
 when they shipped, and their notes were reconstructed from git history on
 2026-08-03. Each says so on its face. The constant has only ever held `0.7.0`
 (for thirty minutes on 2026-07-03, never published) and `0.1.2` before `0.2.0`.
+
+**`0.2.1` is the first release where `MIN_CONTENT_VERSION` (`0.2.0`) is behind
+`ENGINE_VERSION`.** That gap is the floor doing its job: it means *oldest content
+that still loads*, not *newest release available*. Every earlier release moved
+both together, which made them look like one number.
 
 ## Upgrading across several versions
 

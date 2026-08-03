@@ -38,7 +38,7 @@ It prints `moved <N> file(s); rewrote <M> link(s) across <K> file(s)` on success
 The core move of the **phase/index pattern** ([64_phase-index.md](../60_examples/64_phase-index.md)): a parked subtask is a lightweight pointer until work begins, then it graduates to a full issue.
 
 1. Create the new issue folder (`<YYYY-MM-DD>-<slug>/`) with its own `settings.json` + `issue.md` (see [42_updating.md](42_updating.md)). Carry the subtask's framing into `issue.md`.
-2. **Leave the original subtask in place** as the index entry, but update it to point at the new issue (`Promoted to <new-issue-id>`) and flip its status to `review`/`done` as appropriate — the index issue stays the roadmap.
+2. **Leave the original subtask in place** as the index entry, but update it to point at the new issue (`Promoted to <new-issue-id>`) and flip its status to `review` — the index issue stays the roadmap. Closing it from there is the user's ([Closing authority](../00_anatomy/00_overview.md#closing-authority)).
 3. Use `agent-ks move` for any notes that should travel from the parent into the new issue so their links survive.
 
 ### Split an issue
@@ -47,10 +47,10 @@ When an issue has grown two distinct responsibilities: create the second issue, 
 
 ### Merge issues
 
-When two issues turn out to be the same work (often caught by the duplicate check too late): pick the canonical one, `agent-ks move` the other's `notes/`/`subtasks/` into it, add a comment summarising the merge, and `dropped`-with-a-comment the now-empty duplicate (never just delete it — see [21_comments.md](../20_sections/21_comments.md); the `dropped` flip itself is human-only).
+When two issues turn out to be the same work (often caught by the duplicate check too late): pick the canonical one, `agent-ks move` the other's `notes/`/`subtasks/` into it, add a comment summarising the merge, and `dropped`-with-a-comment the now-empty duplicate (never just delete it — see [21_comments.md](../20_sections/21_comments.md); the `dropped` flip itself is the user's, [Closing authority](../00_anatomy/00_overview.md#closing-authority)).
 
 ### Regroup subtasks
 
 Wrapping a flat list into grouping folders (or the reverse): `agent-ks move` each leaf into/out of the `NN_<group>/` folder. Add an optional folder `settings.json` (`{ "title": "..." }`) if the group slug doesn't read cleanly as a label.
 
-> **Don't rewrite history.** `comments/` and `agent-log/` are append-only. Restructuring moves *plan* and *reference* material (issues, subtasks, notes); it never edits a past comment or iteration in place.
+> **Don't rewrite history.** `comments/` and `agent-log/` are append-only, **with one named exception**: `# State` in a run's `01_summary.md` is rewritten in place as the run progresses — that is what makes it the run's current position rather than a diary entry ([24_agent-logs.md](../20_sections/24_agent-logs.md)). Everything else is appended: a closed iteration file is not re-narrated, and a past comment is never edited. Restructuring moves *plan* and *reference* material (issues, subtasks, notes); it never edits a past comment or a closed iteration in place.

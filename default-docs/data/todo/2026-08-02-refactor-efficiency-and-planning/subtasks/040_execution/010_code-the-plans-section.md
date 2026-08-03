@@ -1,6 +1,6 @@
 ---
 title: "Code the plans section (framework + CLI)"
-status: review
+status: done
 ---
 
 # Overview

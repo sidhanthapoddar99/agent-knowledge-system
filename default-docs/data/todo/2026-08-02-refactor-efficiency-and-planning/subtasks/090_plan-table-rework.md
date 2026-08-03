@@ -1,6 +1,6 @@
 ---
 title: "The plan table, reworked on first contact"
-status: review
+status: done
 ---
 
 # Overview

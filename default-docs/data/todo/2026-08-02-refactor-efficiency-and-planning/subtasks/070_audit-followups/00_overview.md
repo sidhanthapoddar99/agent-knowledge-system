@@ -1,21 +1,26 @@
 ---
 title: "Audit follow-ups — what the three readers found"
-status: open
+status: in-progress
 ---
 
 # Overview
 
 **Everything in this group came out of
-[`130`](../040_execution/130_independent-skill-audit.md), and none of it has been
-acted on.** Three neutral readers compared the old `agent-ks-issues` skill
-against the new one, having seen neither this issue nor the reasoning behind
-either version. Their verdicts are stored verbatim at
+[`130`](../040_execution/130_independent-skill-audit.md).** Three neutral readers
+compared the old `agent-ks-issues` skill against the new one, having seen neither
+this issue nor the reasoning behind either version. Their verdicts are stored
+verbatim at
 [`071`](../../agent-log/020_wf_ship-the-split/02_working/071_verdict-opus.md) ·
 [`072`](../../agent-log/020_wf_ship-the-split/02_working/072_verdict-sonnet.md) ·
 [`073`](../../agent-log/020_wf_ship-the-split/02_working/073_verdict-sol.md).
 
-**Each subtask here is a proposal, not a plan.** They sit at `open` because the
-decision to do any of them is Sid's, taken with the verdicts in front of him.
+> [!NOTE]
+> **All seven are now at `review`, done 2026-08-03** —
+> [the round](../../agent-log/020_wf_ship-the-split/02_working/160_audit-followups.md).
+> They were written as proposals for Sid to choose from; he asked for them to be
+> discussed and finished in one pass instead. Every one of the seven was taken —
+> six fixed, one (`050`) closed on evidence that a later sweep had already fixed
+> it. Nothing was rejected, so nothing is owed a `dropped` reason.
 
 # References
 
@@ -31,15 +36,42 @@ decision to do any of them is Sid's, taken with the verdicts in front of him.
 
 # Todo list
 
-- [ ] Sid decides which of the seven below to take, and in what order
-- [ ] Anything taken gets a plan stage; anything rejected gets `dropped` with the
-      reason, so the next reader does not re-raise it
+- [x] Sid decides which of the seven below to take, and in what order —
+      **answered 2026-08-03: all of them, in one pass.** *"Can't we just discuss
+      this and get it over with?"*
+- [x] Anything taken gets a plan stage; anything rejected gets `dropped` with the
+      reason — **nothing was rejected**, so no `dropped` reason is owed. The
+      seven ran as a single round rather than as staged work
 
 # Outcomes and Next Steps
 
-**Nothing is scheduled.** The one thing worth saying up front: **`010` and `050`
-are the two that make the skill actively wrong to follow**, and they are both
-mechanical. Everything else is a judgment call or a polish pass.
+**All seven at `review`, 2026-08-03** —
+[the round](../../agent-log/020_wf_ship-the-split/02_working/160_audit-followups.md).
+`done` is Sid's.
+
+| # | Disposition |
+|---|---|
+| `010` | Fixed. `64_phase-index.md` rewritten whole — the earlier pass had changed one line and left the tree teaching the old model |
+| `020` | Fixed. The rule has one home: `00_overview.md#closing-authority`, 14 inbound links |
+| `030` | Fixed — four named contradictions plus **seven more** the end-to-end re-read found |
+| `040` | Fixed. `28_plans.md` gained a stage-status section; a stage's status describes the **schedule**, never the work |
+| `050` | **Already fixed** — closed on a grep showing zero remaining `--issue` examples |
+| `060` | Fixed, and one claim in the subtask itself corrected: the loader `warn`s, it does not truncate silently |
+| `070` | Fixed rather than dropped. The `title` claim was settled **by running a build**, and it was false |
+
+**Two things came out of this round that were not in the audit at all**, both
+recorded rather than folded away:
+
+- [`130`](../130_skill-links-checks-the-wrong-tree.md) — **`agent-ks check
+  skill-links` reads the installed plugin, not the working tree.** Every
+  "skill-links clean" line in this issue's record was measured against a copy
+  nobody had edited.
+- `42_updating.md` named `check section` — a *docs* validator — as the way to
+  validate the tracker. It would pass a tracker with a broken vocabulary.
+
+**The original assessment held up.** `010` and `050` were called *the two that
+make the skill actively wrong to follow*, and that was right: `050` turned out
+to be already fixed, and `010` turned out to be worse than described.
 
 # Details
 
@@ -58,7 +90,7 @@ claim is true, which is not the same as acting on it.
 | `040` | [A stage's `status` has no stated meaning](./040_stage-status-semantics.md) | sol only | **yes** — absent from the skill | medium |
 | `050` | [Every new CLI example is a command that errors](./050_cli-examples-do-not-run.md) | Opus (as a style nit) | **yes — reproduced** | **high** |
 | `060` | [Countable defects](./060_countable-defects.md) | sol, Opus | **yes** — "Three" lists four | low |
-| `070` | [Defects present in BOTH versions](./070_defects-in-both-versions.md) | Sonnet, sol | not yet | low |
+| `070` | [Defects present in BOTH versions](./070_defects-in-both-versions.md) | Sonnet, sol | **yes** — the `title` claim disproved by a build, 2026-08-03 | low |
 
 ## What the readers actually concluded
 

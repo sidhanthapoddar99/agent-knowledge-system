@@ -1,6 +1,6 @@
 ---
 title: "Version bump — engine 0.2.0 + plugin 0.7.0"
-status: review
+status: done
 ---
 
 # Overview

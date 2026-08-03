@@ -1,6 +1,6 @@
 ---
 title: "Countable defects — a heading that miscounts, and three numbers that disagree"
-status: open
+status: review
 ---
 
 # Overview
@@ -19,24 +19,58 @@ because they share an owner and a fix shape, not because they are related.
 
 # Todo list
 
-- [ ] **`03_overall-issue-tracker-vocabulary.md:57`** — the heading says *"Three
+- [x] **`03_overall-issue-tracker-vocabulary.md:57`** — the heading says *"Three
       vocabulary layers"* and the list has four. **Verified.** The fourth
       (per-plan-stage / per-agent-log / per-iteration-file) was added by this
       issue; the heading was not updated
-- [ ] **`23_subtasks.md:36,62`** — group depth given as *"one level"*, *"3 levels
+- [x] **`23_subtasks.md:36,62`** — group depth given as *"one level"*, *"3 levels
       or fewer"* and *"up to 5 levels deep"*, two of them in the same line
-- [ ] **`24_agent-logs.md:395`** — `plans/020_decoder-and-retention/` where
+- [x] **`24_agent-logs.md:395`** — `plans/020_decoder-and-retention/` where
       `28_plans.md` and `01_folder-layout.md` specify `plans/NN_<name>/` and every
       other example uses two digits. **Verified**
-- [ ] **`63_agent-loops.md:81-85`** — *"A two-round bugfix does not need any of
+- [x] **`63_agent-loops.md:81-85`** — *"A two-round bugfix does not need any of
       this"* immediately above *"An agent log opens when work is delegated or
       runs over multiple rounds"*. See below — the fix is a word, not a rule
       change
 
 # Outcomes and Next Steps
 
-> [!IMPORTANT]
-> **PLACEHOLDER** — nothing done. This is a proposal.
+**All four done 2026-08-03** — [the round](../../agent-log/020_wf_ship-the-split/02_working/160_audit-followups.md).
+
+| Site | Fix |
+|---|---|
+| `03_overall-issue-tracker-vocabulary.md:57` | "Three vocabulary layers" → **"Four"** |
+| `23_subtasks.md:36,62` | The three conflicting caps replaced by one blockquote — see below |
+| `24_agent-logs.md:395` | `plans/020_…` → `plans/02_…` |
+| `63_agent-loops.md:81` | "A two-round bugfix" → **"A one-round bugfix you do yourself"** |
+
+The `63` fix is the word-change Details argued for, not a rule change: *"any of
+this"* was always defensible, and "two-round" was the only thing colliding with
+the bolded rule beneath it.
+
+## The depth blockquote — and a claim of my own that was wrong
+
+The three caps are now one statement: **five levels is the loader's hard cap, one
+level is the convention**, with what happens when you exceed it.
+
+**Details above says the loader "silently truncates at five levels". It does
+not, and I wrote that overstatement into the skill before checking the source.**
+`issues.ts:1338` prints:
+
+```
+[issues] "<id>": subtasks/<path>/ exceeds the 5-level depth cap — ignored
+```
+
+That is a `console.warn` — the build still succeeds and the entries still do not
+render, so the *consequence* is exactly as described, but it is not silent. The
+skill now says the accurate thing: the cap is enforced by **one warning line in a
+build log of hundreds of pages**, which is easy to miss but is not nothing.
+
+Worth keeping the distinction rather than smoothing it: "silent" and "warns
+somewhere nobody looks" call for different fixes. The first needs a new
+diagnostic; the second needs the existing one surfaced. Recorded because the
+correction is to my own just-written text, caught by reading the loader instead
+of trusting the subtask that briefed me.
 
 # Details
 

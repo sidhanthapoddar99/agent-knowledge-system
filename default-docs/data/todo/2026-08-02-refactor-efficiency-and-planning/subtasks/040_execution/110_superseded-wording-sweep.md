@@ -1,6 +1,6 @@
 ---
 title: "Sweep — delete superseded wording, and make the rule explicit"
-status: review
+status: done
 ---
 
 # Overview

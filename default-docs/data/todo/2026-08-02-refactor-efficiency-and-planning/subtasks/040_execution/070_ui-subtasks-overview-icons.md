@@ -1,6 +1,6 @@
 ---
 title: "UI — Subtasks and Overview have no section icon"
-status: review
+status: done
 ---
 
 # Overview

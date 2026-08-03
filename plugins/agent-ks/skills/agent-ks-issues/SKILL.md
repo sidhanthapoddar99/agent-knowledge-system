@@ -153,9 +153,9 @@ entry graduates to a real issue exactly when it passes the litmus test — and i
 
 ## Lifecycle — statuses & AI rules
 
-**One status vocabulary across the whole tracker** — issues, subtasks, plan stages,
-agent logs and iteration files all use these seven values in the `status` field. Fixed
-in framework code; a tracker overrides only colors.
+**One status vocabulary across the whole tracker** — issues, subtasks, plans, plan
+stages, agent logs and iteration files all use these seven values in the `status` field.
+Fixed in framework code; a tracker overrides only colors.
 
 | Category | Statuses |
 |---|---|
@@ -165,30 +165,31 @@ in framework code; a tracker overrides only colors.
 | **Closed** | `done` · `dropped` |
 
 **Agent logs and iteration files use five of the seven** — `blocked` and `review` mean
-nothing for a run. On a run, `done` means *the agent finished its assignment* and
-`dropped` means it did not (crashed, refused, superseded). **What the run concluded is
-prose in `# Outcome`, never the status.** An audit that finished and found two real
-defects is `status: done`.
+nothing for a run.
+
+> **Who may set `done` / `dropped` — and what those two words mean — depends on what
+> carries the status.** An issue, a subtask, a plan, a plan stage and an agent log do not
+> all have the same answer. The rule has exactly one home:
+> **[Closing authority](references/00_anatomy/00_overview.md#closing-authority)**. Read
+> it before you close anything; do not infer it from the word.
 
 The AI rules are the most important rules in this skill:
 
-1. **Manage `in-progress` yourself; hand off at the Review category, never `done`.** Set
-   `in-progress` when you start executing. Your ceiling is `review` (or `input-needed`) —
-   `done`/`dropped` are **human-only** transitions on an issue or subtask. Hand off with
-   a verifiable artefact (PR, diff, screenshot, test output).
-2. **`done` on an agent log is yours to set.** Same word, opposite authority: an agent
-   log is your record of your own run, so you close it. Never self-certify a subtask.
-3. **Hit a wall → `input-needed`, not `blocked`.** Write the actual question **inline in
+1. **Manage `in-progress` yourself; hand off at the Review category.** Set `in-progress`
+   when you start executing, and hand off with a verifiable artefact (PR, diff,
+   screenshot, test output). Closing is governed by
+   [Closing authority](references/00_anatomy/00_overview.md#closing-authority) above.
+2. **Hit a wall → `input-needed`, not `blocked`.** Write the actual question **inline in
    the subtask/issue body** so a fresh session sees it; reserve `blocked` for a structural
    dependency on another issue/subtask.
-4. **Default search scope is everything not Closed** (open, blocked, in-progress,
+3. **Default search scope is everything not Closed** (open, blocked, in-progress,
    input-needed, review) — skip the Closed category (`done`/`dropped`) unless explicitly asked.
-5. **Review-debt promotion:** an active (non-closed) issue with any subtask in the
+4. **Review-debt promotion:** an active (non-closed) issue with any subtask in the
    **Review category** (`review` or `input-needed`) surfaces as "needs review" — it lands on
    the Review tab and **displays a `review` badge on the index** (display-only; the stored
    status is unchanged and the CLI/`--json` still report it, reverting once the subtask moves
    on). `blocked` never promotes — it rests, reason read in place.
-6. **`dropped` requires a comment** explaining why, first (human-only).
+5. **`dropped` on an issue or subtask requires a comment** explaining why, written first.
 
 ## Executing work — plans, agent logs, memory
 
@@ -399,7 +400,8 @@ for a tight report — patterns in [41_searching.md](references/40_operations/41
   `agent-log/020_wf_ship/02_working/090_x.md` labels as `020/02/090` — the walk stops at
   `agent-log/`, which carries none. A target with no prefix takes no label at all: it
   has no ordering identity to state.
-- **Frontmatter `title`** on every markdown file (Astro builds fail without it).
+- **Frontmatter `title`** on every markdown file. The build does **not** fail without
+  one — it falls back to the slug, so the page silently ships titled `_my-file`.
 - **`settings.json` may be `.jsonc`** (comments + trailing commas) — prefer `.jsonc`
   for the tracker root and annotate what each component/label means.
 - **Edit, don't rewrite**; append-only in `comments/` and `agent-log/`; preserve

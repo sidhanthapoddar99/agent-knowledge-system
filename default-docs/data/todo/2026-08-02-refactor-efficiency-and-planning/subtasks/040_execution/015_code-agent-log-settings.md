@@ -1,6 +1,6 @@
 ---
 title: "Code per-agent-log settings.json (framework)"
-status: review
+status: done
 ---
 
 # Overview

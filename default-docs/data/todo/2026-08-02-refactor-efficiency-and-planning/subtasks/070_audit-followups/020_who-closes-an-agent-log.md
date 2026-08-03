@@ -1,6 +1,6 @@
 ---
 title: "Two files disagree on who may close an agent log"
-status: open
+status: review
 ---
 
 # Overview
@@ -28,16 +28,57 @@ other mention points at it.
 
 # Todo list
 
-- [ ] Decide where the authority rule lives — one file, not two
-- [ ] Correct `00_overview.md:72,83` and its status table
-- [ ] Check `SKILL.md:167-180`, `24_agent-logs.md:327-329` and `28_plans.md:131`
+- [x] Decide where the authority rule lives — one file, not two
+- [x] Correct `00_overview.md:72,83` and its status table
+- [x] Check `SKILL.md:167-180`, `24_agent-logs.md:327-329` and `28_plans.md:131`
       all agree with it and do not restate it
-- [ ] Sweep for any other copy of the AI-rules block
+- [x] Sweep for any other copy of the AI-rules block
 
 # Outcomes and Next Steps
 
-> [!IMPORTANT]
-> **PLACEHOLDER** — nothing done. This is a proposal.
+**Done 2026-08-03** — [the round](../../agent-log/020_wf_ship-the-split/02_working/160_audit-followups.md).
+
+**The rule's one home is `00_overview.md`, in a new `### Closing authority`
+section — not `SKILL.md`, which is what *The likely fix* below proposed.**
+
+The proposal assumed `SKILL.md` should keep it "because it is always loaded".
+That is the wrong test. The question an agent actually arrives with is *may I
+close this thing*, and it arrives while reading whichever file describes the
+thing — `24_agent-logs.md` for a run, `28_plans.md` for a stage,
+`23_subtasks.md` for a subtask. A rule those three link to has to sit in a file
+they can all point at as a peer; `SKILL.md` is the entry point, not a reference.
+So `SKILL.md` now carries a pointer and states the rule nowhere.
+
+The section answers the question **for every kind of thing a status can sit on**,
+which is what neither previous statement did:
+
+| Status sits on | Who closes |
+|---|---|
+| issue / subtask | the user only; the agent's ceiling is `review` / `input-needed` |
+| agent log, child log, iteration file | the agent — it records its own run |
+| plan / plan stage | the agent — closing ends a *schedule*, and certifies nothing about the work |
+
+It also settles what an agent-log `status` means, which was never written down:
+it answers *did the agent finish its assignment*, never *was the news good*. A
+completed audit that found five defects is `done`. `dropped` means crashed,
+refused or superseded — **a run is never `dropped` for reporting bad news.**
+
+**Fourteen inbound links from eight files** now point at
+`00_overview.md#closing-authority`; the duplicate statements in `SKILL.md`,
+`28_plans.md`, `23_subtasks.md`, `24_agent-logs.md`, `43_moving-restructuring.md`
+and `61_multiple-subtasks.md` are gone. Anchor and links verified by grep, and
+the link checker passes against the working tree.
+
+**One decision taken rather than escalated:** `done`/`dropped` on a *plan stage*
+is agent-settable. Nothing in the skill or the code stated it either way; it is
+read off two facts already written — the agent may close a plan, and a stage
+carries no status of the work. Reversible in one line, and it is the third row
+of the table above.
+
+**AI-rule numbering in `00_overview.md` was deliberately left stable**, because
+`21_comments.md`, `41_searching.md` and `61_multiple-subtasks.md` cite those
+rules by number. `SKILL.md`'s list has no inbound citations and renumbered
+freely.
 
 # Details
 

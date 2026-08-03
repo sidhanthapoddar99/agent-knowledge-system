@@ -108,10 +108,16 @@ The verdict drops into the four-branch decision tree above without you ever load
 Run the validator after any non-trivial write to confirm the tracker still parses and no unknown keys crept in:
 
 ```bash
-agent-ks check section <tracker>      # or: bun plugins/.../scripts/issues/check.mjs <tracker>
+agent-ks check issues                      # the default tracker
+agent-ks check issues --tracker <path>     # a non-default one
 ```
 
-Three optional flags shape the output:
+**Not `agent-ks check section`** — that validates a *docs* section (`NN_` prefixes,
+`settings.json`, `title`) and knows nothing about tracker schema, so it will pass a
+tracker with a broken vocabulary. And the tracker is a `--tracker` flag, never a
+positional argument.
+
+Four optional flags shape the output:
 
 - `--quiet` / `--no-warnings` — suppress all warnings; only errors print.
 - `--verbose` — for unknown-key warnings, also list the canonical keys (helps when migrating a tracker upgraded from an older framework version).
@@ -120,7 +126,7 @@ Three optional flags shape the output:
 ## When NOT to edit
 
 - Don't touch closed-category issues (`done` / `dropped`) without an explicit human prompt.
-- Don't rewrite history in `comments/` or `agent-log/` — append, don't edit prior entries.
+- Don't rewrite history in `comments/` or `agent-log/` — append, don't edit prior entries. The one exception is `# State` in a run's `01_summary.md`, which is rewritten in place by design ([24_agent-logs.md](../20_sections/24_agent-logs.md)).
 - Don't change `author` or `date` on someone else's comment.
 - Don't mark an issue or subtask `done` or `dropped` — closing is a human-only transition (AI rule #1, [00_overview.md](../00_anatomy/00_overview.md)).
 

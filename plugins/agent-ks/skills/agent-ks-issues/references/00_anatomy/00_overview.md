@@ -59,31 +59,62 @@ rot under continuous AI-driven shipping.
 
 ---
 
-## Lifecycle — 7 statuses, 4 categories & AI rules
+## Lifecycle — 7 statuses, 4 categories, closing authority & AI rules
 
 **7 statuses in 4 categories** — one field, one vocabulary, across issues, subtasks,
-plan stages, agent logs and iteration files. Fixed in framework code:
+plans, plan stages, agent logs and iteration files. Fixed in framework code:
 
 | Category | Statuses | Notes |
 |---|---|---|
 | **Not Started** | `open` · `blocked` | `blocked` = depends on another issue/subtask; reason in prose |
 | **In Progress** | `in-progress` | Agent sets it automatically when work starts |
 | **Review** | `input-needed` · `review` | `input-needed` = stuck on a question (written inline); `review` = done, awaiting sign-off |
-| **Closed** | `done` · `dropped` | Terminal; both **human-only**; `dropped` needs a comment first |
+| **Closed** | `done` · `dropped` | Terminal. **Who may set them depends on what carries the status** — [Closing authority](#closing-authority) |
 
 Transitions are **unenforced** — any jump is legal. The category grouping is what the UI
 filters by; the status is the per-row badge.
 
-**Agent logs and iteration files use five of the seven** — `blocked` and `review` mean
-nothing for a run. There, `done` means the agent finished its assignment and `dropped`
-means it did not; what the run *concluded* is prose, never the status.
+**Runs use five of the seven.** An agent log, a child agent log and an iteration file
+carry `open` · `in-progress` · `input-needed` · `done` · `dropped`. `blocked` and
+`review` are excluded because both describe a *work item*: a run does not wait on another
+run, and a run is never signed off — the subtask is. Fixed as `RUN_STATUSES` in
+`issue-status.ts`.
+
+### Closing authority
+
+**Who may set `done` and `dropped`. This section is that rule's only home** — every other
+file in the skill links here instead of restating it.
+
+The discriminator is **what the status is attached to**: a thing that carries the *work*,
+or a thing that carries a *record of* or a *schedule for* the work.
+
+| The status sits on | Who may close it | Why |
+|---|---|---|
+| An **issue** or a **subtask** | **The user, only.** Your ceiling is `review` — or `input-needed` with the question written inline | Closing signs off the work. The user inspects the artefact (PR, diff, screenshot, test output) and flips it |
+| An **agent log**, a child agent log, or an **iteration file** | **You.** You close your own run | It records what *you* did. Nobody else is in a position to say whether the run finished |
+| A **plan** or a **plan stage** | **You.** Closing ends a *schedule*, not a piece of work | A plan stores no status of the work — the subtasks it references render their own live status — so closing one certifies nothing about it ([28_plans.md](../20_sections/28_plans.md)) |
+
+**Never self-certify a subtask by closing the agent log that worked on it.** The two
+`done`s are the same word from the same vocabulary with opposite authority, and the log's
+`done` is not evidence for the subtask's.
+
+**An agent log's `status` answers *did the agent finish its assignment*, never *was the
+news good*.** An audit that ran to completion and found five defects is `done` — the
+five defects are prose in its `01_summary.md`. `dropped` means the run did not deliver:
+it crashed, was refused, or was superseded. A run is never `dropped` for reporting bad
+news.
+
+On an issue or subtask, `dropped` additionally needs its explaining comment written first
+(the last of the AI rules below). A `dropped` run needs no comment; its `01_summary.md`
+says what happened.
 
 ### AI rules — the most important rules in the whole skill
 
-1. **Manage `in-progress`; hand off at Review; never mark `done`/`dropped`.** Set
-   `in-progress` when you start executing. Your ceiling is `review` (or `input-needed`) —
-   `done`/`dropped` are *human-only*. The human inspects the artefact (PR, diff,
-   screenshot) and flips to `done`.
+1. **Manage `in-progress` yourself; hand off at the Review category.** Set `in-progress`
+   when you start executing, and hand off with a verifiable artefact (PR, diff,
+   screenshot, test output). Before setting `done` or `dropped` on *anything*, read
+   [Closing authority](#closing-authority) above — the answer differs by what carries the
+   status, and guessing is how a subtask gets self-certified.
 
 2. **Hit a wall → `input-needed`, not `blocked`.** Set `input-needed` and write the
    actual question **inline in the subtask/issue body** so a fresh session picks it up.
@@ -103,8 +134,9 @@ means it did not; what the run *concluded* is prose, never the status.
    are `review`/`done`, there's a verifiable artefact (PR, file diff, screenshot, test
    output), and the agent-log captures what was tried.
 
-6. **`dropped` requires a comment** (human-only). Write `comments/NNN_….md` explaining why
-   before flipping.
+6. **`dropped` on an issue or subtask requires a comment first.** Write
+   `comments/NNN_….md` explaining why, before the flip — [Closing authority](#closing-authority)
+   says whose flip it is.
 
 ---
 
@@ -118,7 +150,7 @@ contents.
 | File | Read it for |
 |---|---|
 | **`00_anatomy/` — orientation** | |
-| [00_overview.md](00_overview.md) | *(this file)* operating model, lifecycle + AI rules, this index |
+| [00_overview.md](00_overview.md) | *(this file)* operating model, lifecycle, **closing authority** (who may set `done`/`dropped`, on anything), AI rules, this index |
 | [01_folder-layout.md](01_folder-layout.md) | the `<issue>/` folder tree, the 5-level nesting cap, URL shapes |
 | [02_per-issue-settings.md](02_per-issue-settings.md) | per-issue `settings.json`; derived vs stored; `agentLogKinds` |
 | [03_overall-issue-tracker-vocabulary.md](03_overall-issue-tracker-vocabulary.md) | the tracker-root `settings.json(c)` — `fields` vocabulary, authors, views |

@@ -1,6 +1,6 @@
 ---
 title: "Rework the demo showcase issue onto the new structure"
-status: review
+status: done
 ---
 
 # Overview

@@ -14,7 +14,8 @@ record itself* is substantial. This is the issue type that earns several agent l
 │   └── 010_zero-flakes.md           SCOPE: what "done" means, and how to verify it
 ├── plans/
 │   └── 01_get-to-zero/              ORDER: which sweep runs when, and what blocks what
-│       ├── overview.md
+│       ├── settings.json            title + status
+│       ├── overview.md              RESERVED name — the intro, never a stage
 │       ├── 10_categorize.md
 │       └── 20_fix-the-top-five.md
 ├── agent-memory/
@@ -83,6 +84,6 @@ and don't let an agent log list its rounds as a schedule — that is the plan.
 
 ## When this is overkill
 
-A two-round bugfix does not need any of this. **An agent log opens when work is
-delegated or runs over multiple rounds** — otherwise the change gets a line in the plan
-and no folder at all.
+A one-round bugfix you do yourself does not need any of this. **An agent log opens when
+work is delegated or runs over multiple rounds** — otherwise the change gets a line in
+the plan and no folder at all.

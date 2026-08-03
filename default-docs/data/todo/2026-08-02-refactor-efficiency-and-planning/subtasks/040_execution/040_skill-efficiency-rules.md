@@ -1,6 +1,6 @@
 ---
 title: "Skill — the responsibility split, and the agent-log rewrite"
-status: review
+status: done
 ---
 
 # Overview

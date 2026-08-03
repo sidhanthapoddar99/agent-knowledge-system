@@ -59,8 +59,18 @@ whole tracker (see
 [03_overall-issue-tracker-vocabulary.md](../00_anatomy/03_overall-issue-tracker-vocabulary.md)),
 tracked independently per subtask.
 
-A subtask may live at the root of `subtasks/`, or nested up to 5 levels deep. **The
-folder is a label only** — no folder body file. **Keep to 3 levels or fewer.** Folders
+A subtask may live at the root of `subtasks/`, or nested inside group folders. **The
+folder is a label only** — no folder body file.
+
+> **Five levels is the loader's hard cap; one level is the convention.** Past five, the
+> folder is **ignored** — its entries do not render — and the loader prints
+> `[issues] "<id>": subtasks/<path>/ exceeds the 5-level depth cap — ignored`. That is a
+> `console.warn`: the build still succeeds, and one warning line in a build log of
+> hundreds of pages is easy to miss. So the cap is not a style guideline — exceeding it
+> loses content, and the only thing that says so is a line nobody is watching for.
+> Group by area, one level, per the test above; two is already a smell.
+
+Folders
 use the same numbering as leaves and sort interleaved with them. In the sidebar a group
 folder shows **done/total** (the Closed category — `done`/`dropped` — counts as done);
 the section header carries the same count plus an amber review-dot when any subtask sits
@@ -176,8 +186,9 @@ agent-ks issue set-state <issue> review --subtask NN      # resolves the subtask
 ```
 
 > **AI rule:** set `in-progress` when you start, hand off at `review` (or
-> `input-needed` with the question inline) — never `done`/`dropped`, which are
-> human-only transitions.
+> `input-needed` with the question inline). Who may close it —
+> and why the answer is different for an agent log — is stated once, in
+> [Closing authority](../00_anatomy/00_overview.md#closing-authority).
 
 ## Rapid mechanical changes
 

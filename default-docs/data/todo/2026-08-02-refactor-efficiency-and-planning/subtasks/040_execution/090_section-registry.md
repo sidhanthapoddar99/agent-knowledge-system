@@ -1,6 +1,6 @@
 ---
 title: "Framework — a section registry, so eleven files stop agreeing by hand"
-status: review
+status: done
 ---
 
 # Overview

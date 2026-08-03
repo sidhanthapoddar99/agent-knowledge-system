@@ -1,6 +1,6 @@
 ---
 title: "Number the agent log's own slots"
-status: review
+status: done
 ---
 
 # Overview
@@ -49,10 +49,23 @@ be converted by a script rather than by hand; and the script is control-tested.
 - [x] Control harness, 26 assertions including a decoy that a naive
       find-and-replace would break
 - [x] The renames themselves, run by one actor sequentially
-- [ ] **Sid: the screenshot needs recapturing.**
-      `user-guide/19_issues/assets/demo-agent-log.png` shows the old slot names.
-      Prose cannot fix an image; the alt text has been softened to wording that
-      is true under both shapes so nothing reads as a lie in the meantime
+- [x] **The screenshot was recaptured** — 2026-08-03, and **not** by Sid. The
+      fixture had already been migrated, so the page renders the current shape
+      and the capture could be automated
+      ([the harness](../../../../../verification/docs-screenshots/capture.mjs)).
+      It now shows `01 Summary` · `02 Working` · `03 Debrief` under
+      `20 Edge cases` — which is what its caption always claimed. All four
+      user-guide assets moved to webp in the same pass, 632K → 323K
+- [x] **This line's own description of the defect was wrong**, and is corrected
+      rather than deleted. It said the image "shows the old slot names". It did
+      not: it showed the *milestone* model that predates them —
+      `200_it_stress/101_step-a.md` at the activity root, a `goal` slot, `Iter 1`
+      badges rendered from the retired `iteration:` field, and a `Success` chip
+      from the retired status vocabulary. **Sid caught it by opening the image
+      while the claim was being repeated at him.** Nothing validates a
+      screenshot, so a claim about one is only as good as the last person who
+      looked — and this claim had been restated across three rounds by agents
+      reading the previous round's text
 
 # Outcomes and Next Steps
 

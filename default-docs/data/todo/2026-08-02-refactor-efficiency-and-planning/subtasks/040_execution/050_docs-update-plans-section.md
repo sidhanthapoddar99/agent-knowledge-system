@@ -1,6 +1,6 @@
 ---
 title: "Docs — define what every section is FOR, in the guide and the user-guide"
-status: review
+status: done
 ---
 
 # Overview

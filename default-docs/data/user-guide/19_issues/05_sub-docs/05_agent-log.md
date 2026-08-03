@@ -14,7 +14,7 @@ somewhere to organise, and to continue an iterative loop across rounds.
 When a human reviews a `review`-flagged issue, the agent log is the first thing they
 read.
 
-![The demo issue on an agent-log page — one folder per run with its kind symbol, the summary first, and the iteration files inside](../assets/demo-agent-log.png)
+![The demo issue on an agent-log page — one folder per run with its kind symbol, the summary first, and the iteration files inside](../assets/demo-agent-log.webp)
 
 ## What it holds — and what it does not
 

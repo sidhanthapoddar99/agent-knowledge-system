@@ -1,6 +1,6 @@
 ---
 title: "Agent memory — what it becomes once plans/ leaves it"
-status: review
+status: done
 ---
 
 # Overview

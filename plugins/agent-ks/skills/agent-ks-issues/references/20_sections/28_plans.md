@@ -156,12 +156,34 @@ you can point somewhere. **Point with a link, never a number** — see
 [Linking](../10_writing/10_writing.md#linking); a note reading *"blocked on 14"* is
 unreadable the moment 14 is renumbered.
 
-## Status is the canonical seven
+## Stage status — what the canonical seven mean on a stage
 
-Same vocabulary, icons and colours as issues and subtasks. A stage that is waiting sets
-`status: blocked` and says what it waits on in one line of body text — there is no
-`blocked-by:` field, because a dependency graph nobody maintains is worse than a
-sentence somebody reads.
+Same seven values, same icons and colours as everywhere else; their general definitions
+live in [00_overview.md](../00_anatomy/00_overview.md) and are not repeated here. What is
+specific to a stage is the subject: **a stage's status describes the SCHEDULE, never the
+work.** The subtasks it references render their own live status underneath it, so the
+stage row and the subtask rows answer different questions and cannot contradict one
+another.
+
+| Status | On a stage |
+|---|---|
+| `open` | Scheduled, not started. The default `new-stage` writes |
+| `blocked` | Cannot start until something outside this stage moves. Name that thing in one line of body text — there is no `blocked-by:` field, because a dependency graph nobody maintains is worse than a sentence somebody reads |
+| `in-progress` | The stage being worked right now. **One at a time** is the convention; a second usually means the plan is really two plans, or that the first one stalled without saying so |
+| `input-needed` | Stalled part-way on an answer only the user can give. The question goes in the stage's `## Questions`, written out in full — never "waiting on an answer" |
+| `review` | The stage's work is finished and what remains is the user's — signing off its subtasks, or taking a decision. Use it when the `outcome` is not yours to declare met |
+| `done` | The `outcome` line is met and nothing further is scheduled here |
+| `dropped` | This stage will not run — superseded, folded into another stage, or the work was abandoned. One line of body says which. **Never delete it**; the plan is the record of what was in scope at the time |
+
+**Who may set `done` or `dropped` on a stage:**
+[Closing authority](../00_anatomy/00_overview.md#closing-authority) — the answer is not
+the same as for the subtasks the stage references, so read it rather than reasoning from
+the word.
+
+**A stage does not wait for its subtasks to reach `done` before it can be `done`.**
+Requiring that would make the stage a running tally of its subtasks' statuses — the one
+thing a plan must not hold. Set the stage from the schedule's point of view and let the
+subtask rows speak for themselves.
 
 ## The plan table
 
@@ -198,8 +220,9 @@ Nothing renders above the issue body.
 
 ## Closing a plan
 
-**You may close a plan** — on your own, or when told to. Unlike a subtask's `done`,
-closing a plan ends a *schedule*; it is not a sign-off on work quality.
+Closing a plan ends a *schedule*, not a piece of work: a plan holds no status of the
+work, so closing one asserts nothing about its quality. **Who may close it, and when you
+need to be told to:** [Closing authority](../00_anatomy/00_overview.md#closing-authority).
 
 The closing record goes in `overview.md` as a `## Closed` section, written once and
 never edited after:
@@ -217,12 +240,13 @@ what answers *"what did we think was in scope back then?"*
 
 | Who | Does what |
 |---|---|
-| **You** | Update stage status, todos, questions and references **as work lands**. Add a stage when you discover necessary work. Reorder. Close the plan |
+| **You** | Update stage status, todos, questions and references **as work lands**. Add a stage when you discover necessary work. Reorder. Close a stage, and close the plan |
 | **The user** | Owns the shape — which stages exist, their order, their outcomes |
 
 A plan that cannot absorb a discovery is a plan that gets abandoned mid-run, and an
-abandoned plan is worse than an edited one. What does not change: `done` on an issue
-subtask remains human-only.
+abandoned plan is worse than an edited one. What does not change: closing the *subtasks*
+a stage references is a separate question with a separate answer —
+[Closing authority](../00_anatomy/00_overview.md#closing-authority).
 
 ## Standing questions do not live here
 

@@ -33,7 +33,7 @@ This routing rule applies to every natural-language phrase the user might use. R
 
 ## Helper scripts — use these, they're the fastest path
 
-The plugin ships 8 issue-tracker CLI wrappers (`agent-ks issue list`, `agent-ks issue show`, `agent-ks issue subtasks`, `agent-ks issue agent-logs`, `agent-ks issue set-state`, `agent-ks issue add-comment`, `agent-ks issue add-agent-log`, `agent-ks issue review-queue`) on your `PATH`. **Prefer them over hand-rolled grep** — they understand the schema (subtask `status`, component-as-array, agent-log subgroups) and emit terse output by default. **Every wrapper requires `bun`** — the scripts import `gray-matter`, which node cannot resolve (there is no `package.json` and no `node_modules`), so the dispatcher refuses with an install hint rather than failing on an import.
+The plugin ships the `agent-ks issue` command group on your `PATH` — reads, writes, and the scaffolders that create tracker structure. **Run `agent-ks help` for the live list**; a count written here is a second copy of a fact the manifest already holds, and it drifts. **Prefer them over hand-rolled grep** — they understand the schema (subtask `status`, component-as-array, agent-log subgroups) and emit terse output by default. **Every wrapper requires `bun`** — the scripts import `gray-matter`, which node cannot resolve (there is no `package.json` and no `node_modules`), so the dispatcher refuses with an install hint rather than failing on an import.
 
 | Command (script) | What it does |
 |---|---|
@@ -43,8 +43,15 @@ The plugin ships 8 issue-tracker CLI wrappers (`agent-ks issue list`, `agent-ks 
 | `agent-ks issue agent-logs` (`agent-logs.mjs`) | Print the last N agent-log entries (default 3) — catch up before resuming work. |
 | `agent-ks issue set-state` (`set-state.mjs`) | Update issue status (`settings.json`) or subtask status (frontmatter). Path-allow-listed to the content root. |
 | `agent-ks issue add-comment` (`add-comment.mjs`) | Append a comment with auto-incremented `NNN_` prefix. |
-| `agent-ks issue add-agent-log` (`add-agent-log.mjs`) | Append an agent-log entry with auto-incremented iteration. Supports `--group` for subgroups. |
+| `agent-ks issue add-agent-log` (`add-agent-log.mjs`) | Append a **one-line** entry to an agent log. Multi-line records are written as files, not funnelled through this. |
 | `agent-ks issue review-queue` (`review-queue.mjs`) | List items needing review — issues in the **Review category** (`review` / `input-needed`) + active (non-closed) issues with a Review-category subtask. |
+| `agent-ks issue new-agent-log` (`new-agent-log.mjs`) | Scaffold a run — `settings.json` + `01_summary.md`, nothing else seeded. `--kind`, `--name`, `--parent` for a child run. |
+| `agent-ks issue new-iteration` (`new-iteration.mjs`) | Open a round's file in `02_working/`, head pre-filled (`Goal` · `Inputs` · `Expected Outcome` · `Outcome`). `--producer` for one agent's own output beside it. |
+| `agent-ks issue new-plan` (`new-plan.mjs`) | Open a plan — folder + `settings.json` + `overview.md`. |
+| `agent-ks issue new-stage` (`new-stage.mjs`) | Add a stage to a plan; the prefix is both its id and its order, gap-spaced by ten. |
+| `agent-ks issue new-subtask` (`new-subtask.mjs`) | Scaffold a subtask on the five-section template (Overview / References / Todo list / Outcomes and Next Steps / Details). |
+
+**Every scaffolder takes the issue id positionally**, not as `--issue`: `agent-ks issue new-plan <issue-id> --name <slug>`.
 
 Common usage:
 

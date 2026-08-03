@@ -74,7 +74,7 @@ Any `settings.json` in the project (tracker root, per-issue, or docs folders) ma
 
 Keep the descriptions accurate as the taxonomy evolves — a stale gloss is worse than none. To backfill them on an older tracker, run the repo-root `migration/` chain — its detect passes find every missing description. **Prefer `.jsonc` for the root** so you can still annotate structure/rationale with comments; `settings.jsonc` is a strict superset of JSON, so a plain `.json` file is valid too — the meanings live in the `descriptions` data either way.
 
-## Three vocabulary layers
+## Four vocabulary layers
 
 1. **Tracker-wide** — root `settings.json` (above)
 2. **Per-issue** — values picked from the tracker vocabulary (see [02_per-issue-settings.md](02_per-issue-settings.md))

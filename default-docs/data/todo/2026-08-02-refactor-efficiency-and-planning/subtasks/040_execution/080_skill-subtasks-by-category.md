@@ -1,6 +1,6 @@
 ---
 title: "Skill — subtasks are grouped by CATEGORY, not execution order"
-status: review
+status: done
 ---
 
 # Overview

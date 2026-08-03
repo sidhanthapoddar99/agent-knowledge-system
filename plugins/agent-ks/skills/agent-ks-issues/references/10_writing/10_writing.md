@@ -11,8 +11,12 @@ time); the docs/blog flavour lives in the `agent-ks-docs` skill's
 
 ## Frontmatter per subdoc type
 
-**`title` is required on every markdown file** (builds fail without it). Beyond that,
-each subdoc has its own small schema:
+**`title` is required by convention on every markdown file — but nothing enforces it.**
+Measured 2026-08-03 with a titleless note and a full build: the build **succeeds**, the
+page renders, and the title falls back to the file slug, shipping as
+`_titleless-probe · <issue> | Agent KS`. So a missing `title` is not caught by any gate;
+it is caught by someone noticing an ugly heading later. Beyond that, each subdoc has its
+own small schema:
 
 | File | Frontmatter |
 |---|---|
@@ -130,7 +134,9 @@ Rich content in issue markdown is plain GFM — no project-specific tag syntax.
 
 ```markdown
 > [!WARNING]
-> This subtask blocks the release — don't close it until 20/30 land.
+> This subtask blocks the release — don't close it until
+> [the sidebar tree](./020_sidebar-tree.md) and
+> [link rewriting](./030_link-rewriting.md) land.
 ```
 
 **Collapsible content** — native `<details>` / `<summary>` (fold long logs, dumps,

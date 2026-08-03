@@ -72,4 +72,4 @@ freely. Prefer **tables and pointers over paragraphs**:
 The demo issue (`2026-07-01-demo-issue-anatomy-showcase`) ships a populated glossary
 following this shape:
 
-![The demo issue's Glossary panel — per-section colour legend with Example columns](../assets/demo-glossary.png)
+![The demo issue's Glossary panel — per-section colour legend with Example columns](../assets/demo-glossary.webp)

@@ -1,9 +1,9 @@
 # agent-knowledge-system
 
-[![engine](https://img.shields.io/github/v/release/sidhanthapoddar99/agent-knowledge-system?label=engine&color=0b7285)](https://github.com/sidhanthapoddar99/agent-knowledge-system/releases/latest)
-[![plugin](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fsidhanthapoddar99%2Fagent-knowledge-system%2Fmain%2Fplugins%2Fagent-ks%2F.claude-plugin%2Fplugin.json&query=%24.version&label=plugin&prefix=v&color=5f3dc4)](./plugins/agent-ks)
-[![changelog](https://img.shields.io/badge/changelog-releases-495057)](./CHANGELOG.md)
-[![runtime](https://img.shields.io/badge/runtime-bun-000000)](https://bun.sh)
+[![engine](https://img.shields.io/github/v/release/sidhanthapoddar99/agent-knowledge-system?label=engine&color=0b7285&labelColor=1f2328&logo=github&logoColor=white)](https://github.com/sidhanthapoddar99/agent-knowledge-system/releases/latest)
+[![plugin](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fsidhanthapoddar99%2Fagent-knowledge-system%2Fmain%2Fplugins%2Fagent-ks%2F.claude-plugin%2Fplugin.json&query=%24.version&label=plugin&prefix=v&color=5f3dc4&labelColor=1f2328&logo=claude&logoColor=white)](./plugins/agent-ks)
+[![changelog](https://img.shields.io/badge/changelog-releases-1971c2?labelColor=1f2328&logo=readme&logoColor=white)](./CHANGELOG.md)
+[![runtime](https://img.shields.io/badge/runtime-bun-fbf0df?labelColor=1f2328&logo=bun&logoColor=fbf0df)](https://bun.sh)
 
 <sub>Both version badges read live values — the **engine** from the latest release tag, the **plugin** from `plugin.json` on `main`. Neither is a number typed into this file, so neither can drift.</sub>
 

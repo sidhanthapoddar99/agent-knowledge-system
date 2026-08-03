@@ -28,7 +28,7 @@ The weight is in `notes/` — gap-numbered because reading order matters here (s
 - **`issue.md` poses a question**, not a task: "Which search backend fits our constraints?" with the criteria for a good answer.
 - **`notes/` carries the substance** — one file per option, a benchmarks file with methodology, a recommendation file. This is where the reasoning lives; `issue.md` stays the orientation layer.
 - **Subtasks are minimal** — often a single "land the decision and get sign-off." The work product is the written conclusion, so there's little to decompose.
-- **`comments/` is load-bearing** — the back-and-forth that converges on the decision (alternatives challenged, constraints clarified) belongs here as the durable thread.
+- **`brainstorm/` is load-bearing** — the back-and-forth that converges on the decision (alternatives challenged, constraints clarified) lives there, and graduates into `notes/` the moment something downstream cites its conclusion. `comments/` records *that* the decision landed, in a couple of lines plus a pointer; the debate itself is not a comment thread ([21_comments.md](../20_sections/21_comments.md)).
 - **Shipping to `review`** means "the recommendation is written and defensible" — the human reads `040_recommendation.md` and either accepts (→ `done`, often spawning an implementation issue) or pushes back in a comment (→ `open`).
 
 ## When to reach for this shape

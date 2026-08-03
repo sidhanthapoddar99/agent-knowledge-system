@@ -1,6 +1,6 @@
 ---
 title: "Every new CLI example is a command that errors"
-status: open
+status: review
 ---
 
 # Overview
@@ -34,20 +34,50 @@ bun new-plan.mjs 2026-08-03-cli-smoke --name audit-followup
 
 # Todo list
 
-- [ ] `SKILL.md:209-210` — `new-plan`, `new-stage`
-- [ ] `24_agent-logs.md:453,463,464` — `new-agent-log`, `new-iteration` ×2
-- [ ] `28_plans.md:168-170` — `new-plan`, `new-stage` ×2
-- [ ] `63_agent-loops.md:47,51` — `new-agent-log`, `new-iteration`
-- [ ] Grep the whole skill for `--issue` afterwards; the list above is what one
+- [x] `SKILL.md:209-210` — `new-plan`, `new-stage`
+- [x] `24_agent-logs.md:453,463,464` — `new-agent-log`, `new-iteration` ×2
+- [x] `28_plans.md:168-170` — `new-plan`, `new-stage` ×2
+- [x] `63_agent-loops.md:47,51` — `new-agent-log`, `new-iteration`
+- [x] Grep the whole skill for `--issue` afterwards; the list above is what one
       pass found
-- [ ] Decide the opposite way if preferred — **add** `--issue` as an alias in the
+- [x] Decide the opposite way if preferred — **add** `--issue` as an alias in the
       four scripts and leave the docs alone. Either fixes it; only one is a doc
       change
 
 # Outcomes and Next Steps
 
-> [!IMPORTANT]
-> **PLACEHOLDER** — nothing done. This is a proposal.
+**Already fixed — closed on evidence 2026-08-03**, not by doing the work again.
+[The round](../../agent-log/020_wf_ship-the-split/02_working/160_audit-followups.md).
+
+The nine examples were corrected by the skill-consistency sweep that ran after
+this subtask was written, so the todo list above was stale before anyone picked
+it up. Verified rather than assumed:
+
+```bash
+$ grep -rn -- "--issue" plugins/agent-ks/skills/
+agent-ks-issues/references/40_operations/41_searching.md:54:
+  **Every scaffolder takes the issue id positionally**, not as `--issue`
+```
+
+**One hit in the whole skills tree, and it is the sentence forbidding the form.**
+Zero remaining examples use it.
+
+The positional grammar was also exercised end to end this session — subtask
+[`130`](../130_skill-links-checks-the-wrong-tree.md) was scaffolded with
+`agent-ks issue new-subtask <issue-id> --name <slug>` and created correctly. All
+four scaffolders answer `--help` with a usage line naming `<issue-id>`
+positionally.
+
+**The decision offered in the last todo — add `--issue` as an alias instead —
+was not taken, and deliberately.** Two spellings for one argument is a second
+thing to keep in sync, which is the defect class this entire issue is about. One
+grammar, documented once.
+
+**The structural suggestion in Details stands and is NOT done:** nothing yet
+extracts ` ```bash ` lines and asserts the subcommand and flags exist. That gate
+would have caught all nine for free, and it would have caught the
+[wrong-tree defect](../130_skill-links-checks-the-wrong-tree.md) found the same
+day. Worth opening when someone picks up the checker work.
 
 # Details
 
@@ -128,5 +158,7 @@ links outside fences, three illustrative ones inside, and a four-backtick block
 wrapping a three-backtick block: it reported exactly the two real ones. All three
 skills now pass at zero.
 
-**The nine CLI examples that error are untouched** and remain this subtask's
-actual scope, still `open` and still Sid's call.
+**Written while the nine CLI examples were still untouched.** They were fixed by
+the skill-consistency sweep shortly afterwards and verified clean on 2026-08-03
+— see Outcomes above. Left in place rather than edited: it dates the fenced-block
+fix correctly relative to the rest.

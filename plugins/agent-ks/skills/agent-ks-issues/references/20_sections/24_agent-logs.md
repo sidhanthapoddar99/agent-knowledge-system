@@ -26,7 +26,7 @@ than to explain.
 > **When work is delegated, or when it runs over multiple rounds.**
 
 Nothing else opens one. A change you make inline gets a line in the plan and no folder.
-Without this rule, three files become a three-file floor for a one-line change.
+Without this rule, three files become the floor for a one-line change.
 
 ## Vocabulary
 
@@ -52,7 +52,7 @@ agent-log/
     │   └── 020_<round>.md
     ├── 03_debrief/                 ← what leaves this run
     │   └── 01_handover.md
-    └── 100_wf_<sub-goal>/          ← a child agent log — same shape, recursively
+    └── 100_wf_<sub-goal>/          ← a child agent log — same shape, ≤ 2 deep
 ```
 
 **Inside an agent log, the numeric prefix decides what a member is — nothing else
@@ -61,7 +61,7 @@ does.**
 | Prefix on a member of an agent log | What it is |
 |---|---|
 | `< 100` — `01_`, `02_`, `03_` | one of the run's own **slots** |
-| `≥ 100` — `100_`, `210_` | a **child agent log**, `NXX_<kind>_<name>/`, same shape recursively |
+| `≥ 100` — `100_`, `210_` | a **child agent log**, `NXX_<kind>_<name>/`, same shape — nesting two levels at most |
 
 The two bands cannot collide: slots have `01`–`99` to grow into and children start at
 `100`. The band applies **inside** an agent log only — everything directly under
@@ -91,21 +91,37 @@ Custom codes via `agentLogKinds` in the issue's `settings.json`.
 > Yes → **child agent log**, with its own `01_summary.md`.
 > No, it is work done toward the parent's goal → **iteration file** in `02_working/`.
 
-That is the only rule. A ten-stage plan gives ten child agent logs; a loop with four
-named goals gives four; the agents running inside any of them give iteration files.
+That is the only rule. A loop with four named goals gives four child agent logs; the
+agents running inside any of them give iteration files.
+
+**A plan stage is not a run, and never becomes a folder here.** Stages are the plan's —
+order and blocking. What earns a child agent log is *work*: delegated, or running over
+several rounds, with a goal of its own. That work usually serves a stage, and the stage
+then survives as a **label** in the log's name. The mapping is never one-for-one — the
+large example turns three stages into five child logs.
 
 **Nesting may mirror a structure that exists; it may never invent one.** A child agent
 log with no goal of its own is an iteration file wearing a folder.
 
-**Depth budget — the loader silently drops anything deeper than 5 levels below
-`agent-log/`.** Two levels of child agent log is the working ceiling:
+**Depth budget — the loader reads 5 folder levels below `agent-log/` and silently drops
+anything deeper.** Two levels of child agent log is the working ceiling, and the deepest
+legal path spends all five:
 
 | Segment | Level |
 |---|---|
 | agent log — `030_lp_overnight/` | 1 |
 | child agent log — `100_wf_decoder-swap/` | 2 |
-| `02_working/` | 3 |
-| a producer's artifact folder — `061_research-codecs/` | 4 |
+| second child agent log — `100_au_codec-review/` | 3 |
+| `02_working/` | 4 |
+| a producer's artifact folder — `061_research-codecs/` | 5 |
+
+**A second nested child log is legal; a third is not.** `agent-ks check issues` raises an
+*error* on the third, because past level 5 the content gets no page and no error — it
+simply stops existing on the site. A sub-goal that would need a third level goes
+**beside** its parent instead of inside it: same `≥ 100` band, one level up.
+
+Most runs spend far less. One level of child log leaves the fifth level unused, which is
+the shape the large example uses.
 
 ---
 
@@ -136,7 +152,7 @@ title: "Summary"
 
 | Section | Holds | Shape | Changes |
 |---|---|---|---|
-| **State** | Where this run is right now and what happens next. Not a status token — that lives in `settings.json` | **A callout.** `> [!NOTE]` normally; `> [!WARNING]` / `> [!IMPORTANT]` when the run is stuck, reopened or failed | **Live** — the only section rewritten during the run |
+| **State** | Where this run is right now and what happens next. Not a status token — that lives in `settings.json` | **A callout.** `> [!NOTE]` normally; `> [!WARNING]` / `> [!IMPORTANT]` when the run is stuck, reopened or failed | **Live** — rewritten every time the run moves |
 | **Goal** | Purpose in plain language, context, expected outcome, **and the trigger** — who asked, when, in what words | Prose | Written once |
 | **Todo** | The run's checklist, **headed by its references** — the plan stage and subtask this executes against, plus the scoping notes | **A linked list with a line of detail per item, or a table** | Ticked as work lands |
 | **Out of Scope** | What this run deliberately does not touch. **Optional** — omit it rather than writing "nothing" | List | Written once |
@@ -168,7 +184,8 @@ Use `[~]` for an item that shipped and then reopened, with the reason on the ite
 point a delegated agent at the file and spend the prompt on the delta. Standing rules
 are referenced from `agent-memory/`, never re-typed. Never write a separate brief file.
 
-**No notes section.** If it is worth writing, it goes in `03_debrief/`.
+**No `# Notes` section in `01_summary.md`** — five sections, and that is not one of
+them. If it is worth writing, it goes in `03_debrief/`.
 
 **`# Outcome` is detailed, and that is deliberate.** The rule it must obey is *point at
 detail rather than copying it* — link the iteration file that holds the working, do not
@@ -186,8 +203,8 @@ subtask.
 ## One iteration, one file — and an iteration is a GROUP
 
 The atomic unit is an **iteration**, not an agent: a coherent round of work covering a
-group of subtasks, executions and agents. The orchestrator writes the iteration file
-from what the round produced.
+group of subtasks, executions and agents. The orchestrator opens the iteration file with
+its head before the round starts and writes `# Outcome` from what the round produced.
 
 **A file per agent is not created.** An agent that produced something substantial — an
 audit, a research survey, a measured comparison — gets its own file, because that output
@@ -233,7 +250,7 @@ them is free-form.
 ```markdown
 ---
 title: "Scope A — the byte surface"
-status: done           # the canonical 7 — see below
+status: done           # five of the canonical 7 — see below
 agent: sol             # who wrote it
 ---
 
@@ -360,7 +377,8 @@ legible as half-finished.
 **Written during the run, not only at the end** — a mid-run observation goes in when it
 is noticed.
 
-`01_handover.md` is a convention, not a mandate. **No slot is required to exist.**
+`01_handover.md` is a convention, not a mandate. **`02_working/` and `03_debrief/` are
+not required to exist** — `01_summary.md` is the one member that always is.
 
 **Anything actionable leaves the log** and becomes a subtask or a dump entry; the
 debrief keeps the pointer. A bug recorded only as log prose dies in the log.
@@ -376,9 +394,10 @@ debrief keeps the pointer. A bug recorded only as log prose dies in the log.
 
 # Four cases stated explicitly
 
-**An audit report is an iteration file.** One auditor, one file in `02_working/`, bound by
-*thin but complete* like any other: findings with `file:line` and the reproduction, one
-line each, detail pointed at rather than inlined. There is no separate `audit/` folder.
+**An audit report is a file in `02_working/`, not a folder of its own.** One auditor, one
+producer file beside the round's iteration file — `031_` next to `030_` — bound by *thin
+but complete* like any other: findings with `file:line` and the reproduction, one line
+each, detail pointed at rather than inlined. There is no separate `audit/` folder.
 
 **A pair is two files, never one.** Two reviewers on one concern share the iteration
 digits — `011_scope-a-reader.md` and `012_scope-a-executor.md`. Findings merge as a
@@ -387,9 +406,10 @@ finding nothing, and that comparison needs both files.
 
 **An external tool gets a named owner who writes its file.** Where one half cannot write
 into the tracker itself — a separate CLI, a hosted model — a named agent owns the job,
-waits for it to reach a terminal state, and writes the iteration file from the returned
-result. `agent:` names the **tool**, because the finding is the tool's; the owner is
-accountable for the file existing.
+waits for it to reach a terminal state, and writes that half's file from the returned
+result: a producer file when the tool produced something substantial, otherwise a line in
+the iteration file. `agent:` names the **tool**, because the finding is the tool's; the
+owner is accountable for the file existing.
 
 **Benchmarks split by weight.** The *numbers* go in the iteration file that produced
 them. The *drivers, traces and raw dumps* go to the code repo's gitignored benchmark
@@ -431,9 +451,10 @@ Per agent log and per child agent log. Optional; absent renders grey.
 **Two carriers, no overlap:** `settings.json` is per **folder**, frontmatter is per
 **file**. Neither repeats what the folder name already says.
 
-> `done` on an **agent log** means the run finished, and you may set it. `done` on a
-> **subtask** is human-only and means the work is signed off. Same word, same
-> vocabulary, opposite authority.
+> **Who may set `done` here — and why it does not mean what `done` on a subtask means —
+> is [Closing authority](../00_anatomy/00_overview.md#closing-authority).** Same word,
+> same vocabulary; that section owns it, and answers the question for every kind of
+> thing a status can sit on.
 
 ---
 
@@ -441,7 +462,7 @@ Per agent log and per child agent log. Optional; absent renders grey.
 
 Two, deliberately. One example alone sets a floor as much as a ceiling.
 
-## The small end — a one-round change, two files
+## The small end — a one-round change, two markdown files
 
 A subtask asked for one validator rule. One round, one executor, nothing produced but
 the change itself.
@@ -486,8 +507,8 @@ slots that exist, it does not require all three.
 ## The large end — a plan, an overnight loop, five workflows
 
 The scenario: a plan with 8 stages, 4–5 subtasks each. An overnight loop covering stages
-3–5. The loop runs 5 workflows. Each workflow has planning, execution, audit, review,
-fix and benchmark units inside it.
+3–5. The loop runs 5 workflows. Each workflow has planning, research, execution, audit,
+review, fix and benchmark units inside it.
 
 **The mapping decision comes first, because it is the whole answer:**
 
@@ -495,12 +516,13 @@ fix and benchmark units inside it.
   schedule — order and blocking. `agent-log/` is execution.
 - **The overnight loop is one agent log** — one run, one starting state, one outcome.
 - **Each workflow is a child agent log** — it has its own goal.
-- **The workflow's stages are NOT folders.** They are the iteration digits.
+- **The workflow's own units — planning, research, execution, audit, fix, bench — are
+  NOT folders.** They are the iteration digits.
 
 ```
 data/tasks/2026-08-02-nsd-phase-2/
 ├── plans/
-│   └── 020_decoder-and-retention/      # the 8 stages: order + what blocks what
+│   └── 02_decoder-and-retention/       # the 8 stages: order + what blocks what
 ├── subtasks/                           # the 4-5 per stage — filed by CATEGORY, not order
 ├── notes/                              # analysis that outlives the run
 └── agent-log/
@@ -526,9 +548,10 @@ data/tasks/2026-08-02-nsd-phase-2/
         │   │   ├── 032_audit-blast.md        #   producer: the blast-radius report
         │   │   ├── 040_fix-round.md          # iteration 04 — what was fixed, what was not
         │   │   ├── 050_bench-before-after.md # iteration 05 — the numbers
-        │   │   └── 060_research-codecs/      # one producer, several artifacts → a folder
-        │   │       ├── 01_findings.md
-        │   │       └── 02_decision-tree.mmd  #   mermaid renders as a log entry
+        │   │   ├── 060_codec-shortlist.md    # iteration 06 — the orchestrator's file
+        │   │   └── 061_research-codecs/      #   producer: one agent, several artifacts,
+        │   │       ├── 01_findings.md        #   so it gets a FOLDER — still `NN1_`, not
+        │   │       └── 02_decision-tree.mmd  #   `NN0_`. mermaid renders as a log entry
         │   └── 03_debrief/
         │       └── 01_handover.md
         │
@@ -554,7 +577,9 @@ What this example teaches:
    reports produce two, plus the iteration's own.
 4. One producer making several artifacts is the only reason to nest inside
    `02_working/`.
-5. Depth stops at four.
+5. Depth is a budget, not a target. One level of child agent log spends four of the
+   five levels the loader reads; the second level the ceiling allows is still unused
+   here, and nothing needed it.
 
 ---
 
@@ -591,13 +616,18 @@ longer directly to the file.
 ## Rapid ad-hoc changes
 
 Landing several small changes in a burst: group them against the block they belong to.
-If they carry reasoning worth keeping, that is one agent log of kind `it` with one
-iteration file — not one folder per change.
+Inline work opens no folder however much reasoning it carried — a line in the plan holds
+it. When the burst was **delegated**, or ran over **several rounds**, it is one agent log
+of kind `it` with one iteration file — never one folder per change.
 
 # Boundaries
 
-- **Never rewrite history.** Iteration files are write-once by nature; `# State` in
-  `01_summary.md` is the only live text in an agent log.
+- **Never rewrite history — an agent log is append-only.** New work opens the next
+  iteration file; a round that already closed is not re-narrated to match what came
+  after it. Filling a file in *as its round runs* is not rewriting: the orchestrator
+  writes the head before the work starts, the producer writes `# Outcome` when it
+  returns, `# Todo` is ticked as items land, and `# State` in `01_summary.md` is
+  rewritten every time the run moves.
 - **`agent-memory/` is not part of `agent-log/`.** The log records what happened; memory
   holds what is still true ([26_agent-memory.md](26_agent-memory.md)).
 - **The run's task list is not the subtask list.** Subtasks are durable and counted; the

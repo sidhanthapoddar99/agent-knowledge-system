@@ -1,6 +1,6 @@
 ---
 title: "Ordering labels — keep the number, keep it honest"
-status: review
+status: done
 ---
 
 # Overview

@@ -1,6 +1,6 @@
 ---
 title: "Skill — teach the plans section, retire the old one"
-status: review
+status: done
 ---
 
 # Overview

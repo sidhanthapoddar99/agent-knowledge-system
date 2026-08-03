@@ -1,6 +1,6 @@
 ---
 title: "Update ~/.claude/CLAUDE.md"
-status: review
+status: done
 ---
 
 # Overview

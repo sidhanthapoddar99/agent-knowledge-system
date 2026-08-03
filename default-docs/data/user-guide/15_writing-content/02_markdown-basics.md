@@ -168,7 +168,7 @@ The five types and what they're for:
 
 ```markdown
 > [!TIP]
-> You can use **bold**, `code`, and [links](/user-guide) inside a callout.
+> You can use **bold**, `code`, and [links](../10_configuration/01_overview.md) inside a callout.
 >
 > Even multiple paragraphs.
 ```

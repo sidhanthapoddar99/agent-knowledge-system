@@ -67,7 +67,7 @@ No hard limit — but if `issue.md` is drifting past a few hundred lines of pros
 
 ## Heading anchors and sub-doc linking
 
-Headings in `issue.md` get anchor IDs (`#goal`, `#context`, `#success-criteria`) the same as any other markdown. Other files in the issue folder (comments, subtasks) can link to them with relative fragments — `[goal](../issue.md#goal)` — though in practice the cross-links are usually maintained at the URL level (`/todo/<id>#goal`).
+Headings in `issue.md` get anchor IDs (`#goal`, `#context`, `#success-criteria`) the same as any other markdown. Other files in the issue folder (comments, subtasks) link to them with a relative fragment — `[goal](../issue.md#goal)`. That is the only form: it names the file on disk, so `agent-ks move` follows it and an editor opens it. A URL-level `/todo/<id>#goal` is not a path and nothing can maintain it.
 
 When rendering the **Comprehensive** tab (see [Detail View](../ui/detail-view)), all heading IDs are prefixed to prevent collisions with subtask heading IDs — but on the **Overview** tab and direct URL, IDs stay bare.
 

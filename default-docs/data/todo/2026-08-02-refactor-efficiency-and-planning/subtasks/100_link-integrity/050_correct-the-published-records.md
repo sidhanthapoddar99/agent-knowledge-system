@@ -1,6 +1,6 @@
 ---
 title: "Correct the records that argued for root-relative — 0.2.1 is tagged and pushed"
-status: in-progress
+status: done
 ---
 
 # Overview
@@ -65,9 +65,8 @@ links failing identically is evidence about the tool. It is the most useful
 sentence in this group — the moment the correct answer was written down and read
 backwards.
 
-Still open: the conclusions inside [`030`](./030_user-guide-relative-links-404.md)
-and [`040`](./040_site-wide-link-rot.md) themselves, which still argue for the
-root-relative rewrite in their own Details. The release note was corrected first
+~~Still open: the conclusions inside `030` and `040`.~~ **Both closed 2026-08-04**
+with their wrong conclusions removed. The release note was corrected first
 because it is the one a stranger reads.
 
 # Details
@@ -113,16 +112,58 @@ Keep it, and annotate it with what it actually meant.
 
 **Back to `in-progress` 2026-08-03.**
 
-- 🟡 **A published page still teaches the forbidden form.**
-  `user-guide/19_issues/05_sub-docs/01_issue-md.md:70` — *"cross-links are
-  usually maintained at the URL level (`/todo/<id>#goal`)"*. Untouched by this
-  run while 16 sibling pages under `19_issues/` were edited.
-- 🟡 Lesser: `user-guide/15_writing-content/02_markdown-basics.md:160` teaches
-  `[links](/user-guide)` in a callout example. Inside a fence, so the gate skips
-  it by design — but it is what an author copies.
-- 🟡 **My own overclaim.** The plan says the backticked-path rule is "live on
-  every surface". It is on the three *tracker* surfaces only, and the docs skill
-  does not follow it — 12 backticked `references/…` paths against 1 link.
-- **Wording correction:** the record should say **129 converted**, not 137. 137
-  was the inventory; `73ea791` contains exactly 129 target changes across 43
-  files.
+- [x] 🟢 **A published page still teaching the forbidden form — fixed 2026-08-04.**
+  [`01_issue-md.md`](../../../../user-guide/19_issues/05_sub-docs/01_issue-md.md)
+  said cross-links are *"usually maintained at the URL level
+  (`/todo/<id>#goal`)"*. It had been missed while 16 sibling pages under
+  `19_issues/` were edited. Now states the relative fragment as the only form,
+  with the reason: it names the file on disk, so `move` follows it and an editor
+  opens it.
+- [x] 🟢 **The callout example — fixed 2026-08-04.**
+  [`02_markdown-basics.md`](../../../../user-guide/15_writing-content/02_markdown-basics.md)
+  demonstrated `[links](/user-guide)`. It sits inside a fence, so the gate skips
+  it **by design** — which is exactly why it mattered: no check would ever have
+  caught it, and a fenced example is what an author copies. Now a relative link
+  to a page that exists.
+- [x] 🟢 **The skill did not follow its own rule — fixed 2026-08-04.**
+  `agent-ks-docs/SKILL.md` carried **12 backticked `references/…` paths against
+  1 link**, in the same file that states *"reference by LINK, never by a
+  backticked path"*. All 12 converted to the text-mirror form
+  (`` [`references/writing.md`](./references/writing.md) ``), which keeps the
+  path visible as text while making it maintainable — and `move` rewrites the
+  text along with the target, so the two cannot drift.
+
+  **A rule contradicted by the file stating it is worse than a rule stated
+  nowhere**: a reader copies what they see, not what they are told.
+
+- [x] ⬜ **"Say 129 converted, not 137" — checked, and it does not apply.** The
+  two numbers count different things and the record already keeps them apart:
+
+  | Figure | What it counts | Where |
+  |---:|---|---|
+  | 137 | site-absolute links that **existed** — 115 `user-guide` + 19 `dev-docs` + 3 tracker | the inventory, in [`020`](./020_relative-links-are-the-contract.md) *Details* |
+  | 129 | links **converted** in `73ea791` | [`020`](./020_relative-links-are-the-contract.md) *Outcomes* |
+  | 8 | left deliberately — 5 dead targets, 2 cross-issue tracker links, 1 remaining | the difference, and it is accounted for |
+
+  Every occurrence of `137` in the group is an inventory statement, and no record
+  claims 137 were converted. **Changing them would have introduced the error the
+  finding was warning about.** Recorded rather than acted on — a finding that
+  reads plausibly and is wrong is worth keeping visible.
+
+# Closed 2026-08-04
+
+**The original job was done on 2026-08-03** — `releases/0.2.1.md` carries a dated
+correction block rather than a quiet rewrite, which is the whole point: the tag
+is pushed, and two versions of one release note with no sign either changed is
+the same silent wrongness this group exists to correct. That note now carries
+**three** dated corrections.
+
+The two subtasks this one was waiting on have since been closed with their wrong
+conclusions removed: [`030`](./030_user-guide-relative-links-404.md) (the
+argument for root-relative deleted, the measurement kept) and
+[`040`](./040_site-wide-link-rot.md) (the prescription to rewrite 313 more links
+retracted in place, and re-measured to **0**).
+
+**Nothing published still recommends converting relative links to absolute
+form.** Verified across the release notes, both skills, `guide.ts`, and the
+user-guide and dev-docs content.

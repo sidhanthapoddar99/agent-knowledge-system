@@ -90,7 +90,7 @@ Letting each tracker invent its own status names would reintroduce the drift the
 vocabulary exists to kill. Transitions between statuses remain unenforced guidance — it's
 the *set* that's fixed, not the *moves*.
 
-Full treatment in [Lifecycle and Review](./lifecycle-and-review).
+Full treatment in [Lifecycle and Review](./04_setup/06_lifecycle-and-review.md).
 
 ### Agent logs as a first-class section
 
@@ -151,6 +151,6 @@ That's what this is.
 
 ## See also
 
-- [Lifecycle and Review](./lifecycle-and-review) — how the seven statuses / four categories and the review handoff work in practice
+- [Lifecycle and Review](./04_setup/06_lifecycle-and-review.md) — how the seven statuses / four categories and the review handoff work in practice
 - [Sub-Documents → agent-log](./sub-docs/agent-log) — iteration discipline
 - [Using with AI](./using-with-ai) — the skill + agent workflows

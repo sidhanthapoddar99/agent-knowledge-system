@@ -82,11 +82,11 @@ Minimum required fields:
 }
 ```
 
-Every enum value (`status`, `priority`, `component`, each label) must exist in the tracker's root `settings.json` vocabulary. If you're reaching for a value that isn't in the vocab, **don't invent** — either pick the closest existing value, or edit the root vocabulary to add it (see [Vocabulary](../settings/vocabulary)).
+Every enum value (`status`, `priority`, `component`, each label) must exist in the tracker's root `settings.json` vocabulary. If you're reaching for a value that isn't in the vocab, **don't invent** — either pick the closest existing value, or edit the root vocabulary to add it (see [Vocabulary](../04_setup/02_vocabulary.md)).
 
 The convention is **one component per issue**; multi-component is allowed for genuinely cross-cutting work but should be the exception. `created` is parsed from the folder slug; `updated` is derived from git history at render time — don't write either by hand.
 
-Full schema: [Per-Issue Settings](../settings/per-issue).
+Full schema: [Per-Issue Settings](../04_setup/01_per-issue.md).
 
 ## 4. Write `issue.md`
 
@@ -199,5 +199,5 @@ Everything else (`comments/`, `subtasks/`, `notes/`, `agent-log/`) grows as the 
 ## See also
 
 - [Folder Structure](../folder-structure) — the full layout reference
-- [Per-Issue Settings](../settings/per-issue) — full metadata schema
+- [Per-Issue Settings](../04_setup/01_per-issue.md) — full metadata schema
 - [Work an Issue](./work-an-issue) — what to do once it's created

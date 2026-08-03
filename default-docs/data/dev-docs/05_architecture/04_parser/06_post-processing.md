@@ -96,6 +96,9 @@ Rewrites relative markdown links to match the generated URL slugs — stripping 
 | Strip `/index` suffix | `./section/index` | `./section` |
 | Preserve fragments | `./02_guide.md#setup` | `./guide#setup` |
 | **Shift up one level** | `./guide` | `../guide` |
+| Skip absolute URLs | `https://example.com` | *(unchanged)* |
+| Skip root-relative | `/docs/guide` | *(unchanged)* |
+| Skip non-markdown files | `./assets/scene.excalidraw` | *(unchanged — `asset-src` owns it)* |
 
 #### Why the level shift exists
 
@@ -112,8 +115,12 @@ The URL base is one level deeper than the source directory, so `./claude-skills`
 
 > [!WARNING]
 > **Do not "fix" this in the content by writing site-absolute links.** They render correctly and `agent-ks move` skips every link starting with `/`, so a converted link silently leaves link maintenance and rots on the next file move. Relative links are the authoring contract; this transform is what makes them resolve.
-| Skip absolute URLs | `https://example.com` | *(unchanged)* |
-| Skip root-relative | `/docs/guide` | *(unchanged)* |
+
+#### Why non-markdown targets are skipped
+
+A link to a **colocated file** — `[the scene](../assets/diagram.excalidraw)`, an image, a PDF — is not a page link. `asset-src` owns those, and resolves them against the **source file's directory on disk**, not against the page URL. Shifting them here would send that resolution one directory too high.
+
+This was found the hard way, minutes after the level shift was added: the `<img>` to a scene file came out at `/content-assets/user-guide/15_writing-content/assets/…` and the `<a>` to *the same file in the same page* came out at `/content-assets/user-guide/assets/…`. Two postprocessors resolving the same string against two different bases. `internal-links` now returns any href with a non-markdown extension untouched.
 
 **Content-type behavior:**
 - **Docs:** Strips both `NN_` prefixes and extensions
@@ -328,7 +335,7 @@ the browser renders it". To add another render-by-reference format (e.g.
 4. **First-class pages (optional)** — register the extension in
    `DIAGRAM_KINDS` in `src/loaders/diagram-pages.ts` and prefixed files
    become sidebar pages with no further work (see
-   [Data Loading → Diagram pages](/docs/architecture/data-loading)).
+   [Data Loading → Diagram pages](../03_data-loading.md)).
 
 What you should **not** do: inline the file's content into the HTML (breaks
 the one-source-of-truth rule and bloats pages), render at build time

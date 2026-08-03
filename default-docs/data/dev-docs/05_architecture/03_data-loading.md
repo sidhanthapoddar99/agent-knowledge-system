@@ -404,7 +404,7 @@ The layout then calls `loadContentWithSettings(dataPath)` internally to build th
 
 Content is cached using mtime-based validation — no hash computation. Cache is cleared automatically when files change (via HMR in dev, fresh build in production).
 
-See [Unified Cache System](/docs/architecture/optimizations/unified-cache-system) for full caching details.
+See [Unified Cache System](./06_optimizations/02_unified-cache-system.md) for full caching details.
 
 ## Error Handling
 

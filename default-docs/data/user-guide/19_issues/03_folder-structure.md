@@ -20,11 +20,11 @@ data/todo/              ← one tracker
 └── 2025-06-25-dev-only-content/
 ```
 
-You can have multiple trackers in one project — e.g. `data/bugs/`, `data/roadmap/`. Each is mounted under its own base URL in `site.yaml`. See [Setup a new tracker](./setup-new-tracker).
+You can have multiple trackers in one project — e.g. `data/bugs/`, `data/roadmap/`. Each is mounted under its own base URL in `site.yaml`. See [Setup a new tracker](./04_setup/10_setup-new-tracker.md).
 
 ### Tracker root `settings.json`
 
-Defines the vocabulary that every issue in the tracker must use — priorities, components, labels (with their descriptions), plus status colors, preset views, and authors. (The lifecycle statuses themselves are fixed in framework code, not defined here.) Full schema in [Vocabulary](./settings/vocabulary).
+Defines the vocabulary that every issue in the tracker must use — priorities, components, labels (with their descriptions), plus status colors, preset views, and authors. (The lifecycle statuses themselves are fixed in framework code, not defined here.) Full schema in [Vocabulary](./04_setup/02_vocabulary.md).
 
 ## The issue folder
 
@@ -94,7 +94,7 @@ Examples:
 
 | Path | Required | Contents |
 |---|---|---|
-| `settings.json` | ✅ | All metadata — status, priority, labels, plus optional `agentLogKinds`. See [Per-Issue Settings](./settings/per-issue). |
+| `settings.json` | ✅ | All metadata — status, priority, labels, plus optional `agentLogKinds`. See [Per-Issue Settings](./04_setup/01_per-issue.md). |
 | `issue.md` | ✅ | The goal / pitch / context. Pure markdown, no frontmatter. See [issue.md](./sub-docs/issue-md). |
 | `glossary.md` | — | Per-issue glossary, rendered as-is on the **Glossary** panel (never generated). Suggested sections: *Colour legend* · *Key terms* · *Conventions*, scoped per section where meanings differ. |
 | `comments/` | — | One file per comment — `NNN_<slug>.md` (author/date in frontmatter) or the strict `NNN_YYYY-MM-DD_<author>.md`. Flat — no subfolders. See [Comments](./sub-docs/comments). |
@@ -202,7 +202,7 @@ Any `.md` file at the issue root other than `issue.md` and `glossary.md` produce
 | `/<base>` | Index of all issues in the tracker | `IndexLayout.astro` |
 | `/<base>/<YYYY-MM-DD-slug>` | One issue's detail page | `DetailLayout.astro` |
 
-Where `<base>` comes from the `base_url` declared in `site.yaml`. See [Setup](./setup-new-tracker).
+Where `<base>` comes from the `base_url` declared in `site.yaml`. See [Setup](./04_setup/10_setup-new-tracker.md).
 
 ### Sub-doc URLs
 
@@ -231,7 +231,7 @@ Both visible in dev, hidden in prod. See [Drafts](../15_writing-content/05_draft
 
 ## See also
 
-- [Per-Issue Settings](./settings/per-issue) — what `settings.json` holds
-- [Vocabulary](./settings/vocabulary) — the tracker-root `settings.json`
+- [Per-Issue Settings](./04_setup/01_per-issue.md) — what `settings.json` holds
+- [Vocabulary](./04_setup/02_vocabulary.md) — the tracker-root `settings.json`
 - [Sub-Documents](./sub-docs/issue-md) — each file type's format
-- [Setup a new tracker](./setup-new-tracker) — site.yaml wiring
+- [Setup a new tracker](./04_setup/10_setup-new-tracker.md) — site.yaml wiring

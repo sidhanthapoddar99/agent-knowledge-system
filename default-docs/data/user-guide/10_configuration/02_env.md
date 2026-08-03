@@ -8,7 +8,7 @@ sidebar_position: 2
 
 Environment variables configure the bootstrap path and server settings. **`.env` lives inside the framework folder** (`agent-knowledge-system/.env`), not at your project root — it ships with the framework.
 
-> **Note:** Directory paths for data, assets, and themes are configured in `site.yaml`'s `paths:` section, not in `.env`. Only `CONFIG_DIR` (and optionally `LAYOUT_EXT_DIR`) lives in `.env`. See [Site Configuration](./site) for details.
+> **Note:** Directory paths for data, assets, and themes are configured in `site.yaml`'s `paths:` section, not in `.env`. Only `CONFIG_DIR` (and optionally `LAYOUT_EXT_DIR`) lives in `.env`. See [Site Configuration](./03_site/01_overview.md) for details.
 
 ## Directory Paths
 

@@ -92,5 +92,5 @@ Each section lists its files as links to **their own URLs** (`/<issue>/notes/<na
 ## See also
 
 - [List View](./list-view) — how you get here
-- [Per-Issue Settings](../settings/per-issue) — the metadata fields
+- [Per-Issue Settings](../04_setup/01_per-issue.md) — the metadata fields
 - [Sub-Documents](../sub-docs/issue-md) — each file type's conventions

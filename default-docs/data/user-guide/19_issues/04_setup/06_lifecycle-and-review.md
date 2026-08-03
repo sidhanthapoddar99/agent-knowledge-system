@@ -135,7 +135,7 @@ The list page filters by **category**, so the tabs read something like:
 Active (13)   In Progress (4)   Review (5 — includes 2 with review subtasks)   Not Started (6)   Closed (41)   All
 ```
 
-See [List View](./ui/list-view) for the full index-page tour.
+See [List View](../07_ui/01_list-view.md) for the full index-page tour.
 
 ## Typical issue lifecycle
 
@@ -198,9 +198,9 @@ stands. Labels are for genuinely cross-cutting tags (`bug`, `feature`, `docs`,
 
 ## See also
 
-- [Design Philosophy](./design-philosophy) — why the label-vs-status doctrine was revised for in-progress/blocked
-- [Subtasks](./sub-docs/subtasks) — per-subtask status handling
-- [Agent Log](./sub-docs/agent-log) — what iterations capture and how they support review
-- [List View](./ui/list-view) — category tabs, review-debt promotion in the UI
-- [Using with AI](./using-with-ai) — the full agent operating manual
-- [Review and Close workflow](./workflows/review-and-close) — the human's side of the handoff
+- [Design Philosophy](../02_design-philosophy.md) — why the label-vs-status doctrine was revised for in-progress/blocked
+- [Subtasks](../05_sub-docs/03_subtasks.md) — per-subtask status handling
+- [Agent Log](../05_sub-docs/05_agent-log.md) — what iterations capture and how they support review
+- [List View](../07_ui/01_list-view.md) — category tabs, review-debt promotion in the UI
+- [Using with AI](../09_using-with-ai.md) — the full agent operating manual
+- [Review and Close workflow](../08_workflows/03_review-and-close.md) — the human's side of the handoff

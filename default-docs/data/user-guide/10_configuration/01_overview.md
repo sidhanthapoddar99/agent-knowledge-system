@@ -215,7 +215,7 @@ The system validates configuration at build time:
 | Section | File | Link |
 |---------|------|------|
 | Environment | `.env` | [env.md](./env) |
-| Site Metadata & Logo | `site.yaml` | [site.md](./site) |
-| Page Definitions | `site.yaml` → `pages:` | [page.md](./page) |
+| Site Metadata & Logo | `site.yaml` | [site.md](./03_site/01_overview.md) |
+| Page Definitions | `site.yaml` → `pages:` | [page.md](./03_site/08_page.md) |
 | Navigation | `navbar.yaml` | [navbar.md](./navbar) |
 | Footer | `footer.yaml` | [footer.md](./footer) |

@@ -39,7 +39,7 @@ Three ways:
 
 Agents: never mark a subtask `done` directly in autonomous mode — the agent ceiling is the **Review** category. Always go through `review`. **`done` is a human transition** (as is `dropped`, which also requires an explaining comment). Exception: if the work is trivially safe (typo fix, comment update, etc.) and a human has pre-authorised direct closure in the issue prompt.
 
-See [Lifecycle and Review](../lifecycle-and-review) for the full rule set.
+See [Lifecycle and Review](../04_setup/06_lifecycle-and-review.md) for the full rule set.
 
 ## Write a comment
 
@@ -150,7 +150,7 @@ The list view shows an Updated date for each issue, derived from git history —
 
 ## See also
 
-- [Lifecycle and Review](../lifecycle-and-review) — the full seven-status / four-category model
+- [Lifecycle and Review](../04_setup/06_lifecycle-and-review.md) — the full seven-status / four-category model
 - [Review and Close](./review-and-close) — the human side of the handoff
 - [Using with AI](../using-with-ai) — agent-specific workflow
 - [Sub-Documents](../sub-docs/issue-md) — per-file-type conventions

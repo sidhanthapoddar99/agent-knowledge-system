@@ -39,7 +39,7 @@ Six tabs. Four map to the lifecycle **categories** — In Progress, Review, Not 
 
 ### Subtask-debt promotion
 
-The **Review** tab isn't just issues whose own status is in the Review category (`input-needed` / `review`) — it's highlighted, and it also absorbs **review-debt**: active (non-closed) issues with one or more subtasks in the Review category. See [Lifecycle and Review — subtask-debt promotion](../lifecycle-and-review).
+The **Review** tab isn't just issues whose own status is in the Review category (`input-needed` / `review`) — it's highlighted, and it also absorbs **review-debt**: active (non-closed) issues with one or more subtasks in the Review category. See [Lifecycle and Review — subtask-debt promotion](../04_setup/06_lifecycle-and-review.md).
 
 This matters: it surfaces work waiting on a human even when the issue's own status still sits in an earlier category. The tab count often reads like:
 
@@ -71,7 +71,7 @@ One-click filter + group configurations, declared in the tracker's root `setting
 
 Clicking a preset applies its filters + group at once. The URL updates to reflect the applied state — bookmarkable.
 
-See [Vocabulary — preset views](../settings/vocabulary#preset-views) for the full schema.
+See [Vocabulary — preset views](../04_setup/02_vocabulary.md#preset-views) for the full schema.
 
 ## Filter bar
 
@@ -101,7 +101,7 @@ The `assignee` row exposes two layers in the same dropdown:
 - Top — `assigned` / `unassigned`: coarse "is anybody on this?" Use these to scan for idle work or owned work without picking a specific person.
 - Below the divider — per-person names from `authors[]`: fine "what is X working on?"
 
-Assignees are just who's on the issue — nothing more. Progress is the explicit `in-progress` status, not a side effect of being assigned. See [`author` vs `assignees`](../settings/per-issue#author-vs-assignees).
+Assignees are just who's on the issue — nothing more. Progress is the explicit `in-progress` status, not a side effect of being assigned. See [`author` vs `assignees`](../04_setup/01_per-issue.md#author-vs-assignees).
 
 ### Group-by
 
@@ -176,5 +176,5 @@ A single button restores the default tab + no filters.
 ## See also
 
 - [Detail View](./detail-view) — what clicking through takes you to
-- [Vocabulary](../settings/vocabulary) — how preset views and enum colors are declared
-- [Lifecycle and Review](../lifecycle-and-review) — category tab semantics, review-debt promotion
+- [Vocabulary](../04_setup/02_vocabulary.md) — how preset views and enum colors are declared
+- [Lifecycle and Review](../04_setup/06_lifecycle-and-review.md) — category tab semantics, review-debt promotion

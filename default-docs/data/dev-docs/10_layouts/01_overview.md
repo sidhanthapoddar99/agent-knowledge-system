@@ -7,7 +7,7 @@ description: How layouts receive data, their props interfaces, and how to build 
 
 This section covers the implementation side of layouts — what data each layout type receives from the route handler, component conventions, and how to build new layouts.
 
-For choosing and configuring layouts in `site.yaml`, see the [User Guide → Layouts](/user-guide/layouts/overview).
+For choosing and configuring layouts in `site.yaml`, see the [User Guide → Layouts](../../user-guide/16_layout-system/01_overview.md).
 
 ## What's in This Section
 

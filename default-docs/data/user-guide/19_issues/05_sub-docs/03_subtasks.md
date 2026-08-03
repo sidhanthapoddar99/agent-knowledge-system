@@ -97,7 +97,7 @@ migrate-me warning until you rename it.) If `status` is missing, the default is 
 | Closed | `done` | Verified, shipped | `review → done` by a human |
 | Closed | `dropped` | Decided not to do | `→ dropped` by a human, with a reason in a comment |
 
-Same vocabulary as issue-level status. See [Lifecycle and Review](../lifecycle-and-review)
+Same vocabulary as issue-level status. See [Lifecycle and Review](../04_setup/06_lifecycle-and-review.md)
 for the full model — especially the **review handoff** and **review-debt promotion** rules
 (a parent issue with any subtask in the Review category surfaces on the Review tab even if
 its own status isn't).
@@ -153,6 +153,6 @@ The Comprehensive tab on the parent issue concatenates every subtask body with i
 
 ## See also
 
-- [Lifecycle and Review](../lifecycle-and-review) — how the seven statuses interact at issue + subtask level
+- [Lifecycle and Review](../04_setup/06_lifecycle-and-review.md) — how the seven statuses interact at issue + subtask level
 - [Work an Issue](../workflows/work-an-issue) — adding subtasks, transitioning state
 - [Using with AI](../using-with-ai) — how agents are expected to handle subtasks

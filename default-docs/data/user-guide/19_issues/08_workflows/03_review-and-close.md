@@ -147,7 +147,7 @@ If you realise the issue shouldn't proceed at all:
 
 ## See also
 
-- [Lifecycle and Review](../lifecycle-and-review) — the seven-status / four-category model in detail
+- [Lifecycle and Review](../04_setup/06_lifecycle-and-review.md) — the seven-status / four-category model in detail
 - [Work an Issue](./work-an-issue) — the other side of the handoff
 - [Using with AI](../using-with-ai) — how agents are trained to respect the review boundary
 - [Agent Log](../sub-docs/agent-log) — what to read first, every review

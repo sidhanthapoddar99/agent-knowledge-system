@@ -100,11 +100,11 @@ Agents working with the tracker should invoke the `agent-ks-issues` skill — th
 
 - [Design Philosophy](./design-philosophy) — the full rationale for the shape
 - [Folder Structure](./folder-structure) — the data layout in detail
-- [Per-Issue Settings](./settings/per-issue) — metadata schema
-- [Vocabulary](./settings/vocabulary) — tracker-root `settings.json`
-- [Lifecycle and Review](./lifecycle-and-review) — the seven-status / four-category model
+- [Per-Issue Settings](./04_setup/01_per-issue.md) — metadata schema
+- [Vocabulary](./04_setup/02_vocabulary.md) — tracker-root `settings.json`
+- [Lifecycle and Review](./04_setup/06_lifecycle-and-review.md) — the seven-status / four-category model
 - [Sub-Documents](./sub-docs/issue-md) — each file type's conventions
 - [List View](./ui/list-view) and [Detail View](./ui/detail-view)
 - [Workflows](./workflows/create-an-issue) — step-by-step guides
 - [Using with AI](./using-with-ai) — the skill + agent discipline
-- [Setup a new tracker](./setup-new-tracker) — spinning one up from scratch
+- [Setup a new tracker](./04_setup/10_setup-new-tracker.md) — spinning one up from scratch

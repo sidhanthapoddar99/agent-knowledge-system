@@ -71,6 +71,17 @@ function rewriteHref(href: string, addLevel: boolean): string {
     return href;
   }
 
+  // A link to a colocated FILE (./assets/scene.excalidraw, ../img/x.png) is not
+  // a page link — `asset-src` owns it, and resolves it against the source file's
+  // directory on disk rather than against the page URL. Shifting it here would
+  // send that resolution one directory too high, which is exactly what happened
+  // the first time the level shift was added: the <img> came out right and the
+  // <a> to the same file came out one level up. Anything with an extension that
+  // is not markdown belongs to another processor.
+  if (/\.[a-z0-9]+($|#)/i.test(href) && !/\.mdx?($|#)/i.test(href)) {
+    return href;
+  }
+
   // Split off fragment (#section-id)
   const hashIndex = href.indexOf('#');
   let pathPart = hashIndex >= 0 ? href.slice(0, hashIndex) : href;

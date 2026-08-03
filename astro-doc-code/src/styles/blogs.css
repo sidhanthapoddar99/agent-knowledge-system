@@ -323,14 +323,13 @@
   color: var(--color-text-muted);
 }
 
+/* Tags are <span>, not <a> — there is no tag-archive route yet, so they are
+   labels rather than links. The hover underline is gone with the link: nothing
+   should look clickable when nothing happens on click. */
 .blog-post__footer-tag {
   font-size: var(--ui-text-body);
   color: var(--color-brand-primary);
   text-decoration: none;
-}
-
-.blog-post__footer-tag:hover {
-  text-decoration: underline;
 }
 
 /* Post body responsive — sm (640px) */

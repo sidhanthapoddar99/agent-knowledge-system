@@ -292,4 +292,4 @@ Use for trackers that are **never meant for public view** (internal roadmaps, dr
 
 - [Per-Issue Settings](./per-issue) — what each issue fills in based on this vocabulary
 - [List View](../ui/list-view) — how filters + preset views render
-- [Setup a new tracker](../setup-new-tracker) — designing a new vocabulary from scratch
+- [Setup a new tracker](./10_setup-new-tracker.md) — designing a new vocabulary from scratch

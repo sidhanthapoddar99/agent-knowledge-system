@@ -617,5 +617,5 @@ Two examples, deliberately: one alone sets a floor as much as a ceiling.
 - [Plans](./plans) — where order lives
 - [Subtasks](./subtasks) — the scope the log executes against
 - [Agent Memory](./agent-memory) — what is still true, across runs
-- [Lifecycle and Review](../lifecycle-and-review) — how the log feeds the review handoff
+- [Lifecycle and Review](../04_setup/06_lifecycle-and-review.md) — how the log feeds the review handoff
 - [Using with AI](../using-with-ai) — agent discipline

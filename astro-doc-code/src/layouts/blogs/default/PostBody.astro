@@ -59,7 +59,11 @@ const formattedDate = formatDate(date);
       <footer class="blog-post__footer">
         <div class="blog-post__footer-tags">
           <span class="blog-post__footer-label">Tagged:</span>
-          {tags.map((tag) => <a href={`/blog/tag/${tag}`} class="blog-post__footer-tag">#{tag}</a>)}
+          {/* Rendered as text, not links. There is no /blog/tag/<tag> route —
+              the tag-archive feature was never built, so every post shipped
+              tags that looked clickable and 404'd. Make these <a> again in the
+              same change that adds the route, not before. */}
+          {tags.map((tag) => <span class="blog-post__footer-tag">#{tag}</span>)}
         </div>
       </footer>
     )}

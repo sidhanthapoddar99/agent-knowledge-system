@@ -316,4 +316,4 @@ divided for the next insertion. `--subtask a.md,b.md` seeds the `subtasks:` list
 - [Subtasks](./subtasks) — the scope a stage schedules; filed by category, never by order
 - [Agent Log](./agent-log) — where the stages are actually carried out
 - [Agent Memory](./agent-memory) — what is still true; it holds no plan
-- [Lifecycle and Review](../lifecycle-and-review) — the seven-status vocabulary
+- [Lifecycle and Review](../04_setup/06_lifecycle-and-review.md) — the seven-status vocabulary

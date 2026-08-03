@@ -133,7 +133,7 @@ Transforms markdown content through a configurable pipeline:
 | `postprocessors/` | Heading IDs, internal/external link rewriting |
 | `content-types/` | DocsParser, BlogParser (naming conventions) |
 
-See [Parser System](/docs/architecture/parser/overview) for details.
+See [Parser System](./04_parser/01_overview.md) for details.
 
 ### 4. Layout Layer (`src/layouts/`)
 

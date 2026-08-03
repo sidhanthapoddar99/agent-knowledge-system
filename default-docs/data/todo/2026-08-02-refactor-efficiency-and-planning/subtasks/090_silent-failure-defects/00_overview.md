@@ -18,7 +18,15 @@ nothing warned, and every surface rendered normally.
   scan root from its own location on disk, so it checked the *installed* plugin
   and reported clean over files it had never read.
 
-**Done when** all three are fixed and each has a mechanical guard that fails when
+And a fourth, which is `030`'s own fix caught doing the same thing:
+
+- [`040`](./040_two-commands-not-one-guess.md) — the walk-up that fixed `030`
+  infers which tree you mean from where you are standing, and in **consumer mode**
+  it guesses wrong: the framework clone sits inside the user's project, so it
+  scans bundled skills and labels them `[source tree]`. Replaced with two explicit
+  commands, `agent-ks` and `agent-ks-dev`.
+
+**Done when** all four are fixed and each has a mechanical guard that fails when
 the defect is reintroduced — not merely a note describing it.
 
 # References
@@ -37,11 +45,25 @@ the defect is reintroduced — not merely a note describing it.
       exist, reporting every offender at once
 - [x] `030` — the skill-link gate now anchors on the current directory, falls
       back to the installed copy **with a warning**, and names which tree it read
-- [ ] Sid to sign off — all three are at `review`; `done` is his
+- [x] Sid signed off on all three, 2026-08-03 — `010`, `020` and `030` are `done`
+- [ ] `040` — two commands instead of one guess, and the walk-up reverted
 
 # Outcomes and Next Steps
 
-**All three at `review`, fixed and shipped in `0.2.1`.** `done` is Sid's call.
+**`010`, `020` and `030` closed by Sid on 2026-08-03**, all three fixed and
+shipped in `0.2.1`. **`040` is open** — the correction to `030`'s resolution
+logic, agreed the same day and not yet started.
+
+Two things surfaced while closing them, both recorded in the subtasks rather than
+only here:
+
+- **`020`'s hard-stop was applied before Sid ruled on it.** The subtask argues
+  both sides and concludes it is his call; it was implemented inline anyway. He
+  ruled in favour, so the outcome is right and the sequence was backwards.
+- **`030`'s fix carried the defect it was fixing.** Found by Sid asking whether
+  these were real issues or presumptions — the answer was that the *defects* were
+  observed fact, and the *fix* contained the only unexamined inference. That is
+  what `040` is for.
 
 Each fix was control-tested in both directions — the guard must fire on the
 defect and stay quiet on correct input. That mattered concretely: the first draft

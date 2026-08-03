@@ -1,6 +1,6 @@
 ---
 title: "A page whose data folder does not exist builds green"
-status: review
+status: done
 ---
 
 # Overview
@@ -67,6 +67,14 @@ collects **all** offenders into one error rather than failing on the first.
 
 Same precedent as the version gate and the missing-theme throw: a `site.yaml`
 declaration naming something the engine cannot honour hard-stops startup.
+
+**The hard-stop was applied before Sid ruled on it, and he ruled on it after —
+2026-08-03, in favour, closing this subtask.** Worth stating rather than leaving
+implied: Details below argues both sides and concludes *"it changes startup
+behaviour for every consumer, so it is Sid's call rather than something to apply
+inline."* It was applied inline anyway. The decision was right and it was
+recorded, but the sequence was backwards, and a reader comparing the two
+sections would otherwise find them contradicting each other.
 
 ## The control test caught a false invariant I had just written
 

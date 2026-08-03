@@ -1,6 +1,6 @@
 ---
 title: "Migration — agent-log status vocabulary → the canonical seven"
-status: review
+status: done
 ---
 
 # Overview
@@ -159,11 +159,14 @@ vocabulary no longer declared.
 
 ## Measured, and one correction to this subtask
 
-**The blast radius was 75 files, not 78.** This subtask recorded 78 and named it
-as the acceptance test.
+**The blast radius was 75 files, not 78.** This subtask originally recorded 78
+and named that as the acceptance test — in this section and again under *Blast
+radius* below, where the wrong number survived this correction for a day and
+would have failed a passing run.
 `grep -rlE "^status: *(success|failed|not-started) *$"` returns 75, and the
-script's own detect agrees. The number is corrected here rather than left to be
-re-derived.
+script's own detect agrees: 71 `success`, 3 `failed`, 1 `not-started`. Every
+statement of the number now reads 75; the correction is recorded here rather
+than the mistake being quietly erased.
 
 ## Acceptance, each item run
 
@@ -328,11 +331,12 @@ callout under *Scope held* for why the two are not merged.
 
 ## Blast radius — counted
 
-**78 files in this repo alone** carry `status: success`, `status: failed` or
-`status: not-started`, across `default-docs/data/todo/`. Every consumer tracker
-will have proportionally more, since agent-logs are where the volume is.
+**75 files in this repo alone** carry `status: success`, `status: failed` or
+`status: not-started`, across `default-docs/data/todo/` — 71, 3 and 1
+respectively. Every consumer tracker will have proportionally more, since
+agent-logs are where the volume is.
 
-That count is also the acceptance test: run detect, expect 78 here, migrate,
+That count is also the acceptance test: run detect, expect 75 here, migrate,
 re-run detect, expect 0.
 
 ## Not in this script

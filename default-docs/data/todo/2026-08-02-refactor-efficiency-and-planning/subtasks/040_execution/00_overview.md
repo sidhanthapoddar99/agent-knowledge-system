@@ -1,6 +1,6 @@
 ---
 title: "Execution"
-status: in-progress
+status: done
 ---
 
 # Overview
@@ -33,20 +33,20 @@ below are stable ids, not a sequence.
 
 | # | Subtask | Status |
 |---|---------|--------|
-| 010 | [Code the plans section](./010_code-the-plans-section.md) — framework sections, routes, CLI, validator | review |
-| 015 | [Code per-agent-log settings.json](./015_code-agent-log-settings.md) — status as data; **ships independently of the plans section** | review |
-| 020 | [Update ~/.claude/CLAUDE.md](./020_update-global-claude-md.md) — the global operating rules | input-needed |
-| 030 | [Skill: the plans section](./030_skill-plans-section.md) — teach `plans/`, delete the old shape | review |
-| 040 | [Skill: the responsibility split](./040_skill-efficiency-rules.md) — the split, plus the agent-log rewrite. **The one that fixes the measured problem** | review |
-| 050 | [Docs: user-guide + bundled guide](./050_docs-update-plans-section.md) — user-guide prose + bundled `guide.ts` | review |
-| 070 | [UI: Subtasks and Overview have no icon](./070_ui-subtasks-overview-icons.md) — **not gated**; do it in the same pass as the Plans icon | review |
-| 080 | [Skill: subtasks by category, not order](./080_skill-subtasks-by-category.md) — the other half of the plans idea | review |
-| 090 | [Framework: a section registry](./090_section-registry.md) — **after** `010`, never merged into it | review |
-| 100 | [Migration: agent-log status vocabulary](./100_migration-script.md) — the mandatory half of the release; ships with [`050`](../050_version-bump.md) | in-progress |
-| 110 | [Sweep: delete superseded wording](./110_superseded-wording-sweep.md) — and write the rule that replaces it | review |
-| 120 | [Agent memory after plans](./120_agent-memory-after-plans.md) — what `agent-memory/` becomes once `plans/` leaves it | review |
-| 130 | [Audit: three neutral readers](./130_independent-skill-audit.md) — old skill vs new; **stored, not acted on**. Last | review |
-| 140 | [Rework the demo showcase](./140_rework-demo-showcase.md) — the fixture, onto the new structure, with a Playwright pass | review |
+| 010 | [Code the plans section](./010_code-the-plans-section.md) — framework sections, routes, CLI, validator | done |
+| 015 | [Code per-agent-log settings.json](./015_code-agent-log-settings.md) — status as data; **ships independently of the plans section** | done |
+| 020 | [Update ~/.claude/CLAUDE.md](./020_update-global-claude-md.md) — the global operating rules | done |
+| 030 | [Skill: the plans section](./030_skill-plans-section.md) — teach `plans/`, delete the old shape | done |
+| 040 | [Skill: the responsibility split](./040_skill-efficiency-rules.md) — the split, plus the agent-log rewrite. **The one that fixes the measured problem** | done |
+| 050 | [Docs: user-guide + bundled guide](./050_docs-update-plans-section.md) — user-guide prose + bundled `guide.ts` | done |
+| 070 | [UI: Subtasks and Overview have no icon](./070_ui-subtasks-overview-icons.md) — **not gated**; do it in the same pass as the Plans icon | done |
+| 080 | [Skill: subtasks by category, not order](./080_skill-subtasks-by-category.md) — the other half of the plans idea | done |
+| 090 | [Framework: a section registry](./090_section-registry.md) — **after** `010`, never merged into it | done |
+| 100 | [Migration: agent-log status vocabulary](./100_migration-script.md) — the mandatory half of the release; ships with [`050`](../050_version-bump.md) | done |
+| 110 | [Sweep: delete superseded wording](./110_superseded-wording-sweep.md) — and write the rule that replaces it | done |
+| 120 | [Agent memory after plans](./120_agent-memory-after-plans.md) — what `agent-memory/` becomes once `plans/` leaves it | done |
+| 130 | [Audit: three neutral readers](./130_independent-skill-audit.md) — old skill vs new; **stored, not acted on**. Last | done |
+| 140 | [Rework the demo showcase](./140_rework-demo-showcase.md) — the fixture, onto the new structure, with a Playwright pass | done |
 
 **Not in this group:** the NeuraSutra sidequest moved out to the top level as
 [`060`](../060_sidequest-neurasutra.md). It targets a different pair of repos,
@@ -57,10 +57,24 @@ execution work until someone decides to take them.
 
 # Conclusions and Summary
 
-**Twelve of fourteen are at `review`.** Two are not, both deliberately: `020` is
-`input-needed` because it proposes a diff to `~/.claude/CLAUDE.md`, and that file
-is Sid's; `100` went **back** to `in-progress` on 2026-08-03 when three todo
-items were added to it after its original scope was already complete.
+**`100` is closed as of 2026-08-03.** It went **back** to `in-progress` earlier
+that day when three todo items were added after its original scope was already
+complete, returned to `review` once 0.2.1 closed all three, and closed on Sid's
+instruction once the last blocker — a blast-radius count stated as 78 in two
+places and 75 in a third — was corrected to 75 throughout.
+
+**All fourteen are closed.** The Status column above spent a day disagreeing with
+the subtask files — it read `review` for thirteen rows while every one of those
+files already carried `status: done` (flipped in `a01ae7b`; the hand-written
+table never followed). Sid confirmed on 2026-08-03 that those closures were his,
+and the column is now synced.
+
+> [!NOTE]
+> **The defect was the duplication, not the number.** A status lived in the
+> frontmatter *and* in a hand-typed column, with nothing keeping the two honest —
+> the same shape as the `iteration:` field this group's own migration deleted for
+> exactly that reason. The durable fix is for this column to be derived rather
+> than typed; until it is, it will drift again.
 
 The `100` reopening is worth a line rather than a silent status flip. Dropping
 the `iteration:` frontmatter field moved the number into the filename and left

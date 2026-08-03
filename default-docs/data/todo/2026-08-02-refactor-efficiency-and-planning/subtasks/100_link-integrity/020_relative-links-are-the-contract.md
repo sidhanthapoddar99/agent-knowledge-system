@@ -15,9 +15,24 @@ whose job is keeping links alive when files move.
 option.** That is the permission under which 341 content links were converted to
 a form `move` cannot maintain (reverted in `ee404bb`).
 
-**Done when** both skills state relative links as the rule *with the reason
-attached*, the one real exception is named, and the docs skill stops presenting
-the absolute form as an equivalent alternative.
+**Done when** every surface that states or demonstrates link form says the same
+thing, the one real exception is named, and no surface presents the absolute form
+as an equivalent alternative.
+
+> [!IMPORTANT]
+> **Zero ambiguity is the bar, and it is Sid's, set 2026-08-03.** Not *"prefer
+> relative"* — one rule, stated identically everywhere, with the notation spelled
+> out so nobody has to infer it:
+>
+> | Form | Means | Use for |
+> |---|---|---|
+> | `./x` · `../x` | **relative** to this file's directory | every reference to a file inside this project |
+> | `/x` | **site-absolute** — from the site root | nothing internal. This is the form `move` cannot maintain |
+> | `https://…` | external | services and pages outside this project |
+>
+> Spelling out that `./` is relative and a leading `/` is absolute reads as
+> obvious. It was not obvious enough to stop 341 links being converted, and the
+> conversion was performed by someone who had read both skill files.
 
 # References
 
@@ -46,11 +61,24 @@ the absolute form as an equivalent alternative.
       wins
 - [ ] Strengthen `10_writing.md:117` the same way: it states the rule but frames
       the reason against bare prose paths, not against absolute links
-- [ ] Check every other reference that shows link examples, so the rule is not
-      stated in one place and contradicted in another
-- [ ] Decide whether `agent-ks check` should warn on a **new** absolute link
-      inside a section. Record the decision either way — a rule that lives only
-      in prose is exactly the shape that failed here
+- [ ] **Sweep every surface that states or demonstrates link form**, so the rule
+      is not stated in one place and contradicted in another. The full list, none
+      of which the original scoping covered:
+      - both skills' reference files — anywhere a link example appears, not only
+        the two lines named above
+      - `astro-doc-code/src/layouts/issues/default/guide.ts`, the bundled
+        plugin-independent twin of the issues skill
+      - `default-docs/data/user-guide/` — the pages that teach authors to write links
+      - `default-docs/data/dev-docs/` — same, from the implementation side
+      - this repo's `CLAUDE.md`, **only if it already says something about links.**
+        If it is silent, leave it silent — a rule the skills own does not get
+        copied into a file that cannot know when the skill changed
+- [ ] **Account for the 137 site-absolute links that exist today** (measured
+      2026-08-03, see Details). The user-guide's 115 are the known cross-section
+      set; the other 22 have never been looked at
+- [ ] Mechanical guard — moved to [`090`](./090_tools-must-say-what-they-skip.md).
+      Sid decided 2026-08-03 that the checking should exist, so it is work rather
+      than an open question
 
 # Outcomes and Next Steps
 
@@ -103,6 +131,23 @@ cannot know what URL prefix a section publishes under.
 This was demonstrated live while regrouping these very subtasks: one `move`
 rewrote **6 relative links across 4 files** without being asked. Every one of
 those would have been skipped had they been absolute.
+
+## Where the absolute links actually are — measured 2026-08-03
+
+Counted across `default-docs/data/**/*.md`, on the working tree after the revert:
+
+| Directory | site-absolute `](/…)` | relative `](./…` · `](../…` | external `http` |
+|---|---:|---:|---:|
+| `user-guide/` | **115** | 372 | 3 |
+| `dev-docs/` | **19** | 70 | 6 |
+| `todo/` (the tracker) | **3** | 838 | 8 |
+| `blog/` · `pages/` | 0 | 0 | 0 |
+
+**137 site-absolute links, and the scoping so far has only explained 115 of
+them.** The `dev-docs` 19 and the tracker's 3 were never examined — they may be
+the same cross-section convention, or they may be leftovers. Each one is a link
+`agent-ks move` will silently decline to maintain, so "probably fine" is not an
+answer this group is allowed to give.
 
 ## The exception — to verify, not assume
 

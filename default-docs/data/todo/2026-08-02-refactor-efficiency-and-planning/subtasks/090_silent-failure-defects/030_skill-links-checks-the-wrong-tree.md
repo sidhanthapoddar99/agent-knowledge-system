@@ -1,6 +1,6 @@
 ---
 title: "The skill-links gate reads the installed plugin, not the working tree"
-status: review
+status: done
 ---
 
 # Overview
@@ -45,6 +45,17 @@ or refuses to run, and the fix is control-tested in both directions.
       no prior green covers the committed tree
 
 # Outcomes and Next Steps
+
+> [!IMPORTANT]
+> **Closed 2026-08-03, and the resolution half is superseded the same day by
+> [`040`](./040_two-commands-not-one-guess.md).** The defect recorded here was
+> real and is fixed. But the *walk-up from the CWD* that fixed it turned out to
+> carry the same shape of bug pointing the other way: in consumer mode the
+> framework clone sits inside the user's project, so a consumer standing in it
+> gets the **bundled** skills checked and labelled `[source tree]`, which is not
+> the copy they run. `040` replaces the inference with two explicit commands and
+> keeps the banner. This subtask stays `done` because its finding stands; the
+> follow-up owns the correction.
 
 **Fixed 2026-08-03.** The anchor moved from **where the script lives** to **where
 you are standing**.

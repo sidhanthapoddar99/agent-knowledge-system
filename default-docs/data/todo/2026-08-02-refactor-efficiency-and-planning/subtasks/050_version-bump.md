@@ -98,9 +98,17 @@ harnesses pass.
   mode with 0.1.x content. The dogfood tree cannot stand in for it: it was
   migrated as each converter shipped, so its chain run is a re-run, not a first
   run.
-- **Tag and publish** — `v0.2.0` on the merge commit, plus
-  `gh release create v0.2.0 --notes-file releases/0.2.0.md`. Nothing is tagged
-  yet, and the release note is written and waiting.
+**Done 2026-08-03, on Sid's word:** the branch was fast-forwarded into `main` and
+pushed (37 commits), and **all four releases are published** — `v0.1.0`,
+`v0.1.1`, `v0.1.2` at their historical commits and `v0.2.0` at the tip, which is
+correctly the only one marked Latest.
+
+`v0.2.0` went through the workflow end to end — its first real run, green, body
+byte-identical to `releases/0.2.0.md`. The three retro ones were published with
+`gh release create --latest=false`, because **a workflow triggered by a tag runs
+the workflow file as it exists at the tagged commit** — and June/July commits
+have no `.github/workflows/`, so pushing those tags fires nothing. Worth knowing
+before anyone assumes an old tag will self-publish.
 
 # Details
 

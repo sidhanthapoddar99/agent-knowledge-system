@@ -10,9 +10,15 @@ Every version of this engine gets **two artefacts, and both are required**:
 
 **Pushing the tag publishes the note.** [`.github/workflows/release.yml`](../.github/workflows/release.yml)
 fires on any `v*` tag, reads `releases/<version>.md`, and creates the release
-with the note as its body and the note's **H1 as the release title** — so line 1
-must be `# <version> — <one line>`. Re-running on an existing release updates the
-body rather than erroring, so a corrected note can be re-published.
+using the note's **H1 as the release title** and **everything below it as the
+body** — so line 1 must be `# <version> — <one line>`. Re-running on an existing
+release updates it rather than erroring, so a corrected note can be re-published.
+
+**The H1 is stripped from the body on purpose.** GitHub renders the release
+title above the body already, so publishing the file verbatim shows the same
+sentence twice. The file keeps its heading regardless: it is the title's single
+source, and the note has to read as a standalone document here in `releases/`.
+Write the note for the file; the workflow adapts it for the release page.
 
 **And it fails the tag when the note is missing.** That is the point: a release
 note is the artefact most easily skipped, because nothing downstream breaks

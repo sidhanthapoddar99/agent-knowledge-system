@@ -223,6 +223,47 @@ text, so `` `state:` `` would have rendered literally.
 the notes. It restates nothing — the notes are the home, and an index that
 summarises them would be a second copy that drifts.
 
+### Shipped — merged, pushed, and all four releases published
+
+Sid released the hold on merging: the branch fast-forwarded into `main` (37
+commits — his six unpushed ones plus this run's 31), gated on `main` before the
+push, then four annotated tags.
+
+| Tag | At | Release |
+|---|---|---|
+| `v0.1.0` | `fffc48a` | published manually, not-latest |
+| `v0.1.1` | `17c0e53` | published manually, not-latest |
+| `v0.1.2` | `d70cc11` | published manually, not-latest |
+| `v0.2.0` | `e447aee` | **published by the workflow** — first real run, green |
+
+**A tag-triggered workflow runs the workflow file as it exists at the tagged
+commit.** So the three retro tags, pointing at June/July commits that contain no
+`.github/workflows/`, fire nothing — they were published with
+`gh release create --latest=false`. The ordering mattered too: publishing the old
+ones first, then `v0.2.0`, is what leaves `0.2.0` as the only release marked
+Latest. Verified after the fact: `v0.2.0`'s published body is byte-identical to
+`releases/0.2.0.md`.
+
+### Version badges that cannot drift
+
+Sid asked for version badges at the top of the README, VS-Code-marketplace style.
+Both read live values rather than stating a number:
+
+- **engine** — shields' `github/v/release`, which resolves to the latest release
+  tag. It moves when a release ships, by construction.
+- **plugin** — a shields dynamic-JSON badge reading `$.version` from
+  `plugin.json` on `main`. It moves when the file moves.
+
+Both were fetched and confirmed to render `v0.2.0` and `v0.7.0` before landing —
+a badge pointing at a broken endpoint is worse than no badge, and it fails
+silently in a README nobody re-checks.
+
+**One caught in the act:** the first draft included a `changelog | 4 releases`
+badge — a hard-coded count, sitting directly beneath a line claiming nothing here
+can drift. Removed before commit. Worth recording precisely because it is the
+same defect this release deleted from `plugin.json`, reintroduced within the hour
+by the person who deleted it.
+
 | Version | Tag anchor | Confidence | Why it is not certain |
 |---|---|---|---|
 | `0.1.0` | `fffc48a` (2026-06-22) | content med-high, anchor medium | `ENGINE_VERSION` did not exist; the version is a retroactive label |

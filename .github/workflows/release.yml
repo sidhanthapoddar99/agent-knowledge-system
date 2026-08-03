@@ -46,13 +46,27 @@ jobs:
             exit 1
           fi
 
+          # Publish everything BELOW the H1. GitHub already renders the title
+          # above the body, so shipping the file verbatim prints it twice — once
+          # as the release heading and again as an H1 at the top of the body.
+          # The file keeps its H1: it is the title's single source, and the note
+          # has to read as a standalone document in releases/ too.
+          BODY="$(mktemp)"
+          tail -n +2 "$NOTE" | sed '/./,$!d' > "$BODY"    # drop line 1, then any leading blanks
+
+          if [ ! -s "$BODY" ]; then
+            echo "::error::${NOTE} is a heading and nothing else — a release note needs a body."
+            exit 1
+          fi
+
           {
             echo "VERSION=${VERSION}"
             echo "NOTE=${NOTE}"
+            echo "BODY=${BODY}"
             echo "TITLE=${TITLE}"
           } >> "$GITHUB_ENV"
 
-          echo "Publishing ${GITHUB_REF_NAME} from ${NOTE}"
+          echo "Publishing ${GITHUB_REF_NAME} from ${NOTE} — title: ${TITLE}"
 
       - name: Create or update the release
         env:
@@ -61,10 +75,10 @@ jobs:
           set -euo pipefail
           if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
             echo "Release exists — updating its body from ${NOTE}"
-            gh release edit "$GITHUB_REF_NAME" --title "$TITLE" --notes-file "$NOTE"
+            gh release edit "$GITHUB_REF_NAME" --title "$TITLE" --notes-file "$BODY"
           else
             gh release create "$GITHUB_REF_NAME" \
               --title "$TITLE" \
-              --notes-file "$NOTE" \
+              --notes-file "$BODY" \
               --verify-tag
           fi

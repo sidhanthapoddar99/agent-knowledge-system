@@ -64,5 +64,46 @@ instance of it:
 
 ## Outcome
 
-> [!NOTE]
-> **PLACEHOLDER** — written 2026-08-03, not started.
+**All four stages ran 2026-08-03. Broken in-body links 418 → 0; every stage at
+`review`, none at `done`.**
+
+| Stage | Result |
+|---|---|
+| `10` tools | `agent-ks` = installed, `agent-ks-dev` = this tree. Needs `/plugin install` before the bare command changes behaviour |
+| `20` renderer | Three lines. 418 → 55, control-tested by disabling the shift and rebuilding. Zero content files changed |
+| `30` the rule | No cross-section exception exists — proven, not assumed. 129 links converted, 55 → 0 broken |
+| `40` records + guards | `0.2.1` corrected in place with a dated block; `move` reports its skips; `check link-form` ships green |
+
+**Stage 10 first was the right call, and it paid off within the run.** Stage 30
+edited five skill surfaces; every "clean" quoted for those edits came from
+`agent-ks-dev`, reading the tree that was actually being changed.
+
+### Three things worth carrying out of this run
+
+**A count improving is not evidence a change is correct.** The renderer fix took
+418 → 55 and had introduced a new bug on the way: it shifted links to colocated
+*files*, which a different postprocessor resolves against a different base. It
+was found by tracing one link into its built output — the same check that would
+have prevented the original 341-link mistake, and it costs one request.
+
+**The exception that wasn't.** `020` was told to verify the cross-section
+exception rather than assume it. Verifying collapsed it: `move` maintains
+cross-section relative links, so 115 links believed to follow a convention were
+simply unmaintained. **Checking a rule you expect to confirm is how you find the
+rule doesn't exist.**
+
+**Both new gates are green on arrival, deliberately.** The tree was taken to zero
+before `check link-form` shipped, and the backticked-path rule was left unbuilt
+precisely because it would have landed red against ~44 existing instances. A gate
+that is red on arrival is a gate people learn to ignore.
+
+### Left open, and why
+
+- **[`060`](../../subtasks/100_link-integrity/060_does-the-tracker-share-it.md)** —
+  1,372 broken tracker links, measured, untriaged. Different pipeline, different
+  defect; acting on it without triage is what this whole group is about.
+- **[`080`](../../subtasks/100_link-integrity/080_link-it-dont-name-it.md)** —
+  the rule is live on every surface, the ~44 existing backticked paths are not
+  converted. Judgement per instance, not a sweep.
+- **[`040`](../../subtasks/100_link-integrity/040_site-wide-link-rot.md)** still
+  prescribes the rewrite that was reverted.

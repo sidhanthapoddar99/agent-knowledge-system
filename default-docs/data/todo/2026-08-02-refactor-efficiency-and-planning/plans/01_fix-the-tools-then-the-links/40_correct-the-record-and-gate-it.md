@@ -2,7 +2,7 @@
 title: "Correct the record, and gate it"
 outcome: "No published record still argues for the wrong form, and the rule is enforced by a tool rather than by prose"
 who: claude
-status: open
+status: review
 subtasks:
   - "[Correct the published records](../../subtasks/100_link-integrity/050_correct-the-published-records.md)"
   - "[Does the tracker share it?](../../subtasks/100_link-integrity/060_does-the-tracker-share-it.md)"
@@ -13,16 +13,23 @@ subtasks:
 
 ## Todo
 
-- [ ] Correct the three records. `v0.2.1` is **tagged and pushed** — a dated
-      correction block, never a quiet rewrite. Keep the wrong reasoning visible
-- [ ] Triage the tracker's 3,978 into the three populations before deciding
-      whether the checker's tracker exclusion survives
-- [ ] Commit the content link checker, reframed as a **rendering** gate
-- [ ] Build the two guards: `move` reports every link it declined to maintain,
-      `check` gates link form. **Baseline first — do not ship a gate that is red
-      on arrival**
-- [ ] Re-measure the site-wide counts and record before/after side by side
-- [ ] Everything to `review`. **Nothing to `done`**
+- [x] Correct the published record — `releases/0.2.1.md` carries a dated
+      `[!CAUTION]` block, and the *"not one of 101 links got it right"* line is
+      kept and annotated rather than deleted
+- [ ] **Triage the tracker — NOT DONE.** Measured instead: 1,372 broken with
+      `--all`, dominated by relative links, against a pipeline that re-roots
+      links itself. The exclusion now rests on that measurement rather than on an
+      invented principle, and the triage stays open on
+      [`060`](../../subtasks/100_link-integrity/060_does-the-tracker-share-it.md)
+- [x] Commit the content link checker, reframed — it now names which layer to
+      suspect, in order, and forbids the site-absolute "fix"
+- [x] Build the guards — `move` reports every link it declined; `check link-form`
+      is a new source-only gate, **green on arrival** because the tree was taken
+      to zero first
+- [x] Re-measure and record before/after
+- [x] Everything to `review`. **Nothing to `done`**
+- [ ] `040`'s own prescription — still argues for the root-relative rewrite in
+      its Details. Not retracted
 
 **Two gates, two questions — do not merge them.** The rendering gate asks *does
 this link resolve?* and needs a build. The form gate asks *is this link

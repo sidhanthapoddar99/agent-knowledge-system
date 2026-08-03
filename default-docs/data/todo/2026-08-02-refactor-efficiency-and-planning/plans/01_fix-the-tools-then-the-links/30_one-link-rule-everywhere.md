@@ -2,7 +2,7 @@
 title: "One link rule, everywhere"
 outcome: "Every surface states the same rule — internal references are relative markdown links — with the reason attached and no alternative offered"
 who: claude
-status: open
+status: review
 subtasks:
   - "[Relative links are the contract](../../subtasks/100_link-integrity/020_relative-links-are-the-contract.md)"
   - "[Link it, don't name it](../../subtasks/100_link-integrity/080_link-it-dont-name-it.md)"
@@ -11,20 +11,20 @@ subtasks:
 
 ## Todo
 
-- [ ] Settle the cross-section question **first** — verify against `move.mjs`
-      whether a cross-section relative link is rewritten correctly. If it is,
-      there is no exception and the simpler rule wins. Stage 40's gate encodes
-      whatever this concludes
-- [ ] State the rule identically on every surface: both skills, `guide.ts`, the
-      user-guide, the dev-docs. **This repo's `CLAUDE.md` only if it already says
-      something about links** — if it is silent, leave it silent
-- [ ] Account for all 137 site-absolute links. 115 are the known user-guide
-      cross-section set; the 19 in `dev-docs/` and 3 in the tracker have never
-      been examined
-- [ ] Convert backticked paths that should be links — **in reviewable batches,
-      one directory at a time, gate after each.** Not one scripted sweep
-- [ ] **Gate:** `agent-ks-dev check skill-links` clean, on the source tree,
-      after every batch
+- [x] Settle the cross-section question **first** — settled by a dry-run `move`:
+      cross-section relative links **are** maintained, so **there is no
+      exception** and the simpler rule wins
+- [x] State the rule identically on every surface — both skills' references, both
+      `SKILL.md` front pages, `guide.ts`. `CLAUDE.md` left silent on link form,
+      as instructed
+- [x] Account for all 137 — 129 converted, 5 belong to the dead-target subtask,
+      2 parked on the tracker question, 1 is a quoted example
+- [x] Take the broken-target count to zero — 55 → 0
+- [ ] **Convert backticked paths that should be links — NOT DONE.** The rule is
+      live everywhere; the ~44 existing instances need judgement per instance and
+      were not swept. Left on [`080`](../../subtasks/100_link-integrity/080_link-it-dont-name-it.md)
+- [x] **Gate after every batch** — build + `check links` after each directory,
+      `check skill-links` on the source tree after the skill edits
 
 **This stage carries the run's real risk.** It proposes the second mass link edit
 in this repo; the first touched 341 files and was wrong. Two things make this one

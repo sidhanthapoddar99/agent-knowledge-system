@@ -1,6 +1,6 @@
 ---
 title: "check-content-links was built on the wrong model — reframe it as a rendering gate"
-status: open
+status: review
 ---
 
 # Overview
@@ -53,10 +53,37 @@ broken link fails it while removing that link returns it to zero.
 
 # Outcomes and Next Steps
 
-> [!IMPORTANT]
-> **PLACEHOLDER** — the script exists and is uncommitted. Blocked on Sid's
-> approval, and on [`060`](./060_does-the-tracker-share-it.md) for the tracker
-> question.
+**Reframed and committed 2026-08-03.**
+
+The header no longer blames authors. It now tells whoever trips the gate **which
+layer to look at, in order**: the renderer first, the target second, the author
+third — with the reason attached, which is that uniform failure across
+independent authors is evidence about the tool. It also carries the prohibition
+that matters most: never resolve a failure here by converting the link to
+site-absolute form, because that renders green and leaves link maintenance.
+
+### The tracker exclusion — now justified by measurement, not by a story
+
+The original reason (*"a rotted link is history, not a defect"*) was reasoned to,
+not measured, and was invented to fit the wrong model. Measured after the renderer
+fix:
+
+| Scope | Pages | Broken |
+|---|---:|---:|
+| Default — docs sections | 173 | **0** |
+| `--all` — including the tracker | 978 | **1,372** |
+
+So the exclusion stands, on the honest ground: including trackers would put the
+gate at 1,372 on arrival, and **a gate that is red on arrival is a gate people
+learn to ignore.** Whether those 1,372 are history, demo-fixture fiction, or a
+second transform bug is untriaged — that is
+[`060`](./060_does-the-tracker-share-it.md), and the header now says so instead of
+asserting a principle.
+
+**One signal worth carrying to `060`:** the tracker failures are dominated by
+*relative* links that do not resolve, and the issues pipeline has its own
+re-rooting pass (`issue-body-links.ts`). The docs level-shift does not apply to
+it. That is a real lead, not a conclusion.
 
 # Details
 

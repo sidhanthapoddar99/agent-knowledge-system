@@ -205,6 +205,11 @@ function mirrorText(text, oldTarget, oldRel, newTarget, newRel) {
 // We compute against FINAL locations so moved↔moved links self-correct.
 
 const editsByFile = new Map(); // finalAbs -> [{line, old, new}]
+// Site-absolute internal links met along the way. `move` cannot rewrite these
+// and never could; what changed is that it now says so instead of passing over
+// them in silence. A run that maintained 40 links and abandoned 12 used to look
+// exactly like a run that maintained 52.
+const unmaintainable = [];
 
 function addEdit(finalAbs, line, oldFull, newFull) {
   if (oldFull === newFull) return;
@@ -238,7 +243,17 @@ for (const file of scanFiles) {
     LINK_RE.lastIndex = 0;
     while ((m = LINK_RE.exec(lineText)) !== null) {
       const [full, bang, text, target] = m;
-      if (isIgnorableTarget(target)) continue;
+      if (isIgnorableTarget(target)) {
+        // A site-absolute INTERNAL link is not external and not an anchor — it
+        // is a link this tool cannot maintain, because it cannot know what URL
+        // prefix a section publishes under. Skipping is correct; skipping in
+        // SILENCE is what let 341 links be converted to this form without
+        // anyone noticing they had left link maintenance. Count them and say so.
+        if (target.startsWith('/') && !target.startsWith('//')) {
+          unmaintainable.push(`${file}:${idx + 1}  [${text}](${target})`);
+        }
+        continue;
+      }
       const { rel, anchor } = splitAnchor(target);
       if (rel === '') continue; // target was pure-anchor after all
 
@@ -292,7 +307,24 @@ if (dryRun) {
       }
     }
   }
+  reportUnmaintainable();
   process.exit(0);
+}
+
+/**
+ * Say what was skipped. A warning, not an error — `move` is doing its job
+ * correctly and refusing to move a file over someone else's link form would be
+ * disproportionate. But the count has to be visible, because the failure this
+ * prevents is not a crash: it is a link set that quietly shrinks while every
+ * run still reports success.
+ */
+function reportUnmaintainable() {
+  if (!unmaintainable.length) return;
+  console.log(`\n⚠ ${unmaintainable.length} site-absolute link(s) left UNMAINTAINED.`);
+  console.log(`  \`move\` cannot rewrite a target starting with "/" — it cannot know what URL`);
+  console.log(`  prefix a section publishes under. These will not follow a file when it moves.`);
+  console.log(`  Rewrite them as relative links (./x, ../x) to bring them back into maintenance.\n`);
+  for (const u of unmaintainable) console.log(`  ${u}`);
 }
 
 // ── perform the filesystem move ────────────────────────────────────────────
@@ -369,4 +401,5 @@ for (const [finalAbs, arr] of editsByFile) {
 }
 
 console.log(`moved ${movedFileCount} file(s) [${moveMode}]; rewrote ${editedLinks} link(s) across ${editedFiles} file(s)`);
+reportUnmaintainable();
 process.exit(0);

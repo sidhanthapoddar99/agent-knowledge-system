@@ -3,9 +3,30 @@
  * check-content-links.mjs — verify links between CONTENT pages resolve.
  *
  * The sibling `check-skill-links.mjs` does this for the skill `.md` files under
- * `plugins/`. Nothing did it for `data/` — the docs, the guide, the blog — and
- * the result was 313 dead links across the user guide and dev-docs, plus every
- * relative link in one whole section, accumulated with nobody noticing.
+ * `plugins/`. Nothing did it for `data/` — the docs, the guide, the blog.
+ *
+ * WHAT A FAILURE HERE MEANS. This measures whether a RENDERED link resolves,
+ * which is a statement about the whole pipeline and not about the author. When
+ * this file was first written the belief was that the content was at fault, and
+ * it said so; that belief was wrong and it cost 341 content links rewritten to a
+ * form nothing could maintain, then reverted. The actual cause was three lines
+ * in `internal-links.ts` — every page's URL is one segment deeper than its
+ * source directory, and the transform emitted `./` unchanged.
+ *
+ * So when this reports errors, check IN THIS ORDER:
+ *   1. the renderer (`src/parsers/postprocessors/internal-links.ts`) — is a
+ *      whole class of link failing the same way? That is a transform bug.
+ *   2. the target — does the page actually exist where the link says?
+ *   3. the author — only once 1 and 2 are ruled out.
+ *
+ * **Uniform failure across independent authors is evidence about the tool.** If
+ * every link in a section is broken, the section was not written by 100 people
+ * who all made the same mistake.
+ *
+ * NEVER "fix" a failure here by converting the link to site-absolute form. It
+ * renders green and `agent-ks move` skips every target starting with `/`, so the
+ * link silently leaves link maintenance forever. That is the exact trade the 341
+ * rewrite made.
  *
  * WHY THIS CHECKS THE BUILT SITE, NOT THE MARKDOWN.
  *
@@ -30,11 +51,24 @@
  * from the config and are correct by construction; including them would drown
  * the real findings in thousands of identical passes.
  *
- * TRACKERS ARE EXCLUDED BY DEFAULT (`type: issues` in site.yaml). An issue is a
- * record of what someone thought at the time — a link that rotted because its
- * target was deleted is history, not a defect, and rewriting it edits the
- * record. Pass `--all` to include them. This keeps the clean state at ZERO,
- * which is the only state a gate can be read against.
+ * TRACKERS ARE EXCLUDED BY DEFAULT (`type: issues` in site.yaml). Pass `--all`
+ * to include them.
+ *
+ * The original reason given was that an issue is a record of what someone
+ * thought at the time, so a rotted link is history rather than a defect. That
+ * reasoning was invented to fit the wrong model and is only PART of the truth.
+ * Measured 2026-08-03, after the renderer fix: the non-tracker sections report
+ * **0** errors over 173 pages; `--all` reports **1,372** over 978. The tracker's
+ * failures are dominated by relative links that do not resolve, and the issues
+ * pipeline is a different one — it has its own re-rooting pass
+ * (`issue-body-links.ts`) for the detail-URL collapse, and the docs level-shift
+ * does not apply to it.
+ *
+ * So the exclusion stands for now on a MEASURED basis, not a principled one:
+ * including trackers would put the gate at 1,372 on arrival, and a gate that is
+ * red on arrival is a gate people learn to ignore. Whether those 1,372 are
+ * history, fiction in demo fixtures, or a real second transform bug has not been
+ * triaged. Until it has, `--all` is a measurement and the default is the gate.
  *
  * Usage:
  *   check-content-links.mjs [--section <name>] [--all] [--dist <path>] [--json]

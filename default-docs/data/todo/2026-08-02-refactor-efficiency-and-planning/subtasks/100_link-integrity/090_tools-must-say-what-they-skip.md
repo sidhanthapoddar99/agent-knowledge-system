@@ -1,6 +1,6 @@
 ---
 title: "The tools skip links silently — move must report what it declined, and check must gate link form"
-status: open
+status: review
 ---
 
 # Overview
@@ -41,36 +41,72 @@ link, and both are control-tested in each direction.
 
 # Todo list
 
-- [ ] **`move` reports its skips.** Every link it declined, with the file and the
-      target, and a one-line summary: *"N links left unmaintained (site-absolute —
-      `move` cannot rewrite these)."* Silence currently reads as success
-- [ ] Decide whether a skip should be a **warning or a failure** in `move`.
-      Recommended: warning. `move` is doing its job correctly; the defect is in
-      the content it met, and refusing to move a file over it would be
+- [x] **`move` reports its skips** — every declined link with file, line and
+      target, under a summary naming what it means
+- [x] **Warning, not failure**, as recommended. `move` is doing its job
+      correctly; refusing to move a file over someone else's link form would be
       disproportionate
-- [ ] **`check` gains a link-form gate** — a site-absolute link to an internal
-      target is an error. External `http(s)` untouched. The cross-section
-      exception, if [`020`](./020_relative-links-are-the-contract.md) confirms one
-      exists, is encoded here rather than remembered
-- [ ] **`check` flags a backticked path that resolves to a real file** — the
-      [`080`](./080_link-it-dont-name-it.md) rule. Only when the path resolves;
-      guessing at prose is how a gate becomes noise people disable
-- [ ] Baseline the gate against today's tree **before** enforcing: 137
-      site-absolute links exist right now (measured, see
-      [`020`](./020_relative-links-are-the-contract.md)). Decide what the gate
-      does about pre-existing ones — fix-then-enforce, or grandfather with a
-      recorded list. **Do not ship a gate that is red on arrival**
-- [ ] Control-test both directions for each gate: it fires on the defect, and it
-      stays quiet on a clean tree. Neither half alone proves anything
-- [ ] Assert a non-zero count of links examined — a run that inspected nothing
-      fails rather than passing
+- [x] **`check link-form` built** — a new source-only gate. No cross-section
+      exception to encode: `020` proved there isn't one
+- [ ] **`check` flags a backticked path that resolves to a real file** — not
+      built. Left with [`080`](./080_link-it-dont-name-it.md), whose content
+      sweep it belongs with
+- [x] **Baselined before enforcing.** The tree was taken to zero first, so the
+      gate ships green
+- [x] Control-tested both directions, for both tools
+- [x] Non-zero-count assertion, plus a second one: files found but zero links
+      parsed also fails
 
 # Outcomes and Next Steps
 
-> [!NOTE]
-> **PLACEHOLDER** — decided 2026-08-03, not started. Depends on
-> [`020`](./020_relative-links-are-the-contract.md) settling the cross-section
-> exception, because the gate has to encode it.
+**Both guards built and control-tested 2026-08-03. One deferred.**
+
+### `agent-ks move` now says what it declined
+
+```
+⚠ 3 site-absolute link(s) left UNMAINTAINED.
+  `move` cannot rewrite a target starting with "/" — it cannot know what URL
+  prefix a section publishes under. These will not follow a file when it moves.
+  Rewrite them as relative links (./x, ../x) to bring them back into maintenance.
+```
+
+Control-tested: a clean run reports the 3 that legitimately remain; planting one
+more site-absolute link makes it 4. Warning, not error — exit code unchanged.
+
+### `agent-ks check link-form` — a new gate, and deliberately not merged with `check links`
+
+| Gate | Question | Needs |
+|---|---|---|
+| `check links` | Does this link **resolve**? | a built `dist/` |
+| `check link-form` | Is this link **maintainable**? | the markdown only — instant |
+
+A link can resolve perfectly and be unmaintainable. That is not a corner case;
+it is exactly what the 341 conversions were, and why the resolution gate alone
+would have called them clean.
+
+| Run | Result |
+|---|---|
+| Default (docs sections) | ✅ **clean** — 568 links across 161 files |
+| With one site-absolute link planted | ✅ **1 error**, naming file, line and target |
+| Probe removed | ✅ clean again |
+| `--all` (includes the tracker) | 2 errors — the cross-issue links parked on [`060`](./060_does-the-tracker-share-it.md) |
+
+**Two false-positive classes were closed before shipping**, both found by running
+it rather than reasoning about it: fenced blocks (syntax being shown), and
+**inline code spans** — documentation that quotes the wrong form in order to
+forbid it must not trip the gate that forbids it.
+
+**Trackers are excluded by default**, matching `check links`. Not on principle:
+the issues pipeline re-roots links itself and its rendering is
+[`060`](./060_does-the-tracker-share-it.md)'s open question, so converting a
+tracker link to relative today could swap a working link for a broken one.
+
+### What is not built
+
+`check` does **not** flag a backticked path that could have been a link. It needs
+the [`080`](./080_link-it-dont-name-it.md) content sweep alongside it — shipping
+the gate first would light up 44+ existing instances and land red on arrival,
+which is the one thing this subtask said not to do.
 
 # Details
 

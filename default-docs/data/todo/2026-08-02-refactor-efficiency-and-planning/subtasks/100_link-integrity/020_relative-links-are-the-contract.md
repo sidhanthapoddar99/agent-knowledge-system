@@ -1,6 +1,6 @@
 ---
 title: "The skill offers absolute links as an equal option, and move cannot see them"
-status: open
+status: review
 ---
 
 # Overview
@@ -82,9 +82,43 @@ as an equivalent alternative.
 
 # Outcomes and Next Steps
 
-> [!IMPORTANT]
-> **PLACEHOLDER** — diagnosed, not written. Blocked on Sid's approval to start
-> work. The mechanical-guard question needs a decision before this can close.
+**Done 2026-08-03. The exception this subtask was told to verify does not
+exist**, which made the rule simpler rather than more complicated.
+
+### The verification that collapsed the exception
+
+A dry-run `agent-ks move` of `05_getting-started/03_aliases.md` rewrote
+`[Path Aliases](../../05_getting-started/03_aliases.md)` from inside
+`10_configuration/03_site/` correctly. **Cross-section relative links are
+maintained.** So the user-guide's 115 "cross-section absolute" links were never a
+convention — they were 115 links that had opted out of maintenance. The idea that
+they represented a rule was an inference from counting links, which is exactly
+what this subtask warned against: *nobody wrote it down as a rule.*
+
+**One rule, no exception, five surfaces:** both skills' reference files, both
+`SKILL.md` front pages, and `guide.ts` — the plugin-independent twin that ships
+whether or not the plugin is installed. This repo's `CLAUDE.md` was left silent on
+link form, per the instruction not to copy a rule the skills own.
+
+### The content, converted
+
+| Directory | Absolute before | Absolute after |
+|---|---:|---:|
+| `user-guide/` | 115 | **1** |
+| `dev-docs/` | 19 | **0** |
+| `todo/` | 3 | **2** |
+
+129 links converted, applied one directory at a time with a build and the link
+gate after each batch. **Broken in-body links stayed level across both batches** —
+the conversion fixed nothing and broke nothing, which is the right outcome: it
+moved links back into maintenance without changing what they point at.
+
+Left deliberately: 5 whose target does not exist, which belong to
+[`100`](./100_links-whose-target-does-not-exist.md), and the 2 cross-issue tracker
+links parked on [`060`](./060_does-the-tracker-share-it.md).
+
+The rule is now enforced by [`check link-form`](./090_tools-must-say-what-they-skip.md)
+rather than by prose.
 
 # Details
 
@@ -92,7 +126,7 @@ as an equivalent alternative.
 
 | Where | Text | Effect |
 |---|---|---|
-| `docs-layout.md:203` | "Use relative paths **or the resolved URL**", showing `[installation](/user-guide/getting-started/installation)` and adding **"— also works."** | Presents the absolute form as sanctioned |
+| `docs-layout.md:203` | "Use relative paths **or the resolved URL**", showing `[installation](/user-guide/…)` and adding **"— also works."** | Presents the absolute form as sanctioned |
 | `docs-layout.md:247` | "site-absolute links (leading `/`) … are left untouched" | States the consequence, in another section, with no link back |
 | `10_writing.md:117` | "standard markdown relative links … `agent-ks move` rewrites real markdown links when files move — prefer them over bare prose paths" | Right rule; the reason is aimed at prose paths, not absolute links |
 

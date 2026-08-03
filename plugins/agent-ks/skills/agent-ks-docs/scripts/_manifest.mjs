@@ -249,6 +249,11 @@ export const MANIFEST = [
     flags: [{ name: 'json', desc: 'structured findings' }],
   },
   {
+    bin: 'docs-check-link-form', group: 'check', verb: 'link-form', category: 2, script: 'check-link-form.mjs', runtime: 'mjs',
+    summary: 'Every internal link is relative — the form agent-ks move can maintain (source-only, no build needed)',
+    flags: [{ name: 'json', desc: 'structured findings' }],
+  },
+  {
     bin: 'docs-check-links', group: 'check', verb: 'links', category: 2, script: 'check-content-links.mjs', runtime: 'mjs',
     summary: 'Verify links between content pages resolve (run ./start build first)',
     flags: [

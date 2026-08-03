@@ -71,9 +71,45 @@ prescribed converting content to site-absolute form. That was carried out on
 
 # Outcomes and Next Steps
 
-> [!IMPORTANT]
-> **Scoping complete; work not started.** The revert has landed and been
-> verified. Everything else in this group is blocked on Sid's go-ahead.
+**Worked 2026-08-03 on Sid's go-ahead. Broken in-body links: 418 → 0.**
+
+| Subtask | State |
+|---|---|
+| [`010`](./010_renderer-drops-a-url-level.md) renderer | review — fixed, control-tested both directions, zero content files changed |
+| [`020`](./020_relative-links-are-the-contract.md) the rule | review — no cross-section exception exists; 129 links converted |
+| [`050`](./050_correct-the-published-records.md) records | review — `0.2.1` carries a dated correction block |
+| [`070`](./070_reframe-the-link-checker.md) checker | review — reframed and committed; exclusion now measured, not asserted |
+| [`090`](./090_tools-must-say-what-they-skip.md) guards | review — `move` reports its skips, `check link-form` shipped green |
+| [`100`](./100_links-whose-target-does-not-exist.md) dead targets | review — 55 → 0 |
+| [`060`](./060_does-the-tracker-share-it.md) tracker | **open** — measured, not triaged. See below |
+| [`080`](./080_link-it-dont-name-it.md) backticked paths | **open** — rule landed, content sweep not done |
+| [`040`](./040_site-wide-link-rot.md) re-measure | **open** — its own prescription still needs retracting |
+
+**The finding that changed the shape of the work:** there is no cross-section
+exception. A dry-run `move` proved relative links are maintained across sections,
+so the 115 "cross-section absolute" links in the user guide were not a convention
+— they were links that had opted out of maintenance. One rule, no carve-outs.
+
+**And one defect was introduced and caught inside this run.** The renderer fix
+also shifted links to colocated *files*, which `asset-src` resolves against the
+source directory — the same asset came out at two different URLs from `<img>` and
+`<a>` in one page. Found by tracing a link into its built output rather than
+trusting a count that had just improved from 418 to 55.
+
+## What is left, and why each is parked rather than forgotten
+
+- **[`060`](./060_does-the-tracker-share-it.md) — 1,372 broken links in the
+  tracker, measured, untriaged.** They are dominated by *relative* links that do
+  not resolve, and the issues pipeline has its own re-rooting pass, so the docs
+  fix does not apply. This is a real lead and explicitly not a conclusion. Both
+  link gates exclude trackers by default until it is settled.
+- **[`080`](./080_link-it-dont-name-it.md) — the content sweep.** The rule is
+  live on every surface; converting the ~44 existing backticked paths is a
+  judgement call per instance and was not attempted. The matching `check` rule is
+  deliberately unbuilt for the same reason: shipping it now would land red.
+- **[`040`](./040_site-wide-link-rot.md)** still prescribes the root-relative
+  rewrite in its own Details. Harmless while the renderer is fixed; wrong to
+  leave for a reader.
 
 # Details
 

@@ -1,6 +1,6 @@
 ---
 title: "55 links point at pages that do not exist — visible only now the renderer is fixed"
-status: open
+status: review
 ---
 
 # Overview
@@ -48,9 +48,48 @@ and every link that was deleted rather than repaired is accounted for.
 
 # Outcomes and Next Steps
 
-> [!NOTE]
-> **PLACEHOLDER** — filed 2026-08-03 the moment the renderer fix made them
-> visible. Not started.
+**Done 2026-08-03, the same day it was filed. 55 → 0.**
+
+| Batch | How | Count |
+|---|---|---:|
+| `19_issues` reorganisation fallout | basename match against the section, **applied only where unique** | 42 |
+| Individually reasoned | `./site` pointed at a folder with no index page; two artifact links had one `../` too many; three carried a `/docs/` base from a section rename; one named a section that is called `16_layout-system` | 8 |
+| Blog tags | see below | 4 |
+| Regression I had just introduced | see below | 1 |
+
+**Nothing was invented.** The repair pass fixed only where the basename matched
+exactly one file in the section; ambiguous and no-candidate cases were printed
+and left alone. It reported 0 ambiguous.
+
+### The fence guard, added before applying
+
+A link inside a fenced block is syntax being shown, not a link — rewriting one
+silently corrupts a worked example. Adding fence-skipping removed 13 false
+candidates and changed **none** of the 42 real ones, which is the useful result:
+it proved the repairs were all in prose.
+
+### The blog tags were a fourth thing, not a link defect
+
+`PostBody.astro` rendered every tag as `<a href="/blog/tag/…">` for a route that
+was never built, so every post shipped links that looked clickable and 404'd.
+They are `<span>` now, and **the hover underline went with them** — nothing should
+look clickable when nothing happens on click. Make them links again in the same
+change that adds the route; the reason is written beside the code.
+
+### And a regression this pass caught in my own work
+
+Fixing the renderer in [`010`](./010_renderer-drops-a-url-level.md) had also
+shifted links to **colocated files**, which `asset-src` resolves against the
+source directory rather than the page URL. The same scene file, in the same page:
+
+```
+<img>  /content-assets/user-guide/15_writing-content/assets/diagram-showcase.excalidraw   ✓
+<a>    /content-assets/user-guide/assets/diagram-showcase.excalidraw                      ✗
+```
+
+`internal-links` now returns any href with a non-markdown extension untouched.
+**Found by tracing one link into its built output rather than trusting the
+count** — the count had gone from 418 to 55 and looked like success.
 
 # Details
 

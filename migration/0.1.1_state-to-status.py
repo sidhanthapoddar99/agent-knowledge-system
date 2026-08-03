@@ -40,10 +40,10 @@ are preserved exactly.
 
 USAGE
 -----
-    python3 2026-07-02_state-to-status.py detect  <path>
-    python3 2026-07-02_state-to-status.py locate  <path>
-    python3 2026-07-02_state-to-status.py migrate <path> [--dry-run]
-    python3 2026-07-02_state-to-status.py verify  <path>   # exit 1 if legacy remains
+    python3 0.1.1_state-to-status.py detect  <path>
+    python3 0.1.1_state-to-status.py locate  <path>
+    python3 0.1.1_state-to-status.py migrate <path> [--dry-run]
+    python3 0.1.1_state-to-status.py verify  <path>   # exit 1 if legacy remains
 
 `<path>` may be a single file, an issue folder, or a whole tracker
 (e.g. data/todo/). Directories are scanned recursively.

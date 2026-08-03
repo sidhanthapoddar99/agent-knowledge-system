@@ -50,14 +50,14 @@ cannot invent (often the meaning already IS the `//` comment beside the value â€
 move it into the map by hand; the comment may stay). An automated rewrite would
 strip or misplace comments. So this script DETECTS the old shape and PRINTS the
 exact replacement to paste; it never edits the file. (Contrast the mechanical,
-per-file 2026-07-02_state-to-status.py, which safely rewrites frontmatter
+per-file 0.1.1_state-to-status.py, which safely rewrites frontmatter
 line-by-line and so ships a `migrate` command â€” a different kind of migration.)
 
 USAGE
 -----
-    python3 2026-07-03_root-settings-schema.py detect <path>
-    python3 2026-07-03_root-settings-schema.py guide  <path>   # paste-in replacements
-    python3 2026-07-03_root-settings-schema.py verify <path>   # exit 1 if any facet fails
+    python3 0.1.2_root-settings-schema.py detect <path>
+    python3 0.1.2_root-settings-schema.py guide  <path>   # paste-in replacements
+    python3 0.1.2_root-settings-schema.py verify <path>   # exit 1 if any facet fails
 
 `<path>` may be a tracker-root settings file or a tracker directory (which
 resolves `settings.jsonc` first, then `settings.json`).

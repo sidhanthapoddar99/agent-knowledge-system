@@ -191,6 +191,60 @@ going to drift again.
 The sidebar-typography probe was **not** re-run: this change touches no UI, and
 a probe re-run over an untouched surface is a green tick that means nothing.
 
+## The release convention, and the back-catalogue
+
+**Sid's rule, set this session:** every version release is **tagged
+`v<engine-version>`** and ships a **detailed release note** written like a GitHub
+release body. The convention, the template and the rules live in
+[`releases/README.md`](../../../../../../../releases/README.md); the rule itself
+is in the repo's `CLAUDE.md`. The load-bearing part of the template is that
+**every breaking change names the symptom a consumer sees if they skip it** —
+"status vocabulary changed" is not actionable, "your status chips render empty
+and `check issues` errors on every agent-log file" is.
+
+`releases/0.2.0.md` was written here. A subagent then reconstructed the
+back-catalogue from git — `0.1.0`, `0.1.1`, `0.1.2` — read-only on git, since
+agents do not run git write commands.
+
+| Version | Tag anchor | Confidence | Why it is not certain |
+|---|---|---|---|
+| `0.1.0` | `fffc48a` (2026-06-22) | content med-high, anchor medium | `ENGINE_VERSION` did not exist; the version is a retroactive label |
+| `0.1.1` | `17c0e53` (2026-07-02) | content high, anchor medium | Same, plus the lifecycle wave kept landing for another 80 minutes — a case exists for tagging the tail instead |
+| `0.1.2` | `d70cc11` (2026-07-03) | high | The only unambiguous one: this commit literally sets `ENGINE_VERSION = '0.1.2'` |
+
+**The constant has held exactly two committed values before now** — `0.7.0` for
+thirty minutes on 2026-07-03, then `0.1.2`. `0.1.0` and `0.1.1` are labels
+assigned that same day to two format changes that had already shipped. Nothing
+was ever published at `0.7.0`, so it gets no note; that is recorded in
+`releases/0.1.2.md` rather than given a file of its own.
+
+### What the retro pass caught in my own note — both verified, both real
+
+1. **The rebrand was missing.** `0.2.0`'s window (2026-07-03 → today) contains
+   the whole 2026-07-08 rebrand: `documentation-template` →
+   `agent-knowledge-system`, plugin `documentation-guide` → `agent-ks`, CLI
+   `docs-guide` → `agent-ks`, all three skills renamed, all three slash commands
+   renamed. That is the largest consumer-facing break in the back-catalogue and
+   the note did not mention it. Confirmed at `c0f48a0` / `93d7deb` / `fc5a3dd`
+   before writing it in.
+2. **`check legacy-tags` was listed as new in 0.2.0.** It shipped `65b9673`,
+   2026-07-03 09:08 — *before* `d70cc11` set the `0.1.2` constant at 10:35, so it
+   belongs to `0.1.2`. Checked the same way and removed; `theme tokens` went with
+   it, first appearing 2026-07-02.
+
+Worth naming plainly: **both were caught by a reader who reconstructed the same
+window independently**, not by any check. A release note has no validator, and
+these are exactly the errors that would have shipped.
+
+### And a live defect it surfaced
+
+Four migration scripts named a **filename that does not exist** in their own
+USAGE block — `2026-06-22_done-to-state.py` and friends, left behind when the
+scripts were renamed onto the version scale. The docstring is this project's
+documented source of truth for running a migration, so anyone copy-pasting from
+it hits file-not-found. Fixed in all four; the three retro notes that reported it
+as live were updated to say it is fixed.
+
 ## Found on the way — and not fixed here
 
 `agent-ks check config` reports one error, and it is **pre-existing**, not from

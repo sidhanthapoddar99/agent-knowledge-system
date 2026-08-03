@@ -31,13 +31,13 @@ USAGE
 Three capabilities, selected by the first positional argument:
 
     # 1. detect — count files that still carry a `done:` field
-    python3 2026-06-22_done-to-state.py detect <path>
+    python3 0.1.0_done-to-state.py detect <path>
 
     # 2. locate — list every offending file + the line number and value
-    python3 2026-06-22_done-to-state.py locate <path>
+    python3 0.1.0_done-to-state.py locate <path>
 
     # 3. migrate — rewrite frontmatter (add --dry-run to preview, change nothing)
-    python3 2026-06-22_done-to-state.py migrate <path> [--dry-run]
+    python3 0.1.0_done-to-state.py migrate <path> [--dry-run]
 
 `<path>` may be a single .md file, an issue folder, or a whole section folder
 (e.g. data/todo/) — directories are scanned recursively for *.md files.

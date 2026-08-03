@@ -1,6 +1,6 @@
 ---
 title: "Every relative link in the issues user-guide was a 404 — 85 of them"
-status: review
+status: done
 ---
 
 # Overview
@@ -47,18 +47,32 @@ the true size, which is why it was counted rather than taken.
       both work forever, which is the ambiguity this repo keeps deleting
 - [x] Rewrite all 65, folder segment included (`./subtasks` →
       `./sub-docs/subtasks` from a sibling, or a root-relative form)
-- [ ] **Add a link check over `data/`** and wire it into `agent-ks check`. Same
-      class as the skill link checker, which already exists and already caught
-      real breakage — this one has no equivalent
-- [ ] Control-test the new check: a deliberately broken link must fail it, and
-      removing that link must return it to zero
+- [x] **Add a link check over `data/`** and wire it into `agent-ks check` —
+      delivered by [`070`](./070_reframe-the-link-checker.md) and
+      [`090`](./090_tools-must-say-what-they-skip.md) as `agent-ks check links`
+      (resolution, needs a build) and `agent-ks check link-form` (form, source
+      only). Neither is this subtask's to close
+- [x] Control-test the new check — done as part of those, not here
 - [x] Re-measure: expect 0 broken of ~100
 
 # Outcomes and Next Steps
 
-**Fixed for this section 2026-08-03 — 210 in-page links checked, 0 broken.**
-101 links rewritten to root-relative (`/user-guide/issues/<slug>`): 65 of the
-`./` form and 36 more, then 50 of the `../` form.
+> [!CAUTION]
+> **The fix described below was REVERTED. The measurements were not.**
+>
+> 101 links were rewritten to root-relative form (`/user-guide/issues/<slug>`) on
+> 2026-08-03 and the section then read 210 links checked, 0 broken. That
+> conversion was undone in `ee404bb`, and
+> [`020`](./020_relative-links-are-the-contract.md) converted the section back to
+> relative links. **Nothing in this subtask's fix survives in the tree.**
+>
+> What survives is the measurement, and the reason it was taken twice — which is
+> the whole value of this file. Read the warning below it.
+>
+> The root cause was a renderer defect, not an authoring one:
+> [`010`](./010_renderer-drops-a-url-level.md). The argument for root-relative
+> form that used to sit in this file has been deleted; it is the reasoning error
+> [`130`](./130_what-the-wrong-diagnosis-taught.md) exists to record.
 
 > [!WARNING]
 > **My first measurement was wrong, and it under-reported.** The count of "65
@@ -76,17 +90,6 @@ the true size, which is why it was counted rather than taken.
 > The lesson is the one this issue keeps relearning: **the source is not the
 > artefact.** Checking link text against a guessed resolution rule is not
 > checking a link; only resolving the emitted `href` against the emitted tree is.
-
-## Why root-relative, rather than fixing the relative form
-
-A correct relative link is writable — `../sub-docs/plans` from a page one level
-deep — but it depends on the writer knowing their own page's depth, and that
-changes whenever a file moves between folders. Root-relative does not: it is the
-same string from every page, and `agent-ks move` has one form to rewrite.
-
-The trailing-slash behaviour is the argument. Relative links here are correct
-only by counting `../` against a URL shape most writers never see, and the
-evidence is that **not one of the 101 got it right**.
 
 ## Verification
 
@@ -179,3 +182,26 @@ you. That is the same shape as
 [the gate reading the wrong tree](../090_silent-failure-defects/030_skill-links-checks-the-wrong-tree.md) —
 three instances in one week of *a wrong answer that is indistinguishable from a
 right one until someone looks.*
+
+# Closed 2026-08-04
+
+**Kept: the measurement and the lesson. Deleted: the fix and the argument for
+it.** Both deleted parts described a state that no longer exists — the 101-link
+conversion was reverted, and the reasoning behind it is the error the group was
+opened to correct.
+
+The measurement stands and was the useful output: 85 of 85 relative links in
+`19_issues/` were 404ing, and the warning above records why the *first* count
+(65 of 100) was wrong. That warning is the most reusable thing here —
+**checking link text against a guessed resolution rule is not checking a link.**
+
+The site-wide table below is left as recorded and **must not be cited**: its
+tracker figure of 3,978 was retracted by [`110`](./110_live-check.md), and its
+site-wide counts were taken before the renderer fix. [`040`](./040_site-wide-link-rot.md)
+owns re-measuring them.
+
+**One thing found while closing, now its own subtask.** The section's links were
+converted back out of site-absolute form into *slug* form — `./design-philosophy`
+where the file is `02_design-philosophy.md`. Relative in shape, still not a path.
+334 such links across the content, 294 of them in `user-guide/`, and `move` walks
+past them without a word. [`170`](./170_relative-but-not-a-path.md).

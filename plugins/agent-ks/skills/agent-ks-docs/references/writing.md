@@ -76,7 +76,7 @@ Never inline scene JSON — the `.excalidraw` file stays the single source of tr
 
 ## Asset embedding
 
-Two ways to reference images and downloadable files:
+Two ways to reference images and downloadable files. **Colocate by default — the site folder is for the handful of things the whole site shares** (favicon, logos, standard symbols). Anything a specific page uses goes in an `assets/` folder beside that page, so it moves with the document and is readable from the file tree; a site with hundreds of pages must not funnel every image into one directory. `/assets/…` is the only place a leading `/` is correct.
 
 - **Shared files** live under the project's root `assets/` folder, served from `/assets/` — reference with absolute paths:
   ```markdown

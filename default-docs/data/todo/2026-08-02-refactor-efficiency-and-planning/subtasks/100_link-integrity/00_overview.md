@@ -5,6 +5,43 @@ status: in-progress
 
 # Overview
 
+> [!IMPORTANT]
+> **Triaged 2026-08-03, after the live check. Read this table first — the
+> group's framing below it is one revision out of date.**
+>
+> The off-by-one was real for the *built* docs site and is **not** the root
+> cause of the group. The root cause is that **a relative href resolves against
+> whatever base the current address has, and the dev server and the built site
+> do not agree on that base.** Six subtasks survive that correction unchanged,
+> three need re-measuring, three are pointers or answered questions, and one is
+> superseded.
+
+| | What it is | Still worth pursuing? |
+|---|---|---|
+| [`010`](./010_renderer-drops-a-url-level.md) | the depth-shift diagnosis + the shipped fix | 🔴 **Superseded.** Correct for the built site, wrong in dev. Replaced by render-time absolute resolution on [`2026-06-09` `03`](../../../2026-06-09-issue-link-resolution/subtasks/03_comprehensive-panel-subdoc-links.md). **The code is still in the tree** — it goes when that lands, not before, or the breakage moves to production |
+| [`020`](./020_relative-links-are-the-contract.md) | relative is the rule, on every surface | 🟢 **Yes** — and the rule itself was vindicated. Two open items: the two asset kinds, and cross-root portability |
+| [`030`](./030_user-guide-relative-links-404.md) | 85 broken links in the issues user-guide | 🟡 **Yes, but re-measure.** The measurement holds for the built site; its *conclusion* still argues for the root-relative rewrite and has never been rewritten |
+| [`040`](./040_site-wide-link-rot.md) | "4,295 broken links site-wide" | 🔴 **The number is not usable.** Codex found the count inflated ~27× by repeated sidebars, and the tracker share is the dev/build gap, not rot. Re-measure or close it — do not cite it |
+| [`050`](./050_correct-the-published-records.md) | correcting `0.2.1` and the records | 🟢 **Yes**, and it now needs a **third** correction block — the tracker claim |
+| [`060`](./060_does-the-tracker-share-it.md) | does the tracker share the bug? | ✅ **Answered — no.** Awaiting review only |
+| [`070`](./070_reframe-the-link-checker.md) | reframe `check links` | 🟢 **Yes.** Anchors are never checked, the count is inflated, and it can only ever see the built site |
+| [`080`](./080_link-it-dont-name-it.md) | a file reference is a link, not a backticked path | 🟢 **Yes, and it is untouched.** Fully independent of everything above — the one item here no diagnosis affected |
+| [`090`](./090_tools-must-say-what-they-skip.md) | `move` and `check` must not skip silently | 🟢 **Yes.** The gate passes 306 links `move` cannot maintain, and both tools are wrong about site assets |
+| [`100`](./100_links-whose-target-does-not-exist.md) | 55 links with no target | 🟢 **Yes** — genuinely dead targets, independent of resolution |
+| [`110`](./110_live-check.md) | the fifteen clicked links | ✅ **Done its job.** It is the evidence the rest is re-based on |
+| [`120`](./120_dev-and-build-disagree-on-the-base.md) | the real diagnosis + the three options | 🟡 **Sid's call**, and the June issue already decided it |
+| [`130`](./130_what-the-wrong-diagnosis-taught.md) | damage inventory, nine surfaces | 🟢 **Yes** — three fixed, the rest listed |
+| [`140`](./140_dual-slug-url-resolution.md) · [`150`](./150_plans-auto-resolution.md) | routing defects found by the live check | ⬜ **Pointers only** — the work is on `2026-06-09-issue-link-resolution` |
+
+**The one thing to do next**, and everything else waits behind it: land
+render-time absolute link resolution. It removes [`010`](./010_renderer-drops-a-url-level.md)'s
+regression, the dev/build split, and the Comprehensive-panel bug in one change —
+and it was decided on 2026-06-09, before this group existed.
+
+**Everything below this box was written before the live check.** It is kept
+rather than rewritten because the wrong reasoning is the useful part of the
+record.
+
 **Everything in this group descends from a single off-by-one in the renderer, and
 from the fact that it was diagnosed as an authoring problem instead.**
 

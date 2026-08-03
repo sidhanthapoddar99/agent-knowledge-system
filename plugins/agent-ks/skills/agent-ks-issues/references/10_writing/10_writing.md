@@ -181,6 +181,13 @@ embedded by reference — a `[[./…]]`/`[[../…]]` inside the fence (see "Cont
 embedding" below). `assets/` never appears in any sidebar — it's the home for
 every diagram an issue embeds or links.
 
+**The issue's own `assets/` is where an issue's files go — always, and any
+subfolder can have one.** Referenced relatively (`./assets/x.png`,
+`../assets/x.png`), so the file travels with the issue. The site-wide
+`/assets/…` folder is a different route and holds only what the whole site
+shares — favicon, logos, standard symbols. **Nothing an issue produces belongs
+there.**
+
 A diagram file can also **be a supporting doc itself**: drop a `.mmd` / `.dot` /
 `.excalidraw` file directly into `notes/`, `brainstorm/`, `agent-memory/`, or
 `agent-log/` (no markdown wrapper) and it renders as a first-class entry — own

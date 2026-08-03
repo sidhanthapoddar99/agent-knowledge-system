@@ -284,26 +284,12 @@ under *Cross-linking between docs pages*.
       relative link that 404s is a renderer bug — do not convert it to `/`"),
       drop the incident and the number.
 
-- [ ] **5. Cross-root portability — checked 2026-08-04, and the coupling is
-      real.** The question was whether a URL is derived from the folder name. It
-      is not. `site.yaml` carries **two independent values** per section:
-
-      ```yaml
-      dev-docs:
-        base_url: "/dev-docs"     # what the browser sees
-        data: "@data/dev-docs"    # what a relative link walks through
-      ```
-
-      Nothing ties them. A cross-section relative link climbs `../../` through the
-      **folder** name and lands on a URL built from **`base_url`**, so it resolves
-      only while those two strings match. They match in this repo because someone
-      named them alike — that is a convention, not a rule, and Codex reproduced
-      the 404 against a hypothetical `/internals` base.
-
-      **No fix here.** [`2026-06-09` `03`](../../../2026-06-09-issue-link-resolution/subtasks/03_comprehensive-panel-subdoc-links.md)
-      removes it structurally: resolving links to absolute at render time reads
-      `base_url` directly, so the folder name stops being load-bearing. Recorded
-      as a constraint for that subtask rather than patched here.
+- [x] **5. Cross-root portability — moved out, 2026-08-04.** It is not a wording
+      defect: `base_url` and the data folder are two independent `site.yaml`
+      values that only match here by naming convention, so a cross-section link
+      resolves by luck. It needs reproducing and probably a config-load refusal,
+      neither of which belongs in a documentation rewrite. Now
+      [`160`](./160_base-url-and-folder-name-are-not-tied.md).
 
 - [ ] **6. Repeat the fact deliberately — do NOT deduplicate it.** Sid, 2026-08-04:
       **the fact belongs in three or four places in the skill, and five or six

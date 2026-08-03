@@ -65,11 +65,11 @@ that decides it, and no restatement may re-implement or contradict it.
 
 # Out of Scope
 
-- **Item 5, cross-root portability.** Already answered in the subtask: `base_url`
-  and the data folder are independent `site.yaml` values and only match here by
-  convention. It is removed structurally by
-  [`2026-06-09` `03`](../../../2026-06-09-issue-link-resolution/subtasks/03_comprehensive-panel-subdoc-links.md),
-  not by wording. **Do not patch it.**
+- **Cross-root portability.** Moved out of `020` entirely and now
+  [`160`](../../subtasks/100_link-integrity/160_base-url-and-folder-name-are-not-tied.md)
+  — `base_url` and the data folder are independent `site.yaml` values that match
+  here only by naming convention. It needs reproducing and probably a
+  config-load refusal, not wording. **Do not touch it.**
 - **Item 8** — the subtask's todo list and its outcomes section disagree. Sid
   decides which side is right; touch neither.
 - **Any content link.** No file under `default-docs/data/**` changes its links in

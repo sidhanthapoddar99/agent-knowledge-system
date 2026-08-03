@@ -32,13 +32,18 @@ still has to invent the missing half, and two readers invent different ones.
 
 **The test is STAGES, not effort and not file count.**
 
-> **An agent log records work that had stages** — where a later stage acts on
-> what an earlier one produced. **A single self-contained pass has no stages and
-> earns no log**, however long it took or however many files it touched; it
-> belongs in the subtask's own Outcomes.
+> **An agent log records work that was large enough not to fit in one pass AND
+> genuinely staged** — where a later step acted on what an earlier one *found*.
+> Both, not either. **A single pass with checks attached is not staged**,
+> however long it took or however many files it touched; it belongs in the
+> subtask's own Outcomes.
 >
-> **Two things always earn one:** work with stages, and anything Sid explicitly
-> asks to have recorded.
+> **Two things always earn one:** work meeting that bar, and anything Sid
+> explicitly asks to have recorded.
+
+The load-bearing distinction is **verify vs audit** — a check you can predict
+the answer to is not a stage. Spelled out under *It is a combination* below,
+along with why reaching for an audit on a small change is itself the error.
 
 Sid's own framing of the trigger, which is the clearest statement of it:
 
@@ -125,6 +130,53 @@ it just quietly keeps being believed.
 enough to be misleading. An hour of grinding through one mechanical change has
 no stages and earns nothing; ten minutes that overturned an assumption has one
 and earns a log. **Ask what was learned, not what was spent.**
+
+## It is a combination, not one factor — and a verify is not a stage
+
+**Sid, 2026-08-03:** *"You won't do an audit just for a small change like a URL
+slug update — you would verify. There is a difference."*
+
+Stages alone over-trigger, because almost any change can be described as having
+steps. The two factors have to hold together:
+
+| | Earns a log | Does not |
+|---|---|---|
+| **Scale** | large enough that the **work** does not fit in one pass | small enough that one pass does it |
+| **Process** | genuinely staged — a later step acted on what an earlier one *found* | a single pass with checks attached |
+
+**"Scale" means the work, not the diff** — this is the one place the two come
+apart, and it is why the four-line bug fix earns a log while a thirty-file
+rename does not. An hour and three wrong diagnoses did not fit in one pass; the
+rename did.
+
+**Worked the other way, on today's routing fixes:** read the code, edit, curl,
+build, done. Small work, and every check was a verify — nothing came back that
+changed the approach. One pass. No log, which is what Sid said before the rule
+existed to say it.
+
+**The distinction that does the work: a VERIFY is not a stage.**
+
+| | What it is | Does it earn a log? |
+|---|---|---|
+| **Verify** | *did I break it* — a check whose expected answer is "no". Typecheck, build, gate, one curl against the fixed URL | **No.** The answer changes nothing about what you did; it only says whether you may stop |
+| **Audit / review** | *what is wrong here* — an open question whose answer you cannot predict, and which redirects the work | **Yes.** Its output is information that did not exist before |
+
+So `edit → build → curl → done` is **one pass**, however many commands it took.
+`audit → findings → fix → re-audit` is **staged**, because the findings changed
+what got fixed.
+
+### The corollary, which matters more than the rule
+
+**If you are reaching for an audit on something small, the mistake is the audit,
+not the missing log.** The weight of the process must be proportionate to the
+change. A slug update gets verified; commissioning a review for it wastes a
+round and then invents a record to justify it.
+
+This has already happened in this issue in the opposite direction — two
+independent reviews commissioned on a diff, both of which read `dist/` and
+neither of which opened a URL. **A verify would have caught it and an audit did
+not.** Reach for the audit when you cannot predict the answer; reach for the
+verify when you can, and the only question is whether you got it.
 
 ## The two failure modes this must avoid
 

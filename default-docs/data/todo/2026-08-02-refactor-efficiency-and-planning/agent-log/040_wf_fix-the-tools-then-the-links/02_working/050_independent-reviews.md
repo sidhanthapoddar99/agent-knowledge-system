@@ -1,6 +1,6 @@
 ---
 title: "Independent reviews"
-status: in-progress
+status: done
 agent: claude
 ---
 
@@ -124,10 +124,161 @@ because a review that only finds faults is not a measurement.
 - **The four "NOT DONE" items were read as honest** rather than smoothed over.
   Exactly one overclaim was found in the whole record.
 
+---
+
+# Codex `gpt-5.6-sol` — the executing review
+
+**Complete after 18 minutes. Five findings, and it independently reproduced the
+one Opus found first.**
+
+**This is why an executing reviewer was required.** Four of its five findings are
+things reading cannot reach — they came from running the renderer against a
+matrix of link shapes, from parsing the built HTML with a real parser rather than
+grep, and from synthetic fixtures fired at both new gates.
+
+## What it ran, and the one limitation it declared
+
+`./start build` **failed** in its sandbox — Astro hit `EROFS` writing
+`.astro/content.d.ts`, so **it did not build fresh.** It used the existing
+`dist/`, and checked that dist was generated ~20 seconds before the HEAD commit
+— so the artefact it read does correspond to the code under review. Stated here
+because a review whose build failed is a review with a bound on it.
+
+Everything else it executed: both gates, both with `--all`; section-specific
+runs; direct renderer matrices for docs, nested and root index pages, blog and
+page contexts, assets, query strings, URI schemes, diagram pages and hypothetical
+base URLs; a full before/after comparison of all 129 conversions; and false-pass
+fixtures for both new reports. Final `git status` clean — no writes.
+
+## 🔴 1 — Same critical finding, independently reproduced
+
+Identical diagnosis to Opus, reached separately: `internal-links.ts` shifts only
+`docs`; `IssuesParser` identifies as `blog`; the new tracker rule therefore
+mandates links the tracker renderer breaks.
+
+Its measurement: **`check-content-links.mjs --all --json` → 1,410 errors.** *"The
+default gates hide this by excluding trackers."*
+
+> **Two independent reviewers, two methods, one conclusion.** This is not a
+> judgement call.
+
+## 🔴 2 — The link-form gate passes 306 links it claims are maintainable
+
+**The gate does not check what it says it checks.** It rejects a leading `/` and
+nothing else. But `move.mjs` resolves link targets as **real filesystem paths**,
+so an extensionless slug-form link is no more maintainable than an absolute one.
+
+In the real non-tracker tree:
+
+| Shape | Count | `move` can maintain it? |
+|---|---:|---|
+| resolves to a real `.md`/`.mdx` source file | 238 | yes |
+| **extensionless URL-form (`./overview`)** | **306** | **no — no such filesystem target** |
+| resolves to a real non-markdown file | 1 | n/a |
+
+Control-tested: `[target](./target)` pointing at `02_target.md` →
+`check-link-form` exits 0 *"all checks passed"*, and a dry-run move of
+`02_target.md` reports *"No link edits needed."*
+
+**So the rule as enforced is weaker than the rule as written.** `docs-layout.md`
+does say *"write the path, not the URL — link the source file rather than its
+published slug"*, and that half is correct and unenforced. The majority of
+accepted page links violate it.
+
+## 🔴 3 — "Broken in-body links: 0" is true only for path existence
+
+The checker discards fragments (`.pathname`), so **anchors are never checked.**
+Parsing the actual markdown-body containers found **four broken anchors**:
+
+- `user-guide/20_custom-pages/01_overview.md:33` — `#home`, `#info`,
+  `#countdown`; the built IDs are `customhome`, `custominfo`, `customcountdown`
+- `user-guide/25_themes/04_tokens/05_layout-dimensions.md:156` —
+  `#variables-the-framework-uses-but-doesnt-require`; the generated ID contains
+  `doesn39t`
+
+**And the headline count I quoted is inflated.** The extraction regex selects the
+outer `<main>`, so repeated sidebars are counted. Real markdown-body anchors:
+**569**, not 15,585. All 569 destination paths exist; four fragments do not.
+
+> The direction of "418 → 0" holds. **The denominator I reported it against does
+> not**, and "0 broken" means "0 broken paths", not "0 broken links".
+
+## 🟡 4 — The renderer still fails several edge shapes
+
+Found by running the processor directly, not by reading it. Correct: bare
+`sibling.md`, `./sibling.md`, pure anchors, cross-folder links, `./folder/index.md`,
+root-level `index.md`, `./asset.pdf`, `./asset.pdf#page=2`.
+
+Wrong:
+
+| Input | Produces | Should |
+|---|---|---|
+| nested bare `index.md` | `../index` | address the containing folder index |
+| `./asset.pdf?download=1` | shifted to `../asset.pdf?…` | be skipped — the query defeated my extension test |
+| `./page.md?x=1` | shifted, **keeps `.md`** | strip the extension |
+| `mailto:guide.md` | rewritten as a page path | be left alone |
+| blog sibling links | no shift, date prefix kept | resolve — a synthetic sibling resolved *underneath* the current post |
+| **`./05_mermaid-full-page.mmd`** | left unchanged → 404 | be treated as a page — `diagram-pages.ts:95` declares these extensions **page types** |
+
+The last one is mine directly: my non-markdown skip is too broad. Diagram files
+are first-class pages in this framework, and I classified them as assets.
+
+## 🟡 5 — Both new reports have false passes *and* a false failure
+
+| Case | Behaviour |
+|---|---|
+| `[x](/missed "title")` — titled markdown link | **missed**, gate exits 0 |
+| `<a href="/raw">` — raw HTML | **missed** |
+| markdown link inside an HTML comment | **falsely reported** — the renderer emits no anchor |
+| `[Download](/assets/spec.pdf)` — the form `writing.md` requires | **fails the gate** |
+| `![Logo](/assets/logo.png)` | `move` calls it unmaintained and advises a rewrite that **breaks it** |
+
+The last two are the same defect Opus found from the other direction.
+
+## The conversion audit — the part that came back clean
+
+**All 129 checked individually, not sampled:**
+
+- every one resolves to the **same published pathname as before**
+- every source target exists; every destination page exists in `dist`
+- all six converted fragments exist
+- 128 expected hrefs present in the source-page HTML; the 129th is deliberately
+  inside a fenced example
+
+**One correction to my wording:** the claim should say **129 converted**, not
+137. 137 was the inventory; 129 was the conversion. Commit `73ea791` contains
+exactly 129 target changes across 43 files.
+
+**And it confirmed Opus's cross-root concern by testing it:** six conversions
+cross between `user-guide` and `dev-docs`. A hypothetical `/internals` base-url
+test still emitted `/user-guide/…` — *"these cross-section links are therefore
+not portable to independently named section URLs."*
+
+---
+
+# Where the two reviews agree, and where only one saw it
+
+| Finding | Opus (reads) | Codex (executes) |
+|---|---|---|
+| Tracker rule mandates a form that 404s | ✅ | ✅ **independently** |
+| `/assets/` form forbidden by the new rule | ✅ | ✅ |
+| Cross-root links not portable | ✅ (reasoned) | ✅ (tested with a fake base URL) |
+| Gate passes 306 unmaintainable links | — | ✅ |
+| Anchors never checked; count inflated | — | ✅ |
+| Renderer edge shapes (queries, schemes, blog, diagram pages) | — | ✅ |
+| Gates miss titled links and raw HTML | — | ✅ |
+| Published page still teaches the old form | ✅ | — |
+| Slug-stripping claim false for tracker | ✅ | — |
+| Skill history / 11-way duplication | ✅ | — |
+| My overclaim about "every surface" | ✅ | — |
+
+**Four of Codex's five findings were invisible to reading.** That is the whole
+argument for *at least one reviewer must execute*, and it is now measured rather
+than asserted.
+
 # Next
 
-- [ ] Codex `gpt-5.6-sol` result — watcher armed, task `task-msddtjs2-s9v7gb`
-- [ ] Record it here beside Opus, as reported
-- [ ] **Then** discuss with Sid. The tracker-renderer question is his: fix the
-      issues pipeline the same way the docs one was fixed, or caveat the rule
-      and leave the renderer alone
+- [x] Both audits recorded, as reported, with nothing fixed or disputed
+- [ ] **Discuss with Sid.** The tracker-renderer question is his — fix the issues
+      pipeline the same way the docs one was fixed, or caveat the rule and leave
+      the renderer alone. Everything else is mine to fix once that is settled

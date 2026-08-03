@@ -15,19 +15,33 @@ title: "Summary"
 > gone. Treat times and orderings as approximate; treat the numbers as measured,
 > because every one of them came from a command that is repeatable.
 
-Reviews commissioned after the fact, on Sid's prompt.
-**[Opus has reported and nothing was clean](02_working/050_independent-reviews.md)**
-— all three concerns produced findings, two of them red. The Codex
-`gpt-5.6-sol` executing review is still running; its watcher is armed.
+**[Both reviews are in, and neither was clean](02_working/050_independent-reviews.md)**
+— commissioned after the fact on Sid's prompt, because the rule requiring them
+did not fire during the run.
 
-**The run's headline result stands, and its instruction edits do not.** The link
-counts were independently reproduced. But the rule written into the three tracker
-surfaces mandates a form that **404s in the tracker today**, because the issues
-pipeline has the same off-by-one that was fixed for docs — and the gate written
-in the same run says the opposite of the skill. That is this run's own named
-defect, committed inside the change meant to remove it.
+**Two independent reviewers, two methods, one conclusion on the worst finding:**
+the rule this run wrote into the three tracker surfaces mandates a link form that
+**404s in the tracker today**, because the issues pipeline has the same off-by-one
+that was fixed for docs. Codex measured it at **1,410 errors** with `--all`, which
+the default gates hide by excluding trackers. That is this run's own named defect
+— *a rule that returns a plausible result when obeyed* — committed inside the
+change meant to remove it.
 
-Nothing has been fixed or disputed: Sid asked for both audits in hand first.
+**Three of my own reported numbers were wrong in kind, and the executing review
+is what caught them:**
+
+- *"0 broken in-body links"* means **0 broken paths**. The checker discards
+  fragments, and four anchors are broken.
+- *"15,585 links"* counts repeated sidebars. The real markdown-body figure is
+  **569**.
+- The new `check link-form` gate **passes 306 links `move` cannot maintain** —
+  it tests for a leading `/` and nothing else, while `move` resolves targets as
+  filesystem paths. The gate does not check what it claims to check.
+
+**What came back clean:** all 129 conversions verified individually — every one
+resolves to the same published pathname as before.
+
+Nothing fixed, nothing disputed. Sid asked for both audits in hand first.
 
 # Goal
 

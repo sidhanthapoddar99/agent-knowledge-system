@@ -101,6 +101,35 @@ stand is correct, because the content you mean genuinely is the content you are
 standing in. Named here as a checked-clean area, since "we looked at X and it was
 fine" is signal and silence is not.
 
+### `--version` — claimed here before it existed, built 2026-08-03
+
+**This subtask sold the two-command design partly on a staleness check that was
+not built.** Running it returned `cli.mjs: unknown command "--version"` — a
+capability stated as shipped, in the subtask whose whole subject is checks that
+report something they never looked at.
+
+Now built, in `cli.mjs`, accepting `--version` / `-v` / `version`:
+
+```
+$ agent-ks-dev --version
+agent-ks 0.7.1
+/home/sid/projects/…/agent-knowledge-system/plugins/agent-ks
+```
+
+**It prints the path as well as the version, and the path is the useful half.**
+Measured before building it: both `plugin.json` files read `0.7.1` while the two
+skill trees differed in **12 files**, including two scripts that exist only in
+the repo. A version number detects staleness only if it moves on every change,
+and a skill edit does not move it — so version-only comparison would have
+reported "in sync" across that divergence. **The path never lies about which
+copy you just ran.**
+
+For an actual content answer, compare the trees rather than their labels:
+
+```
+diff -rq plugins/agent-ks/skills <installed>/skills
+```
+
 ### The one thing Sid has to do
 
 **`/plugin install`.** Until the plugin is reinstalled, the on-`PATH` `agent-ks`
@@ -235,7 +264,8 @@ arbitrary commit.
 
 | Question | Before | With both names |
 |---|---|---|
-| Is my install stale? | no cheap way to tell — the confusion that ran through this whole subtask | `agent-ks --version` vs `agent-ks-dev --version` |
+| Which copy did I just run? | no cheap way to tell — the confusion that ran through this whole subtask | `agent-ks --version` vs `agent-ks-dev --version`, which print the **path** as well |
+| Is my install stale? | — | **not the version** — it only moves when bumped. `diff -rq` over the two `skills/` trees |
 | Does my change alter behaviour? | stash, or plant probe files, or trust whoever ran it | run both against the same input, diff the output |
 | Does the gate fire on the defect *and* stay quiet on correct input? | a procedure someone has to remember | the natural way to invoke it |
 

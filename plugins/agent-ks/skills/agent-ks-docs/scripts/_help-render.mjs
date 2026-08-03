@@ -84,6 +84,7 @@ export function renderList() {
     out.push('');
   }
   out.push(`Run \`${DISPATCH} help <command>\` for flags, or \`<command> --help\`.`);
+  out.push(`\`${DISPATCH} --version\` prints the version AND the tree it ran from.`);
   out.push(`Add \`--json\` to any data command — or to \`${DISPATCH} help\` — for machine output.`);
   return out.join('\n');
 }

@@ -12,6 +12,7 @@
  */
 
 import path from 'node:path';
+import { readFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { MANIFEST, resolveCommand } from './_manifest.mjs';
@@ -26,6 +27,22 @@ const tokens = process.argv.slice(2);
 // verb as tokens[0], so this only ever catches the bare dispatcher.)
 if (tokens.length === 0 || tokens.every((t) => t === '--help' || t === '-h')) {
   process.stdout.write(renderList() + '\n');
+  process.exit(0);
+}
+
+// `--version` / `-v` / `version`. Prints the plugin version AND the tree it was
+// read from, because the two commands can report the same version over trees
+// that differ — the version only moves when someone bumps it, and a skill edit
+// does not. The path is what actually tells you which copy you just ran.
+if (tokens.length === 1 && ['--version', '-v', 'version'].includes(tokens[0])) {
+  const pluginRoot = path.resolve(fileURLToPath(import.meta.url), '../../../..');
+  let version = 'unknown';
+  try {
+    version = JSON.parse(
+      readFileSync(path.join(pluginRoot, '.claude-plugin', 'plugin.json'), 'utf8'),
+    ).version ?? 'unknown';
+  } catch { /* keep 'unknown' — a missing manifest is not worth failing a version query */ }
+  process.stdout.write(`agent-ks ${version}\n${pluginRoot}\n`);
   process.exit(0);
 }
 

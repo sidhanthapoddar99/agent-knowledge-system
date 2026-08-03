@@ -321,8 +321,10 @@ if (dryRun) {
 function reportUnmaintainable() {
   if (!unmaintainable.length) return;
   console.log(`\n⚠ ${unmaintainable.length} site-absolute link(s) left UNMAINTAINED.`);
-  console.log(`  \`move\` cannot rewrite a target starting with "/" — it cannot know what URL`);
-  console.log(`  prefix a section publishes under. These will not follow a file when it moves.`);
+  console.log(`  A "/" target is a URL from the site root, not a path — it is not true on disk,`);
+  console.log(`  so no filesystem tool can follow it. \`move\` cannot rewrite one (it cannot know`);
+  console.log(`  what URL prefix a section publishes under), and neither can grep or an editor.`);
+  console.log(`  These will not follow a file when it moves.`);
   console.log(`  Rewrite them as relative links (./x, ../x) to bring them back into maintenance.\n`);
   for (const u of unmaintainable) console.log(`  ${u}`);
 }

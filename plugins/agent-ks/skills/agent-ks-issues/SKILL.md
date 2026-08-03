@@ -379,9 +379,21 @@ for a tight report — patterns in [41_searching.md](references/40_operations/41
   and un-searchable for exactly the same mechanical reason a backticked number is.
   `[…](/todo/…)` is worse, because it renders as a working link and `move` skips
   every target beginning with `/` — so it looks maintained and is not. **Relative
-  markdown link, or nothing.** The one exception is a file with nothing to link to
-  (outside the site, or a path being discussed as a value) — see the universal
-  conventions in `references/10_writing/10_writing.md`.
+  markdown link, or nothing.**
+
+  **Why, underneath all three:** a tracker is a folder of markdown that filesystem
+  tools work on — `move`, `grep`, an editor, an agent walking the tree. A relative
+  link is the only form that is **true on disk**, so it is the only form any of
+  them can follow. The rendered tracker is one consumer of the files, not the thing
+  being built. So if a relative link 404s on the site, that is a renderer defect to
+  file — rewriting it to `/` would make correct content wrong on disk to please one
+  consumer, and would drop it out of maintenance for good.
+
+  The one exception is a target that is **not a document** — source code, config, or
+  a path being discussed as a value rather than pointed at. *Not* "anything the site
+  doesn't publish": the skill files under `plugins/agent-ks/skills/` are never served
+  and still cross-link relatively. See the universal conventions in
+  `references/10_writing/10_writing.md`.
 
   A link reading `[010](./010_thing.md)` is still a number, just a clickable one — the
   link text must name the thing. Where the number genuinely is the subject (*"the first

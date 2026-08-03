@@ -4,7 +4,7 @@ How to rename / move items and reshape issues without breaking links or losing h
 
 ## `agent-ks move` — link-aware moves on the tracker
 
-Issues, subtasks, notes, and comments cross-link each other with **relative** paths. A plain `mv` / `git mv` moves the file but leaves every relative link pointing at the old location — inbound links from sibling files break, and relative links *inside* the moved file now resolve from the wrong directory. Nothing warns you; the build still passes.
+Issues, subtasks, notes, and comments cross-link each other with **relative** paths — because a tracker is a folder of markdown that filesystem tools work on, and a relative path is the only form that is *true on disk* for `move`, `grep`, an editor, or an agent walking the tree. (A site-absolute `/todo/…` link is a URL, not a path: `move` skips it and it will never follow a file again.) A plain `mv` / `git mv` moves the file but leaves every relative link pointing at the old location — inbound links from sibling files break, and relative links *inside* the moved file now resolve from the wrong directory. Nothing warns you; the build still passes.
 
 Use **`agent-ks move`** (on your `PATH` after install) instead — a link-aware move, the same move-and-update-links behaviour an editor like Obsidian does. It operates on the whole content root, so it works on tracker paths just like docs paths.
 

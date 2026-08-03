@@ -94,6 +94,17 @@ print("hello")
 [Anchor Link](#headings)
 ```
 
+**Internal links are relative, and they point at the source file** — `../05_getting-started/01_overview.md`, not the published URL `/user-guide/getting-started/overview`. Write the path that exists on disk; the renderer strips the `NN_` ordering prefix and the `.md` extension when it builds the URL.
+
+The reason is what this content *is*. A page here is a file in a folder, and it is meant to be usable as one — read in an editor, searched with `grep`, opened in Obsidian, moved by `agent-ks move`, walked by an AI agent. **A relative link is the only form that is true on disk**, so it is the only form all of those can follow. The rendered site is one consumer of these files, not the thing being built.
+
+A site-absolute link (one starting with `/`) is a URL rather than a path. It renders perfectly in a browser, which is what makes it dangerous: `agent-ks move` skips every target beginning with `/`, so such a link quietly drops out of link maintenance and rots the next time a file moves, with nothing reporting it.
+
+> [!IMPORTANT]
+> **If a relative link is correct on disk but 404s on the site, that is a defect in the renderer — report it, don't work around it in your content.** Rewriting a correct path into a site-absolute URL makes the file wrong on disk in order to satisfy one viewer, and costs you link maintenance permanently.
+
+The single exception is the **site assets folder**: `/assets/logo.png` and friends genuinely are site-level URLs for things the whole site shares. Images belonging to one page are colocated instead (`./assets/diagram.png`) — see [Asset embedding](./03_asset-embedding.md).
+
 ### Lists
 
 ```markdown

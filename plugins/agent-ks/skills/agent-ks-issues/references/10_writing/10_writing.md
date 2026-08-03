@@ -116,18 +116,35 @@ reader the target is somewhere it is not.
 
 - **Every reference to a page in this tracker is a relative markdown link**
   (`[the migration script](../040_execution/100_migration-script.md)`). Not a
-  site-absolute `/todo/…` link, and not a backticked path. Three things a
-  backticked path costs, all of them silent: `agent-ks move` cannot rewrite it, so
-  it rots on the next file move; a reader cannot click it and gets no title, only
-  a path; an agent has to run a find-and-search to resolve it. **A site-absolute
-  link costs the first of those and hides it behind a link that renders perfectly.**
+  site-absolute `/todo/…` link, and not a backticked path. **The reason is what a
+  tracker is:** a folder of markdown that filesystem tools operate on — `agent-ks
+  move`, `grep`, an editor, an agent walking the tree — and a relative link is the
+  only form that is **true on disk**, so it is the only form all of those can
+  follow. The rendered tracker is one consumer of those folders, not the thing
+  being built, so its URLs are not the address space you write in.
+
+  Three things a backticked path costs, all of them silent: `agent-ks move` cannot
+  rewrite it, so it rots on the next file move; a reader cannot click it and gets
+  no title, only a path; an agent has to run a find-and-search to resolve it. **A
+  site-absolute link costs the first of those and hides it behind a link that
+  renders perfectly** — `move` skips every target starting with `/`, correctly,
+  because such a target was never a path to begin with.
 - **Link text is free — use it.** `[the execution group's overview](../040_execution/00_overview.md)`
   reads inside a sentence; `` `subtasks/040_execution/00_overview.md` `` interrupts
   one and tells the reader nothing they did not already have.
-- **A repo file that is not a tracker page** has nothing to link to, so a backticked
-  path is correct there: `` `src/loaders/issues.ts` ``. That is the exception, and
-  it is about reachability — the file is outside the site — not about convenience.
-  The same applies to a path being discussed as a value rather than pointed at.
+- **A repo file that is no document at all** — source code, config, a binary — has
+  nothing to link *to*, so a backticked path is correct there:
+  `` `src/loaders/issues.ts` ``. That is the exception, and it is about the target
+  not being a document, not about convenience. The same applies to a path being
+  discussed as a value rather than pointed at.
+
+  **"Not served on the site" is not the test, and reading it that way gets this
+  backwards.** A markdown file that belongs to a linked tree of documents takes a
+  relative markdown link whether or not the site ever renders it — the skill files
+  under `plugins/agent-ks/skills/` are the clearest case: they never appear on the
+  site, they cross-link each other relatively, and `agent-ks check skill-links`
+  verifies exactly that. Relative links are how the *filesystem* holds a document
+  tree together; being published is a separate question.
 - **`Related:` lines** at the end of a body are the convention for soft references
   (duplicate-check hits, sibling subtasks, superseded issues).
 - **A tracker URL keeps its ordering prefixes** — `subtasks/020_impl/010_backend.md`

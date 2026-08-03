@@ -11,12 +11,24 @@
  * case: it is exactly what 341 converted links were, and why the resolution gate
  * alone would have reported them clean.
  *
- * WHAT IS WRONG WITH A SITE-ABSOLUTE INTERNAL LINK. `agent-ks move` resolves each
- * target to a real filesystem path before rewriting it, and skips anything
- * starting with `/` — correctly, because it cannot know what URL prefix a
- * section publishes under (`_links.mjs → isIgnorableTarget`). So `[x](/a/b)`
- * renders fine, works in a browser, and has permanently left link maintenance.
- * It rots on the next file move with nothing reporting it.
+ * WHAT IS WRONG WITH A SITE-ABSOLUTE INTERNAL LINK. Start with what these
+ * documents are: filesystem-first files, written so filesystem tools work on them
+ * — `move`, `grep`, an editor, an agent walking the tree — with the rendered site
+ * as one consumer rather than the thing being built. A relative link is the only
+ * form that is TRUE ON DISK, so it is the only form any of those tools can
+ * follow. A `/…` target is a URL counted from the site root; it is not a path,
+ * and it stops being true the moment the file is read outside the site.
+ *
+ * The tooling consequence follows from that, it is not the reason for it:
+ * `agent-ks move` resolves each target to a real filesystem path before rewriting
+ * it, and skips anything starting with `/` (`_links.mjs → isIgnorableTarget`,
+ * which is the ONLY place that classification lives). So `[x](/a/b)` renders
+ * fine, works in a browser, and has permanently left link maintenance. It rots on
+ * the next file move with nothing reporting it.
+ *
+ * Hence the fix for a failure here is always to make the link relative — never to
+ * make the rule looser. And a relative link that 404s on the built site is a
+ * RENDERER defect to file, not a reason to convert content to `/`.
  *
  * External `http(s)://` and `mailto:` are fine. Pure `#anchors` are fine.
  * Fenced blocks AND inline code spans are skipped — a link inside either is

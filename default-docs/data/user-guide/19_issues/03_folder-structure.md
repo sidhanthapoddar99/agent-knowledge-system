@@ -155,6 +155,20 @@ link text has to name the thing. A number *alongside* a named link is fine. And 
 the number genuinely is the subject (*"the first two digits are the iteration"*), it
 stays.
 
+**And the link is relative** — `./x`, `../x`, pointing at the file as it sits on disk.
+Never a site-absolute `/todo/…`, which is a URL rather than a path. The reason is the
+same one that makes a link beat a number, one level down: **a tracker is a folder of
+markdown that filesystem tools operate on** — `agent-ks move`, `grep`, an editor, an AI
+agent walking the tree — and a relative path is the only form that is *true on disk*, so
+it is the only form all of them can follow. The rendered tracker is one consumer of
+those folders, not the thing being built.
+
+A `/todo/…` link is the worse failure of the two, because it hides itself: it renders as
+a perfectly working link while `agent-ks move` skips every target starting with `/`. So
+it has silently left link maintenance, and it rots on the next file move with nothing
+reporting it. If a relative link is right on disk and 404s on the site, **that is a
+renderer defect worth reporting — never a reason to rewrite the content.**
+
 This applies to every file the tracker holds, and to docs pages too. The rule itself is
 not validated: a checker cannot tell a backticked `` `010` `` that means a file from one
 that means a digit sequence, and a rule that fired on both would be switched off within

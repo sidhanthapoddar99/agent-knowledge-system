@@ -16,6 +16,8 @@ Cross-cutting rules for writing markdown content across content types (docs, blo
 - **Description** is optional but recommended (used in meta tags + sidebar tooltips).
 - **`draft: true`** hides the page from the production build. Works on docs, blog, issues.
 - **Don't write MDX** — this project uses pure markdown (`.md`); rich content comes from native GFM extensions (alert callouts, `<details>`, fenced diagrams), not MDX components.
+- **Every reference to a file in this project is a relative markdown link** — `./x`, `../x`, pointing at the **source file** (`../25_themes/03_variables.md`), never at its published URL. **The reason is what these documents are:** they are written filesystem-first, so that filesystem tools work on them — `agent-ks move`, `grep`, an editor, an agent walking the tree. A relative link is the only form that is **true on disk**, so it is the only form all of those can follow; the rendered site is one consumer of the files, not the thing being built. A site-absolute `/…` link is a URL rather than a path — it renders fine and `agent-ks move` skips it, so it leaves link maintenance silently and rots on the next file move. If a relative link 404s on the site, that is a renderer defect to file, never a reason to rewrite the content. The one exception is the site assets folder, `/assets/…` — see *Asset embedding* below. Full rule: [Cross-linking between docs pages](./layouts/docs-layout.md).
+- **And it has to be a LINK, not a backticked path.** `` `../25_themes/03_variables.md` `` quoted in prose is a string that looks like a reference: `agent-ks move` cannot rewrite it, a reader cannot click it, and an agent has to search to resolve it — all silently. The exception is a target that is **not a document** (source code, config, a binary), which has nothing to link to, so `` `src/loaders/paths.ts` `` is correct.
 
 ## Standard frontmatter
 
@@ -76,7 +78,7 @@ Never inline scene JSON — the `.excalidraw` file stays the single source of tr
 
 ## Asset embedding
 
-Two ways to reference images and downloadable files. **Colocate by default — the site folder is for the handful of things the whole site shares** (favicon, logos, standard symbols). Anything a specific page uses goes in an `assets/` folder beside that page, so it moves with the document and is readable from the file tree; a site with hundreds of pages must not funnel every image into one directory. `/assets/…` is the only place a leading `/` is correct.
+Two ways to reference images and downloadable files. **Colocate by default — the site folder is for the handful of things the whole site shares** (favicon, logos, standard symbols). Anything a specific page uses goes in an `assets/` folder beside that page, so it moves with the document and is readable from the file tree; a site with hundreds of pages must not funnel every image into one directory. **These are two different routes, not two styles** — and `/assets/…` is the only place a leading `/` is correct anywhere in this project, because a shared site symbol genuinely *is* a site-level URL rather than a document sitting next to yours. Everything else is addressed the way the filesystem addresses it, relatively, so that it stays true on disk and moves with the page that uses it.
 
 - **Shared files** live under the project's root `assets/` folder, served from `/assets/` — reference with absolute paths:
   ```markdown

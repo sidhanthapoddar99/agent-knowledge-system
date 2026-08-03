@@ -20,7 +20,24 @@ import path from 'node:path';
 /** Markdown link / image. Captures: leading `!` (optional), text, target. */
 export const MD_LINK_RE = /(!?)\[([^\]]*)\]\(([^)\s]+)\)/g;
 
-/** A link target that should never be rewritten (external, absolute, anchor). */
+/**
+ * A link target that should never be rewritten (external, absolute, anchor).
+ *
+ * THIS IS THE ONE PLACE THAT DECIDES IT. The rule "internal references are
+ * relative" is restated in several skill and doc surfaces on purpose — a rule an
+ * author meets once, in a file they may never open, is a rule that gets missed.
+ * The MECHANISM, though, lives here and nowhere else: no other file may
+ * re-implement this classification, and no restatement may contradict it.
+ *
+ * WHY A LEADING `/` IS SKIPPED RATHER THAN "NOT SUPPORTED YET". These documents
+ * are filesystem-first — written so that filesystem tools (`move`, `grep`, an
+ * editor, an agent walking the tree) work on them, with the rendered site as one
+ * consumer rather than the thing being built. A relative link is the only form
+ * that is true on disk. A `/…` target is a URL counted from the site root, so it
+ * is not a path at all and there is nothing here to resolve; a smarter `move`
+ * would not change that, it would have to guess the URL prefix a section
+ * publishes under. Skipping is the correct answer, not a limitation.
+ */
 export function isIgnorableTarget(url) {
   if (!url) return true;
   if (/^[a-z][a-z0-9+.-]*:/i.test(url)) return true; // scheme: http:, https:, mailto:, …

@@ -23,10 +23,14 @@
  * every link in a section is broken, the section was not written by 100 people
  * who all made the same mistake.
  *
- * NEVER "fix" a failure here by converting the link to site-absolute form. It
- * renders green and `agent-ks move` skips every target starting with `/`, so the
- * link silently leaves link maintenance forever. That is the exact trade the 341
- * rewrite made.
+ * NEVER "fix" a failure here by converting the link to site-absolute form. The
+ * deeper reason is the project's principle, not the tool: these documents are
+ * filesystem-first, written so filesystem tools work on them, and a relative link
+ * is the only form that is TRUE ON DISK. Converting to `/…` makes correct content
+ * WRONG on disk in order to make one consumer — the rendered site — go green. It
+ * also renders green and `agent-ks move` skips every target starting with `/`, so
+ * the link silently leaves link maintenance forever. That is the exact trade the
+ * 341 rewrite made.
  *
  * WHY THIS CHECKS THE BUILT SITE, NOT THE MARKDOWN.
  *

@@ -249,7 +249,7 @@ Checked against the files 2026-08-04. Items 1–4 are all one block:
 `plugins/agent-ks/skills/agent-ks-docs/references/layouts/docs-layout.md`,
 under *Cross-linking between docs pages*.
 
-- [ ] **1. Say WHY, and say the real why — agent-first, filesystem-first.**
+- [x] **1. Say WHY, and say the real why — agent-first, filesystem-first.**
       Sid, 2026-08-04: the documents are built in a **filesystem-first format so
       that filesystem tools work on them** — `move`, `grep`, an editor, an agent
       walking the tree. A relative link is the only form that is true on disk, so
@@ -264,21 +264,21 @@ under *Cross-linking between docs pages*.
       is the document; the app renders it*). **Write a short version, do not copy
       the section** — a copy cannot know it was replaced.
 
-- [ ] **2. Stop saying a leading `/` is always wrong.** The rule table reads
+- [x] **2. Stop saying a leading `/` is always wrong.** The rule table reads
       `/x` → *"nothing internal"*, which contradicts `writing.md:81`, where
       `/assets/logo.png` is correct and required. Two asset kinds, two routes:
       **`/assets/…`** is the site-wide folder (favicon, logos), **`./assets/…`**
       is colocated per-doc and rewritten at build to `/content-assets/…`.
       Colocated is the default; the site folder is the exception.
 
-- [ ] **3. Drop the stale depth claim.** The block says the renderer *"adjusts
+- [x] **3. Drop the stale depth claim.** The block says the renderer *"adjusts
       the URL depth for you"*. That is the interim one-level shift, correct only
       on the built site, and it is being deleted by
       [`2026-06-09` `03`](../../../2026-06-09-issue-link-resolution/subtasks/03_comprehensive-panel-subdoc-links.md).
       Promise only what survives: `NN_` prefixes and `.md` stripped, and **both
       URL spellings accepted** (shipped in 0.2.2).
 
-- [ ] **4. Keep the warning, delete the story.** The 341-link incident is
+- [x] **4. Keep the warning, delete the story.** The 341-link incident is
       narrated inside the skill, which this repo's `CLAUDE.md` forbids — skills
       are history-free and the tracker already holds it. Keep the *rule* ("a
       relative link that 404s is a renderer bug — do not convert it to `/`"),
@@ -291,7 +291,7 @@ under *Cross-linking between docs pages*.
       neither of which belongs in a documentation rewrite. Now
       [`160`](./160_base-url-and-folder-name-are-not-tied.md).
 
-- [ ] **6. Repeat the fact deliberately — do NOT deduplicate it.** Sid, 2026-08-04:
+- [x] **6. Repeat the fact deliberately — do NOT deduplicate it.** Sid, 2026-08-04:
       **the fact belongs in three or four places in the skill, and five or six
       more across docs, the tracker and the code is fine.** The audit's
       "asserted in eleven places" was framed as duplication to cut; that is the

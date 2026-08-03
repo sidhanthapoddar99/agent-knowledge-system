@@ -203,23 +203,38 @@ The outline is built from `##` and `###` headings in the page body. Use `#` only
 **Every reference to a file in this project is a relative markdown link. There is no second option.**
 
 ```markdown
-See [installation](../getting-started/installation) for setup.
+See [installation](../05_getting-started/02_installation.md) for setup.
 ```
 
 | Form | Means | Use for |
 |---|---|---|
-| `./x` · `../x` | relative to **this file's own directory** | every internal reference, including across sections |
-| `/x` | site-absolute, from the site root | nothing internal — see below |
+| `./x` · `../x` | relative to **this file's own directory** | every reference to a file inside this project, including across sections |
+| `/assets/…` | the **site assets** folder — favicon, logos, standard symbols | the one internal case where a leading `/` is correct, because it genuinely *is* a site-level URL and not a document (see *Asset embedding* in `../writing.md`) |
+| `/x` — anything else | site-absolute: a URL counted from the site root | nothing. It is a URL, not a path, and it stops being true the moment the file is read outside the site |
 | `https://…` | external | services and pages outside this project |
 
-**Why the rule is not a preference.** `agent-ks move` keeps links alive when files move by resolving each target to a real filesystem path — and it **skips every link starting with `/`** (see *Move* below). A site-absolute link renders perfectly, works in a browser, and has silently opted out of link maintenance forever. It then rots on the next file move with nothing left to catch it.
+**Why — the documents are filesystem-first.** These pages are written so that *filesystem tools work on them*: `agent-ks move`, `grep`, an editor, an agent walking the tree, a human reading the folder in Obsidian or `cat`. A relative link is the only form that is **true on disk**, so it is the only form all of those can follow. The rendered site is one consumer of the documents — it is not the thing being built, and its URL scheme is not the address space the content is written in. This is the project's load-bearing principle; the repo's `CLAUDE.md` states it in full under *"The filesystem is the document. The app renders it."*
+
+**And mechanically, the tooling follows from that.** `agent-ks move` keeps links alive when files move by resolving each target to a real filesystem path — and it **skips every link starting with `/`** (see *Move* below). A site-absolute link renders perfectly, works in a browser, and has silently opted out of link maintenance forever. It then rots on the next file move with nothing left to catch it. That is a consequence of the principle, not the reason for it: a better `move` would not change the answer, because a `/` link was never a path to begin with.
 
 **Relative works across sections too** — `../../05_getting-started/03_aliases.md` from inside `10_configuration/03_site/` is resolved and rewritten correctly. There is no cross-section exception; the rule is one rule.
 
-**Write the path, not the URL.** Link the source file (`../getting-started/02_installation.md`) rather than its published slug. The renderer strips `NN_` prefixes and `.md` extensions and adjusts the URL depth for you, and `move` can only follow a link it can resolve on disk.
+**Write the path, not the URL.** Link the source file (`../05_getting-started/02_installation.md`) rather than its published slug — that is the string that is true on disk, and `move` can only follow a link it can resolve there. The renderer strips `NN_` ordering prefixes and the `.md` extension, and accepts **both URL spellings** (with and without the prefix), so the source path is what you write and the renderer's job is to make it resolve.
+
+**Make it a LINK, not a backticked path.** `[the aliases page](../05_getting-started/03_aliases.md)`, never `` `05_getting-started/03_aliases.md` `` sitting in prose. A backticked path is not a reference to anything — it is a string that looks like one, and it costs three things, all of them silent:
+
+| | |
+|---|---|
+| `agent-ks move` cannot rewrite it | it is prose to every tool that exists, so the file moves, the text stays, and nothing reports it |
+| the reader cannot click it | and gets a path instead of a title — a path says where, never what |
+| an agent has to search to resolve it | a link resolves in one step; a quoted path costs a `find` and a guess |
+
+**The exception is a target that is not a document at all** — source code, config, a binary, a directory. There is nothing to link *to*, so `` `src/loaders/paths.ts` `` is correct. The test is whether the target is a document, not whether a link would be inconvenient; the same applies to a path being discussed as a *value* rather than pointed at.
+
+**Link text is free — use it.** `[how aliases resolve](../05_getting-started/03_aliases.md)` reads inside a sentence. A bare path interrupts one and tells the reader nothing they did not already have.
 
 > [!WARNING]
-> If a relative link 404s on the built site, that is a **renderer** bug, not an authoring one — do not "fix" it by converting to `/`. This exact mistake was made once: 341 content links were converted on that diagnosis before anyone opened the transform, and all 341 had to be reverted. See `astro-doc-code/src/parsers/postprocessors/internal-links.ts`.
+> If a relative link 404s on the built site, that is a **renderer** bug, not an authoring one — do not "fix" it by converting to `/`. Converting inverts the model: it makes correct-on-disk content wrong on disk in order to satisfy one consumer, and it removes the link from maintenance permanently. File the rendering defect instead. See `astro-doc-code/src/parsers/postprocessors/internal-links.ts`.
 
 ## Validate
 
@@ -261,7 +276,7 @@ It rewrites links on **both sides** in one atomic pass:
 External links (`http://`, `https://`, `mailto:` …), site-absolute links (leading `/`, including `/assets/…`), and pure-anchor links (`#section`) are left untouched. Every candidate link is resolved as a real filesystem path before being rewritten, so it never string-replaces a coincidental match.
 
 > [!IMPORTANT]
-> **"Left untouched" is why the link form above is a rule and not a style.** A site-absolute link is not maintained by anything — `move` cannot know what URL prefix a section publishes under, so it correctly declines, and the link is on its own from then on. This is the consequence half of *Cross-linking between docs pages*; the two used to sit 44 lines apart with nothing joining them, and that gap is how 341 links got converted to a form nothing could maintain.
+> **"Left untouched" is why the link form above is a rule and not a style.** `move` rewrites a link by resolving it to a real file and recomputing the path — so it can only maintain links that *are* paths. A site-absolute link is a URL, true only inside the rendered site, so `move` correctly declines it (it cannot know what URL prefix a section publishes under) and the link is on its own from then on. This is the mechanical half of *Cross-linking between docs pages*: the documents are filesystem-first so that filesystem tools work on them, and `move` is one of those tools behaving exactly as that implies.
 
 Flags:
 

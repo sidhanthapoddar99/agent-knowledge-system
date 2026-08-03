@@ -114,7 +114,9 @@ The URL base is one level deeper than the source directory, so `./claude-skills`
 **Index pages are exempt.** `DocsParser.generateSlug` collapses a trailing `/index`, so `a/index.md` publishes at `a` and its URL base already *is* its source directory. Shifting those would break them in the opposite direction — it is the only special case in the transform.
 
 > [!WARNING]
-> **Do not "fix" this in the content by writing site-absolute links.** They render correctly and `agent-ks move` skips every link starting with `/`, so a converted link silently leaves link maintenance and rots on the next file move. Relative links are the authoring contract; this transform is what makes them resolve.
+> **Do not "fix" this in the content by writing site-absolute links.** The direction of the contract is the point: content is authored filesystem-first, so that filesystem tools work on it — `agent-ks move`, `grep`, an editor, an agent walking the tree — and a relative link is the only form that is *true on disk*. **This transform exists to serve that authoring form, not the other way round.** A site-absolute link is a URL, not a path; it renders correctly and `agent-ks move` skips every link starting with `/`, so a converted link silently leaves link maintenance and rots on the next file move.
+>
+> So a relative link that 404s on the built site is **a bug in this file**, and the fix belongs here. Rewriting the content to `/…` makes correct documents wrong on disk to make one consumer go green — and it is unrecoverable in the sense that matters: nothing will ever maintain those links again.
 
 #### Why non-markdown targets are skipped
 

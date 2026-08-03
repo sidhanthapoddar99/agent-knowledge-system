@@ -1,6 +1,6 @@
 ---
 title: "The tools skip links silently — move must report what it declined, and check must gate link form"
-status: review
+status: in-progress
 ---
 
 # Overview
@@ -148,3 +148,27 @@ Both [`020`](./020_relative-links-are-the-contract.md) and
 remember. This subtask is what makes them hold on a day nobody is thinking about
 links — which is the only day that matters, because the 341 conversions were
 performed by someone who had read both skill files that same week.
+
+# Reopened — the gate does not check what it claims
+
+**Back to `in-progress` 2026-08-03.** This is the sharpest finding of the two
+audits, and it is about the gate I built here.
+
+- 🔴 **`check link-form` passes 306 links `move` cannot maintain.** It tests for
+  a leading `/` and nothing else. But `move` resolves targets as **real
+  filesystem paths**, so an extensionless slug-form link (`./overview`) is no
+  more maintainable than an absolute one. In the non-tracker tree: 238 links
+  resolve to a real `.md` source, **306 are extensionless URL-form**, 1 is a real
+  non-markdown file. Control-tested — `[target](./target)` pointing at
+  `02_target.md` passes the gate, and a dry-run move of that file reports *"No
+  link edits needed."*
+  **Fix: gate resolvability, not prefix.** Sid has approved; note it turns those
+  306 red, so "green on arrival" breaks and the content has to be fixed with it.
+- 🔴 **Both tools are wrong about site assets.** There are two asset kinds and
+  they are different routes: `/assets/…` is the **site** folder (favicon, logos)
+  and is correct as written; `./assets/…` is **colocated per-doc**, rewritten to
+  `/content-assets/…`. Today `move` reports `![Logo](/assets/logo.png)` as
+  unmaintained and advises a rewrite that **breaks it**, and `check link-form`
+  fails `[Download](/assets/spec.pdf)` — the form `references/writing.md`
+  requires. Both need the site-assets prefix exempt, and `move` needs an image
+  filter.

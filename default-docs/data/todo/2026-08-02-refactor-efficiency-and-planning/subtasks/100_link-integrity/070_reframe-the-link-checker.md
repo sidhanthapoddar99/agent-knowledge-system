@@ -1,6 +1,6 @@
 ---
 title: "check-content-links was built on the wrong model — reframe it as a rendering gate"
-status: review
+status: in-progress
 ---
 
 # Overview
@@ -131,3 +131,25 @@ it reports.** The measurements it produced were accurate and its conclusions wer
 not, and anyone reading the output would have inherited the conclusions. Worth
 stating in the file itself, because the next person to trip this gate needs to
 know which layer to look at.
+
+# Reopened — the checker measures less than it reports
+
+**Back to `in-progress` 2026-08-03.** Codex executed against the built HTML with
+a real parser and found the tool's own numbers misleading.
+
+- 🔴 **Anchors are never checked.** `check-content-links.mjs:207` uses
+  `.pathname`, discarding fragments. **Four broken anchors** exist right now:
+  three on `user-guide/20_custom-pages/01_overview.md:33` (`#home`, `#info`,
+  `#countdown`; the built IDs are `customhome` / `custominfo` / `customcountdown`)
+  and one on `25_themes/04_tokens/05_layout-dimensions.md:156`
+  (`#…doesnt-require` vs a generated `…doesn39t…`).
+- 🔴 **The link count is inflated.** The body regex at `:177` selects the outer
+  `<main>`, so repeated sidebars are counted. Reported 15,585; the real
+  markdown-body figure is **569**. Every "N links checked" line quoting this tool
+  — including mine — is wrong by ~27×.
+- 🟡 Misses `[x](/y "title")` (titled markdown links) and raw HTML `<a href>`.
+- 🟡 **False failure:** a markdown link inside an HTML comment is reported,
+  though the renderer emits no anchor for it.
+
+**So "0 broken in-body links" means "0 broken paths".** The direction of 418 → 0
+holds; the claim needs narrowing and the tool needs to check fragments.

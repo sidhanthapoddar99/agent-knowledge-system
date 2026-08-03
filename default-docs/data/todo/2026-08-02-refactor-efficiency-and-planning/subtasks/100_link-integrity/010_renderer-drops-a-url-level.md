@@ -1,6 +1,6 @@
 ---
 title: "Relative links render one level too deep — the renderer, not the content"
-status: review
+status: in-progress
 ---
 
 # Overview
@@ -193,3 +193,25 @@ until after the rewrite had been made and pushed.
 thing.** A measurement can be perfectly correct and still be attributed to the
 wrong layer; the measurement here was right every time and the conclusion was
 wrong anyway.
+
+# Reopened — edge shapes the audits found
+
+**Back to `in-progress` 2026-08-03.** The core fix stands; Codex ran the
+processor against a matrix of link shapes and found six it still gets wrong.
+Recorded in [the review round](../../agent-log/040_wf_fix-the-tools-then-the-links/02_working/050_independent-reviews.md).
+
+| Input | Produces | Should |
+|---|---|---|
+| nested bare `index.md` | `../index` | address the containing folder index |
+| `./asset.pdf?download=1` | shifted | be skipped — **the query string defeats the extension test I added** |
+| `./page.md?x=1` | shifted, keeps `.md` | strip the extension |
+| `mailto:guide.md` | rewritten as a page path | be left alone |
+| blog sibling links | no shift, date prefix kept | resolve — a synthetic sibling landed *underneath* the current post |
+| `./05_mermaid-full-page.mmd` | left unchanged → 404 | be treated as a **page** — `diagram-pages.ts:95` declares these extensions page types |
+
+The last one is mine directly: the non-markdown skip added for asset links is too
+broad, and diagram files are first-class pages in this framework.
+
+Correct and verified: bare `sibling.md`, `./sibling.md`, pure anchors,
+cross-folder links, `./folder/index.md`, root-level `index.md`, `./asset.pdf`,
+`./asset.pdf#page=2`.

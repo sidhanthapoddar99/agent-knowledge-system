@@ -1,6 +1,6 @@
 ---
 title: "Correct the records that argued for root-relative — 0.2.1 is tagged and pushed"
-status: review
+status: in-progress
 ---
 
 # Overview
@@ -108,3 +108,21 @@ rewrite:
 **Do not delete that sentence.** It is the single most useful line in this whole
 group — it is the moment the correct answer was written down and read backwards.
 Keep it, and annotate it with what it actually meant.
+
+# Reopened — records the audits found still wrong
+
+**Back to `in-progress` 2026-08-03.**
+
+- 🟡 **A published page still teaches the forbidden form.**
+  `user-guide/19_issues/05_sub-docs/01_issue-md.md:70` — *"cross-links are
+  usually maintained at the URL level (`/todo/<id>#goal`)"*. Untouched by this
+  run while 16 sibling pages under `19_issues/` were edited.
+- 🟡 Lesser: `user-guide/15_writing-content/02_markdown-basics.md:160` teaches
+  `[links](/user-guide)` in a callout example. Inside a fence, so the gate skips
+  it by design — but it is what an author copies.
+- 🟡 **My own overclaim.** The plan says the backticked-path rule is "live on
+  every surface". It is on the three *tracker* surfaces only, and the docs skill
+  does not follow it — 12 backticked `references/…` paths against 1 link.
+- **Wording correction:** the record should say **129 converted**, not 137. 137
+  was the inventory; `73ea791` contains exactly 129 target changes across 43
+  files.

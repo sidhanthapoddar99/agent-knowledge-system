@@ -1,6 +1,6 @@
 ---
 title: "The skill offers absolute links as an equal option, and move cannot see them"
-status: review
+status: in-progress
 ---
 
 # Overview
@@ -195,3 +195,35 @@ answer this group is allowed to give.
 That reads coherently, but it is an inference from counting links — **nobody
 wrote it down as a rule**. Confirm against `move.mjs` whether a cross-section
 relative link would be rewritten correctly before enshrining the exception.
+
+# Reopened — what the audits found in the rule itself
+
+**Back to `in-progress` 2026-08-03.** Both reviews landed on the wording, not
+just the code. Full record in
+[the review round](../../agent-log/040_wf_fix-the-tools-then-the-links/02_working/050_independent-reviews.md).
+
+- 🔴 **The rule is wrong for the tracker.** It says "always relative, no second
+  option", and relative links 404 in the tracker today. Blocked on the decision
+  in [`060`](./060_does-the-tracker-share-it.md) — and note that
+  `2026-06-09-issue-link-resolution` already argues the opposite position, that
+  tracker links should resolve root-absolute, because a sub-doc body is rendered
+  at **two** depths and no relative form is right for both.
+- 🔴 **The rule conflates a page link with an asset reference.** Sid's
+  correction: there are two asset kinds and they are different *routes*, not two
+  styles — `/assets/…` is the **site** assets folder (favicon, logos, one global
+  place), while `./assets/…` is **colocated per-doc**, sidebar-ignored, rewritten
+  at build to `/content-assets/…`. Ten such folders are in use. The rule must
+  state both, and must stop implying that a leading `/` is always wrong.
+- 🟡 **Cross-root portability was never tested.** The "no exception" proof ran
+  inside one content root. The six links now crossing `user-guide` ↔ `dev-docs`
+  resolve only because every data folder here is named like its `base_url`;
+  Codex tested a hypothetical `/internals` base and got a 404.
+- 🟡 `10_writing.md:135` claims ordering prefixes are stripped from URL slugs.
+  **False for the tracker** — `issues.ts:1275` keeps the prefix.
+- 🟡 The 341-link incident is narrated **inside the skill**, which this repo's
+  `CLAUDE.md` forbids: skills are history-free, and the tracker already holds it.
+- 🟡 One mechanical fact (`move` skips `/` targets) is now asserted in **eleven
+  places**. `_links.mjs:28` is the single line that decides it.
+- 🟢 `guide.ts` states the exception one clause narrower than the skill.
+- **Boundary leak:** "a file with nothing to link to" literally covers skill
+  `.md` files, which are outside the site but must use relative links.

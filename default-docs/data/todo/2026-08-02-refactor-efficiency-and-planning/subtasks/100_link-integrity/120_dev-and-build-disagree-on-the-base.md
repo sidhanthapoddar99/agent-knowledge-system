@@ -71,6 +71,23 @@ HTTP-based gate must assert on the rendered page, not the status.
 the folder URL itself. So a link to the real file on disk cannot resolve. Sid:
 *"this should be automatically resolved."*
 
+> [!IMPORTANT]
+> **This was already decided, on 2026-06-09, and the decision was option A.**
+> `2026-06-09-issue-link-resolution` subtask
+> [`03`](../../../2026-06-09-issue-link-resolution/subtasks/03_comprehensive-panel-subdoc-links.md)
+> reads: *"stop depending on the browser to resolve relative links. Resolve all
+> internal links to root-absolute URLs at render time… also hardens docs/blog"*
+> — and it names **"the latent trailing-slash fragility in docs/blog"** as one of
+> the things it fixes. That is the exact defect below, written down eight weeks
+> before this run rediscovered it.
+>
+> It is still `open`. This run then built the interim depth shift that subtask
+> supersedes. **The routing work now lives on that issue** as
+> [`05`](../../../2026-06-09-issue-link-resolution/subtasks/05_dual-slug-url-resolution.md)
+> and [`06`](../../../2026-06-09-issue-link-resolution/subtasks/06_plans-auto-resolution.md),
+> so URL resolution has one home rather than two. What stays here is this run's
+> own damage: the regression, and the instructions it wrote.
+
 # The decision — three ways out, and they are not equivalent
 
 > [!IMPORTANT]

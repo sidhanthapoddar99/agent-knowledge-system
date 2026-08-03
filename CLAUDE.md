@@ -26,6 +26,63 @@ The plugin's skills carry the full operating manual, including the `agent-ks` CL
 | `/agent-ks-add-section [name]` | Scaffold a new top-level section under `data/` — auto-computes next `NN_` prefix, creates `settings.json` + starter page, optionally registers in `site.yaml`. |
 | `/agent-ks-quick-idea-note [idea]` | Capture an ad-hoc idea / half-formed issue into the issue dump — writes a subtask entry into the right dump issue, no folder ceremony. |
 
+## The filesystem is the document. The app renders it.
+
+**This is the load-bearing principle of the project, and everything below follows
+from it.** Content here is agent-native documentation that happens to have a
+viewer — not web content that happens to sit in files. So:
+
+> **We do not write documents so the app works. We build the app so it works on
+> native documents.** A folder of markdown opened in Obsidian, `cat`, an editor,
+> or a `grep` is the primary artefact. The rendered site is one consumer of it.
+
+**What that means for whoever is writing.** Your prerogative is that the content
+is correct and reads well *as a file* — headings, tables, prose, and links that a
+human or an agent can follow by walking the tree. It is **not** your job to
+reason about how a link will resolve in a browser, what the URL will look like,
+or whether a path survives the routing layer. **If a relative link is correct on
+disk and breaks on the site, that is a renderer defect — file it, do not
+compensate for it in the content.** Rewriting correct filesystem paths into
+site-absolute URLs to satisfy the renderer inverts the whole model, and has
+already cost this project one 341-link revert.
+
+The small set of things that *are* app-facing — frontmatter, `settings.json`,
+`NN_` ordering prefixes — are there because they carry information the file
+system cannot express on its own (title, status, order). They are metadata about
+the document, not instructions to the renderer.
+
+### Links: relative, always, because that is what is true on disk
+
+One rule, and the reason is this principle rather than a tooling detail:
+
+| Form | Means | Use for |
+|---|---|---|
+| `./x` · `../x` | relative to **this file's directory** | every reference to a file inside this project |
+| `/x` | site-absolute — from the site **root** | nothing internal. It is a URL, not a path, and it is false the moment the file is read outside the site |
+| `https://…` | external | services and pages outside this project |
+
+A relative link is the only form that is simultaneously true on disk, true in
+Obsidian, true to `agent-ks move`, and resolvable by the renderer. The full
+convention — including the optional ordering label, `[19/04/02 the vocabulary
+page](../19_issues/04_setup/02_vocabulary.md)` — lives in the `agent-ks-docs` and
+`agent-ks-issues` skills. **Do not copy it here; those skills own it.**
+
+### Two asset folders, and they are different routes
+
+They look alike and are not interchangeable:
+
+| Reference | What it is | Where it lives |
+|---|---|---|
+| `/assets/…` | **Site assets** — favicon, logos, standard symbols. One global place, genuinely a site-level URL | `default-docs/assets/` (`@assets`) |
+| `./assets/…` · `../assets/…` | **Colocated doc assets** — the images, diagrams and data a specific page refers to. Sidebar-ignored, rewritten at build to `/content-assets/<path>` | an `assets/` folder beside the markdown, at any depth |
+
+**Colocated is the default, and the site folder is the exception.** With hundreds
+of docs and hundreds of issues, each with its own images, dumping everything into
+one site-wide folder is the wrong shape — the asset belongs next to the document
+that uses it, moves with it, and is readable from the file tree. So a leading `/`
+is correct for `/assets/logo.png` and wrong for anything else, which is the one
+place the "never use `/`" rule above has a real exception.
+
 ## Repository Layout
 
 ```

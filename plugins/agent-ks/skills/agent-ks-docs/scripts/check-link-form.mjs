@@ -23,11 +23,15 @@
  * syntax being shown, not a link. Documentation that quotes the wrong form in
  * order to forbid it must not trip the gate that forbids it.
  *
- * TRACKERS ARE EXCLUDED BY DEFAULT, matching `check links`. The issue pipeline
- * has its own link re-rooting and its rendering behaviour is an open question
- * (see the link-integrity group); converting a tracker link to relative before
- * that is settled could swap a working link for a broken one. `--all` includes
- * them as a measurement.
+ * TRACKERS ARE EXCLUDED BY DEFAULT, matching `check links`. Not because their
+ * links are suspect — they are not. Tracker pages are served without a trailing
+ * slash and keep their `NN_` prefixes, so a relative link written against the
+ * file tree already resolves correctly; that was verified by request in
+ * 2026-08-03, after an earlier claim to the contrary was retracted.
+ *
+ * The exclusion is about volume: a tracker holds thousands of links to files
+ * that legitimately came and went, and a gate that is red on arrival is a gate
+ * people learn to ignore. `--all` includes them as a measurement.
  *
  * Usage: check-link-form.mjs [root] [--all] [--json]
  * Exit 0 = every internal link is relative, 1 = at least one is not.

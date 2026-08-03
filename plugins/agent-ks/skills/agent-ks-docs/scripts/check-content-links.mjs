@@ -58,17 +58,31 @@
  * thought at the time, so a rotted link is history rather than a defect. That
  * reasoning was invented to fit the wrong model and is only PART of the truth.
  * Measured 2026-08-03, after the renderer fix: the non-tracker sections report
- * **0** errors over 173 pages; `--all` reports **1,372** over 978. The tracker's
- * failures are dominated by relative links that do not resolve, and the issues
- * pipeline is a different one — it has its own re-rooting pass
- * (`issue-body-links.ts`) for the detail-URL collapse, and the docs level-shift
- * does not apply to it.
+ * **0** errors over 173 pages; `--all` reports **1,372** over 978.
  *
- * So the exclusion stands for now on a MEASURED basis, not a principled one:
- * including trackers would put the gate at 1,372 on arrival, and a gate that is
- * red on arrival is a gate people learn to ignore. Whether those 1,372 are
- * history, fiction in demo fixtures, or a real second transform bug has not been
- * triaged. Until it has, `--all` is a measurement and the default is the gate.
+ * READ THAT 1,372 CAREFULLY — it is not a count of broken tracker links, and it
+ * was reported as one. Tracker pages are served WITHOUT a trailing slash, so a
+ * browser resolves `./x` against the parent directory, which is where the author
+ * meant it; tracker URLs also keep their `NN_` prefixes, so the source path and
+ * the URL path are the same string. Fifteen links were opened by hand on
+ * 2026-08-03 and twelve resolved correctly, including every within-tracker
+ * shape.
+ *
+ * This tool reads `dist/`, where every page is a DIRECTORY and a trailing slash
+ * is added. That single segment changes what every relative href means. So the
+ * 1,372 is the size of the disagreement between the built site and a running
+ * server — a real defect, but of the router, and not one this tool can currently
+ * distinguish from link rot.
+ *
+ * The exclusion therefore stands, on the honest ground: including trackers would
+ * put the gate at 1,372 on arrival, a gate that is red on arrival is one people
+ * learn to ignore, and the number would not mean what it says.
+ *
+ * TWO LIMITS TO KNOW BEFORE TRUSTING ANY RESULT HERE:
+ *   1. It measures the BUILT site only. A finding from `dist/` is not a finding
+ *      about `./start dev`, which serves the same pages at different URLs.
+ *   2. A missing page answers HTTP 200 with a "Page Not Found" body, so a
+ *      status-code check would report dead links as healthy. Do not write one.
  *
  * Usage:
  *   check-content-links.mjs [--section <name>] [--all] [--dist <path>] [--json]

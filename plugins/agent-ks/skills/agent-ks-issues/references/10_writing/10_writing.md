@@ -130,8 +130,11 @@ reader the target is somewhere it is not.
   The same applies to a path being discussed as a value rather than pointed at.
 - **`Related:` lines** at the end of a body are the convention for soft references
   (duplicate-check hits, sibling subtasks, superseded issues).
-- Ordering prefixes are **stripped from URL slugs** (`subtasks/020_impl/010_backend.md`
-  → `…/subtasks/impl/backend`).
+- **A tracker URL keeps its ordering prefixes** — `subtasks/020_impl/010_backend.md`
+  is served at `…/subtasks/020_impl/010_backend`, unchanged. So the path you write
+  and the path a reader lands on are the same string, and a relative link written
+  against the file tree resolves as written. (Docs and blog do strip prefixes,
+  which is why a link *leaving* the tracker is the one case that needs care.)
 
 ## Callouts & collapsibles
 

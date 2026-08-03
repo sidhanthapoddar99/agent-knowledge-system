@@ -201,9 +201,11 @@ every diagram an issue embeds or links.
 **The issue's own `assets/` is where an issue's files go — always, and any
 subfolder can have one.** Referenced relatively (`./assets/x.png`,
 `../assets/x.png`), so the file travels with the issue. The site-wide
-`/assets/…` folder is a different route and holds only what the whole site
-shares — favicon, logos, standard symbols. **Nothing an issue produces belongs
-there.**
+`/assets/…` folder is a different route entirely — it holds what the site
+**chrome** loads (favicon, logos, standard symbols) and is named from code, never
+from a document body. **Nothing an issue produces belongs there, and no file an
+issue writes may name it.** So a leading `/` is wrong in a tracker document with
+no exception at all — assets included.
 
 A diagram file can also **be a supporting doc itself**: drop a `.mmd` / `.dot` /
 `.excalidraw` file directly into `notes/`, `brainstorm/`, `agent-memory/`, or
@@ -251,10 +253,8 @@ where artifacts become first-class embedded pages (`agent-ks-docs` +
 
 ## Assets
 
-- **Shared files**: project root `assets/`, served at `/assets/` — absolute paths:
-  `![Flow](/assets/flow.png)`.
-- **Colocated files**: `<issue>/assets/` next to the markdown — relative paths:
-  `![Flow](./assets/flow.png)`. The build rewrites them to `/content-assets/…`
+- **Colocated, always** — there is no second option. `<issue>/assets/` next to the
+  markdown, relative paths: `![Flow](./assets/flow.png)`. The build rewrites them to `/content-assets/…`
   (relative `<a href>` links to colocated non-page files are rewritten the same
   way, so `[raw file](./assets/x.excalidraw)` works at any page depth);
   colocated non-markdown files never appear in the sidebar.

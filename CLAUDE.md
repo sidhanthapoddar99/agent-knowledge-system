@@ -67,21 +67,27 @@ convention — including the optional ordering label, `[19/04/02 the vocabulary
 page](../19_issues/04_setup/02_vocabulary.md)` — lives in the `agent-ks-docs` and
 `agent-ks-issues` skills. **Do not copy it here; those skills own it.**
 
-### Two asset folders, and they are different routes
+### Two asset folders, and only one of them belongs to a document
 
-They look alike and are not interchangeable:
+They look alike and are not interchangeable — but the split is by **who
+references them**, not by what they hold:
 
-| Reference | What it is | Where it lives |
+| Reference | Whose it is | Where it lives |
 |---|---|---|
-| `/assets/…` | **Site assets** — favicon, logos, standard symbols. One global place, genuinely a site-level URL | `default-docs/assets/` (`@assets`) |
-| `./assets/…` · `../assets/…` | **Colocated doc assets** — the images, diagrams and data a specific page refers to. Sidebar-ignored, rewritten at build to `/content-assets/<path>` | an `assets/` folder beside the markdown, at any depth |
+| `./assets/…` · `../assets/…` | **The document's.** The images, diagrams and data a specific page refers to. Sidebar-ignored, rewritten at build to `/content-assets/<path>` | an `assets/` folder beside the markdown, at any depth |
+| `/assets/…` | **The framework's.** Favicon, logos, standard symbols loaded by layouts and config — the site chrome. Named from **code**, never from a document body | `default-docs/assets/` (`@assets`) |
 
-**Colocated is the default, and the site folder is the exception.** With hundreds
-of docs and hundreds of issues, each with its own images, dumping everything into
-one site-wide folder is the wrong shape — the asset belongs next to the document
-that uses it, moves with it, and is readable from the file tree. So a leading `/`
-is correct for `/assets/logo.png` and wrong for anything else, which is the one
-place the "never use `/`" rule above has a real exception.
+**A document colocates, always. There is no exception.** The asset belongs next
+to the page that uses it: it moves with the document, it is readable from the file
+tree, and it is *true on disk* — the same reason every link is relative. With
+hundreds of docs and hundreds of issues each carrying its own images, funnelling
+them into one site-wide folder is the wrong shape anyway.
+
+So the rule above has **no carve-out to remember**: if you are writing markdown, a
+leading `/` is wrong, assets included. `agent-ks check link-form` enforces exactly
+that, and its strictness is deliberate — **the answer to an asset that will not
+fit is to colocate it, never to loosen the rule.** `/assets/` is the framework's
+own route and the framework's own business.
 
 ## Repository Layout
 

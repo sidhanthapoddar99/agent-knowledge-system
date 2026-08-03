@@ -208,10 +208,11 @@ See [installation](../05_getting-started/02_installation.md) for setup.
 
 | Form | Means | Use for |
 |---|---|---|
-| `./x` · `../x` | relative to **this file's own directory** | every reference to a file inside this project, including across sections |
-| `/assets/…` | the **site assets** folder — favicon, logos, standard symbols | the one internal case where a leading `/` is correct, because it genuinely *is* a site-level URL and not a document (see *Asset embedding* in `../writing.md`) |
-| `/x` — anything else | site-absolute: a URL counted from the site root | nothing. It is a URL, not a path, and it stops being true the moment the file is read outside the site |
+| `./x` · `../x` | relative to **this file's own directory** | every reference to a file inside this project — pages, images, PDFs, data — including across sections |
+| `/x` | site-absolute: a URL counted from the site root | **nothing.** It is a URL, not a path, and it stops being true the moment the file is read outside the site |
 | `https://…` | external | services and pages outside this project |
+
+**Assets are not an exception.** An image or a download a page uses is colocated in an `assets/` folder beside it and referenced relatively, exactly like a page link — see *Asset embedding* in [the writing reference](../writing.md). The site's own `/assets/` folder holds what the **chrome** needs (favicon, logos, symbols loaded by layouts and config); it is named from code and never from a document body. So the rule has no carve-out to remember: **if you are writing markdown, a leading `/` is wrong.**
 
 **Why — the documents are filesystem-first.** These pages are written so that *filesystem tools work on them*: `agent-ks move`, `grep`, an editor, an agent walking the tree, a human reading the folder in Obsidian or `cat`. A relative link is the only form that is **true on disk**, so it is the only form all of those can follow. The rendered site is one consumer of the documents — it is not the thing being built, and its URL scheme is not the address space the content is written in. This is the project's load-bearing principle; the repo's `CLAUDE.md` states it in full under *"The filesystem is the document. The app renders it."*
 

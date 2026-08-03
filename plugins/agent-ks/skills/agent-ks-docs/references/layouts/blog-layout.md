@@ -47,7 +47,13 @@ Auto-generated at `/blog/`. Shows:
 
 ## Asset embedding
 
-Same as other content — assets live in `assets/blog/<post-slug>/` and are referenced as `/assets/blog/<post-slug>/<file>`.
+Same as other content — **colocated and relative, never the site assets folder.** Blog files are flat, so each post's assets live in a per-post subfolder beside them, `assets/<post-slug>/`, referenced relatively:
+
+```markdown
+![Flow](./assets/2026-04-19-introducing-issues/flow.png)
+```
+
+The build rewrites it to `/content-assets/…` like every other colocated asset. A leading `/` is as wrong here as anywhere else — see *Asset embedding* in [the writing reference](../writing.md).
 
 ## URL
 

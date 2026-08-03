@@ -23,10 +23,19 @@ than to explain.
 
 ## When an agent log opens at all
 
-> **When work is delegated, or when it runs over multiple rounds.**
+> **When work is delegated, or when it runs over multiple rounds — and
+> executing a plan is always multiple rounds. Open the log before the first
+> stage, not after the last.**
 
 Nothing else opens one. A change you make inline gets a line in the plan and no folder.
 Without this rule, three files become the floor for a one-line change.
+
+**Plan execution is called out because it is the case that gets skipped.** A plan
+already has stages, each stage already has a record, and the work feels covered —
+so the run itself ends up with no folder, and nothing anywhere holds *what
+happened in order*: what was tried, what turned out to be wrong mid-run, what the
+gates said at each step. A stage records the outcome of a step; the agent log
+records the run.
 
 ## Vocabulary
 

@@ -212,7 +212,7 @@ YYYY-MM-DD-<slug>/                    ← the issue folder
 
 Where a run is carried out, and where its outcome is recorded. **Execution, not scope.**
 
-- **An agent log opens when work is delegated, or when it runs over multiple rounds.**
+- **An agent log opens when work is delegated, or when it runs over multiple rounds — and executing a plan is always multiple rounds.** Open it before the first stage, not after the last.
   Nothing else opens one.
 - One folder per run: \`NNN_<code>_<name>/\` — \`NNN\` orders (2–5 digits, by value) ·
   \`<code>\` is the **kind** · \`<name>\` describes.

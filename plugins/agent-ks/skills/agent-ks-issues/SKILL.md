@@ -215,7 +215,7 @@ Full contract: [28_plans.md](references/20_sections/28_plans.md).
 
 ### Agent logs — where runs are carried out
 
-**An agent log opens when work is delegated, or when it runs over multiple rounds.**
+**An agent log opens when work is delegated, or when it runs over multiple rounds — and executing a plan is always multiple rounds.** Open it before the first stage, not after the last.
 Nothing else opens one. Work you do inline gets a line in the plan and no folder.
 
 ```

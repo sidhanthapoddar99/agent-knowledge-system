@@ -1,6 +1,6 @@
 ---
 title: "Any file under a plan resolves to the plan — overview.md included"
-status: review
+status: done
 ---
 
 **Decision (2026-08-03, Sid):** *"plans section auto resolution to the overview

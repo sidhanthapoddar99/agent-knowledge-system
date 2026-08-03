@@ -1,6 +1,6 @@
 ---
 title: "Docs and blog accept both URL spellings — the source form redirects to the clean slug"
-status: review
+status: done
 ---
 
 **Decision (2026-08-03, Sid):** a route should resolve whether it is written the

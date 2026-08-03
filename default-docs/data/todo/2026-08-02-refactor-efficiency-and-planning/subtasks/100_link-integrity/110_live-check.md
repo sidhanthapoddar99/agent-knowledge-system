@@ -1,6 +1,6 @@
 ---
 title: "Live check — 12 of 15 worked, and the failures were a different bug"
-status: review
+status: done
 ---
 
 # Overview

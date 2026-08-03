@@ -1,6 +1,6 @@
 ---
-title: "Pointer — dual-slug URL resolution is owned by 2026-06-09-issue-link-resolution"
-status: dropped
+title: "Dual-slug URL resolution — found here, fixed on 2026-06-09-issue-link-resolution"
+status: done
 ---
 
 # Overview
@@ -33,7 +33,7 @@ testing anything in this area.
 
 # Outcomes and Next Steps
 
-**Dropped as a pointer, 2026-08-03 — and the work it points at shipped the same day.**
+**Closed 2026-08-03 — and the work it points at shipped the same day.**
 Both spellings now resolve, the source form 302s to the clean slug, and a
 missing page answers 404 instead of 200. Track it on
 [`05`](../../../2026-06-09-issue-link-resolution/subtasks/05_dual-slug-url-resolution.md).

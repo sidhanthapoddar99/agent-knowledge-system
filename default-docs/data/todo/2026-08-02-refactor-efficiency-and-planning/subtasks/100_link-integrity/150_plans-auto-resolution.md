@@ -1,6 +1,6 @@
 ---
-title: "Pointer — plans auto-resolution is owned by 2026-06-09-issue-link-resolution"
-status: dropped
+title: "Plans auto-resolution — found here, fixed on 2026-06-09-issue-link-resolution"
+status: done
 ---
 
 # Overview
@@ -25,6 +25,6 @@ or any other file leads to the plan itself."*
 
 # Outcomes and Next Steps
 
-**Dropped as a pointer, 2026-08-03 — and the work it points at shipped the same day.**
+**Closed 2026-08-03 — and the work it points at shipped the same day.**
 `overview` under a plan now redirects to the plan page. Track it on
 [`06`](../../../2026-06-09-issue-link-resolution/subtasks/06_plans-auto-resolution.md).

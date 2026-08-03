@@ -216,6 +216,19 @@ just the code. Full record in
   place), while `./assets/…` is **colocated per-doc**, sidebar-ignored, rewritten
   at build to `/content-assets/…`. Ten such folders are in use. The rule must
   state both, and must stop implying that a leading `/` is always wrong.
+- 🟡 **The reason in the skill is the shallow one.** `docs-layout.md:216` gives
+  only the `move` argument — *"a site-absolute link has silently opted out of
+  link maintenance forever"*. True, and it makes the rule sound like a tooling
+  constraint that a better tool would remove. **The real reason is that a
+  relative path is what is TRUE on disk**, and the app renders the filesystem
+  rather than the other way round (project `CLAUDE.md`, *the filesystem is the
+  document*). Two or three lines, above the `move` argument rather than instead
+  of it — an author who understands why does not need the rule enforced.
+- 🟡 **One line in the same block is now stale.** `docs-layout.md:220` says the
+  renderer *"adjusts the URL depth for you"*. That is the depth shift
+  [`120`](./120_dev-and-build-disagree-on-the-base.md) supersedes; it is correct
+  for the built site and wrong in dev. Reword to promise only what survives —
+  prefixes and `.md` stripped, and now both URL spellings accepted.
 - 🟡 **Cross-root portability was never tested.** The "no exception" proof ran
   inside one content root. The six links now crossing `user-guide` ↔ `dev-docs`
   resolve only because every data folder here is named like its `base_url`;

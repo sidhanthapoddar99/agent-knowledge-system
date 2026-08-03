@@ -17,7 +17,7 @@ Before touching anything, orient:
 3. **Scan `comments/`** — check for recent discussion, pushback, pivots.
 4. **Read the subtasks** — understand the breakdown.
 
-For agents, the planned `/issues` skill (see [Using with AI](/user-guide/issues/using-with-ai)) automates this via helper scripts. Today, it's a few file reads.
+For agents, the planned `/issues` skill (see [Using with AI](../using-with-ai)) automates this via helper scripts. Today, it's a few file reads.
 
 ## Advance a subtask
 
@@ -39,7 +39,7 @@ Three ways:
 
 Agents: never mark a subtask `done` directly in autonomous mode — the agent ceiling is the **Review** category. Always go through `review`. **`done` is a human transition** (as is `dropped`, which also requires an explaining comment). Exception: if the work is trivially safe (typo fix, comment update, etc.) and a human has pre-authorised direct closure in the issue prompt.
 
-See [Lifecycle and Review](/user-guide/issues/setup/lifecycle-and-review) for the full rule set.
+See [Lifecycle and Review](../lifecycle-and-review) for the full rule set.
 
 ## Write a comment
 
@@ -56,7 +56,7 @@ comments/
 └── 003_2026-04-21_sidhantha.md     ← new
 ```
 
-Keep the body focused. Long deliberation belongs in a note, not a comment. See [Comments](/user-guide/issues/sub-docs/comments).
+Keep the body focused. Long deliberation belongs in a note, not a comment. See [Comments](../sub-docs/comments).
 
 ## Write an agent-log round file
 
@@ -100,7 +100,7 @@ Commit: df7a2e1. Handing off for review — subtask 02 → `review`.
 
 **Keep failed rounds.** They're more valuable than successes for the next round — set
 `status: dropped` and say what failed in `# Outcome`. The run's conclusive file is
-`01_summary.md` beside `02_working/`. See [Agent Log](/user-guide/issues/sub-docs/agent-log).
+`01_summary.md` beside `02_working/`. See [Agent Log](../sub-docs/agent-log).
 
 ## Add a subtask mid-flight
 
@@ -127,7 +127,7 @@ When you (or an agent) thinks all meaningful work is done:
 3. Flip the **issue-level** status: `open → review`
 4. Write a summary comment or agent-log entry: what landed, what evidence
 
-The issue now shows up on the Review tab (with subtask-debt promotion if `status` still says `open` but subtasks are `review`-flagged). See [List View](/user-guide/issues/ui/list-view) and [Review and Close](/user-guide/issues/workflows/review-and-close).
+The issue now shows up on the Review tab (with subtask-debt promotion if `status` still says `open` but subtasks are `review`-flagged). See [List View](../ui/list-view) and [Review and Close](./review-and-close).
 
 ## Dropping work
 
@@ -150,7 +150,7 @@ The list view shows an Updated date for each issue, derived from git history —
 
 ## See also
 
-- [Lifecycle and Review](/user-guide/issues/setup/lifecycle-and-review) — the full seven-status / four-category model
-- [Review and Close](/user-guide/issues/workflows/review-and-close) — the human side of the handoff
-- [Using with AI](/user-guide/issues/using-with-ai) — agent-specific workflow
-- [Sub-Documents](/user-guide/issues/sub-docs/issue-md) — per-file-type conventions
+- [Lifecycle and Review](../lifecycle-and-review) — the full seven-status / four-category model
+- [Review and Close](./review-and-close) — the human side of the handoff
+- [Using with AI](../using-with-ai) — agent-specific workflow
+- [Sub-Documents](../sub-docs/issue-md) — per-file-type conventions

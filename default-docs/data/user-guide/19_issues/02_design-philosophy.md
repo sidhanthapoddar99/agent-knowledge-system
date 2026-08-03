@@ -90,7 +90,7 @@ Letting each tracker invent its own status names would reintroduce the drift the
 vocabulary exists to kill. Transitions between statuses remain unenforced guidance — it's
 the *set* that's fixed, not the *moves*.
 
-Full treatment in [Lifecycle and Review](/user-guide/issues/setup/lifecycle-and-review).
+Full treatment in [Lifecycle and Review](./lifecycle-and-review).
 
 ### Agent logs as a first-class section
 
@@ -98,7 +98,7 @@ Every issue can have an `agent-log/` folder. Each iteration of an autonomous age
 
 This is what makes long-running AI work **auditable**. The human reviewing a `review`-flagged issue doesn't have to ask "what did the AI try?" — they read the agent log. Failed iterations are kept; they're as informative as successes.
 
-See [Sub-Documents → agent-log](/user-guide/issues/sub-docs/agent-log).
+See [Sub-Documents → agent-log](./sub-docs/agent-log).
 
 ### Subtasks share the issue status vocabulary
 
@@ -113,7 +113,7 @@ unified). That means:
 - AI can complete subtasks autonomously, parking each in `review` for human inspection,
   without ever flipping the parent to `done`
 
-See [Subtasks](/user-guide/issues/sub-docs/subtasks).
+See [Subtasks](./sub-docs/subtasks).
 
 ## When this tracker is a good fit
 
@@ -151,6 +151,6 @@ That's what this is.
 
 ## See also
 
-- [Lifecycle and Review](/user-guide/issues/setup/lifecycle-and-review) — how the seven statuses / four categories and the review handoff work in practice
-- [Sub-Documents → agent-log](/user-guide/issues/sub-docs/agent-log) — iteration discipline
-- [Using with AI](/user-guide/issues/using-with-ai) — the skill + agent workflows
+- [Lifecycle and Review](./lifecycle-and-review) — how the seven statuses / four categories and the review handoff work in practice
+- [Sub-Documents → agent-log](./sub-docs/agent-log) — iteration discipline
+- [Using with AI](./using-with-ai) — the skill + agent workflows

@@ -63,7 +63,7 @@ Status does not appear in this file at all — not its values, not its colours. 
 - **Colors are optional** but useful — they drive badge fills on the list view.
 - **Don't over-specify up front.** It's easier to add values than to remove them once issues use them.
 
-Full schema: [Vocabulary](/user-guide/issues/setup/vocabulary).
+Full schema: [Vocabulary](./settings/vocabulary).
 
 ### Designing the vocabulary
 
@@ -75,7 +75,7 @@ Some guidance:
 | `component` | "Which part of the system?" | Match your team's mental model — `frontend / backend / infra`, or `auth / payments / profile`, etc. |
 | `labels` | "Cross-cutting tags" | Type tags (`bug`, `feature`), quality (`good-first-issue`), external dependencies (`blocked-external`). **Never execution state** — that is a status |
 
-Stick to the four enum fields above. The schema is intentionally narrow — `priority` + `status` are the ordering signals; `labels` carry composite categorical work; `updated` is derived from git. Don't add scheduling or release-bucket fields without an explicit policy reversal — they tend to rot under continuous AI-driven shipping. See [Design Philosophy](/user-guide/issues/design-philosophy).
+Stick to the four enum fields above. The schema is intentionally narrow — `priority` + `status` are the ordering signals; `labels` carry composite categorical work; `updated` is derived from git. Don't add scheduling or release-bucket fields without an explicit policy reversal — they tend to rot under continuous AI-driven shipping. See [Design Philosophy](./design-philosophy).
 
 ### Preset views
 
@@ -89,7 +89,7 @@ Optional but useful. Add canned filter views to the tracker:
 ]
 ```
 
-See [Vocabulary — preset views](/user-guide/issues/setup/vocabulary#preset-views).
+See [Vocabulary — preset views](./settings/vocabulary#preset-views).
 
 ### Authors
 
@@ -219,7 +219,7 @@ Each tracker has its own vocabulary. A bug tracker might have `labels: [reproduc
 
 ## See also
 
-- [Vocabulary](/user-guide/issues/setup/vocabulary) — full root `settings.json` schema
+- [Vocabulary](./settings/vocabulary) — full root `settings.json` schema
 - [Page Configuration](/user-guide/configuration/site/page) — `site.yaml pages:` details
 - [Navbar Configuration](/user-guide/configuration/navbar) — adding nav entries
 - [Drafts](/user-guide/writing-content/drafts) — draft flag semantics at both levels

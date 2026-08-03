@@ -30,7 +30,7 @@ All metadata for the issue lives in the sibling `settings.json`. `issue.md` is p
 
 An issue may also carry a root-level `glossary.md` — rendered as-is on the **Glossary**
 panel (pure author markdown, never generated). Full treatment — suggested skeleton,
-per-section colour legends, the Guide-vs-Glossary boundary — in [Glossary](/user-guide/issues/sub-docs/glossary).
+per-section colour legends, the Guide-vs-Glossary boundary — in [Glossary](./glossary).
 
 ## Example
 
@@ -69,7 +69,7 @@ No hard limit — but if `issue.md` is drifting past a few hundred lines of pros
 
 Headings in `issue.md` get anchor IDs (`#goal`, `#context`, `#success-criteria`) the same as any other markdown. Other files in the issue folder (comments, subtasks) can link to them with relative fragments — `[goal](../issue.md#goal)` — though in practice the cross-links are usually maintained at the URL level (`/todo/<id>#goal`).
 
-When rendering the **Comprehensive** tab (see [Detail View](/user-guide/issues/ui/detail-view)), all heading IDs are prefixed to prevent collisions with subtask heading IDs — but on the **Overview** tab and direct URL, IDs stay bare.
+When rendering the **Comprehensive** tab (see [Detail View](../ui/detail-view)), all heading IDs are prefixed to prevent collisions with subtask heading IDs — but on the **Overview** tab and direct URL, IDs stay bare.
 
 ## Assets
 
@@ -84,11 +84,11 @@ Markdown files and `settings.json` are never served raw through `/content-assets
 
 For an AI agent picking up an issue, **read `issue.md` first**. It's the orientation document — everything else (comments, subtasks, notes, agent-log) makes sense in its context. Without reading the goal, subtasks look like arbitrary work items.
 
-See [Using with AI](/user-guide/issues/using-with-ai) for the recommended read order.
+See [Using with AI](../using-with-ai) for the recommended read order.
 
 ## See also
 
-- [Comments](/user-guide/issues/sub-docs/comments) — progress / discussion thread
-- [Subtasks](/user-guide/issues/sub-docs/subtasks) — the work breakdown
-- [Notes](/user-guide/issues/sub-docs/notes) — supporting design docs
-- [Agent Log](/user-guide/issues/sub-docs/agent-log) — AI iteration audit trail
+- [Comments](./comments) — progress / discussion thread
+- [Subtasks](./subtasks) — the work breakdown
+- [Notes](./notes) — supporting design docs
+- [Agent Log](./agent-log) — AI iteration audit trail

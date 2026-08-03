@@ -97,7 +97,7 @@ migrate-me warning until you rename it.) If `status` is missing, the default is 
 | Closed | `done` | Verified, shipped | `review → done` by a human |
 | Closed | `dropped` | Decided not to do | `→ dropped` by a human, with a reason in a comment |
 
-Same vocabulary as issue-level status. See [Lifecycle and Review](/user-guide/issues/setup/lifecycle-and-review)
+Same vocabulary as issue-level status. See [Lifecycle and Review](../lifecycle-and-review)
 for the full model — especially the **review handoff** and **review-debt promotion** rules
 (a parent issue with any subtask in the Review category surfaces on the Review tab even if
 its own status isn't).
@@ -133,7 +133,7 @@ Three common paths:
 
 There's a built-in endpoint for cycling statuses in the UI — `POST /__editor/subtask-toggle` — so clicking a subtask's status icon in the detail view progresses through the happy path `open → in-progress → review → done → open`. (The other statuses — `blocked`, `input-needed`, `dropped` — are set by editing the frontmatter.) Agents can also edit the frontmatter directly.
 
-See [Work an Issue](/user-guide/issues/workflows/work-an-issue) and [Review and Close](/user-guide/issues/workflows/review-and-close) for step-by-step guides.
+See [Work an Issue](../workflows/work-an-issue) and [Review and Close](../workflows/review-and-close) for step-by-step guides.
 
 ## Sub-doc URL
 
@@ -153,6 +153,6 @@ The Comprehensive tab on the parent issue concatenates every subtask body with i
 
 ## See also
 
-- [Lifecycle and Review](/user-guide/issues/setup/lifecycle-and-review) — how the seven statuses interact at issue + subtask level
-- [Work an Issue](/user-guide/issues/workflows/work-an-issue) — adding subtasks, transitioning state
-- [Using with AI](/user-guide/issues/using-with-ai) — how agents are expected to handle subtasks
+- [Lifecycle and Review](../lifecycle-and-review) — how the seven statuses interact at issue + subtask level
+- [Work an Issue](../workflows/work-an-issue) — adding subtasks, transitioning state
+- [Using with AI](../using-with-ai) — how agents are expected to handle subtasks

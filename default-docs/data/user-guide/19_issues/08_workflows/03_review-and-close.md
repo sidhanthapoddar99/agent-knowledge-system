@@ -17,7 +17,7 @@ In a fully-autonomous tracker, AI would close its own work. Two problems:
 
 The review state is a deliberate trust boundary. The AI's claim is "I think this is done." The human's job is to **verify**. Without this step, you're either over-trusting or babysitting — no middle ground.
 
-See [Design Philosophy](/user-guide/issues/design-philosophy) for the full argument.
+See [Design Philosophy](../design-philosophy) for the full argument.
 
 ## When something shows up in your queue
 
@@ -26,7 +26,7 @@ Navigate to the tracker's list view → **Review tab**. This shows:
 - Issues with `status: review`
 - Issues with `status: open` but one or more subtasks in `review` (subtask-debt promotion)
 
-The count on the tab tells you how much human attention is pending. See [List View](/user-guide/issues/ui/list-view).
+The count on the tab tells you how much human attention is pending. See [List View](../ui/list-view).
 
 ## Reviewing an issue
 
@@ -135,7 +135,7 @@ Hard to investigate. Flip `review → open`, ask in a comment: *"Log says X, but
 
 ### No log written at all
 
-"Cannot review without audit trail. Flip to `open` with a comment requesting agent-log entry." Do not accept blind. See [Agent Log](/user-guide/issues/sub-docs/agent-log).
+"Cannot review without audit trail. Flip to `open` with a comment requesting agent-log entry." Do not accept blind. See [Agent Log](../sub-docs/agent-log).
 
 ## Dropping during review
 
@@ -147,7 +147,7 @@ If you realise the issue shouldn't proceed at all:
 
 ## See also
 
-- [Lifecycle and Review](/user-guide/issues/setup/lifecycle-and-review) — the seven-status / four-category model in detail
-- [Work an Issue](/user-guide/issues/workflows/work-an-issue) — the other side of the handoff
-- [Using with AI](/user-guide/issues/using-with-ai) — how agents are trained to respect the review boundary
-- [Agent Log](/user-guide/issues/sub-docs/agent-log) — what to read first, every review
+- [Lifecycle and Review](../lifecycle-and-review) — the seven-status / four-category model in detail
+- [Work an Issue](./work-an-issue) — the other side of the handoff
+- [Using with AI](../using-with-ai) — how agents are trained to respect the review boundary
+- [Agent Log](../sub-docs/agent-log) — what to read first, every review

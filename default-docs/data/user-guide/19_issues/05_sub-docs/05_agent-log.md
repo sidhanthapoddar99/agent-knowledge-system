@@ -28,7 +28,7 @@ read.
 | **New todos** the run generated | Its own list of micro-steps |
 
 **The line: a subtask defines the work, the agent log carries it out.** Scope in one,
-execution in the other. And the order the rounds run in belongs to [Plans](/user-guide/issues/sub-docs/plans) — an
+execution in the other. And the order the rounds run in belongs to [Plans](./plans) — an
 agent log that lists its rounds as a schedule is re-deriving the plan.
 
 ## When an agent log opens at all
@@ -592,11 +592,11 @@ Two examples, deliberately: one alone sets a floor as much as a ceiling.
 
 ## What does NOT belong here
 
-- **The scope of the work** — that is the [subtask](/user-guide/issues/sub-docs/subtasks).
-- **The order the rounds run in** — that is the [plan](/user-guide/issues/sub-docs/plans).
+- **The scope of the work** — that is the [subtask](./subtasks).
+- **The order the rounds run in** — that is the [plan](./plans).
 - **Human discussion** — `comments/`, the flat evolution log.
 - **Deliberation and options-weighing** — `brainstorm/`.
-- **Durable facts the agent learns** — [Agent Memory](/user-guide/issues/sub-docs/agent-memory); the log records
+- **Durable facts the agent learns** — [Agent Memory](./agent-memory); the log records
   *what happened*, memory holds *what is still true*.
 - **Micro-progress pings** — they belong in the next iteration file, or nowhere.
 
@@ -614,8 +614,8 @@ Two examples, deliberately: one alone sets a floor as much as a ceiling.
 
 ## See also
 
-- [Plans](/user-guide/issues/sub-docs/plans) — where order lives
-- [Subtasks](/user-guide/issues/sub-docs/subtasks) — the scope the log executes against
-- [Agent Memory](/user-guide/issues/sub-docs/agent-memory) — what is still true, across runs
-- [Lifecycle and Review](/user-guide/issues/setup/lifecycle-and-review) — how the log feeds the review handoff
-- [Using with AI](/user-guide/issues/using-with-ai) — agent discipline
+- [Plans](./plans) — where order lives
+- [Subtasks](./subtasks) — the scope the log executes against
+- [Agent Memory](./agent-memory) — what is still true, across runs
+- [Lifecycle and Review](../lifecycle-and-review) — how the log feeds the review handoff
+- [Using with AI](../using-with-ai) — agent discipline

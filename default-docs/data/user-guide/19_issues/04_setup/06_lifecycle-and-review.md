@@ -135,7 +135,7 @@ The list page filters by **category**, so the tabs read something like:
 Active (13)   In Progress (4)   Review (5 — includes 2 with review subtasks)   Not Started (6)   Closed (41)   All
 ```
 
-See [List View](/user-guide/issues/ui/list-view) for the full index-page tour.
+See [List View](./ui/list-view) for the full index-page tour.
 
 ## Typical issue lifecycle
 
@@ -194,13 +194,13 @@ Leave the folder on disk — the audit trail is valuable. Don't `rm -rf` dropped
 
 The rule: the lifecycle status is the single source of truth for where a piece of work
 stands. Labels are for genuinely cross-cutting tags (`bug`, `feature`, `docs`,
-`blocked-external`, …), and **order is a [plan](/user-guide/issues/sub-docs/plans)**, never a field.
+`blocked-external`, …), and **order is a [plan](../sub-docs/plans)**, never a field.
 
 ## See also
 
-- [Design Philosophy](/user-guide/issues/design-philosophy) — why the label-vs-status doctrine was revised for in-progress/blocked
-- [Subtasks](/user-guide/issues/sub-docs/subtasks) — per-subtask status handling
-- [Agent Log](/user-guide/issues/sub-docs/agent-log) — what iterations capture and how they support review
-- [List View](/user-guide/issues/ui/list-view) — category tabs, review-debt promotion in the UI
-- [Using with AI](/user-guide/issues/using-with-ai) — the full agent operating manual
-- [Review and Close workflow](/user-guide/issues/workflows/review-and-close) — the human's side of the handoff
+- [Design Philosophy](./design-philosophy) — why the label-vs-status doctrine was revised for in-progress/blocked
+- [Subtasks](./sub-docs/subtasks) — per-subtask status handling
+- [Agent Log](./sub-docs/agent-log) — what iterations capture and how they support review
+- [List View](./ui/list-view) — category tabs, review-debt promotion in the UI
+- [Using with AI](./using-with-ai) — the full agent operating manual
+- [Review and Close workflow](./workflows/review-and-close) — the human's side of the handoff

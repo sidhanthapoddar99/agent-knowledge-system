@@ -16,8 +16,8 @@ Where `agent-log/` records *what happened*, agent-memory holds *what is still tr
 
 | Holds | Does not hold |
 |---|---|
-| What is **true and binding** for this issue | **Decisions.** Those are the issue's [Notes](/user-guide/issues/sub-docs/notes) |
-| **How we got here** — what was tried, what landed, what was parked | **The plan.** Order is [Plans](/user-guide/issues/sub-docs/plans) |
+| What is **true and binding** for this issue | **Decisions.** Those are the issue's [Notes](./notes) |
+| **How we got here** — what was tried, what landed, what was parked | **The plan.** Order is [Plans](./plans) |
 | Gotchas, environment quirks, dead approaches, expensive-to-find pointers | Anything the repo, git history, `issue.md` or notes already record |
 | An **index** that routes | Any content inside that index |
 
@@ -48,7 +48,7 @@ corrected rather than left to contradict.
 ### There is no live bucket, and nothing replaces it
 
 What is left, in what order, and who is blocked is the **plan's** job
-([Plans](/user-guide/issues/sub-docs/plans)) — one click away in the sidebar, where plans list in plain
+([Plans](./plans)) — one click away in the sidebar, where plans list in plain
 ascending prefix order and the active one is marked in bold rather than moved.
 
 The temptation is to let `memory.md` grow a "current state" section to fill the gap.
@@ -124,8 +124,8 @@ else follows the normal ordering. Each file gets its own URL:
 
 ## See also
 
-- [Plans](/user-guide/issues/sub-docs/plans) — what's left, in what order, and who's blocked
-- [Agent Log](/user-guide/issues/sub-docs/agent-log) — what happened (vs what's still true)
-- [Subtasks](/user-guide/issues/sub-docs/subtasks) — the source of truth for detail
-- [Notes](/user-guide/issues/sub-docs/notes) — the decisions; same free-form feel, different owner and durability
-- [Using with AI](/user-guide/issues/using-with-ai) — agent discipline
+- [Plans](./plans) — what's left, in what order, and who's blocked
+- [Agent Log](./agent-log) — what happened (vs what's still true)
+- [Subtasks](./subtasks) — the source of truth for detail
+- [Notes](./notes) — the decisions; same free-form feel, different owner and durability
+- [Using with AI](../using-with-ai) — agent discipline

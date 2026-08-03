@@ -85,6 +85,33 @@ const measure = () => page.evaluate(() => {
     // second page load, or after the server is closed, is measuring something
     // else and will happily certify a dead check.
     mainTitleSize: size('.issue-main__title'),
+    // THE INDENT. A nested row's first content must start at the same x as its
+    // parent's first content — one step of exactly one glyph plus one gap.
+    //
+    // Asserted by MEASUREMENT rather than by summing the CSS, because every
+    // term that broke it was invisible in the arithmetic: the list's own
+    // padding, the guide-line border (a border occupies layout), and a chevron
+    // whose rotated box reports a different width than it lays out with.
+    indent: (() => {
+      const x = (el) => (el ? +el.getBoundingClientRect().left.toFixed(1) : null);
+      // Only an OPEN subgroup can be measured: a collapsed one is display:none
+      // and every rect reads 0, which compares equal to another 0 and would
+      // pass this check over two boxes that were never laid out.
+      const pick = [...document.querySelectorAll('.issue-sidebar__subgroup')]
+        .map((d) => ({
+          folder: d.querySelector(':scope > .issue-sidebar__subgroup-heading'),
+          row: d.querySelector(':scope > .issue-sidebar__items--nested > .issue-sidebar__item'),
+        }))
+        .find(({ folder, row }) =>
+          folder?.querySelector('.issue-sidebar__num') && row?.querySelector('.issue-sidebar__num')
+          && x(folder) > 0 && x(row) > 0);
+      return {
+        parentNum: x(pick?.folder.querySelector('.issue-sidebar__num')),
+        childNum: x(pick?.row.querySelector('.issue-sidebar__num')),
+        parentRow: x(pick?.folder),
+        childText: pick?.row.textContent.trim().slice(0, 20) ?? null,
+      };
+    })(),
     // CONTROL for the glyph check: a trailing glyph is deliberately NOT in the
     // column, so a comparison that finds everything equal is caught.
     trailingGlyph: (() => {
@@ -139,6 +166,19 @@ say('at least two leading glyph kinds were on the page', glyphs.length >= 2,
   JSON.stringify(seen.glyphs));
 say('every leading glyph occupies the same width',
   new Set(glyphs.map(([, w]) => w)).size === 1, JSON.stringify(seen.glyphs));
+// The indent. `parentNum` and `childNum` must both exist first — two nulls
+// compare equal, which would pass on a page where neither row rendered.
+const ind = seen.indent;
+say('found a nested row under a numbered parent to measure',
+  ind.parentNum !== null && ind.childNum !== null, JSON.stringify(ind));
+say("a nested row's number starts at its parent's number",
+  ind.parentNum !== null && ind.parentNum === ind.childNum, JSON.stringify(ind));
+// CONTROL: the parent ROW itself starts further left than its own number —
+// so "same x" is a real constraint and not two reads of the same box.
+say('CONTROL the row and its number are not the same x',
+  ind.parentRow !== null && ind.parentRow !== ind.parentNum,
+  `row ${ind.parentRow} vs num ${ind.parentNum}`);
+
 say('CONTROL a trailing element is NOT in the glyph column',
   seen.trailingGlyph !== null && seen.trailingGlyph !== glyphs[0]?.[1],
   `glyph ${glyphs[0]?.[1]} vs count chip ${seen.trailingGlyph}`);

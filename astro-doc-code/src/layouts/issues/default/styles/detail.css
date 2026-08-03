@@ -36,6 +36,18 @@
      kind of row it was. The BOX is now one width for all of them; each drawing
      keeps its own size and is centred inside it. Change it here, not per icon. */
   --sidebar-glyph: 14px;
+  /* The gap between a row's parts, and — the reason it is a variable — the unit
+     the tree indents by. A nested list steps in by exactly one glyph plus one
+     gap, so a child's first content lands where its parent's first content
+     lands, directly under it. Two hard-coded numbers cannot hold that: the
+     indent was 0.5rem against a 14px + 0.3rem row, so every level drifted a
+     little further left of the column it was supposed to line up with. */
+  --sidebar-row-gap: 0.3rem;
+  /* The vertical guide line down a list. It is a BORDER, so it occupies layout
+     — which is why the indent below subtracts it rather than pretending it is
+     decoration. One pixel, and it was one pixel of misalignment. */
+  --sidebar-rule: 1px;
+  --sidebar-indent: calc(var(--sidebar-glyph) + var(--sidebar-row-gap));
   border-right: 1px solid var(--color-border-default);
   padding: 1.25rem 0.75rem;
   position: sticky;
@@ -113,13 +125,13 @@
   flex-direction: column;
   gap: 0.05rem;
   padding: 0.15rem 0 0.25rem 0.4rem;
-  border-left: 1px solid var(--color-border-default);
+  border-left: var(--sidebar-rule) solid var(--color-border-default);
   margin-left: 0.2rem;
 }
 .issue-sidebar__item {
   display: flex;
   align-items: center;
-  gap: 0.3rem;
+  gap: var(--sidebar-row-gap);
   width: 100%;
   padding: 0.2rem 0.2rem;
   background: transparent;
@@ -238,7 +250,7 @@
 .issue-sidebar__subgroup-heading {
   display: flex;
   align-items: center;
-  gap: 0.3rem;
+  gap: var(--sidebar-row-gap);
   padding: 0.2rem 0.2rem;
   font-size: var(--ui-text-micro);
   color: var(--color-text-secondary);
@@ -253,7 +265,21 @@
 }
 .issue-sidebar__subgroup-name { flex: 1; letter-spacing: 0; font-weight: 600; }
 .issue-sidebar__items--nested {
-  margin-left: 0.5rem;
+  /* ONE value for the step, which is why the list's own left padding goes to
+     zero here. It inherits `padding-left` from `.issue-sidebar__items`, so the
+     real indent was margin + padding and the arithmetic could never line up
+     with a rule expressed as "one glyph plus one gap" — it silently overshot by
+     the padding on every level. The guide-line border is subtracted for the
+     same reason — a border occupies layout, so it is part of the step whether
+     or not it is decoration.
+
+     Verified by MEASUREMENT, never by the sum:
+     `verification/sidebar-typography/probe.mjs` reads both x-positions off a
+     real engine and asserts they are equal. Every term here (padding, border,
+     a rotated chevron's box) was found that way, and each of them was invisible
+     in the arithmetic. */
+  margin-left: calc(var(--sidebar-indent) - var(--sidebar-rule));
+  padding-left: 0;
 }
 
 /* ===== Main column ===== */

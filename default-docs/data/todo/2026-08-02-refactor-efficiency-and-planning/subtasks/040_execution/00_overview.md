@@ -73,7 +73,7 @@ outside it.** The agent log's three slots became `01_summary.md` / `02_working/`
 rather than a reserved-name set
 ([the numbering spec](../../notes/80_agent-log-numbering-spec.md)). It ships as a
 top-level subtask,
-[number the agent log's own slots](../100_agent-log-slot-numbering.md), rather
+[number the agent log's own slots](../080_presentation-and-numbering/030_agent-log-slot-numbering.md), rather
 than as edits to the twelve subtasks below — a rename that crosses every surface
 at once is one change, and splitting it across the subtasks it happens to touch
 would leave no single place that knows whether it finished.

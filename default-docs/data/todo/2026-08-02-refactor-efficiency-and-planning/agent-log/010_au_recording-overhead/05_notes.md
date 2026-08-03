@@ -30,7 +30,7 @@ late.
 
 ## Caveats on the numbers
 
-Stated in full under "Caveats" in [Audit the efficiency losses](../../subtasks/010_audit-efficiency-losses.md). The
+Stated in full under "Caveats" in [Audit the efficiency losses](../../subtasks/010_initial-research/010_audit-efficiency-losses.md). The
 short version: one project, one window, read-back is proxied rather than
 observed, and the comment-share figure is biased *low* by the classifier — so the
 real ratio is at least as bad as reported.
@@ -40,4 +40,4 @@ real ratio is at least as bad as reported.
 The two brainstorms are the whole risk. The measurement was easy and is done; the
 hard part is a rule that cuts restatement **without** cutting verification, and
 without becoming a word budget. Read the "Two constraints" section of
-[Brainstorm: cutting the recording overhead](../../subtasks/020_brainstorm-efficiency-remedies.md) before proposing anything.
+[Brainstorm: cutting the recording overhead](../../subtasks/010_initial-research/020_brainstorm-efficiency-remedies.md) before proposing anything.

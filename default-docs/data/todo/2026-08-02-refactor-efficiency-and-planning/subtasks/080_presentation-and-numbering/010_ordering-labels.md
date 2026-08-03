@@ -5,7 +5,7 @@ status: done
 
 # Overview
 
-[Reference by link, never by number](../notes/70_reference-by-link-never-by-number.md)
+[Reference by link, never by number](../../notes/70_reference-by-link-never-by-number.md)
 solved one problem and created another: it took the numbers out of link text, and
 **the numbers were useful**. Sid, on why:
 
@@ -31,9 +31,9 @@ reported rather than left to rot.
 # References
 
 - The rule this completes:
-  [reference by link, never by number](../notes/70_reference-by-link-never-by-number.md)
+  [reference by link, never by number](../../notes/70_reference-by-link-never-by-number.md)
 - The round that built it:
-  [ordering labels](../agent-log/020_wf_ship-the-split/02_working/110_ordering-labels.md)
+  [ordering labels](../../agent-log/020_wf_ship-the-split/02_working/110_ordering-labels.md)
 - Where the shared primitives live:
   `plugins/agent-ks/skills/agent-ks-docs/scripts/_links.mjs`
 
@@ -117,7 +117,7 @@ which does not.
 The label grammar is `NN`, `NN/MM`… followed by whitespace and a name. Link text
 that legitimately opens with a bare number and a space — *"2026 retrospective"* —
 matches it. **The control run proved this is real, not theoretical:** the fixture
-line `[2026 retrospective](./70_refs.md)` was reported, exactly as predicted.
+line `[70 retrospective](../70_refs.md)` was reported, exactly as predicted.
 
 An error would block the gate over wording. A warning says what is wrong and
 offers the escape ("reword the link text if the number was never an ordering
@@ -146,7 +146,7 @@ unprefixed folder names.** `working/` had no prefix, so the walk stopped there
 and the label lost the agent log it belonged to; `summary.md` had no prefix at
 all, so it had no ordering identity to label with. Both slots are now numbered —
 `02_working/` and `01_summary.md`
-([the numbering spec](../notes/80_agent-log-numbering-spec.md)) — so the walk no
+([the numbering spec](../../notes/80_agent-log-numbering-spec.md)) — so the walk no
 longer stops early, and the labels above are what the rule as documented here now
 produces. **Derived from the rule, not re-measured against `_links.mjs`.**
 
@@ -167,7 +167,7 @@ one thing to watch when they start being written: the label is now three segment
 index rather than something the sidebar shows as a row to match against. If that
 reads badly in practice it is a one-line change to the walk, and `agent-ks move`
 plus the drift warning make it cheap to make later. Recorded by
-[number the agent log's own slots](./100_agent-log-slot-numbering.md).
+[number the agent log's own slots](./030_agent-log-slot-numbering.md).
 
 ## A second defect this turned up
 

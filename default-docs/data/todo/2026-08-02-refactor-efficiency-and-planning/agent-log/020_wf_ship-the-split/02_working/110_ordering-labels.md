@@ -73,7 +73,7 @@ So `agent-ks check issues` now **warns** when a label disagrees with its target.
 `move` covers the moves it performs; the validator covers a hand `git mv`, an
 editor rename, and a label typed from memory. The pair is what makes the
 convention safe to use, and the decision is recorded at
-[the subtask](../../../subtasks/080_ordering-labels.md).
+[the subtask](../../../subtasks/080_presentation-and-numbering/010_ordering-labels.md).
 
 ## The control run — five cases, and the false positive I predicted
 
@@ -140,7 +140,7 @@ unchanged.
 **No link in this repo carries a label.** The convention ships unused: it is
 optional, so nothing forced a bulk rewrite, and a `--relabel` bulk tool is
 premature before anyone has lived with it. Both are open items on
-[the subtask](../../../subtasks/080_ordering-labels.md).
+[the subtask](../../../subtasks/080_presentation-and-numbering/010_ordering-labels.md).
 
 The consequence to be honest about: the validator's label check has **never
 fired on real content**, only on the control fixture. It is proven to work; it is

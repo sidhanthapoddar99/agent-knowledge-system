@@ -7,9 +7,9 @@ agent: claude
 # Goal
 
 Clear the three remaining open subtasks —
-[`110`](../../../subtasks/110_using-with-ai-page-stale.md),
-[`120`](../../../subtasks/120_config-page-missing-data-dir.md),
-[`130`](../../../subtasks/130_skill-links-checks-the-wrong-tree.md) — and push.
+[`110`](../../../subtasks/090_silent-failure-defects/010_using-with-ai-page-stale.md),
+[`120`](../../../subtasks/090_silent-failure-defects/020_config-page-missing-data-dir.md),
+[`130`](../../../subtasks/090_silent-failure-defects/030_skill-links-checks-the-wrong-tree.md) — and push.
 
 Sid, having been given the three in plain terms and asked what he wanted:
 *"issues-test was a scratch tracker on my disk, delete it / complete the three

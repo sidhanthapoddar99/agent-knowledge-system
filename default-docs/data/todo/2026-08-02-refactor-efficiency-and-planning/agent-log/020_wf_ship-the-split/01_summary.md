@@ -28,7 +28,7 @@ title: "Summary"
 > **Waiting on Sid:** the seven
 > [audit follow-ups](../../subtasks/070_audit-followups/00_overview.md) are all
 > at `open` pending his decision on which to take, plus
-> [`120`](../../subtasks/120_config-page-missing-data-dir.md) — a pre-existing
+> [`120`](../../subtasks/090_silent-failure-defects/020_config-page-missing-data-dir.md) — a pre-existing
 > config entry that fails the validator and builds green anyway, found while
 > gating the release.
 
@@ -107,7 +107,7 @@ Executes against
       link text as `040/100 <name>`, because the sidebar lists by number and a
       name alone cannot be matched against it. Shipped with **two** guards, not
       the one proposed: `move` recomputes it, and the validator warns when it
-      drifts. Scoped at [the subtask](../../subtasks/080_ordering-labels.md)
+      drifts. Scoped at [the subtask](../../subtasks/080_presentation-and-numbering/010_ordering-labels.md)
 
 # Out of Scope
 

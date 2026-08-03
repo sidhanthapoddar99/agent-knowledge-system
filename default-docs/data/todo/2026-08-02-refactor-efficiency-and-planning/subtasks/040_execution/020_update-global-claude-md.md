@@ -22,7 +22,7 @@ schema are updated, and each change names the audit finding it answers.
 # References
 
 - Root causes: [the recording-overhead audit](../../notes/10_efficiency-audit-2026-08-02.md) — "Root cause" table
-- Rules decided by: [Brainstorm: cutting the recording overhead](../020_brainstorm-efficiency-remedies.md) — **gate**
+- Rules decided by: [Brainstorm: cutting the recording overhead](../010_initial-research/020_brainstorm-efficiency-remedies.md) — **gate**
 - The shapes the file must now describe:
   [the agent-log structure](../../notes/20_agent-log-structure.md) ·
   [the plans section](../../notes/50_plans-section-spec.md) ·
@@ -104,7 +104,7 @@ produced-not-ran rule, the plans re-pointing and the no-committed-brief rule are
 all about behaviour rather than filenames.
 
 **This one is owed here rather than in the rename subtask.**
-[Number the agent log's own slots](../100_agent-log-slot-numbering.md) swept the
+[Number the agent log's own slots](../080_presentation-and-numbering/030_agent-log-slot-numbering.md) swept the
 skill, the user-guide, the in-app guide and the fixtures; it could not sweep
 `~/.claude/CLAUDE.md`, which lives outside every repo and needs Sid's word every
 time. So it stays this subtask's, and it is worth its own pass rather than being

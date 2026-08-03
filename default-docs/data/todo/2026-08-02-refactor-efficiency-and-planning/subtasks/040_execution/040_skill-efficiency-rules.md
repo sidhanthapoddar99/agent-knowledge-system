@@ -72,7 +72,7 @@ and no surviving line licenses an essay.
       ([the numbering spec](../../notes/80_agent-log-numbering-spec.md)). The
       half-done-rename argument above applied unchanged, so the sweep ran across
       the whole skill in one pass under
-      [number the agent log's own slots](../100_agent-log-slot-numbering.md)
+      [number the agent log's own slots](../080_presentation-and-numbering/030_agent-log-slot-numbering.md)
 - [x] Delete the four lines that mandate maximal detail (table below)
 - [x] **No superseded wording** — apply [`110`](./110_superseded-wording-sweep.md)
       to this skill as part of the same pass
@@ -112,7 +112,7 @@ with child agent logs for sub-goals at prefix `≥ 100`.
 ([the numbering spec](../../notes/80_agent-log-numbering-spec.md)). This subtask
 shipped the skill with the unprefixed names and a reserved-name rule; the second
 sweep that renamed them is
-[number the agent log's own slots](../100_agent-log-slot-numbering.md). Nothing
+[number the agent log's own slots](../080_presentation-and-numbering/030_agent-log-slot-numbering.md). Nothing
 about what the three slots hold changed, which is why it was a sweep and not a
 rewrite.
 
@@ -261,7 +261,7 @@ soft and that is where the duplication will regrow.
 lines) and ask, against the new skill: what would each file have been? Roughly
 one agent log note plus one findings list is the target — and the defect that run
 found must still be recorded, or the rules cut the wrong thing. This is
-[the back-test](../020_brainstorm-efficiency-remedies.md).
+[the back-test](../010_initial-research/020_brainstorm-efficiency-remedies.md).
 
 **Then the opposite case.** Confirm the new rules do not shrink a genuinely large
 stage. A rule that flattens everything to the same small size is the same bug

@@ -44,7 +44,7 @@ and a fresh plan can be scaffolded with one command.
 - [x] Framework: **the Subtasks column** — resolve `subtasks:` refs, group by the
       `category` they already carry, count. Reuse `CATEGORIES` and the existing
       status colours; add nothing.
-      **Removed 2026-08-03** — see [the plan table rework](../090_plan-table-rework.md).
+      **Removed 2026-08-03** — see [the plan table rework](../080_presentation-and-numbering/020_plan-table-rework.md).
       The refs are still resolved; they render as named chips, not a tally
 - [x] Framework: **the active-plan marker** — a `Plans` sidebar group with the
       active plan (highest not `done`/`dropped`, derived at render, never
@@ -123,7 +123,7 @@ milestones), so a genuinely new folder is still checked.
 
 > [!WARNING]
 > **Re-check that detector against the 2026-08-03 numbering
-> ([number the agent log's own slots](../100_agent-log-slot-numbering.md)).** The
+> ([number the agent log's own slots](../080_presentation-and-numbering/030_agent-log-slot-numbering.md)).** The
 > new shape's first slot is `01_summary.md`, and the retired six-slot shape had a
 > file of **exactly that name**. Any detector keying on a `0N_` prefix rather
 > than on the specific retired names (`00_goal`, `02_task_list`, `05_notes`,

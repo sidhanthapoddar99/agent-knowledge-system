@@ -15,7 +15,7 @@ plan in the right place and knows which one is active.
 
 # References
 
-- Shape: [Brainstorm: the plans section](../030_brainstorm-plans-section.md) — **gate**
+- Shape: [Brainstorm: the plans section](../010_initial-research/030_brainstorm-plans-section.md) — **gate**
 - Implementation it documents: [Code the plans section](./010_code-the-plans-section.md)
 - Bundled twin that must stay in sync:
   [Docs: user-guide + bundled guide](./050_docs-update-plans-section.md)

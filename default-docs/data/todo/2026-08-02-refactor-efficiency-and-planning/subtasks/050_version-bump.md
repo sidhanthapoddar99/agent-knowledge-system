@@ -19,7 +19,7 @@ marketplace listing match reality, and a consumer on the old content format is
 > vocabulary: the agent log's three slots gained numeric prefixes and the
 > child-log rule became a prefix comparison
 > ([the numbering spec](../notes/80_agent-log-numbering-spec.md)), shipped by
-> [number the agent log's own slots](./100_agent-log-slot-numbering.md) with its
+> [number the agent log's own slots](./080_presentation-and-numbering/030_agent-log-slot-numbering.md) with its
 > own converter. Two breaking changes behind one gate is what the gate is for;
 > splitting them stops the same consumer twice.
 >

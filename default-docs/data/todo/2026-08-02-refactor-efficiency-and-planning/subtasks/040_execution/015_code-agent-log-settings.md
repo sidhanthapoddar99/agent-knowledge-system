@@ -67,7 +67,7 @@ that the discriminator is arithmetic the filesystem carries rather than a name
 list only the code knows, and the sidebar's *pin summary first* rule goes with
 it. Spec: [the numbering spec](../../notes/80_agent-log-numbering-spec.md).
 Execution, including the loader constant, the validator and the migration:
-[number the agent log's own slots](../100_agent-log-slot-numbering.md). **No
+[number the agent log's own slots](../080_presentation-and-numbering/030_agent-log-slot-numbering.md). **No
 open work is carried here** — the status read path this subtask shipped is
 unaffected.
 
@@ -78,7 +78,7 @@ unaffected.
 > defect in what is below.** The loader told a slot from a child agent log by a
 > **reserved-name set**; that is now a **prefix comparison**
 > ([the numbering spec](../../notes/80_agent-log-numbering-spec.md)), carried out
-> by [number the agent log's own slots](../100_agent-log-slot-numbering.md).
+> by [number the agent log's own slots](../080_presentation-and-numbering/030_agent-log-slot-numbering.md).
 > Everything else here — the status read path, the colours, the four verified
 > fixtures, the proved-able-to-fail validator — is untouched by it.
 

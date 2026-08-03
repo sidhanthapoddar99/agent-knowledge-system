@@ -99,7 +99,7 @@ cap **404s**.
 **The harness asserts those three by path, so confirm it was repointed with the
 2026-08-03 rename** to `01_summary.md` / `02_working/` / `03_debrief/` — the
 rename is
-[number the agent log's own slots](../100_agent-log-slot-numbering.md), whose
+[number the agent log's own slots](../080_presentation-and-numbering/030_agent-log-slot-numbering.md), whose
 todo list does not name this harness. Same class of edit as the one-path repoint
 the fixture consolidation already cost it, below, and it fails loudly if missed.
 

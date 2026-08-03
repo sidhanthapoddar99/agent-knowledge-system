@@ -15,15 +15,15 @@ its own page URL the way a browser does, and checking the target exists.
 | `user-guide` | 667 | **243** | 36% |
 | `dev-docs` | 214 | **70** | 33% |
 | `blog` | 7 | **4** | 57% |
-| `user-guide/issues` | 210 | 0 | — fixed in [`140`](./140_user-guide-relative-links-404.md) |
+| `user-guide/issues` | 210 | 0 | — fixed in [`140`](./030_user-guide-relative-links-404.md) |
 
 **Done when** every section reads 0, and a check in `agent-ks` fails on a new one.
 
 # References
 
 - The section already fixed, and the method that measured it:
-  [`140`](./140_user-guide-relative-links-404.md)
-- The round that found it: [0.2.1](../agent-log/020_wf_ship-the-split/02_working/180_release-0-2-1.md)
+  [`140`](./030_user-guide-relative-links-404.md)
+- The round that found it: [0.2.1](../../agent-log/020_wf_ship-the-split/02_working/180_release-0-2-1.md)
 - The checker to model it on:
   `plugins/agent-ks/skills/agent-ks-docs/scripts/check-skill-links.mjs`
 
@@ -37,7 +37,7 @@ its own page URL the way a browser does, and checking the target exists.
       record of what someone thought at the time; a link that rotted because its
       target was deleted is **history**, not a bug
 - [ ] Fix `user-guide` (243) and `dev-docs` (70) — the same scripted
-      root-relative rewrite as [`140`](./140_user-guide-relative-links-404.md),
+      root-relative rewrite as [`140`](./030_user-guide-relative-links-404.md),
       which took minutes
 - [ ] `dev-docs` carries a second, different defect: absolute links to a `/docs/…`
       prefix that no longer exists (`/docs/architecture/parser/overview`). That is
@@ -49,7 +49,7 @@ its own page URL the way a browser does, and checking the target exists.
 - [ ] **Write the checker**, wired in as `agent-ks check links`. Resolve rendered
       `href`s against `dist/`, and **fail loudly when `dist/` is absent** rather
       than passing — a gate that cannot see anything must not report clean
-      ([`130`](./130_skill-links-checks-the-wrong-tree.md) is the precedent, twice)
+      ([`130`](../090_silent-failure-defects/030_skill-links-checks-the-wrong-tree.md) is the precedent, twice)
 - [ ] Control-test it: a deliberately broken link fails it, removing that link
       returns it to zero
 
@@ -93,8 +93,8 @@ Three checks run over this repo and **none looks at links inside `data/`**:
 A 36% failure rate in the user guide survived because it is invisible from the
 inside: every page renders, every link is styled like a link, and only clicking
 one tells you. Same shape as
-[the empty section](./120_config-page-missing-data-dir.md) and
-[the gate reading the wrong tree](./130_skill-links-checks-the-wrong-tree.md).
+[the empty section](../090_silent-failure-defects/020_config-page-missing-data-dir.md) and
+[the gate reading the wrong tree](../090_silent-failure-defects/030_skill-links-checks-the-wrong-tree.md).
 
 ## The measurement, written down so it can be repeated
 

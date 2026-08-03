@@ -207,7 +207,7 @@ restructured old folders would rewrite the record rather than migrate it.
 > against: the retired six-slot folders are still left exactly where they are,
 > and what moves is only the shape this issue itself introduced days earlier.
 > It ships as `0.2.0_agent-log-slot-numbering.py` under
-> [number the agent log's own slots](../100_agent-log-slot-numbering.md), not
+> [number the agent log's own slots](../080_presentation-and-numbering/030_agent-log-slot-numbering.md), not
 > here — this script is a text rewrite of frontmatter values and is already
 > verified idempotent, and folding a link-aware folder rename into it would put
 > two unrelated failure modes behind one command.
@@ -323,7 +323,7 @@ still needs no migration. *New* structure does, because the three slots were
 renumbered after this script shipped
 ([the numbering spec](../../notes/80_agent-log-numbering-spec.md)). That is a
 separate script in a separate subtask
-([number the agent log's own slots](../100_agent-log-slot-numbering.md)); see the
+([number the agent log's own slots](../080_presentation-and-numbering/030_agent-log-slot-numbering.md)); see the
 callout under *Scope held* for why the two are not merged.
 
 ## Blast radius — counted
@@ -338,7 +338,7 @@ re-run detect, expect 0.
 ## Not in this script
 
 - `agent-memory/plans/` → `plans/`. Sid migrates the one live consumer by hand
-  ([decided](../030_brainstorm-plans-section.md)). Nothing automated, nothing
+  ([decided](../010_initial-research/030_brainstorm-plans-section.md)). Nothing automated, nothing
   maintained.
 - The `MILESTONE_STATUSES` set itself — deleting it from `check.mjs` is part of
   [`015`](./015_code-agent-log-settings.md), not a content migration.

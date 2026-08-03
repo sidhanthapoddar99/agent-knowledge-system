@@ -35,10 +35,10 @@ times this week: **a surface that looks correct because nothing checks it.**
 
 | Subtask | State |
 |---|---|
-| [the ordering label](../../../subtasks/080_ordering-labels.md) | shipped; no backfill, by Sid's decision |
-| [the plan table rework](../../../subtasks/090_plan-table-rework.md) | shipped; one item waiting on Sid's eyes |
-| [agent-log slot numbering](../../../subtasks/100_agent-log-slot-numbering.md) | shipped; screenshot recapture waiting on Sid |
-| [the using-with-AI page](../../../subtasks/110_using-with-ai-page-stale.md) | **open** — found stale in four independent ways |
+| [the ordering label](../../../subtasks/080_presentation-and-numbering/010_ordering-labels.md) | shipped; no backfill, by Sid's decision |
+| [the plan table rework](../../../subtasks/080_presentation-and-numbering/020_plan-table-rework.md) | shipped; one item waiting on Sid's eyes |
+| [agent-log slot numbering](../../../subtasks/080_presentation-and-numbering/030_agent-log-slot-numbering.md) | shipped; screenshot recapture waiting on Sid |
+| [the using-with-AI page](../../../subtasks/090_silent-failure-defects/010_using-with-ai-page-stale.md) | **open** — found stale in four independent ways |
 
 ## Things proposed but NOT done
 

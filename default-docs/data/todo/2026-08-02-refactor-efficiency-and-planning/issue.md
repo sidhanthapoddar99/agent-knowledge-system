@@ -35,9 +35,9 @@ The cost is real and compounding, not theoretical:
 
 | Stage | Subtask | Output |
 |---|---|---|
-| Diagnose | [Audit the efficiency losses](./subtasks/010_audit-efficiency-losses.md) ✅ | The measured audit — **done** |
-| Decide | [Brainstorm: cutting the recording overhead](./subtasks/020_brainstorm-efficiency-remedies.md) | A proportionality rule that survives contact with a real run |
-| Decide | [Brainstorm: the plans section](./subtasks/030_brainstorm-plans-section.md) | The shape of `plans/` as a real section — **TBD, this is the open design** |
+| Diagnose | [Audit the efficiency losses](./subtasks/010_initial-research/010_audit-efficiency-losses.md) ✅ | The measured audit — **done** |
+| Decide | [Brainstorm: cutting the recording overhead](./subtasks/010_initial-research/020_brainstorm-efficiency-remedies.md) | A proportionality rule that survives contact with a real run |
+| Decide | [Brainstorm: the plans section](./subtasks/010_initial-research/030_brainstorm-plans-section.md) | The shape of `plans/` as a real section — **TBD, this is the open design** |
 | Execute | [Execution](./subtasks/040_execution/00_overview.md) | Framework + CLI + skills + docs + the consumer-side fix |
 | Ship | [Version bump to 0.7.0](./subtasks/050_version-bump.md) | `agent-ks` 0.7.0 |
 

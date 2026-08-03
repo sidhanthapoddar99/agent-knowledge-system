@@ -37,7 +37,7 @@ findings note has one natural narrative unit, and this file is it.
 
 Recorded as a deliberate choice, not an omission — and noted because it is
 exactly the convention under revision in
-[Brainstorm: cutting the recording overhead](../../subtasks/020_brainstorm-efficiency-remedies.md). Total for this activity: ~150
+[Brainstorm: cutting the recording overhead](../../subtasks/010_initial-research/020_brainstorm-efficiency-remedies.md). Total for this activity: ~150
 lines against a 1,928-line comparator.
 
 ## Status

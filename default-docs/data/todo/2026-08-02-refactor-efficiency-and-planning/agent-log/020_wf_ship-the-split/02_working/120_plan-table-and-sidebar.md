@@ -102,4 +102,4 @@ be worse than saying so.
 Whether a six-column table reads well on Sid's screen. Everything above says the
 markup is what was asked for; only Sid can say the result is legible. That is
 the open item on
-[the subtask](../../../subtasks/090_plan-table-rework.md).
+[the subtask](../../../subtasks/080_presentation-and-numbering/020_plan-table-rework.md).

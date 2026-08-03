@@ -14,7 +14,7 @@ the logs were earning their cost. The framing that mattered: a log is a working
 space and a set of notes, not a transcript — so *why* a run happened and what it
 produced is worth recording, and the verbatim agent prompt is not.
 
-**Executes against:** [Audit the efficiency losses](../../subtasks/010_audit-efficiency-losses.md).
+**Executes against:** [Audit the efficiency losses](../../subtasks/010_initial-research/010_audit-efficiency-losses.md).
 
 **Done when** there is a counted answer — not an impression — plus a named root
 cause for each symptom, and an explicit statement of what *earned* its cost so

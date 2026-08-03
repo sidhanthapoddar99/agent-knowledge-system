@@ -126,7 +126,7 @@ broken link was dropped into `references/`: the run went from 44 files clean to
 and clean when removed. That is the proof the pass is real and not another empty
 scope.
 
-Filed as [the gate reads the installed plugin](../../../subtasks/130_skill-links-checks-the-wrong-tree.md).
+Filed as [the gate reads the installed plugin](../../../subtasks/090_silent-failure-defects/030_skill-links-checks-the-wrong-tree.md).
 
 # Gates
 

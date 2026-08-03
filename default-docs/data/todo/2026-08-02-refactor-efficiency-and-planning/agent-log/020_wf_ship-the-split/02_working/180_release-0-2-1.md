@@ -71,7 +71,7 @@ single pre-existing warning, so neither rule added noise.
 The first control run of the new lint printed nothing. Not because the lint
 failed — because `agent-ks check issues` runs the **installed** `check.mjs`,
 not the edited one, exactly as
-[`130`](../../../subtasks/130_skill-links-checks-the-wrong-tree.md) describes for
+[`130`](../../../subtasks/090_silent-failure-defects/030_skill-links-checks-the-wrong-tree.md) describes for
 the link checker. It turned into a free baseline: the installed copy *is* the
 pre-fix code, which is where the 1-vs-3 before/after came from.
 

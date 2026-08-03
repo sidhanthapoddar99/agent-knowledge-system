@@ -148,4 +148,4 @@ nothing lost that anyone would later want.
    was to produce.
 5. **A plan with a real home**, so runs stop re-deriving the state of the work in
    their own folders. This is the connection to the other half of the issue —
-   see [Brainstorm: the plans section](../subtasks/030_brainstorm-plans-section.md).
+   see [Brainstorm: the plans section](../subtasks/010_initial-research/030_brainstorm-plans-section.md).

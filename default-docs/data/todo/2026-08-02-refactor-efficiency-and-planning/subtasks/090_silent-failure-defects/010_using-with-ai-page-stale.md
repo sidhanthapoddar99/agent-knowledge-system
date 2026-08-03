@@ -17,7 +17,7 @@ the first one is the worst:
 | 81 | *"Write an agent-log entry every iteration. Goal / Approach / Result / Next"* | That four-section body is retired. A round file's head is Goal / Inputs / Expected Outcome / Outcome, in `02_working/` |
 
 Found while updating this page's folder tree for
-[the slot numbering](./100_agent-log-slot-numbering.md) — that change fixed the
+[the slot numbering](../080_presentation-and-numbering/030_agent-log-slot-numbering.md) — that change fixed the
 tree and nothing else, deliberately, because the rest is a different problem.
 
 **Done when** a reader can follow the page end to end and every command they type
@@ -25,11 +25,11 @@ works.
 
 # References
 
-- The change that surfaced it: [slot numbering](./100_agent-log-slot-numbering.md)
+- The change that surfaced it: [slot numbering](../080_presentation-and-numbering/030_agent-log-slot-numbering.md)
 - The truth for commands: `agent-ks help`, and
   `plugins/agent-ks/skills/agent-ks-docs/references/cli-toolkit.md` (outside the
   site root, so a path rather than a link)
-- The truth for the agent-log shape: [agent-log structure](../notes/20_agent-log-structure.md)
+- The truth for the agent-log shape: [agent-log structure](../../notes/20_agent-log-structure.md)
 
 # Todo list
 
@@ -44,7 +44,7 @@ works.
 # Outcomes and Next Steps
 
 **Done 2026-08-03**, shipped in `cf437fd` (+112 / −68) —
-[the round](../agent-log/020_wf_ship-the-split/02_working/180_release-0-2-1.md).
+[the round](../../agent-log/020_wf_ship-the-split/02_working/180_release-0-2-1.md).
 
 > [!NOTE]
 > **This record was written a commit late, and the gap is worth naming.** The
@@ -99,7 +99,7 @@ The last todo predicted the staleness would not stop at four spots. It did not �
   subtasks, **wrong** for agent logs, child logs, iteration files, plans and
   stages, which an agent closes itself. Replaced with the three-row authority
   table and a line forbidding self-certification — the same rule
-  [`070/020`](./070_audit-followups/020_who-closes-an-agent-log.md) gave a single
+  [`070/020`](../070_audit-followups/020_who-closes-an-agent-log.md) gave a single
   home, which this page was quietly contradicting.
 - The folder tree had no `plans/` and no `agent-memory/` — both post-date the
   page, and the orientation order does not work without them.
@@ -111,7 +111,7 @@ The last todo predicted the staleness would not stop at four spots. It did not �
 
 # Follow-up this produced
 
-[`140`](./140_user-guide-relative-links-404.md) — the agent hit one broken
+[`140`](../100_link-integrity/030_user-guide-relative-links-404.md) — the agent hit one broken
 relative link and flagged the pattern as *"~10 pages"*. Measured against the
 built site it is **65 of 100 links across 18 files**. Filed separately because
 it is a section-wide defect with a mechanical fix, not a rewrite of this page.

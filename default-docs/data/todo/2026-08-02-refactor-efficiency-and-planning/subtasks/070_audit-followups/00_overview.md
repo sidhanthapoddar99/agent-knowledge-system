@@ -62,7 +62,7 @@ verbatim at
 **Two things came out of this round that were not in the audit at all**, both
 recorded rather than folded away:
 
-- [`130`](../130_skill-links-checks-the-wrong-tree.md) — **`agent-ks check
+- [`130`](../090_silent-failure-defects/030_skill-links-checks-the-wrong-tree.md) — **`agent-ks check
   skill-links` reads the installed plugin, not the working tree.** Every
   "skill-links clean" line in this issue's record was measured against a copy
   nobody had edited.

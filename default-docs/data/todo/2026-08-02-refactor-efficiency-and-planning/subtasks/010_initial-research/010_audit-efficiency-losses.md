@@ -11,7 +11,7 @@ couple of hours of work on a consumer project produced far more activity log and
 source comment than code.
 
 **Done, 2026-08-02.** Headline: **8.8% of everything written over 24 hours was
-code.** Full result in [the recording-overhead audit](../notes/10_efficiency-audit-2026-08-02.md).
+code.** Full result in [the recording-overhead audit](../../notes/10_efficiency-audit-2026-08-02.md).
 
 # References
 

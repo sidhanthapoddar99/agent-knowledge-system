@@ -16,14 +16,14 @@ coded before the shape is settled.
 
 # References
 
-- Why this is half of an efficiency issue: [the recording-overhead audit](../notes/10_efficiency-audit-2026-08-02.md)
+- Why this is half of an efficiency issue: [the recording-overhead audit](../../notes/10_efficiency-audit-2026-08-02.md)
   — finding 3, the log grew to fill the plan's absence
 - Current convention in the field: `agent-memory/plans/` with the `0NN_` /
   `1NN_` band split and the *highest-numbered plan is active* rule, as practised
   on the audited consumer project
 - Current CLI: `agent-ks issue new-memory-plan`
 - Test bed: `2026-07-01-demo-issue-anatomy-showcase`
-- Implemented by: [Code the plans section](./040_execution/010_code-the-plans-section.md)
+- Implemented by: [Code the plans section](../040_execution/010_code-the-plans-section.md)
 
 # Todo list
 
@@ -41,12 +41,12 @@ coded before the shape is settled.
 - [x] Decide whether `plans/` is **agent-owned, human-owned, or shared** →
       **shared**, with the split written down
 - [x] Write the shape into `notes/` before any code is written →
-      [The plans section (decided)](../notes/50_plans-section-spec.md)
+      [The plans section (decided)](../../notes/50_plans-section-spec.md)
 
 # Outcomes and Next Steps
 
-**The spec:** [The plans section (decided)](../notes/50_plans-section-spec.md).
-Built by [`010`](./040_execution/010_code-the-plans-section.md), which now points
+**The spec:** [The plans section (decided)](../../notes/50_plans-section-spec.md).
+Built by [`010`](../040_execution/010_code-the-plans-section.md), which now points
 at the spec rather than at this subtask.
 
 **What was rejected, and why** — the part worth keeping:
@@ -57,7 +57,7 @@ at the spec rather than at this subtask.
 | One file per plan | No per-stage status or `who` that anything can render; *"which stages wait on Sid"* becomes prose |
 | A `blocked-by:` graph | Nothing would maintain it. A graph nobody maintains is worse than a sentence somebody reads |
 | A `1NN_` standing band inside `plans/` | Cross-plan questions belong to the issue's `notes/`. Keeps `plans/` holding plan folders and nothing else |
-| Building the section registry in the same change | Sequenced as [`090`](./040_execution/090_section-registry.md) — two structural changes in one diff and you cannot tell which broke the render |
+| Building the section registry in the same change | Sequenced as [`090`](../040_execution/090_section-registry.md) — two structural changes in one diff and you cannot tell which broke the render |
 
 **One reversal, recorded because the reasoning matters more than the outcome:**
 the design first said *"the prefix is order, the name is identity"*. Sid
@@ -139,4 +139,4 @@ is the price of A, and if A is the right structure the price is worth paying. It
 - **No new scheduling or release-bucket fields.** Project rule: they rot under
   continuous AI-driven shipping.
 - **Existing consumer repos must not break on upgrade.** See the migration
-  ruling in [Code the plans section](./040_execution/010_code-the-plans-section.md).
+  ruling in [Code the plans section](../040_execution/010_code-the-plans-section.md).

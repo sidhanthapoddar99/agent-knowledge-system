@@ -16,7 +16,7 @@ in the built site.
 > time; see the warning in Outcomes for why the middle one was wrong.
 
 The section's own navigation is majority-broken. A reader following "see
-[Subtasks](./subtasks)" from the `issue.md` page lands on a 404, and nothing
+[Subtasks](../subtasks)" from the `issue.md` page lands on a 404, and nothing
 anywhere reports it: the build succeeds, `check issues` is clean, and
 `check skill-links` does not look at `data/`.
 
@@ -26,7 +26,7 @@ obvious candidate, since the same class of defect has now appeared in the skill
 (fixed) and the user-guide (this).
 
 Found by the agent rewriting
-[the using-with-AI page](./110_using-with-ai-page-stale.md), which hit one
+[the using-with-AI page](../090_silent-failure-defects/010_using-with-ai-page-stale.md), which hit one
 instance and flagged the pattern. **It estimated "~10 pages"; measuring found
 65 links across 18 files** — the estimate was the right instinct at a sixth of
 the true size, which is why it was counted rather than taken.
@@ -34,7 +34,7 @@ the true size, which is why it was counted rather than taken.
 # References
 
 - The round that found and measured it:
-  [0.2.1](../agent-log/020_wf_ship-the-split/02_working/180_release-0-2-1.md)
+  [0.2.1](../../agent-log/020_wf_ship-the-split/02_working/180_release-0-2-1.md)
 - Slug generation: `astro-doc-code/src/parsers/content-types/docs.ts` →
   `DocsParser.generateSlug`
 - Exact matching with no fallback: `astro-doc-code/src/pages/lib/route-match.ts`
@@ -116,7 +116,7 @@ Auditing the whole built site the same way, this section was the small case:
 and both doc sets is a different piece of work from this subtask, and the
 tracker's number needs triage first — much of it is demo and fixture content
 pointing at deliberately fictional paths (`/docs/api`, `/contact`), which is not
-the same defect. Filed as [`150`](./150_site-wide-link-rot.md).
+the same defect. Filed as [`150`](./040_site-wide-link-rot.md).
 
 The `blog` four are a third thing again: `/blog/tag/<name>` pages are linked by
 the blog layout and never built. That is a missing feature, not a bad link.
@@ -175,7 +175,7 @@ Three checks run over this repo and **none of them looks at links inside
 **A 100% failure rate survived because the failure is invisible from the inside.**
 Every page renders, every link is styled like a link, and only clicking one tells
 you. That is the same shape as
-[the empty section](./120_config-page-missing-data-dir.md) and
-[the gate reading the wrong tree](./130_skill-links-checks-the-wrong-tree.md) —
+[the empty section](../090_silent-failure-defects/020_config-page-missing-data-dir.md) and
+[the gate reading the wrong tree](../090_silent-failure-defects/030_skill-links-checks-the-wrong-tree.md) —
 three instances in one week of *a wrong answer that is indistinguishable from a
 right one until someone looks.*

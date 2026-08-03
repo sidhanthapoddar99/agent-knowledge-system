@@ -317,6 +317,6 @@ this round:
 repo. The interesting half is that **the build does not care**: 948 pages built
 green with a page entry pointing at a missing folder. A validator catches it, the
 thing the validator is meant to protect does not. Tracked as
-[`120`](../../../subtasks/120_config-page-missing-data-dir.md) rather than fixed
+[`120`](../../../subtasks/090_silent-failure-defects/020_config-page-missing-data-dir.md) rather than fixed
 inline, because the fix is a judgement — delete the entry, or make the loader
 refuse — and that is a decision, not a typo.

@@ -7,7 +7,7 @@ status: done
 
 Turn the audit's root-cause list into a small set of rules an agent can follow
 mid-run. Output is a **written rule set**, argued in `brainstorm/` and graduated
-to `notes/`, which [Skill: the proportionality rules](./040_execution/040_skill-efficiency-rules.md) then
+to `notes/`, which [Skill: the proportionality rules](../040_execution/040_skill-efficiency-rules.md) then
 implements.
 
 The hard part is not knowing we write too much. It is finding a rule that
@@ -16,7 +16,7 @@ jargon, which is worse than writing too much.
 
 # References
 
-- The measurements: [the recording-overhead audit](../notes/10_efficiency-audit-2026-08-02.md)
+- The measurements: [the recording-overhead audit](../../notes/10_efficiency-audit-2026-08-02.md)
 - Runs in parallel with [Brainstorm: the plans section](./030_brainstorm-plans-section.md); both gate the
   execution group
 - Feeds: `040_execution/040_skill-efficiency-rules`,
@@ -34,20 +34,20 @@ jargon, which is worse than writing too much.
 - [x] Decide what happens to the **six standard slots** → removed; three slots
       instead. **Renamed 2026-08-03** to `01_summary.md` + `02_working/` +
       `03_debrief/` — the count and the purposes are unchanged, only the
-      filenames ([the numbering spec](../notes/80_agent-log-numbering-spec.md))
+      filenames ([the numbering spec](../../notes/80_agent-log-numbering-spec.md))
 - [x] Decide the **brief policy** → `01_summary.md` **is** the brief
 - [x] Decide whether anything ever gets **compacted or superseded** →
       superseded wording is **deleted**, and non-contributing content is deleted
 - [x] Graduate the resolved threads into `notes/` as the rule set
 - [x] **Back-test against the audited run** — **not run, by Sid's call.**
-      Replaced by [`130`](./040_execution/130_independent-skill-audit.md): three
+      Replaced by [`130`](../040_execution/130_independent-skill-audit.md): three
       neutral auditors compare the old and new skill at the end of the work, and
       the result is stored rather than acted on
 
 # Outcomes and Next Steps
 
 **The rule set:**
-[What each section is for](../notes/60_section-responsibilities.md) — the
+[What each section is for](../../notes/60_section-responsibilities.md) — the
 responsibility split, which is what the brainstorm converged on instead of the
 density rules this subtask originally scoped.
 
@@ -78,7 +78,7 @@ how"* — which `guide.ts` still states.
 **The back-test was dropped by Sid, and replaced rather than skipped.** Instead of
 re-deriving the audited run against the new rules by hand, the check moves to the
 end of the work and becomes
-[`130` — the independent skill audit](./040_execution/130_independent-skill-audit.md):
+[`130` — the independent skill audit](../040_execution/130_independent-skill-audit.md):
 three neutral auditors compare the old and the new skill side by side. Better
 evidence than a self-assessment, and it costs nothing until there is something to
 compare.

@@ -30,9 +30,9 @@ caused by that work.**
 - `default-docs/config/site.yaml` — the `issues-test` entry in the `pages:` block
 - `astro-doc-code/src/loaders/config.ts` — where page entries resolve, and where
   the version gate already hard-stops on a bad declaration
-- [the release iteration file](../agent-log/020_wf_ship-the-split/02_working/150_version-bump.md)
+- [the release iteration file](../../agent-log/020_wf_ship-the-split/02_working/150_version-bump.md)
   — where this was found, with the commands above
-- [the audit brief](../agent-log/020_wf_ship-the-split/02_working/140_audit-brief.md)
+- [the audit brief](../../agent-log/020_wf_ship-the-split/02_working/140_audit-brief.md)
   — the same shape, twice: a check that passes what it should refuse
 
 # Todo list
@@ -57,7 +57,7 @@ implemented.
 **Sid answered the question this was waiting on:** *"issues-test was a scratch
 tracker on my disk, delete it."* The `site.yaml` comment agreed — *"Phase 1
 testbed — throwaway data"* — and the design note that spawned it
-([the issues restructure design](../../2026-04-10-issues-layout/notes/01_issues-restructure-design.md))
+([the issues restructure design](../../../2026-04-10-issues-layout/notes/01_issues-restructure-design.md))
 describes it as a throwaway testbed. Entry removed.
 
 **The loader now refuses**, per the recommendation in Details. `loadSiteConfig()`

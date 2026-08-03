@@ -10,7 +10,7 @@ status: review
 reporting green on this issue's work all week, and those greens were true of a
 copy nobody had changed.
 
-Found 2026-08-03 while gating [the audit follow-ups](../agent-log/020_wf_ship-the-split/02_working/160_audit-followups.md):
+Found 2026-08-03 while gating [the audit follow-ups](../../agent-log/020_wf_ship-the-split/02_working/160_audit-followups.md):
 a bare run printed *"✓ all checks passed — 3 skills, 44 markdown files"* under
 the path `…/sids-plugin-marketplace/agent-ks/0.7.0/skills`, having read none of
 the twelve files that round had just edited.
@@ -21,9 +21,9 @@ or refuses to run, and the fix is control-tested in both directions.
 # References
 
 - The round that found it, with the control test:
-  [the audit follow-ups](../agent-log/020_wf_ship-the-split/02_working/160_audit-followups.md)
+  [the audit follow-ups](../../agent-log/020_wf_ship-the-split/02_working/160_audit-followups.md)
 - The script: `plugins/agent-ks/skills/agent-ks-docs/scripts/check-skill-links.mjs`
-- The greens this invalidates: [the release round](../agent-log/020_wf_ship-the-split/02_working/150_version-bump.md)
+- The greens this invalidates: [the release round](../../agent-log/020_wf_ship-the-split/02_working/150_version-bump.md)
   and every earlier "skill-links clean" line in this issue
 
 # Todo list

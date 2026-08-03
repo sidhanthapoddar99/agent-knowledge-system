@@ -63,7 +63,7 @@ agent-ks-issues/references/40_operations/41_searching.md:54:
 Zero remaining examples use it.
 
 The positional grammar was also exercised end to end this session — subtask
-[`130`](../130_skill-links-checks-the-wrong-tree.md) was scaffolded with
+[`130`](../090_silent-failure-defects/030_skill-links-checks-the-wrong-tree.md) was scaffolded with
 `agent-ks issue new-subtask <issue-id> --name <slug>` and created correctly. All
 four scaffolders answer `--help` with a usage line naming `<issue-id>`
 positionally.
@@ -76,7 +76,7 @@ grammar, documented once.
 **The structural suggestion in Details stands and is NOT done:** nothing yet
 extracts ` ```bash ` lines and asserts the subcommand and flags exist. That gate
 would have caught all nine for free, and it would have caught the
-[wrong-tree defect](../130_skill-links-checks-the-wrong-tree.md) found the same
+[wrong-tree defect](../090_silent-failure-defects/030_skill-links-checks-the-wrong-tree.md) found the same
 day. Worth opening when someone picks up the checker work.
 
 # Details

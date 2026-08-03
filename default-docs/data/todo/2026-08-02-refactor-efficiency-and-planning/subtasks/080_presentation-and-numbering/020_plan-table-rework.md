@@ -27,10 +27,10 @@ with their symbol, and the design record says what was reversed.
 # References
 
 - The design this revises, with its own *Revised* section appended:
-  [the plans section spec](../notes/50_plans-section-spec.md)
-- The round: [the plan table rework](../agent-log/020_wf_ship-the-split/02_working/120_plan-table-and-sidebar.md)
-- The subtask that built the original: [code the plans section](./040_execution/010_code-the-plans-section.md)
-- Obviated half of: [stage status semantics](./070_audit-followups/040_stage-status-semantics.md)
+  [the plans section spec](../../notes/50_plans-section-spec.md)
+- The round: [the plan table rework](../../agent-log/020_wf_ship-the-split/02_working/120_plan-table-and-sidebar.md)
+- The subtask that built the original: [code the plans section](../040_execution/010_code-the-plans-section.md)
+- Obviated half of: [stage status semantics](../070_audit-followups/040_stage-status-semantics.md)
 
 # Todo list
 

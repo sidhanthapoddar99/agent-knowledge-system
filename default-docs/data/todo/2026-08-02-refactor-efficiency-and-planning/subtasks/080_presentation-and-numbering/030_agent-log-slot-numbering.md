@@ -26,10 +26,10 @@ be converted by a script rather than by hand; and the script is control-tested.
 # References
 
 - The spec, written before any work and used as the agents' brief:
-  [the numbering spec](../notes/80_agent-log-numbering-spec.md)
-- The round: [numbering the slots](../agent-log/020_wf_ship-the-split/02_working/130_agent-log-slot-numbering.md)
-- The design record this revises: [agent-log structure](../notes/20_agent-log-structure.md)
-- Follow-up this turned up: [the using-with-ai page](./110_using-with-ai-page-stale.md)
+  [the numbering spec](../../notes/80_agent-log-numbering-spec.md)
+- The round: [numbering the slots](../../agent-log/020_wf_ship-the-split/02_working/130_agent-log-slot-numbering.md)
+- The design record this revises: [agent-log structure](../../notes/20_agent-log-structure.md)
+- Follow-up this turned up: [the using-with-ai page](../090_silent-failure-defects/010_using-with-ai-page-stale.md)
 
 # Todo list
 
@@ -52,7 +52,7 @@ be converted by a script rather than by hand; and the script is control-tested.
 - [x] **The screenshot was recaptured** — 2026-08-03, and **not** by Sid. The
       fixture had already been migrated, so the page renders the current shape
       and the capture could be automated
-      ([the harness](../../../../../verification/docs-screenshots/capture.mjs)).
+      ([the harness](../../../../../../verification/docs-screenshots/capture.mjs)).
       It now shows `01 Summary` · `02 Working` · `03 Debrief` under
       `20 Edge cases` — which is what its caption always claimed. All four
       user-guide assets moved to webp in the same pass, 632K → 323K
@@ -96,7 +96,7 @@ and the loser is silently corrupted. The renames waited.
 
 ## A side effect that fixed a recorded compromise
 
-[The ordering label](./080_ordering-labels.md) shipped with one deliberate
+[The ordering label](./010_ordering-labels.md) shipped with one deliberate
 under-report: a round file produced the label `090` rather than `020/090`,
 because the unprefixed `working/` segment ended the walk, and fixing it would
 have put tracker knowledge into a library the docs side shares.

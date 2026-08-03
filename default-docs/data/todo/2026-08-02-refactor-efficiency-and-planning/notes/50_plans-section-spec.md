@@ -333,7 +333,7 @@ looked at the built page. Each is recorded here with what replaced it and why;
 the round that made the changes is
 [the plan-table rework](../agent-log/020_wf_ship-the-split/02_working/120_plan-table-and-sidebar.md),
 and the subtask is
-[the plan table rework](../subtasks/090_plan-table-rework.md).
+[the plan table rework](../subtasks/080_presentation-and-numbering/020_plan-table-rework.md).
 
 | Spec said | Ships as | Why |
 |---|---|---|

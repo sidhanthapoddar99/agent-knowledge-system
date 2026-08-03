@@ -38,7 +38,7 @@ what it should be when the subtasks it references disagree.
 - [x] Confirm the Subtasks column's four buckets are visibly a *different* thing
       from the stage's `status`, since they sit in the same table row —
       **resolved by deletion, 2026-08-03.** The counts column is gone
-      ([the plan table rework](../090_plan-table-rework.md)), so the two
+      ([the plan table rework](../080_presentation-and-numbering/020_plan-table-rework.md)), so the two
       status-shaped things no longer sit side by side. The rest of this subtask
       still stands: the stage's own `status` is still undocumented as *stored,
       not derived*

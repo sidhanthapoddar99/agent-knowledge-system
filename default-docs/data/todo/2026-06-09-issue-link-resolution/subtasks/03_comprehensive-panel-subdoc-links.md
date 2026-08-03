@@ -66,6 +66,31 @@ down. Then a single shared resolver maps
 - [ ] Remove the interim `issue-body-links` postprocessor (subtask 02) once the general pass covers `issue.md`.
 - [ ] Verify all four: subtask's own page · the Comprehensive embed · docs cross-links · blog — plus a trailing-slash URL still resolving.
 
+## Link shapes the replacement must handle
+
+Handed over from
+[`…/100_link-integrity/010_renderer-drops-a-url-level.md`](../../2026-08-02-refactor-efficiency-and-planning/subtasks/100_link-integrity/010_renderer-drops-a-url-level.md),
+where they were found by audit and deliberately not patched: each is a defect of
+the interim one-level shift that this subtask deletes, so fixing them in place
+would be work on a function scheduled for removal.
+
+| Input | What the interim shift does |
+|---|---|
+| `./asset.pdf?download=1` | shifts it — the query string defeats the extension test, so an asset is treated as a page |
+| `./page.md?x=1` | shifts it and keeps `.md` — the extension strip is anchored to `$` |
+| nested bare `index.md` | emits `../index`; should address the containing folder's index |
+| blog sibling links | no shift and the date prefix is kept, so a sibling post lands underneath the current one |
+
+**The generalisable one is the query string**: any rule that reads a target's
+extension has to tolerate `?` and `#` after it. Two of the four are that same
+mistake in two places.
+
+Two further shapes from the same audit — `mailto:guide.md` and diagram-page
+links (`./05_x.mmd`) — were **fixed** in `internal-links.ts` rather than handed
+over, because they are wrong at any URL depth and survive the shift's removal.
+Keep both behaviours: the URI-scheme skip, and diagram files with an `NN_`
+prefix being pages while unprefixed ones stay colocated assets.
+
 ## Architectural note
 
 This is the "**don't depend on browser relative resolution — resolve links to

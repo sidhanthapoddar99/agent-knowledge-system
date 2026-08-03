@@ -88,8 +88,10 @@ prescribed converting content to site-absolute form. That was carried out on
       [`020`](./020_relative-links-are-the-contract.md)'s reach extended past the
       two skill files
 - [ ] **Sid's approval to begin** — then work the group in the order below
-- [ ] [`010`](./010_renderer-drops-a-url-level.md) — fix the renderer, with a
-      control test that fails when the fix is reverted
+- [x] [`010`](./010_renderer-drops-a-url-level.md) — fix the renderer, with a
+      control test that fails when the fix is reverted. **Closed 2026-08-04**:
+      two audit edge cases fixed (`mailto:`, diagram pages), four handed to
+      `2026-06-09` `03` because they are defects of the shift it deletes
 - [ ] [`020`](./020_relative-links-are-the-contract.md) — one link-form rule,
       stated identically on every surface, with the reason attached
 - [ ] [`080`](./080_link-it-dont-name-it.md) — a file reference is a link, never a
@@ -112,7 +114,7 @@ prescribed converting content to site-absolute form. That was carried out on
 
 | Subtask | State |
 |---|---|
-| [`010`](./010_renderer-drops-a-url-level.md) renderer | review — fixed, control-tested both directions, zero content files changed |
+| [`010`](./010_renderer-drops-a-url-level.md) renderer | **done** — fixed, control-tested both directions, zero content files changed. Two audit edge cases closed out 2026-08-04; the shift itself still awaits its replacement |
 | [`020`](./020_relative-links-are-the-contract.md) the rule | review — no cross-section exception exists; 129 links converted |
 | [`050`](./050_correct-the-published-records.md) records | review — `0.2.1` carries a dated correction block |
 | [`070`](./070_reframe-the-link-checker.md) checker | review — reframed and committed; exclusion now measured, not asserted |

@@ -1,6 +1,6 @@
 ---
 title: "Relative links render one level too deep — the renderer, not the content"
-status: in-progress
+status: done
 ---
 
 # Overview
@@ -194,24 +194,66 @@ thing.** A measurement can be perfectly correct and still be attributed to the
 wrong layer; the measurement here was right every time and the conclusion was
 wrong anyway.
 
-# Reopened — edge shapes the audits found
+# Reopened, then closed — edge shapes the audits found
 
-**Back to `in-progress` 2026-08-03.** The core fix stands; Codex ran the
-processor against a matrix of link shapes and found six it still gets wrong.
-Recorded in [the review round](../../agent-log/040_wf_fix-the-tools-then-the-links/02_working/050_independent-reviews.md).
+**Reopened 2026-08-03.** The core fix stood; Codex ran the processor against a
+matrix of link shapes and found six it still got wrong. Recorded in
+[the review round](../../agent-log/040_wf_fix-the-tools-then-the-links/02_working/050_independent-reviews.md).
 
-| Input | Produces | Should |
+**Closed 2026-08-04 with two of the six fixed here and four handed on**, because
+the four are all defects *of the level shift*, and the level shift is being
+deleted — see below.
+
+## Fixed here
+
+| Input | Was | Now |
 |---|---|---|
-| nested bare `index.md` | `../index` | address the containing folder index |
-| `./asset.pdf?download=1` | shifted | be skipped — **the query string defeats the extension test I added** |
-| `./page.md?x=1` | shifted, keeps `.md` | strip the extension |
-| `mailto:guide.md` | rewritten as a page path | be left alone |
-| blog sibling links | no shift, date prefix kept | resolve — a synthetic sibling landed *underneath* the current post |
-| `./05_mermaid-full-page.mmd` | left unchanged → 404 | be treated as a **page** — `diagram-pages.ts:95` declares these extensions page types |
+| `mailto:guide.md` | `../mailto:guide` | unchanged |
+| `./05_mermaid-full-page.mmd` | unchanged → 404 | `../mermaid-full-page` |
 
-The last one is mine directly: the non-markdown skip added for asset links is too
-broad, and diagram files are first-class pages in this framework.
+**`mailto:`** ended in `.md`, so it satisfied the markdown test and was rewritten
+as a page path. The guard is a **URI-scheme** test (`^scheme:`), not a `mailto:`
+special case — a relative path can never carry a scheme, so the blanket skip is
+safe and covers `tel:` and `data:` for free. It applies to the blog branch too,
+which had the same bug.
 
-Correct and verified: bare `sibling.md`, `./sibling.md`, pure anchors,
-cross-folder links, `./folder/index.md`, root-level `index.md`, `./asset.pdf`,
-`./asset.pdf#page=2`.
+**Diagram pages** were caught by the non-markdown skip added for colocated
+assets, which was too broad: `.mmd` / `.mermaid` / `.dot` / `.gv` /
+`.excalidraw` are first-class pages here. The discriminator is now the same one
+the loader uses — `diagram-pages.ts` publishes a diagram file only when it
+carries an `NN_` prefix, and never scans `assets/`. So `./10_flow.excalidraw`
+is a page and `./assets/scene.excalidraw` stays an asset. The extension list is
+**imported** from `DIAGRAM_EXTENSIONS` rather than retyped, so the two cannot
+drift.
+
+### Control-tested both directions
+
+16 link shapes, run against the fixed processor and against `HEAD`'s:
+
+| Version | Result |
+|---|---|
+| fixed | 16 / 16 pass |
+| before the fix | **5 fail** — exactly the targeted shapes, including the blog `mailto:` |
+
+The 11 that had to stay still stayed still: `./assets/scene.excalidraw`,
+`../img/x.png`, `./asset.pdf`, `./asset.pdf#page=2`, `./02_sibling.md`,
+`sibling.md`, `../10_other/03_x.md#f`, `#anchor`, an external `https://…/a.md`,
+a site-absolute path, and `./sub/index.md`. Full build passes — 1,169 pages.
+
+## Handed to the June issue, not fixed here
+
+| Input | Wrong how |
+|---|---|
+| `./asset.pdf?download=1` | shifted — the query string defeats the extension test |
+| `./page.md?x=1` | shifted, keeps `.md` — the strip is anchored to `$` |
+| nested bare `index.md` | `../index` — the collapse pattern needs a leading slash |
+| blog sibling links | no shift, date prefix kept |
+
+**Every one of these is a bug in the one-level shift, and the shift is going.**
+It is a constant offset, so it is right on the built site and wrong on the dev
+server, which serves the same page without a trailing slash.
+[`2026-06-09-issue-link-resolution/subtasks/03_comprehensive-panel-subdoc-links.md`](../../../2026-06-09-issue-link-resolution/subtasks/03_comprehensive-panel-subdoc-links.md)
+decided the replacement on 2026-06-09: resolve internal links to **root-absolute
+at render time**, so no browser base is involved at all. Patching four shapes of
+a function scheduled for deletion buys nothing; they are listed in that subtask
+as cases its replacement must handle.

@@ -35,13 +35,48 @@
 
 import path from 'node:path';
 import type { Processor, ProcessContext } from '../types';
-import { stripOrderPrefix } from '../core/order-prefix';
+import { hasOrderPrefix, stripOrderPrefix } from '../core/order-prefix';
+import { DIAGRAM_EXTENSIONS } from '../../loaders/diagram-pages';
+
+/** Extensions without the dot, ready to drop into a character alternation. */
+const DIAGRAM_ALT = DIAGRAM_EXTENSIONS.map((e) => e.slice(1)).join('|');
+
+/** Every extension that names a PAGE in this framework — markdown and diagrams. */
+const PAGE_EXT_RE = new RegExp(`\\.(mdx?|${DIAGRAM_ALT})($|#)`, 'i');
+const PAGE_EXT_STRIP_RE = new RegExp(`\\.(mdx?|${DIAGRAM_ALT})$`, 'i');
+const MARKDOWN_EXT_RE = /\.mdx?($|#)/i;
+
+/**
+ * A URI scheme — `mailto:`, `tel:`, `data:`, anything `scheme:`.
+ *
+ * `mailto:guide.md` ends in `.md`, so it satisfied the markdown test below and
+ * came out rewritten as a page path (`../mailto:guide`). A relative path can
+ * never carry a scheme, so this is a safe blanket skip rather than a mailto
+ * special case.
+ */
+const URI_SCHEME_RE = /^[a-z][a-z0-9+.-]*:/i;
 
 /**
  * Strip the NN_ ordering prefix (2–5 digits) from a single path segment
  */
 function stripPrefix(segment: string): string {
   return stripOrderPrefix(segment);
+}
+
+/**
+ * Is this a link to a first-class diagram PAGE, or to a colocated diagram ASSET?
+ *
+ * The same discriminator the loader uses: `diagram-pages.ts` publishes only
+ * files carrying an `NN_` prefix, and never scans `assets/`. Without the prefix
+ * the file is embed-only and belongs to `asset-src`, which resolves it against
+ * the source directory rather than the page URL. Getting this backwards is what
+ * the blanket non-markdown skip below did — it treated every `.mmd` as an asset,
+ * so a link to a real diagram page was left unrewritten and 404'd.
+ */
+function isDiagramPageLink(pathPart: string): boolean {
+  const last = pathPart.split('/').pop() ?? '';
+  if (!DIAGRAM_EXTENSIONS.includes(path.posix.extname(last).toLowerCase())) return false;
+  return hasOrderPrefix(last);
 }
 
 /**
@@ -66,19 +101,12 @@ function isIndexPage(context: ProcessContext): boolean {
  * segment deeper than its source directory. False only for index pages.
  */
 function rewriteHref(href: string, addLevel: boolean): string {
-  // Only process relative links (./  ../  or bare filenames ending in .md)
-  if (!href.startsWith('./') && !href.startsWith('../') && !href.match(/\.mdx?($|#)/)) {
-    return href;
-  }
+  // `mailto:` and friends are not paths. Checked first, because such a target
+  // can end in `.md` and would otherwise pass every test below.
+  if (URI_SCHEME_RE.test(href)) return href;
 
-  // A link to a colocated FILE (./assets/scene.excalidraw, ../img/x.png) is not
-  // a page link — `asset-src` owns it, and resolves it against the source file's
-  // directory on disk rather than against the page URL. Shifting it here would
-  // send that resolution one directory too high, which is exactly what happened
-  // the first time the level shift was added: the <img> came out right and the
-  // <a> to the same file came out one level up. Anything with an extension that
-  // is not markdown belongs to another processor.
-  if (/\.[a-z0-9]+($|#)/i.test(href) && !/\.mdx?($|#)/i.test(href)) {
+  // Only process relative links (./  ../  or a bare filename naming a page file)
+  if (!href.startsWith('./') && !href.startsWith('../') && !PAGE_EXT_RE.test(href)) {
     return href;
   }
 
@@ -87,8 +115,19 @@ function rewriteHref(href: string, addLevel: boolean): string {
   let pathPart = hashIndex >= 0 ? href.slice(0, hashIndex) : href;
   const fragment = hashIndex >= 0 ? href.slice(hashIndex) : '';
 
-  // Strip .md/.mdx extension
-  pathPart = pathPart.replace(/\.(mdx|md)$/, '');
+  // A link to a colocated FILE (./assets/scene.excalidraw, ../img/x.png) is not
+  // a page link — `asset-src` owns it, and resolves it against the source file's
+  // directory on disk rather than against the page URL. Shifting it here would
+  // send that resolution one directory too high, which is exactly what happened
+  // the first time the level shift was added: the <img> came out right and the
+  // <a> to the same file came out one level up. Anything with an extension that
+  // is neither markdown nor a PREFIXED diagram belongs to another processor.
+  if (/\.[a-z0-9]+($|#)/i.test(href) && !MARKDOWN_EXT_RE.test(href) && !isDiagramPageLink(pathPart)) {
+    return href;
+  }
+
+  // Strip the page extension — markdown or diagram
+  pathPart = pathPart.replace(PAGE_EXT_STRIP_RE, '');
 
   // Strip XX_ prefixes from each path segment (but not ./ or ../)
   pathPart = pathPart
@@ -118,6 +157,7 @@ export const internalLinksPostprocessor: Processor = {
       return content.replace(
         /<a\s+([^>]*?)href\s*=\s*["']([^"']+)["']([^>]*)>/gi,
         (match, before, href, after) => {
+          if (URI_SCHEME_RE.test(href)) return match;
           if (!href.match(/\.mdx?($|#)/)) return match;
           const newHref = href.replace(/\.(mdx|md)($|#)/, '$2');
           return `<a ${before}href="${newHref}"${after}>`;

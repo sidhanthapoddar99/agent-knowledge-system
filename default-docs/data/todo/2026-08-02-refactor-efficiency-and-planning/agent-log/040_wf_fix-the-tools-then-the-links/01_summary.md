@@ -15,11 +15,19 @@ title: "Summary"
 > gone. Treat times and orderings as approximate; treat the numbers as measured,
 > because every one of them came from a command that is repeatable.
 
-Reviews commissioned after the fact, on Sid's prompt — an executing review
-(Codex `gpt-5.6-sol`, `xhigh`, read-only) on link correctness and whether the 129
-conversions preserved meaning, and an in-harness Opus review on whether the
-instruction surfaces now agree with each other and with the code. Neither had
-reported at the time of writing.
+Reviews commissioned after the fact, on Sid's prompt.
+**[Opus has reported and nothing was clean](02_working/050_independent-reviews.md)**
+— all three concerns produced findings, two of them red. The Codex
+`gpt-5.6-sol` executing review is still running; its watcher is armed.
+
+**The run's headline result stands, and its instruction edits do not.** The link
+counts were independently reproduced. But the rule written into the three tracker
+surfaces mandates a form that **404s in the tracker today**, because the issues
+pipeline has the same off-by-one that was fixed for docs — and the gate written
+in the same run says the opposite of the skill. That is this run's own named
+defect, committed inside the change meant to remove it.
+
+Nothing has been fixed or disputed: Sid asked for both audits in hand first.
 
 # Goal
 

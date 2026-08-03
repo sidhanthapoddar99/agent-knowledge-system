@@ -2,19 +2,22 @@
 title: "The tools tell the truth"
 outcome: "`agent-ks` always means installed, `agent-ks-dev` always means this tree, and every gate names which it read"
 who: claude
-status: open
+status: review
 subtasks:
   - "[Two commands, not one guess](../../subtasks/090_silent-failure-defects/040_two-commands-not-one-guess.md)"
 ---
 
 ## Todo
 
-- [ ] Land the subtask in full — revert the walk-up, add the shim and `mise.toml`,
+- [x] Land the subtask in full — revert the walk-up, add the shim and `mise.toml`,
       sweep the sibling scripts, correct `releases/0.2.1.md`
-- [ ] **Gate:** from the repo, `agent-ks` names the install and `agent-ks-dev`
-      names the repo. From outside the repo, `agent-ks-dev` is not on `PATH` at all
-- [ ] **Gate:** re-run `agent-ks-dev check skill-links` and record the count. No
-      green quoted in later stages until this one exists
+- [x] **Gate:** the anchor no longer moves with the CWD — proven by running the
+      new script from `/tmp` against a copy with no `.git` and getting
+      `[installed plugin]`. **`agent-ks` on `PATH` still runs the old script until
+      Sid reinstalls the plugin**, so that half is verified against the code
+      rather than against the dispatcher
+- [x] **Gate:** `agent-ks-dev check skill-links` — 44 files, clean; 45 files and
+      one error with a probe planted. Every green quoted from here on is this one
 
 **Why this is stage one and not an afterthought.** Everything after this quotes a
 gate, and the gate that covers skill files is currently reading the wrong tree.

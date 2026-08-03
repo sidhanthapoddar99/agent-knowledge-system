@@ -1,6 +1,6 @@
 ---
 title: "Two commands, not one guess — agent-ks-dev, and reverting the walk-up"
-status: open
+status: review
 ---
 
 # Overview
@@ -56,36 +56,65 @@ longer describes behaviour that has changed.
 
 # Todo list
 
-- [ ] **Revert the walk-up** in `check-skill-links.mjs` — delete
-      `resolveSkillsDir()`, restore the script-location anchor (exact before/after
-      in Details)
-- [ ] **Keep the banner.** The mode label stays, with `installed` reworded — under
-      two explicit commands, scanning the install is correct behaviour rather than
-      a fallback, so it must stop reading as an apology
-- [ ] **Keep the `filesScanned === 0` error.** A run that read nothing still fails
-- [ ] **Add `bin/agent-ks-dev`** at the repo root — a two-line shim exec'ing
-      `plugins/agent-ks/bin/agent-ks`, which resolves `cli.mjs` relative to itself
-      and therefore dispatches into the source tree
-- [ ] **Add `mise.toml`** at the repo root putting `bin/` on `PATH`, so
-      `agent-ks-dev` works from any subdirectory of the repo and nowhere else
-- [ ] **Audit the sibling scripts for the same walk-up.** Only
-      `check-skill-links.mjs` got it, but confirm rather than assume —
-      `resolve-context.mjs`, `check-legacy-tags.mjs`, `check-content-links.mjs`
-      and `_env.mjs` all read `import.meta.url`
-- [ ] **One line in this project's `CLAUDE.md`** — see Details for the wording,
-      which states the invariant rather than a workaround
-- [ ] **Correct `releases/0.2.1.md`** — it describes the walk-up as shipped
-      behaviour. Same class of task as
-      [`100/050`](../100_link-integrity/050_correct-the-published-records.md)
-- [ ] **Control-test both directions**: from the repo, `agent-ks` must name the
-      install and `agent-ks-dev` must name the repo; from outside the repo,
-      `agent-ks-dev` must not exist on `PATH` at all
+- [x] **Revert the walk-up** in `check-skill-links.mjs` — `resolveSkillsDir()`
+      deleted, script-location anchor restored
+- [x] **Keep the banner**, with the modes reworded. Neither is a fallback now:
+      `[repo source tree]` / `[installed plugin]` / `[explicit path]`
+- [x] **Keep the `filesScanned === 0` error.** Untouched
+- [x] **Add `bin/agent-ks-dev`** — a real file, not a symlink, exec'ing
+      `plugins/agent-ks/bin/agent-ks`
+- [x] **Add `mise.toml`** putting `bin/` on `PATH` inside this repo only
+- [x] **Audit the sibling scripts** — clean, see below
+- [x] **One line in this project's `CLAUDE.md`**, plus the row in
+      `cli-toolkit.md` that describes the command's scope
+- [x] **Correct `releases/0.2.1.md`** — dated correction block, not a rewrite
+- [x] **Control-test both directions**
 
 # Outcomes and Next Steps
 
-> [!NOTE]
-> **PLACEHOLDER** — not started. Agreed with Sid 2026-08-03; execution follows the
-> link-integrity discussion.
+**Done 2026-08-03.** The anchor is now the command you type. `describeTree()`
+still reports which kind of tree it landed in — by looking for a `.git` three
+levels up from `skills/` — but that is a *description* of where the script
+already is, not a search for where it should go.
+
+### Control test — four runs
+
+| Run | Resolved | Label | Verdict |
+|---|---|---|---|
+| `./bin/agent-ks-dev check skill-links` from repo root | repo `plugins/agent-ks/skills` | `[repo source tree]` | ✅ 44 files, clean |
+| the new script copied to `/tmp` (no `.git`), **run from `/tmp`** | its own `/tmp` copy | `[installed plugin]` | ✅ the CWD no longer influences anything |
+| repo, with a probe file carrying one broken link | repo | `[repo source tree]` | ✅ **45** files, 1 error naming the repo file |
+| repo, probe removed | repo | `[repo source tree]` | ✅ **44** files, clean |
+
+The 44 ↔ 45 swing is the part that proves it read the directory the probe was
+written into. The `/tmp` run is the one that proves the walk-up is gone — under
+the old logic, standing anywhere inside a repo changed the answer.
+
+`mise env` confirms the repo's `bin/` lands first on `PATH`.
+
+### The sibling audit — clean, and one near-miss worth naming
+
+No other script anchors a *skills* tree on the CWD. `_env.mjs` is the only one
+with a walk-up loop (`while (dir !== path.dirname(dir))`), and it is resolving
+**content** — the user's `.env` and content root. Anchoring *that* on where you
+stand is correct, because the content you mean genuinely is the content you are
+standing in. Named here as a checked-clean area, since "we looked at X and it was
+fine" is signal and silence is not.
+
+### The one thing Sid has to do
+
+**`/plugin install`.** Until the plugin is reinstalled, the on-`PATH` `agent-ks`
+still runs the *old* script — so it still walks up, still finds this repo, and
+still prints `[source tree]`. That is visible in the control test above: the first
+run through the installed dispatcher reported the repo with the old label. It is
+the defect demonstrating itself one last time.
+
+After the reinstall, `agent-ks` and `agent-ks-dev` diverge as designed and
+`agent-ks --version` vs `agent-ks-dev --version` becomes the cheap staleness check.
+
+`agent-ks-dev` as a **bare** command also needs `mise` shell activation. The
+`mise.toml` is read correctly (verified via `mise env`), but a non-interactive
+shell without the hook does not get it. `./bin/agent-ks-dev` always works.
 
 # Details
 

@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# `agent-ks-dev` — this repo's plugin source, never the installed copy.
+#
+# `agent-ks` on PATH is the INSTALLED plugin, and several of its scripts resolve
+# what to operate on from where they themselves live. That is correct and it is
+# why two names exist: the command you type states which tree you mean, so no
+# script has to guess. See
+# subtasks/090_silent-failure-defects/040_two-commands-not-one-guess.md.
+#
+# A symlink cannot do this job: BASH_SOURCE[0] would resolve to the link's own
+# directory, so the dispatcher's `$DIR/../skills/...` would point somewhere else.
+# It has to be a real file that execs the real dispatcher.
+set -euo pipefail
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+exec "$DIR/../plugins/agent-ks/bin/agent-ks" "$@"

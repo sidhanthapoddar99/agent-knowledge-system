@@ -24,17 +24,35 @@
  *
  * Usage: check-skill-links.mjs [skill-dir]
  *
- * With no argument it checks **every skill in the plugin source tree found by
- * walking up from the CWD**, falling back to the installed plugin (with a
- * warning) when there is no source tree — which is the normal case for a
- * consumer. See `resolveSkillsDir()` for why the CWD is the anchor.
+ * With no argument it checks **every skill beside this script**. Which tree that
+ * is follows from which command you typed, and nothing here guesses:
  *
- * THIS SCOPE HAS BEEN WRONG TWICE, in the same mechanism, both times reporting a
- * clean pass over something nobody meant to check:
+ *   agent-ks     check skill-links   → the INSTALLED plugin
+ *   agent-ks-dev check skill-links   → this repo's source tree
+ *
+ * `agent-ks-dev` is a repo-root shim on PATH via mise; it execs the repo's own
+ * `plugins/agent-ks/bin/agent-ks`, which resolves this script relative to itself.
+ * So the same three lines below are correct under both names.
+ *
+ * THIS SCOPE HAS BEEN WRONG THREE TIMES, in the same mechanism, each time
+ * reporting a clean pass over something nobody meant to check:
  *   1. It defaulted to its own SKILL root — one skill of three.
  *   2. It defaulted to its own INSTALL — a published copy, never the working tree.
- * Both were fixed by widening what it looks at while leaving *what it anchors on*
- * alone. If a third turns up, change the anchor rather than the radius.
+ *   3. Fixing (2) by walking up from the CWD guessed the other way: in consumer
+ *      mode the framework clone sits INSIDE the user's project, so a consumer
+ *      standing in it got the bundled skills checked and labelled [source tree].
+ *
+ * The first two were fixed by widening the radius and leaving the anchor alone,
+ * and this file said at the time: if a third turns up, change the anchor. A third
+ * turned up. The anchor is now the human — stated by the command, not inferred
+ * from a directory. There is no filesystem test that separates "the maintainer
+ * developing the plugin" from "a consumer sitting in their framework folder",
+ * because those are the same directory.
+ *
+ * WHAT SURVIVES from the (2) fix, because it was right independently of anchoring:
+ * the run names the tree it read, in words, in the banner. The original failure
+ * was not only that the wrong tree was read — it was that the green LOOKED like
+ * it covered your work.
  *
  * Exit 0 = all links resolve, 1 = broken link(s) found.
  */
@@ -59,37 +77,29 @@ function skillsIn(dir) {
 }
 
 /**
- * Which `skills/` directory to check — anchored on the CWD, NOT on this script.
+ * Which `skills/` directory to check — the one this script lives in.
  *
- * The script's own location is the wrong anchor, and getting this wrong is
- * invisible. `agent-ks` on PATH dispatches to the INSTALLED plugin, so resolving
- * from `import.meta.url` meant every bare `agent-ks check skill-links` scanned
- * `~/.claude/plugins/cache/…` — a published copy that no working-tree edit can
- * reach. It reported "3 skills, 44 files, all checks passed" over a round of
- * edits it had never read, and every such green in the record before 2026-08-03
- * describes the installed copy rather than what was committed.
+ * That is deliberately dumb, and the dumbness is the feature: the running copy
+ * of this file IS the tree being asked about. Dispatched through the installed
+ * `agent-ks`, that is the install; through `agent-ks-dev`, it is the repo. The
+ * command carries the intent, so nothing here has to infer it.
  *
- * So: walk up from the CWD for a plugin source tree and check that. Falling back
- * to the install is still correct for a consumer, who has no source tree at all —
- * but it is a WARNING, because "I checked something else" must never look like
- * "I checked your work".
+ * Do not reintroduce a CWD walk-up. See the header — it was tried, and it moved
+ * the wrong-tree bug onto consumers instead of removing it.
  */
-function resolveSkillsDir() {
-  let dir = path.resolve(process.cwd());
-  for (;;) {
-    const candidate = path.join(dir, 'plugins', 'agent-ks', 'skills');
-    if (skillsIn(candidate).length) return { dir: candidate, source: 'repo' };
-    const parent = path.dirname(dir);
-    if (parent === dir) break;
-    dir = parent;
-  }
-  const own = path.dirname(path.dirname(SCRIPT_DIR));   // scripts/ → <skill>/ → skills/
-  return { dir: own, source: skillsIn(own).length ? 'installed' : 'none' };
+const OWN_SKILL = path.dirname(SCRIPT_DIR);           // scripts/ → this skill's root
+const OWN_SKILLS_DIR = path.dirname(OWN_SKILL);       // …/skills/
+
+/** Is the tree we are about to scan a checkout, or an installed plugin? */
+function describeTree(dir) {
+  // …/skills → …/agent-ks → …/plugins → the repo root, if this is a source tree.
+  const repoRoot = path.dirname(path.dirname(path.dirname(dir)));
+  return fs.existsSync(path.join(repoRoot, '.git')) ? 'repo' : 'installed';
 }
 
 const RESOLVED = POSITIONAL
   ? { dir: path.dirname(path.resolve(POSITIONAL)), source: 'explicit' }
-  : resolveSkillsDir();
+  : { dir: OWN_SKILLS_DIR, source: describeTree(OWN_SKILLS_DIR) };
 const SKILLS_DIR = RESOLVED.dir;
 
 /** Every skill to check: the one named on the command line, or all of them. */
@@ -97,13 +107,6 @@ const SKILL_ROOTS = POSITIONAL ? [path.resolve(POSITIONAL)] : skillsIn(SKILLS_DI
 
 const errors = [];
 const warnings = [];
-
-if (RESOLVED.source === 'installed') {
-  warnings.push(
-    `no plugin source tree found walking up from ${process.cwd()} — scanned the ` +
-    `INSTALLED plugin at ${SKILLS_DIR}. Working-tree edits are NOT covered by this run.`,
-  );
-}
 
 // Markdown inline link: [text](target). We only care about the target.
 const LINK_RE = /\[[^\]]*\]\(([^)]+)\)/g;
@@ -159,8 +162,9 @@ if (filesScanned === 0) {
 // Name the TREE, not just the path. The old banner did print its root and still
 // fooled a reader into taking an install-scoped pass as a working-tree pass, so
 // the mode is stated in words rather than left to be inferred from a path.
-const MODE = { repo: ' [source tree]', installed: ' [FALLBACK — the copy beside this script, not a tree you are in]',
-               explicit: ' [explicit path]', none: '' }[RESOLVED.source] ?? '';
+// Neither mode is a fallback now — each is what the command you typed means.
+const MODE = { repo: ' [repo source tree]', installed: ' [installed plugin]',
+               explicit: ' [explicit path]' }[RESOLVED.source] ?? '';
 
 reportAndExit({
   kind: 'skill-links',

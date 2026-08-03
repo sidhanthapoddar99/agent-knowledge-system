@@ -242,3 +242,66 @@ just the code. Full record in
 - 🟢 `guide.ts` states the exception one clause narrower than the skill.
 - **Boundary leak:** "a file with nothing to link to" literally covers skill
   `.md` files, which are outside the site but must use relative links.
+
+## Todo — the reopened round
+
+Checked against the files 2026-08-04. Items 1–4 are all one block:
+`plugins/agent-ks/skills/agent-ks-docs/references/layouts/docs-layout.md`,
+under *Cross-linking between docs pages*.
+
+- [ ] **1. Say WHY, and say the real why — agent-first, filesystem-first.**
+      Sid, 2026-08-04: the documents are built in a **filesystem-first format so
+      that filesystem tools work on them** — `move`, `grep`, an editor, an agent
+      walking the tree. A relative link is the only form that is true on disk, so
+      it is the only form all of those can follow. **The UI is an addition that
+      enhances the documents; it is not the thing being built.** The skill today
+      gives only the `move` argument, which reads as a tooling constraint a
+      better tool would remove — and that framing is what made converting 341
+      links look reasonable. Two or three lines, **above** the `move` argument
+      rather than instead of it.
+
+      The principle is stated in full in this repo's `CLAUDE.md` (*the filesystem
+      is the document; the app renders it*). **Write a short version, do not copy
+      the section** — a copy cannot know it was replaced.
+
+- [ ] **2. Stop saying a leading `/` is always wrong.** The rule table reads
+      `/x` → *"nothing internal"*, which contradicts `writing.md:81`, where
+      `/assets/logo.png` is correct and required. Two asset kinds, two routes:
+      **`/assets/…`** is the site-wide folder (favicon, logos), **`./assets/…`**
+      is colocated per-doc and rewritten at build to `/content-assets/…`.
+      Colocated is the default; the site folder is the exception.
+
+- [ ] **3. Drop the stale depth claim.** The block says the renderer *"adjusts
+      the URL depth for you"*. That is the interim one-level shift, correct only
+      on the built site, and it is being deleted by
+      [`2026-06-09` `03`](../../../2026-06-09-issue-link-resolution/subtasks/03_comprehensive-panel-subdoc-links.md).
+      Promise only what survives: `NN_` prefixes and `.md` stripped, and **both
+      URL spellings accepted** (shipped in 0.2.2).
+
+- [ ] **4. Keep the warning, delete the story.** The 341-link incident is
+      narrated inside the skill, which this repo's `CLAUDE.md` forbids — skills
+      are history-free and the tracker already holds it. Keep the *rule* ("a
+      relative link that 404s is a renderer bug — do not convert it to `/`"),
+      drop the incident and the number.
+
+- [ ] **5. Test cross-root portability.** The "no exception" proof ran inside one
+      content root. The six `user-guide` ↔ `dev-docs` links resolve only because
+      every data folder here happens to be named like its `base_url`; Codex tried
+      a hypothetical `/internals` base and got a 404. Not known broken — never
+      tested.
+
+- [ ] **6. Count the restatements before deduplicating them.** The audit said the
+      `move`-skips-`/` fact is asserted in eleven places. A loose grep on
+      2026-08-04 hit 19 lines across 13 files and **over-matches**, so neither
+      number is usable yet. `_links.mjs:28` is the single line that decides it;
+      run a tight count first, then cut.
+
+- [ ] **7. Check the two smallest findings** — `guide.ts` states the exception one
+      clause narrower than the skill, and "a file with nothing to link to"
+      literally covers skill `.md` files, which sit outside the site and must
+      still use relative links.
+
+- [ ] **8. Reconcile this file with itself.** The Todo list near the top has every
+      box unticked while *Outcomes* below declares the work done on 2026-08-03
+      with measurements. One of the two is wrong; **Sid decides which**, so
+      neither was changed.

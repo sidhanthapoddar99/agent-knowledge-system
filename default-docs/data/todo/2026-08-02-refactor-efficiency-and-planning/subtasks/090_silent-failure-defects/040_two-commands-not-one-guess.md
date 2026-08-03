@@ -1,6 +1,6 @@
 ---
 title: "Two commands, not one guess — agent-ks-dev, and reverting the walk-up"
-status: review
+status: done
 ---
 
 # Overview
@@ -130,16 +130,30 @@ For an actual content answer, compare the trees rather than their labels:
 diff -rq plugins/agent-ks/skills <installed>/skills
 ```
 
-### The one thing Sid has to do
+### The reinstall — done 2026-08-03, and the two commands have diverged
 
-**`/plugin install`.** Until the plugin is reinstalled, the on-`PATH` `agent-ks`
-still runs the *old* script — so it still walks up, still finds this repo, and
-still prints `[source tree]`. That is visible in the control test above: the first
-run through the installed dispatcher reported the repo with the old label. It is
-the defect demonstrating itself one last time.
+Until the plugin was reinstalled the on-`PATH` `agent-ks` ran the *old* script:
+it still walked up, still found this repo, and still printed `[source tree]` —
+the defect demonstrating itself one last time, visible in the control test above.
 
-After the reinstall, `agent-ks` and `agent-ks-dev` diverge as designed and
-`agent-ks --version` vs `agent-ks-dev --version` becomes the cheap staleness check.
+Sid reinstalled at `0.7.2`. Measured immediately after:
+
+| Command | Version | Tree it scanned | Banner |
+|---|---|---|---|
+| `agent-ks` | `0.7.2` | `~/.claude/plugins/cache/…/agent-ks/0.7.2` | `[installed plugin]` |
+| `agent-ks-dev` | `0.7.2` | `…/agent-knowledge-system/plugins/agent-ks` | `[repo source tree]` |
+
+**Run from inside this repo, `agent-ks` now reports the cache.** That is the
+whole fix in one line — the same invocation from the same directory used to
+report the repo and call it authoritative.
+
+Also confirmed: `diff -rq` across both `skills/` trees is now **identical**
+(12 files differed before the release), and `agent-ks check link-form` — which
+did not exist on the installed copy that morning — runs there.
+
+**And it demonstrates why `--version` prints the path.** Both commands report
+`0.7.2`. The version alone could not have told you which one answered; the path
+is the only discriminator, and today it is the only difference between them.
 
 `agent-ks-dev` as a **bare** command also needs `mise` shell activation. The
 `mise.toml` is read correctly (verified via `mise env`), but a non-interactive

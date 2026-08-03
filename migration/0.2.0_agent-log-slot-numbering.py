@@ -80,10 +80,10 @@ names each one with the command to fix it.
 
 USAGE
 -----
-    python3 migration/0.1.4_agent-log-slot-numbering.py detect  [--root .]
-    python3 migration/0.1.4_agent-log-slot-numbering.py migrate [--root .] [--dry-run]
-    python3 migration/0.1.4_agent-log-slot-numbering.py relink  [--root .] [--dry-run]
-    python3 migration/0.1.4_agent-log-slot-numbering.py verify  [--root .]
+    python3 migration/0.2.0_agent-log-slot-numbering.py detect  [--root .]
+    python3 migration/0.2.0_agent-log-slot-numbering.py migrate [--root .] [--dry-run]
+    python3 migration/0.2.0_agent-log-slot-numbering.py relink  [--root .] [--dry-run]
+    python3 migration/0.2.0_agent-log-slot-numbering.py verify  [--root .]
 
 `detect` changes nothing.
 

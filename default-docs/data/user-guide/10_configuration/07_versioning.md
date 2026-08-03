@@ -15,7 +15,7 @@ misread an older content format.
 `site.yaml` carries one top-level key:
 
 ```yaml
-engine_version: "0.1.2"
+engine_version: "0.2.0"
 ```
 
 - Format is `X.Y.Z`. **Described by position, not by the words "minor" and
@@ -43,19 +43,19 @@ hard stops:
 **Content too old:**
 
 ```
-This content targets engine 0.0.5, but this engine is 0.1.2 and supports content
-0.1.2 or newer. The content must be migrated from 0.0.5 to 0.1.2 — ask your AI to
+This content targets engine 0.0.5, but this engine is 0.2.0 and supports content
+0.2.0 or newer. The content must be migrated from 0.0.5 to 0.2.0 — ask your AI to
 do it: the migration scripts live in migration/ at the repo root, named by the
-version they bring content to. Run each script between 0.0.5 and 0.1.2 in version
+version they bring content to. Run each script between 0.0.5 and 0.2.0 in version
 order (detect pass, then --dry-run, then migrate), verify with agent-ks check,
-then set engine_version: "0.1.2" in site.yaml.
+then set engine_version: "0.2.0" in site.yaml.
 ```
 
 **Content too new** (engine behind the content):
 
 ```
-This content targets engine 0.2.0, but this engine is only 0.1.2. Update the
-framework to 0.2.0 or newer (./start offers the update when the upstream is
+This content targets engine 0.3.0, but this engine is only 0.2.0. Update the
+framework to 0.3.0 or newer (./start offers the update when the upstream is
 ahead), or check upgrade options for your install.
 ```
 
@@ -94,7 +94,7 @@ detail (gate mechanics, floor discipline, authoring migrations).
 ## For engine maintainers — only breaking changes move the floor
 
 The contract has a development side, and it is not optional. Any release that
-changes the content format ships with `ENGINE_VERSION` bumped (minor) and a
+changes the content format ships with `ENGINE_VERSION` bumped and a
 `migration/<new-version>_<statement>.py` covering the change. What happens to
 `MIN_CONTENT_VERSION` depends on the **class of change**:
 

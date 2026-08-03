@@ -63,10 +63,10 @@ the author's formatting survive.
 
 USAGE
 -----
-    python3 0.1.3_agent-log-status-vocabulary.py detect  <path>
-    python3 0.1.3_agent-log-status-vocabulary.py locate  <path>
-    python3 0.1.3_agent-log-status-vocabulary.py migrate <path> [--dry-run]
-    python3 0.1.3_agent-log-status-vocabulary.py verify  <path>   # exit 1 if legacy remains
+    python3 0.2.0_agent-log-status-vocabulary.py detect  <path>
+    python3 0.2.0_agent-log-status-vocabulary.py locate  <path>
+    python3 0.2.0_agent-log-status-vocabulary.py migrate <path> [--dry-run]
+    python3 0.2.0_agent-log-status-vocabulary.py verify  <path>   # exit 1 if legacy remains
 
 `<path>` may be a single file, an issue folder, or a whole tracker
 (e.g. `data/todo/`). Directories are scanned recursively.

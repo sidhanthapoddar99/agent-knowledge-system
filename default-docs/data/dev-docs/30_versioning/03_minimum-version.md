@@ -47,7 +47,8 @@ Get it wrong in either direction and the mechanism degrades:
 
 For any release touching the content format:
 
-1. Bump `ENGINE_VERSION` (minor).
+1. Bump `ENGINE_VERSION` — which place moves is a judgement about the size of
+   the change, stated by position in [Versioning Overview](./overview).
 2. Ship `migration/<new-version>_<statement>.py` — the change does not exist
    until its script does.
 3. Decide the class honestly: does *unmigrated* old content still render
@@ -56,5 +57,6 @@ For any release touching the content format:
 4. Document: the script's docstring is the runbook; keep this section, the
    user-guide versioning page, and CLAUDE.md's contract paragraph accurate.
 
-Releases that don't touch the content format at all: bump `ENGINE_VERSION`
-(patch, or minor), floor untouched, no script — consumers feel nothing.
+Releases that don't touch the content format at all: bump `ENGINE_VERSION` at
+whichever place fits the change, floor untouched, no script — consumers feel
+nothing.

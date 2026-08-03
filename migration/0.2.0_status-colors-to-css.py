@@ -63,9 +63,9 @@ a round-trip would silently destroy both.
 
 USAGE
 -----
-    python3 migration/0.1.3_status-colors-to-css.py detect  [--root .]
-    python3 migration/0.1.3_status-colors-to-css.py migrate [--root .] [--dry-run]
-    python3 migration/0.1.3_status-colors-to-css.py verify  [--root .]
+    python3 migration/0.2.0_status-colors-to-css.py detect  [--root .]
+    python3 migration/0.2.0_status-colors-to-css.py migrate [--root .] [--dry-run]
+    python3 migration/0.2.0_status-colors-to-css.py verify  [--root .]
 
 `detect` changes nothing. `migrate --dry-run` prints the exact edits. `migrate`
 is idempotent — a second run finds zero. `verify` exits non-zero if any

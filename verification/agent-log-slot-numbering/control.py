@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Control harness for migration/0.1.4_agent-log-slot-numbering.py.
+"""Control harness for migration/0.2.0_agent-log-slot-numbering.py.
 
 A migration that reports "0 to change" over a tracker it never looked at scores
 identically to one that correctly found nothing. So this builds a scratch
@@ -52,7 +52,7 @@ import tempfile
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-SCRIPT = REPO / "migration" / "0.1.4_agent-log-slot-numbering.py"
+SCRIPT = REPO / "migration" / "0.2.0_agent-log-slot-numbering.py"
 
 
 def write(path: Path, text: str) -> None:

@@ -169,7 +169,7 @@ They used to live here as a `statusColors` map, and that had two problems CSS do
 **A leftover `statusColors` map now fails the build rather than being ignored.** An
 override that silently stops applying surfaces weeks later as *"the colours look wrong
 somehow"*, with nothing pointing at the cause. Run
-`migration/0.1.3_status-colors-to-css.py` — it reports every non-default colour it removes
+`migration/0.2.0_status-colors-to-css.py` — it reports every non-default colour it removes
 so you can re-declare it in CSS, and tells you to check the comments left behind.
 
 The seven statuses group into four categories — **Not Started** (`open`, `blocked`) ·

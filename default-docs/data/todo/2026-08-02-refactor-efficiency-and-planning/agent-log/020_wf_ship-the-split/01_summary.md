@@ -16,13 +16,21 @@ title: "Summary"
 > **What is not finished, all deliberately:**
 > [the migration script](../../subtasks/040_execution/100_migration-script.md)
 > went back to `in-progress` on 2026-08-03 when the `iteration:` question
-> surfaced a check only it can run; and
-> [the version bump](../../subtasks/050_version-bump.md) sits outside this
-> folder, held on Sid's word.
+> surfaced a check only it can run.
+>
+> **The version bump is no longer held.** Sid released it on 2026-08-03 —
+> **engine `0.2.0`, floor `0.2.0`, plugin `0.7.0`** — and the gate refused
+> un-migrated content for the first time in the project's history
+> ([the release round](./02_working/150_version-bump.md)). Every release from now
+> on is tagged and written up in `releases/`, also his rule, set the same day.
+> Tagging and publishing are his; nothing on this branch has been pushed.
 >
 > **Waiting on Sid:** the seven
 > [audit follow-ups](../../subtasks/070_audit-followups/00_overview.md) are all
-> at `open` pending his decision on which to take.
+> at `open` pending his decision on which to take, plus
+> [`120`](../../subtasks/120_config-page-missing-data-dir.md) — a pre-existing
+> config entry that fails the validator and builds green anyway, found while
+> gating the release.
 
 # Goal
 

@@ -11,7 +11,7 @@
   // the values in framework code (astro-doc-code/src/loaders/issue-status.ts),
   // the colours in theme CSS as `--status-<name>` variables (color.css). A
   // `fields.status` block or a top-level `statusColors` map is a hard error, not
-  // an ignored key — see migration/0.1.3_status-colors-to-css.py.
+  // an ignored key — see migration/0.2.0_status-colors-to-css.py.
   // To restyle the lifecycle, override the CSS variables in your theme.
   // Agents set `in-progress` (auto) and `review`/`input-needed`; `done` and
   // `dropped` are human-only. Transitions are unenforced guidance.

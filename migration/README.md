@@ -12,6 +12,20 @@ startup gate reports *"content targets X, engine is Y"*, run every script with a
 version in `(X, Y]`, ascending. Authoring dates live inside each docstring —
 provenance, not ordering.
 
+**The version in the name must be a version the engine can actually be at.** A
+release that rolls several format changes together gives all of them the
+*release's* version, however many bumps were planned along the way — `0.2.0`
+ships three scripts, and the two originally drafted as `0.1.3` and `0.1.4` were
+renamed when the release landed on `0.2.0`, because no engine ever existed at
+those numbers and so no content tree could ever legitimately declare one.
+
+The cost of sharing a version is that **execution order within it is
+undefined** — so scripts sharing one must be order-independent. In practice that
+means each walks the tree itself (`rglob`) rather than consuming a file list a
+sibling produced; the three `0.2.0` scripts are independent by that
+construction. If a change genuinely depends on an earlier one having run, it is
+not a sibling — it is the next version.
+
 ## Script contract
 
 - **Python, stdlib only** — one-off runs, not part of the live CLI path.

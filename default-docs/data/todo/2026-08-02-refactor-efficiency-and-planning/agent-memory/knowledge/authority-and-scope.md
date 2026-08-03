@@ -23,10 +23,25 @@ branch instruction and are Sid's to place.
 **The version bump and the migration script are mine to write, but only on his
 word.** They are not autonomous work and must not be swept into a loop:
 
-- [`050`](../../subtasks/050_version-bump.md) — engine `0.1.3`, floor `0.1.3`,
-  plugin `0.7.0`, and the `site.yaml` declarations
+- [`050`](../../subtasks/050_version-bump.md) — **released 2026-08-03 on his
+  word**: engine `0.2.0`, floor `0.2.0`, plugin `0.7.0`, `site.yaml` declaration
+  `0.2.0`. He chose `0.2.0` over the drafted `0.1.3` / `0.1.4`
 - [`100`](../../subtasks/040_execution/100_migration-script.md) — the script that
   rewrites 78 files onto the canonical seven statuses
+
+**The hold is spent, not lifted.** It covered this release; the next bump is held
+the same way.
+
+## Releases — standing rule, set 2026-08-03
+
+Sid's: **every version release is tagged `v<engine-version>` and ships a detailed
+release note**, written like a GitHub release body, at `releases/<version>.md`.
+Convention and template: [`releases/README.md`](../../../../../../releases/README.md);
+the rule itself lives in the repo's `CLAUDE.md`.
+
+**Writing the note is mine; tagging and publishing are not.** The tag lands on
+`main` after the merge, and pushing it is his call — nothing on this branch has
+been pushed.
 
 ## Sid's alone
 

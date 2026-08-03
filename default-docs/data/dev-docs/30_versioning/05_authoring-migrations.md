@@ -90,7 +90,8 @@ Usage:
    zero; a second migrate is a no-op.
 3. **Run it on the dogfood content** (`default-docs/`) — the framework's own
    tree migrates in the same release that changes the format.
-4. **Bump `ENGINE_VERSION`** (minor) in `src/loaders/engine-version.ts`.
+4. **Bump `ENGINE_VERSION`** in `src/loaders/engine-version.ts` — which place
+   moves is a judgement about the size of the change, never a fixed rule.
 5. **Decide the floor** honestly (see [Minimum Version](./minimum-version)):
    breaking → raise `MIN_CONTENT_VERSION`; good-to-have → leave it.
 6. **Document**: docstring complete; user-guide versioning page and CLAUDE.md

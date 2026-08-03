@@ -253,6 +253,19 @@ Preflight (no-arg form) does: update check (fetches upstream and prompts `Y/n` t
 
 If you're inside `astro-doc-code/`, `bun run dev` / `bun run build` / `bun run preview` work directly.
 
+## Releases — every version is tagged, and written up
+
+Two artefacts per release, **both required**:
+
+1. **An annotated git tag** — `v<engine-version>`, on the commit that moves `ENGINE_VERSION`. It lands on `main` after the work merges; never on a working branch.
+2. **A release note** — `releases/<version>.md`, published as the GitHub release body (`gh release create v0.2.0 --notes-file releases/0.2.0.md`).
+
+**The note is an upgrade instruction, not a changelog.** Its reader is someone whose build just stopped with a version error, or an AI acting for them; a list of commit subjects helps neither. Every breaking change names **the symptom a consumer sees if they skip it** ("your agent-log status chips render empty and `check issues` errors on every one"), the script that fixes it, and the chain to run — ending with the `site.yaml` bump as the last step.
+
+**One tag, two version series.** The engine version is the repo's version and the thing tagged; the plugin version (`plugins/agent-ks/.claude-plugin/plugin.json`) rides inside the note, because nothing in the code checks it and a consumer updates both together.
+
+Writing the note is **part of the release, same as the migration script** — a format change that ships without one leaves consumers holding the gate's error message and nothing else. The convention, the template and the rules: [`releases/README.md`](./releases/README.md). Tagging and publishing are the orchestrator's / Sid's; agents write the note and never run a git write command.
+
 ## Key Rules
 
 1. **`NN_` prefix required** for all doc files/folders — numeric, **2–5 digits** (2 is the common case), sorted by value (widths coexist; gap-space to leave insert room)
@@ -264,3 +277,4 @@ If you're inside `astro-doc-code/`, `bun run dev` / `bun run build` / `bun run p
 7. **Split large layout files** at ~400 lines into `parts/` subcomponents; client JS in a single `client.ts`
 8. **Issues** use folder-per-item (`YYYY-MM-DD-<slug>/`) with `settings.json` for metadata; vocabulary in the tracker's root `settings.json`
 9. **`engine_version` in `site.yaml`** — content outside the engine's supported range is a hard startup error (see "Version contract" above); after any migration, bump it to the engine's version
+10. **Every release is tagged `v<engine-version>` and written up** in `releases/<version>.md` — see "Releases" above; the note ships with the release, not after it

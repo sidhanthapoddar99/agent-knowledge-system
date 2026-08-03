@@ -15,7 +15,10 @@ engine's format. They live at the **repo root**:
 ├── 0.1.0_done-to-state.py
 ├── 0.1.1_state-to-status.py
 ├── 0.1.2_legacy-custom-tags.py
-└── 0.1.2_root-settings-schema.py
+├── 0.1.2_root-settings-schema.py
+├── 0.2.0_agent-log-slot-numbering.py
+├── 0.2.0_agent-log-status-vocabulary.py
+└── 0.2.0_status-colors-to-css.py
 ```
 
 ## Why the repo root
@@ -49,6 +52,7 @@ are the ones that get skipped:
 |---|---|---|
 | **Frontmatter / field** | A field renamed, retyped, or removed | `0.1.0_done-to-state.py`, `0.1.1_state-to-status.py` |
 | **Settings schema** | Structure of a `settings.json(c)` | `0.1.2_root-settings-schema.py` |
+| **File / folder layout** | Where content files live, or what they are named | `0.2.0_agent-log-slot-numbering.py` (the agent-log's three slots gained numeric prefixes — renames on disk **plus** every inbound link rewritten) |
 | **Content syntax** | The *authoring syntax itself* — markup constructs retired or replaced in page bodies | `0.1.2_legacy-custom-tags.py` (`:::callout` / `<callout>` / `<tabs>` / `<collapsible>` → GFM alerts, `<details>`, `###` sections) |
 
 Content-syntax migrations are the easiest to forget — the old markup often
@@ -62,9 +66,11 @@ syntax are mentions, not usage, and must be skipped.
 ## The chain rule
 
 When the gate reports *content targets X, engine is Y*, the upgrade runs
-**every script with a version in `(X, Y]`, ascending** — going 0.0.5 → 0.1.2 means
-running everything above 0.0.5 up to and including 0.1.2, not just the newest
-script. This is also how good-to-have migrations (which never moved the floor —
+**every script with a version in `(X, Y]`, ascending** — going 0.0.5 → 0.2.0 means
+running everything above 0.0.5 up to and including 0.2.0, not just the newest
+script. A release that ships several scripts gives them all its own version, so
+`(X, Y]` can hold three scripts at the same number; they are written to be
+order-independent (each walks the tree itself). This is also how good-to-have migrations (which never moved the floor —
 see [Minimum Version](./minimum-version)) eventually reach older trees: the
 next breaking chain sweeps them up.
 

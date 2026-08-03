@@ -43,7 +43,7 @@ be converted by a script rather than by hand; and the script is control-tested.
       exact rename
 - [x] In-app guide, skill (7 files), user-guide + the sidebar legend artifact
       (12 files) — three background agents in parallel on prose
-- [x] Migration `0.1.4_agent-log-slot-numbering.py` — renames **and** rewrites
+- [x] Migration `0.2.0_agent-log-slot-numbering.py` — renames **and** rewrites
       inbound links, skips legacy six-slot logs, reports rather than moves a
       child numbered below 100
 - [x] Control harness, 26 assertions including a decoy that a naive

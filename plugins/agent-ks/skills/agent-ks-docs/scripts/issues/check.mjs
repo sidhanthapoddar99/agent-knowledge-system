@@ -461,7 +461,7 @@ if (vocab?.fields?.status) {
   errors.push(`<root>/settings.json: remove \`fields.status\` — statuses are fixed in code (${STATUSES.join('|')}), and their colours are theme CSS variables, not settings (covered by a repo-root migration/ script — run the migration chain)`);
 }
 if (vocab?.statusColors) {
-  errors.push(`<root>/settings.json: remove \`statusColors\` — status colours are no longer configurable per tracker. Override the \`--status-<name>\` CSS variables in your theme's color.css instead, e.g. \`[data-theme="dark"] { --status-dropped: #ef4444; }\` (one per status: ${STATUSES.map((s) => `--status-${s}`).join(' ')}). CSS also lets light and dark differ, which the JSON map could not. Run migration/0.1.3_status-colors-to-css.py`);
+  errors.push(`<root>/settings.json: remove \`statusColors\` — status colours are no longer configurable per tracker. Override the \`--status-<name>\` CSS variables in your theme's color.css instead, e.g. \`[data-theme="dark"] { --status-dropped: #ef4444; }\` (one per status: ${STATUSES.map((s) => `--status-${s}`).join(' ')}). CSS also lets light and dark differ, which the JSON map could not. Run migration/0.2.0_status-colors-to-css.py`);
 }
 // Every component/label value must carry a description (rendered in the Guide
 // modal). priority meanings stay optional.

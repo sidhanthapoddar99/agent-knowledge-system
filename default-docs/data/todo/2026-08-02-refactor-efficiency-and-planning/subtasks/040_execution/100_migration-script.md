@@ -5,7 +5,7 @@ status: in-progress
 
 # Overview
 
-Ship `migration/0.1.3_agent-log-status-vocabulary.py`, which rewrites every
+Ship `migration/0.2.0_agent-log-status-vocabulary.py`, which rewrites every
 agent-log file's `status:` onto the canonical seven and drops the now-dead
 `iteration:` field.
 
@@ -52,7 +52,7 @@ shows the exact rewrites, migrate is idempotent (a second run finds zero), and
 
 # Outcomes and Next Steps
 
-`migration/0.1.3_agent-log-status-vocabulary.py` ships, and has been **run against
+`migration/0.2.0_agent-log-status-vocabulary.py` ships, and has been **run against
 this repo's own `default-docs/`** with the result committed in the same change.
 
 > [!IMPORTANT]
@@ -134,7 +134,7 @@ restructured old folders would rewrite the record rather than migrate it.
 > `debrief/` → `03_debrief/`. That is not the case this section was arguing
 > against: the retired six-slot folders are still left exactly where they are,
 > and what moves is only the shape this issue itself introduced days earlier.
-> It ships as `0.1.4_agent-log-slot-numbering.py` under
+> It ships as `0.2.0_agent-log-slot-numbering.py` under
 > [number the agent log's own slots](../100_agent-log-slot-numbering.md), not
 > here — this script is a text rewrite of frontmatter values and is already
 > verified idempotent, and folding a link-aware folder rename into it would put

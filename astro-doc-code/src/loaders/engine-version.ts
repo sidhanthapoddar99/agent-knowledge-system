@@ -18,19 +18,31 @@
  *
  * Bump discipline — any format change: bump ENGINE_VERSION and ship a
  * `migration/<new-version>_<statement>.py`. Which place moves is a judgement
- * about the size of the change; in practice every format migration this repo
- * has shipped moved Z (0.1.0, 0.1.1, 0.1.2). Raise MIN_CONTENT_VERSION ONLY for
- * breaking changes (old content fails/misrenders without the migration); a
- * good-to-have migration leaves the floor alone — old trees keep working and
- * migrate opportunistically. The floor means "oldest content version that still
- * works unmigrated", not "newest migration available".
+ * about the size of the change; 0.1.0 through 0.1.2 each moved Z, and 0.2.0 is
+ * the first release to move Y — a new section reader (plans), one status
+ * vocabulary shared by every file kind, status colours out of tracker settings
+ * and into theme CSS, and a renamed agent-log slot layout. Raise
+ * MIN_CONTENT_VERSION ONLY for breaking changes (old content fails/misrenders
+ * without the migration); a good-to-have migration leaves the floor alone — old
+ * trees keep working and migrate opportunistically. The floor means "oldest
+ * content version that still works unmigrated", not "newest migration
+ * available".
  */
 
 /** What this engine currently is. Major stays 0 while the project is in beta. */
-export const ENGINE_VERSION = '0.1.2';
+export const ENGINE_VERSION = '0.2.0';
 
-/** Oldest content version this engine still parses. */
-export const MIN_CONTENT_VERSION = '0.1.2';
+/**
+ * Oldest content version this engine still parses.
+ *
+ * Equal to ENGINE_VERSION as of 0.2.0, and deliberately so: every format change
+ * in this release is breaking. 0.1.x content declares agent-log statuses from a
+ * vocabulary that no longer exists, carries `statusColors` in tracker settings
+ * (now a hard error), and names its agent-log slots `summary.md` / `working/` /
+ * `debrief/` where the reader expects the numbered forms. None of that degrades
+ * — it misreads — so 0.1.x content must migrate before it loads.
+ */
+export const MIN_CONTENT_VERSION = '0.2.0';
 
 /** Content trees with no `engine_version` declaration predate the contract. */
 export const UNVERSIONED = '0.0.0';
@@ -56,8 +68,8 @@ export function isValidVersion(v: string): boolean {
  * `0.1.1_state-to-status.py` was a breaking value remap and reached nobody.
  *
  * This does NOT make every release mandatory. MIN_CONTENT_VERSION is the
- * control: ship a fix as 0.1.4 and leave the floor at 0.1.3, and content at
- * 0.1.3 still passes. Raise the floor only when old content genuinely breaks.
+ * control: ship a fix as 0.2.1 and leave the floor at 0.2.0, and content at
+ * 0.2.0 still passes. Raise the floor only when old content genuinely breaks.
  */
 export function compareFormatVersions(a: string, b: string): number {
   const [aMaj, aMin, aPat] = a.split('.').map(Number);

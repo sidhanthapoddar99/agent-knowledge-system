@@ -8,6 +8,16 @@ A **knowledge + task system designed for AI consumers**, with human-readable doc
 
 This platform is **agents-first**: the day-to-day operations — writing docs, filing and updating issues, executing subtasks, keeping logs — are performed by AI agents, with humans in the loop rather than at the keyboard. The rendered site is that loop's observability surface: the issue tracker turns the agents' thinking (brainstorms, notes, agent-logs, comments) into browsable pages, so a human can watch and steer the work without digging through files. The documentation itself serves a dual readership — humans read it to use the application; agents read it to load an overview of the whole system before acting on it.
 
+## What it looks like
+
+Every issue is a folder of plain markdown in your repo. The site is how a human reads it without opening a single file — here, one audit run with its summary open, and the whole issue anatomy in the left rail: brainstorms, notes, plans, subtasks, the agent log with its numbered slots, and the agent's own working memory.
+
+![An agent-log run rendered as a page, with the full issue anatomy in the sidebar](.github/media/issue-agent-log.webp)
+
+The index groups issues by component and filters them by **lifecycle category** rather than by individual status — Active, In Progress, Review, Not Started, Closed — with subtask progress on every row.
+
+![The issue index, grouped by component with per-row subtask progress](.github/media/issue-index.webp)
+
 ## Quick start
 
 The fastest path is via the Claude Code plugin distributed through [`sids-plugin-marketplace`](https://github.com/sidhanthapoddar99/sids-plugin-marketplace) — three commands to install, one to scaffold:
@@ -26,8 +36,8 @@ The fastest path is via the Claude Code plugin distributed through [`sids-plugin
 | Surface | Use it for |
 |---|---|
 | **Skills (3)** — `agent-ks-docs`, `agent-ks-issues`, `agent-ks-artifacts` | Trigger automatically on docs/blog/config work, issue-tracker work, and HTML-artifact building respectively. Each triages to domain-specific reference files. |
-| **Slash commands** — `/agent-ks-init`, `/agent-ks-add-section` | Bootstrap a new project; add a top-level section. Both interactive. |
-| **CLI** — one `agent-ks` entrypoint on `PATH` | 28 commands as `agent-ks <group> <verb>` — issue tracker (`agent-ks issue …`), validators (`agent-ks check …`), docs/blog content, git metadata, cross-content search. Discover with `agent-ks help`. |
+| **Slash commands (3)** — `/agent-ks-init`, `/agent-ks-add-section`, `/agent-ks-quick-idea-note` | Bootstrap a new project; add a top-level section; capture a half-formed idea into the issue dump. All interactive. |
+| **CLI** — one `agent-ks` entrypoint on `PATH` | `agent-ks <group> <verb>` — issue tracker (`agent-ks issue …`), validators (`agent-ks check …`), docs/blog content, git metadata, theme tokens, cross-content search. Run `agent-ks help` for the live list. Requires `bun`. |
 
 The `agent-ks` entrypoint lands on your `$PATH` automatically after install — no path configuration. Pass `--help` to any command for the full flag list.
 
@@ -113,6 +123,11 @@ The plugin in `plugins/agent-ks/` is distributed via [`sids-plugin-marketplace`]
 - **End-user docs** — `default-docs/data/user-guide/` (rendered at `/user-guide` in the live site). Setup, configuration, content authoring, themes, layouts, the issue tracker.
 - **Developer docs** — `default-docs/data/dev-docs/` (rendered at `/dev-docs`). Architecture, layouts internals, loader pipeline, scripts, and the **Plugins** section explaining how Claude Code plugins work and how to author one.
 - **CLAUDE.md** at the repo root — orientation for Claude Code sessions working in this repo.
+- **[CHANGELOG.md](./CHANGELOG.md)** — every release, with the full notes in [`releases/`](./releases/) and on the [GitHub releases page](https://github.com/sidhanthapoddar99/agent-knowledge-system/releases).
+
+Both doc sets are written *in* the framework and rendered *by* it — the user-guide below is this repo's own `default-docs/data/user-guide/`:
+
+![The bundled user-guide, rendered by the framework itself](.github/media/user-guide.webp)
 
 ## What's coming
 

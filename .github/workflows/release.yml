@@ -1,0 +1,70 @@
+# Publish a GitHub release from the note that ships with the tag.
+#
+# The rule this enforces: every version release is tagged `v<engine-version>`
+# AND ships `releases/<version>.md` (see releases/README.md). Documenting that
+# rule is not enough — a release note is the artefact most easily forgotten,
+# because nothing downstream fails without it. So this job **fails the tag** when
+# the note is missing, which turns the rule into something the repo checks
+# rather than something a maintainer remembers.
+#
+# Fires only on a pushed tag matching v*. Re-running on an existing release
+# updates its body rather than erroring, so a corrected note can be re-published
+# by re-running the job.
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write        # required to create/edit a release
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Find the release note for this tag
+        run: |
+          set -euo pipefail
+          VERSION="${GITHUB_REF_NAME#v}"
+          NOTE="releases/${VERSION}.md"
+
+          if [ ! -f "$NOTE" ]; then
+            echo "::error::No release note at ${NOTE}. Every tag ships one — see releases/README.md. Write the note, amend the tag, push again."
+            exit 1
+          fi
+
+          # The note's H1 is the release title: "0.2.0 — <one line>".
+          TITLE="$(head -n 1 "$NOTE" | sed 's/^#[[:space:]]*//')"
+          if [ -z "$TITLE" ]; then
+            echo "::error::${NOTE} has no H1 on line 1 — that line is the release title."
+            exit 1
+          fi
+
+          {
+            echo "VERSION=${VERSION}"
+            echo "NOTE=${NOTE}"
+            echo "TITLE=${TITLE}"
+          } >> "$GITHUB_ENV"
+
+          echo "Publishing ${GITHUB_REF_NAME} from ${NOTE}"
+
+      - name: Create or update the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            echo "Release exists — updating its body from ${NOTE}"
+            gh release edit "$GITHUB_REF_NAME" --title "$TITLE" --notes-file "$NOTE"
+          else
+            gh release create "$GITHUB_REF_NAME" \
+              --title "$TITLE" \
+              --notes-file "$NOTE" \
+              --verify-tag
+          fi

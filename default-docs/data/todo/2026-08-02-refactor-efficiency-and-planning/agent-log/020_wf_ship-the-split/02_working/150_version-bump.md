@@ -206,6 +206,23 @@ and `check issues` errors on every agent-log file" is.
 back-catalogue from git — `0.1.0`, `0.1.1`, `0.1.2` — read-only on git, since
 agents do not run git write commands.
 
+**Publishing is automated, and the rule is enforced rather than documented.**
+`.github/workflows/release.yml` fires on any `v*` tag, reads
+`releases/<version>.md`, uses its H1 as the release title, and creates the GitHub
+release — **failing the tag when the note is missing**. That inversion is the
+whole point: a release note is the artefact most easily skipped, because nothing
+downstream breaks without one. Now something does.
+
+Verified locally before committing, using the workflow's exact shell: all four
+notes yield the right title, and a tag with no note (`v9.9.9`) fails. That second
+half is the control — a guard whose failure path has never run is not a guard.
+`0.1.0`'s H1 lost its backticks in the process: a GitHub release title is plain
+text, so `` `state:` `` would have rendered literally.
+
+`CHANGELOG.md` at the repo root is a **one-row-per-release index**, linking to
+the notes. It restates nothing — the notes are the home, and an index that
+summarises them would be a second copy that drifts.
+
 | Version | Tag anchor | Confidence | Why it is not certain |
 |---|---|---|---|
 | `0.1.0` | `fffc48a` (2026-06-22) | content med-high, anchor medium | `ENGINE_VERSION` did not exist; the version is a retroactive label |

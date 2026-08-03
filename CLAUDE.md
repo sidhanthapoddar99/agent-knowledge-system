@@ -258,7 +258,7 @@ If you're inside `astro-doc-code/`, `bun run dev` / `bun run build` / `bun run p
 Two artefacts per release, **both required**:
 
 1. **An annotated git tag** — `v<engine-version>`, on the commit that moves `ENGINE_VERSION`. It lands on `main` after the work merges; never on a working branch.
-2. **A release note** — `releases/<version>.md`, published as the GitHub release body (`gh release create v0.2.0 --notes-file releases/0.2.0.md`).
+2. **A release note** — `releases/<version>.md`. **Pushing the tag publishes it**: `.github/workflows/release.yml` reads the note, uses its H1 as the release title, and creates the GitHub release — and **fails the tag if the note is missing**, so the rule is checked rather than remembered. `CHANGELOG.md` at the root is a one-row-per-release index that restates nothing.
 
 **The note is an upgrade instruction, not a changelog.** Its reader is someone whose build just stopped with a version error, or an AI acting for them; a list of commit subjects helps neither. Every breaking change names **the symptom a consumer sees if they skip it** ("your agent-log status chips render empty and `check issues` errors on every one"), the script that fixes it, and the chain to run — ending with the `site.yaml` bump as the last step.
 

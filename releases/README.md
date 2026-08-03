@@ -5,12 +5,29 @@ Every version of this engine gets **two artefacts, and both are required**:
 1. **An annotated git tag** — `v<engine-version>`, on the commit that moves
    `ENGINE_VERSION` in `astro-doc-code/src/loaders/engine-version.ts`. The tag
    lands on `main` after the work merges, never on a working branch.
-2. **A release note** — `releases/<version>.md`, this folder. It is published as
-   the GitHub release body:
+2. **A release note** — `releases/<version>.md`, this folder. It becomes the
+   GitHub release body.
 
-   ```bash
-   gh release create v0.2.0 --title "0.2.0 — <one line>" --notes-file releases/0.2.0.md
-   ```
+**Pushing the tag publishes the note.** [`.github/workflows/release.yml`](../.github/workflows/release.yml)
+fires on any `v*` tag, reads `releases/<version>.md`, and creates the release
+with the note as its body and the note's **H1 as the release title** — so line 1
+must be `# <version> — <one line>`. Re-running on an existing release updates the
+body rather than erroring, so a corrected note can be re-published.
+
+**And it fails the tag when the note is missing.** That is the point: a release
+note is the artefact most easily skipped, because nothing downstream breaks
+without one. This makes the rule something the repo checks rather than something
+a maintainer remembers.
+
+By hand, if ever needed:
+
+```bash
+gh release create v0.2.0 --title "0.2.0 — <one line>" --notes-file releases/0.2.0.md
+```
+
+**[`CHANGELOG.md`](../CHANGELOG.md) at the repo root is the index** — one row per
+release, linking here. Add the row in the same change as the note; it restates
+nothing, so there is nothing to drift.
 
 **The note is an upgrade instruction, not a changelog line.** Its reader is
 someone whose build just stopped with a version error, or an AI assistant acting

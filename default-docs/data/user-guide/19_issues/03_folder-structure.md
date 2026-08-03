@@ -20,11 +20,11 @@ data/todo/              ← one tracker
 └── 2025-06-25-dev-only-content/
 ```
 
-You can have multiple trackers in one project — e.g. `data/bugs/`, `data/roadmap/`. Each is mounted under its own base URL in `site.yaml`. See [Setup a new tracker](./setup-new-tracker).
+You can have multiple trackers in one project — e.g. `data/bugs/`, `data/roadmap/`. Each is mounted under its own base URL in `site.yaml`. See [Setup a new tracker](/user-guide/issues/setup/setup-new-tracker).
 
 ### Tracker root `settings.json`
 
-Defines the vocabulary that every issue in the tracker must use — priorities, components, labels (with their descriptions), plus status colors, preset views, and authors. (The lifecycle statuses themselves are fixed in framework code, not defined here.) Full schema in [Vocabulary](./settings/vocabulary).
+Defines the vocabulary that every issue in the tracker must use — priorities, components, labels (with their descriptions), plus status colors, preset views, and authors. (The lifecycle statuses themselves are fixed in framework code, not defined here.) Full schema in [Vocabulary](/user-guide/issues/setup/vocabulary).
 
 ## The issue folder
 
@@ -94,16 +94,16 @@ Examples:
 
 | Path | Required | Contents |
 |---|---|---|
-| `settings.json` | ✅ | All metadata — status, priority, labels, plus optional `agentLogKinds`. See [Per-Issue Settings](./settings/per-issue). |
-| `issue.md` | ✅ | The goal / pitch / context. Pure markdown, no frontmatter. See [issue.md](./sub-docs/issue-md). |
+| `settings.json` | ✅ | All metadata — status, priority, labels, plus optional `agentLogKinds`. See [Per-Issue Settings](/user-guide/issues/setup/per-issue). |
+| `issue.md` | ✅ | The goal / pitch / context. Pure markdown, no frontmatter. See [issue.md](/user-guide/issues/sub-docs/issue-md). |
 | `glossary.md` | — | Per-issue glossary, rendered as-is on the **Glossary** panel (never generated). Suggested sections: *Colour legend* · *Key terms* · *Conventions*, scoped per section where meanings differ. |
-| `comments/` | — | One file per comment — `NNN_<slug>.md` (author/date in frontmatter) or the strict `NNN_YYYY-MM-DD_<author>.md`. Flat — no subfolders. See [Comments](./sub-docs/comments). |
-| `brainstorm/` | — | Active deliberation — the *process* of deciding. `NN_<kind>_<slug>.md` with optional full-word kinds; folder = one brainstorm. See [Brainstorm](./sub-docs/brainstorm). |
-| `notes/` | — | Finalized output + durable references — the *product*. **Up to 5 levels (up to 3 recommended).** See [Notes](./sub-docs/notes). |
-| `subtasks/` | — | The plan — atomic units of work with `NN_<slug>.md` naming and frontmatter state. **Up to 5 levels of grouping subfolders (up to 3 recommended)** — folder = label only (sidebar shows its **done/total**), leaves are first-class subtasks. See [Subtasks](./sub-docs/subtasks). |
-| `plans/` | — | **Order** — `NN_<name>/` plan folders, each with `overview.md` and `NN_<stage>.md` stages that reference the subtasks they schedule. See [Plans](./sub-docs/plans). |
-| `agent-log/` | — | **Execution + outcome** — `NNN_<code>_<name>/` per run (kind code in the name), holding the numbered slots `01_summary.md`, `02_working/` and `03_debrief/`. See [Agent Log](./sub-docs/agent-log). |
-| `agent-memory/` | — | AI-mutable working state — a pinned `memory.md` index that **routes and never stores**, plus two **lifecycle** buckets: `knowledge/` (what's true and binding) and `history/` (how we got here, write-once). Order is not here: it lives in the top-level `plans/` section. See [Agent Memory](./sub-docs/agent-memory). |
+| `comments/` | — | One file per comment — `NNN_<slug>.md` (author/date in frontmatter) or the strict `NNN_YYYY-MM-DD_<author>.md`. Flat — no subfolders. See [Comments](/user-guide/issues/sub-docs/comments). |
+| `brainstorm/` | — | Active deliberation — the *process* of deciding. `NN_<kind>_<slug>.md` with optional full-word kinds; folder = one brainstorm. See [Brainstorm](/user-guide/issues/sub-docs/brainstorm). |
+| `notes/` | — | Finalized output + durable references — the *product*. **Up to 5 levels (up to 3 recommended).** See [Notes](/user-guide/issues/sub-docs/notes). |
+| `subtasks/` | — | The plan — atomic units of work with `NN_<slug>.md` naming and frontmatter state. **Up to 5 levels of grouping subfolders (up to 3 recommended)** — folder = label only (sidebar shows its **done/total**), leaves are first-class subtasks. See [Subtasks](/user-guide/issues/sub-docs/subtasks). |
+| `plans/` | — | **Order** — `NN_<name>/` plan folders, each with `overview.md` and `NN_<stage>.md` stages that reference the subtasks they schedule. See [Plans](/user-guide/issues/sub-docs/plans). |
+| `agent-log/` | — | **Execution + outcome** — `NNN_<code>_<name>/` per run (kind code in the name), holding the numbered slots `01_summary.md`, `02_working/` and `03_debrief/`. See [Agent Log](/user-guide/issues/sub-docs/agent-log). |
+| `agent-memory/` | — | AI-mutable working state — a pinned `memory.md` index that **routes and never stores**, plus two **lifecycle** buckets: `knowledge/` (what's true and binding) and `history/` (how we got here, write-once). Order is not here: it lives in the top-level `plans/` section. See [Agent Memory](/user-guide/issues/sub-docs/agent-memory). |
 
 ### Subfolder rules (`subtasks/`, `notes/`, `brainstorm/`, `agent-memory/`, `agent-log/`)
 
@@ -202,7 +202,7 @@ Any `.md` file at the issue root other than `issue.md` and `glossary.md` produce
 | `/<base>` | Index of all issues in the tracker | `IndexLayout.astro` |
 | `/<base>/<YYYY-MM-DD-slug>` | One issue's detail page | `DetailLayout.astro` |
 
-Where `<base>` comes from the `base_url` declared in `site.yaml`. See [Setup](./setup-new-tracker).
+Where `<base>` comes from the `base_url` declared in `site.yaml`. See [Setup](/user-guide/issues/setup/setup-new-tracker).
 
 ### Sub-doc URLs
 
@@ -216,7 +216,7 @@ Every sub-doc has **its own page**:
 | Agent-memory | `/<base>/<issue>/agent-memory/<name>` |
 | Agent-log | `/<base>/<issue>/agent-log/<folder>/<file>` |
 
-(Group segments only when nested.) The detail page itself is panel-based and hash-addressable: `#comments`, `#comprehensive`, `#guide` (and `#guide-<section>` deep links), `#glossary`. Full detail-page tour in [Detail View](./ui/detail-view).
+(Group segments only when nested.) The detail page itself is panel-based and hash-addressable: `#comments`, `#comprehensive`, `#guide` (and `#guide-<section>` deep links), `#glossary`. Full detail-page tour in [Detail View](/user-guide/issues/ui/detail-view).
 
 ## Draft flag at two levels
 
@@ -231,7 +231,7 @@ Both visible in dev, hidden in prod. See [Drafts](/user-guide/writing-content/dr
 
 ## See also
 
-- [Per-Issue Settings](./settings/per-issue) — what `settings.json` holds
-- [Vocabulary](./settings/vocabulary) — the tracker-root `settings.json`
-- [Sub-Documents](./sub-docs/issue-md) — each file type's format
-- [Setup a new tracker](./setup-new-tracker) — site.yaml wiring
+- [Per-Issue Settings](/user-guide/issues/setup/per-issue) — what `settings.json` holds
+- [Vocabulary](/user-guide/issues/setup/vocabulary) — the tracker-root `settings.json`
+- [Sub-Documents](/user-guide/issues/sub-docs/issue-md) — each file type's format
+- [Setup a new tracker](/user-guide/issues/setup/setup-new-tracker) — site.yaml wiring

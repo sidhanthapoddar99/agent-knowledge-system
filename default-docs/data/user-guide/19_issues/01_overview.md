@@ -8,7 +8,7 @@ sidebar_position: 1
 
 This tracker is **comprehensive memory of thought-work for AI-augmented development**. Not a ticket queue, not a project-management tool. Each issue is a folder of markdown that captures one coherent unit of *thinking + execution* — planning notes, work breakdown, AI execution log, dialog. The value is the recorded reasoning. "What's left to do" is a side effect.
 
-If that framing surprises you, read [Design Philosophy](./design-philosophy) before going further. The shape of every field below depends on it.
+If that framing surprises you, read [Design Philosophy](/user-guide/issues/design-philosophy) before going further. The shape of every field below depends on it.
 
 ## The flow inside an issue
 
@@ -98,13 +98,13 @@ Agents working with the tracker should invoke the `agent-ks-issues` skill — th
 
 ## What to read next
 
-- [Design Philosophy](./design-philosophy) — the full rationale for the shape
-- [Folder Structure](./folder-structure) — the data layout in detail
-- [Per-Issue Settings](./settings/per-issue) — metadata schema
-- [Vocabulary](./settings/vocabulary) — tracker-root `settings.json`
-- [Lifecycle and Review](./lifecycle-and-review) — the seven-status / four-category model
-- [Sub-Documents](./sub-docs/issue-md) — each file type's conventions
-- [List View](./ui/list-view) and [Detail View](./ui/detail-view)
-- [Workflows](./workflows/create-an-issue) — step-by-step guides
-- [Using with AI](./using-with-ai) — the skill + agent discipline
-- [Setup a new tracker](./setup-new-tracker) — spinning one up from scratch
+- [Design Philosophy](/user-guide/issues/design-philosophy) — the full rationale for the shape
+- [Folder Structure](/user-guide/issues/folder-structure) — the data layout in detail
+- [Per-Issue Settings](/user-guide/issues/setup/per-issue) — metadata schema
+- [Vocabulary](/user-guide/issues/setup/vocabulary) — tracker-root `settings.json`
+- [Lifecycle and Review](/user-guide/issues/setup/lifecycle-and-review) — the seven-status / four-category model
+- [Sub-Documents](/user-guide/issues/sub-docs/issue-md) — each file type's conventions
+- [List View](/user-guide/issues/ui/list-view) and [Detail View](/user-guide/issues/ui/detail-view)
+- [Workflows](/user-guide/issues/workflows/create-an-issue) — step-by-step guides
+- [Using with AI](/user-guide/issues/using-with-ai) — the skill + agent discipline
+- [Setup a new tracker](/user-guide/issues/setup/setup-new-tracker) — spinning one up from scratch

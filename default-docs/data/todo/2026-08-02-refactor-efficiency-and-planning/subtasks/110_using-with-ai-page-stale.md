@@ -1,6 +1,6 @@
 ---
 title: "The using-with-AI page describes a world that no longer exists"
-status: open
+status: review
 ---
 
 # Overview
@@ -33,18 +33,88 @@ works.
 
 # Todo list
 
-- [ ] Delete both *"Not implemented yet"* callouts — the skill shipped
-- [ ] Replace every `node scripts/issues/*.mjs` invocation with `agent-ks …`.
+- [x] Delete both *"Not implemented yet"* callouts — the skill shipped
+- [x] Replace every `node scripts/issues/*.mjs` invocation with `agent-ks …`.
       **Verify each command actually runs** rather than transcribing it; a
       user-guide command that errors is worse than no command
-- [ ] Fix the round-file recipe to the current head and location
-- [ ] Read the whole page for anything else predating the skill — it was written
+- [x] Fix the round-file recipe to the current head and location
+- [x] Read the whole page for anything else predating the skill — it was written
       as a forecast, so the staleness is unlikely to stop at four spots
 
 # Outcomes and Next Steps
 
+**Done 2026-08-03**, shipped in `cf437fd` (+112 / −68) —
+[the round](../agent-log/020_wf_ship-the-split/02_working/180_release-0-2-1.md).
+
 > [!NOTE]
-> **PLACEHOLDER** — nothing done. This is the finding, not the fix.
+> **This record was written a commit late, and the gap is worth naming.** The
+> page was rewritten, gated and pushed while this subtask still read `open` with
+> every box unticked — Sid asked *"is this complete?"* and the honest answer was
+> *the work is, the record isn't.*
+>
+> The cause is structural, not carelessness: the work was **delegated**, and an
+> agent correctly does not write tracker records. Its report goes to the
+> orchestrator, who owns the record. Two subtasks done inline the same day were
+> written up immediately; the one that went to an agent was not. **A delegated
+> subtask needs its record closed by hand, and that is exactly the step easiest
+> to drop** — the agent reports success, the gates pass, and nothing anywhere
+> says the tracker is out of date.
+
+## The four defects, verified gone rather than reported gone
+
+| Check | Count |
+|---|---|
+| `Not implemented yet` callouts | **0** |
+| `node scripts/…` invocations | **0** — the one remaining mention is a callout saying that form *does not exist* |
+| Retired `Goal / Approach / Result / Next` | **0** |
+| Working `agent-ks issue …` commands | **20** |
+
+## The agent verified by running, not by transcribing
+
+That was the instruction and it held. Every command on the page was executed
+first — read-only ones against the real tracker, and **write** commands against a
+throwaway tracker at `~/.cache/agent-ks-verify/` via `--tracker`, deleted
+afterwards, with nothing in the repo touched.
+
+Three things it tried did **not** work and so are not on the page:
+
+- `node …/scripts/issues/show.mjs <id>` → `ERR_MODULE_NOT_FOUND: gray-matter`.
+  Reproduced, which is what turned defect 2 from "old entrypoint" into "broken
+  entrypoint".
+- `agent-ks issue set-state subtasks/02_….md review` — the old page's bare
+  relative path. `File not found`, exit 1. The page now shows
+  `set-state <id> review --subtask 02`.
+- `agent-ks issue list --paths-only` with no `--search` — prints nothing, exits
+  1. It lists *match* paths, so it needs a search. Kept off the page entirely.
+
+The worked example deliberately uses the same issue id the agent actually ran
+against, so what a reader copies is verbatim what was executed.
+
+## Stale beyond the four listed, and one of them mattered more than any of them
+
+The last todo predicted the staleness would not stop at four spots. It did not —
+**eight more**, and the first is the serious one:
+
+- **`done`/`dropped` were stated as flatly human-only.** True for issues and
+  subtasks, **wrong** for agent logs, child logs, iteration files, plans and
+  stages, which an agent closes itself. Replaced with the three-row authority
+  table and a line forbidding self-certification — the same rule
+  [`070/020`](./070_audit-followups/020_who-closes-an-agent-log.md) gave a single
+  home, which this page was quietly contradicting.
+- The folder tree had no `plans/` and no `agent-memory/` — both post-date the
+  page, and the orientation order does not work without them.
+- The orientation order predated `01_summary.md` and the active-plan rule; now
+  seven steps ending at notes.
+- Four more forecast-era fragments: a placeholder skill path, a capability list
+  describing the retired four-section body, a `description` naming "helper
+  scripts", and two "while the skill is being built" asides.
+
+# Follow-up this produced
+
+[`140`](./140_user-guide-relative-links-404.md) — the agent hit one broken
+relative link and flagged the pattern as *"~10 pages"*. Measured against the
+built site it is **65 of 100 links across 18 files**. Filed separately because
+it is a section-wide defect with a mechanical fix, not a rewrite of this page.
 
 ## Why it is its own subtask and not a line in another one
 

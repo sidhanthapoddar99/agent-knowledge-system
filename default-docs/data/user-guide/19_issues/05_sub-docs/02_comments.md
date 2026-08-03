@@ -30,7 +30,7 @@ comments/
 └── 003_handoff.md
 ```
 
-Comments are **append-only in practice** — they record history, so they don't get renumbered or rewritten. Keep them a **lean evolution log** (what changed, status shifts, hand-offs), not a forum: the debate that produced a decision lives in [Brainstorm](./brainstorm). The tripwire: a comment is **a couple of lines plus a pointer** — the moment you're writing a second paragraph you're in the wrong section (debating → Brainstorm, specifying → [Notes](./notes)); link instead of inlining.
+Comments are **append-only in practice** — they record history, so they don't get renumbered or rewritten. Keep them a **lean evolution log** (what changed, status shifts, hand-offs), not a forum: the debate that produced a decision lives in [Brainstorm](/user-guide/issues/sub-docs/brainstorm). The tripwire: a comment is **a couple of lines plus a pointer** — the moment you're writing a second paragraph you're in the wrong section (debating → Brainstorm, specifying → [Notes](/user-guide/issues/sub-docs/notes)); link instead of inlining.
 
 ## Why one file per comment
 
@@ -64,7 +64,7 @@ Both optional. If absent, the filename is authoritative.
 
 ## Body
 
-Pure markdown — no length cap, though most comments are a line or two. For design deliberation, use **[Brainstorm](./brainstorm)** — comments record *that* something happened (a decision, a status shift, a hand-off), never the debate that produced it.
+Pure markdown — no length cap, though most comments are a line or two. For design deliberation, use **[Brainstorm](/user-guide/issues/sub-docs/brainstorm)** — comments record *that* something happened (a decision, a status shift, a hand-off), never the debate that produced it.
 
 ## Rendering
 
@@ -77,7 +77,7 @@ Comments live on the detail page's **Comments panel** (`#comments`) — a GitHub
 3. Create `NNN_<slug>.md` with `author:` + `date:` frontmatter (or the strict `NNN_YYYY-MM-DD_<you>.md` form, no frontmatter needed)
 4. Write your comment.
 
-The live editor + planned `/issues` skill automate all of this — see [Using with AI](../using-with-ai).
+The live editor + planned `/issues` skill automate all of this — see [Using with AI](/user-guide/issues/using-with-ai).
 
 ## When NOT to comment
 
@@ -87,6 +87,6 @@ The live editor + planned `/issues` skill automate all of this — see [Using wi
 
 ## See also
 
-- [issue.md](./issue-md) — the initial pitch
-- [Subtasks](./subtasks) — atomic work units with their own state
-- [Agent Log](./agent-log) — audit trail for AI iterations
+- [issue.md](/user-guide/issues/sub-docs/issue-md) — the initial pitch
+- [Subtasks](/user-guide/issues/sub-docs/subtasks) — atomic work units with their own state
+- [Agent Log](/user-guide/issues/sub-docs/agent-log) — audit trail for AI iterations

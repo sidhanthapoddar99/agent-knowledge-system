@@ -126,7 +126,7 @@ The loader expects these three fields under `fields` at minimum. Adding more is 
 
 The vocabulary shape is the same for single- and multi-select fields — `values: string[]`, an optional (or, for `component` / `labels`, required) `descriptions` map, and optional `colors`. Whether issues consume each value singly or as a list is up to per-issue `settings.json`.
 
-`priority` + `status` are the ordering signals — see [Design Philosophy](../design-philosophy) for why no other dimensions are wired in.
+`priority` + `status` are the ordering signals — see [Design Philosophy](/user-guide/issues/design-philosophy) for why no other dimensions are wired in.
 
 ### Status colors
 
@@ -175,7 +175,7 @@ so you can re-declare it in CSS, and tells you to check the comments left behind
 The seven statuses group into four categories — **Not Started** (`open`, `blocked`) ·
 **In Progress** (`in-progress`) · **Review** (`input-needed`, `review`) · **Closed**
 (`done`, `dropped`). The UI filters by category; the status is the per-row badge. Full
-meanings and transition conventions are in [Lifecycle and Review](./lifecycle-and-review).
+meanings and transition conventions are in [Lifecycle and Review](/user-guide/issues/setup/lifecycle-and-review).
 
 **The status set is fixed in framework code — you cannot add, remove, or rename statuses
 per tracker.** A `fields.status` block in the root settings is a **hard error** at
@@ -204,7 +204,7 @@ nothing about it is per-tracker — the values are code, the colours are theme C
 
 **Bottom line:** the colors are tweakable from `settings.json`; the names, the count,
 the categories, and the order are not. This is deliberate — see
-[Design Philosophy](../design-philosophy) for why an AI-operated tracker fixes its
+[Design Philosophy](/user-guide/issues/design-philosophy) for why an AI-operated tracker fixes its
 lifecycle vocabulary rather than letting each project drift.
 
 #### The single source of truth (for framework maintainers)
@@ -230,7 +230,7 @@ that's a framework-level decision, not a per-tracker config change.
 }
 ```
 
-Why required: these glosses are the controlled definition every issue author and AI agent reads when deciding where a new issue belongs, and they render verbatim in the tracker's **Guide** modal (the **Guide** button beside the table/card toggle on the [list view](../ui/list-view)). Keeping them mandatory stops `component` from silently drifting into a junk drawer. To backfill descriptions on an older tracker, run `migration/2026-07-03_root-settings-schema.py`.
+Why required: these glosses are the controlled definition every issue author and AI agent reads when deciding where a new issue belongs, and they render verbatim in the tracker's **Guide** modal (the **Guide** button beside the table/card toggle on the [list view](/user-guide/issues/ui/list-view)). Keeping them mandatory stops `component` from silently drifting into a junk drawer. To backfill descriptions on an older tracker, run `migration/2026-07-03_root-settings-schema.py`.
 
 ### Colors
 
@@ -290,6 +290,6 @@ Use for trackers that are **never meant for public view** (internal roadmaps, dr
 
 ## See also
 
-- [Per-Issue Settings](./per-issue) — what each issue fills in based on this vocabulary
-- [List View](../ui/list-view) — how filters + preset views render
-- [Setup a new tracker](../setup-new-tracker) — designing a new vocabulary from scratch
+- [Per-Issue Settings](/user-guide/issues/setup/per-issue) — what each issue fills in based on this vocabulary
+- [List View](/user-guide/issues/ui/list-view) — how filters + preset views render
+- [Setup a new tracker](/user-guide/issues/setup/setup-new-tracker) — designing a new vocabulary from scratch

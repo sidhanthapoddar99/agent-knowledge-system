@@ -20,7 +20,7 @@ It teaches the agent:
 4. **The review handoff** — when to mark `review`, and which `done`s are the human's and which are the agent's
 5. **Agent-log discipline** — when a folder opens at all, one file per iteration, keep the failed rounds
 
-You do not copy the skill into a project. It lives in the plugin, versioned with it, so a project that pins a stale copy would silently drift from the framework it documents. This page and its siblings under [Issues](./overview) are the canonical statement; the skill is the agent-facing companion to them.
+You do not copy the skill into a project. It lives in the plugin, versioned with it, so a project that pins a stale copy would silently drift from the framework it documents. This page and its siblings under [Issues](/user-guide/issues/overview) are the canonical statement; the skill is the agent-facing companion to them.
 
 ## Why a skill is worth the context cost
 
@@ -229,7 +229,7 @@ A well-briefed agent, equipped with the skill and the CLI, can run for hours aut
 ## See also
 
 - [Claude Code Plugin](/user-guide/getting-started/claude-skills) — installing the skills and the CLI
-- [Lifecycle and Review](./setup/lifecycle-and-review) — the seven-status / four-category model the skill enforces
-- [Agent Log](./sub-docs/agent-log) — the run shape, the round-file head, the worked examples
-- [Plans](./sub-docs/plans) — where order lives, and what a stage may reference
-- [Review and Close](./workflows/review-and-close) — the human's counterpart to the agent's workflow
+- [Lifecycle and Review](/user-guide/issues/setup/lifecycle-and-review) — the seven-status / four-category model the skill enforces
+- [Agent Log](/user-guide/issues/sub-docs/agent-log) — the run shape, the round-file head, the worked examples
+- [Plans](/user-guide/issues/sub-docs/plans) — where order lives, and what a stage may reference
+- [Review and Close](/user-guide/issues/workflows/review-and-close) — the human's counterpart to the agent's workflow

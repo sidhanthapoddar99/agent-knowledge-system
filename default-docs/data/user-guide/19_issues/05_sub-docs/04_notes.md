@@ -6,7 +6,7 @@ sidebar_position: 4
 
 # Notes
 
-Notes live in `<issue-folder>/notes/` and hold the issue's **finalized output + durable references** — the decided architecture, the agreed spec, research links worth keeping. Notes are defined by contrast with [Brainstorm](./brainstorm): brainstorm is *what we're figuring out*, notes are *what we know*.
+Notes live in `<issue-folder>/notes/` and hold the issue's **finalized output + durable references** — the decided architecture, the agreed spec, research links worth keeping. Notes are defined by contrast with [Brainstorm](/user-guide/issues/sub-docs/brainstorm): brainstorm is *what we're figuring out*, notes are *what we know*.
 
 Content arrives two ways: by **graduating** out of a resolved brainstorm (the conclusion distilled, the trail left behind with a `> **Resolved →** notes/…` marker), or fully formed (a reference, a how-to, a link dump). Once here it should be **stable** — a note that keeps changing is a brainstorm wearing the wrong hat.
 
@@ -133,7 +133,7 @@ If `issue.md` creeps past 300 lines, it probably wants to be split — extract t
 
 ## See also
 
-- [Brainstorm](./brainstorm) — the deliberation that graduates into notes
-- [issue.md](./issue-md) — the body that notes support
-- [Subtasks](./subtasks) — for breaking the work into trackable units
-- [Agent Log](./agent-log) — the execution record
+- [Brainstorm](/user-guide/issues/sub-docs/brainstorm) — the deliberation that graduates into notes
+- [issue.md](/user-guide/issues/sub-docs/issue-md) — the body that notes support
+- [Subtasks](/user-guide/issues/sub-docs/subtasks) — for breaking the work into trackable units
+- [Agent Log](/user-guide/issues/sub-docs/agent-log) — the execution record

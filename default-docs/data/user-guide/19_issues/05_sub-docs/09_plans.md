@@ -8,7 +8,7 @@ sidebar_position: 9
 
 The `plans/` folder is where **order** lives: what runs when, what blocks what, who each
 stage waits on, and the scope of this round of work. Everything else about the work
-lives in the [subtasks](./subtasks) its stages reference.
+lives in the [subtasks](/user-guide/issues/sub-docs/subtasks) its stages reference.
 
 ## The design, in one sentence
 
@@ -26,7 +26,7 @@ nothing on this page is a sync rule.
 | The **order** stages run in | What the work *is* — that is the subtask's |
 | What **blocks** what, and who each stage waits on | Any **status of the work** — stages reference subtasks and the renderer pulls their live status |
 | The **outcome** each stage is aiming at, in one line | A copy of the subtask list |
-| Stage-scoped todos and questions | Questions that outlive the plan — those are the issue's [notes](./notes) |
+| Stage-scoped todos and questions | Questions that outlive the plan — those are the issue's [notes](/user-guide/issues/sub-docs/notes) |
 
 **A plan is not a second copy of the subtask list.** It is the *ordering* and the
 *blocking* — exactly what a subtask cannot express, because a subtask does not know
@@ -295,7 +295,7 @@ What does not change: `done` on an issue subtask remains human-only.
 | Question | Home |
 |---|---|
 | About **this stage** | the stage's `## Questions` |
-| Outlives every plan | the issue's [notes](./notes) |
+| Outlives every plan | the issue's [notes](/user-guide/issues/sub-docs/notes) |
 
 This keeps `plans/` containing plan folders and nothing else, so there is never an "is
 this a plan or a standing file?" read at load time.
@@ -313,7 +313,7 @@ divided for the next insertion. `--subtask a.md,b.md` seeds the `subtasks:` list
 
 ## See also
 
-- [Subtasks](./subtasks) — the scope a stage schedules; filed by category, never by order
-- [Agent Log](./agent-log) — where the stages are actually carried out
-- [Agent Memory](./agent-memory) — what is still true; it holds no plan
-- [Lifecycle and Review](../lifecycle-and-review) — the seven-status vocabulary
+- [Subtasks](/user-guide/issues/sub-docs/subtasks) — the scope a stage schedules; filed by category, never by order
+- [Agent Log](/user-guide/issues/sub-docs/agent-log) — where the stages are actually carried out
+- [Agent Memory](/user-guide/issues/sub-docs/agent-memory) — what is still true; it holds no plan
+- [Lifecycle and Review](/user-guide/issues/setup/lifecycle-and-review) — the seven-status vocabulary

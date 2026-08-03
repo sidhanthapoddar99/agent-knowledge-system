@@ -19,7 +19,7 @@ status: in-progress
 | | What it is | Still worth pursuing? |
 |---|---|---|
 | [`010`](./010_renderer-drops-a-url-level.md) | the depth-shift diagnosis + the shipped fix | 🔴 **Superseded.** Correct for the built site, wrong in dev. Replaced by render-time absolute resolution on [`2026-06-09` `03`](../../../2026-06-09-issue-link-resolution/subtasks/03_comprehensive-panel-subdoc-links.md). **The code is still in the tree** — it goes when that lands, not before, or the breakage moves to production |
-| [`020`](./020_relative-links-are-the-contract.md) | relative is the rule, on every surface | 🟢 **Yes** — and the rule itself was vindicated. Two open items: the two asset kinds, and cross-root portability |
+| [`020`](./020_relative-links-are-the-contract.md) | relative is the rule, on every surface | 🟢 **Done 2026-08-04.** Rule stated with its architectural reason on 15 surfaces, independently audited, and the asset "exception" deleted — there is none. Cross-root portability moved to [`160`](./160_base-url-and-folder-name-are-not-tied.md) |
 | [`030`](./030_user-guide-relative-links-404.md) | 85 broken links in the issues user-guide | 🟡 **Yes, but re-measure.** The measurement holds for the built site; its *conclusion* still argues for the root-relative rewrite and has never been rewritten |
 | [`040`](./040_site-wide-link-rot.md) | "4,295 broken links site-wide" | 🔴 **The number is not usable.** Codex found the count inflated ~27× by repeated sidebars, and the tracker share is the dev/build gap, not rot. Re-measure or close it — do not cite it |
 | [`050`](./050_correct-the-published-records.md) | correcting `0.2.1` and the records | 🟢 **Yes**, and it now needs a **third** correction block — the tracker claim |
@@ -92,7 +92,7 @@ prescribed converting content to site-absolute form. That was carried out on
       control test that fails when the fix is reverted. **Closed 2026-08-04**:
       two audit edge cases fixed (`mailto:`, diagram pages), four handed to
       `2026-06-09` `03` because they are defects of the shift it deletes
-- [ ] [`020`](./020_relative-links-are-the-contract.md) — one link-form rule,
+- [x] [`020`](./020_relative-links-are-the-contract.md) — one link-form rule,
       stated identically on every surface, with the reason attached
 - [ ] [`080`](./080_link-it-dont-name-it.md) — a file reference is a link, never a
       backticked path. Same defect shape as `020`, other half of the rule
@@ -115,7 +115,7 @@ prescribed converting content to site-absolute form. That was carried out on
 | Subtask | State |
 |---|---|
 | [`010`](./010_renderer-drops-a-url-level.md) renderer | **done** — fixed, control-tested both directions, zero content files changed. Two audit edge cases closed out 2026-08-04; the shift itself still awaits its replacement |
-| [`020`](./020_relative-links-are-the-contract.md) the rule | review — no cross-section exception exists; 129 links converted |
+| [`020`](./020_relative-links-are-the-contract.md) the rule | **done** — 129 links converted, then the reason stated on every surface and audited. No exception of any kind, assets included |
 | [`050`](./050_correct-the-published-records.md) records | review — `0.2.1` carries a dated correction block |
 | [`070`](./070_reframe-the-link-checker.md) checker | review — reframed and committed; exclusion now measured, not asserted |
 | [`090`](./090_tools-must-say-what-they-skip.md) guards | review — `move` reports its skips, `check link-form` shipped green |

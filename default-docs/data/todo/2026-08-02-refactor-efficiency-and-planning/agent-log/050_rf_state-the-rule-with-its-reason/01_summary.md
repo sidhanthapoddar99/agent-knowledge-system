@@ -4,8 +4,10 @@ title: "Summary"
 
 # State
 
-Brief written 2026-08-04, agent not yet launched. One worker, one round, on
-`fix/relative-link-rendering`.
+**Closed 2026-08-04.** One worker, one independent auditor, one correction round
+by the orchestrator. Landed on `fix/relative-link-rendering`; the subtask it
+executed against, [`020`](../../subtasks/100_link-integrity/020_relative-links-are-the-contract.md),
+is `done`.
 
 # Goal
 
@@ -80,4 +82,33 @@ that decides it, and no restatement may re-implement or contradict it.
 
 # Outcome
 
-Not started.
+**15 restatements of the link rule across 13 files, each carrying its reason.**
+Working record: [the rewrite](./02_working/010_the-rewrite.md).
+
+| Stage | Result |
+|---|---|
+| Round 1 — the writer | Items 1, 2, 3, 4, 6 done; item 7 half; two open questions disclosed rather than decided |
+| Audit — independent, executing | **DEFECTS FOUND.** Reproduced the `/assets/` gate conflict against a scratch file; answered seven authoring cases from the text alone |
+| Round 2 — the correction | The `/assets/` exception deleted outright on Sid's ruling; `guide.ts` and the cross-section claim fixed; item 7 completed |
+
+**The round's own mistake, and it is the useful part.** Round 1 read the rule's
+one exception as *"a leading `/` is right for `/assets/…`"* and wrote it onto
+five surfaces. Sid, 2026-08-04: *"In the documents, we don't use the asset folder
+of the website. The asset folder is only used by the code."* The split is by
+**who references**, not by what the folder holds — so there is no exception, and
+`check link-form` had been right all along while every prose surface drifted away
+from it. **The gate was the only thing that never lied.**
+
+Three surfaces were reached that had no link rule at all before: the docs skill's
+general writing reference, `user-guide/15_writing-content/02_markdown-basics.md`,
+and `user-guide/19_issues/03_folder-structure.md`. `blog-layout.md` was found
+unswept and fixed.
+
+Gates at close: `check skill-links` 44 files pass `[repo source tree]`,
+`check link-form` 569 links / 161 files pass, `check issues` clean but for one
+pre-existing unrelated warning.
+
+**Left open deliberately:** the `cover:` blog frontmatter field is documented and
+nothing reads it — the blog is still under development (Sid, 2026-08-04). And a
+diagram file sitting directly beside a page, rather than inside `assets/`, is
+covered by no skill surface; the fact lives only in `asset-src.ts:16`.

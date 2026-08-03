@@ -149,12 +149,19 @@ An issue is one folder — one coherent unit of *thinking + execution*.
   never \`\\\`050\\\`\`. Prefixes are gap-spaced so files can be inserted between them, and
   \`agent-ks move\` rewrites real links when a file moves; a backticked number is prose
   to every tool that exists, so it breaks silently and reports nothing.
-- **The link is RELATIVE — \`./x\` or \`../x\`, never a leading \`/\`.** A backticked
+- **The link is RELATIVE — \`./x\` or \`../x\`, never a leading \`/\`, assets included.**
+  **Why:** a tracker is a folder of markdown that filesystem tools operate on —
+  \`agent-ks move\`, \`grep\`, an editor, an agent walking the tree — and a relative
+  link is the only form that is *true on disk*, so it is the only form any of them
+  can follow. The rendered tracker is one consumer of those folders, not the thing
+  being built, so its URLs are not the address space you write in. A backticked
   *path* costs the same three things a backticked number does: nothing maintains it,
   nobody can click it, and an agent has to go searching. A site-absolute
   \`[…](/todo/…)\` is worse — it renders as a working link, and \`agent-ks move\`
   skips every target beginning with \`/\`, so it looks maintained and is not. The one
-  exception is a file with nothing to link to, such as source code outside the site.
+  exception is a target that is **not a document** — source code, config, a binary —
+  which has nothing to link *to*. The test is the target, not whether it is served
+  on the site: these skill and framework files are off-site and still link relatively.
 - **To keep the number too, open the link text with the target's ORDERING PATH** —
   \`[040/100 the migration script](…/subtasks/040_execution/100_migration-script.md)\`.
   The sidebar lists entries by number, so the label is what lets you match a link

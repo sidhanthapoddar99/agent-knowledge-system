@@ -1,6 +1,6 @@
 ---
 title: "The skill offers absolute links as an equal option, and move cannot see them"
-status: in-progress
+status: done
 ---
 
 # Overview
@@ -16,8 +16,9 @@ option.** That is the permission under which 341 content links were converted to
 a form `move` cannot maintain (reverted in `ee404bb`).
 
 **Done when** every surface that states or demonstrates link form says the same
-thing, the one real exception is named, and no surface presents the absolute form
-as an equivalent alternative.
+thing, carries the same reason, and no surface presents the absolute form as an
+equivalent alternative. *Originally written as "the one real exception is named".
+There is no exception — see the closing section.*
 
 > [!IMPORTANT]
 > **Zero ambiguity is the bar, and it is Sid's, set 2026-08-03.** Not *"prefer
@@ -50,18 +51,18 @@ as an equivalent alternative.
 
 # Todo list
 
-- [ ] Rewrite `docs-layout.md:203` — relative is **the rule**, not one of two
+- [x] Rewrite `docs-layout.md:203` — relative is **the rule**, not one of two
       options. Drop the *"— also works"* framing from the absolute example
-- [ ] Put the **reason in the same place as the rule**: `agent-ks move` rewrites
+- [x] Put the **reason in the same place as the rule**: `agent-ks move` rewrites
       relative targets and skips absolute ones, so an absolute link opts itself
       out of link maintenance permanently
-- [ ] Name the one exception — leaving the section — **and verify it against
+- [x] Name the one exception — leaving the section — **and verify it against
       `move.mjs` first.** If a cross-section relative link would in fact be
       rewritten correctly, there may be no exception needed, and the simpler rule
       wins
-- [ ] Strengthen `10_writing.md:117` the same way: it states the rule but frames
+- [x] Strengthen `10_writing.md:117` the same way: it states the rule but frames
       the reason against bare prose paths, not against absolute links
-- [ ] **Sweep every surface that states or demonstrates link form**, so the rule
+- [x] **Sweep every surface that states or demonstrates link form**, so the rule
       is not stated in one place and contradicted in another. The full list, none
       of which the original scoping covered:
       - both skills' reference files — anywhere a link example appears, not only
@@ -73,10 +74,10 @@ as an equivalent alternative.
       - this repo's `CLAUDE.md`, **only if it already says something about links.**
         If it is silent, leave it silent — a rule the skills own does not get
         copied into a file that cannot know when the skill changed
-- [ ] **Account for the 137 site-absolute links that exist today** (measured
+- [x] **Account for the 137 site-absolute links that exist today** (measured
       2026-08-03, see Details). The user-guide's 115 are the known cross-section
       set; the other 22 have never been looked at
-- [ ] Mechanical guard — moved to [`090`](./090_tools-must-say-what-they-skip.md).
+- [x] Mechanical guard — moved to [`090`](./090_tools-must-say-what-they-skip.md).
       Sid decided 2026-08-03 that the checking should exist, so it is work rather
       than an open question
 
@@ -308,12 +309,62 @@ under *Cross-linking between docs pages*.
       Audit each occurrence for *reason and weight*, strengthen the thin ones,
       and add the fact where an author would look and not find it.
 
-- [ ] **7. Check the two smallest findings** — `guide.ts` states the exception one
-      clause narrower than the skill, and "a file with nothing to link to"
-      literally covers skill `.md` files, which sit outside the site and must
-      still use relative links.
+- [x] **7. Both smallest findings fixed 2026-08-04.** `guide.ts:152` now carries
+      the architectural reason like every other surface, states the rule with no
+      asset carve-out, and its exception reads *"a target that is not a
+      document"* rather than *"outside the site"* — the boundary leak, which had
+      literally covered the skill's own `.md` files.
 
-- [ ] **8. Reconcile this file with itself.** The Todo list near the top has every
-      box unticked while *Outcomes* below declares the work done on 2026-08-03
-      with measurements. One of the two is wrong; **Sid decides which**, so
-      neither was changed.
+- [x] **8. Reconciled 2026-08-04.** The top Todo list was the stale half: its
+      items were delivered on 2026-08-03 and never ticked, which is what made the
+      two sections disagree. Ticked to match, and the Outcomes section stands as
+      written.
+
+## Closed 2026-08-04 — and the one thing this round got wrong
+
+**Sid's ruling, and it reverses an exception added earlier the same day:**
+
+> *"In the documents, we don't use the asset folder of the website. The asset
+> folder is only used by the code. It's not to be used inside writing document."*
+
+Item 2 above had been read as *"a leading `/` is sometimes right — `/assets/…` is
+the exception."* That is wrong. The split is by **who references**, not by what
+the folder holds: `default-docs/assets/` is the site chrome's (favicon, logos,
+symbols loaded by layouts and config) and is named from **code**. A document
+colocates its images, diagrams, PDFs and data beside itself and references them
+relatively, for the same reason every link is relative — it is true on disk.
+
+**So the rule has no carve-out at all**, and `check link-form` needed no change:
+it had been rejecting `[spec](/assets/spec.pdf)` all along, correctly, while the
+skill documented that form as right. The gate was the only surface that never
+drifted, and the *"never make the rule looser"* line in its header stays.
+
+The exception was removed from five surfaces and the project `CLAUDE.md` section
+was rewritten around who-references. **Zero document-facing `/assets/` references
+remain in either skill.** `blog-layout.md` was fixed on the way — it had never
+been swept and sent every blog asset to the site folder.
+
+### The audit
+
+Independent, commissioned after the round, executing rather than reading — it
+answered seven concrete authoring cases using only the new skill text, and
+reproduced the `/assets/` gate conflict against a scratch file rather than
+asserting it. It came back **DEFECTS FOUND**, which is why this subtask was not
+closed on the writer's own report. Findings and their disposition:
+
+| Finding | Disposition |
+|---|---|
+| The skill documents `/assets/…` as correct; the gate rejects it | **Fixed** — the skill was wrong, not the gate |
+| The asset exception reached the docs skill only, not the issues skill | **Fixed** — removed from both, so there is nothing to keep in sync |
+| `guide.ts` stated the rule with the tooling reason alone, and kept the boundary leak | **Fixed** — item 7 |
+| `docs-layout.md` asserted "no cross-section exception" more confidently than the tracker records it | **Fixed** — caveat added, pointing at [`160`](./160_base-url-and-folder-name-are-not-tied.md) |
+| `blog-layout.md` never swept | **Fixed** |
+| The commit message claimed all four script edits were comment-only; `move.mjs` changed four `console.log` strings | **Recorded here.** No control flow moved, and the run's own record stated it correctly — only the commit message overstated it |
+| `cover:` blog frontmatter is documented but nothing reads it | **Not pursued** — Sid, 2026-08-04: the blog is still under development |
+
+**The case the text failed** is worth keeping: asked how to reference a diagram
+file sitting *directly* beside a page (`20_flow.mmd`, not inside `assets/`), the
+skill gave no answer, and the *"not a document"* exception plausibly reads as
+covering it — pushing an author to backtick a file that is a first-class page.
+The fact that any relative colocated file works, `assets/` folder or not, lives
+in a framework source comment (`asset-src.ts:16`) and on no skill surface.

@@ -71,7 +71,7 @@ area is signal; silence is not.
 > The brief originally sent both halves to `<activity>/audit/<scope>.md`, which
 > is this project's orchestration convention — and which **this repo's own rule
 > rejects**: an audit report is an iteration file, and there is no `audit/`
-> folder ([24_agent-logs.md](../../../../../../plugins/agent-ks/skills/agent-ks-issues/references/20_sections/24_agent-logs.md)).
+> folder ([24_agent-logs.md](../../../../../../../plugins/agent-ks/skills/agent-ks-issues/references/20_sections/24_agent-logs.md)).
 > The validator agreed, warning on the folder. Both reports now sit beside this
 > file as the pair they are — [141](./141_audit-skill-consistency-opus.md) and
 > [142](./142_audit-executor-followability-sol.md), sharing iteration 14 with
@@ -107,7 +107,7 @@ retired marker is read, and a loose root file counts only where there is no
 `01_summary.md`. History stays exactly as quiet as before: 51 folders, 1
 pre-existing warning, unchanged.
 
-The classifier moved to [`_agent-log-shape.mjs`](../../../../../../plugins/agent-ks/skills/agent-ks-docs/scripts/issues/_agent-log-shape.mjs)
+The classifier moved to [`_agent-log-shape.mjs`](../../../../../../../plugins/agent-ks/skills/agent-ks-docs/scripts/issues/_agent-log-shape.mjs)
 so its control imports **the real predicate**. The old control restated the
 regexes and therefore passed with the defect live — it could only ever prove
 that two copies agreed, which was never in question.

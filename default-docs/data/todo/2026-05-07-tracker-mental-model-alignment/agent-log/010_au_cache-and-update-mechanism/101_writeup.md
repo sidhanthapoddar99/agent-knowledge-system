@@ -6,7 +6,7 @@ date: 2026-05-07
 
 ## Goal
 
-Document the issue-dates cache mechanism end-to-end: how the cache populates, when it invalidates, what triggers refresh, and why each design choice was made. This is the canonical reference for [subtask 09 (`document-cleanup-in-dev-docs`)](../subtasks/09_document-cleanup-in-dev-docs.md) — when that subtask lands the dev-docs writeup, link to or quote this entry.
+Document the issue-dates cache mechanism end-to-end: how the cache populates, when it invalidates, what triggers refresh, and why each design choice was made. This is the canonical reference for [subtask 09 (`document-cleanup-in-dev-docs`)](../../subtasks/09_document-cleanup-in-dev-docs.md) — when that subtask lands the dev-docs writeup, link to or quote this entry.
 
 ## What the cache stores
 

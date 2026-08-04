@@ -93,17 +93,17 @@ Executes against
 - [x] [The three-reader audit](../../subtasks/040_execution/130_independent-skill-audit.md)
       — three neutral readers, old skill against new, none of them shown this
       issue. Verdicts stored verbatim; seven findings filed and **none acted on**
-- [x] [Status colours out of settings and into theme CSS](./080_status-colours.md)
+- [x] [Status colours out of settings and into theme CSS](./02_working/080_status-colours.md)
       — added 2026-08-03 from Sid's questions about the palette. Seven
       `--status-*` tokens, a hard error on the old override route, migration
       `0.1.3`, and the last surface still keyed to the retired vocabulary fixed
-- [x] [The summary shape and the link rule](./090_summary-shape-and-links.md)
+- [x] [The summary shape and the link rule](./02_working/090_summary-shape-and-links.md)
       — added 2026-08-03 after Sid read this file: `# Todo` items must be links
       carrying detail, `# State` is a callout, `# Outcome` is a detail area
-- [x] [The demo fixture, ten agent logs down to three](./100_demo-showcase-agent-logs.md)
+- [x] [The demo fixture, ten agent logs down to three](./02_working/100_demo-showcase-agent-logs.md)
       — 50 files to 28, no stubs, and the tracker-wide validator warning count
       from 2 down to 1
-- [x] [Ordering labels](./110_ordering-labels.md) — the number comes back into
+- [x] [Ordering labels](./02_working/110_ordering-labels.md) — the number comes back into
       link text as `040/100 <name>`, because the sidebar lists by number and a
       name alone cannot be matched against it. Shipped with **two** guards, not
       the one proposed: `move` recomputes it, and the validator warns when it
@@ -122,7 +122,7 @@ Executes against
 
 The responsibility split shipped — `plans/` as its own section, order out of
 `agent-memory/`, subtasks filed by category, the six agent-log slots gone — and
-[three neutral readers](./070_independent-audit.md) confirmed the design while
+[three neutral readers](./02_working/070_independent-audit.md) confirmed the design while
 finding seven execution defects in it, now sitting unactioned at
 [the audit follow-ups](../../subtasks/070_audit-followups/00_overview.md).
 
@@ -134,13 +134,13 @@ consolidation — 24 assertions, all PASS.
 
 The warning count was 2 for most of this run. The second one belonged to a
 fixture that existed to trigger it, and went when
-[the demo was reduced](./100_demo-showcase-agent-logs.md).
+[the demo was reduced](./02_working/100_demo-showcase-agent-logs.md).
 
 **One gate that used to need a caveat now passes at zero.**
 `check-skill-links.mjs` reported 4 errors against the issues skill for most of
 this run — all inside one fenced example, none of them real links. Writing the
 new worked examples took that to 8, so
-[the extractor was fixed to skip fenced blocks](./090_summary-shape-and-links.md)
+[the extractor was fixed to skip fenced blocks](./02_working/090_summary-shape-and-links.md)
 and control-tested against a fixture carrying both kinds. **All three skills now
 pass at zero**, which means the result can be read as a tick rather than as
 "8 errors, all false".

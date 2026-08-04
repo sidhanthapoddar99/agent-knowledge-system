@@ -94,7 +94,7 @@ is what let the title and layout ladders collapse.
   overview page and a sub-doc page:
   `This issue · Brainstorm · Notes · Plans · Subtasks · Agent log · Agent memory`
   — this also closes the other half of
-  [Sidebar icons](./070_sidebar-icons-and-overview.md), since an icon is now a
+  [Sidebar icons](./070_ui-subtasks-overview-icons.md), since an icon is now a
   required field rather than something a section can ship without.
 - The throwaway section's own sub-doc page carried `is-active` +
   `aria-current="page"` on its own sidebar entry, and the panel key

@@ -47,6 +47,45 @@ export function isIgnorableTarget(url) {
   return false;
 }
 
+/**
+ * Resolve a relative link target against the linking file's directory and return
+ * the absolute path it names, or `null` when nothing of that name is on disk.
+ *
+ * THIS IS THE OTHER HALF OF `isIgnorableTarget`, and it lives here for the same
+ * reason. That function answers *is this a path at all*; this one answers *is it
+ * a path that exists*. A link can pass the first and fail the second — and that
+ * failure is invisible everywhere else, because the renderer accepts the
+ * published slug (`./design-philosophy`) as readily as the source file it was
+ * derived from (`./02_design-philosophy.md`). The site works; the file tree does
+ * not, so `move` cannot follow the link, `grep` cannot find it, and an editor
+ * cannot open it.
+ *
+ * The resolution is the SAME arithmetic `move` performs before rewriting a link
+ * (`path.resolve(dir, rel)`), which is what makes this an honest test of
+ * maintainability rather than a second opinion about it.
+ *
+ * THE MATCH IS EXACT — dropping the extension is not a near miss, it is a miss.
+ * `./03_variables` where `03_variables.md` exists looks harmless: the `NN_`
+ * prefix survives, so `grep` and an editor still find the file. `move` does not.
+ * It resolves the target by the arithmetic above and compares the RESULT to the
+ * file being moved, so a target one character short of the filename never
+ * matches and falls through the same branch as a link that legitimately points
+ * elsewhere. Demonstrated 2026-08-04 on a fixture: `move` rewrote
+ * `./20_themes/01_overview.md` and walked silently past `./20_themes/01_overview`
+ * in the same file. Accepting it here would certify as maintainable a form the
+ * maintaining tool cannot follow — the exact mistake the leading-slash-only test
+ * made.
+ *
+ * A DIRECTORY target (`./20_themes`) does resolve, and legitimately: `move` maps
+ * directory paths as readily as file paths, so the link is maintained.
+ */
+export function resolveTargetOnDisk(fromDir, rel) {
+  let decoded = rel;
+  try { decoded = decodeURIComponent(rel); } catch { /* malformed escape — try as written */ }
+  const abs = path.resolve(fromDir, decoded);
+  return fs.existsSync(abs) ? abs : null;
+}
+
 /** Split a link target into { rel, anchor } where anchor includes the leading '#'. */
 export function splitAnchor(url) {
   const h = url.indexOf('#');
@@ -84,6 +123,25 @@ export function makeFenceTracker() {
     if (marker) { open = marker; return false; }
     return true;
   };
+}
+
+/**
+ * Blank out inline code spans, replacing each with same-length filler so column
+ * numbers still line up. A link inside backticks is being SHOWN, not used.
+ *
+ * The run length matters and a single-backtick pattern gets it wrong. Markdown
+ * opens a code span on a run of N backticks and closes it on a run of N — which
+ * is exactly how a document quotes markup that itself contains backticks:
+ *
+ *     `` [`references/writing.md`](./references/writing.md) ``
+ *
+ * A `/`[^`]*`/` pattern stops at the first inner backtick, leaves the link
+ * exposed, and reports it as content. That is a gate accusing a document of the
+ * very thing it is correctly demonstrating — found 2026-08-04 in a subtask that
+ * was quoting the right form.
+ */
+export function blankCodeSpans(line) {
+  return line.replace(/(`+)[\s\S]*?\1/g, (s) => ' '.repeat(s.length));
 }
 
 // ── ordering labels ───────────────────────────────────────────────────────

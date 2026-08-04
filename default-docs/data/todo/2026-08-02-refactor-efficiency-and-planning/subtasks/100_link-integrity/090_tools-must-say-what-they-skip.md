@@ -1,6 +1,6 @@
 ---
 title: "The tools skip links silently — move must report what it declined, and check must gate link form"
-status: in-progress
+status: done
 ---
 
 # Overview
@@ -48,8 +48,11 @@ link, and both are control-tested in each direction.
       disproportionate
 - [x] **`check link-form` built** — a new source-only gate. No cross-section
       exception to encode: `020` proved there isn't one
+- [x] **`check link-form` resolves the target on disk** — the existence test, not
+      just the leading-slash test. Warns rather than fails; see below
 - [ ] **`check` flags a backticked path that resolves to a real file** — not
-      built, and **now unblocked**. It was parked behind
+      built. Deliberately left; the existence test above is the harder half and
+      shipped first. It was parked behind
       [a file reference is a link](./080_link-it-dont-name-it.md)'s content
       sweep; that sweep was dropped on 2026-08-04 and the gate was named there
       as the higher-value half, because it catches every future instance instead
@@ -160,22 +163,86 @@ remember. This subtask is what makes them hold on a day nobody is thinking about
 links — which is the only day that matters, because the 341 conversions were
 performed by someone who had read both skill files that same week.
 
-# Reopened — the gate does not check what it claims
+# The gate did not check what it claimed — reopened, then closed
 
-**Back to `in-progress` 2026-08-03.** This is the sharpest finding of the two
-audits, and it is about the gate I built here.
+**Reopened `in-progress` 2026-08-03, closed 2026-08-04.** The sharpest finding of
+the two audits, and it was about the gate this subtask had just built.
 
-- 🔴 **`check link-form` passes 306 links `move` cannot maintain.** It tests for
-  a leading `/` and nothing else. But `move` resolves targets as **real
-  filesystem paths**, so an extensionless slug-form link (`./overview`) is no
-  more maintainable than an absolute one. In the non-tracker tree: 238 links
-  resolve to a real `.md` source, **306 are extensionless URL-form**, 1 is a real
-  non-markdown file. Control-tested — `[target](./target)` pointing at
-  `02_target.md` passes the gate, and a dry-run move of that file reports *"No
-  link edits needed."*
-  **Fix: gate resolvability, not prefix.** Sid has approved; note it turns those
-  306 red, so "green on arrival" breaks and the content has to be fixed with it.
-- [ ] **Same job as [relative but not a path](./170_relative-but-not-a-path.md)** —
-      that subtask holds the content side (the links to convert) and this one
-      holds the gate. Land them together; a gate that goes red on arrival with no
-      fix available is the one thing this subtask said not to ship.
+🔴 **`check link-form` passed 306 links `move` cannot maintain.** It tested for a
+leading `/` and nothing else — a check on the *shape* of a link rather than on
+what it points at. `move` resolves targets as **real filesystem paths**, so
+`./design-philosophy` (the file is `02_design-philosophy.md`) is no more
+maintainable than an absolute link, and rather harder to spot: a site-absolute
+link announces itself, this one looks exactly like the correct form.
+
+## What shipped
+
+**`check link-form` now runs two tests.** Both live in the same pass because both
+answer *can our tooling maintain this link* — the second is not a new gate.
+
+| Test | Severity | Question |
+|---|---|---|
+| Not site-absolute | **error** — exit 1 | is this a path at all? |
+| Resolves on disk | **warning** — exit unchanged | is it a path that exists? |
+
+**Warning, not error, on the same reasoning as `move`'s skip report.** It arrives
+with 306 pre-existing hits; a gate that is red on arrival is a gate people learn
+to ignore, which is the failure this gate exists to prevent. It tightens to an
+error once [the content is converted](./170_relative-but-not-a-path.md).
+
+**The resolution is `move`'s own arithmetic**, `path.resolve(dir, rel)`, and it
+lives beside `isIgnorableTarget` in `_links.mjs` — the file that already declares
+itself the one home for link-target classification. That is what makes it a test
+of maintainability rather than a second opinion about it.
+
+## `move` corrected the design mid-build, twice over
+
+The first version accepted two targets that resolve without naming a file of
+their own name. A dry-run of `move` on a fixture settled both:
+
+| Form | Accepted? | Why |
+|---|---|---|
+| a directory — `./20_themes` | ✅ yes | `move` maps directory paths as readily as file paths |
+| extension dropped — `./20_themes/01_overview` | ❌ **no** | `move` rewrote `…/01_overview.md` and walked **silently past** `…/01_overview` in the same file |
+
+The second is the one worth keeping: it looks harmless — the `NN_` prefix
+survives, `grep` and an editor still find the file — and the maintaining tool
+still cannot follow it. Accepting it would have repeated, one step smaller,
+exactly the mistake the leading-slash-only test made. The measured tree has **2**
+of them and **0** directory targets, so neither carve-out was load-bearing; the
+demonstration decided it, not the counts.
+
+They are reported with different wording, because they are different repairs: one
+is a missing extension, the other is a slug that has to be matched back to its
+file.
+
+## Control tests, 2026-08-04
+
+| Run | Result |
+|---|---|
+| Fixture: real path, directory, anchor-on-real-file, external, pure anchor | ✅ clean — 6 links, 0 findings |
+| Plant a slug-form link | ✅ 1 warning, exit **0** |
+| Plant a site-absolute link | ✅ 1 error, exit **1** |
+| Remove both | ✅ clean again |
+| Extensionless link whose `.md` exists | ✅ warned, with the add-the-extension wording |
+| `move` dry-run on the same fixture | ✅ rewrote 2, skipped the extensionless and the slug — **the agreement this gate claims** |
+| Real tree | 0 errors, **306** warnings, 240 resolved — matches the audit's 306 exactly |
+| `--all` (tracker included) | 2 errors (parked on [`060`](./060_does-the-tracker-share-it.md)), 322 warnings — 16 of them tracker |
+| `move` dry-run on real content, before and after | ✅ `2 link edit(s) across 2 file(s)` both times — no regression |
+
+**A second zero-assertion was added with the feature**, matching the one already
+guarding the parser: if links were parsed and *none* resolve, that is the
+resolver being broken rather than the content, and it fails.
+
+## Closed with one item open, deliberately
+
+**`check` still does not flag a backticked path that could have been a link.** The
+existence test was the harder and higher-value half and shipped first; the
+backtick check now falls out of the same resolver almost for free. It is carried
+on [`170`](./170_relative-but-not-a-path.md)'s todo list rather than holding this
+subtask open, because the tool work here is finished.
+
+**The couple-them-together constraint is dissolved, not ignored.** This subtask
+said not to ship a gate that goes red on arrival with no fix available — warning
+severity is what answers that, and it is why the gate could land before the 306
+links are converted instead of waiting on them.

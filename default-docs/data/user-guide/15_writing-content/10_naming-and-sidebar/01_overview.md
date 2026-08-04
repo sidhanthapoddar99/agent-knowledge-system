@@ -12,10 +12,10 @@ This overview is the **shared reference**: the prefix grammar, the required-vs-o
 
 | Artifact | Covers |
 |---|---|
-| [Suffix Icons](./suffix-icons) | The trailing marker a row gets when the page is **not markdown** — the artifact and diagram/chart glyphs — the one glyph vocabulary shared by the docs sidebar and the issue sub-doc tree. Markdown is unmarked. |
-| [Docs — File Tree → Sidebar](./docs) | How a docs section's files and folders map to sidebar sections and entries, with the mandatory-prefix rule and its failure modes |
-| [Blogs — File Tree → Sidebar](./blogs) | The date-prefix scheme, flat ordering, and what the index and sidebar render |
-| [Issues — File Tree → Sidebar](./issues) | The richest case: every issue sub-folder (comments, notes, brainstorm, subtasks, agent-log, agent-memory) and what each renders — plus the **leading-mark legend**: the `NN` badge and its status tint, agent-log kind symbols, subtask status icons, and the folder chevron / count |
+| [Suffix Icons](./02_suffix-icons.html) | The trailing marker a row gets when the page is **not markdown** — the artifact and diagram/chart glyphs — the one glyph vocabulary shared by the docs sidebar and the issue sub-doc tree. Markdown is unmarked. |
+| [Docs — File Tree → Sidebar](./03_docs.html) | How a docs section's files and folders map to sidebar sections and entries, with the mandatory-prefix rule and its failure modes |
+| [Blogs — File Tree → Sidebar](./04_blogs.html) | The date-prefix scheme, flat ordering, and what the index and sidebar render |
+| [Issues — File Tree → Sidebar](./05_issues.html) | The richest case: every issue sub-folder (comments, notes, brainstorm, subtasks, agent-log, agent-memory) and what each renders — plus the **leading-mark legend**: the `NN` badge and its status tint, agent-log kind symbols, subtask status icons, and the folder chevron / count |
 
 ## The ordering prefix — one grammar
 
@@ -52,7 +52,7 @@ This is the part most easily gotten wrong. The three content types treat the pre
 
 ### Docs — prefix fully stripped
 
-The docs sidebar (`layouts/docs/default/Sidebar.astro`) shows the frontmatter **`title`** and nothing of the prefix. `05_getting-started/02_installation.md` renders as **"Installation"** under **"Getting Started"**; the URL is `/…/getting-started/installation`. **No number is ever shown** — the only thing that can trail a docs row is a **type glyph** for a non-markdown page (see [Suffix Icons](./suffix-icons)).
+The docs sidebar (`layouts/docs/default/Sidebar.astro`) shows the frontmatter **`title`** and nothing of the prefix. `05_getting-started/02_installation.md` renders as **"Installation"** under **"Getting Started"**; the URL is `/…/getting-started/installation`. **No number is ever shown** — the only thing that can trail a docs row is a **type glyph** for a non-markdown page (see [Suffix Icons](./02_suffix-icons.html)).
 
 Docs *files* nest freely — every page builds and is reachable by URL, however deep. What's bounded is how deep the **sidebar draws**: the single system-wide `MAX_SUBFOLDER_DEPTH` (**5**) — the very same value the issue tracker caps folders at. There is **no per-section depth setting**; "up to 3 levels" is a recommended authoring convention, not a configured default. Folders deeper than 5 still route; they just aren't drawn as rows. So it's one shared max — a *display* limit on the docs sidebar, a *structural* cap on issue folders.
 

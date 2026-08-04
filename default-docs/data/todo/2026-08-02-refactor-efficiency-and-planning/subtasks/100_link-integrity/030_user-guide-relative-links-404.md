@@ -15,8 +15,8 @@ in the built site.
 > resolved links the way a browser does. Each number was the honest best at the
 > time; see the warning in Outcomes for why the middle one was wrong.
 
-The section's own navigation is majority-broken. A reader following "see
-[Subtasks](../subtasks)" from the `issue.md` page lands on a 404, and nothing
+The section's own navigation is majority-broken. A reader following
+`[Subtasks](../subtasks)` from the `issue.md` page lands on a 404, and nothing
 anywhere reports it: the build succeeds, `check issues` is clean, and
 `check skill-links` does not look at `data/`.
 

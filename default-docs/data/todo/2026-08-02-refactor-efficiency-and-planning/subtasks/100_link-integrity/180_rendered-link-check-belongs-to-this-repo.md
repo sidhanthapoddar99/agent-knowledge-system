@@ -23,7 +23,7 @@ different people doing different work rather than phases of one timeline:
 disk → usage stage, ships in the plugin. A build, a running server, or the
 framework source → development stage, lives in `scripts/` and never ships.
 
-Now written into the project [`CLAUDE.md`](../../../../../CLAUDE.md) under *Three
+Now written into the project [`CLAUDE.md`](../../../../../../CLAUDE.md) under *Three
 stages*.
 
 **Done when** the rendering check lives in `scripts/`, runs against a live

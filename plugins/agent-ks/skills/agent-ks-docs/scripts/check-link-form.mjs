@@ -11,6 +11,27 @@
  * case: it is exactly what 341 converted links were, and why the resolution gate
  * alone would have reported them clean.
  *
+ * TWO TESTS, AND THE SECOND IS THE ONE THAT WAS MISSING.
+ *
+ *   1. ERROR — the target must not be site-absolute (a leading `/`).
+ *   2. WARNING — the target must EXIST ON DISK.
+ *
+ * The gate shipped with only the first, and that was a check on the SHAPE of a
+ * link rather than on what it points at. `./design-philosophy` is relative, has
+ * no leading slash, and passes — while the file is `02_design-philosophy.md` and
+ * nothing of that name exists. It is the published URL wearing a relative
+ * costume: the renderer accepts both spellings, so there is no symptom to
+ * notice, and `move` walks straight past it because a slug never resolves to the
+ * file being moved. A site-absolute link at least announces itself. This one
+ * looks exactly like the correct form.
+ *
+ * WHY THE EXISTENCE TEST WARNS RATHER THAN FAILS. It arrives with hundreds of
+ * pre-existing hits — links converted twice (to site-absolute and back), where
+ * the conversion back restored the shape and not the target. A gate that is red
+ * on arrival is a gate people learn to ignore, which is the failure mode this
+ * whole gate exists to avoid. It warns until the content is converted; then it
+ * is tightened to an error.
+ *
  * WHAT IS WRONG WITH A SITE-ABSOLUTE INTERNAL LINK. Start with what these
  * documents are: filesystem-first files, written so filesystem tools work on them
  * — `move`, `grep`, an editor, an agent walking the tree — with the rendered site
@@ -35,25 +56,21 @@
  * syntax being shown, not a link. Documentation that quotes the wrong form in
  * order to forbid it must not trip the gate that forbids it.
  *
- * TRACKERS ARE EXCLUDED BY DEFAULT, matching `check links`. Not because their
- * links are suspect — they are not. Tracker pages are served without a trailing
- * slash and keep their `NN_` prefixes, so a relative link written against the
- * file tree already resolves correctly; that was verified by request in
- * 2026-08-03, after an earlier claim to the contrary was retracted.
- *
- * The exclusion is about volume: a tracker holds thousands of links to files
- * that legitimately came and went, and a gate that is red on arrival is a gate
- * people learn to ignore. `--all` includes them as a measurement.
+ * TRACKERS ARE EXCLUDED BY DEFAULT, matching `check links`. The exclusion is
+ * about volume: a tracker holds thousands of links to files that legitimately
+ * came and went, and a gate that is red on arrival is a gate people learn to
+ * ignore. `--all` includes them as a measurement.
  *
  * Usage: check-link-form.mjs [root] [--all] [--json]
- * Exit 0 = every internal link is relative, 1 = at least one is not.
+ * Exit 0 = no site-absolute internal link, 1 = at least one. Targets missing
+ * from disk are reported as warnings and do not change the exit code.
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { resolveProjectContext } from './_env.mjs';
 import { reportAndExit } from './_check-lib.mjs';
-import { MD_LINK_RE, makeFenceTracker } from './_links.mjs';
+import { MD_LINK_RE, makeFenceTracker, splitAnchor, resolveTargetOnDisk, blankCodeSpans } from './_links.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const JSON_OUT = process.argv.includes('--json');
@@ -79,26 +96,49 @@ const ALL = process.argv.includes('--all');
 const isTracker = (abs) => /(^|[\\/])todo[\\/]/.test(path.relative(ROOT, abs));
 
 const errors = [];
+const warnings = [];
 const files = walk(ROOT).filter((f) => ALL || !isTracker(f));
 let linksChecked = 0;
+let resolvable = 0;
 
 for (const file of files) {
   const isProse = makeFenceTracker();
   fs.readFileSync(file, 'utf-8').split('\n').forEach((line, idx) => {
     if (!isProse(line)) return;
-    // Blank out inline code spans first — a link shown inside backticks is being
-    // quoted, not used. Replaced with same-length filler so columns still line up.
-    const scanned = line.replace(/`[^`]*`/g, (s) => ' '.repeat(s.length));
+    // A link shown inside backticks is being quoted, not used.
+    const scanned = blankCodeSpans(line);
     let m;
     MD_LINK_RE.lastIndex = 0;
     while ((m = MD_LINK_RE.exec(scanned)) !== null) {
       const [, bang, text, target] = m;
       if (bang) continue;                        // an image, not a navigation link
       linksChecked++;
-      if (!target.startsWith('/') || target.startsWith('//')) continue;
-      errors.push(
-        `${path.relative(ROOT, file)}:${idx + 1}: site-absolute internal link ` +
-        `→ ${target}   "${text}"   — agent-ks move cannot maintain this; write it relative (./x, ../x)`,
+      if (target.startsWith('/') && !target.startsWith('//')) {
+        errors.push(
+          `${path.relative(ROOT, file)}:${idx + 1}: site-absolute internal link ` +
+          `→ ${target}   "${text}"   — agent-ks move cannot maintain this; write it relative (./x, ../x)`,
+        );
+        continue;
+      }
+      // Everything else that is not a path at all — external, protocol-relative,
+      // pure anchor — has nothing on disk to find and is not this gate's business.
+      if (/^[a-z][a-z0-9+.-]*:/i.test(target) || target.startsWith('//') || target.startsWith('#')) continue;
+
+      const { rel } = splitAnchor(target);
+      if (rel === '') continue;                  // anchor-only after the split
+      const fromDir = path.dirname(file);
+      if (resolveTargetOnDisk(fromDir, rel)) { resolvable++; continue; }
+      // Two different repairs, so say which one this is. A missing extension is a
+      // one-character fix; a slug has to be matched back to the file it came from.
+      const extLess = !path.extname(rel) &&
+        ['.md', '.mdx'].find((e) => resolveTargetOnDisk(fromDir, rel + e));
+      warnings.push(
+        `${path.relative(ROOT, file)}:${idx + 1}: target does not exist on disk ` +
+        `→ ${rel}   "${text}"   — ` +
+        (extLess
+          ? `the file is ${rel}${extLess}; add the extension`
+          : `relative in shape, but no file of that name`) +
+        `; agent-ks move will skip it`,
       );
     }
   });
@@ -108,12 +148,23 @@ for (const file of files) {
 // the equivalent trap twice in a sibling script; the assertion is cheap.
 if (files.length === 0) errors.push(`no markdown found under ${ROOT} — nothing was checked`);
 if (files.length && linksChecked === 0) errors.push(`${files.length} file(s) but zero links parsed — the link matcher is not working`);
+// The same assertion one level down. Every internal link resolving to nothing
+// would mean the resolver is broken, not that the content is: with hundreds of
+// relative links in this tree, zero resolvable is a tool failure.
+if (linksChecked && warnings.length && resolvable === 0) {
+  errors.push(`${warnings.length} relative link(s) and NONE resolve — the target resolver is not working, not the content`);
+}
 
 reportAndExit({
   kind: 'link-form',
   root: ROOT,
-  subtitle: `(${linksChecked} link(s) across ${files.length} markdown file(s))`,
+  subtitle:
+    `(${linksChecked} link(s) across ${files.length} markdown file(s); ${resolvable} resolved on disk)` +
+    (warnings.length
+      ? `\nwarnings below are targets that do not exist on disk — relative in shape, not a path. ` +
+        `They do not fail the gate yet; see subtask 170 in the link-integrity group.`
+      : ''),
   errors,
-  warnings: [],
+  warnings,
   json: JSON_OUT,
 });

@@ -31,7 +31,7 @@ References this run executes against:
   — the rendering gate is in the wrong tree
 - [`190`](../../subtasks/100_link-integrity/190_the-depth-shift-is-removed.md)
   — the depth shift is removed
-- The project [`CLAUDE.md`](../../../../../CLAUDE.md) → *Three stages*, Sid's
+- The project [`CLAUDE.md`](../../../../../../CLAUDE.md) → *Three stages*, Sid's
   framing that decides which tree a tool belongs in
 
 - [x] Write the three stages into the project `CLAUDE.md`, with the two link

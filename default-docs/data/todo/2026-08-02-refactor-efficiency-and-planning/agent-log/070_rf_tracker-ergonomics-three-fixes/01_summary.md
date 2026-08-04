@@ -4,10 +4,12 @@ title: "Summary"
 
 # State
 
-> [!NOTE]
-> **Three rounds done, all three subtasks at `review`.** A fourth round — four
-> independent reviewers on the diff — is what remains before this is handed over.
-> Nothing is blocked.
+> [!WARNING]
+> **Four reviews are in and the diff does not stand.** Two of the three subtasks
+> it closed are wrong in ways their own acceptance tests were built not to see —
+> the replaced rule is still shipped in ~10 other files, and a folder-form round
+> is silently dropped from the generated table. **Nothing has been fixed**;
+> waiting on Sid before round 05 decides the merged findings.
 
 # Goal
 
@@ -41,6 +43,11 @@ precedent that decided `015`'s design,
 - [x] [`010`](../../subtasks/110_tracker-ergonomics/010_plan-execution-needs-an-agent-log.md)
       — already shipped; re-verified on every surface it names, and its wording
       is what round 01 replaced with the trigger-and-floor form
+- [x] [Four independent reviews](./02_working/040_four-independent-reviews.md) —
+      24 findings, merged as a union. Three of them overturn a claim rounds 01–03
+      made about their own work
+- [ ] **Round 05 — decide and fix.** Not started; the union is decided once,
+      after Sid reads it, rather than patched per reviewer
 
 # Out of Scope
 

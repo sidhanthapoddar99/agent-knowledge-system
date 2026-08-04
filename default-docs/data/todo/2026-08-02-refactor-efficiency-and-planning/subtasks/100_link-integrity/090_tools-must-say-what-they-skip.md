@@ -49,8 +49,11 @@ link, and both are control-tested in each direction.
 - [x] **`check link-form` built** — a new source-only gate. No cross-section
       exception to encode: `020` proved there isn't one
 - [ ] **`check` flags a backticked path that resolves to a real file** — not
-      built. Left with [`080`](./080_link-it-dont-name-it.md), whose content
-      sweep it belongs with
+      built, and **now unblocked**. It was parked behind
+      [a file reference is a link](./080_link-it-dont-name-it.md)'s content
+      sweep; that sweep was dropped on 2026-08-04 and the gate was named there
+      as the higher-value half, because it catches every future instance instead
+      of clearing today's 95
 - [x] **Baselined before enforcing.** The tree was taken to zero first, so the
       gate ships green
 - [x] Control-tested both directions, for both tools
@@ -103,10 +106,18 @@ tracker link to relative today could swap a working link for a broken one.
 
 ### What is not built
 
-`check` does **not** flag a backticked path that could have been a link. It needs
-the [`080`](./080_link-it-dont-name-it.md) content sweep alongside it — shipping
-the gate first would light up 44+ existing instances and land red on arrival,
-which is the one thing this subtask said not to do.
+`check` does **not** flag a backticked path that could have been a link.
+
+**The reason it was deferred no longer holds.** It was waiting on
+[a file reference is a link](./080_link-it-dont-name-it.md)'s content sweep, so
+the gate would not land red. That sweep was **dropped** on 2026-08-04 — a script
+cannot tell a reference from an example, so the rule now fires when someone
+edits a file instead. The 95 existing instances stay.
+
+So the gate would light up 95 on arrival, and the decision to make is whether it
+warns or fails. **Warn**, on the same reasoning as `move`'s skip report: the
+existing 95 are honest text rather than broken links, and a gate that is red on
+arrival is a gate people learn to ignore.
 
 # Details
 
@@ -164,11 +175,7 @@ audits, and it is about the gate I built here.
   link edits needed."*
   **Fix: gate resolvability, not prefix.** Sid has approved; note it turns those
   306 red, so "green on arrival" breaks and the content has to be fixed with it.
-- 🔴 **Both tools are wrong about site assets.** There are two asset kinds and
-  they are different routes: `/assets/…` is the **site** folder (favicon, logos)
-  and is correct as written; `./assets/…` is **colocated per-doc**, rewritten to
-  `/content-assets/…`. Today `move` reports `![Logo](/assets/logo.png)` as
-  unmaintained and advises a rewrite that **breaks it**, and `check link-form`
-  fails `[Download](/assets/spec.pdf)` — the form `references/writing.md`
-  requires. Both need the site-assets prefix exempt, and `move` needs an image
-  filter.
+- [ ] **Same job as [relative but not a path](./170_relative-but-not-a-path.md)** —
+      that subtask holds the content side (the links to convert) and this one
+      holds the gate. Land them together; a gate that goes red on arrival with no
+      fix available is the one thing this subtask said not to ship.

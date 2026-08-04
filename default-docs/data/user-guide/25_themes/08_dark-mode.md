@@ -237,6 +237,6 @@ background: color-mix(in srgb, var(--color-brand-primary) 50%, var(--color-bg-pr
 
 ## See also
 
-- [Colors](./tokens/colors) — all 14 colour tokens, both modes
-- [Rules for Layout Authors](./rules-for-layout-authors) — the no-hardcoded-values contract
-- [Theme Structure](./theme-structure) — where `color.css` sits
+- [Colors](./04_tokens/02_colors.md) — all 14 colour tokens, both modes
+- [Rules for Layout Authors](./10_rules-for-layout-authors.md) — the no-hardcoded-values contract
+- [Theme Structure](./03_theme-structure.md) — where `color.css` sits

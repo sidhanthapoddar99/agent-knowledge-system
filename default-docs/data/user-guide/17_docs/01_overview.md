@@ -14,10 +14,10 @@ Sibling content types: [Blogs](../18_blogs/01_overview.md) for date-ordered post
 
 | Topic | Description |
 |-------|-------------|
-| [Structure](./structure) | Naming conventions with `NN_` prefix (2–5 digits) |
-| [Folder Settings](./folder-settings) | Configure `settings.json` for each folder |
-| [Frontmatter](./frontmatter) | Required and optional metadata fields |
-| [Asset Embedding](./asset-embedding) | Detailed asset management for docs |
+| [Structure](./02_structure.md) | Naming conventions with `NN_` prefix (2–5 digits) |
+| [Folder Settings](./03_folder-settings.md) | Configure `settings.json` for each folder |
+| [Frontmatter](./04_frontmatter.md) | Required and optional metadata fields |
+| [Asset Embedding](./05_asset-embedding.md) | Detailed asset management for docs |
 
 ## Key Rules Summary
 

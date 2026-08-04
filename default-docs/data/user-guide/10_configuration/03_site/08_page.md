@@ -214,7 +214,7 @@ a section's `base_url` **may not** be any of them:
 
 | Reserved | Claimed by |
 |---|---|
-| `artifacts` | the `/artifacts/<path>` route that serves full-page HTML [artifacts](../../writing-content/artifact-pages) |
+| `artifacts` | the `/artifacts/<path>` route that serves full-page HTML [artifacts](../../15_writing-content/08_artifact-pages.md) |
 | `assets` | the `/assets/<path>` static-asset route |
 | `content-assets` | the `/content-assets/<path>` route that serves colocated content files |
 | `api` | the `/api/*` dev endpoints |

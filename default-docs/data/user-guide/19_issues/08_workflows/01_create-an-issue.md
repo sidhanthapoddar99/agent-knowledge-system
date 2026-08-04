@@ -145,7 +145,7 @@ Capture baseline metrics before any changes. Target scenarios:
 Capture: FPS during scroll, input-to-render latency, RAM usage.
 ```
 
-Full conventions: [Subtasks](../sub-docs/subtasks).
+Full conventions: [Subtasks](../05_sub-docs/03_subtasks.md).
 
 Leave subtasks out if the issue is small enough to be a single unit of work.
 
@@ -156,7 +156,7 @@ Create these only when you have content for them:
 - `notes/<slug>.md` — for design docs, proposals, research
 - `agent-log/NNN_<slug>.md` — for AI iteration records
 
-See [Notes](../sub-docs/notes) and [Agent Log](../sub-docs/agent-log).
+See [Notes](../05_sub-docs/04_notes.md) and [Agent Log](../05_sub-docs/05_agent-log.md).
 
 ## 7. Verify — open in dev
 
@@ -198,6 +198,6 @@ Everything else (`comments/`, `subtasks/`, `notes/`, `agent-log/`) grows as the 
 
 ## See also
 
-- [Folder Structure](../folder-structure) — the full layout reference
+- [Folder Structure](../03_folder-structure.md) — the full layout reference
 - [Per-Issue Settings](../04_setup/01_per-issue.md) — full metadata schema
-- [Work an Issue](./work-an-issue) — what to do once it's created
+- [Work an Issue](./02_work-an-issue.md) — what to do once it's created

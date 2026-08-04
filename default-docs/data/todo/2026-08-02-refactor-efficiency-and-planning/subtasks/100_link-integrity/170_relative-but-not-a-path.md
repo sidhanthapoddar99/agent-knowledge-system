@@ -1,6 +1,6 @@
 ---
-title: "Relative in shape, a URL in fact — 322 links name a slug instead of a file"
-status: open
+title: "Relative in shape, a URL in fact — 322 links named a slug instead of a file"
+status: done
 ---
 
 # Overview
@@ -67,12 +67,12 @@ link is skipped loudly; this one is skipped invisibly.**
 
 **One row of this table is now false, and that is the point of
 [`090`](./090_tools-must-say-what-they-skip.md).** `check link-form` asked only
-*does this start with `/`*; it now resolves the target on disk and warns. The
+*does this start with `/`*; it now resolves the target on disk and **fails**. The
 rest still hold — which is why the gate had to be the one to change.
 
 | Gate | Why it passes | |
 |---|---|---|
-| `check link-form` — **fixed** | asked only *does this start with `/`* | now warns on all 322 |
+| `check link-form` — **fixed** | asked only *does this start with `/`* | now an error; found all 322 |
 | `check links` | resolves against the **built site**, where the slug is exactly what works | green |
 | `move` | has no concept of a target it cannot resolve | reports nothing |
 | the build | renders the href as written | green |
@@ -84,21 +84,20 @@ the four gates look at the site, one looks at a prefix, and one looks at a diff.
 This is the group's recurring shape once more: *a wrong answer indistinguishable
 from a right one until someone looks.*
 
-# The gate now names them — the list is a command, not a survey
+# The gate named them — the list was a command, not a survey
 
 **Built and control-tested 2026-08-04 on [`090`](./090_tools-must-say-what-they-skip.md).**
-`agent-ks check link-form` resolves every relative target on disk and **warns**
-on each one that does not exist, with file, line, target and link text. So this
-subtask no longer needs a script written to find its own work:
+`agent-ks check link-form` resolves every relative target on disk and reports each
+one that does not exist, with file, line, target and link text. So this subtask
+never needed a script written to find its own work:
 
 ```
 agent-ks check link-form --json     # the current list, always current
 ```
 
-**It warns rather than fails on purpose**, so it could ship before the content
-was fixed. Converting the content is what earns the right to tighten it to an
-error — that tightening is the last item below and it is what closes the class
-permanently.
+**It shipped as a warning and was tightened to an error the same day**, once the
+tree hit zero. That staging is the only reason the gate could land before the
+content was fixed; the tightening is what closes the class permanently.
 
 Two decisions the gate settled, which this subtask had listed as open:
 
@@ -137,6 +136,28 @@ gate turned up real link rot alongside it. Sample, verified by hand:
 
 **Fix the 22 first.** They are a small, hand-checkable set with a real symptom,
 and they do not depend on the 300 in any way.
+
+# Closed 2026-08-04 — 322 → 0, and the gate now fails on the next one
+
+| Step | Result |
+|---|---|
+| 22 genuinely broken links, by hand | 322 → 300 |
+| 300 slug-form links, by parser | 300 → **0** |
+| `check link-form` tightened from warning to error | red on the next one, in **any** consumer tree |
+| `migration/0.2.3_slug-form-links.py` | the same fix, shipped to consumers |
+
+**The acceptance test the class needed, because there is no visible symptom:**
+build before, build after, diff every emitted `href`.
+
+```
+86,452 hrefs · 1,216 pages · byte-identical
+```
+
+That is the whole point stated as a number — the source changed and the site did
+not, which is why nothing caught this for two rewrites. And the thing it bought,
+measured the same way: a `move` dry-run over the eight links pointing at
+`19_issues/02_design-philosophy.md` rewrote **2 before, 8 after**. That is the
+demonstration in *The demonstration* below, run again with the opposite result.
 
 ## The 22 — done 2026-08-04, by hand
 
@@ -193,6 +214,61 @@ what to type — had that example silently rewritten to `./02_overview.md` by a
 dry-run move. `move` tracks fenced blocks and nothing else. Carried as a todo
 below; the helper it needs now exists.
 
+## The 300 — converted by parsing, not by pattern
+
+**A regex over the file text is what got the last sweep in this group reverted.**
+It rewrote a link that was already inside a link, and destroyed a teaching
+example in a page whose subject was how to write links. So the converter reuses
+the gate's own primitives — fence tracker, code-span blanker, link regex — and
+edits only inside a parsed link target. It refuses rather than guesses: zero or
+several candidate files is a reported refusal, never a pick.
+
+Control-tested on a fixture carrying all five cases before it was allowed near
+the tree: live link **changed**; single-backtick span, double-backtick span,
+fenced block, and an already-correct link **untouched**; anchor preserved.
+
+**Result: 300 links in 70 files, 0 refused.** The gate went to zero in both
+scopes — docs `✓ all checks passed`, `--all` down to the 2 site-absolute tracker
+links parked on [`060`](./060_does-the-tracker-share-it.md).
+
+## The migration script, and the control that makes it trustworthy
+
+`migration/0.2.3_slug-form-links.py` — `detect` · `locate` · `migrate --dry-run`
+· `verify`. A consumer upgrading into the stricter gate meets a wall of errors on
+content that has never changed; this is what answers that, and its docstring
+leads with the symptom rather than the rule.
+
+It is a **stdlib-Python reimplementation** of the JavaScript converter, which
+makes the strongest control available here possible: run each over the same
+pre-conversion tree and diff the results.
+
+| Control | Result |
+|---|---|
+| Python `detect` on the pre-conversion tree | **300** — the same number the JS gate and converter found |
+| Python `migrate`, diffed against the JS-converted tree | **byte-identical**, 70 files |
+| Re-run `migrate` on its own output | 0 rewrites — idempotent |
+| `verify` on the converted tree | clean, exit 0 |
+| Fixture: link inside a code span / fenced block | untouched by both |
+
+**Two implementations agreeing on 300 links across 70 files is worth more than
+either one passing its own tests**, because they share no code — only the rule.
+
+A note on the refusals seen when testing against an extracted subtree: links
+reaching out to repo-root files (`../../…/CLAUDE.md`, `plugins/…`) correctly
+refuse there, because in that copy the target genuinely is not on disk. On the
+real tree the same run refuses nothing. The script says so on its summary line
+rather than only on stderr, so `0 link(s)` plus exit 1 cannot read as a bug.
+
+## What this does not close
+
+- **The version bump and the release are Sid's.** `ENGINE_VERSION` is still
+  `0.2.2` and the script is named `0.2.3` — the naming rule in
+  `migration/README.md` covers exactly this case, and a release that lands on a
+  different number renames it. The floor does **not** move: slug-form links
+  render correctly, so old content still works unmigrated. This is a
+  good-to-have migration, not a breaking one
+- **`move` still rewrites links inside inline code spans** — carried above
+
 # Todo list
 
 - [x] **Extend `check link-form` to resolve the target on disk** — the existence
@@ -203,38 +279,22 @@ below; the helper it needs now exists.
 - [x] Anchors and directory targets decided — see above
 - [x] **Fix the 22 genuinely broken ones first** — done 2026-08-04, by hand.
       322 → 300, table above
-- [ ] **`move` must skip inline code spans**, as `check link-form` now does. It
-      rewrites a link inside backticks, editing a documentation example into a
-      lie — demonstrated on a fixture. `_links.mjs → blankCodeSpans` is the fix;
-      `move` currently tracks fenced blocks only
-- [ ] **Convert the 300.** Mechanical, zero ambiguous — match each path segment
-      against the real directory entries with `NN_` prefix and extension
-      stripped. **Not with a blind regex:** the last automated content sweep in
-      this group was reverted for rewriting a teaching example and nesting a link
-      inside a link. Convert only inside a parsed markdown link target, never in
-      a fenced block or a code span — the gate already draws exactly that line,
-      so drive the conversion from the gate's own findings rather than a fresh
-      scan
-- [ ] **Tighten the gate from warning to error** once the tree is at zero. This
-      is the step that makes the class unrepeatable, and it is the whole reason
-      the conversion is worth doing — the 334 already work in a browser
-- [ ] **Add the backticked-path check**, inherited from
-      [`090`](./090_tools-must-say-what-they-skip.md) on closing. A backticked
-      string that resolves to a real document is a link that was never written;
-      the resolver this gate now carries answers it almost for free. Warn, on the
-      same reasoning — 95 exist and they are honest text, not broken links
-- [ ] Verify the conversion changed no rendered URL — the slug and the source
-      path resolve to the same page since 0.2.2, so the site must be unaffected.
-      **Build before and after and diff the emitted hrefs**
-- [ ] Re-run the `move` demonstration above afterwards: all eight links to
-      `design-philosophy` should be rewritten, not two
-- [ ] **Titled links are invisible to the same gate**, inherited from
-      [`070`](./070_reframe-the-link-checker.md) on closing. `MD_LINK_RE`'s
-      target pattern is `[^)\s]+`, so it stops at the space in
-      `[x](/y "title")` and the link is never parsed at all — not reported, not
-      counted. **Two exist in the content today.** Same class as the rest of this
-      subtask: a link the tooling cannot see is a link the tooling cannot
-      maintain
+- [x] **Convert the 300** — done 2026-08-04 by parsing, not by pattern. 300
+      links in 70 files, 0 refused
+- [x] **Tighten the gate from warning to error** — done the same day; that
+      staging was the whole reason it shipped as a warning
+- [x] Verify the conversion changed no rendered URL — **86,452 hrefs across
+      1,216 pages, byte-identical** before and after
+- [x] Re-run the `move` demonstration: **8 of 8** rewritten, against 2 before
+- [x] Ship it to consumers — `migration/0.2.3_slug-form-links.py`, an
+      independent Python implementation, control-tested against the JS one on
+      the same tree
+
+**Four items moved rather than closed**, to
+[link tooling blind spots](./200_link-tooling-blind-spots.md): `move` rewriting
+links inside code spans, titled links the regex never parses, backticked-path
+detection, and reference-style links. None of them is this subtask's acceptance
+test; all four are the same family and belong together.
 
 # Details
 

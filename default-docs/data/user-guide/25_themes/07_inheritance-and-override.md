@@ -8,7 +8,7 @@ sidebar_position: 7
 
 A theme can inherit from another. The child declares `extends: "@theme/<name>"`, the loader resolves the parent recursively, and the concatenated CSS includes both. Three `override_mode` values decide **how** parent and child combine.
 
-This page is the full reference. For the guided walkthroughs, see [Creating Themes](./creating-themes/quick-start).
+This page is the full reference. For the guided walkthroughs, see [Creating Themes](./06_creating-themes/01_quick-start.md).
 
 ## The `extends` field
 
@@ -86,7 +86,7 @@ child:  element.css  ← cascades over parent's
 
 **Result**: child overrides variables where declared; parent's other CSS flows through unchanged.
 
-**Use for**: typical custom themes. Re-brand, tweak some element sizing, override a few UI styles. See [Extending Default](./creating-themes/extending-default).
+**Use for**: typical custom themes. Re-brand, tweak some element sizing, override a few UI styles. See [Extending Default](./06_creating-themes/02_extending-default.md).
 
 ### `override` — skip parent files that child replaces
 
@@ -205,7 +205,7 @@ Practically, keep chains shallow — 2 or 3 levels max. The loader supports arbi
 
 ## See also
 
-- [Theme Structure](./theme-structure) — `extends`, `override_mode`, and `files:` in the manifest
-- [Creating Themes / Extending Default](./creating-themes/extending-default) — typical merge-mode child
-- [Creating Themes / Standalone Theme](./creating-themes/standalone-theme) — `extends: null` approach
-- [Validation](./validation) — what errors on each mode
+- [Theme Structure](./03_theme-structure.md) — `extends`, `override_mode`, and `files:` in the manifest
+- [Creating Themes / Extending Default](./06_creating-themes/02_extending-default.md) — typical merge-mode child
+- [Creating Themes / Standalone Theme](./06_creating-themes/03_standalone-theme.md) — `extends: null` approach
+- [Validation](./09_validation.md) — what errors on each mode

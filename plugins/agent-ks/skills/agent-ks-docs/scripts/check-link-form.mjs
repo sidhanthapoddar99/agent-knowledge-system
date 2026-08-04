@@ -11,26 +11,31 @@
  * case: it is exactly what 341 converted links were, and why the resolution gate
  * alone would have reported them clean.
  *
- * TWO TESTS, AND THE SECOND IS THE ONE THAT WAS MISSING.
+ * TWO TESTS, AND BOTH FAIL. The second was missing for most of this gate's life.
  *
- *   1. ERROR — the target must not be site-absolute (a leading `/`).
- *   2. WARNING — the target must EXIST ON DISK.
+ *   1. The target must not be site-absolute (a leading `/`).
+ *   2. The target must EXIST ON DISK.
  *
  * The gate shipped with only the first, and that was a check on the SHAPE of a
  * link rather than on what it points at. `./design-philosophy` is relative, has
- * no leading slash, and passes — while the file is `02_design-philosophy.md` and
- * nothing of that name exists. It is the published URL wearing a relative
+ * no leading slash, and passed — while the file is `02_design-philosophy.md` and
+ * nothing of that name existed. It is the published URL wearing a relative
  * costume: the renderer accepts both spellings, so there is no symptom to
  * notice, and `move` walks straight past it because a slug never resolves to the
- * file being moved. A site-absolute link at least announces itself. This one
- * looks exactly like the correct form.
+ * file being moved. A site-absolute link at least announces itself. That one
+ * looked exactly like the correct form.
  *
- * WHY THE EXISTENCE TEST WARNS RATHER THAN FAILS. It arrives with hundreds of
- * pre-existing hits — links converted twice (to site-absolute and back), where
- * the conversion back restored the shape and not the target. A gate that is red
- * on arrival is a gate people learn to ignore, which is the failure mode this
- * whole gate exists to avoid. It warns until the content is converted; then it
- * is tightened to an error.
+ * The existence test shipped as a WARNING because it arrived with 300 hits —
+ * links converted twice (to site-absolute and back), where the conversion back
+ * restored the shape and not the target. A gate that is red on arrival is a gate
+ * people learn to ignore. The 300 were converted on 2026-08-04 and the test was
+ * tightened to an error the same day, which was the point of the warning phase:
+ * it was a staging step, not a severity judgement.
+ *
+ * The conversion was verified to change nothing a reader sees — 86,452 hrefs
+ * across 1,216 built pages, byte-identical before and after — and to restore
+ * what it was for: a `move` dry-run over the eight links to one page rewrote
+ * two of them before and all eight after.
  *
  * WHAT IS WRONG WITH A SITE-ABSOLUTE INTERNAL LINK. Start with what these
  * documents are: filesystem-first files, written so filesystem tools work on them
@@ -62,8 +67,7 @@
  * ignore. `--all` includes them as a measurement.
  *
  * Usage: check-link-form.mjs [root] [--all] [--json]
- * Exit 0 = no site-absolute internal link, 1 = at least one. Targets missing
- * from disk are reported as warnings and do not change the exit code.
+ * Exit 0 = every internal link is relative AND names a file that exists.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -96,7 +100,6 @@ const ALL = process.argv.includes('--all');
 const isTracker = (abs) => /(^|[\\/])todo[\\/]/.test(path.relative(ROOT, abs));
 
 const errors = [];
-const warnings = [];
 const files = walk(ROOT).filter((f) => ALL || !isTracker(f));
 let linksChecked = 0;
 let resolvable = 0;
@@ -132,7 +135,7 @@ for (const file of files) {
       // one-character fix; a slug has to be matched back to the file it came from.
       const extLess = !path.extname(rel) &&
         ['.md', '.mdx'].find((e) => resolveTargetOnDisk(fromDir, rel + e));
-      warnings.push(
+      errors.push(
         `${path.relative(ROOT, file)}:${idx + 1}: target does not exist on disk ` +
         `→ ${rel}   "${text}"   — ` +
         (extLess
@@ -148,23 +151,19 @@ for (const file of files) {
 // the equivalent trap twice in a sibling script; the assertion is cheap.
 if (files.length === 0) errors.push(`no markdown found under ${ROOT} — nothing was checked`);
 if (files.length && linksChecked === 0) errors.push(`${files.length} file(s) but zero links parsed — the link matcher is not working`);
-// The same assertion one level down. Every internal link resolving to nothing
-// would mean the resolver is broken, not that the content is: with hundreds of
-// relative links in this tree, zero resolvable is a tool failure.
-if (linksChecked && warnings.length && resolvable === 0) {
-  errors.push(`${warnings.length} relative link(s) and NONE resolve — the target resolver is not working, not the content`);
+// The same assertion one level down, and it is the one that matters now that a
+// missing target FAILS. Every internal link resolving to nothing would mean the
+// resolver is broken rather than the content — and it would fail every run with
+// a wall of findings that all look like content defects. Say which it is.
+if (linksChecked && errors.length && resolvable === 0) {
+  errors.push(`${errors.length} finding(s) and NOT ONE link resolves — suspect the resolver, not the content`);
 }
 
 reportAndExit({
   kind: 'link-form',
   root: ROOT,
-  subtitle:
-    `(${linksChecked} link(s) across ${files.length} markdown file(s); ${resolvable} resolved on disk)` +
-    (warnings.length
-      ? `\nwarnings below are targets that do not exist on disk — relative in shape, not a path. ` +
-        `They do not fail the gate yet; see subtask 170 in the link-integrity group.`
-      : ''),
+  subtitle: `(${linksChecked} link(s) across ${files.length} markdown file(s); ${resolvable} resolved on disk)`,
   errors,
-  warnings,
+  warnings: [],
   json: JSON_OUT,
 });

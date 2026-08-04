@@ -17,7 +17,7 @@ that still *works*.
 ## Two classes of format change
 
 Every engine release that changes the content format ships a migration script
-(see [Migrations](./migrations)). Whether the floor moves depends on the class
+(see [Migrations](./04_migrations.md)). Whether the floor moves depends on the class
 of change:
 
 | Class | Old content on the new engine | Floor |
@@ -48,7 +48,7 @@ Get it wrong in either direction and the mechanism degrades:
 For any release touching the content format:
 
 1. Bump `ENGINE_VERSION` — which place moves is a judgement about the size of
-   the change, stated by position in [Versioning Overview](./overview).
+   the change, stated by position in [Versioning Overview](./01_overview.md).
 2. Ship `migration/<new-version>_<statement>.py` — the change does not exist
    until its script does.
 3. Decide the class honestly: does *unmigrated* old content still render

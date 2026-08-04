@@ -47,16 +47,16 @@ a silently misrendered page there, an agent mass-producing content against a
 stale convention. The contract converts all of that into **one loud, early,
 self-explanatory failure** at startup — and because the primary consumer of the
 error message is an AI assistant, the message contains the complete recovery
-procedure (see [The Version Gate](./version-gate)).
+procedure (see [The Version Gate](./02_version-gate.md)).
 
 ## This section
 
 | Page | Covers |
 |---|---|
-| [The Version Gate](./version-gate) | Where the gate runs, both failure directions, exact messages |
-| [Minimum Version](./minimum-version) | The floor — breaking vs good-to-have changes, release discipline |
-| [Migrations](./migrations) | The `migration/` system — naming, the chain, the upgrade flow |
-| [Authoring Migrations](./authoring-migrations) | Writing a new migration script, testing it, shipping it |
+| [The Version Gate](./02_version-gate.md) | Where the gate runs, both failure directions, exact messages |
+| [Minimum Version](./03_minimum-version.md) | The floor — breaking vs good-to-have changes, release discipline |
+| [Migrations](./04_migrations.md) | The `migration/` system — naming, the chain, the upgrade flow |
+| [Authoring Migrations](./05_authoring-migrations.md) | Writing a new migration script, testing it, shipping it |
 
 Consumer-facing summary: the user-guide's
 [Versioning & Migrations](../../user-guide/10_configuration/07_versioning.md) page.

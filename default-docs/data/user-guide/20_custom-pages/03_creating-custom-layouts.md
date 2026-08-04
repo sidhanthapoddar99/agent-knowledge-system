@@ -389,7 +389,7 @@ Minimum verification before shipping:
 
 ## See also
 
-- [Using Built-in Layouts](./using-built-in-layouts) — study `home`, `info`, `countdown` as references
+- [Using Built-in Layouts](./02_using-built-in-layouts.md) — study `home`, `info`, `countdown` as references
 - [Layout System / Custom Layout Styles](../16_layout-system/03_custom-layout-styles.md) — the `LAYOUT_EXT_DIR` + `@ext-layouts` mechanism
 - [Themes / Rules for Layout Authors](../25_themes/10_rules-for-layout-authors.md) — the no-hardcoded-values discipline
 - [Themes / Tokens](../25_themes/04_tokens/01_overview.md) — what tokens to consume, which to avoid

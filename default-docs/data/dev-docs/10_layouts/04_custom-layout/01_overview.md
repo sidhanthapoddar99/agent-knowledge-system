@@ -229,4 +229,4 @@ Custom layouts are the most flexible — you define:
 2. What components you include in the folder
 3. How everything is arranged and styled
 
-See [Creating Custom Layouts](./creating) for a step-by-step guide.
+See [Creating Custom Layouts](./04_creating.md) for a step-by-step guide.

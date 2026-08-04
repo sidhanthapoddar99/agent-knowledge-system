@@ -183,6 +183,6 @@ For extra-prominent blog cards, you can absolutely promote titles to a content-s
 
 ## See also
 
-- [Markdown Styles](./markdown-styles) — the `.blog-post__body` inherits these
-- [Typography](../tokens/typography) — the tokens all these sizes come from
+- [Markdown Styles](./02_markdown-styles.md) — the `.blog-post__body` inherits these
+- [Typography](../04_tokens/03_typography.md) — the tokens all these sizes come from
 - [Blog Content Type](../../18_blogs/01_overview.md) — the content side

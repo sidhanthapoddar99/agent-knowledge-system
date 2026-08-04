@@ -155,7 +155,7 @@ These declare `:root { --foo: value; }` blocks. The default theme keeps them to:
 - `font.css` — families, primitive scale, semantic UI + content + display tokens
 - `element.css` — spacing, radii, shadows, transitions, z-index, opacity, layout dimensions
 
-See [Tokens](./tokens/overview) for full per-file breakdown.
+See [Tokens](./04_tokens/01_overview.md) for full per-file breakdown.
 
 ### Styling files
 
@@ -165,7 +165,7 @@ These consume variables to style actual elements — no `--foo:` declarations. S
 - `navbar.css` — everything under `.site-navbar` (or similar class)
 - `footer.css`, `docs.css`, `blogs.css`, `issues.css` — similarly scoped per component
 
-All styling files MUST consume variables — **no hardcoded colours, font sizes, or spacing.** See [Rules for Layout Authors](./rules-for-layout-authors).
+All styling files MUST consume variables — **no hardcoded colours, font sizes, or spacing.** See [Rules for Layout Authors](./10_rules-for-layout-authors.md).
 
 ### Reference files
 
@@ -198,7 +198,7 @@ The loader resolves relative paths against the theme folder.
 
 ## See also
 
-- [Theme Contract](./the-theme-contract) — the 46 required variables
-- [Tokens / Overview](./tokens/overview) — per-category variable reference
-- [Inheritance and Override](./inheritance-and-override) — modes + cascade rules, deeper
-- [Creating Themes / Quick Start](./creating-themes/quick-start) — first theme, hands-on
+- [Theme Contract](./02_the-theme-contract.md) — the 46 required variables
+- [Tokens / Overview](./04_tokens/01_overview.md) — per-category variable reference
+- [Inheritance and Override](./07_inheritance-and-override.md) — modes + cascade rules, deeper
+- [Creating Themes / Quick Start](./06_creating-themes/01_quick-start.md) — first theme, hands-on

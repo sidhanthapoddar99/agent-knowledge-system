@@ -102,7 +102,7 @@ Brand and status colours are brighter in dark mode to maintain contrast against 
 
 The `[data-theme="dark"]` attribute is toggled on `<html>` by the framework's dark-mode switcher. Layouts don't need to read the attribute — `var(--color-bg-primary)` resolves to the right value automatically based on which selector matches.
 
-See [Dark Mode](../dark-mode) for the full story.
+See [Dark Mode](../08_dark-mode.md) for the full story.
 
 ## Choosing brand + status colours
 
@@ -176,7 +176,7 @@ Every colour is a `var(--color-…)`. **No `#fff`, no `rgba(0,0,0,0.1)` for bord
 
 ## See also
 
-- [The Theme Contract](../the-theme-contract) — the 46-variable fixed set
-- [Dark Mode](../dark-mode) — how `[data-theme="dark"]` works end-to-end
-- [Typography](./typography) — the other major token category
-- [Rules for Layout Authors](../rules-for-layout-authors) — full no-hardcoded-values contract
+- [The Theme Contract](../02_the-theme-contract.md) — the 46-variable fixed set
+- [Dark Mode](../08_dark-mode.md) — how `[data-theme="dark"]` works end-to-end
+- [Typography](./03_typography.md) — the other major token category
+- [Rules for Layout Authors](../10_rules-for-layout-authors.md) — full no-hardcoded-values contract

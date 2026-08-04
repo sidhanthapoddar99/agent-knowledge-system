@@ -80,7 +80,7 @@ The `--shiki-dark` variables are generated per-token by Shiki itself. The theme 
 .markdown-content h6 { font-size: var(--content-h6); font-weight: 600; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: var(--letter-spacing-wide); }
 ```
 
-Note `h4`, `h5`, `h6` are the **same size as body**. They differentiate via weight + colour shift + (at h6) text-transform. That's the "structural landmarks, not visual emphasis" principle from [Typography](../tokens/typography#h4h6-are-structural-not-visual).
+Note `h4`, `h5`, `h6` are the **same size as body**. They differentiate via weight + colour shift + (at h6) text-transform. That's the "structural landmarks, not visual emphasis" principle from [Typography](../04_tokens/03_typography.md#h4h6-are-structural-not-visual).
 
 ### Spacing between paragraphs / headings
 
@@ -142,6 +142,6 @@ Each of these freezes a value that should flow through the theme. The last one i
 
 ## See also
 
-- [Typography](../tokens/typography) — `--content-*` tokens the markdown styles consume
-- [Colors](../tokens/colors) — `--color-*` tokens for links, code backgrounds, borders
+- [Typography](../04_tokens/03_typography.md) — `--content-*` tokens the markdown styles consume
+- [Colors](../04_tokens/02_colors.md) — `--color-*` tokens for links, code backgrounds, borders
 - [Writing Content / Markdown Basics](../../15_writing-content/02_markdown-basics.md) — what the rendered output looks like from the author side

@@ -174,7 +174,7 @@ A few rules of thumb:
 
 ## See also
 
-- [Layout System Overview](./overview) — the four content types and how resolution works
-- [Custom Layout Styles](./custom-layout-styles) — ship your own style via `@ext-layouts`
+- [Layout System Overview](./01_overview.md) — the four content types and how resolution works
+- [Custom Layout Styles](./03_custom-layout-styles.md) — ship your own style via `@ext-layouts`
 - [Page Configuration](../10_configuration/03_site/08_page.md) — the full `pages:` entry schema
 - [Navbar Configuration](../10_configuration/04_navbar.md) · [Footer Configuration](../10_configuration/05_footer.md)

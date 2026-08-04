@@ -233,6 +233,6 @@ Every value is a token. No magic numbers.
 
 ## See also
 
-- [The Theme Contract](../the-theme-contract) — 13 element variables, full list
-- [Layout Dimensions](./layout-dimensions) — max-width, heights, sidebar/outline widths
-- [Rules for Layout Authors](../rules-for-layout-authors) — the discipline
+- [The Theme Contract](../02_the-theme-contract.md) — 13 element variables, full list
+- [Layout Dimensions](./05_layout-dimensions.md) — max-width, heights, sidebar/outline widths
+- [Rules for Layout Authors](../10_rules-for-layout-authors.md) — the discipline

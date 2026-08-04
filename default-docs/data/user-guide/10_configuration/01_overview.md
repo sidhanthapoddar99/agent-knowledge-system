@@ -35,7 +35,7 @@ your-docs-folder/
 └── agent-knowledge-system/   # the framework (don't edit)
 ```
 
-In *dogfood mode* (working on the framework itself), the same folders live under `agent-knowledge-system/default-docs/` instead, and `CONFIG_DIR=./default-docs/config`. See [Environment Variables](./env) for the two-mode model.
+In *dogfood mode* (working on the framework itself), the same folders live under `agent-knowledge-system/default-docs/` instead, and `CONFIG_DIR=./default-docs/config`. See [Environment Variables](./02_env.md) for the two-mode model.
 
 ## Configuration Files
 
@@ -139,7 +139,7 @@ Configuration supports path aliases for cleaner references:
 
 > Layout-alias paths above are relative to the framework root (`astro-doc-code/`). From the repo root, the full path is e.g. `astro-doc-code/src/layouts/docs/default/`.
 
-See [Path Aliases](../getting-started/aliases) for the full reference.
+See [Path Aliases](../05_getting-started/03_aliases.md) for the full reference.
 
 ### Assets Alias
 
@@ -214,8 +214,8 @@ The system validates configuration at build time:
 
 | Section | File | Link |
 |---------|------|------|
-| Environment | `.env` | [env.md](./env) |
+| Environment | `.env` | [env.md](./02_env.md) |
 | Site Metadata & Logo | `site.yaml` | [site.md](./03_site/01_overview.md) |
 | Page Definitions | `site.yaml` → `pages:` | [page.md](./03_site/08_page.md) |
-| Navigation | `navbar.yaml` | [navbar.md](./navbar) |
-| Footer | `footer.yaml` | [footer.md](./footer) |
+| Navigation | `navbar.yaml` | [navbar.md](./04_navbar.md) |
+| Footer | `footer.yaml` | [footer.md](./05_footer.md) |

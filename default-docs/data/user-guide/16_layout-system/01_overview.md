@@ -91,7 +91,7 @@ pages:
 
 Index+detail types (blog, issues) accept `layout_index` + `layout_detail` separately. Single-surface types (docs, custom) accept one `layout:`.
 
-At route time, `src/pages/[...slug].astro` reads the page config, resolves the alias, and invokes the matching Astro component. Full detail: [Switching Layout Styles](./switching-styles).
+At route time, `src/pages/[...slug].astro` reads the page config, resolves the alias, and invokes the matching Astro component. Full detail: [Switching Layout Styles](./02_switching-styles.md).
 
 ## The flow, end to end
 
@@ -130,7 +130,7 @@ Response
 
 You can ship your own layout style without editing `src/layouts/`. Drop it in a user-configured directory (typically `layouts/<type>/<style>/` at your project root, sibling of `config/` and `data/`), set `LAYOUT_EXT_DIR` in `.env`, and the new layout is immediately available via the same `@<type>/<style>` alias — with **override-by-name** semantics against built-ins.
 
-Full walkthrough: [Custom Layout Styles](./custom-layout-styles).
+Full walkthrough: [Custom Layout Styles](./03_custom-layout-styles.md).
 
 ## When you need a new layout
 
@@ -150,8 +150,8 @@ Most projects never write a custom layout. **If theme overrides + style switchin
 
 | Page | Covers |
 |---|---|
-| [Switching Layout Styles](./switching-styles) | Picking built-in styles · `site.yaml` fields · what ships · dev-toolbar switcher |
-| [Custom Layout Styles](./custom-layout-styles) | `LAYOUT_EXT_DIR` setup · `@ext-layouts` alias · import rules · override behaviour |
+| [Switching Layout Styles](./02_switching-styles.md) | Picking built-in styles · `site.yaml` fields · what ships · dev-toolbar switcher |
+| [Custom Layout Styles](./03_custom-layout-styles.md) | `LAYOUT_EXT_DIR` setup · `@ext-layouts` alias · import rules · override behaviour |
 
 ## See also
 

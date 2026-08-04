@@ -8,7 +8,7 @@ sidebar_position: 1
 
 This tracker is **comprehensive memory of thought-work for AI-augmented development**. Not a ticket queue, not a project-management tool. Each issue is a folder of markdown that captures one coherent unit of *thinking + execution* — planning notes, work breakdown, AI execution log, dialog. The value is the recorded reasoning. "What's left to do" is a side effect.
 
-If that framing surprises you, read [Design Philosophy](./design-philosophy) before going further. The shape of every field below depends on it.
+If that framing surprises you, read [Design Philosophy](./02_design-philosophy.md) before going further. The shape of every field below depends on it.
 
 ## The flow inside an issue
 
@@ -98,13 +98,13 @@ Agents working with the tracker should invoke the `agent-ks-issues` skill — th
 
 ## What to read next
 
-- [Design Philosophy](./design-philosophy) — the full rationale for the shape
-- [Folder Structure](./folder-structure) — the data layout in detail
+- [Design Philosophy](./02_design-philosophy.md) — the full rationale for the shape
+- [Folder Structure](./03_folder-structure.md) — the data layout in detail
 - [Per-Issue Settings](./04_setup/01_per-issue.md) — metadata schema
 - [Vocabulary](./04_setup/02_vocabulary.md) — tracker-root `settings.json`
 - [Lifecycle and Review](./04_setup/06_lifecycle-and-review.md) — the seven-status / four-category model
-- [Sub-Documents](./sub-docs/issue-md) — each file type's conventions
-- [List View](./ui/list-view) and [Detail View](./ui/detail-view)
-- [Workflows](./workflows/create-an-issue) — step-by-step guides
-- [Using with AI](./using-with-ai) — the skill + agent discipline
+- [Sub-Documents](./05_sub-docs/01_issue-md.md) — each file type's conventions
+- [List View](./07_ui/01_list-view.md) and [Detail View](./07_ui/02_detail-view.md)
+- [Workflows](./08_workflows/01_create-an-issue.md) — step-by-step guides
+- [Using with AI](./09_using-with-ai.md) — the skill + agent discipline
 - [Setup a new tracker](./04_setup/10_setup-new-tracker.md) — spinning one up from scratch

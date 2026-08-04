@@ -30,11 +30,11 @@ The framework ships with three custom layouts. Each consumes its own YAML schema
 
 | Layout | For | Schema summary |
 |---|---|---|
-| [`@custom/home`](./using-built-in-layouts#home) | Landing pages | `{ hero: {…}, features: [{…}] }` |
-| [`@custom/info`](./using-built-in-layouts#info) | About / simple content pages | `{ title, description }` |
-| [`@custom/countdown`](./using-built-in-layouts#countdown) | Event countdowns | `{ title, subtitle?, targetDate, amount?, note? }` |
+| [`@custom/home`](./02_using-built-in-layouts.md#home) | Landing pages | `{ hero: {…}, features: [{…}] }` |
+| [`@custom/info`](./02_using-built-in-layouts.md#info) | About / simple content pages | `{ title, description }` |
+| [`@custom/countdown`](./02_using-built-in-layouts.md#countdown) | Event countdowns | `{ title, subtitle?, targetDate, amount?, note? }` |
 
-Full schemas + examples: [Using Built-in Layouts](./using-built-in-layouts).
+Full schemas + examples: [Using Built-in Layouts](./02_using-built-in-layouts.md).
 
 ## Anatomy of a custom page
 
@@ -104,7 +104,7 @@ The three built-in layouts cover the most common custom surfaces. If one of them
 
 **Use `@custom/countdown` when** you're building hype for an event, sale, launch, or deadline. Very specific, but highly effective when the use case hits.
 
-**Write a new layout when** none of these fit the shape of your page. See [Creating Custom Layouts](./creating-custom-layouts).
+**Write a new layout when** none of these fit the shape of your page. See [Creating Custom Layouts](./03_creating-custom-layouts.md).
 
 ## URL shapes
 
@@ -147,8 +147,8 @@ Three pages, same layout, different data files. Standard pattern.
 
 | Page | For |
 |---|---|
-| [Using Built-in Layouts](./using-built-in-layouts) | The three built-in layouts + their YAML schemas + full examples |
-| [Creating Custom Layouts](./creating-custom-layouts) | Writing your own custom layout · `loadFile` pattern · schema discipline |
+| [Using Built-in Layouts](./02_using-built-in-layouts.md) | The three built-in layouts + their YAML schemas + full examples |
+| [Creating Custom Layouts](./03_creating-custom-layouts.md) | Writing your own custom layout · `loadFile` pattern · schema discipline |
 
 ## See also
 

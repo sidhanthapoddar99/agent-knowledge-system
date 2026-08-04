@@ -58,7 +58,7 @@ These two test the *shape* rather than the distance — worth knowing separately
 | URL LINK | Where it points to | What it opened |
 |---|---|---|
 | [14. same target, with an anchor](./010_renderer-drops-a-url-level.md#the-mechanism) | Link 1 again, plus `#the-mechanism` | ✅ right page, right heading |
-| [15. slug form, no `.md`](./010_renderer-drops-a-url-level) | Link 1 again, written as a URL slug instead of a source path | ✅ right page |
+| [15. slug form, no `.md`](./010_renderer-drops-a-url-level.md) | Link 1 again, written as a URL slug instead of a source path | ✅ right page |
 
 # What each result would mean
 

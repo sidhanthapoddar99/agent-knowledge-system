@@ -6,7 +6,7 @@ sidebar_position: 1
 
 # Tokens Overview
 
-"Tokens" in this framework = the CSS custom properties a theme defines. The system draws a sharp line between **variables that carry design decisions** (here) and **CSS that styles specific elements** (the [Component Styles](../component-styles/overview) section). This page maps the territory.
+"Tokens" in this framework = the CSS custom properties a theme defines. The system draws a sharp line between **variables that carry design decisions** (here) and **CSS that styles specific elements** (the [Component Styles](../05_component-styles/01_overview.md) section). This page maps the territory.
 
 ## Token tiers
 
@@ -95,13 +95,13 @@ The boundary is strict: variable-declaring files declare, component-styling file
 }
 ```
 
-Note: every visual decision is a `var(--…)` lookup. No `#fff`, no `16px`, no `8px 16px`. If you're ever tempted to write a hardcoded value — a colour, a font size, a spacing unit — **stop and find the token that expresses the intent**. If no token exists, the answer is almost never "invent one in my layout"; it's either "use the closest tier" or "propose a contract addition." See [Rules for Layout Authors](../rules-for-layout-authors).
+Note: every visual decision is a `var(--…)` lookup. No `#fff`, no `16px`, no `8px 16px`. If you're ever tempted to write a hardcoded value — a colour, a font size, a spacing unit — **stop and find the token that expresses the intent**. If no token exists, the answer is almost never "invent one in my layout"; it's either "use the closest tier" or "propose a contract addition." See [Rules for Layout Authors](../10_rules-for-layout-authors.md).
 
 ## In this section
 
 | Page | Covers |
 |---|---|
-| [Colours](./colors) | All 14 semantic colours, light/dark split, brand + status families |
-| [Typography](./typography) | Font families, primitive scale, UI + content + display semantic tokens |
-| [Spacing, Radius, Shadow](./spacing-radius-shadow) | Scale + radius + shadow + transition tokens |
-| [Layout Dimensions](./layout-dimensions) | `--max-width-*`, navbar/sidebar heights, z-index, opacity |
+| [Colours](./02_colors.md) | All 14 semantic colours, light/dark split, brand + status families |
+| [Typography](./03_typography.md) | Font families, primitive scale, UI + content + display semantic tokens |
+| [Spacing, Radius, Shadow](./04_spacing-radius-shadow.md) | Scale + radius + shadow + transition tokens |
+| [Layout Dimensions](./05_layout-dimensions.md) | `--max-width-*`, navbar/sidebar heights, z-index, opacity |

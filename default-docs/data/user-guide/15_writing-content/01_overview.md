@@ -23,11 +23,11 @@ Folder names (`docs`, `blog`, `issues`, `pages`) are convention — the actual p
 
 | Page | Purpose |
 |------|---------|
-| [Markdown Basics](./markdown-basics) | Standard markdown syntax, callouts, collapsibles, and diagrams |
-| [Asset Embedding](./asset-embedding) | The `[[path]]` syntax for inlining file contents |
-| [Page Outline](./outline) | How the auto-generated table of contents works |
-| [Drafts](./drafts) | `draft: true` — visible in dev, hidden in production |
-| [Naming & the Sidebar](./naming-and-sidebar/overview) | How files and folders are named, and exactly what shows in the navigation sidebar for each content type — a shared prefix-grammar reference plus visual file-tree → sidebar artifacts for docs, blogs, and issues |
+| [Markdown Basics](./02_markdown-basics.md) | Standard markdown syntax, callouts, collapsibles, and diagrams |
+| [Asset Embedding](./03_asset-embedding.md) | The `[[path]]` syntax for inlining file contents |
+| [Page Outline](./04_outline.md) | How the auto-generated table of contents works |
+| [Drafts](./05_drafts.md) | `draft: true` — visible in dev, hidden in production |
+| [Naming & the Sidebar](./10_naming-and-sidebar/01_overview.md) | How files and folders are named, and exactly what shows in the navigation sidebar for each content type — a shared prefix-grammar reference plus visual file-tree → sidebar artifacts for docs, blogs, and issues |
 
 For the broader dev vs prod runtime story (what differs when you run `./start dev` vs `./start build`, and how to hide whole sections / navbar items), see [Dev Mode](../10_configuration/06_dev-mode.md) in the Configuration section.
 

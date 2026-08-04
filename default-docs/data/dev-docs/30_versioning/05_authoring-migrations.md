@@ -9,7 +9,7 @@ sidebar_position: 5
 Every engine change that alters the content format ships with a migration
 script — **the change does not exist until its script does.** That covers all
 three migration types (frontmatter/field, settings schema, **content syntax**
-— see [Migrations § Types](./migrations)); the syntax class is the one
+— see [Migrations § Types](./04_migrations.md)); the syntax class is the one
 historically skipped, so check for it explicitly. This page is the maintainer's
 authoring guide.
 
@@ -92,7 +92,7 @@ Usage:
    tree migrates in the same release that changes the format.
 4. **Bump `ENGINE_VERSION`** in `src/loaders/engine-version.ts` — which place
    moves is a judgement about the size of the change, never a fixed rule.
-5. **Decide the floor** honestly (see [Minimum Version](./minimum-version)):
+5. **Decide the floor** honestly (see [Minimum Version](./03_minimum-version.md)):
    breaking → raise `MIN_CONTENT_VERSION`; good-to-have → leave it.
 6. **Document**: docstring complete; user-guide versioning page and CLAUDE.md
    contract paragraph still accurate; this section updated if the mechanics

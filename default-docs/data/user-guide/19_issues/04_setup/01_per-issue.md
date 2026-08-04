@@ -29,7 +29,7 @@ Every issue folder has a `settings.json` at its root. It holds the metadata — 
 |---|---|:---:|---|
 | `title` | string | ✅ | Shown on list + detail views |
 | `description` | string | — | Shown under the title on list + detail |
-| `status` | enum | ✅ | One of the seven fixed lifecycle statuses (framework-defined; a tracker overrides only their colors). See [Lifecycle and Review](./lifecycle-and-review) |
+| `status` | enum | ✅ | One of the seven fixed lifecycle statuses (framework-defined; a tracker overrides only their colors). See [Lifecycle and Review](./06_lifecycle-and-review.md) |
 | `priority` | enum | ✅ | Single value from `fields.priority.values` |
 | `component` | string[] | ✅ | Multi-select from `fields.component.values`. Convention is one entry; multiple is allowed for genuinely cross-cutting work. A bare string (`"x"`) is accepted and normalised to `["x"]` |
 | `labels` | string[] | ✅ | Multi-select from `fields.labels.values` — any subset |
@@ -71,7 +71,7 @@ Backward-compatible: `"component": "live-editor"` is still accepted and normalis
 
 Multi-select. Use labels for anything orthogonal to lifecycle — `bug`, `feature`, `refactor`, `docs`, `idea`, etc. You can stack any number. **Execution state is a status, never a label.**
 
-Labels carry the categorical signal — `bug`, `feature`, `refactor`, `docs`, etc. — alongside the orthogonal flags. Real work is usually composite (a perf fix is `bug + performance + refactor`), so multi-select beats a single primary category. See [Design Philosophy](../design-philosophy).
+Labels carry the categorical signal — `bug`, `feature`, `refactor`, `docs`, etc. — alongside the orthogonal flags. Real work is usually composite (a perf fix is `bug + performance + refactor`), so multi-select beats a single primary category. See [Design Philosophy](../02_design-philosophy.md).
 
 ### `author` vs `assignees`
 
@@ -80,7 +80,7 @@ Labels carry the categorical signal — `bug`, `feature`, `refactor`, `docs`, et
 
 #### Filtering by assignee
 
-Assignees are just who's on the issue — they don't signal progress. Whether work is underway is the explicit `in-progress` status (see [Lifecycle and Review](./lifecycle-and-review)), tracked independently of who's assigned. An empty `assignees` array simply means nobody has picked it up yet.
+Assignees are just who's on the issue — they don't signal progress. Whether work is underway is the explicit `in-progress` status (see [Lifecycle and Review](./06_lifecycle-and-review.md)), tracked independently of who's assigned. An empty `assignees` array simply means nobody has picked it up yet.
 
 The filter bar still exposes assignees as a two-tier picker:
 
@@ -91,7 +91,7 @@ Both modes compose the same way as every other filter — AND across fields, OR 
 
 ### `draft`
 
-Same flag used by docs and blogs (see [Drafts](../../15_writing-content/05_drafts.md)). Per-issue `"draft": true` hides the one issue in production while keeping it visible in dev. To hide a whole tracker, set `"draft": true` in the tracker's **root** `settings.json` (see [Vocabulary](./vocabulary)).
+Same flag used by docs and blogs (see [Drafts](../../15_writing-content/05_drafts.md)). Per-issue `"draft": true` hides the one issue in production while keeping it visible in dev. To hide a whole tracker, set `"draft": true` in the tracker's **root** `settings.json` (see [Vocabulary](./02_vocabulary.md)).
 
 ### `agentLogKinds`
 
@@ -104,7 +104,7 @@ Optional dictionary declaring **custom agent-log kind codes** for this issue. Ea
 }
 ```
 
-**Merge semantics** — the five framework defaults (`lp` loop · `au` audit · `rf` refactor · `it` iteration · `wf` workflow) are always available; the dictionary only adds or overrides. **Per-issue only** — there's no tracker-root layer. `icon` picks from the framework's curated symbol palette; `desc` fills the "use for" cell in the Guide panel's generated kinds table. See [Agent Log](../sub-docs/agent-log).
+**Merge semantics** — the five framework defaults (`lp` loop · `au` audit · `rf` refactor · `it` iteration · `wf` workflow) are always available; the dictionary only adds or overrides. **Per-issue only** — there's no tracker-root layer. `icon` picks from the framework's curated symbol palette; `desc` fills the "use for" cell in the Guide panel's generated kinds table. See [Agent Log](../05_sub-docs/05_agent-log.md).
 
 ## Bigger example
 
@@ -143,6 +143,6 @@ Three flags shape the output:
 
 ## See also
 
-- [Vocabulary](./vocabulary) — the tracker-root `settings.json` that defines enum values and colors
-- [Folder Structure](../folder-structure) — where this file sits
+- [Vocabulary](./02_vocabulary.md) — the tracker-root `settings.json` that defines enum values and colors
+- [Folder Structure](../03_folder-structure.md) — where this file sits
 - [Drafts](../../15_writing-content/05_drafts.md) — the draft flag in the broader framework

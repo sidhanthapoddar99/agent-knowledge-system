@@ -174,7 +174,7 @@ files:
 }
 ```
 
-The `supports_dark_mode` field is declarative — the loader doesn't enforce. What actually disables dark mode is removing the `[data-theme="dark"]` block. See [Dark Mode](../dark-mode).
+The `supports_dark_mode` field is declarative — the loader doesn't enforce. What actually disables dark mode is removing the `[data-theme="dark"]` block. See [Dark Mode](../08_dark-mode.md).
 
 ## Common mistakes
 
@@ -222,6 +222,6 @@ Two files, 14 lines of CSS, done. Everything else (fonts, spacing, layout, compo
 
 ## Next steps
 
-- More than colours? → [Extending Default](./extending-default) — typical multi-file custom theme
-- Completely replace the theme? → [Standalone Theme](./standalone-theme) — `extends: null`, define all 46 vars yourself
-- Understand merge vs override? → [Inheritance and Override](../inheritance-and-override)
+- More than colours? → [Extending Default](./02_extending-default.md) — typical multi-file custom theme
+- Completely replace the theme? → [Standalone Theme](./03_standalone-theme.md) — `extends: null`, define all 46 vars yourself
+- Understand merge vs override? → [Inheritance and Override](../07_inheritance-and-override.md)

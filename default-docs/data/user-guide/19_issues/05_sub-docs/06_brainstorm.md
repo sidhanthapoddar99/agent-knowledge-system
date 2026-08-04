@@ -62,5 +62,5 @@ Sidebar section (before Notes, lightbulb icon) with `NN` badges + clean labels; 
 
 ## See also
 
-- [Notes](./notes) — where conclusions graduate to
-- [Comments](./comments) — the evolution log
+- [Notes](./04_notes.md) — where conclusions graduate to
+- [Comments](./02_comments.md) — the evolution log

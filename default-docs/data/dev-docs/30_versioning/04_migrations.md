@@ -71,7 +71,7 @@ running everything above 0.0.5 up to and including 0.2.0, not just the newest
 script. A release that ships several scripts gives them all its own version, so
 `(X, Y]` can hold three scripts at the same number; they are written to be
 order-independent (each walks the tree itself). This is also how good-to-have migrations (which never moved the floor —
-see [Minimum Version](./minimum-version)) eventually reach older trees: the
+see [Minimum Version](./03_minimum-version.md)) eventually reach older trees: the
 next breaking chain sweeps them up.
 
 For each script in the chain:

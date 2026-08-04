@@ -133,7 +133,7 @@ Three common paths:
 
 There's a built-in endpoint for cycling statuses in the UI — `POST /__editor/subtask-toggle` — so clicking a subtask's status icon in the detail view progresses through the happy path `open → in-progress → review → done → open`. (The other statuses — `blocked`, `input-needed`, `dropped` — are set by editing the frontmatter.) Agents can also edit the frontmatter directly.
 
-See [Work an Issue](../workflows/work-an-issue) and [Review and Close](../workflows/review-and-close) for step-by-step guides.
+See [Work an Issue](../08_workflows/02_work-an-issue.md) and [Review and Close](../08_workflows/03_review-and-close.md) for step-by-step guides.
 
 ## Sub-doc URL
 
@@ -154,5 +154,5 @@ The Comprehensive tab on the parent issue concatenates every subtask body with i
 ## See also
 
 - [Lifecycle and Review](../04_setup/06_lifecycle-and-review.md) — how the seven statuses interact at issue + subtask level
-- [Work an Issue](../workflows/work-an-issue) — adding subtasks, transitioning state
-- [Using with AI](../using-with-ai) — how agents are expected to handle subtasks
+- [Work an Issue](../08_workflows/02_work-an-issue.md) — adding subtasks, transitioning state
+- [Using with AI](../09_using-with-ai.md) — how agents are expected to handle subtasks

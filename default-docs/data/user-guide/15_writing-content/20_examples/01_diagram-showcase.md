@@ -8,9 +8,9 @@ sidebar_position: 7
 
 Every diagram type the framework renders, live on one page. The source for
 each example is shown right below it. See
-[Markdown Basics](../markdown-basics) for fence syntax,
-[Asset Embedding](../asset-embedding) for by-reference embeds, and
-[Diagram Pages](../diagram-pages) for diagrams as standalone pages.
+[Markdown Basics](../02_markdown-basics.md) for fence syntax,
+[Asset Embedding](../03_asset-embedding.md) for by-reference embeds, and
+[Diagram Pages](../06_diagram-pages.md) for diagrams as standalone pages.
 
 ## Mermaid
 

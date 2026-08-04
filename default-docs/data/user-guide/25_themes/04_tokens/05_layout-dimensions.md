@@ -153,6 +153,6 @@ Layouts just hardcode pixel breakpoints with a comment referencing the conventio
 
 ## See also
 
-- [The Theme Contract](../the-theme-contract#variables-the-framework-uses-but-doesnt-require) — layout dimensions are optional
-- [Spacing, Radius, Shadow](./spacing-radius-shadow) — element-level tokens
-- [Theme Structure](../theme-structure) — where `element.css` sits in the default theme
+- [The Theme Contract](../02_the-theme-contract.md#variables-the-framework-uses-but-doesnt-require) — layout dimensions are optional
+- [Spacing, Radius, Shadow](./04_spacing-radius-shadow.md) — element-level tokens
+- [Theme Structure](../03_theme-structure.md) — where `element.css` sits in the default theme

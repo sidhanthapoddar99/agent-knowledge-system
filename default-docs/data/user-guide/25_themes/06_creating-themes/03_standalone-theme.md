@@ -14,7 +14,7 @@ Use this when:
 - You want total control over the full CSS bundle (nothing from default leaks in)
 - You're building a "theme brand kit" to distribute
 
-For most projects, extending default is the right choice — see [Extending Default](./extending-default). Standalone is rare, but when it's right it's clearer than building the same thing as a giant `extends: "@theme/default"` that overrides everything.
+For most projects, extending default is the right choice — see [Extending Default](./02_extending-default.md). Standalone is rare, but when it's right it's clearer than building the same thing as a giant `extends: "@theme/default"` that overrides everything.
 
 ## Directory layout
 
@@ -74,7 +74,7 @@ required_variables:
 
 **Every one of the 46 contract variables must be defined** in your CSS. The validator checks each against the `required_variables` list and errors on missing ones (since there's no parent to inherit from).
 
-The 46 variables (summary — full list in [The Theme Contract](../the-theme-contract)):
+The 46 variables (summary — full list in [The Theme Contract](../02_the-theme-contract.md)):
 
 ### Colours — 14
 
@@ -207,7 +207,7 @@ Notice how you can remap the semantic tokens however you like. Here `--ui-text-m
 
 ### Component styles
 
-`markdown.css`, `navbar.css`, `footer.css`, `docs.css`, `blogs.css` — write these from scratch too. Use the token reference in [Component Styles](../component-styles/overview) as a structural guide. Remember the scoping rule — every selector prefixed with its component class.
+`markdown.css`, `navbar.css`, `footer.css`, `docs.css`, `blogs.css` — write these from scratch too. Use the token reference in [Component Styles](../05_component-styles/01_overview.md) as a structural guide. Remember the scoping rule — every selector prefixed with its component class.
 
 ## Custom required_variables
 
@@ -264,7 +264,7 @@ If you find yourself writing `color.css`, `font.css`, `element.css` that mostly 
 
 ## See also
 
-- [The Theme Contract](../the-theme-contract) — every required variable
-- [Tokens](../tokens/overview) — per-category reference
-- [Component Styles](../component-styles/overview) — what each CSS file styles
-- [Inheritance and Override](../inheritance-and-override) — when `extends: null` is right vs wrong
+- [The Theme Contract](../02_the-theme-contract.md) — every required variable
+- [Tokens](../04_tokens/01_overview.md) — per-category reference
+- [Component Styles](../05_component-styles/01_overview.md) — what each CSS file styles
+- [Inheritance and Override](../07_inheritance-and-override.md) — when `extends: null` is right vs wrong

@@ -175,6 +175,6 @@ A single button restores the default tab + no filters.
 
 ## See also
 
-- [Detail View](./detail-view) — what clicking through takes you to
+- [Detail View](./02_detail-view.md) — what clicking through takes you to
 - [Vocabulary](../04_setup/02_vocabulary.md) — how preset views and enum colors are declared
 - [Lifecycle and Review](../04_setup/06_lifecycle-and-review.md) — category tab semantics, review-debt promotion

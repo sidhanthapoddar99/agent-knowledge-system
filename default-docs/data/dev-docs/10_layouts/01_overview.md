@@ -13,9 +13,9 @@ For choosing and configuring layouts in `site.yaml`, see the [User Guide → Lay
 
 | Section | Contents |
 |---------|----------|
-| [Docs Layout](./docs-layout/overview) | Props interface, sidebar loading, data interface, conventions |
-| [Blog Layout](./blog-layout/overview) | Index vs post props, post card data, conventions |
-| [Custom Layout](./custom-layout/overview) | YAML loading, flexible data schema, creating new layouts |
+| [Docs Layout](./02_docs-layout/01_overview.md) | Props interface, sidebar loading, data interface, conventions |
+| [Blog Layout](./03_blog-layout/01_overview.md) | Index vs post props, post card data, conventions |
+| [Custom Layout](./04_custom-layout/01_overview.md) | YAML loading, flexible data schema, creating new layouts |
 
 ## Data Interface Pattern
 

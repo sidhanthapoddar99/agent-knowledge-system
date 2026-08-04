@@ -153,12 +153,12 @@ The template is the **starting point**, not the final shape. Common follow-ups:
 
 - **Replace the Astro placeholder logos** — swap files in `assets/` and update `config/site.yaml → logo:` paths
 - **Change the theme** — set `theme: "<name>"` in `site.yaml`; framework themes (`full-width`, `minimal`) are already in the scan path via `@root/default-docs/themes`
-- **Add another section** — `/agent-ks-add-section` (or hand-roll: see [Data Structure](./04_data-structure))
+- **Add another section** — `/agent-ks-add-section` (or hand-roll: see [Data Structure](./04_data-structure.md))
 - **Drop a section you don't need** — remove the `pages:` entry in `site.yaml` and the navbar item; delete the `data/<section>/` folder
 - **Hide the framework's User Guide** — drop the `user-guide:` block from `config/site.yaml → pages:` and the matching `navbar.yaml` entry
 
 ## See also
 
 - [Installation](./02_installation.md) — full install walkthrough including the manual route
-- [Data Structure](./04_data-structure) — what each top-level folder is for
+- [Data Structure](./04_data-structure.md) — what each top-level folder is for
 - [Path Aliases](./03_aliases.md) — how `@root` and the user-defined aliases interact

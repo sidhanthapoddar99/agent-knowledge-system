@@ -194,7 +194,7 @@ Leave the folder on disk — the audit trail is valuable. Don't `rm -rf` dropped
 
 The rule: the lifecycle status is the single source of truth for where a piece of work
 stands. Labels are for genuinely cross-cutting tags (`bug`, `feature`, `docs`,
-`blocked-external`, …), and **order is a [plan](../sub-docs/plans)**, never a field.
+`blocked-external`, …), and **order is a [plan](../05_sub-docs/09_plans.md)**, never a field.
 
 ## See also
 

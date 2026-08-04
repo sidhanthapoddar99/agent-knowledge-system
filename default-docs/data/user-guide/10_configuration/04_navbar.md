@@ -60,7 +60,7 @@ In development mode, you can switch navbar styles without editing config files u
 
 ## Logo Configuration
 
-Logo and favicon configuration has moved to `site.yaml`. See [Logo Configuration](./site/logo) for details.
+Logo and favicon configuration has moved to `site.yaml`. See [Logo Configuration](./03_site/07_logo.md) for details.
 
 ```yaml
 # In site.yaml (not navbar.yaml)

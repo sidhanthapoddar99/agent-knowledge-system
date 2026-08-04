@@ -17,7 +17,7 @@ Before touching anything, orient:
 3. **Scan `comments/`** — check for recent discussion, pushback, pivots.
 4. **Read the subtasks** — understand the breakdown.
 
-For agents, the planned `/issues` skill (see [Using with AI](../using-with-ai)) automates this via helper scripts. Today, it's a few file reads.
+For agents, the planned `/issues` skill (see [Using with AI](../09_using-with-ai.md)) automates this via helper scripts. Today, it's a few file reads.
 
 ## Advance a subtask
 
@@ -56,7 +56,7 @@ comments/
 └── 003_2026-04-21_sidhantha.md     ← new
 ```
 
-Keep the body focused. Long deliberation belongs in a note, not a comment. See [Comments](../sub-docs/comments).
+Keep the body focused. Long deliberation belongs in a note, not a comment. See [Comments](../05_sub-docs/02_comments.md).
 
 ## Write an agent-log round file
 
@@ -100,7 +100,7 @@ Commit: df7a2e1. Handing off for review — subtask 02 → `review`.
 
 **Keep failed rounds.** They're more valuable than successes for the next round — set
 `status: dropped` and say what failed in `# Outcome`. The run's conclusive file is
-`01_summary.md` beside `02_working/`. See [Agent Log](../sub-docs/agent-log).
+`01_summary.md` beside `02_working/`. See [Agent Log](../05_sub-docs/05_agent-log.md).
 
 ## Add a subtask mid-flight
 
@@ -127,7 +127,7 @@ When you (or an agent) thinks all meaningful work is done:
 3. Flip the **issue-level** status: `open → review`
 4. Write a summary comment or agent-log entry: what landed, what evidence
 
-The issue now shows up on the Review tab (with subtask-debt promotion if `status` still says `open` but subtasks are `review`-flagged). See [List View](../ui/list-view) and [Review and Close](./review-and-close).
+The issue now shows up on the Review tab (with subtask-debt promotion if `status` still says `open` but subtasks are `review`-flagged). See [List View](../07_ui/01_list-view.md) and [Review and Close](./03_review-and-close.md).
 
 ## Dropping work
 
@@ -151,6 +151,6 @@ The list view shows an Updated date for each issue, derived from git history —
 ## See also
 
 - [Lifecycle and Review](../04_setup/06_lifecycle-and-review.md) — the full seven-status / four-category model
-- [Review and Close](./review-and-close) — the human side of the handoff
-- [Using with AI](../using-with-ai) — agent-specific workflow
-- [Sub-Documents](../sub-docs/issue-md) — per-file-type conventions
+- [Review and Close](./03_review-and-close.md) — the human side of the handoff
+- [Using with AI](../09_using-with-ai.md) — agent-specific workflow
+- [Sub-Documents](../05_sub-docs/01_issue-md.md) — per-file-type conventions

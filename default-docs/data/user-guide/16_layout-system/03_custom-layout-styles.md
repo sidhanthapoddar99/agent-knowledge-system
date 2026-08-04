@@ -224,7 +224,7 @@ The layout appears at `@docs/kanban` and works identically.
 
 ## See also
 
-- [Layout System Overview](./overview) — the four content types + alias resolution
-- [Switching Layout Styles](./switching-styles) — picking between styles in `site.yaml`
+- [Layout System Overview](./01_overview.md) — the four content types + alias resolution
+- [Switching Layout Styles](./02_switching-styles.md) — picking between styles in `site.yaml`
 - [Custom Pages](../20_custom-pages/01_overview.md) — the custom content type, which uses these same layout patterns for page-specific renderers
 - dev-docs / layout-system — `parts/` pattern, client JS conventions, `:global()` gotcha (developer-facing)

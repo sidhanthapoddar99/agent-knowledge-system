@@ -90,7 +90,7 @@ blog/
         └── screenshot.png
 ```
 
-See [Asset Embedding](./asset-embedding) for details.
+See [Asset Embedding](./05_asset-embedding.md) for details.
 
 ## Best Practices
 

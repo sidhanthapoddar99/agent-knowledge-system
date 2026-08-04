@@ -202,7 +202,7 @@ error box in place of the diagram.
 **Embed or page?** Embedding fits diagrams that are figures inside prose.
 When the diagram *is* the content, skip the wrapper entirely — a prefixed
 `.mmd` / `.dot` / `.excalidraw` file renders as a first-class sidebar page:
-see [Diagram Pages](./diagram-pages).
+see [Diagram Pages](./06_diagram-pages.md).
 
 ## Best Practices
 

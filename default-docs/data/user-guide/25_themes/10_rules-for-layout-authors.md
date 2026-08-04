@@ -100,7 +100,7 @@ The dangerous anti-pattern:
 }
 ```
 
-`--color-card-bg` and `--card-title-size` aren't in the [theme contract](./the-theme-contract). No theme defines them. `var()` falls through to the hardcoded fallback — **which freezes the value across dark/light mode and across theme switches.** Dark mode won't flip the card background. Changing themes won't change the title size. The code silently "works" while the feature is broken.
+`--color-card-bg` and `--card-title-size` aren't in the [theme contract](./02_the-theme-contract.md). No theme defines them. `var()` falls through to the hardcoded fallback — **which freezes the value across dark/light mode and across theme switches.** Dark mode won't flip the card background. Changing themes won't change the title size. The code silently "works" while the feature is broken.
 
 ### The fix
 
@@ -167,7 +167,7 @@ Ways layouts break dark mode:
 | Invented variable with hex fallback | Fallback activates, value freezes across modes |
 | Colour filter / blend with hardcoded value | One of the values is fixed across modes |
 
-See [Dark Mode](./dark-mode) for the full gotcha list.
+See [Dark Mode](./08_dark-mode.md) for the full gotcha list.
 
 ## `@media` and CSS variables — the one exception
 
@@ -237,7 +237,7 @@ The discipline isn't aesthetic. It's load-bearing infrastructure for features us
 
 ## See also
 
-- [The Theme Contract](./the-theme-contract) — the 46 variables to consume
-- [Tokens / Typography](./tokens/typography) — when to use UI tokens vs content tokens
-- [Dark Mode](./dark-mode) — the `[data-theme="dark"]` pattern that depends on this discipline
-- [Validation](./validation) — what the loader checks (contract enforcement on theme side)
+- [The Theme Contract](./02_the-theme-contract.md) — the 46 variables to consume
+- [Tokens / Typography](./04_tokens/03_typography.md) — when to use UI tokens vs content tokens
+- [Dark Mode](./08_dark-mode.md) — the `[data-theme="dark"]` pattern that depends on this discipline
+- [Validation](./09_validation.md) — what the loader checks (contract enforcement on theme side)

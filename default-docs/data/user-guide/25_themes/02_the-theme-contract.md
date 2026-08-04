@@ -8,7 +8,7 @@ sidebar_position: 2
 
 Every theme defines **exactly 46 CSS variables**. They're declared in `src/styles/theme.yaml → required_variables` and checked at load time. Any theme — built-in default, inheriting custom, or standalone — must define (or inherit) all 46, or the loader warns / errors.
 
-This page is the flat list. For the *what each one does* breakdown, see the [Tokens](./tokens/overview) section; for the CSS files the defaults live in, see the [Built-in Default Theme](./theme-structure#built-in-default-theme).
+This page is the flat list. For the *what each one does* breakdown, see the [Tokens](./04_tokens/01_overview.md) section; for the CSS files the defaults live in, see the [Built-in Default Theme](./03_theme-structure.md#built-in-default-theme).
 
 ## Why a contract?
 
@@ -17,7 +17,7 @@ Before any discussion of aesthetics, this is the engineering answer: **every lay
 - **Layouts promise**: we will never invent new variable names or hardcode values — we only consume what's in the contract.
 - **Themes promise**: we will define every name in the contract — layouts can rely on them existing.
 
-This is why inventing a variable like `--color-accent` in a layout is dangerous. The contract doesn't promise it exists, so the theme won't define it, so `var(--color-accent)` falls through to whatever fallback the layout wrote — and that hardcoded fallback freezes the value across dark/light mode. See [Rules for Layout Authors](./rules-for-layout-authors) for the full anti-pattern list.
+This is why inventing a variable like `--color-accent` in a layout is dangerous. The contract doesn't promise it exists, so the theme won't define it, so `var(--color-accent)` falls through to whatever fallback the layout wrote — and that hardcoded fallback freezes the value across dark/light mode. See [Rules for Layout Authors](./10_rules-for-layout-authors.md) for the full anti-pattern list.
 
 ## The 46 variables
 
@@ -42,7 +42,7 @@ This is why inventing a variable like `--color-accent` in a layout is dangerous.
 
 **One-tier** — these are semantic names used directly. No primitive colour palette sits behind them. Each is declared twice in the theme (once under `:root` for light mode, once under `[data-theme="dark"]` for dark mode).
 
-Full details: [Tokens / Colors](./tokens/colors).
+Full details: [Tokens / Colors](./04_tokens/02_colors.md).
 
 ### Fonts — 19 variables
 
@@ -84,7 +84,7 @@ For emphasis at the "card title" level, use `--ui-text-body` + `font-weight: 600
 
 `h4`–`h6` are intentionally the same size as body. They're structural landmarks for outlines and tables-of-contents, not visual emphasis — differentiate via `font-weight` and `color`, not size.
 
-Full details: [Tokens / Typography](./tokens/typography).
+Full details: [Tokens / Typography](./04_tokens/03_typography.md).
 
 ### Elements — 13 variables
 
@@ -121,7 +121,7 @@ Full details: [Tokens / Typography](./tokens/typography).
 | `--transition-fast` | `150ms ease` |
 | `--transition-normal` | `250ms ease` |
 
-All one-tier. Full details: [Tokens / Spacing, Radius, Shadow](./tokens/spacing-radius-shadow).
+All one-tier. Full details: [Tokens / Spacing, Radius, Shadow](./04_tokens/04_spacing-radius-shadow.md).
 
 ## Variables the framework uses but doesn't require
 
@@ -137,7 +137,7 @@ The default theme defines extras for its own layouts to use. Custom themes that 
 | `--z-index-dropdown` / `sticky` / `modal` / … | Stacking order | All overlays |
 | `--opacity-*`, `--border-width-*` | Fine control | Borderless states, skeletons |
 
-These are documented in [Tokens / Layout Dimensions](./tokens/layout-dimensions). They're **optional** — a theme can override them but doesn't have to.
+These are documented in [Tokens / Layout Dimensions](./04_tokens/05_layout-dimensions.md). They're **optional** — a theme can override them but doesn't have to.
 
 ## Variables you must NEVER invent
 
@@ -166,11 +166,11 @@ At theme load time, the loader checks every variable in `required_variables` aga
 3. **`override` mode** — parent's file is skipped if child provides one; missing in both → warning.
 4. **`replace` mode** — parent entirely skipped, child is standalone. Missing → error.
 
-See [Validation](./validation) for the full failure-mode table.
+See [Validation](./09_validation.md) for the full failure-mode table.
 
 ## See also
 
-- [Tokens / Overview](./tokens/overview) — tier structure · naming rules
-- [Tokens / Colors](./tokens/colors) — 14 colors, light/dark split
-- [Tokens / Typography](./tokens/typography) — two-tier model explained
-- [Rules for Layout Authors](./rules-for-layout-authors) — the consumption side
+- [Tokens / Overview](./04_tokens/01_overview.md) — tier structure · naming rules
+- [Tokens / Colors](./04_tokens/02_colors.md) — 14 colors, light/dark split
+- [Tokens / Typography](./04_tokens/03_typography.md) — two-tier model explained
+- [Rules for Layout Authors](./10_rules-for-layout-authors.md) — the consumption side

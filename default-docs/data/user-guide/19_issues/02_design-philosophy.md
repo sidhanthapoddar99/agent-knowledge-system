@@ -98,7 +98,7 @@ Every issue can have an `agent-log/` folder. Each iteration of an autonomous age
 
 This is what makes long-running AI work **auditable**. The human reviewing a `review`-flagged issue doesn't have to ask "what did the AI try?" — they read the agent log. Failed iterations are kept; they're as informative as successes.
 
-See [Sub-Documents → agent-log](./sub-docs/agent-log).
+See [Sub-Documents → agent-log](./05_sub-docs/05_agent-log.md).
 
 ### Subtasks share the issue status vocabulary
 
@@ -113,7 +113,7 @@ unified). That means:
 - AI can complete subtasks autonomously, parking each in `review` for human inspection,
   without ever flipping the parent to `done`
 
-See [Subtasks](./sub-docs/subtasks).
+See [Subtasks](./05_sub-docs/03_subtasks.md).
 
 ## When this tracker is a good fit
 
@@ -152,5 +152,5 @@ That's what this is.
 ## See also
 
 - [Lifecycle and Review](./04_setup/06_lifecycle-and-review.md) — how the seven statuses / four categories and the review handoff work in practice
-- [Sub-Documents → agent-log](./sub-docs/agent-log) — iteration discipline
-- [Using with AI](./using-with-ai) — the skill + agent workflows
+- [Sub-Documents → agent-log](./05_sub-docs/05_agent-log.md) — iteration discipline
+- [Using with AI](./09_using-with-ai.md) — the skill + agent workflows

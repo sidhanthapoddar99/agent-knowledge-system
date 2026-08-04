@@ -117,7 +117,7 @@ Error: Theme "my-theme" missing required variable: --color-bg-primary
 
 **Cause**: standalone theme (or `override` / `replace` mode) where the variable isn't declared.
 
-**Fix**: declare the variable in one of your CSS files. For standalone themes, all 46 must be present. See [The Theme Contract](./the-theme-contract).
+**Fix**: declare the variable in one of your CSS files. For standalone themes, all 46 must be present. See [The Theme Contract](./02_the-theme-contract.md).
 
 ### "Circular extends chain"
 
@@ -195,6 +195,6 @@ Not yet implemented — the framework doesn't currently support `// @theme-ignor
 
 ## See also
 
-- [The Theme Contract](./the-theme-contract) — the 46-variable list validation checks against
-- [Inheritance and Override](./inheritance-and-override) — how override modes affect validation
-- [Rules for Layout Authors](./rules-for-layout-authors) — the layout-side contract (not checked by validator, but enforced by convention)
+- [The Theme Contract](./02_the-theme-contract.md) — the 46-variable list validation checks against
+- [Inheritance and Override](./07_inheritance-and-override.md) — how override modes affect validation
+- [Rules for Layout Authors](./10_rules-for-layout-authors.md) — the layout-side contract (not checked by validator, but enforced by convention)

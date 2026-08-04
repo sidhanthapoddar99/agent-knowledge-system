@@ -95,15 +95,15 @@ Examples:
 | Path | Required | Contents |
 |---|---|---|
 | `settings.json` | ✅ | All metadata — status, priority, labels, plus optional `agentLogKinds`. See [Per-Issue Settings](./04_setup/01_per-issue.md). |
-| `issue.md` | ✅ | The goal / pitch / context. Pure markdown, no frontmatter. See [issue.md](./sub-docs/issue-md). |
+| `issue.md` | ✅ | The goal / pitch / context. Pure markdown, no frontmatter. See [issue.md](./05_sub-docs/01_issue-md.md). |
 | `glossary.md` | — | Per-issue glossary, rendered as-is on the **Glossary** panel (never generated). Suggested sections: *Colour legend* · *Key terms* · *Conventions*, scoped per section where meanings differ. |
-| `comments/` | — | One file per comment — `NNN_<slug>.md` (author/date in frontmatter) or the strict `NNN_YYYY-MM-DD_<author>.md`. Flat — no subfolders. See [Comments](./sub-docs/comments). |
-| `brainstorm/` | — | Active deliberation — the *process* of deciding. `NN_<kind>_<slug>.md` with optional full-word kinds; folder = one brainstorm. See [Brainstorm](./sub-docs/brainstorm). |
-| `notes/` | — | Finalized output + durable references — the *product*. **Up to 5 levels (up to 3 recommended).** See [Notes](./sub-docs/notes). |
-| `subtasks/` | — | The plan — atomic units of work with `NN_<slug>.md` naming and frontmatter state. **Up to 5 levels of grouping subfolders (up to 3 recommended)** — folder = label only (sidebar shows its **done/total**), leaves are first-class subtasks. See [Subtasks](./sub-docs/subtasks). |
-| `plans/` | — | **Order** — `NN_<name>/` plan folders, each with `overview.md` and `NN_<stage>.md` stages that reference the subtasks they schedule. See [Plans](./sub-docs/plans). |
-| `agent-log/` | — | **Execution + outcome** — `NNN_<code>_<name>/` per run (kind code in the name), holding the numbered slots `01_summary.md`, `02_working/` and `03_debrief/`. See [Agent Log](./sub-docs/agent-log). |
-| `agent-memory/` | — | AI-mutable working state — a pinned `memory.md` index that **routes and never stores**, plus two **lifecycle** buckets: `knowledge/` (what's true and binding) and `history/` (how we got here, write-once). Order is not here: it lives in the top-level `plans/` section. See [Agent Memory](./sub-docs/agent-memory). |
+| `comments/` | — | One file per comment — `NNN_<slug>.md` (author/date in frontmatter) or the strict `NNN_YYYY-MM-DD_<author>.md`. Flat — no subfolders. See [Comments](./05_sub-docs/02_comments.md). |
+| `brainstorm/` | — | Active deliberation — the *process* of deciding. `NN_<kind>_<slug>.md` with optional full-word kinds; folder = one brainstorm. See [Brainstorm](./05_sub-docs/06_brainstorm.md). |
+| `notes/` | — | Finalized output + durable references — the *product*. **Up to 5 levels (up to 3 recommended).** See [Notes](./05_sub-docs/04_notes.md). |
+| `subtasks/` | — | The plan — atomic units of work with `NN_<slug>.md` naming and frontmatter state. **Up to 5 levels of grouping subfolders (up to 3 recommended)** — folder = label only (sidebar shows its **done/total**), leaves are first-class subtasks. See [Subtasks](./05_sub-docs/03_subtasks.md). |
+| `plans/` | — | **Order** — `NN_<name>/` plan folders, each with `overview.md` and `NN_<stage>.md` stages that reference the subtasks they schedule. See [Plans](./05_sub-docs/09_plans.md). |
+| `agent-log/` | — | **Execution + outcome** — `NNN_<code>_<name>/` per run (kind code in the name), holding the numbered slots `01_summary.md`, `02_working/` and `03_debrief/`. See [Agent Log](./05_sub-docs/05_agent-log.md). |
+| `agent-memory/` | — | AI-mutable working state — a pinned `memory.md` index that **routes and never stores**, plus two **lifecycle** buckets: `knowledge/` (what's true and binding) and `history/` (how we got here, write-once). Order is not here: it lives in the top-level `plans/` section. See [Agent Memory](./05_sub-docs/07_agent-memory.md). |
 
 ### Subfolder rules (`subtasks/`, `notes/`, `brainstorm/`, `agent-memory/`, `agent-log/`)
 
@@ -230,7 +230,7 @@ Every sub-doc has **its own page**:
 | Agent-memory | `/<base>/<issue>/agent-memory/<name>` |
 | Agent-log | `/<base>/<issue>/agent-log/<folder>/<file>` |
 
-(Group segments only when nested.) The detail page itself is panel-based and hash-addressable: `#comments`, `#comprehensive`, `#guide` (and `#guide-<section>` deep links), `#glossary`. Full detail-page tour in [Detail View](./ui/detail-view).
+(Group segments only when nested.) The detail page itself is panel-based and hash-addressable: `#comments`, `#comprehensive`, `#guide` (and `#guide-<section>` deep links), `#glossary`. Full detail-page tour in [Detail View](./07_ui/02_detail-view.md).
 
 ## Draft flag at two levels
 
@@ -247,5 +247,5 @@ Both visible in dev, hidden in prod. See [Drafts](../15_writing-content/05_draft
 
 - [Per-Issue Settings](./04_setup/01_per-issue.md) — what `settings.json` holds
 - [Vocabulary](./04_setup/02_vocabulary.md) — the tracker-root `settings.json`
-- [Sub-Documents](./sub-docs/issue-md) — each file type's format
+- [Sub-Documents](./05_sub-docs/01_issue-md.md) — each file type's format
 - [Setup a new tracker](./04_setup/10_setup-new-tracker.md) — site.yaml wiring

@@ -246,4 +246,4 @@ files:
 - [Issues Content Type](../../19_issues/01_overview.md) — the content + data side
 - [Issues List View](../../19_issues/07_ui/01_list-view.md) — what the filter bar / state tabs look like
 - [Issues Detail View](../../19_issues/07_ui/02_detail-view.md) — three-column layout details
-- [Colors](../tokens/colors) — the `--color-*` tokens the badges consume
+- [Colors](../04_tokens/02_colors.md) — the `--color-*` tokens the badges consume

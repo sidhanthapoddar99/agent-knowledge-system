@@ -8,7 +8,7 @@ sidebar_position: 9
 
 Two real artifacts live in this section, one for each **theme mode**. Open them from
 the sidebar and you are looking at the artifact type running in production docs. See
-[Artifact Pages](../artifact-pages) for the authoring rules and [Diagram
+[Artifact Pages](../08_artifact-pages.md) for the authoring rules and [Diagram
 Showcase](./diagram-showcase) for the diagram equivalent.
 
 ## Two modes, side by side
@@ -47,4 +47,4 @@ HTML. The self demo's:
 [[./10_design-system-demo.meta.json]]
 ```
 
-For the field-by-field contract, see [Artifact Pages](../artifact-pages#the-metadata-sidecar).
+For the field-by-field contract, see [Artifact Pages](../08_artifact-pages.md#the-metadata-sidecar).

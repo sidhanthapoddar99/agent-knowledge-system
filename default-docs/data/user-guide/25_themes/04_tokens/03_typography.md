@@ -220,6 +220,6 @@ pre code {
 
 ## See also
 
-- [The Theme Contract](../the-theme-contract) — 19 font tokens, full list
-- [Colours](./colors) — the colour side of the token story
-- [Rules for Layout Authors](../rules-for-layout-authors) — the full no-hardcoded-values contract
+- [The Theme Contract](../02_the-theme-contract.md) — 19 font tokens, full list
+- [Colours](./02_colors.md) — the colour side of the token story
+- [Rules for Layout Authors](../10_rules-for-layout-authors.md) — the full no-hardcoded-values contract

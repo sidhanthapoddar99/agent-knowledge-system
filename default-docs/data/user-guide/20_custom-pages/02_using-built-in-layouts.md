@@ -139,7 +139,7 @@ pages:
 
 ### Extending `info` with custom content
 
-The built-in info layout renders `title` + `description` only. If you need more (prose sections, contact forms, embedded diagrams), write a custom layout — see [Creating Custom Layouts](./creating-custom-layouts). Adding a `content:` field to your YAML won't render unless the layout reads it.
+The built-in info layout renders `title` + `description` only. If you need more (prose sections, contact forms, embedded diagrams), write a custom layout — see [Creating Custom Layouts](./03_creating-custom-layouts.md). Adding a `content:` field to your YAML won't render unless the layout reads it.
 
 ---
 
@@ -275,7 +275,7 @@ Flat directory, one file per page. Named to match the URL slug where possible (e
 
 ## See also
 
-- [Creating Custom Layouts](./creating-custom-layouts) — write your own when the three built-ins don't fit
+- [Creating Custom Layouts](./03_creating-custom-layouts.md) — write your own when the three built-ins don't fit
 - [Layout System / Switching Styles](../16_layout-system/02_switching-styles.md) — `layout:` field mechanics
 - [Page Configuration](../10_configuration/03_site/08_page.md) — full `pages:` entry schema
 - [Themes](../25_themes/01_overview.md) — how the countdown's colours, hero display-size, and card styling get themed

@@ -16,7 +16,7 @@ names it) so they're distinguishable from markdown pages at a glance —
 markdown is the default and stays unmarked.
 
 All three types rendering live (as embeds) are on the
-[Diagram Showcase](./examples/diagram-showcase) page.
+[Diagram Showcase](./20_examples/01_diagram-showcase.md) page.
 
 ## Supported formats
 
@@ -94,7 +94,7 @@ Enabled by default everywhere else.
 
 ## Embed or page?
 
-- **Embed** ([asset embedding](./asset-embedding)) when the diagram is a
+- **Embed** ([asset embedding](./03_asset-embedding.md)) when the diagram is a
   figure inside prose — it lives in `assets/`, referenced from markdown.
 - **Page** when the diagram is the content itself — give it a prefix and a
   good filename, and it slots into the sidebar.

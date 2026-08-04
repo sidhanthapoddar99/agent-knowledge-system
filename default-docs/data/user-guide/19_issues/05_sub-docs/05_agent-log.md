@@ -28,7 +28,7 @@ read.
 | **New todos** the run generated | Its own list of micro-steps |
 
 **The line: a subtask defines the work, the agent log carries it out.** Scope in one,
-execution in the other. And the order the rounds run in belongs to [Plans](./plans) — an
+execution in the other. And the order the rounds run in belongs to [Plans](./09_plans.md) — an
 agent log that lists its rounds as a schedule is re-deriving the plan.
 
 ## When an agent log opens at all
@@ -592,11 +592,11 @@ Two examples, deliberately: one alone sets a floor as much as a ceiling.
 
 ## What does NOT belong here
 
-- **The scope of the work** — that is the [subtask](./subtasks).
-- **The order the rounds run in** — that is the [plan](./plans).
+- **The scope of the work** — that is the [subtask](./03_subtasks.md).
+- **The order the rounds run in** — that is the [plan](./09_plans.md).
 - **Human discussion** — `comments/`, the flat evolution log.
 - **Deliberation and options-weighing** — `brainstorm/`.
-- **Durable facts the agent learns** — [Agent Memory](./agent-memory); the log records
+- **Durable facts the agent learns** — [Agent Memory](./07_agent-memory.md); the log records
   *what happened*, memory holds *what is still true*.
 - **Micro-progress pings** — they belong in the next iteration file, or nowhere.
 
@@ -614,8 +614,8 @@ Two examples, deliberately: one alone sets a floor as much as a ceiling.
 
 ## See also
 
-- [Plans](./plans) — where order lives
-- [Subtasks](./subtasks) — the scope the log executes against
-- [Agent Memory](./agent-memory) — what is still true, across runs
+- [Plans](./09_plans.md) — where order lives
+- [Subtasks](./03_subtasks.md) — the scope the log executes against
+- [Agent Memory](./07_agent-memory.md) — what is still true, across runs
 - [Lifecycle and Review](../04_setup/06_lifecycle-and-review.md) — how the log feeds the review handoff
-- [Using with AI](../using-with-ai) — agent discipline
+- [Using with AI](../09_using-with-ai.md) — agent discipline

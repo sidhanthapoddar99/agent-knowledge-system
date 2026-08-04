@@ -14,10 +14,10 @@ Sibling content types: [Docs](../17_docs/01_overview.md) for hierarchical docume
 
 | Topic | Description |
 |-------|-------------|
-| [Blog Index](./blogs-index) | How the blog listing page works |
-| [Structure](./structure) | Date-based file naming |
-| [Frontmatter](./frontmatter) | Required and optional metadata |
-| [Asset Embedding](./asset-embedding) | Central asset management |
+| [Blog Index](./02_blogs-index.md) | How the blog listing page works |
+| [Structure](./03_structure.md) | Date-based file naming |
+| [Frontmatter](./04_frontmatter.md) | Required and optional metadata |
+| [Asset Embedding](./05_asset-embedding.md) | Central asset management |
 
 ## Key Features
 

@@ -13,7 +13,7 @@ and it becomes a **first-class page**, exactly like a diagram file: it appears
 in the sidebar, gets a URL, and routes like a markdown page. The whole document
 is the content — no markdown wrapper needed.
 
-See one live on the [Artifact Showcase](./examples/artifact-showcase) page.
+See one live on the [Artifact Showcase](./20_examples/02_artifact-showcase.md) page.
 
 ## Drop in a file
 
@@ -198,7 +198,7 @@ The framework **never** applies the diagram dark-mode invert filter to an artifa
 inverting arbitrary HTML would wreck its images and brand colors — so honoring the
 theme is the artifact's own job. For the full authoring doctrine — including why any
 UI/UX design is always `self` — see the **`agent-ks-artifacts` skill**. Both modes
-run live on the [Artifact Showcase](./examples/artifact-showcase): a `self` design system and a
+run live on the [Artifact Showcase](./20_examples/02_artifact-showcase.md): a `self` design system and a
 `site` dashboard.
 
 ## In the issue tracker
@@ -222,7 +222,7 @@ can sit *in place*, next to the reasoning about it.
 Because full-page artifacts are served at `/artifacts/<path>`, **`artifacts` is
 a reserved base URL** — no docs section may claim it (nor `assets`,
 `content-assets`, `api`, or `editor`). Doing so is a hard config-load error. See
-[Reserved base URLs](../configuration/site/page#reserved-base-urls).
+[Reserved base URLs](../10_configuration/03_site/08_page.md#reserved-base-urls).
 
 ## Opting a section out
 

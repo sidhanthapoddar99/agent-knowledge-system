@@ -7,7 +7,7 @@ description: How your content, configuration, and assets are organised at your p
 
 This page covers **your project's content folders** — `config/`, `data/`, `assets/`, `themes/`. These live at the root of *your* docs project (the parent of the framework folder), and they're the only files you actually author or edit. Everything inside the framework folder (`astro-doc-code/`, `default-docs/`, `plugins/`) is shipped by the framework and shouldn't be touched.
 
-For the framework's internal code layout, see the [dev-docs](../../dev-docs/01_overview/02_code-structure.md). For what `default-docs/` is and why it ships inside the framework, see the [Overview](./overview).
+For the framework's internal code layout, see the [dev-docs](../../dev-docs/01_overview/02_code-structure.md). For what `default-docs/` is and why it ships inside the framework, see the [Overview](./01_overview.md).
 
 ## What the framework actually requires
 
@@ -80,7 +80,7 @@ agent-knowledge-system/          # the framework repo (you cloned this)
 └── plugins/
 ```
 
-This is what the framework's own development uses — see [Overview → What's in `default-docs/`](./overview) for why this dogfood mode exists.
+This is what the framework's own development uses — see [Overview → What's in `default-docs/`](./01_overview.md) for why this dogfood mode exists.
 
 ## 1. YAML configuration — `config/`
 
@@ -143,7 +143,7 @@ data/
     └── roadmap/       #   public roadmap
 ```
 
-Nothing in that tree is hard-coded. Rename folders, drop sections, add new ones, point `@data/` at a completely different path in `site.yaml` — the framework doesn't care, as long as each section is declared. See [Path Aliases](./aliases) for custom alias declarations.
+Nothing in that tree is hard-coded. Rename folders, drop sections, add new ones, point `@data/` at a completely different path in `site.yaml` — the framework doesn't care, as long as each section is declared. See [Path Aliases](./03_aliases.md) for custom alias declarations.
 
 The file-level structure *inside* each content type is specific to its layout family. Each has its own authoring guide:
 

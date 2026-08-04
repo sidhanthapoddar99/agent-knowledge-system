@@ -6,7 +6,7 @@ sidebar_position: 2
 
 # Extending Default
 
-The **typical custom theme shape** — extend the default, override multiple files, cherry-pick which parts to customise. Different from [Quick Start](./quick-start) in scale: multiple CSS files, richer customisation. Different from [Standalone Theme](./standalone-theme) in approach: still inheriting from default, not rebuilding from scratch.
+The **typical custom theme shape** — extend the default, override multiple files, cherry-pick which parts to customise. Different from [Quick Start](./01_quick-start.md) in scale: multiple CSS files, richer customisation. Different from [Standalone Theme](./03_standalone-theme.md) in approach: still inheriting from default, not rebuilding from scratch.
 
 This is the recommended path for most custom themes. You get the 46-variable contract, dark mode, component styles, and all default behaviour for free — then override exactly what you want to change.
 
@@ -249,7 +249,7 @@ With `override`, parent's `color.css` doesn't load. Your `color.css` is the only
 
 **Use when**: you're replacing a file entirely and don't want accidental leaks via cascade. **Typical**: a colour palette that shares variable names with default but with very different values — you don't want any of the parent's defaults flowing through.
 
-See [Inheritance and Override](../inheritance-and-override) for the full decision matrix.
+See [Inheritance and Override](../07_inheritance-and-override.md) for the full decision matrix.
 
 ## Testing checklist
 
@@ -263,7 +263,7 @@ Before shipping a custom theme:
 
 ## See also
 
-- [Quick Start](./quick-start) — smaller scope, single file
-- [Standalone Theme](./standalone-theme) — larger scope, `extends: null`
-- [Inheritance and Override](../inheritance-and-override) — merge / override / replace in depth
-- [Dark Mode](../dark-mode) — how the `[data-theme="dark"]` pattern works
+- [Quick Start](./01_quick-start.md) — smaller scope, single file
+- [Standalone Theme](./03_standalone-theme.md) — larger scope, `extends: null`
+- [Inheritance and Override](../07_inheritance-and-override.md) — merge / override / replace in depth
+- [Dark Mode](../08_dark-mode.md) — how the `[data-theme="dark"]` pattern works

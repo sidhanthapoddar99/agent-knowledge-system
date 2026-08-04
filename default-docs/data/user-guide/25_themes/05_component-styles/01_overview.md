@@ -14,12 +14,12 @@ This section documents each component-style file — what it scopes, what it sty
 
 | File | Scope | Lines (default) | What it owns |
 |---|---|---:|---|
-| [`markdown.css`](./markdown-styles) | `.markdown-content` | 485 | Rendered markdown — headings, paragraphs, lists, code, blockquotes, tables |
-| [`navbar.css`](./navbar-styles) | Site navbar classes | 305 | Site navbar — logo, links, dropdowns, search, theme toggle |
-| [`footer.css`](./footer-styles) | Site footer classes | 116 | Footer — columns, links, copyright |
-| [`docs.css`](./docs-styles) | Docs layout classes | 466 | Docs layout — sidebar, outline, pagination, breadcrumbs |
-| [`blogs.css`](./blogs-styles) | Blog layout classes | 341 | Blog index + post — cards, meta, tags |
-| [`issues.css`](./issues-styles) | Issues layout classes | — | Issues layout — filter chips, state tabs, sub-doc sidebar, metadata form |
+| [`markdown.css`](./02_markdown-styles.md) | `.markdown-content` | 485 | Rendered markdown — headings, paragraphs, lists, code, blockquotes, tables |
+| [`navbar.css`](./03_navbar-styles.md) | Site navbar classes | 305 | Site navbar — logo, links, dropdowns, search, theme toggle |
+| [`footer.css`](./04_footer-styles.md) | Site footer classes | 116 | Footer — columns, links, copyright |
+| [`docs.css`](./05_docs-styles.md) | Docs layout classes | 466 | Docs layout — sidebar, outline, pagination, breadcrumbs |
+| [`blogs.css`](./06_blogs-styles.md) | Blog layout classes | 341 | Blog index + post — cards, meta, tags |
+| [`issues.css`](./07_issues-styles.md) | Issues layout classes | — | Issues layout — filter chips, state tabs, sub-doc sidebar, metadata form |
 
 ## The cardinal rule
 
@@ -69,7 +69,7 @@ Component styles don't declare variables; they declare element styles. When dark
    in color.css, and let .card inherit the correct shadow automatically. */
 ```
 
-Prefer to solve dark-mode differences via token redefines in `color.css` rather than element-level overrides in component styles. Keeps the logic in one place. See [Dark Mode](../dark-mode) for the full pattern.
+Prefer to solve dark-mode differences via token redefines in `color.css` rather than element-level overrides in component styles. Keeps the logic in one place. See [Dark Mode](../08_dark-mode.md) for the full pattern.
 
 ## Overriding component styles
 
@@ -86,7 +86,7 @@ files:
 
 With `merge`, both parent and child `markdown.css` load — CSS cascade resolves conflicts. With `override`, only the child's `markdown.css` loads; the parent's is skipped.
 
-See [Inheritance and Override](../inheritance-and-override) for merge vs override decisions.
+See [Inheritance and Override](../07_inheritance-and-override.md) for merge vs override decisions.
 
 ## Extending with new layouts
 
@@ -103,7 +103,7 @@ Declare it in the manifest's `files:` array, same as the built-in component styl
 
 ## See also
 
-- [Tokens Overview](../tokens/overview) — what these files consume
-- [Markdown Styles](./markdown-styles) — the biggest file, the prose surface
-- [Theme Structure](../theme-structure) — where these files fit in the overall layout
-- [Rules for Layout Authors](../rules-for-layout-authors) — the no-hardcoded-values rule that applies here
+- [Tokens Overview](../04_tokens/01_overview.md) — what these files consume
+- [Markdown Styles](./02_markdown-styles.md) — the biggest file, the prose surface
+- [Theme Structure](../03_theme-structure.md) — where these files fit in the overall layout
+- [Rules for Layout Authors](../10_rules-for-layout-authors.md) — the no-hardcoded-values rule that applies here

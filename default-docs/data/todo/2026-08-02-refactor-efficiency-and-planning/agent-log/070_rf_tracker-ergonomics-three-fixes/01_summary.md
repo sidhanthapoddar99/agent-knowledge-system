@@ -4,12 +4,15 @@ title: "Summary"
 
 # State
 
-> [!WARNING]
-> **Four reviews are in and the diff does not stand.** Two of the three subtasks
-> it closed are wrong in ways their own acceptance tests were built not to see —
-> the replaced rule is still shipped in ~10 other files, and a folder-form round
-> is silently dropped from the generated table. **Nothing has been fixed**;
-> waiting on Sid before round 05 decides the merged findings.
+> [!NOTE]
+> **Five rounds done; every review finding is fixed or explicitly reported.** The
+> generated index is deleted, the rule has one home, and the blanker is
+> CommonMark-correct with a fixture in the tree. Three subtasks at `review`
+> ([`015`](../../subtasks/110_tracker-ergonomics/015_the-working-index-is-a-table-of-the-round.md)
+> ·[`020`](../../subtasks/110_tracker-ergonomics/020_when-a-run-earns-an-agent-log.md)
+> ·[`025`](../../subtasks/110_tracker-ergonomics/025_an-index-is-checked-not-generated.md)),
+> plus [`010`](../../subtasks/110_tracker-ergonomics/010_plan-execution-needs-an-agent-log.md).
+> One more audit before hand-off.
 
 # Goal
 
@@ -35,8 +38,8 @@ precedent that decided `015`'s design,
       on four surfaces; all 14 worked verdicts re-run and unchanged
 - [x] [The round table](./02_working/020_the-round-table.md) —
       [`015`](../../subtasks/110_tracker-ergonomics/015_the-working-index-is-a-table-of-the-round.md)
-      decided *regenerated*, built as [the round table](./02_working/00_index.md), with a staleness
-      error and a `reindex` verb to answer it
+      decided *regenerated* and built as a generated table — **reversed in round 05**,
+      and the reversal is [`025`](../../subtasks/110_tracker-ergonomics/025_an-index-is-checked-not-generated.md)
 - [x] [The gate that failed its own scaffold](./02_working/030_the-gate-that-failed-its-own-scaffold.md)
       — unplanned: `check link-form` failed **this run's own summary**, on a code
       span that wraps. Two bugs, the second mine
@@ -46,8 +49,10 @@ precedent that decided `015`'s design,
 - [x] [Four independent reviews](./02_working/040_four-independent-reviews.md) —
       24 findings, merged as a union. Three of them overturn a claim rounds 01–03
       made about their own work
-- [ ] **Round 05 — decide and fix.** Not started; the union is decided once,
-      after Sid reads it, rather than patched per reviewer
+- [x] [Decide and delete](./02_working/050_decide-and-delete.md) — the union acted
+      on in one pass. The plugin ends **smaller** than before this run: one CLI verb,
+      two scripts, one frontmatter field and one validator rule removed, and zero new
+      tools added
 
 # Out of Scope
 
@@ -56,42 +61,59 @@ those belong to `2026-08-04-absolute-link-resolution` and were not touched.
 
 # Outcome
 
-**Three subtasks at `review`, three gates green, one unplanned defect fixed.**
+**Four subtasks at `review`, every gate green — and two of this run's own three
+deliverables were reversed by its own review.**
 
 | | |
 |---|---|
-| Files changed | 4 skill/framework surfaces, 6 CLI scripts (2 new), 1 manifest entry |
-| New CLI verb | `agent-ks issue reindex <id> [--log] [--check]` |
-| `check link-form` | **1 error → 0**; warnings unchanged at 52 |
-| `check issues` | clean, down to its two known unrelated warnings |
-| `check skill-links` | ✓ 44 files, repo source tree |
-| Production build | ✓ 1,203 pages |
-| Control tests | 14 rule verdicts re-run · 2-direction floor test · 2-direction staleness gate · 8-case blanker fixture |
+| `check link-form` | ✅ 0 errors, 52 warnings (unchanged throughout) |
+| `check issues` | ✅ its two known unrelated warnings |
+| `check skill-links` | ✅ 44 files, repo source tree |
+| `code-spans.test.mjs` | ✅ 15 cases, **every one of them a case that failed** |
+| `move` dry-run, 8 inbound links | ✅ all 8 rewritten |
+| Production build | ✅ |
+| Net surface change | **−1** CLI verb · **−2** scripts · **−1** frontmatter field · **−1** validator rule · **0** new tools |
 
-**The run's own shape is the thing it built.** This log was opened before the
-first round because a three-part plan fires trigger 1 — and its `02_working/`
-carries the generated round table that round 02 added, populated by rounds 01–03.
-Round 03 exists because round 02's verification returned something that changed
-the work, which is the trigger stated as a fact rather than as prose.
+## The one thing this run is actually about
 
-## What each round found that the diff does not show
+**Every check written here was scoped to the thing it was checking, and each one
+therefore passed.**
 
-- **Round 01** — the acceptance test was the point, not the edit. *One bounded
-  delegated job* is the case that could have moved: under the old five factors
-  *whose hands* was co-equal and might have carried it. It did not move, because
-  the new shape demotes delegation to a weight that never triggers alone.
-- **Round 02** — rendered was rejected for a reason that is easy to miss. It
-  cannot drift at *all*, which sounds strictly better; but it leaves no file, and
-  git does not track empty directories, so the folder vanishes on clone — which
-  is the entire subtask. Regenerated plus a gate was the answer.
+```
+  the acceptance test  →  read the section it had just edited
+  the blanker fixture  →  tested the case that motivated it
+  the staleness gate   →  compared against a generator sharing its blind spot
+```
+
+That is this issue's own subject — *a rule that is technically correct and does
+not fire* — reappearing inside the machinery written to enforce it. It was not
+caught by any gate. It was caught by **four readers who had not written it**, one
+of them with a shell.
+
+## What each round holds that the diff does not
+
+- **Round 01** — the acceptance test *was* the deliverable, and it was the defect.
+  Re-running 14 verdicts proves nothing when the corpus is the paragraph you just
+  wrote.
+- **Round 02** — *derived over typed* was correct reasoning to a wrong conclusion.
+  The precedent said a hand-typed table drifts; it did not say a generated one
+  cannot be blind. Determinism is not the same property as coverage.
 - **Round 03** — the first fix removed one false positive and introduced another,
-  in a file whose subject is false positives. A regex that backtracks into a
-  backtick run is the cause; the fixture that catches it is the one asking
-  whether a *real link after a stray run* survives, which "is it quiet now?"
-  would never have asked.
+  in a file whose subject is false positives.
+- **Round 04** — the four lenses were chosen so no two could find the same thing
+  by the same route. Three of the six highest findings came from exactly one
+  reviewer each, and the two nobody reading could have found came from the one
+  that ran things.
+- **Round 05** — the plan included a new agent and a slash command. Sid killed
+  both: *"agent-ks is meant to make things simple, not more complicated."* The
+  check went into a skill that is already loaded, and the run ended smaller than
+  it started.
 
-## Still open, and reported rather than fixed
+## Reported, not fixed
 
-`020_wf_ship-the-split` round 14 is `in-progress` inside a finished run — a stale
-round file the new table surfaced on its first use. Closing a round is not this
-run's to do.
+- **No CI job or git hook runs `check issues`.** True, and making it one is a
+  decision about this repo's workflow rather than about this run.
+- **`check issues` does not descend into `--group` folders.** The staleness error
+  it let through no longer exists, so it is now cosmetic — but the gap is real.
+- **`020_wf_ship-the-split` round 14 is `in-progress` inside a finished run.**
+  Closing a round is not this run's to do.

@@ -49,8 +49,8 @@ Until then the numbers are labels, and step 4 below says so.
 
 6. Record it where it belongs. Work you did INLINE gets no agent-log folder:
    its outcome goes in the subtask, plus a line in the plan if a plan
-   scheduled it. A folder opens ONLY when the work was DELEGATED, or ran
-   over multiple rounds:
+   scheduled it. Whether a folder opens is decided in one place —
+   [when an agent log opens at all](../20_sections/24_agent-logs.md#when-an-agent-log-opens-at-all):
      agent-ks issue new-agent-log 2026-04-19-docs-phase-2 --kind it \
        --name loader-refactor --goal "…"
      agent-ks issue new-iteration 2026-04-19-docs-phase-2 \
@@ -66,5 +66,5 @@ Until then the numbers are labels, and step 4 below says so.
 
 - **Subtasks go to `review`, never `done`** — that's the user's call ([Closing authority](../00_anatomy/00_overview.md#closing-authority), the one place that rule is stated).
 - **Mark the issue `review` only when** all subtasks are `review`/`done`, there's a verifiable artefact (PR / diff / screenshot), and the record captures what happened (AI rule #5).
-- **Most subtasks on an issue like this earn no agent-log folder at all.** One is opened when work is delegated or runs over multiple rounds, and nothing else opens one ([24_agent-logs.md](../20_sections/24_agent-logs.md)) — otherwise three files become the floor for a one-line change. When one *is* opened it is an activity folder, `NNN_<kind>_<name>/` with `01_summary.md` · `02_working/` · `03_debrief/`; there is no flat form. The long autonomous case is [63_agent-loops.md](63_agent-loops.md).
+- **Most subtasks on an issue like this earn no agent-log folder at all.** The test is stated once, in [when an agent log opens at all](../20_sections/24_agent-logs.md#when-an-agent-log-opens-at-all) — do not re-derive it from this page. When one *is* opened it is an activity folder, `NNN_<kind>_<name>/` with `01_summary.md` · `02_working/` · `03_debrief/`; there is no flat form. The long autonomous case is [63_agent-loops.md](63_agent-loops.md).
 - **An iteration file's head is `Goal` · `Inputs` · `Expected Outcome` · `Outcome`** — the scaffolder seeds all four. `Goal / Approach / Result / Next` was the old milestone shape and no longer exists.

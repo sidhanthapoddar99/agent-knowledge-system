@@ -33,10 +33,37 @@ agent log that lists its rounds as a schedule is re-deriving the plan.
 
 ## When an agent log opens at all
 
-> **When work is delegated, or when it runs over multiple rounds.**
+**A log exists so a finding can be withdrawn.** A finding nobody wrote down cannot be
+retracted — it just quietly keeps being believed. So one question decides it:
 
-Nothing else opens one. A change made inline gets a line in the plan and no folder. This
-is the rule that stops a one-line change acquiring a three-file floor.
+> ### Is there something here that the finished work does not show?
+>
+> **TRIGGER — any one, and it earns a log:**
+> 1. a later step changed course because of what an earlier step **returned** —
+>    executing a plan always does, so open the log **before the first stage**
+> 2. something was **tried and discarded**: a rejected approach, a wrong diagnosis, a
+>    measurement that came back other than expected
+> 3. **you asked** for a record
+>
+> **FLOOR — any one, and it does not:**
+> 1. the log would **restate the subtask**
+> 2. **one** self-contained pass with **nothing discarded** — *one* is literal, so a
+>    loop or a fan-out over several items is not covered by it
+>
+> The floor beats triggers 1 and 2. It never beats trigger 3.
+
+**Never file count, never time spent.** A thirty-file rename has no path worth keeping; a
+four-line fix after three wrong diagnoses has nothing *but* path. Scale answers a
+different question — *does the setup cost more than the work* — and that one is asked
+second, after this one has already said yes.
+
+**And a verify is not a stage.** *Did I break it* — a typecheck, a build, one curl
+against the fixed URL — has an expected answer of "no" and changes nothing about what you
+did. Only an **audit**, whose answer you cannot predict and which redirects the work,
+is a stage.
+
+Then, separately: **a run already open? append to it, even one line** — never open a
+second for work belonging to the first.
 
 ## The structure
 
@@ -562,7 +589,7 @@ What the example teaches:
 
 ## Worked example — the small end
 
-One round, one executor, nothing produced but the change itself. **Two files.**
+One round, one executor, nothing produced but the change itself. **Three files** — the two the scaffolder writes, plus the round.
 
 ```
 agent-log/

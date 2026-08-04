@@ -130,7 +130,7 @@ export const MANIFEST = [
   },
   {
     bin: 'docs-new-agent-log', group: 'issue', verb: 'new-agent-log', category: 3, script: 'issues/new-agent-log.mjs', runtime: 'mjs',
-    summary: 'Scaffold an agent log — settings.json + 01_summary.md, nothing else seeded',
+    summary: 'Scaffold an agent log — settings.json, 01_summary.md, and an empty 02_working/00_index.md',
     flags: [
       { name: 'kind', value: 'code', desc: 'agent-log kind code (lp/au/rf/it/wf or a custom agentLogKinds code) — required' },
       { name: 'name', value: 'slug', desc: 'kebab-case run name, sanitised to [a-z0-9-] — required' },
@@ -138,16 +138,6 @@ export const MANIFEST = [
       { name: 'parent', value: 'path', desc: 'create as a CHILD agent log inside an existing one (a sub-goal with its own goal)' },
       { name: 'prefix', value: 'NNN', desc: 'explicit number (2–5 digits) instead of the next gap-spaced one' },
       { name: 'goal', value: 'text', desc: 'seed 01_summary.md’s Goal section' },
-      { name: 'json', desc: 'structured JSON output' },
-      { name: 'tracker', value: 'path', desc: 'non-default tracker' },
-    ],
-  },
-  {
-    bin: 'docs-reindex', group: 'issue', verb: 'reindex', category: 3, script: 'issues/reindex.mjs', runtime: 'mjs',
-    summary: "Regenerate 02_working/00_index.md — the round table — from the round files' frontmatter",
-    flags: [
-      { name: 'log', value: 'path', desc: 'limit to one agent log, path relative to agent-log/' },
-      { name: 'check', desc: 'report what would change and exit 1 if stale; write nothing' },
       { name: 'json', desc: 'structured JSON output' },
       { name: 'tracker', value: 'path', desc: 'non-default tracker' },
     ],

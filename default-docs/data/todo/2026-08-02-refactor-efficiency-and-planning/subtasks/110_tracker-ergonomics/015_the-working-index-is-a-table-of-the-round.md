@@ -62,42 +62,28 @@ part"* without opening a single round file.
 
 # Outcomes and Next Steps
 
-**Built 2026-08-04 as `02_working/00_index.md` — generated, never typed.**
+> [!CAUTION]
+> **The generated half of this was reversed the same day it shipped, and the
+> reversal is [`025`](./025_an-index-is-checked-not-generated.md).** Read it
+> before acting on anything below.
 
-**The decision: regenerated, not rendered.** Both candidates were derived, so
-neither risked the typed-column defect. Rendered stores nothing and cannot drift
-at all — but it leaves no file on disk, and the folder then vanishes on clone,
-which is the *entire* subtask. Regenerated gives a real file, which the project's
-filesystem-first principle wants anyway: `ls` and `cat` should answer the
-question, not only the site.
+**What survives:** the problem statement, and the seeded file. A scaffolded log
+still shows its shape, still through `02_working/00_index.md`, still as a file
+because git does not track empty directories.
 
-**Drift is answered structurally rather than promised away.** `agent-ks check
-issues` re-runs the generator and **errors** when the file disagrees with its
-round files, so the precedent's failure mode becomes a gate rather than silent
-rot. `agent-ks issue reindex <id>` is the one-command fix the error names — added
-because a round's *status* changes far more often than a round is created, and
-without it the only way to answer the gate would have been to create an iteration
-nobody wanted.
+**What was wrong:** *derived* was treated as the safe answer because the
+alternative — a hand-typed table — had a receipt against it. The generator did
+avoid that defect and introduced a worse one. It read only round files that were
+**files**; a round stored as a folder was skipped silently. The staleness
+validator then compared the file against that same generator, inherited the same
+blind spot, and certified a table with a round missing. **Two things that make
+the same mistake cannot check each other**, which no amount of determinism fixes.
 
-| Answer | |
-|---|---|
-| Columns | `#` · `Round` · `Kind` · `Who` · `Status` · `Produced` |
-| `kind` source | a persisted `unit:`, which `new-iteration --unit` already collected. **Absent prints `—`** — a kind guessed from a title is a plausible label with no source |
-| `who` | the iteration file's `agent:`; a fan-out is **one row** with its workers folded into `Produced` |
-| `03_debrief/` | **not seeded** — named in the scaffolder's help instead |
-| validator | `00_index.md` exempted from the `NNN_` rule, `unit` admitted to the frontmatter set |
+Reproduced on real tracked data: the demo showcase's table jumps `03 → 05`.
 
-**Control-tested both directions:** hand-editing one cell makes `check issues`
-error on exactly that file; restoring makes it clean. Backfilling four historic
-runs was the generator's real test, and it showed something the flat filenames
-never did — `020_wf_ship-the-split` round 07 renders three named auditors and
-round 14 two, a fan-out legible without opening a file.
-
-> [!NOTE]
-> **One finding, left alone deliberately.** The backfill surfaced a round in
-> `020_wf_ship-the-split` still marked `in-progress` inside a finished run. That
-> is a genuinely stale round file the table caught on first use. Closing a round
-> is not this run's to do, so it is reported rather than corrected.
+**And what shipped could not carry what the index was for.** The columns restated
+frontmatter. The line worth reading is what a round *found*, and no generator can
+write that — so the answer was hand-written prose, checked by reading.
 
 The run: [`070_rf_tracker-ergonomics-three-fixes`](../../agent-log/070_rf_tracker-ergonomics-three-fixes/01_summary.md).
 

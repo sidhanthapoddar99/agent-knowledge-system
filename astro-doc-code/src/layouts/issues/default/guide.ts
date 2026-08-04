@@ -207,7 +207,7 @@ YYYY-MM-DD-<slug>/                    ← the issue folder
 │   └── 010_lp_implement-x/           ← NNN_<code>_<name>/ — one run, one goal
 │       ├── settings.json             ← optional {"status": "…"} — colours the symbol
 │       ├── 01_summary.md             ← the one conclusive file, and the brief
-│       ├── 02_working/00_index.md    ← GENERATED round table — never hand-edited
+│       ├── 02_working/00_index.md    ← the round index — written, not generated
 │       ├── 02_working/010_round.md   ← first 2 digits = iteration, last = file in it
 │       ├── 03_debrief/01_handover.md ← what leaves the run
 │       └── 100_wf_sub-goal/          ← a child agent log — prefix ≥ 100, same shape
@@ -266,13 +266,14 @@ ${runStatusTable(statusColors)}
     which file within it** (\`0\` = the iteration file, \`1\`–\`9\` = producers).
   - **A file exists because something was produced, not because an agent ran.**
   - Flat. A folder only when one producer makes several artifacts.
-  - **\`00_index.md\` is the run's round table, and it is GENERATED** — number ·
-    round · kind · who · status · what it produced, every cell read from a round
-    file's frontmatter (\`title\` / \`unit\` / \`agent\` / \`status\`). Seeded empty at
-    scaffold so a run's shape is visible before it has one. **Never hand-edited:**
-    correct the round file, and the table follows. A fan-out is **one row**, its
-    workers folded into *what it produced* — several agents on one round is one
-    iteration, not N.
+  - **\`00_index.md\` is the run's round index, WRITTEN by hand.** Seeded empty at
+    scaffold so a run's shape is visible before it has one. One entry per round —
+    a link, and **a line of what it found**, which is the part no header carries.
+    A fan-out is **one entry**, not N: several agents on one round is one round.
+  - **An index is a claim about other files — check it by reading, never by
+    generating.** It was generated once, and the generator and its checker shared
+    a blind spot: a round stored as a folder was invisible to both, so a table
+    with a round missing was certified correct.
 - **\`03_debrief/\`** — what leaves the run: handover, questions, findings, lessons,
   caveats. Written when noticed, not only at the end. No slot is required to exist.
 - **A child agent log** is any nested folder whose prefix is **≥ 100** —

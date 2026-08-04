@@ -2,7 +2,6 @@
 title: "Sol — the reviewer with a shell, checked against a CommonMark oracle"
 status: done
 agent: gpt-5.6-sol
-unit: audit
 ---
 
 # Goal
@@ -59,7 +58,7 @@ contains `040_research-codecs/`, and the rendered table jumps straight from
 | # | Finding | How |
 |---|---|---|
 | 3 | **Escaped backticks hide a real broken link.** `\`…\`` is literal per CommonMark; the scanner blanks between them. `micromark` renders the link, the gate reports `errorCount: 0` | reproduced, oracle-checked |
-| 4 | **An invalid longer run prevents discovery of a later valid closer** — `` ` prefix `` [quoted](/bad) ` ``. `micromark` says one code span; the gate falsely errors on the quoted link | reproduced, oracle-checked |
+| 4 | **An invalid longer run prevents discovery of a later valid closer.** `micromark` reads the whole construct as one code span; the gate abandoned the opener at the longer inner run and falsely errored on the link it was quoting | reproduced, oracle-checked |
 | 5 | **A multiline YAML title breaks the table.** `cell()` escapes `\|` and not newlines, so a valid literal-block title splits one row across lines — and can forge cells | reproduced |
 | 6 | **Missing frontmatter invents a title from the filename**, contradicting the generated banner and `reindex --help`, both of which say every cell comes from frontmatter and nothing is invented | reproduced |
 

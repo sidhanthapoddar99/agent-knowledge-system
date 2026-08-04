@@ -65,8 +65,9 @@ For AI iterations specifically — don't use this for human edits (use comments 
 Each round:
 
 1. **Find the run's folder** — `agent-log/NNN_<code>_<name>/`, or open one if this is new
-   work. A run opens when work is delegated or when it goes over multiple rounds; anything
-   smaller gets a line in the plan and no folder at all.
+   work. Whether it earns one is
+   [decided here](../05_sub-docs/05_agent-log.md#when-an-agent-log-opens-at-all), not from
+   this page.
 2. **Write the round file into that folder's `02_working/`**, named `NNN_<slug>.md` — the
    first two digits are the iteration and the last is which file within it (`0` for the
    round's own file, `1`–`9` for an agent that produced something substantial of its own).

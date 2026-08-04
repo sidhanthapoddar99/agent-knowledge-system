@@ -2,7 +2,6 @@
 title: "Fable — the blanker against CommonMark, and a repo-wide coherence sweep"
 status: done
 agent: fable
-unit: audit
 ---
 
 # Goal

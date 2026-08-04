@@ -2,7 +2,6 @@
 title: "02_working/ gets a generated round table, and a gate that keeps it honest"
 status: done
 agent: claude
-unit: execution
 ---
 
 # Goal

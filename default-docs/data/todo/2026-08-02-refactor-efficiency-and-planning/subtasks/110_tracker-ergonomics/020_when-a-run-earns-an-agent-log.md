@@ -353,7 +353,29 @@ reasoning, and the factor archaeology. Instances rot; the tracker is their home.
 
 # Outcomes and Next Steps
 
-**Landed 2026-08-04 on four surfaces, and all 14 verdicts held.**
+**Landed 2026-08-04, then corrected the same day — the first landing was
+incomplete and its acceptance test could not have seen it.**
+
+> [!IMPORTANT]
+> **"Four surfaces" was the error.** The *replaced* rule was still shipped in ten
+> further places — three skill references, four user-guide pages, and
+> `24_agent-logs.md` itself, 700 lines below the new rule, saying *"inline work
+> opens no folder however much reasoning it carried"* — which is the flagship
+> trigger-2 case reversed.
+>
+> **The acceptance test re-ran the 14 cases against the section it had just
+> edited, not against the shipped skill.** A check scoped to the thing it is
+> checking always passes. Every copy is now a **link** to the one home, which is
+> the project's own rule and the one that was broken.
+
+Three contradictions inside the new rule were closed at the same time: the floor
+now explicitly beats triggers 1–2 and never trigger 3; floor 2's *"one pass"* is
+stated as literal, so a loop or fan-out is not covered by it; and the prohibition
+on file count is scoped to *whether the path is worth keeping*, leaving scale
+free to answer the separate setup-cost question. The 14 worked cases now **ship**,
+in the one home, because instances are what make a rule applicable.
+
+**Landed on four surfaces, and all 14 verdicts held.**
 
 | Surface | Carries |
 |---|---|

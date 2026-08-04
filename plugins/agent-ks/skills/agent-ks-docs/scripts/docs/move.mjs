@@ -41,7 +41,7 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { resolveProjectContext } from '../_env.mjs';
 import {
-  MD_LINK_RE, isIgnorableTarget, splitAnchor, collectMarkdownFiles, blankCodeSpans,
+  MD_LINK_RE, isIgnorableTarget, splitAnchor, collectMarkdownFiles, blankedProseLines,
   orderingPathFor, relabelOrdering, makeFenceTracker,
 } from '../_links.mjs';
 import { FIRST_CLASS_PAGE_EXTS, sidecarPathsFor } from '../_page-types.mjs';
@@ -293,6 +293,7 @@ for (const file of scanFiles) {
   catch { continue; }
   const lines = content.split('\n');
   const isProse = makeFenceTracker();
+  const scannedLines = blankedProseLines(lines.join('\n'));
 
   lines.forEach((lineText, idx) => {
     if (!isProse(lineText)) return;   // inside a fenced example — not a link
@@ -303,7 +304,7 @@ for (const file of scanFiles) {
     // rewrote `[Overview](./01_overview.md)` inside a code span.
     // The blanker replaces spans with same-length filler, so match offsets stay
     // valid against the untouched line that actually gets edited.
-    const scanned = blankCodeSpans(lineText);
+    const scanned = scannedLines[idx] ?? lineText;
     let m;
     LINK_RE.lastIndex = 0;
     while ((m = LINK_RE.exec(scanned)) !== null) {

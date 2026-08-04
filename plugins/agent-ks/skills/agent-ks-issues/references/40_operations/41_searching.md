@@ -45,7 +45,7 @@ The plugin ships the `agent-ks issue` command group on your `PATH` — reads, wr
 | `agent-ks issue add-comment` (`add-comment.mjs`) | Append a comment with auto-incremented `NNN_` prefix. |
 | `agent-ks issue add-agent-log` (`add-agent-log.mjs`) | Append a **one-line** entry to an agent log. Multi-line records are written as files, not funnelled through this. |
 | `agent-ks issue review-queue` (`review-queue.mjs`) | List items needing review — issues in the **Review category** (`review` / `input-needed`) + active (non-closed) issues with a Review-category subtask. |
-| `agent-ks issue new-agent-log` (`new-agent-log.mjs`) | Scaffold a run — `settings.json` + `01_summary.md`, nothing else seeded. `--kind`, `--name`, `--parent` for a child run. |
+| `agent-ks issue new-agent-log` (`new-agent-log.mjs`) | Scaffold a run — `settings.json`, `01_summary.md`, and an empty `02_working/00_index.md`. `--kind`, `--name`, `--parent` for a child run. |
 | `agent-ks issue new-iteration` (`new-iteration.mjs`) | Open a round's file in `02_working/`, head pre-filled (`Goal` · `Inputs` · `Expected Outcome` · `Outcome`). `--producer` for one agent's own output beside it. |
 | `agent-ks issue new-plan` (`new-plan.mjs`) | Open a plan — folder + `settings.json` + `overview.md`. |
 | `agent-ks issue new-stage` (`new-stage.mjs`) | Add a stage to a plan; the prefix is both its id and its order, gap-spaced by ten. |

@@ -10,13 +10,20 @@
  *   01_summary.md   the one conclusive file: State · Goal · Todo ·
  *                   Out of Scope (optional) · Outcome
  *
- * plus `02_working/00_index.md` — a GENERATED table of the run's rounds, empty
- * at scaffold time. It is seeded because the alternative was invisible
- * structure: a fresh log showed one file, so an agent could not tell that two
- * thirds of the shape existed, and wrote everything into the summary. It has to
- * be a file rather than a bare folder because git does not track empty
- * directories. Every cell is read from a round file's frontmatter and rewritten
- * by `new-iteration` — never typed. See `_working-index.mjs`.
+ * plus `02_working/00_index.md` — an EMPTY STUB for the run's round index, which
+ * the orchestrator writes by hand as rounds land. It is seeded because the
+ * alternative was invisible structure: a fresh log showed one file, so an agent
+ * could not tell that two thirds of the shape existed, and wrote everything into
+ * the summary. It has to be a file rather than a bare folder because git does
+ * not track empty directories.
+ *
+ * **The index is written, not generated, and that is a decision rather than an
+ * omission.** A generated table can only restate frontmatter; the useful index
+ * carries a line of what each round FOUND, which no generator can write. An
+ * earlier version of this script generated it — and the generator and its
+ * staleness checker shared a blind spot, so a round stored as a folder was
+ * dropped from the table and the checker certified the result. Keeping an index
+ * honest is a reading job: `/agent-ks-index-check`.
  *
  * **`03_debrief/` is still not seeded, and that is deliberate.** The previous
  * version of this script created six files whether or not the run had anything
@@ -40,7 +47,7 @@ import {
   parseArgs, printHelp, relForLog, MAX_SUBFOLDER_DEPTH,
   parseGroupSegments, sanitizeName,
 } from './_lib.mjs';
-import { writeWorkingIndex, WORKING_INDEX } from './_working-index.mjs';
+import { WORKING_INDEX, workingIndexStub } from './_index-stub.mjs';
 
 // Framework-default kinds (mirror of src/loaders/issues.ts). An issue may add
 // custom codes via settings.json → agentLogKinds; unknown codes degrade
@@ -68,8 +75,8 @@ if (args.flags.help || !id || !kind || !rawName) {
     '',
     'Scaffold an agent log at agent-log/[<group>/]NNN_<code>_<name>/ with settings.json',
     '({"status": "open"}), 01_summary.md (State / Goal / Todo / Out of Scope /',
-    'Outcome) and 02_working/00_index.md — a GENERATED round table, empty until the',
-    'first iteration file (issue new-iteration) rewrites it. 03_debrief/ is NOT',
+    'Outcome) and 02_working/00_index.md — an empty round index you WRITE as rounds',
+    'land, one line each of what the round found. 03_debrief/ is NOT',
     'seeded: open it by hand when the run has something to hand over (handover,',
     'questions, findings, caveats). A CHILD log (--parent) is numbered from 100 up,',
     'which is what distinguishes it from the parent\'s own 01-03 slots.',
@@ -246,7 +253,8 @@ ${goalBody}
 fs.mkdirSync(dir, { recursive: true });
 fs.writeFileSync(path.join(dir, 'settings.json'), `{\n  "status": "open"\n}\n`);
 fs.writeFileSync(path.join(dir, '01_summary.md'), summary);
-writeWorkingIndex(path.join(dir, '02_working'));
+fs.mkdirSync(path.join(dir, '02_working'), { recursive: true });
+fs.writeFileSync(path.join(dir, '02_working', WORKING_INDEX), workingIndexStub());
 const written = ['settings.json', '01_summary.md', `02_working/${WORKING_INDEX}`];
 
 if (args.flags.json) {

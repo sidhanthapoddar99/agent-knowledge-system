@@ -31,9 +31,8 @@ import path from 'node:path';
 import matter from 'gray-matter';
 import { resolveTracker, listIssueFolders, readVocabulary, parseArgs, printHelp, STATUSES, TERMINAL_STATUSES, normalizeStatus, LEGACY_STATUS_MAP, MAX_SUBFOLDER_DEPTH } from './_lib.mjs';
 import { readJsonChecked, reportAndExit } from '../_check-lib.mjs';
-import { MD_LINK_RE, isIgnorableTarget, splitAnchor, orderingPathFor, parseOrderingLabel, makeFenceTracker, blankCodeSpans } from '../_links.mjs';
+import { MD_LINK_RE, isIgnorableTarget, splitAnchor, orderingPathFor, parseOrderingLabel, makeFenceTracker, blankedProseLines } from '../_links.mjs';
 import { isRetiredAgentLogShape } from './_agent-log-shape.mjs';
-import { renderWorkingIndex, WORKING_INDEX } from './_working-index.mjs';
 import { parseOrderPrefixLoose } from '../_order-prefix.mjs';
 
 const args = parseArgs(process.argv.slice(2));
@@ -94,11 +93,8 @@ const AGENT_MEMORY_FM_KEYS = new Set([...NOTE_FM_KEYS]);
 // retirement is enforced on new-shape files only (under `02_working/`), where
 // it is an actual mistake rather than a fact about how things used to be
 // written.
-// `unit` is the kind of work a round was — the flag `new-iteration --unit`
-// already took, now persisted, because it is the only non-guessing source for
-// the round table's Kind column.
 const AGENT_LOG_FM_KEYS = new Set([
-  'title', 'iteration', 'agent', 'status', 'unit', 'date', 'sidebar_label', 'color',
+  'title', 'iteration', 'agent', 'status', 'date', 'sidebar_label', 'color',
 ]);
 // `agent-logs` is deliberately ABSENT — retired 2026-08-03, and reported by its
 // own error below rather than as a generic unknown-key warning, because the fix
@@ -292,11 +288,12 @@ function lintOrderingLabels(id, issueDir) {
       catch { continue; }
 
       const isProse = makeFenceTracker();
+      const scannedLines = blankedProseLines(lines.join('\n'));
       lines.forEach((lineText, idx) => {
         if (!isProse(lineText)) return;   // illustrative link in a fenced example
         // Backticked links are quoted syntax, not references — the same rule
         // the fence tracker applies one level up.
-        const scanned = blankCodeSpans(lineText);
+        const scanned = scannedLines[idx] ?? lineText;
         MD_LINK_RE.lastIndex = 0;
         let m;
         while ((m = MD_LINK_RE.exec(scanned)) !== null) {
@@ -732,6 +729,8 @@ for (const entry of issueFolders) {
   // AGENT_LOG_CHILD_MIN_PREFIX in src/loaders/issues.ts.
   const logDir = path.join(folder, 'agent-log');
   const CHILD_MIN_PREFIX = 100;
+  // The round index's own name. Not `NNN_`, so it is exempted by name below.
+  const WORKING_INDEX = '00_index.md';
   const SLOT_NAMES = { '01': '01_summary.md', '02': '02_working', '03': '03_debrief' };
   /** A nested folder is a slot (not a child activity) when its prefix is < 100,
    *  or when it has no prefix at all — an unprefixed folder is not an activity,
@@ -796,9 +795,11 @@ for (const entry of issueFolders) {
         const isDoc = f.isFile() && f.name.endsWith('.md');
         if (!isDoc && !f.isDirectory()) continue;
         const base = f.name.replace(/\.md$/, '');
-        // The generated round table. Two digits on purpose, so it sorts ahead of
-        // every `NNN_` round — and exempt here rather than renamed to `000_`,
+        // The hand-written round index. Two digits on purpose, so it sorts ahead
+        // of every `NNN_` round — and exempt here rather than renamed to `000_`,
         // which would make the validator read it as iteration 00's round file.
+        // Whether its CONTENT still agrees with the rounds is not a script's
+        // question: see the `agent-ks-index-check` agent.
         if (f.name === WORKING_INDEX) continue;
         const pm = base.match(/^(\d{2})(\d)[_-]/);
         if (!pm) {
@@ -854,21 +855,6 @@ for (const entry of issueFolders) {
         }
       }
 
-      // The round table is GENERATED, so it can be checked rather than trusted:
-      // re-run the generator and compare. This is the whole reason the index was
-      // allowed to be a file on disk at all — this issue has already paid a day
-      // for a hand-typed status column that disagreed with the files it copied,
-      // and the lesson was that duplication is only safe when something keeps
-      // the two honest. Missing is fine on a log that predates the index; WRONG
-      // is not, because a stale table reads as authoritative.
-      const indexAbs = path.join(workingDir, WORKING_INDEX);
-      if (fs.existsSync(indexAbs)) {
-        let actual = null;
-        try { actual = fs.readFileSync(indexAbs, 'utf-8'); } catch { /* reported by the generic walk */ }
-        if (actual !== null && actual !== renderWorkingIndex(workingDir)) {
-          errors.push(`${rel}/02_working/${WORKING_INDEX}: stale — it disagrees with the round files it is generated from. Every cell is read from a round's own frontmatter (title / unit / agent / status); fix it THERE, then run \`agent-ks issue reindex ${id}\`. Hand-edits to this file are overwritten by design`);
-        }
-      }
     }
 
     for (const f of files) {

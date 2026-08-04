@@ -2,7 +2,6 @@
 title: "Sonnet — the round table as a system, and whether the drift gate holds"
 status: done
 agent: sonnet
-unit: audit
 ---
 
 # Goal

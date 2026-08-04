@@ -158,24 +158,42 @@ export function makeFenceTracker() {
  * was quoting the right form.
  */
 /**
- * The scanner both blankers share. Hand-written rather than a regex, and the
- * reason is backtracking: `/(`+)[\s\S]*?\1/` will happily match ONE backtick out
- * of a run of three when no run of three closes it, pair that with the next
- * unrelated single backtick, and blank everything between — leaving the real
- * span after it exposed. An unmatched run is emitted as itself and scanning
- * continues after it, which is also what markdown does.
+ * The scanner both blankers share, and it is hand-written for two reasons.
+ *
+ * **Backtracking.** `/(`+)[\s\S]*?\1/` will match ONE backtick out of a run of
+ * three when no run of three closes it, pair that with the next unrelated single
+ * backtick, and blank everything between — leaving the real span after it
+ * exposed. A regex cannot express "a run of exactly this length".
+ *
+ * **The escape.** CommonMark: a backslash-escaped backtick is a literal
+ * character and cannot delimit a code span. Missing that turns `\`[x](./y)\``
+ * — a genuinely broken link — into something the gate never looks at. That is
+ * the dangerous direction: a gate that stays silent reads as a healthy tree.
+ *
+ * And an opener searches ONWARD for a closer of exactly its length; a longer run
+ * in between is not a closer and must not end the search.
  */
 function scanCodeSpans(text, fill) {
   let out = '';
   let i = 0;
   while (i < text.length) {
+    if (text[i] === '\\' && i + 1 < text.length) { out += text.slice(i, i + 2); i += 2; continue; }
     if (text[i] !== '`') { out += text[i]; i += 1; continue; }
     let j = i;
     while (j < text.length && text[j] === '`') j += 1;
     const run = text.slice(i, j);
-    const close = text.indexOf(run, j);
-    // A closing run must be exactly this long — ```` ` ```` never closes ```` `` ````.
-    if (close === -1 || text[close + run.length] === '`') { out += run; i = j; continue; }
+    // Look for a run of EXACTLY this length, skipping longer ones and escapes.
+    let k = j;
+    let close = -1;
+    while (k < text.length) {
+      if (text[k] === '\\') { k += 2; continue; }
+      if (text[k] !== '`') { k += 1; continue; }
+      let e = k;
+      while (e < text.length && text[e] === '`') e += 1;
+      if (e - k === run.length) { close = k; break; }
+      k = e;
+    }
+    if (close === -1) { out += run; i = j; continue; }
     const end = close + run.length;
     out += fill(text.slice(i, end));
     i = end;
@@ -197,22 +215,51 @@ export function blankCodeSpans(line) {
  * link gate** on a link the template is deliberately showing rather than using
  * (found 2026-08-04).
  *
- * A span never crosses a blank line — that is a paragraph break in markdown — so
- * blanking is done per paragraph rather than over the whole text. Blanking the
- * whole text in one pass would let two unrelated stray backticks swallow
- * everything between them, which trades a false positive for a false negative.
+ * A span never crosses a **block** boundary, and a blank line is only the most
+ * obvious of those. A `>`-only line inside a blockquote, a new list item, a
+ * heading and a horizontal rule all end a block without a blank line — and
+ * treating them as continuations lets two unrelated stray backticks pair across
+ * them and swallow a genuinely broken link. That is the worse direction: a gate
+ * that goes quiet looks exactly like a clean tree.
+ *
+ * `\r` is matched explicitly, because a CRLF file's "blank" line is `\r\n\r\n`
+ * and a `[ \t]*` split walks straight past it.
  *
  * Newlines are preserved inside the filler, so the result splits into exactly
  * the same lines with exactly the same columns.
  */
 export function blankCodeSpansDoc(text) {
   const keepNewlines = (s) => s.replace(/[^\n]/g, ' ');
-  return text
-    .split(/(\n[ \t]*\n)/)                       // keep the separators, so offsets survive
-    .map((chunk, i) => (i % 2
-      ? chunk                                    // a blank-line separator: never blanked
-      : scanCodeSpans(chunk, keepNewlines)))
-    .join('');
+  const lines = text.split('\n');
+  const out = [];
+  let chunk = [];
+  const flush = () => {
+    if (chunk.length) out.push(scanCodeSpans(chunk.join('\n'), keepNewlines));
+    chunk = [];
+  };
+  for (const line of lines) {
+    if (opensABlock(line)) flush();
+    chunk.push(line);
+    if (endsABlock(line)) flush();
+  }
+  flush();
+  return out.join('\n');
+}
+
+/** A line that BEGINS a new block, so the previous one must be closed first. */
+function opensABlock(line) {
+  return /^[ \t]*(?:[-*+][ \t]|\d{1,9}[.)][ \t]|#{1,6}(?:[ \t]|$)|\|)/.test(line);
+}
+
+/** A line that ENDS the block it belongs to. */
+function endsABlock(line) {
+  // Blank — including a CRLF file's `\r\n`, and a `>`-only line inside a quote.
+  if (/^[ \t\r]*$/.test(line)) return true;
+  if (/^[ \t]*>[ \t\r]*$/.test(line)) return true;
+  // ATX heading, thematic break — self-contained blocks.
+  if (/^[ \t]*#{1,6}(?:[ \t]|$)/.test(line)) return true;
+  if (/^[ \t]*(?:[-*_][ \t]*){3,}\r?$/.test(line)) return true;
+  return false;
 }
 
 // ── ordering labels ───────────────────────────────────────────────────────
@@ -300,4 +347,23 @@ export function collectMarkdownFiles(dir) {
     else if (entry.isFile() && entry.name.endsWith('.md')) out.push(abs);
   }
   return out;
+}
+
+/**
+ * A file's lines with every inline code span blanked, computed over the whole
+ * document so a span that WRAPS is caught.
+ *
+ * **Fenced blocks are emptied first, before any span matching.** Otherwise a
+ * fence's own backtick run could pair with a run in the prose after it and blank
+ * real content; emptying them also puts a boundary either side of every fence,
+ * so nothing pairs across one.
+ *
+ * All three link-walking tools share this. They did not, once: the wrapped-span
+ * fix landed in one of three callers, and `move` — the one that WRITES — kept
+ * the per-line blanker and would have rewritten a quoted example.
+ */
+export function blankedProseLines(text) {
+  const isProse = makeFenceTracker();
+  const prose = text.split('\n').map((line) => (isProse(line) ? line : ''));
+  return blankCodeSpansDoc(prose.join('\n')).split('\n');
 }

@@ -2,7 +2,6 @@
 title: "The link gate failed every freshly scaffolded agent log — a code span that wraps"
 status: done
 agent: claude
-unit: fix
 ---
 
 # Goal

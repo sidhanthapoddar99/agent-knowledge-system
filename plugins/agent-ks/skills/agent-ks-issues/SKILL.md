@@ -240,7 +240,7 @@ agent-log/0NN_<kind>_<name>/     ← one run, one goal
 ├── settings.json                ←   optional: status → colours the kind symbol
 ├── 01_summary.md                ←   REQUIRED. The one conclusive file.
 ├── 02_working/                  ←   one file per iteration, plus producers'
-│   ├── 00_index.md              ←     GENERATED round table — seeded, never typed
+│   ├── 00_index.md              ←     round index — seeded empty, written by hand
 │   ├── 010_<round>.md           ←     iteration 01 — the orchestrator's file
 │   ├── 011_<what-it-produced>.md←     a producer within it
 │   └── 020_<round>.md           ←     iteration 02
@@ -267,13 +267,16 @@ iteration · `wf` workflow; custom codes via `agentLogKinds` in the issue's
 - **A file exists because something was produced, not because an agent ran.** Two
   executors writing code produce one iteration file between them; two auditors writing
   reports produce two, plus the iteration's own.
-- **`02_working/00_index.md` is the run's round table, and it is GENERATED** — number ·
-  round · kind · who · status · what it produced, every cell read from a round file's
-  frontmatter (`title` / `unit` / `agent` / `status`). Seeded empty at scaffold so the
-  shape of a run is visible before it has any; rewritten by `new-iteration`; brought
-  back into agreement with `agent-ks issue reindex <id>` after a round's status changes.
-  `check issues` errors when it disagrees with its round files. **Never hand-edit it** —
-  correct the round file instead.
+- **`02_working/00_index.md` is the run's round index, WRITTEN by hand.** Seeded empty at
+  scaffold so a run's shape is visible before it has one; one entry per round as it
+  lands, carrying **a line of what the round found** — the part no header holds. It was
+  generated once, and the generator and its checker shared a blind spot that certified a
+  table with a round missing.
+- **An index is a claim about other files, so check it by READING.** Plans especially:
+  a stage whose subtasks are all closed while the stage is not. Hand it to a fast,
+  read-only subagent — `ls` two levels first, filesystem as the truth and the index as
+  the claim under test — and have it report rather than edit. Not a gate, not automated:
+  [24_agent-logs.md](references/20_sections/24_agent-logs.md#keeping-an-index-honest--a-reading-job-not-a-script).
 - **Own goal → child agent log. No own goal → iteration file.** That is the only
   nesting rule. Nesting may mirror a structure that exists; it may never invent one.
 - **Actionable items leave the log** and become subtasks. The debrief keeps a pointer.
@@ -356,7 +359,7 @@ The plugin ships one entrypoint, **`agent-ks`**, on `PATH`. Tracker work uses th
 | `list` · `show` · `subtasks` · `agent-logs` · `review-queue` | read |
 | `set-state` · `add-comment` · `add-agent-log` | write |
 | `new-subtask` | scaffolds a subtask — Overview / References / Todo list / Outcomes and Next Steps / Details |
-| `new-agent-log` | scaffolds an agent log — `settings.json` + `01_summary.md`, and `02_working/` + `03_debrief/` as work lands |
+| `new-agent-log` | scaffolds an agent log — `settings.json` + `01_summary.md`, and `02_working/00_index.md`; `03_debrief/` as work lands |
 | `new-iteration` | opens the next iteration file in `02_working/`, head already written (`--producer` for a producer file) |
 | `new-plan` · `new-stage` | opens a plan, and a stage inside it (`--after` inserts) |
 

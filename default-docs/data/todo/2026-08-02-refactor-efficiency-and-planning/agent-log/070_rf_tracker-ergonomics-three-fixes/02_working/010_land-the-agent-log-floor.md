@@ -2,7 +2,6 @@
 title: "The agent-log rule lands: one question, three triggers, two floor conditions"
 status: done
 agent: claude
-unit: execution
 ---
 
 # Goal

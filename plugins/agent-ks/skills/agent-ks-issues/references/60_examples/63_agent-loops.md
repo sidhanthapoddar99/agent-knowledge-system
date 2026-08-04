@@ -84,6 +84,6 @@ and don't let an agent log list its rounds as a schedule — that is the plan.
 
 ## When this is overkill
 
-A one-round bugfix you do yourself does not need any of this. **An agent log opens when
-work is delegated or runs over multiple rounds** — otherwise the change gets a line in
-the plan and no folder at all.
+A one-round bugfix you do yourself does not need any of this. Whether this run earns a
+folder at all is decided in one place:
+[when an agent log opens at all](../20_sections/24_agent-logs.md#when-an-agent-log-opens-at-all).

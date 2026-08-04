@@ -2,7 +2,6 @@
 title: "Opus — the rule as behaviour, re-decided from the shipped text alone"
 status: done
 agent: opus
-unit: audit
 ---
 
 # Goal

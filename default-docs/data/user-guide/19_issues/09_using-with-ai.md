@@ -85,8 +85,9 @@ When picking up an issue, read in this order. Stop as soon as you have enough:
    so a fresh session picks it up on read. When it's answered, delete the question or keep
    the Q&A logged inline, then continue. Reserve `blocked` for a *structural dependency*
    on another issue/subtask (name the dependency in a comment or the body).
-4. **Open an agent log only when the work was delegated, or ran over multiple rounds.**
-   Nothing else opens one — a change you make inline gets a line in the plan and no folder.
+4. **Whether a run earns an agent log is decided in one place** —
+   [when an agent log opens at all](./05_sub-docs/05_agent-log.md#when-an-agent-log-opens-at-all).
+   In one line: *is there something here the finished work does not show?*
    Inside one, `01_summary.md` is the conclusive file, and each round is a file in
    `02_working/` headed **`# Goal` · `# Inputs` · `# Expected Outcome` · `# Outcome`**. The
    orchestrator writes the first three *before* the round starts; the agent writes
@@ -181,7 +182,7 @@ agent-ks issue set-state 2026-04-21-editor-perf in-progress
 #    Inline work opens no folder.
 agent-ks issue new-agent-log 2026-04-21-editor-perf \
   --kind lp --name presence-batching --goal "Cut presence chatter"
-# → agent-log/010_lp_presence-batching/ with settings.json + 01_summary.md
+# → agent-log/010_lp_presence-batching/ — settings.json, 01_summary.md, 02_working/00_index.md
 
 # 4. Open the round's file BEFORE doing the work — the head is the work order
 agent-ks issue new-iteration 2026-04-21-editor-perf \

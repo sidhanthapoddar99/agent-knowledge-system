@@ -28,25 +28,64 @@ does not, with a threshold someone can apply without asking.
 "always", which is exactly as unhelpful as "when it feels right" — the reader
 still has to invent the missing half, and two readers invent different ones.
 
-# The rule — decided with Sid, 2026-08-03
+# The rule — decided with Sid 2026-08-03, restructured 2026-08-04
 
-**It is a judgement over five factors — never effort, and never file count.**
+**One question, one trigger, one floor. Never effort, never file count.**
 
-> **An agent log records the PATH, when the finished work does not show it.**
-> Whether a piece of work earns one is a judgement over five factors weighed
-> together — **stages, marginal cost, difficulty, future impact, whose hands** —
-> and no single factor decides. A single pass with checks attached is not a
-> staged run, however long it took or however many files it touched; it belongs
-> in the subtask's own Outcomes.
+> **A log exists so a finding can be withdrawn.** A finding nobody wrote down
+> cannot be retracted — it just quietly keeps being believed. So the question is
+> always:
 >
-> **One thing always earns a log regardless:** anything Sid explicitly asks to
-> have recorded.
+> ### Is there something here that the finished work does not show?
+>
+> **TRIGGER — any one, and it earns a log:**
+> 1. a later step changed course because of what an earlier step **returned**
+> 2. something was **tried and discarded** — a rejected approach, a wrong
+>    diagnosis, a measurement that came back other than expected
+> 3. **Sid asked** for a record
+>
+> **FLOOR — any one, and it does not, and the floor wins:**
+> 1. the log would **restate the subtask**
+> 2. one self-contained pass with **nothing discarded**
+>
+> Then, and only then, a separate question: **a run already open? append to it.
+> None open? start one.**
 
-Two load-bearing distinctions, both spelled out under *It is a combination*
-below: **a verify is not a stage** (a check whose answer you can predict changes
-nothing about what you did), and **marginal cost decides most real cases** —
-appending to an open run costs a line, opening one costs an explanation of the
-whole issue.
+## Why this shape rather than a weighing — the 2026-08-04 revision
+
+The rule as first written was *"a judgement over five factors weighed together —
+stages, marginal cost, difficulty, future impact, whose hands — and no single
+factor decides."*
+
+**That is not a rule. It is a vibe with a table**, and it fails this subtask's own
+test: *a rule with a trigger and no floor is only half-written… the reader still
+has to invent the missing half, and two readers invent different ones.* Five
+co-equal factors with no ordering leaves exactly the same gap one step later.
+
+**The structural fault: factor 2 answers a different question from the rest.**
+
+```
+   "Should this be recorded?"          "Where does the record go?"
+   ─────────────────────────           ──────────────────────────
+    stages                              marginal cost
+    difficulty                          whose hands
+    future impact
+```
+
+Whether a run is already open has nothing to do with whether the path is worth
+recovering — it says where to put it. Averaging a *whether* with a *where* is
+why the rule needed weighing at all, and why no clean answer could fall out.
+Separate them and most of the judgement disappears.
+
+**And the other three collapse into the first**, because they are symptoms of it
+rather than independent inputs. *Difficulty* matters because hard problems
+produce wrong diagnoses — which is discarded work. *Future impact* matters
+because unrecoverable reasoning is what a log holds — which is discarded work
+again. *Whose hands* raises the cost of being wrong; it never triggers alone
+(one bounded job, one round, nothing found, is still one pass).
+
+**What is kept unchanged**, because it was right: the three verdicts, the
+verify-is-not-a-stage distinction, and *never a validator error*.
 
 Sid's own framing of the trigger, which is the clearest statement of it:
 
@@ -64,14 +103,15 @@ all rather than a single always-rule:
 
 | | When |
 |---|---|
-| 🟢 **Required** | the factors point that way, a run is already open and this belongs to it, or Sid asked for a record |
-| ⬜ **Not required** | one self-contained pass, and opening a log would cost more than the work it records |
-| 🟡 **Ask** | the interactive mode, and anything whose value only becomes clear from what it produced |
+| 🟢 **Required** | any trigger fires and no floor condition holds |
+| ⬜ **Not required** | a floor condition holds — it wins even against a trigger |
+| 🟡 **Ask** | the interactive mode, and anything whose value only becomes clear from what it produced. **Capped at once per session** |
 
-**Never make it a validator error.** This is a judgement over five factors, and a
-gate that fails on judgement gets worked around. A hint at most.
+**Never make it a validator error.** Even with a trigger and a floor this stays a
+judgement — *did a later step act on what came back* is not something a script can
+answer — and a gate that fails on judgement gets worked around. A hint at most.
 
-## Eight cases, answered
+## The 14 cases, answered
 
 Worked through with Sid so the rule has instances and not only a principle.
 
@@ -92,7 +132,7 @@ Worked through with Sid so the rule has instances and not only a principle.
 | **The interactive sitting** — subtasks one by one for an hour | 🟡 Ask | the mode Sid named as needing caution. **Hint once for the session, never per subtask** |
 | **A discussion that settles a design decision**, no code | 🟡 Ask | matches how the skill already treats discussion — offer when dense, never auto-save. The decision goes in the subtask either way; the question is only whether the reasoning earns its own file |
 
-## Why these factors — the reasoning to apply when the table does not fit
+## The reasoning to apply when the table does not fit
 
 **The table above will never cover the case in front of you.** It is instances;
 this is the thing to apply when none of them matches.
@@ -104,7 +144,7 @@ never *how big was this* or *how long did it take*. It is:
 
 > **Is there something here that the finished work does not show?**
 
-**Every factor above is an approximation of that one question.** Stages are the
+**Every test in this subtask is an approximation of that one question.** Stages are the
 most reliable signal for it, because a stage boundary is exactly where
 information was produced and acted on. If stage two did something
 different because of what stage one returned, that "because" exists nowhere in
@@ -135,25 +175,51 @@ enough to be misleading. An hour of grinding through one mechanical change has
 no stages and earns nothing; ten minutes that overturned an assumption has one
 and earns a log. **Ask what was learned, not what was spent.**
 
-## It is a combination — five factors, and no single one decides
+## The limits — what counts, and what is never allowed to count
 
-**Sid, 2026-08-03:** *"I think the factors are stages, size of the whole thing,
-size of the issue — how difficult, impact on the future."* And the case that
-prompted it: *"You won't do an audit just for a small change like a URL slug
-update — you would verify. There is a difference."*
+**A rule without numbers gets applied by mood.** These are the limits; the last
+two are prohibitions and matter as much as the triggers.
 
-**Weigh them together.** Any one of these on its own either over-triggers or
-misses; the judgement is what they say jointly.
+| Limit | Value | Why this, and not something else |
+|---|---|---|
+| **Stages** | **≥ 2**, and the second must have *acted on* what the first returned | `edit → build → curl` is one pass however many commands it took. `audit → findings → fix` is two, because the findings changed what got fixed |
+| **Discarded work** | **≥ 1** rejected approach, wrong diagnosis, or measurement that surprised you | The only category **unrecoverable from the repository at all**. On its own it justifies a log |
+| **Delegated / unattended** | raises the weight of recording, **never triggers alone** | A completion message is not evidence — but one bounded job, one round, nothing found, is still one pass |
+| **Sid asked** | always, no other test applies | — |
+| **File count** | 🚫 **never a factor** | A thirty-file rename has no path. A four-line fix after three wrong diagnoses has nothing *but* path |
+| **Time spent** | 🚫 **never a factor** | An hour of grinding through one mechanical change has no stages. Ten minutes that overturned an assumption has one. **Ask what was learned, not what was spent** |
 
-| # | Factor | Ask | Pushes toward a log when |
-|---|---|---|---|
-| 1 | **Stages** | did a later step act on what an earlier one *found*? | the work changed course because of something it learned |
-| 2 | **Marginal cost** | is there already a log open, and does this fit inside it? | a log exists — then even one line is nearly free. **This is the factor that decides most real cases** |
-| 3 | **Difficulty** | how hard was it to get right? | the answer was not obvious, or the obvious answer was wrong |
-| 4 | **Future impact** | will anyone need this later, and can they get it elsewhere? | the reasoning is not recoverable from the diff, the tracker or git |
-| 5 | **Whose hands** | did you watch it happen? | someone else did it, or it ran unattended |
+**The `🟡 Ask` verdict is capped: once per session, never per subtask.** An
+un-capped prompt becomes the noise it exists to prevent, which is the failure
+Sid named directly.
 
-### 1 · Stages — and the distinction that does the work
+## Marginal cost — a routing question, not a recording one
+
+**Sid, 2026-08-03:** *"Is this a one-line addition to an already-present agent
+log, or is this demanding an agent log in itself? If it is part of a plan and a
+stage has one working file and this is just one line — add it. But if there is no
+agent log and nothing is coming after this, it is not worth explaining the whole
+issue."*
+
+That is entirely right, and it is **the second question, asked after the first has
+already said yes.** Almost all of a log's cost is setup — creating it,
+establishing context, explaining the issue to a reader arriving cold. Appending
+to a run in flight costs a line.
+
+| Situation | Where it goes |
+|---|---|
+| A run is open and this belongs to it | **Append**, even one line. Never start a second log for work belonging to the first |
+| No run open, and nothing follows | **Subtask Outcomes.** Setup exceeding the work is net negative |
+| No run open, but this is the first of several | **Open one now** — cheaper than reconstructing it at step four, when the early reasoning is already lost |
+
+**This is where the old rule's "no log" cases actually came from**, which is why
+demoting it changes no verdict in the fourteen cases above. It changes what a
+reader has to hold in their head: two ordered questions instead of five
+simultaneous ones.
+
+## The triggers in detail
+
+### Trigger 1 · a step that acted on what came back — and the distinction that does the work
 
 Stages alone over-trigger, because almost any change can be narrated as having
 steps. **A VERIFY is not a stage.**
@@ -167,27 +233,11 @@ So `edit → build → curl → done` is **one pass**, however many commands it 
 `audit → findings → fix → re-audit` is **staged**, because the findings changed
 what got fixed.
 
-### 2 · Marginal cost — the factor that settles most cases
+### Trigger 2 · discarded work — and why difficulty is a symptom of it, not a factor
 
-**Sid's framing:** *"Is this a one-line addition to an already-present agent log,
-or is this demanding an agent log in itself? If it is part of a plan and a stage
-has one working file and this is just one line — add it. But if there is no
-agent log and nothing is coming after this, it is not worth explaining the whole
-issue."*
-
-**Almost all of a log's cost is the setup, not the content** — creating it,
-establishing the context, explaining what the issue even is to a reader arriving
-cold. Appending a line to a run already in flight costs a line.
-
-So the same piece of work lands differently depending on what is already open:
-
-| Situation | Verdict |
-|---|---|
-| A run is open and this belongs to it | **Add it**, even one line. Never start a second log for work that belongs to the first |
-| No run open, and nothing follows this | **No log.** The setup exceeds the work, and a log that explains an issue in order to record one line is net negative |
-| No run open, but this is the first step of several | **Open one now.** Cheaper than reconstructing it at step four, when the early reasoning has already been lost |
-
-### 3 · Difficulty — the work, not the diff
+**Difficulty is not an input. It is a predictor of trigger 2**, because hard
+problems are the ones that produce wrong diagnoses, and a wrong diagnosis *is*
+discarded work.
 
 **This is the one place scale and diff come apart**, and it is why the four-line
 trailing-slash fix earns a log while a thirty-file rename does not. An hour and
@@ -201,10 +251,11 @@ build, done. Every check was a verify — nothing came back that changed the
 approach. One pass. No log, which is what Sid said before the rule existed to
 say it.
 
-### 4 · Future impact — can it be recovered from anywhere else?
+### Why trigger 2 is the load-bearing one — recoverability
 
-A log is only worth its cost if what it holds is **not reconstructable**. Rank
-by that, not by how significant the work felt:
+**"Future impact" was the fourth of the old five factors, and it is the same
+question as trigger 2 asked from the other end.** A log is only worth its cost if
+what it holds is **not reconstructable** from anywhere else:
 
 | | Recoverable later from | Needs a log? |
 |---|---|---|
@@ -222,14 +273,17 @@ instance: the retraction worked *because* two reviews had been written down and
 could be named and overturned. **A finding nobody recorded cannot be withdrawn —
 it just quietly keeps being believed.**
 
-### 5 · Whose hands — you cannot vouch for what you did not watch
+### Whose hands — a weight, never a trigger
 
-Delegated or unattended work has a gap that attended work does not: **the only
-account of what happened is the one the worker gives.** That is not automatically
-a log — one bounded job, one round, nothing found, is still one pass (case 1
-above). But it raises the weight of factor 4, because a completion message is not
-evidence, and it is worth recording what was actually run when nobody was
-looking.
+Delegated or unattended work has a gap attended work does not: **the only account
+of what happened is the one the worker gives**, and a completion message is not
+evidence. That is why it raises the value of recording what was actually run.
+
+**It never triggers on its own.** One bounded job, one round, nothing found, is
+still one pass — the same verdict as if you had done it yourself. This is the
+factor most likely to be over-applied, because delegation *feels* like it should
+be recorded; what is worth recording is what came back, not that someone else
+went.
 
 ### The corollary, which matters more than the rule
 
@@ -256,29 +310,46 @@ obviously decide it.
 
 # Todo list
 
-**The rule is decided. What remains is landing it.** Deliberately not done in
-the same sitting that decided it — a rule written straight after the
-conversation that produced it tends to encode the conversation.
+**The rule is decided and now restructured. What remains is landing it.**
+Deliberately not done in the same sitting that decided it — a rule written
+straight after the conversation that produced it tends to encode the
+conversation.
 
-- [ ] Land it on the same surfaces
+**What goes in the skill, exactly** — this list is the deliverable, and its
+shortness is the point:
+
+1. the question — *is there something here the finished work does not show?*
+2. the three triggers
+3. the two floor conditions, and that **the floor wins**
+4. the limits table, including the two prohibitions
+5. the verify-vs-audit distinction
+6. *append to an open run; never open a second* — as a **separate** step, asked
+   only after the answer is already yes
+
+**What stays here and does not ship:** the 14 worked cases, the revision
+reasoning, and the factor archaeology. Instances rot; the tracker is their home.
+
+- [ ] Land the six items above on the surfaces
       [`010`](./010_plan-execution-needs-an-agent-log.md) changed — the issues
-      skill, and `guide.ts`, its plugin-independent twin. **The stages test and
-      the three verdicts, not the fourteen cases** — a skill carries the rule,
-      and a table of instances will rot
-- [ ] **Carry the reasoning across, not just the verdicts.** The three tests
-      under *Why "stages" is the test* are what decide a case the table does not
-      list, and every real case will be one of those. A rule shipped without its
-      reason gets applied literally — which is exactly how
+      skill, and `guide.ts`, its plugin-independent twin
+- [ ] **Carry the reasoning, not just the verdicts.** *A log exists so a finding
+      can be withdrawn* is the sentence to lead with; a rule shipped without its
+      reason gets applied literally, which is exactly how
       [`010`](./010_plan-execution-needs-an-agent-log.md) came to read "always"
 - [ ] Say it **at the point of use**: `agent-ks issue new-agent-log` is where
-      someone is already committing to one. A line in its help text is worth
-      more than a paragraph in a reference
-- [ ] Give the interactive mode its hint, and make it **once per session** —
-      a prompt on every subtask is the thing Sid asked to avoid
-- [ ] Check the reverse case still holds: the [`010`](./010_plan-execution-needs-an-agent-log.md)
-      gate must keep firing for real runs once the floor exists. **Control-test
-      both directions** — a plan execution still demands a log, and a two-minute
-      subtask no longer does
+      someone is already committing to one. A line in its help text beats a
+      paragraph in a reference
+- [ ] Give the interactive mode its hint, **capped at once per session** — a
+      prompt on every subtask is the thing Sid asked to avoid, and an uncapped
+      hint becomes the noise it exists to prevent
+- [ ] **Control-test both directions**, which is the acceptance test:
+      a plan execution still demands a log, and a two-minute subtask no longer
+      does. The [`010`](./010_plan-execution-needs-an-agent-log.md) gate must
+      keep firing once the floor exists
+- [ ] **Re-run the 14 cases against the new shape** and confirm every verdict is
+      unchanged. That is the claim this restructure rests on — it changes what a
+      reader holds in their head, not a single answer. If any verdict moves, the
+      restructure is wrong rather than the case
 
 # References
 

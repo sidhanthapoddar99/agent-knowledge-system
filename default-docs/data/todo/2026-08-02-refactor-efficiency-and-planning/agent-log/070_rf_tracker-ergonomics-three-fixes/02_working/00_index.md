@@ -24,6 +24,13 @@ title: "Rounds"
   The generator is gone, the rule has one home, and the blanker is CommonMark-correct
   with a fixture **in the repo** this time.
 
+- [stop hand-rolling the parser](./060_stop-hand-rolling-the-parser.md) — the second
+  review round, all 20 findings. The blanker is now a **parser** rather than a third
+  hand-written approximation, and the fixture is a differential test against micromark
+  instead of a list of bugs I remembered. Two findings only a shell could reach: I had
+  called the `--group` validator gap cosmetic by reasoning, and it was hiding every
+  agent-log check; and a **fourth** link-walking caller nobody had counted.
+
 # The slots
 
 | | |

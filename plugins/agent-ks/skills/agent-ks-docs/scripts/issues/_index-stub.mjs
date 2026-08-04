@@ -17,7 +17,7 @@
  * The deeper reason is simpler: a generated table can only restate frontmatter,
  * and the line worth reading is *what the round found*, which no generator can
  * write. So the index is written by whoever ran the round, and kept honest by
- * reading: `/agent-ks-index-check <path>`.
+ * reading — see `24_agent-logs.md`, "Keeping an index honest".
  */
 
 /** The index's own name. Two digits, so it sorts ahead of every `NNN_` round. */

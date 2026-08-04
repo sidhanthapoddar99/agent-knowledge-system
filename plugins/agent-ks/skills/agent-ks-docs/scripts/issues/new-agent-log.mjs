@@ -23,7 +23,7 @@
  * earlier version of this script generated it — and the generator and its
  * staleness checker shared a blind spot, so a round stored as a folder was
  * dropped from the table and the checker certified the result. Keeping an index
- * honest is a reading job: `/agent-ks-index-check`.
+ * honest is a reading job — see `24_agent-logs.md`, "Keeping an index honest".
  *
  * **`03_debrief/` is still not seeded, and that is deliberate.** The previous
  * version of this script created six files whether or not the run had anything
@@ -68,8 +68,9 @@ if (args.flags.help || !id || !kind || !rawName) {
     '  TRIGGER, any one — a later step changed course because of what an earlier one',
     '  RETURNED (executing a plan always does) · something was tried and DISCARDED ·',
     '  the user asked.',
-    '  FLOOR, any one, and it WINS — the log would restate the subtask · one',
-    '  self-contained pass with nothing discarded.',
+    '  FLOOR, any one — the log would restate the subtask · ONE self-contained pass',
+    '  with nothing discarded (one is literal: a loop is several passes).',
+    '  The floor beats triggers 1-2, never trigger 3. Neither fires -> ask, once.',
     'Never file count, never time spent. A verify (did I break it) is not a stage.',
     'And if a run is already OPEN, append to it — never open a second.',
     '',

@@ -178,8 +178,8 @@ agent-ks issue agent-logs 2026-04-21-editor-perf --last 5
 # 2. Claim it
 agent-ks issue set-state 2026-04-21-editor-perf in-progress
 
-# 3. Open a run — ONLY because this one was delegated / spans rounds.
-#    Inline work opens no folder.
+# 3. Open a run — only if it earns one. One question decides it:
+#    is there something here the finished work does not show?
 agent-ks issue new-agent-log 2026-04-21-editor-perf \
   --kind lp --name presence-batching --goal "Cut presence chatter"
 # → agent-log/010_lp_presence-batching/ — settings.json, 01_summary.md, 02_working/00_index.md

@@ -61,7 +61,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { reportAndExit } from './_check-lib.mjs';
-import { makeFenceTracker } from './_links.mjs';
+import { makeFenceTracker, blankedProseLines } from './_links.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const JSON_OUT = process.argv.includes('--json');
@@ -125,14 +125,19 @@ let filesScanned = 0;
 for (const SKILL_ROOT of SKILL_ROOTS) {
 for (const file of listMarkdown(SKILL_ROOT)) {
   filesScanned++;
-  const lines = fs.readFileSync(file, 'utf-8').split(/\r?\n/);
+  const raw = fs.readFileSync(file, 'utf-8');
+  const lines = raw.split(/\r?\n/);
+  // The SHARED blanker — parsed, not pattern-matched. This file kept a private
+  // two-regex version for months after the other three callers moved off it, and
+  // it was wrong in both directions: it hid a real broken link behind escaped
+  // backticks, and it errored on the scaffolder's own wrapped code span. A
+  // classification with four private copies is four different answers.
+  const scannedLines = blankedProseLines(raw);
   const relFile = path.relative(SKILLS_DIR, file);
   const isProse = makeFenceTracker();
   lines.forEach((line, i) => {
     if (!isProse(line)) return;   // fence delimiter, or inside a fenced example
-    // Drop inline code spans first (double-backtick before single) so links
-    // shown as literal text inside `...` aren't mistaken for real links.
-    const scan = line.replace(/``.+?``/g, '').replace(/`[^`]*`/g, '');
+    const scan = scannedLines[i] ?? line;
     for (const m of scan.matchAll(LINK_RE)) {
       let target = m[1].trim();
       // Strip a trailing #anchor and any surrounding angle brackets / title.

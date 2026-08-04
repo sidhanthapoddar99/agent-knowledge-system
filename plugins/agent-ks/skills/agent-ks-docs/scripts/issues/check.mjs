@@ -799,7 +799,8 @@ for (const entry of issueFolders) {
         // of every `NNN_` round — and exempt here rather than renamed to `000_`,
         // which would make the validator read it as iteration 00's round file.
         // Whether its CONTENT still agrees with the rounds is not a script's
-        // question: see the `agent-ks-index-check` agent.
+        // question: see `24_agent-logs.md`, "Keeping an index honest", which
+        // is a procedure for a reader and deliberately not a command.
         if (f.name === WORKING_INDEX) continue;
         const pm = base.match(/^(\d{2})(\d)[_-]/);
         if (!pm) {
@@ -898,10 +899,25 @@ for (const entry of issueFolders) {
     }
   }
 
-  if (fs.existsSync(logDir)) {
-    for (const e of fs.readdirSync(logDir, { withFileTypes: true })) {
+  /**
+   * Walk `agent-log/`, linting every run and DESCENDING THROUGH GROUPING FOLDERS.
+   *
+   * A folder with no kind code is a grouping folder — `new-agent-log --group`
+   * creates them — so it holds runs rather than being one. It used to be warned
+   * about and then skipped, and skipping it took every agent-log check with it:
+   * a malformed `settings.json`, a missing `01_summary.md`, an invalid round
+   * status, colliding round numbers, all invisible the moment the run sat inside
+   * a group. Demonstrated by an external reviewer with the same broken run in
+   * both places — direct: 1 error, exit 1; grouped: 0 errors, exit 0.
+   *
+   * It was filed as cosmetic on the reasoning that the only rule it hid had just
+   * been deleted. That reasoning was wrong, and it was wrong because it was
+   * reasoning: nobody ran it.
+   */
+  function walkAgentLogDir(dir, relPrefix, groupDepth) {
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
       if (e.isFile() && e.name.endsWith('.md')) {
-        warnings.push(`${id}/agent-log/${e.name}: flat file at agent-log root — parses, but the convention is an NNN_<code>_<name>/ agent-log folder`);
+        warnings.push(`${relPrefix}/${e.name}: loose file where a run folder belongs — parses, but the convention is an NNN_<code>_<name>/ agent-log folder`);
         continue;
       }
       if (!e.isDirectory()) continue;
@@ -909,18 +925,23 @@ for (const entry of issueFolders) {
       const m = e.name.match(/^(\d{2,5})_(.+)$/);
       const codeMatch = m ? m[2].match(/^([a-z]{2})_(.+)$/) : null;
       if (!m) {
-        warnings.push(`${id}/agent-log/${e.name}/: no numeric order prefix — sorts last; convention is NNN_<code>_<name>/`);
+        warnings.push(`${relPrefix}/${e.name}/: no numeric order prefix — sorts last; convention is NNN_<code>_<name>/`);
       } else if (!codeMatch) {
-        warnings.push(`${id}/agent-log/${e.name}/: no kind code after the prefix — renders without a symbol; convention is NNN_<code>_<name>/ (codes: ${[...effectiveKindCodes].sort().join('/')})`);
+        warnings.push(`${relPrefix}/${e.name}/: no kind code after the prefix — renders without a symbol; convention is NNN_<code>_<name>/ (codes: ${[...effectiveKindCodes].sort().join('/')})`);
       } else if (!effectiveKindCodes.has(codeMatch[1])) {
-        warnings.push(`${id}/agent-log/${e.name}/: kind code \`${codeMatch[1]}\` not in the effective set (${[...effectiveKindCodes].sort().join('/')}) — declare it in settings.json \`agentLogKinds\` or it renders without a symbol`);
+        warnings.push(`${relPrefix}/${e.name}/: kind code \`${codeMatch[1]}\` not in the effective set (${[...effectiveKindCodes].sort().join('/')}) — declare it in settings.json \`agentLogKinds\` or it renders without a symbol`);
       }
 
-      // A grouping folder (no kind code) holds agent logs rather than being one;
-      // recursing into it as a log would demand an 01_summary.md it should not have.
-      if (codeMatch) lintAgentLogFolder(path.join(logDir, e.name), `${id}/agent-log/${e.name}`, 1);
+      if (codeMatch) {
+        lintAgentLogFolder(path.join(dir, e.name), `${relPrefix}/${e.name}`, 1);
+      } else if (groupDepth < MAX_SUBFOLDER_DEPTH) {
+        // A grouping folder: not a run, but the runs inside it are still runs.
+        walkAgentLogDir(path.join(dir, e.name), `${relPrefix}/${e.name}`, groupDepth + 1);
+      }
     }
   }
+
+  if (fs.existsSync(logDir)) walkAgentLogDir(logDir, `${id}/agent-log`, 1);
 }
 
 // Reconcile drift output mode. --strict promotes drift warnings to errors;

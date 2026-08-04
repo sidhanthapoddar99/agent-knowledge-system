@@ -16,6 +16,9 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
+import { fromMarkdown } from 'mdast-util-from-markdown';
+import { gfm } from 'micromark-extension-gfm';
+import { gfmFromMarkdown } from 'mdast-util-gfm';
 
 /**
  * Markdown link / image. Captures: leading `!` (optional), text, target, and the
@@ -158,108 +161,76 @@ export function makeFenceTracker() {
  * was quoting the right form.
  */
 /**
- * The scanner both blankers share, and it is hand-written for two reasons.
+ * Blank out every span of markdown that is CODE rather than content, replacing
+ * it with same-length filler so byte offsets and line numbers still line up. A
+ * link inside backticks, inside a fence, inside an indented block or inside raw
+ * HTML is being SHOWN, not used.
  *
- * **Backtracking.** `/(`+)[\s\S]*?\1/` will match ONE backtick out of a run of
- * three when no run of three closes it, pair that with the next unrelated single
- * backtick, and blank everything between — leaving the real span after it
- * exposed. A regex cannot express "a run of exactly this length".
+ * THIS IS PARSED, NOT PATTERN-MATCHED, AND THAT IS THE WHOLE POINT. Three
+ * hand-written versions of this shipped and each was wrong differently:
  *
- * **The escape.** CommonMark: a backslash-escaped backtick is a literal
- * character and cannot delimit a code span. Missing that turns `\`[x](./y)\``
- * — a genuinely broken link — into something the gate never looks at. That is
- * the dangerous direction: a gate that stays silent reads as a healthy tree.
+ *   1. `/`[^`]*`/` — broke on the ``[`x`](./x)`` form a document uses to quote a
+ *      link containing backticks.
+ *   2. Run-length matching, per line — a code span may WRAP, and the scaffolder's
+ *      own template wraps one, so every agent log the tool created failed the gate.
+ *   3. Run-length matching over a paragraph, with a hand-rolled block splitter —
+ *      ten more divergences from the spec, found by two independent reviewers
+ *      against a CommonMark oracle: escaped backticks inside span content,
+ *      blockquotes, blockquoted list items, setext `===` underlines, pipe-less
+ *      GFM tables, ordered lists that cannot interrupt a paragraph, indented code,
+ *      HTML blocks.
  *
- * And an opener searches ONWARD for a closer of exactly its length; a longer run
- * in between is not a closer and must not end the search.
+ * **Four of those hid a genuinely broken link.** That is the dangerous direction:
+ * a gate that goes quiet is indistinguishable from a clean tree. The pattern
+ * across all three attempts is the same — each fixed the case in front of it and
+ * met the spec somewhere new the next round. A parser has no next round.
+ *
+ * `mdast-util-from-markdown` is the same engine the site renders with, so the
+ * gate and the renderer now disagree about nothing by construction.
  */
-function scanCodeSpans(text, fill) {
-  let out = '';
-  let i = 0;
-  while (i < text.length) {
-    if (text[i] === '\\' && i + 1 < text.length) { out += text.slice(i, i + 2); i += 2; continue; }
-    if (text[i] !== '`') { out += text[i]; i += 1; continue; }
-    let j = i;
-    while (j < text.length && text[j] === '`') j += 1;
-    const run = text.slice(i, j);
-    // Look for a run of EXACTLY this length, skipping longer ones and escapes.
-    let k = j;
-    let close = -1;
-    while (k < text.length) {
-      if (text[k] === '\\') { k += 2; continue; }
-      if (text[k] !== '`') { k += 1; continue; }
-      let e = k;
-      while (e < text.length && text[e] === '`') e += 1;
-      if (e - k === run.length) { close = k; break; }
-      k = e;
-    }
-    if (close === -1) { out += run; i = j; continue; }
-    const end = close + run.length;
-    out += fill(text.slice(i, end));
-    i = end;
+function blankCodeRegions(text) {
+  let tree;
+  try {
+    tree = fromMarkdown(text, { extensions: [gfm()], mdastExtensions: [gfmFromMarkdown()] });
+  } catch {
+    // A document the parser refuses is not a document this gate can judge. Blank
+    // nothing rather than guess — a false positive is loud, a false negative is not.
+    return text;
   }
-  return out;
+  const out = text.split('');
+  const blank = (node) => {
+    const a = node.position?.start?.offset;
+    const b = node.position?.end?.offset;
+    if (a === undefined || b === undefined) return;
+    for (let i = a; i < b; i += 1) if (out[i] !== '\n') out[i] = ' ';
+  };
+  const walk = (node) => {
+    if (CODE_NODE_TYPES.has(node.type)) { blank(node); return; }
+    if (node.children) for (const child of node.children) walk(child);
+  };
+  walk(tree);
+  return out.join('');
 }
 
-export function blankCodeSpans(line) {
-  return scanCodeSpans(line, (s) => ' '.repeat(s.length));
-}
+/** Node types whose content is markup being shown rather than used. */
+const CODE_NODE_TYPES = new Set(['inlineCode', 'code', 'html']);
 
 /**
- * The same thing over a whole document, because a code span may WRAP.
+ * A file's lines with every code region blanked.
  *
- * `blankCodeSpans` is per line, and a line-based blanker cannot see a span that
- * opens on one line and closes on the next — so the link inside it is scanned as
- * content and reported. Not hypothetical: the agent-log scaffolder's own `# Todo`
- * example is a wrapped span, so **every freshly scaffolded agent log failed the
- * link gate** on a link the template is deliberately showing rather than using
- * (found 2026-08-04).
- *
- * A span never crosses a **block** boundary, and a blank line is only the most
- * obvious of those. A `>`-only line inside a blockquote, a new list item, a
- * heading and a horizontal rule all end a block without a blank line — and
- * treating them as continuations lets two unrelated stray backticks pair across
- * them and swallow a genuinely broken link. That is the worse direction: a gate
- * that goes quiet looks exactly like a clean tree.
- *
- * `\r` is matched explicitly, because a CRLF file's "blank" line is `\r\n\r\n`
- * and a `[ \t]*` split walks straight past it.
- *
- * Newlines are preserved inside the filler, so the result splits into exactly
- * the same lines with exactly the same columns.
+ * All four link-walking tools share this — `check-link-form`, `check
+ * skill-links`, `issues/check` and `move`. They did not, twice: the wrapped-span
+ * fix landed in one caller of three, and a fourth caller nobody had counted was
+ * still running the original two-regex version months later. **A shared
+ * classification with four private copies is four different answers.**
  */
+export function blankedProseLines(text) {
+  return blankCodeRegions(text).split('\n');
+}
+
+/** The whole-document form, for a caller that wants the text rather than lines. */
 export function blankCodeSpansDoc(text) {
-  const keepNewlines = (s) => s.replace(/[^\n]/g, ' ');
-  const lines = text.split('\n');
-  const out = [];
-  let chunk = [];
-  const flush = () => {
-    if (chunk.length) out.push(scanCodeSpans(chunk.join('\n'), keepNewlines));
-    chunk = [];
-  };
-  for (const line of lines) {
-    if (opensABlock(line)) flush();
-    chunk.push(line);
-    if (endsABlock(line)) flush();
-  }
-  flush();
-  return out.join('\n');
-}
-
-/** A line that BEGINS a new block, so the previous one must be closed first. */
-function opensABlock(line) {
-  return /^[ \t]*(?:[-*+][ \t]|\d{1,9}[.)][ \t]|#{1,6}(?:[ \t]|$)|\|)/.test(line);
-}
-
-/** A line that ENDS the block it belongs to. */
-function endsABlock(line) {
-  // Blank — including a CRLF file's `\r\n`, and a `>`-only line inside a quote.
-  if (/^[ \t\r]*$/.test(line)) return true;
-  if (/^[ \t]*>[ \t\r]*$/.test(line)) return true;
-  // ATX heading, thematic break — self-contained blocks.
-  if (/^[ \t]*#{1,6}(?:[ \t]|$)/.test(line)) return true;
-  if (/^[ \t]*(?:[-*_][ \t]*){3,}\r?$/.test(line)) return true;
-  return false;
+  return blankCodeRegions(text);
 }
 
 // ── ordering labels ───────────────────────────────────────────────────────
@@ -349,21 +320,3 @@ export function collectMarkdownFiles(dir) {
   return out;
 }
 
-/**
- * A file's lines with every inline code span blanked, computed over the whole
- * document so a span that WRAPS is caught.
- *
- * **Fenced blocks are emptied first, before any span matching.** Otherwise a
- * fence's own backtick run could pair with a run in the prose after it and blank
- * real content; emptying them also puts a boundary either side of every fence,
- * so nothing pairs across one.
- *
- * All three link-walking tools share this. They did not, once: the wrapped-span
- * fix landed in one of three callers, and `move` — the one that WRITES — kept
- * the per-line blanker and would have rewritten a quoted example.
- */
-export function blankedProseLines(text) {
-  const isProse = makeFenceTracker();
-  const prose = text.split('\n').map((line) => (isProse(line) ? line : ''));
-  return blankCodeSpansDoc(prose.join('\n')).split('\n');
-}

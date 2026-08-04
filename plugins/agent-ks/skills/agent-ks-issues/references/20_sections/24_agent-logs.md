@@ -43,6 +43,12 @@ test below is an approximation of one question:
 >
 > **The floor beats triggers 1 and 2. It never beats trigger 3** — when the user asks
 > for a record, that is the end of the test.
+>
+> **NEITHER FIRES → 🟡 ask, once per session.** Repeated work is the case this
+> exists for: a loop over thirty independent subtasks changes course nowhere and
+> discards nothing, so no trigger fires — and it is several passes, so no floor
+> reaches it either. Reasoning from *no floor* to *yes* is how repetition ends up
+> doing the job file count is forbidden to do. **Ask instead, and only once.**
 
 **Executing a plan always fires trigger 1**, and it is the case that gets skipped: the
 plan already has stages, each stage already has a record, and the work feels covered —
@@ -75,7 +81,7 @@ matter as much as the triggers.
 | Limit | Value | Why this, and not something else |
 |---|---|---|
 | **Stages** | **≥ 2**, and the second must have *acted on* what the first returned | `edit → build → curl` is one pass however many commands it took. `audit → findings → fix` is two, because the findings changed what got fixed |
-| **Discarded work** | **≥ 1** rejected approach, wrong diagnosis, or surprising measurement | The only category **unrecoverable from the repository at all**. On its own it justifies a log |
+| **Discarded work** | **≥ 1** rejected approach, wrong diagnosis, or surprising measurement | The only category **unrecoverable from the repository at all** — so it needs no second trigger. It is still a trigger, and floor 1 still outranks it: if the discarded work is already written into the subtask, the log would restate it |
 | **Delegated / unattended** | raises the weight of recording, **never triggers alone** | A completion message is not evidence — but one bounded job, one round, nothing found, is still one pass |
 | **The user asked** | always, no other test applies | — |
 | **File count** | 🚫 **never** decides *whether the path is worth keeping* | A thirty-file rename has no path. A four-line fix after three wrong diagnoses has nothing *but* path |
@@ -84,8 +90,9 @@ matter as much as the triggers.
 **Where scale legitimately does count.** *"No record for small work"* is a real rule
 elsewhere in this skill, and it does not contradict the two prohibitions — it answers the
 **second** question, not the first. Scale never says whether the path is worth
-recovering; it can say whether the **setup cost exceeds the work**, which is the routing
-table's middle row. Read in that order, both hold.
+recovering. It says whether **opening a log costs more than the work it would record**,
+which is the routing table's middle row: *no run open, and nothing follows*. Read in
+that order, both hold.
 
 ### A verify is not a stage
 
@@ -105,15 +112,17 @@ stated. Nothing else in the skill re-derives them.
 | Case | Verdict | Because |
 |---|---|---|
 | Executing a plan, at any level | 🟢 | stages by construction — trigger 1 |
-| A loop over 3–4 subtasks, or over 30–40 | 🟢 | several passes, so floor 2 cannot reach it. **One** log, nested if it must be |
+| A loop over 3–4 subtasks, or over 30–40, where the rounds inform each other | 🟢 | trigger 1 — a later round acted on what an earlier one returned. **One** log, nested if it must be |
+| The same loop, but every item is independent and nothing is discarded | 🟡 | no trigger, no floor. The default, asked once |
 | A multi-stage audit, or a built workflow | 🟢 | the canonical case |
-| A content migration — `detect → dry-run → migrate → re-detect` | 🟢 | a stage chain with numbers at each step. Small diff, large blast radius |
+| A content migration — `detect → dry-run → migrate → re-detect` | 🟢 | a stage chain: the dry-run's output decides whether the migrate runs |
 | A substantial refactor | 🟢 | **not for the size** — a refactor carries audit and re-fix, so it is multi-stage |
 | A hard bug: three wrong diagnoses, a four-line fix | 🟢 | the wrong diagnoses **are** the stages, and the diff hides every one |
 | One subagent, one bounded job, nothing found | ⬜ | delegation alone is not a stage chain. The subtask's Outcomes |
 | An investigation that changed no code, whose numbers are already in a subtask | ⬜ | floor 1 — the log would restate it |
-| A commit of 20–30 lines · a text change · a quick audit that found one thing you then fixed | ⬜ | **setup exceeds the work.** The routing question, not the trigger question |
-| Anything so small it questions whether it deserved a subtask | ⬜ | floor 1 |
+| A commit of 20–30 lines, or a text change | ⬜ | one self-contained pass — floor 2 |
+| A quick audit that found one thing you then fixed | ⬜ | trigger 1 fires, but no run is open and nothing follows, so it goes to the subtask's Outcomes. **The routing question, answered second** |
+| Anything so small it questions whether it deserved a subtask | ⬜ | the log would restate the subtask — floor 1 |
 | One independent review, one round, returning findings | 🟡 | judge on what came back, not on the fact a review ran |
 | A sitting where the user solves subtasks one by one | 🟡 | **hint once for the session** |
 | A discussion that settles a design decision, no code | 🟡 | the decision goes in the subtask either way. Discussion is explicit-save-only — offer, never auto-save. Rejecting alternatives inside a conversation is **not** trigger 2 |
@@ -125,11 +134,11 @@ find the reasoning that produced it.**
 
 ### When you are unsure
 
-**🟡 Ask — and cap it at once per session, never per subtask.** Two situations earn it:
-work whose value only becomes clear from what it produced (one independent review, one
-round — judge on what came back, not on the fact a review ran), and the interactive
-sitting where a user is solving subtasks one by one. An uncapped prompt becomes the
-noise it exists to prevent.
+**🟡 Ask — and cap it at once per session, never per subtask.** Three situations earn it:
+**neither a trigger nor a floor fired** (the default above); work whose value only
+becomes clear from what it produced (one independent review, one round — judge on what
+came back, not on the fact a review ran); and the interactive sitting where a user is
+solving subtasks one by one. An uncapped prompt becomes the noise it exists to prevent.
 
 **Never make this a validator error.** *Did a later step act on what came back* is not
 something a script can answer, and a gate that fails on judgement gets worked around.
@@ -769,16 +778,6 @@ Creates the folder with `settings.json`, `01_summary.md` and an empty
 The index is seeded as a **file** rather than the folder alone because git does not
 track an empty directory — a scaffolded empty folder would exist only for whoever ran
 the command.
-
-## Bring the round table back into agreement
-
-```bash
-agent-ks issue reindex <id>            # every log on the issue
-agent-ks issue reindex <id> --check    # report staleness, write nothing, exit 1 if stale
-```
-
-Run it after changing a round's `status`. `new-iteration` already rewrites the index
-when a round is created; this is for the far commoner case of a round finishing.
 
 ## Open the next iteration file
 

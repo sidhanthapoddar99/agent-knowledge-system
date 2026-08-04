@@ -5,14 +5,15 @@ title: "Summary"
 # State
 
 > [!NOTE]
-> **Five rounds done; every review finding is fixed or explicitly reported.** The
+> **Six rounds done. Two review rounds, 44 findings, all closed.** The
 > generated index is deleted, the rule has one home, and the blanker is
 > CommonMark-correct with a fixture in the tree. Three subtasks at `review`
 > ([`015`](../../subtasks/110_tracker-ergonomics/015_the-working-index-is-a-table-of-the-round.md)
 > ·[`020`](../../subtasks/110_tracker-ergonomics/020_when-a-run-earns-an-agent-log.md)
 > ·[`025`](../../subtasks/110_tracker-ergonomics/025_an-index-is-checked-not-generated.md)),
 > plus [`010`](../../subtasks/110_tracker-ergonomics/010_plan-execution-needs-an-agent-log.md).
-> One more audit before hand-off.
+> The second audit found twenty more, including two that only a shell could
+> reach. Ready for hand-off.
 
 # Goal
 
@@ -49,6 +50,10 @@ precedent that decided `015`'s design,
 - [x] [Four independent reviews](./02_working/040_four-independent-reviews.md) —
       24 findings, merged as a union. Three of them overturn a claim rounds 01–03
       made about their own work
+- [x] [Stop hand-rolling the parser](./02_working/060_stop-hand-rolling-the-parser.md)
+      — the second review round. The blanker is a parser now, the fixture is
+      differential, and the `--group` gap I had dismissed by reasoning was hiding
+      every agent-log check
 - [x] [Decide and delete](./02_working/050_decide-and-delete.md) — the union acted
       on in one pass. The plugin ends **smaller** than before this run: one CLI verb,
       two scripts, one frontmatter field and one validator rule removed, and zero new

@@ -226,8 +226,11 @@ Where a run is carried out, and where its outcome is recorded. **Execution, not 
   - **TRIGGER**, any one: a later step changed course because of what an earlier step
     **returned** (executing a plan always does — open the log **before the first
     stage**) · something was **tried and discarded** · the user asked.
-  - **FLOOR**, any one, and it **wins**: the log would **restate the subtask** · one
-    self-contained pass with **nothing discarded**.
+  - **FLOOR**, any one: the log would **restate the subtask** · **one**
+    self-contained pass with **nothing discarded** — *one* is literal, so a loop
+    or a fan-out is several passes and this floor does not reach it.
+  - The floor beats triggers 1–2, **never trigger 3**. **Neither fires → ask,
+    once per session**, which is where independent repeated work lands.
   - **Never file count, never time spent.** A thirty-file rename has no path; a
     four-line fix after three wrong diagnoses has nothing but path. A **verify**
     (*did I break it*) is not a stage — only an **audit** (*what is wrong here*) is.

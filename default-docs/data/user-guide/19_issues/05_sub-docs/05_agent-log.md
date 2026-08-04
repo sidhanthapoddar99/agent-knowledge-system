@@ -51,6 +51,11 @@ retracted — it just quietly keeps being believed. So one question decides it:
 >    loop or a fan-out over several items is not covered by it
 >
 > The floor beats triggers 1 and 2. It never beats trigger 3.
+>
+> **NEITHER FIRES → ask, once per session.** That is where independent repeated
+> work lands: a loop over thirty unrelated subtasks changes course nowhere and
+> discards nothing, so no trigger fires — and it is several passes, so no floor
+> reaches it either.
 
 **Never file count, never time spent.** A thirty-file rename has no path worth keeping; a
 four-line fix after three wrong diagnoses has nothing *but* path. Scale answers a

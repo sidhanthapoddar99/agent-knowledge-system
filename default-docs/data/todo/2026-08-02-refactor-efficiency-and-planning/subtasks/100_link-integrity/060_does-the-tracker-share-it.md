@@ -1,6 +1,6 @@
 ---
 title: "Answered: the tracker does not share the off-by-one, and does not need to"
-status: review
+status: done
 ---
 
 # Overview
@@ -30,22 +30,23 @@ scoped or the question is closed as "the tracker is fine".
 
 # Todo list
 
-- [ ] Reproduce the probe properly: serve `dist/` and follow a tracker link over
+- [x] Reproduce the probe properly: serve `dist/` and follow a tracker link over
       **real HTTP**, recording the status code — not by reasoning about paths
-- [ ] Work out why `issue-body-links.ts` did **not** appear to fire on the page
+- [x] Work out why `issue-body-links.ts` did **not** appear to fire on the page
       probed. Either it is not running, or the probe read the wrong page, or the
       comment is describing intent rather than behaviour
-- [ ] Separate the three populations in [`040`](./040_site-wide-link-rot.md)'s
+- [x] Separate the three populations in [`040`](./040_site-wide-link-rot.md)'s
       3,978 before drawing any conclusion:
       **(a)** demo and fixture issues pointing at deliberately fictional paths
       (`/docs/api`, `/contact`) — not defects;
       **(b)** links whose target was genuinely deleted — history, not defects;
       **(c)** correct links broken by the renderer — the only real ones
-- [ ] Only then decide whether the tracker needs a fix, and whether it is the
+- [x] Only then decide whether the tracker needs a fix, and whether it is the
       same fix as [`010`](./010_renderer-drops-a-url-level.md)
-- [ ] If the header comment on `issue-body-links.ts` turns out to be wrong,
+- [x] If the header comment on `issue-body-links.ts` turns out to be wrong,
       correct it — a comment asserting correctness is what stopped this being
-      looked at sooner
+      looked at sooner. **Done 2026-08-04, and it was wrong in the way that
+      matters most: right conclusion, wrong reason** — see below
 
 # Outcomes and Next Steps
 
@@ -130,3 +131,31 @@ The last time a single unverified reading of link behaviour was acted on, 341
 content links were rewritten into a form the tooling cannot maintain. The cost of
 filing this separately and leaving it open is one folder entry. The cost of being
 wrong about it in the other direction is another cleanup like this one.
+
+# Closed 2026-08-04
+
+**The answer stands — no, and the comment that asserted it now says why
+correctly.**
+
+`issue-body-links.ts` claimed sub-doc pages are safe because they are *"served at
+a URL depth that MATCHES their file depth"*. **That reasoning is wrong.**
+Relative resolution does not compare segment counts; it asks whether the
+browser's base is a directory or a file — `/a/b/` resolves `./x` to `/a/b/x`,
+`/a/b` resolves it to `/a/x`. Depth never enters into it.
+
+The real reasons are the two properties [`110`](./110_live-check.md) verified:
+tracker pages are served **without a trailing slash**, and tracker URLs **keep
+their `NN_` prefixes**. Docs have neither. The comment now states both, records
+that fifteen links were opened by hand to establish it, and warns that a static
+read of `dist/` reports these links as broken because the built site adds the
+slash the dev server omits.
+
+**Why a right answer with wrong reasoning was worth fixing at all.** This comment
+is *why nobody opened the question sooner* — it read as authoritative, and a
+reader checking it against a real failure would have found the reasoning did not
+hold and concluded the conclusion was wrong too. A load-bearing comment that
+cannot survive being checked is worse than one that says nothing: it spends trust
+it has not earned, and it spends it exactly when someone is investigating.
+
+Filing this as its own subtask cost one folder entry. It bought not repeating the
+341-link mistake in the tracker, where there are 1,069 relative links.

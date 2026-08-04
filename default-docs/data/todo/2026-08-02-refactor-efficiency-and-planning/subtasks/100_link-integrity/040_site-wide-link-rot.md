@@ -70,9 +70,22 @@ Re-measured on a fresh build with `agent-ks check links`, the gate this subtask
 asked for and [`070`](./070_reframe-the-link-checker.md) /
 [`090`](./090_tools-must-say-what-they-skip.md) delivered:
 
-| Sections | Pages | In-body links | Broken |
+| Sections | Pages | Links checked | Broken |
 |---|---:|---:|---:|
-| `user-guide` · `dev-docs` · `blog` · docs | 342 | 15,586 | **0** |
+| `user-guide` · `dev-docs` · `blog` · docs | 342 | 15,586 *(see below)* | **0** |
+
+> **The 15,586 is not a body-link count and must not be quoted as one.** The tool
+> matches `<article|main>` and a built page opens `<main>` first, so the sidebar
+> is counted on every page. Checked against one real page while closing
+> [`070`](./070_reframe-the-link-checker.md): **112 links counted, 9 actually in
+> the body.** The overall inflation is ~27×, so the true in-body figure is in the
+> hundreds. **The 0 is unaffected** — a broken link is a broken link whichever
+> region it sits in, and the sidebar links are generated and correct. Only the
+> denominator is wrong. Fixing the region match is [`070`](./070_reframe-the-link-checker.md)'s.
+>
+> **And `0 broken` means `0 broken PATHS`.** The tool discards fragments
+> (`check-content-links.mjs:225` takes `.pathname`), so anchors are unchecked —
+> four broken ones were known to exist at the time of this measurement.
 
 **243, 70 and 4 → 0.** Not by rewriting content: the cause was the renderer
 ([`010`](./010_renderer-drops-a-url-level.md)), and the router changes in 0.2.2

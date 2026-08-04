@@ -8,9 +8,28 @@
  * under-resolve by one level: the `/<tracker>` (and issue) segment gets dropped
  * (e.g. `../other-issue/issue.md` wrongly resolves to `/other-issue/issue`).
  *
- * Sub-doc pages (subtasks / notes / agent-log) are served at a URL depth that
- * MATCHES their file depth, so their relative links already resolve correctly —
+ * Sub-doc pages (subtasks / notes / agent-log) already resolve correctly, so
  * this transform must NOT touch them. It only fires for the root `issue.md`.
+ *
+ * WHY they resolve, stated carefully — the earlier wording here was right about
+ * the conclusion and wrong about the cause, which is worse than saying nothing.
+ * It claimed they are "served at a URL depth that MATCHES their file depth".
+ * **Relative resolution does not care about segment counts.** It cares whether
+ * the browser's base is a directory or a file: `/a/b/` resolves `./x` to `/a/b/x`,
+ * while `/a/b` resolves it to `/a/x`. Two things make the tracker safe, and
+ * neither is depth:
+ *
+ *   1. A tracker page is served WITHOUT a trailing slash, so the base is already
+ *      the parent directory — where the author meant it.
+ *   2. Tracker URLs KEEP their `NN_` ordering prefixes (`issues.ts`), so the
+ *      source path and the URL path are the same string.
+ *
+ * Docs have neither property, which is why they needed a fix and this does not.
+ * Verified by request in 2026-08-03 — fifteen tracker links opened by hand,
+ * covering sibling, cross-group, up-two, up-three into another issue, nested,
+ * anchored and slug-form shapes. Note that a static read of `dist/` reports
+ * these as broken: the BUILT site adds the trailing slash the dev server omits,
+ * so `dist/` cannot answer this question at all.
  *
  * Fix: re-root each relative link at the issue folder and emit it relative to
  * the tracker base, so it resolves correctly from the collapsed detail URL

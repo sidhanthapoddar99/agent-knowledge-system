@@ -300,6 +300,43 @@ Three tiers is the whole chrome palette. For card titles, primary buttons, and a
 - `em` units are OK when the intent is *relative to surrounding text* (e.g. `<code>` inside a heading). That's a conscious relative choice, not a scale violation.
 - Custom / marketing layouts (`src/layouts/custom/**`) MAY reach for `--display-*` or fluid `clamp()`. Those are the only places display tiers belong.
 
+## Three stages, and they decide which tree a tool belongs in
+
+The project is used in three distinct stages. They are not phases of one
+timeline — they are **different people doing different work**, and a tool built
+for one is wrong in another.
+
+| Stage | Who | What is being worked on | Where its tooling lives |
+|---|---|---|---|
+| **Development** | a maintainer of this repo | the engine, the skills, the plugin, the layouts | repo-root `scripts/` and `astro-doc-code/` — **never ships** |
+| **Writing & usage** | an AI or a human authoring content | documents and tracker entries in an existing project | `plugins/agent-ks/` — **ships to every consumer** |
+| **Host** | nobody, at run time | a built static site being served | no tooling; it is the artefact |
+
+**The test for where a tool goes: what does it need in order to run?** Something
+that needs only the files on disk is usage-stage and belongs in the plugin —
+every consumer has files. Something that needs a build, a running server, or the
+framework source is development-stage and belongs in `scripts/`; a consumer has
+none of those and should never be asked for them.
+
+**Worked example — the two link checkers, which is where this rule came from.**
+`agent-ks check link-form` reads markdown and asks *is this link maintainable and
+does its target exist on disk*. That is a question about **files**, it needs no
+build, and it is the plugin's. Whether a link then **resolves in a browser** is a
+question about the **renderer** — the answer can be no while every file is
+correct, which is exactly what happened here — so it is checked by a
+development-stage script against a running server, not by the plugin against
+`dist/`.
+
+Putting the rendering check in the plugin was the original mistake: the tool
+reported defects it could not own, and sent whoever tripped it to edit content
+when the fix was three lines in the renderer.
+
+**The boundary is not "files versus visuals".** Structure, ordering and layout
+*are* the agent's business where the agent authors them — an artifact page is
+self-contained HTML the agent writes, so its rendering is its own responsibility.
+What belongs to the engine is everything the engine *derives*: URLs, slugs,
+heading IDs, routing, redirects.
+
 ## Build Commands
 
 Use the `./start` wrapper at the repo root.

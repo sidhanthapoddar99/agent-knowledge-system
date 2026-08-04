@@ -23,7 +23,7 @@ status: in-progress
 | [`030`](./030_user-guide-relative-links-404.md) | 85 broken links in the issues user-guide | 🟢 **Done 2026-08-04.** Measurement and its lesson kept; the reverted fix and the argument for root-relative form deleted. Its two open todos were delivered by [`070`](./070_reframe-the-link-checker.md) / [`090`](./090_tools-must-say-what-they-skip.md). Spawned [`170`](./170_relative-but-not-a-path.md) |
 | [`040`](./040_site-wide-link-rot.md) | "4,295 broken links site-wide" | 🟢 **Done 2026-08-04 at zero.** Re-measured: 342 pages, 15,586 in-body links, **0 broken** across the doc sections. The 4,295 is retracted in place. Nothing unique was left to move out |
 | [`050`](./050_correct-the-published-records.md) | correcting `0.2.1` and the records | 🟢 **Done 2026-08-04.** Three dated correction blocks on `0.2.1`; `030` and `040` closed with their wrong conclusions removed. Nothing published still recommends the absolute form |
-| [`060`](./060_does-the-tracker-share-it.md) | does the tracker share the bug? | ✅ **Answered — no.** Awaiting review only |
+| [`060`](./060_does-the-tracker-share-it.md) | does the tracker share the bug? | 🟢 **Done 2026-08-04. No** — the tracker lacks both conditions (no trailing slash, prefixes kept). The `issue-body-links.ts` comment that asserted it now states the real reason |
 | [`070`](./070_reframe-the-link-checker.md) | reframe `check links` | 🟢 **Yes.** Anchors are never checked, the count is inflated, and it can only ever see the built site |
 | [`080`](./080_link-it-dont-name-it.md) | a file reference is a link, not a backticked path | 🟢 **Yes, and it is untouched.** Fully independent of everything above — the one item here no diagnosis affected |
 | [`090`](./090_tools-must-say-what-they-skip.md) | `move` and `check` must not skip silently | 🟢 **Yes.** The gate passes 306 links `move` cannot maintain, and both tools are wrong about site assets |
@@ -100,7 +100,7 @@ prescribed converting content to site-absolute form. That was carried out on
       backticked path. Same defect shape as `020`, other half of the rule
 - [x] [`050`](./050_correct-the-published-records.md) — correct `0.2.1`'s release
       note and the two subtasks that argue for the wrong form
-- [ ] [`060`](./060_does-the-tracker-share-it.md) — settle whether the tracker
+- [x] [`060`](./060_does-the-tracker-share-it.md) — settle whether the tracker
       pipeline has the same defect. **Unverified; do not act on it yet**
 - [ ] [`070`](./070_reframe-the-link-checker.md) — reframe the link checker,
       which was built on the wrong model

@@ -1,7 +1,7 @@
 {
   "name": "agent-ks",
   "description": "Teaches Claude to operate an agent-knowledge-system project \u2014 writing docs and blog posts, running the folder-per-issue tracker (plans, subtasks, agent logs, agent memory), and building self-contained HTML artifacts. Ships three auto-triggering skills, three slash commands, and the `agent-ks` CLI on your PATH; requires bun.",
-  "version": "0.7.3",
+  "version": "0.8.0",
   "author": {
     "name": "Sidhantha"
   },

@@ -1,6 +1,6 @@
 ---
 title: "The rule says when an agent log is required and never says when it is not"
-status: review
+status: done
 ---
 
 # Overview

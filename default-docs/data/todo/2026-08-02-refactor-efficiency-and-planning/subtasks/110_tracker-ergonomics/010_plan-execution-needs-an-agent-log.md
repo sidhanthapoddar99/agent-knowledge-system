@@ -1,6 +1,6 @@
 ---
 title: "Executing a plan opened no agent log — the rule covered it and did not fire"
-status: review
+status: done
 ---
 
 # Overview

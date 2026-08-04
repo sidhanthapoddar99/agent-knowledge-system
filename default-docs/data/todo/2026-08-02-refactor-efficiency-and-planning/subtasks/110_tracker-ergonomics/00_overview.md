@@ -17,8 +17,14 @@ that arrives too late to act on.
   an index that carries the run's shape, not an empty placeholder.
 - [`020`](./020_when-a-run-earns-an-agent-log.md) — and the correction to
   [`010`](./010_plan-execution-needs-an-agent-log.md) had a trigger and no floor,
-  so read literally it said *always*. The fix is one question, three triggers and
-  two floor conditions, with the floor winning.
+  so read literally it said *always*. The fix is one question, three triggers,
+  two floor conditions, and a stated default when neither fires.
+- [`025`](./025_an-index-is-checked-not-generated.md) — the index built for
+  [`015`](./015_the-working-index-is-a-table-of-the-round.md) was **generated**,
+  and its checker shared the generator's blind spot. Hand-written now, checked by
+  reading.
+- [`035`](./035_the-plugin-declares-no-dependencies.md) — open. The cost the
+  parser swap named: four undeclared dependencies and no `package.json`.
 
 **Done when** each entry is fixed *in the place that will be read next time* —
 the skill, the scaffolder, the validator — and not merely in a record of the
@@ -33,16 +39,36 @@ conversation that noticed it.
 
 # Todo list
 
-- [x] [`010`](./010_plan-execution-needs-an-agent-log.md) — at `review`
-- [x] [`015`](./015_the-working-index-is-a-table-of-the-round.md) — decided
-      *regenerated*, built, gated; at `review`
-- [x] [`020`](./020_when-a-run-earns-an-agent-log.md) — landed on four surfaces,
-      all 14 verdicts held; at `review`
+- [x] [`010`](./010_plan-execution-needs-an-agent-log.md) — `done`
+- [x] [`015`](./015_the-working-index-is-a-table-of-the-round.md) — `done`; its
+      *problem* was solved, its *design* was reversed by
+      [`025`](./025_an-index-is-checked-not-generated.md)
+- [x] [`020`](./020_when-a-run-earns-an-agent-log.md) — one home, a stated
+      default, `done`
+- [x] [`025`](./025_an-index-is-checked-not-generated.md) — `done`
+- [ ] [`035`](./035_the-plugin-declares-no-dependencies.md) — open, and the first
+      task is to **reproduce the failure rather than fix it**
 
 # Outcomes and Next Steps
 
-**Open, and expected to stay open.** This is a place to put small things, not a
-milestone. Entries close individually.
+**Four closed 2026-08-04, one open.** The group stays open by design — it is a
+place to put small things, not a milestone, and entries close individually.
+
+**What the four cost, and what they were worth.** Two review rounds over one
+diff, 44 findings, and **two of this group's own three deliverables were reversed
+by its own review.** The generated index was deleted the day it shipped; the
+hand-rolled markdown scanner was replaced by a parser after its third rewrite.
+
+The single lesson, and it is the one to carry: **every defect here came from a
+check scoped to the thing it was checking.** The acceptance test read the
+paragraph it had just written. The fixture tested the bugs it had already met.
+The staleness gate compared against a generator carrying its own blind spot. A
+validator gap was called cosmetic by reasoning rather than by running it.
+
+What worked, twice, was an **oracle** — something that answers the question
+independently of the code under test. The link fixture is now a differential
+test against the same markdown engine the site renders with, and the reviewer
+that found the most was the one with a shell.
 
 # Details
 

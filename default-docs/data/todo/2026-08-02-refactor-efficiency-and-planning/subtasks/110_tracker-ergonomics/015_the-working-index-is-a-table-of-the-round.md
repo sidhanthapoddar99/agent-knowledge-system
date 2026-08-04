@@ -1,6 +1,6 @@
 ---
 title: "02_working/ has no index — scaffold one, and make it say what each round was and who did it"
-status: review
+status: done
 ---
 
 # Overview

@@ -1,6 +1,6 @@
 ---
 title: "An index is hand-written and checked by reading — not generated"
-status: review
+status: done
 ---
 
 # Overview

@@ -9,7 +9,7 @@ sidebar_position: 9
 Two real artifacts live in this section, one for each **theme mode**. Open them from
 the sidebar and you are looking at the artifact type running in production docs. See
 [Artifact Pages](../08_artifact-pages.md) for the authoring rules and [Diagram
-Showcase](./diagram-showcase) for the diagram equivalent.
+Showcase](./01_diagram-showcase.md) for the diagram equivalent.
 
 ## Two modes, side by side
 

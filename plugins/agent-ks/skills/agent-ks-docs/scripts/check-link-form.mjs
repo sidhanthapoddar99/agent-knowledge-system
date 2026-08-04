@@ -82,7 +82,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { resolveProjectContext } from './_env.mjs';
 import { reportAndExit } from './_check-lib.mjs';
-import { MD_LINK_RE, makeFenceTracker, splitAnchor, resolveTargetOnDisk, blankedProseLines } from './_links.mjs';
+import { eachLink, splitAnchor, resolveTargetOnDisk } from './_links.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const JSON_OUT = process.argv.includes('--json');
@@ -128,49 +128,40 @@ let missingTarget = 0;
  */
 for (const file of files) {
   const raw = fs.readFileSync(file, 'utf-8');
-  const scannedLines = blankedProseLines(raw);
-  const isProse = makeFenceTracker();
-  raw.split('\n').forEach((line, idx) => {
-    if (!isProse(line)) return;
-
-    // A link shown inside backticks is being quoted, not used.
-    const scanned = scannedLines[idx] ?? line;
-    let m;
-    MD_LINK_RE.lastIndex = 0;
-    while ((m = MD_LINK_RE.exec(scanned)) !== null) {
-      const [, bang, text, target] = m;
-      if (bang) continue;                        // an image, not a navigation link
-      linksChecked++;
-      if (target.startsWith('/') && !target.startsWith('//')) {
-        errors.push(
-          `${path.relative(ROOT, file)}:${idx + 1}: site-absolute internal link ` +
-          `→ ${target}   "${text}"   — agent-ks move cannot maintain this; write it relative (./x, ../x)`,
-        );
-        continue;
-      }
-      // Everything else that is not a path at all — external, protocol-relative,
-      // pure anchor — has nothing on disk to find and is not this gate's business.
-      if (/^[a-z][a-z0-9+.-]*:/i.test(target) || target.startsWith('//') || target.startsWith('#')) continue;
-
-      const { rel } = splitAnchor(target);
-      if (rel === '') continue;                  // anchor-only after the split
-      const fromDir = path.dirname(file);
-      if (resolveTargetOnDisk(fromDir, rel)) { resolvable++; continue; }
-      // Two different repairs, so say which one this is. A missing extension is a
-      // one-character fix; a slug has to be matched back to the file it came from.
-      const extLess = !path.extname(rel) &&
-        ['.md', '.mdx'].find((e) => resolveTargetOnDisk(fromDir, rel + e));
-      missingTarget++;
+  // Whole-document, via the shared walker: fenced blocks and code spans are
+  // already blanked, and a link whose label wraps is found like any other.
+  for (const { bang, label: text, target, line } of eachLink(raw)) {
+    if (bang) continue;                          // an image, not a navigation link
+    linksChecked++;
+    if (target.startsWith('/') && !target.startsWith('//')) {
       errors.push(
-        `${path.relative(ROOT, file)}:${idx + 1}: target does not exist on disk ` +
-        `→ ${rel}   "${text}"   — ` +
-        (extLess
-          ? `the file is ${rel}${extLess}; add the extension`
-          : `relative in shape, but no file of that name`) +
-        `; agent-ks move will skip it`,
+        `${path.relative(ROOT, file)}:${line}: site-absolute internal link ` +
+        `→ ${target}   "${text}"   — agent-ks move cannot maintain this; write it relative (./x, ../x)`,
       );
+      continue;
     }
-  });
+    // Everything else that is not a path at all — external, protocol-relative,
+    // pure anchor — has nothing on disk to find and is not this gate's business.
+    if (/^[a-z][a-z0-9+.-]*:/i.test(target) || target.startsWith('//') || target.startsWith('#')) continue;
+
+    const { rel } = splitAnchor(target);
+    if (rel === '') continue;                    // anchor-only after the split
+    const fromDir = path.dirname(file);
+    if (resolveTargetOnDisk(fromDir, rel)) { resolvable++; continue; }
+    // Two different repairs, so say which one this is. A missing extension is a
+    // one-character fix; a slug has to be matched back to the file it came from.
+    const extLess = !path.extname(rel) &&
+      ['.md', '.mdx'].find((e) => resolveTargetOnDisk(fromDir, rel + e));
+    missingTarget++;
+    errors.push(
+      `${path.relative(ROOT, file)}:${line}: target does not exist on disk ` +
+      `→ ${rel}   "${text}"   — ` +
+      (extLess
+        ? `the file is ${rel}${extLess}; add the extension`
+        : `relative in shape, but no file of that name`) +
+      `; agent-ks move will skip it`,
+    );
+  }
 }
 
 // A gate that inspected nothing must fail, never pass. This one has fallen into

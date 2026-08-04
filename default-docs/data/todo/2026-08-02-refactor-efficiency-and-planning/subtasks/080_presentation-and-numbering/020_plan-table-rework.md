@@ -102,7 +102,7 @@ waiting on*, which is what a reader arriving cold needs first.
 Rendering it as inline markdown costs one shared helper and buys the thing that
 matters: a note can **point at another file with a real link**. Given this
 issue's own standing rule — [reference by link, never by
-number](../notes/70_reference-by-link-never-by-number.md) — a Notes column that
+number](../../notes/70_reference-by-link-never-by-number.md) — a Notes column that
 could only hold flat text would have quietly taught the opposite.
 
 `outcome:` was converted at the same time. Two one-line frontmatter fields with

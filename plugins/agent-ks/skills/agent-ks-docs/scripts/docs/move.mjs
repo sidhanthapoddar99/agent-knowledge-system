@@ -41,8 +41,8 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { resolveProjectContext } from '../_env.mjs';
 import {
-  MD_LINK_RE, isIgnorableTarget, splitAnchor, collectMarkdownFiles, blankedProseLines,
-  orderingPathFor, relabelOrdering, makeFenceTracker,
+  eachLink, isIgnorableTarget, splitAnchor, collectMarkdownFiles,
+  orderingPathFor, relabelOrdering,
 } from '../_links.mjs';
 import { FIRST_CLASS_PAGE_EXTS, sidecarPathsFor } from '../_page-types.mjs';
 
@@ -184,7 +184,7 @@ for (const s of sidecars) {
 
 // ── helpers ──────────────────────────────────────────────────────────────
 
-// collectMarkdownFiles() + MD_LINK_RE + isIgnorableTarget come from ../_links.mjs.
+// collectMarkdownFiles() + eachLink() + isIgnorableTarget come from ../_links.mjs.
 
 /** Recursively collect every file (any extension) under a directory. */
 function collectAllFiles(dir) {
@@ -214,7 +214,6 @@ function didMove(abs) {
   return movedFilesAbs.has(abs);
 }
 
-const LINK_RE = MD_LINK_RE; // shared regex from ../_links.mjs (also used by agent-ks img)
 
 /**
  * Build a POSIX-style relative link from fileDir to targetAbs.
@@ -268,10 +267,12 @@ const unmaintainable = [];
  * prose, and a first-occurrence replace would edit whichever came first — the
  * example. Splicing at the offset the scan actually matched cannot pick wrong.
  */
-function addEdit(finalAbs, line, col, oldFull, newFull) {
+function addEdit(finalAbs, line, offset, oldFull, newFull) {
   if (oldFull === newFull) return;
   if (!editsByFile.has(finalAbs)) editsByFile.set(finalAbs, []);
-  editsByFile.get(finalAbs).push({ line, col, old: oldFull, new: newFull });
+  // `offset` is DOCUMENT-absolute, not a column. `line` is carried only so the
+  // dry-run can name where the edit is; nothing splices by it.
+  editsByFile.get(finalAbs).push({ line, offset, old: oldFull, new: newFull });
 }
 
 // Files to scan for links: every .md in scope, plus moved .md files (which may
@@ -291,64 +292,57 @@ for (const file of scanFiles) {
   let content;
   try { content = fs.readFileSync(file, 'utf-8'); }
   catch { continue; }
-  const lines = content.split('\n');
-  const isProse = makeFenceTracker();
-  const scannedLines = blankedProseLines(lines.join('\n'));
 
-  lines.forEach((lineText, idx) => {
-    if (!isProse(lineText)) return;   // inside a fenced example — not a link
-    // A link inside BACKTICKS is being shown, not used — a doc telling a reader
-    // what to type. Rewriting one edits the example into a lie, which is the
-    // same damage as rewriting a fenced block. `move` tracked fences and not
-    // spans until 2026-08-04; demonstrated on a fixture, where a dry run
-    // rewrote `[Overview](./01_overview.md)` inside a code span.
-    // The blanker replaces spans with same-length filler, so match offsets stay
-    // valid against the untouched line that actually gets edited.
-    const scanned = scannedLines[idx] ?? lineText;
-    let m;
-    LINK_RE.lastIndex = 0;
-    while ((m = LINK_RE.exec(scanned)) !== null) {
-      const [full, bang, text, target, title] = m;
-      if (isIgnorableTarget(target)) {
-        // A site-absolute INTERNAL link is not external and not an anchor — it
-        // is a link this tool cannot maintain, because it cannot know what URL
-        // prefix a section publishes under. Skipping is correct; skipping in
-        // SILENCE is what let 341 links be converted to this form without
-        // anyone noticing they had left link maintenance. Count them and say so.
-        if (target.startsWith('/') && !target.startsWith('//')) {
-          unmaintainable.push(`${file}:${idx + 1}  [${text}](${target})`);
-        }
-        continue;
+  // Whole-document via the shared walker. Fenced blocks and code spans are
+  // blanked inside it — a link in either is being SHOWN, not used, and
+  // rewriting one edits an example into a lie. `move` tracked fences and not
+  // spans until 2026-08-04; demonstrated on a fixture, where a dry run rewrote
+  // `[Overview](./01_overview.md)` inside a code span.
+  //
+  // Offsets are document-absolute, which is what makes a link whose LABEL WRAPS
+  // rewritable: the per-line version could not even see one, so eight links in
+  // this repo were unmaintainable and nothing said so.
+  for (const { match: m, bang, label: text, target, title, start, line } of eachLink(content)) {
+    const full = m[0];
+    if (isIgnorableTarget(target)) {
+      // A site-absolute INTERNAL link is not external and not an anchor — it
+      // is a link this tool cannot maintain, because it cannot know what URL
+      // prefix a section publishes under. Skipping is correct; skipping in
+      // SILENCE is what let 341 links be converted to this form without
+      // anyone noticing they had left link maintenance. Count them and say so.
+      if (target.startsWith('/') && !target.startsWith('//')) {
+        unmaintainable.push(`${file}:${line}  [${text}](${target})`);
       }
-      const { rel, anchor } = splitAnchor(target);
-      if (rel === '') continue; // target was pure-anchor after all
-
-      // Resolve the link target to a CURRENT absolute path.
-      const targetAbsCurrent = path.resolve(currentDir, rel);
-      // Where will that target live after the move?
-      const targetAbsFinal = mappedPath(targetAbsCurrent);
-
-      // If neither the file nor its target moved, the existing link is still
-      // valid as written — leave it untouched (don't churn unrelated links
-      // just to normalise their form).
-      if (!moved && targetAbsFinal === targetAbsCurrent) continue;
-
-      // Recompute the link from the file's FINAL directory to the target's
-      // FINAL location.
-      const newRel = relLink(finalDir, targetAbsFinal);
-      const newTarget = newRel + anchor;
-      // Two text rewrites, and they are mutually exclusive in practice: a
-      // path-mirror has no ordering label, and a labelled link is descriptive
-      // rather than a mirror. Applied in sequence so neither has to know about
-      // the other.
-      const mirrored = mirrorText(text, target, rel, newTarget, newRel);
-      const newText = relabelOrdering(mirrored, orderingPathFor(targetAbsFinal));
-
-      const newFull = `${bang}[${newText}](${newTarget}${title || ''})`;
-      if (newFull === full) continue; // neither target nor text changed
-      addEdit(finalFile, idx + 1, m.index, full, newFull);
+      continue;
     }
-  });
+    const { rel, anchor } = splitAnchor(target);
+    if (rel === '') continue; // target was pure-anchor after all
+
+    // Resolve the link target to a CURRENT absolute path.
+    const targetAbsCurrent = path.resolve(currentDir, rel);
+    // Where will that target live after the move?
+    const targetAbsFinal = mappedPath(targetAbsCurrent);
+
+    // If neither the file nor its target moved, the existing link is still
+    // valid as written — leave it untouched (don't churn unrelated links
+    // just to normalise their form).
+    if (!moved && targetAbsFinal === targetAbsCurrent) continue;
+
+    // Recompute the link from the file's FINAL directory to the target's
+    // FINAL location.
+    const newRel = relLink(finalDir, targetAbsFinal);
+    const newTarget = newRel + anchor;
+    // Two text rewrites, and they are mutually exclusive in practice: a
+    // path-mirror has no ordering label, and a labelled link is descriptive
+    // rather than a mirror. Applied in sequence so neither has to know about
+    // the other.
+    const mirrored = mirrorText(text, target, rel, newTarget, newRel);
+    const newText = relabelOrdering(mirrored, orderingPathFor(targetAbsFinal));
+
+    const newFull = `${bang}[${newText}](${newTarget}${title || ''})`;
+    if (newFull === full) continue; // neither target nor text changed
+    addEdit(finalFile, line, start, full, newFull);
+  }
 }
 
 // ── plan summary (dry-run) or execute ──────────────────────────────────────
@@ -462,24 +456,23 @@ for (const [finalAbs, arr] of editsByFile) {
     console.error(`warning: could not read ${finalAbs} to rewrite links — ${e.message}`);
     continue;
   }
-  const lines = content.split('\n');
   let touched = false;
-  // Right-to-left within a line, so an earlier edit never shifts a later offset.
-  for (const e of [...arr].sort((a, b) => b.line - a.line || b.col - a.col)) {
-    const i = e.line - 1;
-    if (i < 0 || i >= lines.length) continue;
-    // Assert at the offset rather than anywhere on the line. A mismatch here
-    // means the file changed under us, and skipping is the safe answer.
-    if (lines[i].slice(e.col, e.col + e.old.length) === e.old) {
-      lines[i] = lines[i].slice(0, e.col) + e.new + lines[i].slice(e.col + e.old.length);
+  // Last-to-first across the DOCUMENT, so an earlier edit never shifts a later
+  // offset. Splicing the whole text rather than a line is what lets a link
+  // whose label wraps be rewritten at all.
+  for (const e of [...arr].sort((a, b) => b.offset - a.offset)) {
+    // Assert at the offset rather than anywhere nearby. A mismatch here means
+    // the file changed under us, and skipping is the safe answer.
+    if (content.slice(e.offset, e.offset + e.old.length) === e.old) {
+      content = content.slice(0, e.offset) + e.new + content.slice(e.offset + e.old.length);
       editedLinks++;
       touched = true;
     } else {
-      console.error(`warning: expected link not found at ${finalAbs}:${e.line}:${e.col + 1} (skipped): ${e.old}`);
+      console.error(`warning: expected link not found at ${finalAbs}:${e.line} (skipped): ${e.old}`);
     }
   }
   if (touched) {
-    fs.writeFileSync(finalAbs, lines.join('\n'));
+    fs.writeFileSync(finalAbs, content);
     editedFiles++;
   }
 }

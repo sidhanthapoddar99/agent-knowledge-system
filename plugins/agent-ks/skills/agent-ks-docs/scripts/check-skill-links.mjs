@@ -61,7 +61,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { reportAndExit } from './_check-lib.mjs';
-import { makeFenceTracker, blankedProseLines } from './_links.mjs';
+import { eachLink } from './_links.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const JSON_OUT = process.argv.includes('--json');
@@ -108,9 +108,6 @@ const SKILL_ROOTS = POSITIONAL ? [path.resolve(POSITIONAL)] : skillsIn(SKILLS_DI
 const errors = [];
 const warnings = [];
 
-// Markdown inline link: [text](target). We only care about the target.
-const LINK_RE = /\[[^\]]*\]\(([^)]+)\)/g;
-
 function listMarkdown(dir, acc = []) {
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
     if (e.name.startsWith('.') || e.name === 'node_modules') continue;
@@ -126,34 +123,28 @@ for (const SKILL_ROOT of SKILL_ROOTS) {
 for (const file of listMarkdown(SKILL_ROOT)) {
   filesScanned++;
   const raw = fs.readFileSync(file, 'utf-8');
-  const lines = raw.split(/\r?\n/);
-  // The SHARED blanker — parsed, not pattern-matched. This file kept a private
-  // two-regex version for months after the other three callers moved off it, and
-  // it was wrong in both directions: it hid a real broken link behind escaped
-  // backticks, and it errored on the scaffolder's own wrapped code span. A
-  // classification with four private copies is four different answers.
-  const scannedLines = blankedProseLines(raw);
   const relFile = path.relative(SKILLS_DIR, file);
-  const isProse = makeFenceTracker();
-  lines.forEach((line, i) => {
-    if (!isProse(line)) return;   // fence delimiter, or inside a fenced example
-    const scan = scannedLines[i] ?? line;
-    for (const m of scan.matchAll(LINK_RE)) {
-      let target = m[1].trim();
-      // Strip a trailing #anchor and any surrounding angle brackets / title.
-      target = target.replace(/\s+["'].*$/, '').replace(/^<|>$/g, '');
-      const hash = target.indexOf('#');
-      if (hash !== -1) target = target.slice(0, hash);
-      if (!target) continue;                                   // pure #anchor
-      if (/^(https?:|mailto:|@)/.test(target)) continue;       // external / alias
-      if (path.isAbsolute(target)) continue;                   // absolute, out of scope
-      if (!target.endsWith('.md')) continue;                   // only check .md targets
-      const resolved = path.resolve(path.dirname(file), target);
-      if (!fs.existsSync(resolved)) {
-        errors.push(`${relFile}:${i + 1}: broken link → ${target}`);
-      }
+  // The SHARED walker — one place finds a link, blanks fenced blocks and code
+  // spans, and scans the WHOLE document. This file kept a private two-regex
+  // version for months after the other callers moved off it, and it was wrong in
+  // both directions: it hid a real broken link behind escaped backticks, and it
+  // errored on the scaffolder's own wrapped code span. A classification with
+  // four private copies is four different answers.
+  for (const link of eachLink(raw)) {
+    let target = link.target.trim();
+    // Strip a trailing #anchor and any surrounding angle brackets / title.
+    target = target.replace(/\s+["'].*$/, '').replace(/^<|>$/g, '');
+    const hash = target.indexOf('#');
+    if (hash !== -1) target = target.slice(0, hash);
+    if (!target) continue;                                   // pure #anchor
+    if (/^(https?:|mailto:|@)/.test(target)) continue;       // external / alias
+    if (path.isAbsolute(target)) continue;                   // absolute, out of scope
+    if (!target.endsWith('.md')) continue;                   // only check .md targets
+    const resolved = path.resolve(path.dirname(file), target);
+    if (!fs.existsSync(resolved)) {
+      errors.push(`${relFile}:${link.line}: broken link → ${target}`);
     }
-  });
+  }
 }
 }
 

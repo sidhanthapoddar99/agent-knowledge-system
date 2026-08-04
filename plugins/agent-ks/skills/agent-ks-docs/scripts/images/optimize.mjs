@@ -23,7 +23,7 @@ import {
   IMAGE_EXTS, findEngine, parseSize, humanBytes, fileSize,
   runEngine, isLossy,
 } from './_lib.mjs';
-import { MD_LINK_RE } from '../_links.mjs';
+import { rewriteLinks } from '../_links.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 
@@ -220,29 +220,30 @@ if (o.rewriteLinks && renames.length && !o.out) {
   const byOld = new Map(renames.map((r) => [r.oldAbs, r.newAbs]));
   let root = o.linksRoot ? path.resolve(o.linksRoot) : null;
   if (!root) { try { root = resolveProjectContext(SCRIPT_DIR).contentRoot; } catch { root = process.cwd(); } }
-  const LINK_RE = MD_LINK_RE; // shared regex from ../_links.mjs (also used by agent-ks move)
   const mds = collectMd(root);
   for (const md of mds) {
     let txt; try { txt = fs.readFileSync(md, 'utf-8'); } catch { continue; }
     const dir = path.dirname(md);
-    let touched = false;
-    const next = txt.replace(LINK_RE, (full, bang, text, target, title) => {
+    // `rewriteLinks` blanks fenced blocks and code spans before matching, which
+    // a bare `txt.replace(MD_LINK_RE, …)` did not — so this used to rewrite an
+    // image reference inside a worked example, the same defect `move` was fixed
+    // for. It also splices by offset, so a wrapped label is rewritable.
+    const { text: next, changed } = rewriteLinks(txt, ({ bang, label, target, title }) => {
       const hash = target.indexOf('#');
       const url = hash === -1 ? target : target.slice(0, hash);
       const anchor = hash === -1 ? '' : target.slice(hash);
-      if (/^[a-z][a-z0-9+.-]*:/i.test(url) || url.startsWith('/') || url.startsWith('#')) return full;
+      if (/^[a-z][a-z0-9+.-]*:/i.test(url) || url.startsWith('/') || url.startsWith('#')) return null;
       const abs = path.resolve(dir, url);
       const newAbs = byOld.get(abs);
-      if (!newAbs) return full;
+      if (!newAbs) return null;
       let newRel = path.relative(dir, newAbs).split(path.sep).join('/');
       if (!newRel.startsWith('.')) newRel = './' + newRel;
       // keep author's leading "./" style if they used a bare relative path
       if (!url.startsWith('./') && newRel.startsWith('./')) newRel = newRel.slice(2);
-      const newText = text === url ? newRel : text;
-      touched = true; linkEdits++;
+      const newText = label === url ? newRel : label;
       return `${bang}[${newText}](${newRel}${anchor}${title || ''})`;
     });
-    if (touched) { fs.writeFileSync(md, next); linkFiles++; }
+    if (changed) { fs.writeFileSync(md, next); linkEdits += changed; linkFiles++; }
   }
 }
 

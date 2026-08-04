@@ -143,6 +143,25 @@ export function makeFenceTracker() {
 }
 
 /**
+ * The same rule as `makeFenceTracker`, applied to a WHOLE DOCUMENT: every fenced
+ * region is replaced by same-length filler, newlines kept, so offsets and
+ * line:column numbers are untouched.
+ *
+ * It exists because a per-line tracker cannot be combined with a whole-document
+ * scan, and the whole-document scan is what `eachLink` needs — see the note
+ * there. Same tracker, same fence rule, applied to the text instead of to a
+ * loop, so the two cannot drift apart.
+ */
+export function blankFencesDoc(text) {
+  if (!text.includes('```') && !text.includes('~~~')) return text;
+  const isProse = makeFenceTracker();
+  return text
+    .split('\n')
+    .map((line) => (isProse(line) ? line : line.replace(/[^\n]/g, ' ')))
+    .join('\n');
+}
+
+/**
  * Blank out inline code spans, replacing each with same-length filler so line
  * and column numbers still line up. A link inside backticks is being SHOWN, not
  * used — a worked example in a skill, a wrong form quoted in a guide — so it
@@ -247,6 +266,88 @@ export function blankedProseLines(text) {
 /** The whole-document form, for a caller that wants the text rather than lines. */
 export function blankCodeSpansDoc(text) {
   return blankCodeSpans(text);
+}
+
+// ── walking a document's links ────────────────────────────────────────────
+
+/**
+ * Every markdown link in a document, in order, with its position.
+ *
+ * **This is the one place a link is FOUND, and it scans the whole document.**
+ * Every caller used to run `MD_LINK_RE` over one line at a time, and a link
+ * whose visible text wraps looks like half a link on each of two lines — so it
+ * matched nothing and was invisible to `check link-form`, `check skill-links`,
+ * `check issues` and `move` alike. Eight of them existed in this repo.
+ *
+ * The regex was never the problem: its label group is `[^\]]*`, and a negated
+ * class already matches newlines. It was only ever fed one line at a time.
+ *
+ * `move`, which cannot maintain a link it never saw, is why this is worth a
+ * shared function rather than four fixes.
+ *
+ * Yields `{ match, target, label, title, bang, start, end, line, col, lineText }`
+ * where `line`/`col` are 1-based and derived from the match offset. `lineText`
+ * is the RAW line the link starts on, for a caller that wants to show context.
+ */
+export function* eachLink(rawText) {
+  const scanned = blankCodeSpansDoc(blankFencesDoc(rawText));
+  const rawLines = rawText.split('\n');
+
+  // Offset of the first character of each line, so offset → line is a binary
+  // search rather than a re-scan per match.
+  const lineStarts = [0];
+  for (let i = 0; i < scanned.length; i += 1) {
+    if (scanned[i] === '\n') lineStarts.push(i + 1);
+  }
+  const lineOf = (offset) => {
+    let lo = 0, hi = lineStarts.length - 1;
+    while (lo < hi) {
+      const mid = (lo + hi + 1) >> 1;
+      if (lineStarts[mid] <= offset) lo = mid; else hi = mid - 1;
+    }
+    return lo;
+  };
+
+  MD_LINK_RE.lastIndex = 0;
+  for (let m; (m = MD_LINK_RE.exec(scanned)) !== null; ) {
+    const idx = lineOf(m.index);
+    yield {
+      match: m,
+      bang: m[1],
+      label: m[2],
+      target: m[3],
+      title: m[4] ?? '',
+      start: m.index,
+      end: m.index + m[0].length,
+      line: idx + 1,
+      col: m.index - lineStarts[idx] + 1,
+      lineText: rawLines[idx] ?? '',
+    };
+  }
+}
+
+/**
+ * Rewrite a document's links in one pass: `replacer(link)` returns the new text
+ * for that link, or `null` to leave it alone.
+ *
+ * Splicing by offset is why the whole-document scan makes the WRITING callers
+ * simpler rather than harder — `move` and `img --rewrite-links` used to
+ * reassemble the file line by line, which is what made a wrapped link
+ * unrewritable even once it had been found.
+ */
+export function rewriteLinks(rawText, replacer) {
+  let out = '';
+  let cursor = 0;
+  let changed = 0;
+  for (const link of eachLink(rawText)) {
+    const next = replacer(link);
+    if (next === null || next === undefined) continue;
+    // Slice from the RAW text — the blanked copy is only ever used for finding.
+    out += rawText.slice(cursor, link.start) + next;
+    cursor = link.end;
+    changed += 1;
+  }
+  return { text: out + rawText.slice(cursor), changed };
 }
 
 // ── ordering labels ───────────────────────────────────────────────────────

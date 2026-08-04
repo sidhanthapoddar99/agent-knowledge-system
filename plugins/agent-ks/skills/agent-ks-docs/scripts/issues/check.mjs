@@ -31,7 +31,7 @@ import path from 'node:path';
 import { readFrontmatter, frontmatterData } from '../_frontmatter.mjs';
 import { resolveTracker, listIssueFolders, readVocabulary, parseArgs, printHelp, STATUSES, TERMINAL_STATUSES, normalizeStatus, LEGACY_STATUS_MAP, MAX_SUBFOLDER_DEPTH } from './_lib.mjs';
 import { readJsonChecked, reportAndExit } from '../_check-lib.mjs';
-import { MD_LINK_RE, isIgnorableTarget, splitAnchor, orderingPathFor, parseOrderingLabel, makeFenceTracker, blankedProseLines } from '../_links.mjs';
+import { eachLink, isIgnorableTarget, splitAnchor, orderingPathFor, parseOrderingLabel } from '../_links.mjs';
 import { isRetiredAgentLogShape } from './_agent-log-shape.mjs';
 import { parseOrderPrefixLoose } from '../_order-prefix.mjs';
 
@@ -283,38 +283,29 @@ function lintOrderingLabels(id, issueDir) {
       }
       if (!e.isFile() || !e.name.endsWith('.md')) continue;
 
-      let lines;
-      try { lines = fs.readFileSync(abs, 'utf-8').split(/\r?\n/); }
+      let raw;
+      try { raw = fs.readFileSync(abs, 'utf-8'); }
       catch { continue; }
 
-      const isProse = makeFenceTracker();
-      const scannedLines = blankedProseLines(lines.join('\n'));
-      lines.forEach((lineText, idx) => {
-        if (!isProse(lineText)) return;   // illustrative link in a fenced example
-        // Backticked links are quoted syntax, not references — the same rule
-        // the fence tracker applies one level up.
-        const scanned = scannedLines[idx] ?? lineText;
-        MD_LINK_RE.lastIndex = 0;
-        let m;
-        while ((m = MD_LINK_RE.exec(scanned)) !== null) {
-          const [, , text, target] = m;
-          const label = parseOrderingLabel(text);
-          if (!label) continue;
-          if (isIgnorableTarget(target)) continue;
-          const { rel } = splitAnchor(target);
-          if (!rel) continue;
-          const targetAbs = path.resolve(path.dirname(abs), rel);
-          if (!fs.existsSync(targetAbs)) continue;   // broken link — a different lint's job
-          const actual = orderingPathFor(targetAbs);
-          if (!actual || actual === label.orderingPath) continue;
-          const where = `${id}/${path.relative(issueDir, abs).split(path.sep).join('/')}:${idx + 1}`;
-          warnings.push(
-            `${where}: ordering label \`${label.orderingPath}\` does not match its target — ` +
-            `\`${rel}\` sits at \`${actual}\`. Fix the label, or reword the link text if the ` +
-            `number was never an ordering label`,
-          );
-        }
-      });
+      // Whole-document via the shared walker — fenced blocks and code spans are
+      // blanked inside it, and a wrapped label is found like any other link.
+      for (const { label: text, target, line } of eachLink(raw)) {
+        const label = parseOrderingLabel(text);
+        if (!label) continue;
+        if (isIgnorableTarget(target)) continue;
+        const { rel } = splitAnchor(target);
+        if (!rel) continue;
+        const targetAbs = path.resolve(path.dirname(abs), rel);
+        if (!fs.existsSync(targetAbs)) continue;   // broken link — a different lint's job
+        const actual = orderingPathFor(targetAbs);
+        if (!actual || actual === label.orderingPath) continue;
+        const where = `${id}/${path.relative(issueDir, abs).split(path.sep).join('/')}:${line}`;
+        warnings.push(
+          `${where}: ordering label \`${label.orderingPath}\` does not match its target — ` +
+          `\`${rel}\` sits at \`${actual}\`. Fix the label, or reword the link text if the ` +
+          `number was never an ordering label`,
+        );
+      }
     }
   };
   walk(issueDir, 0);

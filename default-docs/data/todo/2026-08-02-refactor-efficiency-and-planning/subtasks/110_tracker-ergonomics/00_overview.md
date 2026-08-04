@@ -27,9 +27,10 @@ that arrives too late to act on.
   imported and never declared, resolving only because the CLI execs `bun`, which
   auto-installs. Removed rather than declared: `Bun.YAML` was already in the
   runtime. The plugin now ships **zero** dependencies.
-- [`045`](./045_a-link-whose-label-wraps-is-never-checked.md) — open. Ten links in
-  this repo that no gate has ever seen, because every caller matches one line at a
-  time and their labels wrap. Pre-existing; found by counting against the renderer.
+- [`045`](./045_a-link-whose-label-wraps-is-never-checked.md) — eight links no
+  gate had ever seen, because every caller matched one line at a time and their
+  labels wrap. One shared whole-document walker now; two of the eight turned out
+  to be broken, and nothing could have said so.
 - [`055`](./055_an-index-is-checked-by-a-cheap-agent.md) — the reading job from
   [`025`](./025_an-index-is-checked-not-generated.md), built as the plugin's first
   agent. Report-only, two directions, and the second one needs a directory listing
@@ -60,18 +61,19 @@ conversation that noticed it.
 - [x] [`035`](./035_the-plugin-declares-no-dependencies.md) — `done`; zero
       runtime dependencies, licensed by a differential test over 1,035 documents.
       The offline case is measured: old hangs at 90 s, new exits 0
-- [ ] [`045`](./045_a-link-whose-label-wraps-is-never-checked.md) — open; ten real
-      instances, and the fix is a design question about where link *finding* lives
+- [x] [`045`](./045_a-link-whose-label-wraps-is-never-checked.md) — `done`;
+      rendered-but-unscanned 8 → 0, measured against micromark and controlled
+      against the old per-line scan
 - [x] [`055`](./055_an-index-is-checked-by-a-cheap-agent.md) — `done`; five drafts,
       two control tests, and it found this overview's own staleness on first run
 - [x] [`065`](./065_the-skill-audit-and-its-rulings.md) — `done`
 
 # Outcomes and Next Steps
 
-**Seven closed, one open.** The group stays open by design — it is a
-place to put small things, not a milestone, and entries close individually. The
-last two entries were **raised by the reviews**, not planned: the parser swap paid
-for itself twice over in things it revealed, and was then reverted.
+**All eight closed.** The group was a place to put small things
+rather than a milestone, and entries closed individually. The last two were
+**raised by the reviews**, not planned: the parser swap paid for itself twice over
+in things it revealed, and was then reverted.
 
 **This overview was itself the first thing the new checker caught.** It named
 [`055`](./055_an-index-is-checked-by-a-cheap-agent.md) and

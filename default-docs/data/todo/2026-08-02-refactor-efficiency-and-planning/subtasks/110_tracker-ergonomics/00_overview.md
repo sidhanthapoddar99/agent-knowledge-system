@@ -37,6 +37,10 @@ that arrives too late to act on.
   because an index cannot lead you to an entry it does not have.
 - [`065`](./065_the-skill-audit-and-its-rulings.md) — two audits of the issues
   skill, the findings that survived checking, and the rulings that closed them.
+- [`075`](./075_move-skips-a-backticked-label.md) — `move` silently declined every
+  link whose label is backticked, this tracker's commonest shape. A second blind
+  spot beside [`045`](./045_a-link-whose-label-wraps-is-never-checked.md)'s, found
+  by running the tool rather than by testing it.
 
 **Done when** each entry is fixed *in the place that will be read next time* —
 the skill, the scaffolder, the validator — and not merely in a record of the
@@ -67,10 +71,12 @@ conversation that noticed it.
 - [x] [`055`](./055_an-index-is-checked-by-a-cheap-agent.md) — `done`; five drafts,
       two control tests, and it found this overview's own staleness on first run
 - [x] [`065`](./065_the-skill-audit-and-its-rulings.md) — `done`
+- [x] [`075`](./075_move-skips-a-backticked-label.md) — `review`; 1 of 3 links
+      rewritten before, 3 of 3 after
 
 # Outcomes and Next Steps
 
-**All eight closed.** The group was a place to put small things
+**Eight closed, one at review.** The group was a place to put small things
 rather than a milestone, and entries closed individually. The last two were
 **raised by the reviews**, not planned: the parser swap paid for itself twice over
 in things it revealed, and was then reverted.

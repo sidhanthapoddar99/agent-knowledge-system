@@ -303,7 +303,7 @@ for (const file of scanFiles) {
   // rewritable: the per-line version could not even see one, so eight links in
   // this repo were unmaintainable and nothing said so.
   for (const { match: m, bang, label: text, target, title, start, line } of eachLink(content)) {
-    const full = m[0];
+    const full = m[0];   // RAW text at the found offsets — see eachLink
     if (isIgnorableTarget(target)) {
       // A site-absolute INTERNAL link is not external and not an anchor — it
       // is a link this tool cannot maintain, because it cannot know what URL

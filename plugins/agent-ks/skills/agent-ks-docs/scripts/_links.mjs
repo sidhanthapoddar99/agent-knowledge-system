@@ -311,12 +311,28 @@ export function* eachLink(rawText) {
   MD_LINK_RE.lastIndex = 0;
   for (let m; (m = MD_LINK_RE.exec(scanned)) !== null; ) {
     const idx = lineOf(m.index);
+    // **The blanked copy FINDS the link; the raw text DESCRIBES it.** Re-match at
+    // the same offsets so every group is what is actually on disk.
+    //
+    // Without this, a label containing inline code — `` [`080`](./x.md) ``, this
+    // repo's house style — is reported with its backticks blanked to spaces. The
+    // per-line version had the same flaw and it made `move` SKIP those links: it
+    // asserted a blanked string against the real line, the assert failed, and the
+    // link was left unrewritten with a warning nobody was reading. A rewriting
+    // tool that silently declines the most common link shape in the repo is the
+    // exact "quietly shrinking link set" this whole effort exists to remove.
+    const rawSlice = rawText.slice(m.index, m.index + m[0].length);
+    MD_LINK_RE.lastIndex = 0;
+    const r = MD_LINK_RE.exec(rawSlice) ?? m;
+    MD_LINK_RE.lastIndex = m.index + m[0].length;
+
     yield {
-      match: m,
-      bang: m[1],
-      label: m[2],
-      target: m[3],
-      title: m[4] ?? '',
+      match: r,
+      bang: r[1],
+      label: r[2],
+      target: r[3],
+      title: r[4] ?? '',
+      raw: rawSlice,
       start: m.index,
       end: m.index + m[0].length,
       line: idx + 1,

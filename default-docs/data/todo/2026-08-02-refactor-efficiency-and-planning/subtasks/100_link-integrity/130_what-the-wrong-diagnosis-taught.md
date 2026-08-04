@@ -1,6 +1,6 @@
 ---
 title: "Damage inventory — what the wrong diagnosis wrote into code, skills and docs"
-status: in-progress
+status: review
 ---
 
 # Overview
@@ -17,29 +17,94 @@ for a renderer defect.
 
 # The inventory
 
-| # | Surface | What it says | Verdict |
+Re-checked 2026-08-04 — every row against the file as it stands today, not
+against what was written about it.
+
+| # | Surface | What it said | Where it stands now |
 |---|---|---|---|
-| 1 | `internal-links.ts` — the docs depth shift | one-level shift when `contentType === 'docs'` | 🔴 **Damage, shipped.** Right for the built site, wrong in dev. Superseded by render-time absolute resolution |
-| 2 | `check-link-form.mjs` header | trackers excluded because *"converting a tracker link to relative could swap a working link for a broken one"* | 🔴 **Damage.** The premise is false — tracker relative links work. The exclusion may still be right, but not for this reason |
-| 3 | `check-content-links.mjs` header | trackers excluded, justified by 1,372 measured failures | 🔴 **Damage.** The 1,372 is the dev/build gap, not link rot |
-| 4 | The link rule in both skills | relative always, never a leading `/` | 🟢 **Correct, and now better founded.** It was defended as a `move` requirement; it is actually a consequence of the filesystem-first principle |
-| 5 | The ordering-label form, `[19/04/02 name](…)` | live in `agent-ks-docs/SKILL.md:74`, `agent-ks-issues/SKILL.md:394`, `10_writing.md:86` | 🟢 **Kept, unaffected.** Verified 2026-08-03 |
-| 6 | `10_writing.md:133` | *"ordering prefixes are stripped from URL slugs"* | 🔴 **False for the tracker**, which keeps them — and that fact is now load-bearing, because it is *why* tracker relative links resolve |
-| 7 | The two asset kinds | `move` advises rewriting `/assets/logo.png`; `check link-form` fails it | 🔴 **Damage**, carried on [`090`](./090_tools-must-say-what-they-skip.md). Now stated in the project `CLAUDE.md` |
+| 1 | `internal-links.ts` — the docs depth shift | one-level shift when `contentType === 'docs'` | 🟢 **Deleted 2026-08-04**, together with opening the issue that builds the replacement. The file's header now states the open defect instead of a mechanism |
+| 2 | `check-link-form.mjs` | the gate skipped the whole tracker; the reason was wrong twice | 🟢 **Exclusion deleted 2026-08-04.** Coverage 569 → **1,857** links. The premise called false turned out true — see below |
+| 3 | `check-content-links.mjs` header | trackers excluded, justified by 1,372 measured failures | 🟢 **Superseded — the file is being deleted**, not corrected. [Retire the plugin's rendering gate](../../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/060_retire-the-plugin-rendering-gate.md) |
+| 4 | The link rule in both skills | relative always, never a leading `/` | 🟢 **Correct, and now better founded.** Defended as a `move` requirement; it is actually a consequence of the filesystem-first principle |
+| 5 | The ordering-label form, `[19/04/02 name](…)` | live in both skills and `10_writing.md` | 🟢 **Kept, unaffected.** Verified 2026-08-03 |
+| 6 | `10_writing.md` | *"ordering prefixes are stripped from URL slugs"* | 🟢 **Corrected.** It now states that a tracker URL keeps its prefixes, that docs and blog strip them, and that a link *leaving* the tracker is the one case needing care |
+| 7 | The two asset kinds | `move` advised rewriting `/assets/logo.png`; `check link-form` fails it | 🟢 **Closed** on [`090`](./090_tools-must-say-what-they-skip.md); the rule is in the project `CLAUDE.md` and the stale exemption instruction was deleted |
 | 8 | 129 content links converted absolute → relative | `73ea791` | 🟢 **Correct and worth keeping.** Independent of the diagnosis: it moved links back into `move`'s maintenance |
-| 9 | `releases/0.2.1.md` | already carries two dated corrections | 🟡 Needs a third — the tracker claim |
+| 9 | `releases/0.2.1.md` | carried three dated corrections | 🟢 **Fourth added 2026-08-04** — the third one's *reasoning* was dev-only, though its retraction stood |
+
+## Row 2 — closed 2026-08-04 by deleting the exclusion, and it cost something
+
+**The gate skipped the whole tracker and only ever looked at docs.** Its reason
+had been wrong twice: first that converting a tracker link to relative could swap
+a working link for a broken one, then — after that was called false — that a
+tracker holds too many legitimately-rotted links to gate on.
+
+**The second reason was measured and did not survive:**
+
+| Scope | Links | Findings |
+|---|---:|---:|
+| docs only (the old default) | 569 | 0 |
+| everything | 1,843 | **2** |
+
+Two. Both site-absolute cross-issue links parked on
+[`060`](./060_does-the-tracker-share-it.md), zero missing targets. Not a wall.
+
+**A scope carve-out has to earn itself with a number.** This one could not,
+twice, so it was deleted rather than given a third reason — the two links were
+converted to relative and the gate now walks **1,857 links across 991 files**,
+green. `--all` is still accepted and ignored so existing invocations work.
+
+### And the "false" premise turned out to be true
+
+**This is the part worth remembering.** The original reason — *converting a
+tracker link to relative could swap a working link for a broken one* — was
+retracted as false. Measured against a real static file server on 2026-08-04,
+after making exactly that conversion:
+
+```
+page served at        /todo/2026-04-10-sync-and-presence/     (301 adds the slash)
+emitted href          2026-04-10-editor-core/issue
+therefore resolves to /todo/2026-04-10-sync-and-presence/2026-04-10-editor-core/issue
+                                                                              404
+```
+
+Site-absolute, those two links worked in **every** environment. Relative, they
+work in dev and 404 on a static host. **The conversion did exactly what the
+premise said it would.**
+
+It was called false on evidence from a dev server only — the same dev-only
+reasoning this subtask exists to sweep up, appearing one more time inside the
+sweep itself.
+
+### Why the conversion stands anyway
+
+Not because the cost is zero, but because it is **the cost every other tracker
+link already pays**. All ~1,800 relative links in this tracker resolve the same
+wrong way on a static host; those two were the only ones immune, and they bought
+that immunity by leaving `agent-ks move`'s maintenance permanently.
+
+Keeping two links broken-on-disk to dodge a defect that already affects the other
+1,800 — and that has its own issue and its own acceptance test — is paying
+forever to hide a symptom. The class is fixed by
+[absolute link resolution](../../../2026-08-04-absolute-link-resolution/issue.md),
+where these two now sit with their siblings instead of being a special case
+nobody remembers.
+
+**This is reversible in one edit if the call goes the other way.**
 
 # Todo list
 
-- [ ] **1 — the shipped regression.** Do not simply revert: that moves the
-      breakage back to production. It goes when render-time absolute resolution
-      lands ([`120`](./120_dev-and-build-disagree-on-the-base.md))
-- [ ] **2 and 3 — rewrite both gate headers.** The honest reason for excluding
-      trackers is now: *the gate reads `dist/`, and `dist/` is the one
-      environment where this question cannot be asked*
-- [ ] **6 — correct the slug-stripping claim** in `10_writing.md`, and say why it
-      matters rather than just fixing the sentence
-- [ ] **9 — third correction block in `0.2.1`**
+- [x] **1 — the shipped regression.** Gone 2026-08-04, with the replacement work
+      opened rather than the breakage moved back to production
+- [x] **3 — `check-content-links.mjs`.** Not rewritten: the file is being
+      deleted. Correcting the header of a doomed file is waste
+- [x] **6 — the slug-stripping claim** in `10_writing.md`, corrected with the
+      reason it matters rather than only the sentence
+- [x] **9 — the correction block in `0.2.1`.** Needed a fourth, not a third: the
+      third existed but justified its retraction with a dev-only fact
+- [x] **2 — the tracker exclusion is gone**, not re-justified. Two links
+      converted, gate green over everything, and the cost measured and written
+      down rather than assumed away
 - [ ] Re-read the rest of both reviews. Their headline finding was wrong; the
       other rows used different methods and are probably unaffected, but **none
       has been checked against a live URL**

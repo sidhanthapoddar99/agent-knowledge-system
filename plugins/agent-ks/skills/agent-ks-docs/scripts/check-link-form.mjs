@@ -61,12 +61,20 @@
  * syntax being shown, not a link. Documentation that quotes the wrong form in
  * order to forbid it must not trip the gate that forbids it.
  *
- * TRACKERS ARE EXCLUDED BY DEFAULT, matching `check links`. The exclusion is
- * about volume: a tracker holds thousands of links to files that legitimately
- * came and went, and a gate that is red on arrival is a gate people learn to
- * ignore. `--all` includes them as a measurement.
+ * NOTHING IS EXCLUDED. Trackers used to be skipped by default, and the reason
+ * given for it was wrong twice: first that converting a tracker link to relative
+ * could swap a working link for a broken one (false — tracker relative links
+ * work), then that a tracker holds too many links to files that legitimately
+ * came and went. That second reason was measured on 2026-08-04 and did not
+ * survive: over 1,843 links the tracker contributed **two** findings, both
+ * site-absolute cross-issue links, both fixed the same day.
  *
- * Usage: check-link-form.mjs [root] [--all] [--json]
+ * A scope carve-out has to earn itself with a number. This one could not, twice,
+ * so it is gone rather than given a third reason — and a link in a tracker is
+ * exactly as unmaintainable as a link in a docs page. `--all` is accepted and
+ * ignored, so existing invocations keep working.
+ *
+ * Usage: check-link-form.mjs [root] [--json]
  * Exit 0 = every internal link is relative AND names a file that exists.
  */
 import fs from 'node:fs';
@@ -95,12 +103,9 @@ function walk(dir, acc = []) {
   return acc;
 }
 
-const ALL = process.argv.includes('--all');
-/** Tracker content — `type: issues`. Excluded unless --all; see the header. */
-const isTracker = (abs) => /(^|[\\/])todo[\\/]/.test(path.relative(ROOT, abs));
 
 const errors = [];
-const files = walk(ROOT).filter((f) => ALL || !isTracker(f));
+const files = walk(ROOT);
 let linksChecked = 0;
 let resolvable = 0;
 

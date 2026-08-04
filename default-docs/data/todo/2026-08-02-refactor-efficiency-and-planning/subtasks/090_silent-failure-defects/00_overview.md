@@ -1,6 +1,6 @@
 ---
 title: "Silent-failure defects — tools that passed what they should have refused"
-status: in-progress
+status: done
 ---
 
 # Overview

@@ -1,6 +1,6 @@
 ---
 title: "`move` orphans a file's .meta.json sidecar — silently, under the old name"
-status: review
+status: done
 ---
 
 # Overview
@@ -159,3 +159,55 @@ to get it.
 - [ ] Extract the coupled-file definitions into a shared module beside
       `_links.mjs`, and have both `move.mjs` and `check.mjs` import them. Small,
       and it makes the invariant structural instead of documented
+
+# The follow-up is done too — one source, and the control proves it
+
+**`scripts/_page-types.mjs`** is now the single home for both facts —
+which extensions are first-class pages, and what a sidecar is called — plus the
+two small predicates built on them. `check.mjs` and `move.mjs` each import from
+it and define none of it; `move.mjs`'s *"keep the two in step by hand"* comment
+is deleted, because there is no longer a second copy to keep in step.
+
+Folding the predicates in **removed** code rather than adding indirection: both
+tools had independently written the same derivation.
+
+## The control that proves it, because nothing else can
+
+A refactor that leaves one tool reading a stale copy passes every ordinary test —
+both tools behave exactly as before. So: a bogus `.zzz` extension was added to
+the shared module **and nowhere else**, and both tools were watched.
+
+| Shared module | `check section` on the fixture | `move 95_c.zzz` |
+|---|---|---|
+| before | warns on both `95_c.zzz` and `95_c.meta.json` | moves the `.zzz` alone — **sidecar orphaned** |
+| `.zzz` added | both warnings **gone** | `carried sidecar: 95_c.meta.json → …` |
+| `.zzz` removed | both warnings **back**, verbatim | back to orphaning it |
+
+**Both flipped together on one edit, and flipped back.** That is the only check
+that distinguishes a real single source from two lists that happen to agree
+today.
+
+Also: the two gates' full output is **byte-identical** before and after
+(`diff` clean on both), and the plugin's own `_selftest.mjs` passes.
+
+## Not verified, stated plainly
+
+- `--dry-run` and the directory-move path were exercised in the original fix but
+  **not re-run after this refactor**
+- The extension list still mirrors the runtime loaders (`DIAGRAM_EXTENSIONS`,
+  `ARTIFACT_PAGE_GLOB`) by **comment only** — no build was run to confirm they
+  still agree. That coupling is unchanged by this work, but it is now stated
+  once instead of twice, which is the improvement available without touching
+  runtime code
+
+## Two pre-existing wording defects, noticed and deliberately not fixed
+
+Both are real and neither belongs to this subtask:
+
+- `move` on an **untracked** file reports `[fs (git mv failed, fell back)]` —
+  the correct outcome, worded as a failure, for what is the only possible path
+  for an untracked file
+- An orphaned sidecar is reported by `check section` as the generic *"non-md
+  file in docs folder (move to assets/?)"* rather than naming the actual
+  diagnosis. **This group is about tools that do not say what they mean**, so
+  that one is arguably in scope for a sibling subtask

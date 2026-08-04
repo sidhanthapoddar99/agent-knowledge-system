@@ -22,6 +22,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { ORDER_PREFIX_FULL_RE, ANY_DIGIT_PREFIX_RE } from '../_order-prefix.mjs';
 import { hasFrontmatterTitle, readText, readJsonChecked, reportAndExit } from '../_check-lib.mjs';
+import { FIRST_CLASS_PAGE_EXTS, isSidecarForPage } from '../_page-types.mjs';
 
 const JSON_OUT = process.argv.includes('--json');
 const ROOT = process.argv.slice(2).find((a) => !a.startsWith('-'));
@@ -49,28 +50,11 @@ const warnings = [];
 // the strict `_` separator). ORDER_PREFIX_FULL_RE = /^(\d{2,5})_(.+)$/.
 // Frontmatter `title:` test + read/report helpers come from `_check-lib.mjs`.
 
-// First-class non-markdown pages that the runtime loaders render as docs pages,
-// exactly like a `.md` file: diagram sources (loaders/diagram-pages.ts) and
-// `.html` artifacts (loaders/artifact-pages.ts). Each takes an `NN_` prefix and
-// joins the same slug-collision pool as markdown — so they are validated as pages
-// here, never warned about as stray non-md files. Keep this in sync with
-// DIAGRAM_EXTENSIONS / ARTIFACT_PAGE_GLOB in those loaders.
-const FIRST_CLASS_PAGE_EXTS = new Set(['.mmd', '.mermaid', '.dot', '.gv', '.excalidraw', '.html']);
-// A first-class page may carry a same-name metadata sidecar (`<NN_name>.meta.json`
-// / `.meta.jsonc`) — a companion, never a page itself, so it is neither
-// prefix-checked nor counted in the collision pool.
-const SIDECAR_RE = /\.meta\.jsonc?$/i;
-
-/** True when `name` is a `.meta.json(c)` sidecar for a colocated first-class page. */
-function isSidecarForPage(dir, name) {
-  const m = name.match(SIDECAR_RE);
-  if (!m) return false;
-  const base = name.slice(0, name.length - m[0].length);
-  for (const ext of FIRST_CLASS_PAGE_EXTS) {
-    if (fs.existsSync(path.join(dir, base + ext))) return true;
-  }
-  return false;
-}
+// FIRST_CLASS_PAGE_EXTS (the non-markdown files the runtime renders as pages) and
+// isSidecarForPage() (their `.meta.json(c)` companions) come from the shared
+// `_page-types.mjs`, which `docs/move.mjs` reads too — a page type added there is
+// picked up by both, so neither can drift. A first-class page is validated as a
+// page here (NN_ prefix + collision pool); its sidecar is neither.
 
 /**
  * Classify a folder/file name's ordering prefix.

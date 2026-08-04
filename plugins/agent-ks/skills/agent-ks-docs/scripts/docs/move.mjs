@@ -44,6 +44,7 @@ import {
   MD_LINK_RE, isIgnorableTarget, splitAnchor, collectMarkdownFiles,
   orderingPathFor, relabelOrdering, makeFenceTracker,
 } from '../_links.mjs';
+import { FIRST_CLASS_PAGE_EXTS, sidecarPathsFor } from '../_page-types.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 
@@ -83,6 +84,7 @@ function usage(code) {
   out('  --no-git    force a plain fs move even inside a git work tree');
   out('  --root <dir>  widen / override the scan + validation scope (default: content root from .env)');
   out('  --help      show this help\n');
+  out('  A first-class page\'s .meta.json / .meta.jsonc sidecar travels with it, renamed to match.');
   out('  External (http/https/mailto), site-absolute (/...), and pure-anchor (#...) links are ignored.');
   process.exit(code);
 }
@@ -133,6 +135,51 @@ if (!isInside(scanRoot, fromPath)) {
 if (!isInside(scanRoot, toPath)) {
   console.error(`<to> resolves outside the content root (${scanRoot}):\n  ${toPath}\n  Pass --root <dir> to widen the scope.`);
   process.exit(1);
+}
+
+// ── coupled files: the metadata sidecar ──────────────────────────────────
+// A first-class non-markdown page (`.html` artifact, diagram source) may carry a
+// same-basename `<NN_name>.meta.json` / `.meta.jsonc` sidecar holding its title,
+// sidebar label, embed height and theme mode. It is found by NAME CONVENTION
+// from its partner — nothing links to it — so it is not a neighbour of the page,
+// it is part of it, and it has to travel with it. Moving one without the other
+// produces two broken things at once: a page whose metadata has vanished, and a
+// stray sidecar the loader flags as an orphan.
+//
+// Which extensions are pages, and what a sidecar is called, come from the shared
+// `_page-types.mjs` — the same module `docs/check.mjs` reads for the opposite
+// question ("is this file a sidecar, so don't warn about it as stray"). One
+// definition, so a new page type cannot reach one tool and miss the other.
+
+/**
+ * Sidecars that must travel with a single-file move, as `{ from, to }` pairs.
+ * Empty for a directory move (a sidecar inside the directory moves with it) and
+ * for a page type that has none.
+ */
+function sidecarMoves() {
+  if (fromIsDir) return [];
+  const ext = path.extname(fromPath).toLowerCase();
+  if (!FIRST_CLASS_PAGE_EXTS.has(ext)) return [];
+  const fromBase = fromPath.slice(0, fromPath.length - path.extname(fromPath).length);
+  const toBase = toPath.slice(0, toPath.length - path.extname(toPath).length);
+  const sources = sidecarPathsFor(fromBase);
+  const destinations = sidecarPathsFor(toBase);
+  const out = [];
+  for (let i = 0; i < sources.length; i++) {
+    if (fs.existsSync(sources[i])) out.push({ from: sources[i], to: destinations[i] });
+  }
+  return out;
+}
+
+const sidecars = sidecarMoves();
+
+// Never overwrite a file the caller did not name. Checked before anything moves,
+// so a refusal leaves the tree exactly as it was.
+for (const s of sidecars) {
+  if (fs.existsSync(s.to)) {
+    console.error(`sidecar destination already exists: ${s.to}\n  Refusing to overwrite it. Move or remove it first.`);
+    process.exit(1);
+  }
 }
 
 // ── helpers ──────────────────────────────────────────────────────────────
@@ -295,6 +342,11 @@ if (dryRun) {
   console.log(`move:  ${fromPath}`);
   console.log(`   →   ${toPath}`);
   console.log(`mode:  ${noGit ? 'fs (forced --no-git)' : (inGitTree(fromPath) ? 'git mv' : 'fs (not a git work tree)')}\n`);
+  for (const s of sidecars) {
+    console.log(`sidecar: ${s.from}`);
+    console.log(`   →     ${s.to}`);
+  }
+  if (sidecars.length) console.log('');
   if (totalEdits === 0) {
     console.log('No link edits needed.');
   } else {
@@ -352,25 +404,33 @@ function fsMoveRecursive(src, dst) {
   fs.rmSync(src, { recursive: true, force: true });
 }
 
-// Ensure destination parent dirs exist.
-fs.mkdirSync(path.dirname(toPath), { recursive: true });
-
-let moveMode;
-if (!noGit && inGitTree(fromPath)) {
-  try {
-    execFileSync('git', ['mv', fromPath, toPath], {
-      cwd: path.dirname(fromPath), stdio: ['ignore', 'pipe', 'pipe'],
-    });
-    moveMode = 'git mv';
-  } catch (e) {
-    // Fall back to fs move if git mv refused (e.g. untracked file).
-    fsMoveRecursive(fromPath, toPath);
-    moveMode = 'fs (git mv failed, fell back)';
+/**
+ * Move one path with the best mechanism available: `git mv` inside a work tree
+ * (so history follows), a plain filesystem move otherwise or on refusal.
+ * Returns the mode actually used, for the summary line.
+ */
+function performMove(src, dst) {
+  fs.mkdirSync(path.dirname(dst), { recursive: true });
+  if (!noGit && inGitTree(src)) {
+    try {
+      execFileSync('git', ['mv', src, dst], {
+        cwd: path.dirname(src), stdio: ['ignore', 'pipe', 'pipe'],
+      });
+      return 'git mv';
+    } catch {
+      // Fall back to fs move if git mv refused (e.g. untracked file).
+      fsMoveRecursive(src, dst);
+      return 'fs (git mv failed, fell back)';
+    }
   }
-} else {
-  fsMoveRecursive(fromPath, toPath);
-  moveMode = noGit ? 'fs (--no-git)' : 'fs';
+  fsMoveRecursive(src, dst);
+  return noGit ? 'fs (--no-git)' : 'fs';
 }
+
+const moveMode = performMove(fromPath, toPath);
+// The sidecar goes the same way, by the same mechanism, immediately after its
+// page — see the coupled-files note above.
+const sidecarsMoved = sidecars.map(s => ({ ...s, mode: performMove(s.from, s.to) }));
 
 // ── apply link edits to the (now-final) files ──────────────────────────────
 let editedFiles = 0;
@@ -403,5 +463,8 @@ for (const [finalAbs, arr] of editsByFile) {
 }
 
 console.log(`moved ${movedFileCount} file(s) [${moveMode}]; rewrote ${editedLinks} link(s) across ${editedFiles} file(s)`);
+for (const s of sidecarsMoved) {
+  console.log(`carried sidecar: ${s.from}  →  ${s.to} [${s.mode}]`);
+}
 reportUnmaintainable();
 process.exit(0);

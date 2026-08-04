@@ -1,6 +1,6 @@
 ---
 title: "An index is checked by a cheap agent, not by a human remembering to look"
-status: review
+status: done
 ---
 
 # Overview

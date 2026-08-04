@@ -5,15 +5,16 @@
  * loadIssues() shape (src/loaders/issues.ts) but stays read-light:
  * no markdown rendering, no caching, no Astro coupling.
  *
- * Run with BUN. Not node: `gray-matter` is imported here and there is no
- * package.json or node_modules for node to resolve it from.
+ * Run with BUN. Not node: frontmatter parsing goes through `Bun.YAML`, which
+ * node has no equivalent of. The plugin ships NO npm dependencies — that is the
+ * point, and it is why bun is a hard requirement rather than a preference.
  */
 
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import matter from 'gray-matter';
+import { readFrontmatter, frontmatterData } from '../_frontmatter.mjs';
 import { resolveProjectContext } from '../_env.mjs';
 import { parseOrderPrefixLoose } from '../_order-prefix.mjs';
 import { parseArgs, printHelp } from '../_cli.mjs';
@@ -159,7 +160,7 @@ function makeSubtask(abs, groupPath) {
   let title = cleanName.replace(/[-_]/g, ' ');
   let status = 'open';
   try {
-    const fm = matter(fs.readFileSync(abs, 'utf-8')).data;
+    const fm = frontmatterData(fs.readFileSync(abs, "utf-8"));
     if (fm.title) title = fm.title;
     // Canonical field is `status:`; tolerate the legacy `state:` name and
     // legacy values (closed/cancelled) so a partial migration still reads.
@@ -230,7 +231,7 @@ export function readIssueComments(trackerPath, issueId) {
         const seq = name.match(/^(\d+)/);
         if (seq) sequence = parseInt(seq[1], 10);
         try {
-          const fm = matter(fs.readFileSync(abs, 'utf-8')).data;
+          const fm = frontmatterData(fs.readFileSync(abs, "utf-8"));
           if (fm.author) author = fm.author;
           if (fm.date) date = fm.date;
         } catch {}
@@ -268,7 +269,7 @@ function makeAgentLog(abs, groupPath) {
   const base = path.basename(abs).replace(/\.md$/, '');
   const sequence = parseOrderPrefixLoose(base).position ?? 0;
   let fm = {};
-  try { fm = matter(fs.readFileSync(abs, 'utf-8')).data; } catch {}
+  try { fm = frontmatterData(fs.readFileSync(abs, "utf-8")); } catch {}
   return {
     name: base,
     sequence,

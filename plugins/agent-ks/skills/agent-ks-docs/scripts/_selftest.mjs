@@ -31,10 +31,10 @@ const CLI = path.join(HERE, 'cli.mjs');
 const BIN_DIR = path.resolve(HERE, '../../../bin'); // plugin bin/ folder
 const VERBOSE = process.argv.includes('--verbose');
 
-// Match the shim runtime: prefer bun, fall back to node. The plugin ships NO
-// node_modules; bun resolves deps (e.g. gray-matter) from its global cache,
-// node cannot. Running under node would crash issues/* on import and produce a
-// FALSE baseline — so detect bun the way bin/<name> does.
+// Match the shim runtime: bun, with node only as a last resort. The commands
+// parse frontmatter through `Bun.YAML`, which node does not have, so running
+// under node would crash issues/* and produce a FALSE baseline — detect bun the
+// way bin/<name> does.
 const RUNTIME = (() => {
   const probe = spawnSync('bun', ['--version'], { encoding: 'utf8' });
   return probe.status === 0 ? 'bun' : process.execPath;

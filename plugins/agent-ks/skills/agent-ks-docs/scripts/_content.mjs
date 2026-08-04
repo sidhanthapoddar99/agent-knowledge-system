@@ -13,6 +13,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { resolveProjectContext } from './_env.mjs';
 import { parseArgs, emitJson, writeStdout } from './_cli.mjs';
+import { frontmatterData } from './_frontmatter.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 
@@ -23,20 +24,16 @@ function dataDir() {
   return path.join(resolveProjectContext(SCRIPT_DIR).contentRoot, 'data');
 }
 
-/** Parse the leading `--- … ---` frontmatter block into a flat {key: value}. */
-function parseFrontmatter(content) {
-  const fm = {};
-  const m = /^---\r?\n([\s\S]*?)\r?\n---/.exec(content);
-  if (!m) return fm;
-  for (const line of m[1].split('\n')) {
-    const mm = /^([A-Za-z0-9_-]+):\s*(.*)$/.exec(line);
-    if (mm) fm[mm[1]] = mm[2].replace(/^["']|["']$/g, '').replace(/["']$/, '').trim();
-  }
-  return fm;
-}
-
+/**
+ * Frontmatter for one file, or `{}` if it cannot be read or parsed.
+ *
+ * This used to be a hand-rolled line regex that took every value as a string,
+ * so `tags: [a, b]` arrived as the literal text `"[a, b]"` and a quoted title
+ * containing a colon came back mangled. It now shares the tracker's parser —
+ * one implementation, two callers.
+ */
 function frontmatter(file) {
-  try { return parseFrontmatter(fs.readFileSync(file, 'utf-8')); } catch { return {}; }
+  try { return frontmatterData(fs.readFileSync(file, 'utf-8')); } catch { return {}; }
 }
 
 /** Recursively collect .md files (skip hidden, assets/, README.md). */

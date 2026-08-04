@@ -5,19 +5,22 @@
 #
 # BUN IS REQUIRED, and this refuses rather than falling back to node.
 #
-# There used to be a `node` fallback. It cannot work: the scripts import
-# `gray-matter`, and there is no root `package.json` and no vendored
-# `node_modules`, so node dies with a module-resolution stack trace naming a
-# dependency the reader never chose. Bun resolves it from its own cache. A
-# fallback that always fails is worse than none — it turns "install bun" into
-# "debug an import error", and it made the documented claim that node works
-# read as true right up until someone tried it.
+# There used to be a `node` fallback. It cannot work: frontmatter parsing goes
+# through `Bun.YAML`, which node has no equivalent of, so node dies at the first
+# command that reads a file. A fallback that always fails is worse than none — it
+# turns "install bun" into "debug a ReferenceError", and it made the documented
+# claim that node works read as true right up until someone tried it.
+#
+# This USED to be about an npm import (`gray-matter`) that only bun's
+# auto-install could resolve — i.e. bun AND a network. The plugin now ships no
+# dependencies at all, so the requirement is bun and nothing else: it works
+# offline, on a cold cache, forever.
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CLI="$DIR/../skills/agent-ks-docs/scripts/cli.mjs"
 if ! command -v bun >/dev/null 2>&1; then
   echo "agent-ks: bun is required and was not found on PATH." >&2
-  echo "  These scripts import gray-matter, which node cannot resolve here" >&2
-  echo "  (no package.json, no node_modules) — so there is no working fallback." >&2
+  echo "  These scripts parse frontmatter with Bun.YAML, which node does not have" >&2
+  echo "  — so there is no working fallback." >&2
   echo "  Install: curl -fsSL https://bun.sh/install | bash" >&2
   exit 127
 fi

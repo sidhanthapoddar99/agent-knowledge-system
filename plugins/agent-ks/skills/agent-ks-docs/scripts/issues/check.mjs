@@ -28,7 +28,7 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import matter from 'gray-matter';
+import { readFrontmatter, frontmatterData } from '../_frontmatter.mjs';
 import { resolveTracker, listIssueFolders, readVocabulary, parseArgs, printHelp, STATUSES, TERMINAL_STATUSES, normalizeStatus, LEGACY_STATUS_MAP, MAX_SUBFOLDER_DEPTH } from './_lib.mjs';
 import { readJsonChecked, reportAndExit } from '../_check-lib.mjs';
 import { MD_LINK_RE, isIgnorableTarget, splitAnchor, orderingPathFor, parseOrderingLabel, makeFenceTracker, blankedProseLines } from '../_links.mjs';
@@ -401,7 +401,7 @@ function lintPlans(id, issueDir) {
       }
 
       let parsed;
-      try { parsed = matter(fs.readFileSync(path.join(planDir, f.name), 'utf-8')); }
+      try { parsed = readFrontmatter(fs.readFileSync(path.join(planDir, f.name), 'utf-8')); }
       catch (err) { errors.push(`${stageLabel}: malformed frontmatter (${err.message})`); continue; }
       const fm = parsed.data || {};
       reportDrift(stageLabel, unknownKeys(fm, PLAN_STAGE_FM_KEYS), PLAN_STAGE_FM_KEYS);
@@ -618,7 +618,7 @@ for (const entry of issueFolders) {
           const rel = [...segments, e.name].join('/');
           const abs = path.join(absDir, e.name);
           try {
-            const parsed = matter(fs.readFileSync(abs, 'utf-8'));
+            const parsed = readFrontmatter(fs.readFileSync(abs, 'utf-8'));
             const fm = parsed.data || {};
             // Canonical field is `status:`; `state:` is the legacy name.
             const rawStatus = fm.status ?? fm.state;
@@ -695,7 +695,7 @@ for (const entry of issueFolders) {
         } else if (e.isFile() && e.name.endsWith('.md')) {
           const rel = [...segments, e.name].join('/');
           try {
-            const fm = matter(fs.readFileSync(path.join(absDir, e.name), 'utf-8')).data || {};
+            const fm = readFrontmatter(fs.readFileSync(path.join(absDir, e.name), 'utf-8')).data || {};
             reportDrift(`${id}/${sub}/${rel}`, unknownKeys(fm, FM_KEYS_BY_TYPE[sub]), FM_KEYS_BY_TYPE[sub]);
           } catch (err) {
             warnings.push(`${id}/${sub}/${rel}: malformed frontmatter (${err.message})`);
@@ -817,7 +817,7 @@ for (const entry of issueFolders) {
         if (!isDoc) continue;
         let fm, body;
         try {
-          const parsed = matter(fs.readFileSync(path.join(workingDir, f.name), 'utf-8'));
+          const parsed = readFrontmatter(fs.readFileSync(path.join(workingDir, f.name), 'utf-8'));
           fm = parsed.data || {};
           body = parsed.content || '';
         } catch { continue; } // malformed fm already reported by the generic walk

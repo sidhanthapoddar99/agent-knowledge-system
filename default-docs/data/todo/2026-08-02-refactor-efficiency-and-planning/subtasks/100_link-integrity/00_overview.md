@@ -29,13 +29,14 @@ status: done
 | [`090`](./090_tools-must-say-what-they-skip.md) | `move` and `check` must not skip silently | 🟢 **Yes.** The gate passes 306 links `move` cannot maintain, and both tools are wrong about site assets |
 | [`100`](./100_links-whose-target-does-not-exist.md) | 55 links with no target | 🟢 **Yes** — genuinely dead targets, independent of resolution |
 | [`110`](./110_live-check.md) | the fifteen clicked links | ✅ **Done its job.** It is the evidence the rest is re-based on |
-| [`120`](./120_dev-and-build-disagree-on-the-base.md) | the real diagnosis + the three options | 🟡 **Sid's call**, and the June issue already decided it |
+| [`120`](./120_dev-and-build-disagree-on-the-base.md) | the real diagnosis + the three options | 🟢 **Done.** The call was made — the June issue already decided it, and the URL question now lives there |
 | [`130`](./130_what-the-wrong-diagnosis-taught.md) | damage inventory, nine surfaces | 🟢 **Yes** — three fixed, the rest listed |
-| [`140`](./140_dual-slug-url-resolution.md) · [`150`](./150_plans-auto-resolution.md) | routing defects found by the live check | ⬜ **Pointers only** — the work is on `2026-06-09-issue-link-resolution` |
+| [`140`](./140_dual-slug-url-resolution.md) · [`150`](./150_plans-auto-resolution.md) | routing defects found by the live check | 🟢 **Done as pointers** — both are closed here; the work itself is on `2026-06-09-issue-link-resolution` |
 | [`160`](../../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/040_base-url-and-folder-name-are-not-tied.md) | `base_url` and the data folder are not tied | ➡️ **Moved 2026-08-04** to the absolute-link-resolution issue, which owns the URL. Split out of [`020`](./020_relative-links-are-the-contract.md) |
 | [`170`](./170_relative-but-not-a-path.md) | 334 links relative in shape, a slug in fact | 🟢 **Yes.** Every gate passes them and `move` skips them silently. Found while closing [`030`](./030_user-guide-relative-links-404.md) |
 | [`180`](./180_rendered-link-check-belongs-to-this-repo.md) | the rendering gate is in the wrong tree | ✅ **Done 2026-08-04.** `scripts/check-links.mjs` crawls a live server, is control-tested both directions, and gives a correct distinct answer in dev (4), preview (4) and a real static host (546) |
 | [`190`](./190_the-depth-shift-is-removed.md) | the depth shift is removed | ⬜ **Dropped 2026-08-04.** The shift is out and `trailingSlash: 'always'` was tried and reverted too. The class now has its own issue — see below |
+| [`200`](./200_link-tooling-blind-spots.md) | three links the tooling cannot see, and one it edits when it should only read | 🟢 **Done.** Left open when [`170`](./170_relative-but-not-a-path.md) closed, because they are the same *shape* as this group and not part of that subtask's job |
 
 # ⭐ The class has moved — this group no longer owns the fix
 

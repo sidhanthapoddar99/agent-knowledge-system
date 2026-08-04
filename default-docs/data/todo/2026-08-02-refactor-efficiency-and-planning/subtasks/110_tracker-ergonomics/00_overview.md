@@ -23,11 +23,19 @@ that arrives too late to act on.
   [`015`](./015_the-working-index-is-a-table-of-the-round.md) was **generated**,
   and its checker shared the generator's blind spot. Hand-written now, checked by
   reading.
-- [`035`](./035_the-plugin-declares-no-dependencies.md) — open. The cost the
-  parser swap named: four undeclared dependencies and no `package.json`.
+- [`035`](./035_the-plugin-declares-no-dependencies.md) — `gray-matter` was
+  imported and never declared, resolving only because the CLI execs `bun`, which
+  auto-installs. Removed rather than declared: `Bun.YAML` was already in the
+  runtime. The plugin now ships **zero** dependencies.
 - [`045`](./045_a-link-whose-label-wraps-is-never-checked.md) — open. Ten links in
   this repo that no gate has ever seen, because every caller matches one line at a
   time and their labels wrap. Pre-existing; found by counting against the renderer.
+- [`055`](./055_an-index-is-checked-by-a-cheap-agent.md) — the reading job from
+  [`025`](./025_an-index-is-checked-not-generated.md), built as the plugin's first
+  agent. Report-only, two directions, and the second one needs a directory listing
+  because an index cannot lead you to an entry it does not have.
+- [`065`](./065_the-skill-audit-and-its-rulings.md) — two audits of the issues
+  skill, the findings that survived checking, and the rulings that closed them.
 
 **Done when** each entry is fixed *in the place that will be read next time* —
 the skill, the scaffolder, the validator — and not merely in a record of the
@@ -49,17 +57,28 @@ conversation that noticed it.
 - [x] [`020`](./020_when-a-run-earns-an-agent-log.md) — one home, a stated
       default, `done`
 - [x] [`025`](./025_an-index-is-checked-not-generated.md) — `done`
-- [ ] [`035`](./035_the-plugin-declares-no-dependencies.md) — open, and the first
-      task is to **reproduce the failure rather than fix it**
+- [x] [`035`](./035_the-plugin-declares-no-dependencies.md) — `done`; zero
+      runtime dependencies, licensed by a differential test over 1,035 documents.
+      The offline case is measured: old hangs at 90 s, new exits 0
 - [ ] [`045`](./045_a-link-whose-label-wraps-is-never-checked.md) — open; ten real
       instances, and the fix is a design question about where link *finding* lives
+- [x] [`055`](./055_an-index-is-checked-by-a-cheap-agent.md) — `done`; five drafts,
+      two control tests, and it found this overview's own staleness on first run
+- [x] [`065`](./065_the-skill-audit-and-its-rulings.md) — `done`
 
 # Outcomes and Next Steps
 
-**Four closed 2026-08-04, two open.** The group stays open by design — it is a
-place to put small things, not a milestone, and entries close individually. Both
-open entries were **raised by the reviews**, not planned: the parser swap paid for
-itself twice over in things it revealed.
+**Seven closed, one open.** The group stays open by design — it is a
+place to put small things, not a milestone, and entries close individually. The
+last two entries were **raised by the reviews**, not planned: the parser swap paid
+for itself twice over in things it revealed, and was then reverted.
+
+**This overview was itself the first thing the new checker caught.** It named
+[`055`](./055_an-index-is-checked-by-a-cheap-agent.md) and
+[`065`](./065_the-skill-audit-and-its-rulings.md) as MISSING — two entries that
+existed on disk and appeared nowhere here — plus a wrong count and a status that
+had moved. That is the direction a reference-walking check cannot reach, which is
+the argument the subtask was built on, demonstrated on the file that describes it.
 
 **What the four cost, and what they were worth.** Two review rounds over one
 diff, 44 findings, and **two of this group's own three deliverables were reversed

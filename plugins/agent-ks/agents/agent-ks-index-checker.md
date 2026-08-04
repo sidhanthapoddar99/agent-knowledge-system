@@ -83,7 +83,7 @@ rather than reporting a clean pass.
 | an **issue folder** (has `settings.json` + `issue.md`) | sweep all six kinds below |
 | a `plans/<NN_name>/` folder | the plan: `overview.md`, `settings.json`, every stage |
 | an `agent-log/<NNN_xx_name>/` folder | `01_summary.md` and `02_working/00_index.md` |
-| a `subtasks/<NNN_group>/` folder | that group's `00_overview.md` |
+| a `subtasks/<NNN_group>/` folder | that group's index leaf — **any** file matching `00_*.md`, not the name `00_overview.md` |
 | a whole tracker (`data/todo/` or similar) | say so, and ask for one issue — a tracker-wide sweep is not this agent's size |
 
 If the path does not exist, say that and stop. Do not go looking for what the
@@ -105,7 +105,7 @@ a memory:
 | For | List |
 |---|---|
 | an agent log | `<log>/*` and `<log>/02_working/*` — every round file **and every round folder** |
-| a subtask group | `<group>/*` — every `.md` beside `00_overview.md` |
+| a subtask group | `<group>/*` — every `.md` beside the `00_*.md` index leaf |
 | a plan | `<plan>/*` — every stage file beside `overview.md` and `settings.json` |
 | an issue folder | `<issue>/*` and `<issue>/*/*` — every section folder and its contents |
 
@@ -149,7 +149,7 @@ index names, report the remainder as `MISSING`. Direction A is what differs.
 |---|---|---|
 | `agent-log/<log>/02_working/00_index.md` | every entry in `02_working/` — **files and folders alike.** A round stored as a folder is the exact blind spot a generator and its validator both had here | a bullet whose link resolves to nothing; a bullet whose line of what-it-found is contradicted by the round file itself — a round later reversed that still reads as landed |
 | `agent-log/<log>/01_summary.md` todo list | rounds in `02_working/` doing work no todo item covers | unticked boxes whose work the round files show landed; ticked boxes whose linked subtask still says `open`; `# Outcome` empty while `02_working/` holds finished rounds |
-| `subtasks/<NNN_group>/00_overview.md` | every `.md` in the group beside `00_overview.md` | an entry the overview calls open whose own file says `review`/`done`/`dropped`; the group's own `status:` still `open`/`in-progress` when every member is closed |
+| `subtasks/<NNN_group>/00_*.md` | every `.md` in the group beside the index leaf | an entry the index calls open whose own file says `review`/`done`/`dropped`; **the index leaf's own** `status:` still `open`/`in-progress` when every member is closed (a group folder has no body file of its own) |
 | `issue.md` where it indexes its own sections | every `notes/`, `plans/`, `brainstorm/`, `agent-log/` entry on disk | a mention pointing at something that no longer exists |
 | `notes/` ↔ `brainstorm/` cross-references | notes or brainstorm entries no other file references at all | a pointer to a note that moved or graduated; a "still being decided" whose target now records the decision |
 | **a plan** | every stage file beside `overview.md` — a stage on disk that `overview.md` never mentions | **the inference case — see below** |

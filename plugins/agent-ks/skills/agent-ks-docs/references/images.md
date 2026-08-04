@@ -41,7 +41,7 @@ This is independent of `agent-ks img` — capture is not its job.
 
 ```bash
 agent-ks img path/to/images/*.png --dpr 2 --gray --format webp --quality 80 \
-  --rewrite-links --report
+  --rewrite-links
 ```
 
 - `--dpr 2` — **the biggest free win.** Browser/retina screenshots render at 2×

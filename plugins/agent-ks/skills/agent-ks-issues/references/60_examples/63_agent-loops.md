@@ -77,7 +77,7 @@ iterate → iteration file → (comment if a human decision is needed) → re-it
 |---|---|
 | `subtasks/010_zero-flakes.md` | **Scope** — what done means, and how to verify it |
 | `plans/01_get-to-zero/` | **Order** — which sweep runs when, and what blocks what |
-| `agent-log/0N0_lp_*/` | **Execution** — how the agent actually chased it, and how it came out |
+| `agent-log/NNN_lp_*/` | **Execution** — how the agent actually chased it, and how it came out |
 
 Don't recreate the plan as a run's task list, don't promote a task list into a subtask,
 and don't let an agent log list its rounds as a schedule — that is the plan.

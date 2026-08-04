@@ -70,6 +70,7 @@ Exit `0` clean / `1` problems found (CI-friendly). All support `--json`.
 | `agent-ks check issues` | The issue tracker — schema, vocabulary, subtask states, anatomy folders (brainstorm / agent-memory / agent-log activity grammar, `agentLogKinds`) (`--quiet`, `--strict`, `--tracker`). Use this on `data/todo/`, **not** `check section` |
 | `agent-ks check legacy-tags [root]` | Retired custom-tags syntax (`:::callout` / `<callout>` / `<tabs>` / `<collapsible>`) anywhere under a content root, each hit with its native replacement (GFM alert, `<details>`, flattened sections). Fenced code examples are skipped. Part of the migration toolkit — see `references/doc-migration.md` |
 | `agent-ks check skill-links` | Maintainer tool: relative links between the skill's `.md` files resolve. **Scans the skills beside the running copy** — so `agent-ks` checks the installed plugin and `agent-ks-dev` checks a source checkout. The banner names which; read it before quoting a pass |
+| `agent-ks check links` | Links between content pages resolve **as the site renders them** (`--section`, `--all`, `--dist`). Needs a build first — `./start build` — because it reads the built output, not the source. `check link-form` is the source-only sibling and is the one to reach for by default |
 
 ---
 

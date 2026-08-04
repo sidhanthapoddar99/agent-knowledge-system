@@ -34,7 +34,7 @@ Every tracker has the same skeleton:
     │       └── NN_<subgroup>/
     │           └── NN_<slug>.md                 ← level-2 leaf
     ├── agent-log/                               ← EXECUTION — one folder per run
-    │   └── 0NN_<code>_<name>/                   ← kind code: lp/au/rf/it/wf (+ custom)
+    │   └── NNN_<code>_<name>/                   ← kind code: lp/au/rf/it/wf (+ custom)
     │       ├── settings.json                    ← optional — { "status": "…" }
     │       ├── 01_summary.md                    ← REQUIRED — the one conclusive file
     │       ├── 02_working/                      ← NNN_<name>.md — iteration + producer files

@@ -148,12 +148,55 @@ A hint at most.
 something small, the mistake is the audit, not the missing log.** Reach for an audit
 when you cannot predict the answer; reach for a verify when you can.
 
+## How a plan becomes agent logs
+
+**A plan does not map to a log stage-by-stage. It maps by MILESTONE, and a milestone is
+yours to choose** — nothing in code knows the word, and nothing should. Ten stages might
+carry four milestones or one.
+
+```
+plans/01_the-plan/                    10 stages
+   ├── 010_stage  ┐
+   ├── 020_stage  │ milestone A  ──► agent-log/010_wf_plan/100_wf_milestone-a/
+   ├── 030_stage  ┘                     └── 02_working/  010_… 020_…
+   ├── 040_stage  ┐
+   ├── 050_stage  ┘ milestone B  ──►                     /110_wf_milestone-b/
+   ├── 060_stage    milestone C  ──►                     /120_wf_milestone-c/
+   ├── 070…100     milestone D  ──►                      /130_wf_milestone-d/
+
+agent-log/020_au_the-audit/           ← outside the plan → its own top-level log
+```
+
+1. **The plan gets one main agent log.** Its `01_summary.md` carries the plan-level
+   story; the work happens in the children.
+2. **Each milestone gets a child log**, covering two or three stages. The log's name says
+   which.
+3. **A stage becomes working files** — bundle several stages into one file, or split one
+   stage across two. **The working file is bounded by a round that produced something,
+   never by the stage boundary.** That is why the mapping is not one-for-one and never
+   will be.
+4. **A stage still holds multiple subtasks.** Nothing about that changes.
+5. **Work outside the plan but essential gets its own top-level log** — not a child of
+   the plan's.
+
+**Where an audit goes, decided by size rather than by location:**
+
+| Audit | Goes |
+|---|---|
+| Outside the plan | its own top-level agent log |
+| Inside a plan, **large** — many things checked, issues being hunted | its own agent log |
+| Inside a plan, **small** — say three agents independently checking one thing | **one or two working files** in the log already open |
+
+So the floor above still governs. What "outside the plan" adds is a trigger; size decides
+everything else.
+
 ## Vocabulary
 
 | Term | Means |
 |---|---|
-| **agent log** | one folder — `0NN_<kind>_<name>/` — recording one run with one goal |
-| **child agent log** | an agent log nested inside another, for a sub-goal — prefix `≥ 100` |
+| **agent log** | one folder — `NNN_<kind>_<name>/` — recording one run with one goal |
+| **child agent log** | an agent log nested inside another, for a sub-goal — prefix `≥ 100` **within that log** |
+| **milestone** | a grouping of stages you choose, which becomes one child log. Not a code concept |
 | **slot** | one of the run's own three numbered members: `01_summary.md`, `02_working/`, `03_debrief/` |
 | **iteration** | one coherent round of work — a group of subtasks, executions and agents |
 | **iteration file** | the round's own file in `02_working/`, written by the orchestrator |
@@ -163,7 +206,7 @@ when you cannot predict the answer; reach for a verify when you can.
 
 ```
 agent-log/
-└── 0NN_<kind>_<name>/              ← an agent log
+└── NNN_<kind>_<name>/              ← an agent log
     ├── settings.json               ← optional: status → colours the kind symbol
     ├── 01_summary.md               ← REQUIRED. The one conclusive file.
     ├── 02_working/                 ← one file per iteration, plus producers'

@@ -155,7 +155,10 @@ entry graduates to a real issue exactly when it passes the litmus test — and i
 
 **One status vocabulary across the whole tracker** — issues, subtasks, plans, plan
 stages, agent logs and iteration files all use these seven values in the `status` field.
-Fixed in framework code; a tracker overrides only colors.
+**Fixed in framework code, colours included.** A tracker overrides nothing here: a
+`fields.status` block or a `statusColors` map in the tracker root is a hard error, not a
+customisation. Restyle a status through the theme's `--status-<name>` CSS variable, which
+applies to the whole tracker.
 
 | Category | Statuses |
 |---|---|
@@ -240,7 +243,7 @@ one line — never open a second. None open and nothing follows? the subtask's O
 Unsure? **ask once per session, never per subtask**, and never make it a validator error.
 
 ```
-agent-log/0NN_<kind>_<name>/     ← one run, one goal
+agent-log/NNN_<kind>_<name>/     ← one run, one goal
 ├── settings.json                ←   optional: status → colours the kind symbol
 ├── 01_summary.md                ←   REQUIRED. The one conclusive file.
 ├── 02_working/                  ←   one file per iteration, plus producers'
@@ -250,19 +253,32 @@ agent-log/0NN_<kind>_<name>/     ← one run, one goal
 │   └── 020_<round>.md           ←     iteration 02
 ├── 03_debrief/                  ←   what leaves this run
 │   └── 01_handover.md
-└── 100_wf_<sub-goal>/           ←   a child agent log — same shape, recursively
+└── 100_wf_<sub-goal>/           ←   a child agent log — same shape, one level deeper
 ```
 
-**The prefix decides what a member of an agent log is** — `< 100` is one of the run's
-own three slots, `≥ 100` is a child agent log. Arithmetic rather than a reserved-name
-list, so nothing is ambiguous and a fourth slot needs no code to know its name; the
-numbers also state the order the three are meant to be read in.
+**Numbering: `NNN_` by convention, `NN`–`NNNNN` accepted, gap-spaced** — `010 020 030 …
+090 100 110 120`. Runs keep counting past ninety-nine; the hundredth prefix is nothing
+special.
+
+**Inside a log, the prefix decides what a member is** — `< 100` is one of the run's own
+three slots, `≥ 100` is a child agent log. Arithmetic rather than a reserved-name list,
+so nothing is ambiguous and a fourth slot needs no code to know its name; the numbers
+also state the order the three are meant to be read in. **That band means nothing
+directly under `agent-log/`** — there, `100_lp_sweep` is simply the tenth run.
+
+**Nesting stops at two levels of child log, and the reason is a hard cap.** The framework
+ignores anything past **five** folder levels — no page, no error, just a console warning
+in a build of hundreds of lines, so the content is gone and nothing says so.
+`agent-log/ › run/ › child/ › 02_working/ › producer/` is already five. The validator
+therefore errors one level early, to leave a child log room for its own contents.
 
 Kind codes go in the folder name: `lp` loop · `au` audit · `rf` refactor · `it`
 iteration · `wf` workflow; custom codes via `agentLogKinds` in the issue's
 `settings.json`.
 
-- **Read the agent log before starting work** — don't repeat an approach that failed.
+- **Read the agent log and `agent-memory/memory.md` before starting work** — the log so
+  you don't repeat an approach that failed, `memory.md` because it is the pinned index of
+  what is still true here.
 - **`01_summary.md` IS the brief.** Point a delegated agent at it and spend the prompt
   on the delta. Never write a separate brief file.
 - **An iteration is a GROUP** — of subtasks, of executions, of agents — not one agent
@@ -271,11 +287,12 @@ iteration · `wf` workflow; custom codes via `agentLogKinds` in the issue's
 - **A file exists because something was produced, not because an agent ran.** Two
   executors writing code produce one iteration file between them; two auditors writing
   reports produce two, plus the iteration's own.
-- **`02_working/00_index.md` is the run's round index, WRITTEN by hand.** Seeded empty at
-  scaffold so a run's shape is visible before it has one; one entry per round as it
-  lands, carrying **a line of what the round found** — the part no header holds. It was
-  generated once, and the generator and its checker shared a blind spot that certified a
-  table with a round missing.
+- **`02_working/00_index.md` is the run's round index, WRITTEN by hand.** Optional, and
+  conventionally there — seeded empty at scaffold so a run's shape is visible before it
+  has one; one entry per round as it lands, carrying **a line of what the round found** —
+  the part no header holds. It was generated once, and the generator and its checker
+  shared a blind spot that certified a table with a round missing. **Nothing is an index
+  because of its name or position**: `00_index.md` is the convention, not the test.
 - **An index is a claim about other files, so check it by READING** —
   `/agent-ks-fast-index-check <path>`, a fast read-only subagent that reports and never
   edits. It runs two directions: *index → files* (is this claim still true — `STALE`,
@@ -285,9 +302,17 @@ iteration · `wf` workflow; custom codes via `agentLogKinds` in the issue's
   the stage is not. Not a gate, not automated; manual `ls` fallback and the full
   checklist in
   [24_agent-logs.md](references/20_sections/24_agent-logs.md#keeping-an-index-honest--a-reading-job-not-a-script).
-- **Own goal → child agent log. No own goal → iteration file.** That is the only
-  nesting rule. Nesting may mirror a structure that exists; it may never invent one.
+- **Own goal → child agent log. No own goal → iteration file.** That is the only rule for
+  *whether* to nest; the five-level cap above is the limit on *how far*. Nesting may
+  mirror a structure that exists; it may never invent one.
 - **Actionable items leave the log** and become subtasks. The debrief keeps a pointer.
+
+**A plan becomes agent logs by milestone, not by stage.** The plan gets one log; each
+milestone — a grouping you choose, which nothing in code knows about — gets a child log
+covering two or three stages, and a stage becomes one or more **working files** inside it.
+Work outside the plan gets its own top-level log; a *small* audit inside one is a working
+file, not a log. The full mapping, with the diagram:
+[24_agent-logs.md](references/20_sections/24_agent-logs.md#how-a-plan-becomes-agent-logs).
 
 `agent-ks issue new-agent-log` scaffolds the folder and emits the file headings —
 open what it made rather than reading a template here. Shape, numbering, the
@@ -373,6 +398,16 @@ The plugin ships one entrypoint, **`agent-ks`**, on `PATH`. Tracker work uses th
 
 Plus `agent-ks check issues`, `agent-ks find`, and `agent-ks move` (link-aware).
 Discover with `agent-ks help`; uniform contract (`--help`, `--json`, exit codes 0/1/2).
+**`agent-ks help <command>` abbreviates** — several commands accept more flags than it
+lists, so check `--help` on the command itself before concluding an option is missing.
+
+**Two slash commands and one agent belong to the tracker:**
+
+| | |
+|---|---|
+| `/agent-ks-quick-idea-note [idea]` | Capture a half-formed idea into the issue dump as a subtask entry — no folder ceremony |
+| `/agent-ks-fast-index-check [path]` | Report where an index disagrees with the files it references. Read-only; it never edits and is never automated |
+| `agent-ks-index-checker` | The agent behind that command, for calling directly when sweeping several indexes at once |
 
 **Inside a git worktree** (agent sandboxes): the CLI's `.env` search stops at the
 worktree root — write a worktree-local `.env` or pass `--tracker` explicitly before any
@@ -389,74 +424,23 @@ for a tight report — patterns in [41_searching.md](references/40_operations/41
 ## Universal conventions (assumed by every reference)
 
 - **Ordering prefix** `NN_`/`NNN_` — 2–5 digits, sorted by numeric value, `_` canonical,
-  gap-spaced. Optional for issue subdocs (required by convention only for subtasks'
-  ordering); both 2- and 3-digit are conventional in the tracker.
+  gap-spaced. **Mandatory** in `comments/`, `plans/`, `agent-log/` and `subtasks/`;
+  optional in `notes/`, `brainstorm/` and `agent-memory/`. Existing unprefixed folders
+  still load — the code accepts them for legacy content — but do not write new ones.
 - **The prefix owns the number.** Never repeat it in frontmatter.
-- **REFERENCE BY LINK, NEVER BY NUMBER — everywhere, no exceptions.** Another file is
-  identified by a markdown link whose text says what it *is*, never by its ordering
-  prefix. Applies to every file this framework touches: subtasks, notes, agent logs,
-  plans, comments, the skill's own references, and docs pages.
+- **REFERENCE BY LINK, NEVER BY NUMBER OR PATH.** Another file is identified by a
+  markdown link whose text says what it *is*:
 
-  ```markdown
-  - [x] `010` — the plans section                                    ← WRONG
-  - [x] [The plans section](./010_code-the-plans-section.md) — framework,
-        CLI and validator                                            ← RIGHT
-  ```
+  | Form | |
+  |---|---|
+  | `[040/100 the migration script](../040_execution/100_migration.md)` | **yes** — the ordering label makes it navigable against the numbered sidebar |
+  | `[the migration script](../040_execution/100_migration.md)` | **yes** — the label is optional and only helps where numbers exist |
+  | `` `subtasks/040_execution/100_migration.md` `` | **big no** — a path in backticks is text; `agent-ks move` cannot maintain it |
 
-  Three reasons, and the third is the one people miss. **`agent-ks move` rewrites real
-  markdown links when a file moves; a backticked `` `010` `` is prose to every tool that
-  exists**, so it breaks silently. **A number is not a name** — *"`050` blocks `100`"*
-  is unreadable to anyone who has not already opened both. And **renumbering is
-  normal**: gap-spaced prefixes exist precisely so `015` can be inserted later, and a
-  number quoted in another file makes the numbering immutable.
-
-  **The same three reasons apply to a backticked *path*, and to a site-absolute
-  link.** `` `subtasks/040_execution/00_overview.md` `` is unmaintainable, unclickable
-  and un-searchable for exactly the same mechanical reason a backticked number is.
-  `[…](/todo/…)` is worse, because it renders as a working link and `move` skips
-  every target beginning with `/` — so it looks maintained and is not. **Relative
-  markdown link, or nothing.**
-
-  **Why, underneath all three:** a tracker is a folder of markdown that filesystem
-  tools work on — `move`, `grep`, an editor, an agent walking the tree. A relative
-  link is the only form that is **true on disk**, so it is the only form any of
-  them can follow. The rendered tracker is one consumer of the files, not the thing
-  being built. So if a relative link 404s on the site, that is a renderer defect to
-  file — rewriting it to `/` would make correct content wrong on disk to please one
-  consumer, and would drop it out of maintenance for good.
-
-  The one exception is a target that is **not a document** — source code, config, or
-  a path being discussed as a value rather than pointed at. *Not* "anything the site
-  doesn't publish": the skill files under `plugins/agent-ks/skills/` are never served
-  and still cross-link relatively. See the universal conventions in
-  `references/10_writing/10_writing.md`.
-
-  A link reading `[010](./010_thing.md)` is still a number, just a clickable one — the
-  link text must name the thing. Where the number genuinely is the subject (*"the first
-  two digits are the iteration"*), it stays.
-- **Keeping the number as well is not only allowed, it has a form — the ORDERING
-  LABEL.** Open the link text with the target's ordering path (the numeric prefixes of
-  its folders and of its own name, joined by `/`), then the name:
-
-  ```markdown
-  [040/100 the migration script](../../subtasks/040_execution/100_migration-script.md)
-  [70 reference by link](../../notes/70_reference-by-link-never-by-number.md)
-  ```
-
-  **Why it earns its keep:** the sidebar lists entries by number, so the label is what
-  lets a reader match a link against what they can already see there — without following
-  it. Number *and* name; neither alone does the job.
-
-  **Optional, and kept honest by two things when used.** `agent-ks move` recomputes the
-  label whenever it rewrites the target, and `agent-ks check issues` **warns** when a
-  label disagrees with where its target actually sits. Without that pair it would be the
-  same fact in two places with nothing comparing them — and a stale label is invisible,
-  because the link still resolves and only lies about position.
-
-  A segment with no numeric prefix ends the run, so
-  `agent-log/020_wf_ship/02_working/090_x.md` labels as `020/02/090` — the walk stops at
-  `agent-log/`, which carries none. A target with no prefix takes no label at all: it
-  has no ordering identity to state.
+  A leading `/` is wrong too, and worse: it renders as a working link while `move` skips
+  it, so it looks maintained and is not. The reasoning, the ordering-label spec and the
+  one exception (a target that is not a document) live in
+  [10_writing.md](references/10_writing/10_writing.md).
 - **Frontmatter `title`** on every markdown file. The build does **not** fail without
   one — it falls back to the slug, so the page silently ships titled `_my-file`.
 - **`settings.json` may be `.jsonc`** (comments + trailing commas) — prefer `.jsonc`

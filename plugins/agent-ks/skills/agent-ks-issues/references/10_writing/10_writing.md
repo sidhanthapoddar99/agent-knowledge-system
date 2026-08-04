@@ -303,7 +303,7 @@ prefix is **optional** for most subdocs:
 |---|---|
 | `subtasks/` | `NN_` or `NNN_` freely (leading digit can annotate a group) — see [23_subtasks.md](../20_sections/23_subtasks.md) |
 | `comments/` | `NNN_` **auto-numbered by the CLI** — the number is the comment id, never hand-gapped |
-| `agent-log/` | `0NN_<code>_<name>/` per run; its slots are `01_summary.md` / `02_working/` / `03_debrief/` and a nested run is `≥ 100`; inside `02_working/`, `NNN_` where the first two digits are the iteration — see [24_agent-logs.md](../20_sections/24_agent-logs.md) |
+| `agent-log/` | `NNN_<code>_<name>/` per run; its slots are `01_summary.md` / `02_working/` / `03_debrief/` and a nested run is `≥ 100`; inside `02_working/`, `NNN_` where the first two digits are the iteration — see [24_agent-logs.md](../20_sections/24_agent-logs.md) |
 | `plans/` | `NN_<name>/` per plan; `NN_<stage>.md` gap-spaced by ten — see [28_plans.md](../20_sections/28_plans.md) |
 | `brainstorm/`, `notes/` | optional; gap-number only when reading order matters |
 | `agent-memory/` | usually none — name by topic |

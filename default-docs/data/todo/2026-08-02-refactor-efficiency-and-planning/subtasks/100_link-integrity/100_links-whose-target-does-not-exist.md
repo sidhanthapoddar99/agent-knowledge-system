@@ -1,6 +1,6 @@
 ---
 title: "55 links point at pages that do not exist — visible only now the renderer is fixed"
-status: review
+status: done
 ---
 
 # Overview
@@ -48,7 +48,28 @@ and every link that was deleted rather than repaired is accounted for.
 
 # Outcomes and Next Steps
 
-**Done 2026-08-03, the same day it was filed. 55 → 0.**
+**Done 2026-08-03, the same day it was filed. 55 → 0.** Closed 2026-08-04.
+
+> **What the closing number does and does not cover.** The 55 were measured, and
+> repaired, in the environment they were found in. A static host today reports
+> **539** broken in-body links — and none of them is this subtask's defect. They
+> look like this:
+>
+> ```
+> /dev-docs/plugins/creating-plugins/bin-wrappers/  →  ./capabilities
+> resolves to  .../bin-wrappers/capabilities        →  404
+> ```
+>
+> The target exists; the **base** is wrong, because a static host serves that
+> page with a trailing slash and shifts what every relative href resolves
+> against. That is the trailing-slash defect, owned by
+> [absolute link resolution](../../../2026-08-04-absolute-link-resolution/issue.md),
+> and it will stay red until the resolver lands. This subtask's class — *the
+> target does not exist* — is at zero.
+>
+> **Stated because the two are indistinguishable from a count alone**, which is
+> the failure this whole group is named after. A single number over a static host
+> cannot sign this off, and was not used to.
 
 | Batch | How | Count |
 |---|---|---:|

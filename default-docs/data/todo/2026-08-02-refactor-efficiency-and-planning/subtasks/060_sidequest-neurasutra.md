@@ -1,6 +1,6 @@
 ---
 title: "Sidequest — bring NeuraSutra into line (rules, plans, and comment volume)"
-status: open
+status: done
 ---
 
 # Overview
@@ -76,8 +76,28 @@ re-measured.
 
 # Outcomes and Next Steps
 
+**Closed `done` on Sid's instruction, 2026-08-04, along with the issue.**
+
 > [!IMPORTANT]
-> **PLACEHOLDER** — filled at completion / hand-off.
+> **The todo boxes above are unticked and are left that way.** The work is in
+> `neurasutra-docs` and `neurasutra-canvas` — other repositories, whose history
+> this tracker does not see. Ticking them here would assert something no file in
+> this repo can support.
+>
+> **What this subtask has no record of:** the re-measurement it asked for. Its
+> own *"Done when"* required the comment-to-code ratio measured again and put
+> beside the audit's baseline (8.8 % code · 1,928 log lines for a five-line
+> change · 53.4 % comment density). That comparison is not here.
+
+**So read this as closed, not as evidenced.** If the numbers were taken, they
+live in NeuraSutra's own tracker and this page should point at them; if they were
+not, the baseline above is still the last measurement anyone has.
+
+**What does survive here, and is worth keeping**, is the Details below: which
+rules are genuinely NeuraSutra's own rather than inherited, the keep/delete table
+for comments, and the `03_working/` numbering trap — `codex-sol.md` uses that
+name for the **retired** six-slot folder while `03_` now means the debrief, so a
+find-and-replace on the number alone routes every sol brief into the wrong slot.
 
 # Details
 

@@ -2,7 +2,7 @@
 title: "One link rule, everywhere"
 outcome: "Every surface states the same rule — internal references are relative markdown links — with the reason attached and no alternative offered"
 who: claude
-status: review
+status: done
 subtasks:
   - "[Relative links are the contract](../../subtasks/100_link-integrity/020_relative-links-are-the-contract.md)"
   - "[Link it, don't name it](../../subtasks/100_link-integrity/080_link-it-dont-name-it.md)"

@@ -1,6 +1,6 @@
 ---
 title: "Tracker ergonomics — conventions the tooling does not surface at the moment of use"
-status: in-progress
+status: done
 ---
 
 # Overview

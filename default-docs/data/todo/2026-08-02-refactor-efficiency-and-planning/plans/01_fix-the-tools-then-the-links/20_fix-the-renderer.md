@@ -2,7 +2,7 @@
 title: "Fix the renderer"
 outcome: "A relative link written against the file's own directory resolves in the built site, proven over HTTP"
 who: claude
-status: review
+status: done
 subtasks:
   - "[The renderer drops a URL level](../../subtasks/100_link-integrity/010_renderer-drops-a-url-level.md)"
 ---

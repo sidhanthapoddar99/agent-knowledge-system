@@ -2,7 +2,7 @@
 title: "Correct the record, and gate it"
 outcome: "No published record still argues for the wrong form, and the rule is enforced by a tool rather than by prose"
 who: claude
-status: review
+status: done
 subtasks:
   - "[Correct the published records](../../subtasks/100_link-integrity/050_correct-the-published-records.md)"
   - "[Does the tracker share it?](../../subtasks/100_link-integrity/060_does-the-tracker-share-it.md)"

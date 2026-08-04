@@ -2,7 +2,7 @@
 title: "The tools tell the truth"
 outcome: "`agent-ks` always means installed, `agent-ks-dev` always means this tree, and every gate names which it read"
 who: claude
-status: review
+status: done
 subtasks:
   - "[Two commands, not one guess](../../subtasks/090_silent-failure-defects/040_two-commands-not-one-guess.md)"
 ---

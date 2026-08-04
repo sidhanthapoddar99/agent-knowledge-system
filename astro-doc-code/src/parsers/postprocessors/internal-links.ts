@@ -4,26 +4,23 @@
  *   - Strips .md/.mdx extensions
  *   - Strips XX_ position prefixes from path segments
  *   - Preserves fragment identifiers (#section)
- *   - Emits the link's own relative shape unchanged — no depth adjustment
+ *   - Optionally shifts up one level — see DEPTH_SHIFT
  *
- * Example: ./02_consensus-mechanism.md#overview → ./consensus-mechanism#overview
+ * Example: ./02_consensus-mechanism.md#overview → ../consensus-mechanism#overview
  *
  * DOCS ONLY. Blog and issues take the early branch below and get the extension
  * stripped and nothing else.
  *
- * WHY THERE IS NO DEPTH ADJUSTMENT HERE, since the absence is the design.
- * A page is emitted as `<slug>/index.html`, so a trailing-slash URL puts the
- * page's own name in the path and a sibling link resolves one level too deep.
- * A one-level shift was added for that on 2026-08-03 and removed on 2026-08-04:
- * the site's navigation links to the SAME page without the trailing slash, the
- * server answers both with 200 and no redirect, and the shift breaks that form
- * instead. It chose which half of the site to break.
+ * THE DEPTH ADJUSTMENT IS A NAMED SWITCH — `DEPTH_SHIFT` below, which carries
+ * the full reasoning and the measured numbers. In short: a page is emitted as
+ * `<slug>/index.html`, so a trailing-slash URL puts the page's own name in the
+ * path and a sibling link resolves one level too deep. Whether the URL has that
+ * slash is decided by the SERVER, not by anything visible here.
  *
  * **No constant offset is correct in two environments differing by one URL
  * segment.** The real fix is to stop emitting a browser-relative href — resolve
  * internal links to root-absolute at render time (decided 2026-06-09,
- * `2026-06-09-issue-link-resolution` subtask 03). Until then this emits the
- * author's own shape, which is right for the URLs the navigation produces.
+ * `2026-06-09-issue-link-resolution` subtask 03), which deletes the switch.
  *
  * DO NOT "FIX" A BROKEN LINK BY CONVERTING IT TO SITE-ABSOLUTE FORM in content.
  * That was done once to 341 links before anyone opened this file, and had to be
@@ -93,6 +90,40 @@ function isIndexPage(context: ProcessContext): boolean {
 }
 
 /**
+ * DOES A PAGE'S URL END IN A SLASH? That single question decides whether a
+ * relative href needs one `..` in front of it, and it is the only thing this
+ * switch controls.
+ *
+ *   served /a/b/c   → browser's base is /a/b/      → `./x` is correct
+ *   served /a/b/c/  → browser's base is /a/b/c/    → `../x` is correct
+ *
+ * **It must agree with `trailingSlash` in `astro.config.mjs`.** `'always'` means
+ * every environment serves the slash form, so the page's own name is a URL
+ * segment and the shift is required — `true`. Unset (Astro's default) means
+ * `astro dev` and `astro preview` serve without the slash while a real static
+ * host 301s to add it, so **no value here is correct**: `true` breaks dev,
+ * `false` breaks production. Measured 2026-08-04 over 1,245 in-body links:
+ *
+ *   |            | dev (no slash)     | static host (slash) |
+ *   | false      | 4 broken (anchors) | 546 BROKEN          |
+ *   | true       | broken             | 4 broken (anchors)  |
+ *
+ * A perfect diagonal, which is the proof this switch cannot be set correctly on
+ * its own. It exists so both states are one edit apart while the real fix is
+ * built — **not** as a knob anyone should be tuning.
+ *
+ * THE REAL FIX makes this switch meaningless: resolve internal links to
+ * root-absolute at render time, so there is no browser base to resolve against.
+ * Decided 2026-06-09, `2026-06-09-issue-link-resolution` subtask 03. Delete this
+ * constant when that lands.
+ *
+ * Kept as a named switch rather than deleted code on Sid's instruction,
+ * 2026-08-04: removing it removed the ability to compare the two states, which
+ * is exactly what was needed for the rest of that day.
+ */
+export const DEPTH_SHIFT = true;
+
+/**
  * Rewrite a relative href to match the generated slug.
  *
  * `addLevel` prepends one `..` to compensate for the page's URL being one
@@ -136,35 +167,8 @@ function rewriteHref(href: string, addLevel: boolean): string {
   // Remove /index suffix (index pages resolve to parent)
   pathPart = pathPart.replace(/\/index$/, '');
 
-  // NO DEPTH SHIFT — removed 2026-08-04, and why it is not coming back in this
-  // form is worth the paragraph.
-  //
-  // A `path.posix.join('..', pathPart)` stood here from 2026-08-03. It
-  // compensated for the BUILT site serving a page as a directory with a trailing
-  // slash, where the page's own name becomes a URL segment. That much is real.
-  // But the site's own sidebar links to the form WITHOUT the slash, the server
-  // answers both with 200 and no redirect, and on that form the extra `..` sends
-  // every relative link one level too high. Reproduced in a browser.
-  //
-  // So the shift did not fix the bug — it chose which half of the site to break.
-  // **A single constant offset cannot be correct in two environments that differ
-  // by one URL segment**, and no value of that constant is right, including the
-  // zero this now emits. Today's output is correct for the no-slash form the
-  // navigation actually produces and wrong for a hand-typed trailing-slash URL.
-  // That is the better half, not a solution.
-  //
-  // The fix is to stop emitting a browser-relative href at all: resolve internal
-  // links to root-absolute at render time, decided 2026-06-09 in
-  // `2026-06-09-issue-link-resolution` subtask 03. Then no base is involved and
-  // the trailing slash stops mattering.
-  //
-  // `addLevel` is still computed and passed in deliberately — it encodes which
-  // pages collapse onto their own directory (`index.md`), which the absolute
-  // resolver needs as well. It is unused here on purpose.
-  // EXPERIMENT 2026-08-04 — shift restored, paired with `trailingSlash: 'always'`.
-  // With every environment serving the slash form, the page's own name IS a URL
-  // segment everywhere, so one constant offset is finally correct everywhere.
-  if (addLevel && pathPart) {
+  // THE DEPTH SHIFT — one switch, both states reachable. See DEPTH_SHIFT above.
+  if (DEPTH_SHIFT && addLevel && pathPart) {
     pathPart = path.posix.join('..', pathPart);
   }
 

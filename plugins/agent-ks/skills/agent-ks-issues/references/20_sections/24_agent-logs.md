@@ -365,22 +365,55 @@ says still match what it points at* — and because a checker written from the s
 as the writer inherits its blind spots. So it is a **reading** job, and reading is
 cheap to delegate.
 
-**Hand it to a fast, read-only subagent** — one that reports and never edits, so there is
-nothing to undo. Point it at one index, several, or a whole issue folder, and give it
-this checklist:
+### Run `/agent-ks-fast-index-check <path>`
 
-| Check | Why it is not a script's job |
+That is the route. It hands the path to the plugin's `agent-ks-index-checker`
+subagent — a fast, read-only model that reports and never edits, so there is nothing to
+undo. Give it one index, a plan folder, an agent-log folder, or a whole issue folder.
+
+It answers in two directions, and the second is the one you cannot get any other way:
+
+```
+  DIRECTION A     index ──► files      "is this claim still true?"
+                  → STALE, ORPHAN
+  DIRECTION B     files ──► index      "is everything here listed?"
+                  → MISSING
+```
+
+**Direction B needs a directory listing and nothing else will do.** An index's own links
+can never lead you to an entry the index does not have: list rounds `010`–`060`, add
+`070` and `080`, and every link still resolves while two rounds are unlisted. Following
+references returns clean. Listing the folder does not.
+
+| Label | Means |
 |---|---|
-| **`ls` the folder two levels deep first** — the filesystem is the source of truth, the index is the claim under test | Anything on disk the index does not mention is a finding. A generator asked *"what should be here?"* can only answer from its own assumptions |
-| Every link resolves to a file that exists | shape-checkable, but only in the same pass |
-| Every status the index states matches the target file's own frontmatter | the target is the authority; the index is a copy |
-| **A plan stage whose scheduled subtasks are all `done`/`dropped` but which is not itself closed** | requires reading through a reference to another file's status |
-| A checklist item ticked in an index whose target says `open` | same |
-| Anything present on disk and absent from the index | the case a generator structurally cannot see |
+| `MISSING` | on disk, absent from the index — Direction B only |
+| `ORPHAN` | the index links a file that does not exist |
+| `STALE` | index and target state different facts — objective |
+| `INFERENCE` | every fact correct, the conclusion looks stale — flagged for a human |
+
+The `INFERENCE` case is the plan one: a stage whose scheduled subtasks have all closed
+while the stage has not. Nothing disagrees with anything; what is missing is the
+conclusion. Read it alongside the rule that **a stage's status describes the schedule,
+not the work** — a stage may legitimately close ahead of its subtasks, so this is a
+thing to look at, never an error.
 
 **It reports; you decide.** Deliberately not automated and deliberately not a gate: an
 index is prose with judgement in it, and a gate that fails on judgement gets worked
 around.
+
+### Without the plugin, do it by hand
+
+Same job, same order, no tooling:
+
+| Step | Why it is not a script's job |
+|---|---|
+| **`ls` the folder two levels deep FIRST** — the filesystem is the source of truth, the index is the claim under test | Anything on disk the index does not mention is a finding. A generator asked *"what should be here?"* can only answer from its own assumptions |
+| Diff that listing against what the index names | The one class of defect that following links cannot reach |
+| Every link resolves to a file that exists | shape-checkable, but only in the same pass |
+| Every status the index states matches the target file's own frontmatter | the target is the authority; the index is a copy |
+| **A plan stage whose scheduled subtasks are all `done`/`dropped` but which is not itself closed** | requires reading through a reference to another file's status |
+| A checklist item ticked in an index whose target says `open` — or unticked while its target says `done` | same. An index that explains why it is stale is still stale |
 
 ## One iteration, one file — and an iteration is a GROUP
 

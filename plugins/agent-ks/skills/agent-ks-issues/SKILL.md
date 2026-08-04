@@ -276,10 +276,14 @@ iteration · `wf` workflow; custom codes via `agentLogKinds` in the issue's
   lands, carrying **a line of what the round found** — the part no header holds. It was
   generated once, and the generator and its checker shared a blind spot that certified a
   table with a round missing.
-- **An index is a claim about other files, so check it by READING.** Plans especially:
-  a stage whose subtasks are all closed while the stage is not. Hand it to a fast,
-  read-only subagent — `ls` two levels first, filesystem as the truth and the index as
-  the claim under test — and have it report rather than edit. Not a gate, not automated:
+- **An index is a claim about other files, so check it by READING** —
+  `/agent-ks-fast-index-check <path>`, a fast read-only subagent that reports and never
+  edits. It runs two directions: *index → files* (is this claim still true — `STALE`,
+  `ORPHAN`) and *files → index* (is everything here listed — `MISSING`). **The second
+  needs a directory listing**, because an index's own links can never lead you to an
+  entry it does not have. Plans especially: a stage whose subtasks are all closed while
+  the stage is not. Not a gate, not automated; manual `ls` fallback and the full
+  checklist in
   [24_agent-logs.md](references/20_sections/24_agent-logs.md#keeping-an-index-honest--a-reading-job-not-a-script).
 - **Own goal → child agent log. No own goal → iteration file.** That is the only
   nesting rule. Nesting may mirror a structure that exists; it may never invent one.

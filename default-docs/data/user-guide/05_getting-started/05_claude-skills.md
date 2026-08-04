@@ -9,7 +9,8 @@ This template ships its own **Claude Code plugin** — `agent-ks` — that teach
 
 - **3 skills** — `agent-ks-docs` (triages every docs/blog/config/writing task to a domain-specific reference), `agent-ks-issues` (the complete, self-contained issue-tracker skill — anatomy, rules, agent-logs, agent-memory, and the execution verbs), and `agent-ks-artifacts` (building self-contained HTML artifacts — reports, dashboards, data viz, design systems — served at `/artifacts`)
 - **28 CLI commands** auto-added to `$PATH` — issue tracker, validators, docs/blog content, git metadata, and cross-content search (one `agent-ks` entrypoint; every operation is a `agent-ks <group> <verb>` subcommand)
-- **3 slash commands** (`/agent-ks-init`, `/agent-ks-add-section`, `/agent-ks-quick-idea-note`)
+- **4 slash commands** (`/agent-ks-init`, `/agent-ks-add-section`, `/agent-ks-quick-idea-note`, `/agent-ks-fast-index-check`)
+- **1 agent** — `agent-ks-index-checker`, a fast read-only subagent that checks whether an index still agrees with the files it points at, and reports without editing
 
 You install it from a marketplace once and Claude Code picks it up across every project on your machine. The plugin is distributed via [`sids-plugin-marketplace`](https://github.com/sidhanthapoddar99/sids-plugin-marketplace).
 

@@ -5,17 +5,19 @@ title: "Summary"
 # State
 
 > [!NOTE]
-> **Seven rounds. Three review rounds, 50 findings, all closed.** The generated
-> index is deleted, the rule has one home, and the blanker is a real parser with a
-> differential fixture. Four subtasks closed on Sid's instruction; two open
-> ([`035`](../../subtasks/110_tracker-ergonomics/035_the-plugin-declares-no-dependencies.md)
-> ·[`045`](../../subtasks/110_tracker-ergonomics/045_a-link-whose-label-wraps-is-never-checked.md)),
-> both raised by the reviews rather than planned.
+> **Eight rounds. Three review rounds, 50 findings, all closed.** The generated
+> index is deleted, the rule has one home, and the link checks are ~35 lines with
+> their limits measured against a real parser rather than assumed.
 >
-> **The last audit did not come back clean, and that is the hand-off item:** the
-> parser costs **20×** (`move` 0.30s → 6.81s) and is unbounded on adversarial
-> input. It is stated in the release note rather than hidden. 🟡 **Sid's call
-> whether that trade stands.**
+> **Round 08 reversed round 06 on Sid's call.** The parser it introduced cost 20×
+> and found nothing — 2,157 links exposed either way — so it is out, along with
+> the rule that told authors to convert backticked paths into links. Pushed.
+>
+> Four subtasks closed on Sid's instruction; three open —
+> [`035`](../../subtasks/110_tracker-ergonomics/035_the-plugin-declares-no-dependencies.md)
+> and [`055`](../../subtasks/110_tracker-ergonomics/055_an-index-is-checked-by-a-cheap-agent.md)
+> at `review`, [`045`](../../subtasks/110_tracker-ergonomics/045_a-link-whose-label-wraps-is-never-checked.md)
+> open. All three were raised by the reviews rather than planned.
 
 # Goal
 
@@ -127,6 +129,8 @@ of them with a shell.
   decision about this repo's workflow rather than about this run.
 - **`020_wf_ship-the-split` round 14 is `in-progress` inside a finished run.**
   Closing a round is not this run's to do.
-- **The 20× parser cost.** A pre-filter recovered ~0.4 s of it; the rest is what
-  parsing costs. Stated in [`releases/0.2.4.md`](../../../../../../releases/0.2.4.md)
-  and in the source, not absorbed quietly. 🟡 Sid's to accept or reverse.
+- **The plugin's first agent** — the index checker built for
+  [`055`](../../subtasks/110_tracker-ergonomics/055_an-index-is-checked-by-a-cheap-agent.md)
+  — is unreachable until the installed plugin is reinstalled. Its control tests
+  ran the prompt through a subagent, so the prompt is proven and the wiring is
+  not.

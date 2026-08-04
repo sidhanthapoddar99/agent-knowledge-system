@@ -4,7 +4,8 @@ Claude Code plugin for the [agent-knowledge-system](https://github.com/sidhantha
 
 - **3 skills** — `agent-ks-docs` (operating manual for docs / blog / config / writing / themes — triages to domain-specific reference files), `agent-ks-issues` (the complete, self-contained issue-tracker skill: anatomy, creation rules, subtasks, brainstorms, agent-logs, agent-memory, the dump — also fires on the execution verbs audit / refactor / loop / discuss), and `agent-ks-artifacts` (building self-contained HTML artifacts — reports, dashboards, data visualizations, design systems — as `.html` content files served at `/artifacts`, with a `.meta.json` sidecar; bundles a palette validator)
 - **The `agent-ks` CLI** — one dispatcher on `PATH`; every operation is `agent-ks <group> <verb>` (issue tracker, validators, docs+blog content, git metadata, cross-content `find`, link-aware `move`, `img`). Discover with `agent-ks help`
-- **3 slash commands** — `/agent-ks-init` (bootstrap a new docs project from zero), `/agent-ks-add-section` (scaffold a new top-level section), and `/agent-ks-quick-idea-note` (capture an ad-hoc idea into the issue dump)
+- **4 slash commands** — `/agent-ks-init` (bootstrap a new docs project from zero), `/agent-ks-add-section` (scaffold a new top-level section), `/agent-ks-quick-idea-note` (capture an ad-hoc idea into the issue dump), and `/agent-ks-fast-index-check` (check whether an index still agrees with the files it points at)
+- **1 agent** — `agent-ks-index-checker`, a fast read-only subagent that reports index staleness and never edits
 
 The skills teach Claude Code how to navigate agent-knowledge-system (an Astro-based engine): the project's `data/` content layout, frontmatter conventions, the folder-per-issue tracker, `site.yaml` configuration, custom themes, and more. Each task is triaged to a domain-specific reference file rather than dumping everything into one long prompt.
 
@@ -57,7 +58,8 @@ Computes the next `NN_` prefix, scaffolds `settings.json` + `01_overview.md`, an
 | Artifacts skill | `skills/agent-ks-artifacts/SKILL.md` (+ `references/` incl. a `dataviz/` sub-folder, and a bundled `scripts/validate_palette.js`) |
 | CLI entrypoint | `bin/agent-ks` (bash) + `bin/agent-ks.cmd` (Windows) |
 | CLI dispatcher | `skills/agent-ks-docs/scripts/cli.mjs` — the `<group> <verb>` → script map |
-| 3 slash commands | `commands/agent-ks-init.md`, `commands/agent-ks-add-section.md`, `commands/agent-ks-quick-idea-note.md` |
+| 4 slash commands | `commands/agent-ks-init.md`, `commands/agent-ks-add-section.md`, `commands/agent-ks-quick-idea-note.md`, `commands/agent-ks-fast-index-check.md` |
+| Index-checker agent | `agents/agent-ks-index-checker.md` |
 | Helper scripts | `skills/agent-ks-docs/scripts/{issues,blog,config,docs}/*.mjs` (the dispatcher routes to these) |
 
 ## Requirements

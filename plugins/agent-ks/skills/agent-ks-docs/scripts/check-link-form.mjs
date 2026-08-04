@@ -105,76 +105,33 @@ function walk(dir, acc = []) {
 
 
 const errors = [];
-const warnings = [];
 const files = walk(ROOT);
 let linksChecked = 0;
 let resolvable = 0;
 let missingTarget = 0;
 
 /**
- * A backticked string that names a real DOCUMENT is a link that was never
- * written. `move` cannot rewrite it, a reader cannot click it, and an agent has
- * to search to resolve it — all silently.
+ * WHAT IS A LINK HERE: `[text](./target)` and `[[wikilink]]`. Nothing else.
  *
- * The test is deliberately narrow, because the rule has a real exception: a
- * target that is **not a document** has nothing to link to, so `` `src/loaders/paths.ts` ``
- * is correct and must never be flagged. So this fires only when the span
- * resolves to a file with a PAGE extension. Three further exclusions keep it
- * honest rather than noisy:
+ * **Anything inside backticks is text, and this check has no opinion about it.**
+ * A span that happens to name a real file — `` `user-guide/04_data-structure.md` ``
+ * in a README listing the tree — is correct prose. It was briefly flagged with a
+ * *"write it as a link"* warning; that rule is gone, because it asked an author
+ * to rewrite correct writing to suit a tool, and it could not tell a path being
+ * NAMED from a path being POINTED AT. Converting them by sweep is what got 341
+ * links reverted once already.
  *
- *   - anything with whitespace or brackets — that is a sentence or a whole link
- *     being quoted, not a bare path
- *   - directories — `` `notes/` `` is a section being discussed by name, and it
- *     has no page of its own
- *   - a span that is just a bare filename with no path separator — those are
- *     overwhelmingly a file being NAMED (`issue.md`, `settings.json`) rather
- *     than pointed at
- *
- * **IT STILL CANNOT BE PRECISE, AND THAT IS WHY IT WARNS.** Resolvability proves
- * a path COULD be a link; it cannot prove it SHOULD be one. A page whose subject
- * is paths quotes real ones as data — a table of *written / emitted / actually
- * lives at*, a worked example teaching link syntax — and every one of those
- * resolves. Converting them destroys the thing the page exists to show, which is
- * exactly what got an automated sweep of this class reverted.
- *
- * So this reports and never fails, and the rule it supports is *convert one when
- * you meet it while editing*, judged by a reader — not a sweep. A findings list
- * here is a prompt to look, not a work order.
+ * The convention that remains is for a reader, not a check: **if you are editing
+ * a page and notice a backticked path that would genuinely read better as a
+ * link, convert that one.** The bulk conversion belongs to `migration/`, ran
+ * once, and does not need re-running.
  */
-const PAGE_EXT_RE = /\.(mdx?|html|mmd|mermaid|dot|gv|excalidraw)$/i;
-const CODE_SPAN_RE = /(`+)([^`]+?)\1/g;
-
-function backtickedDocumentPath(spanText, fromDir) {
-  const s = spanText.trim();
-  if (!s || /[\s[\]()<>`]/.test(s)) return null;
-  if (!s.includes('/')) return null;
-  if (!PAGE_EXT_RE.test(s)) return null;
-  const abs = resolveTargetOnDisk(fromDir, s);
-  if (!abs) return null;
-  try { if (fs.statSync(abs).isDirectory()) return null; } catch { return null; }
-  return s;
-}
-
 for (const file of files) {
   const raw = fs.readFileSync(file, 'utf-8');
   const scannedLines = blankedProseLines(raw);
   const isProse = makeFenceTracker();
-  const fileDir = path.dirname(file);
   raw.split('\n').forEach((line, idx) => {
     if (!isProse(line)) return;
-
-    // Read the code spans BEFORE blanking them — this is the one check whose
-    // subject is what is inside the backticks rather than what is outside.
-    CODE_SPAN_RE.lastIndex = 0;
-    let span;
-    while ((span = CODE_SPAN_RE.exec(line)) !== null) {
-      const named = backtickedDocumentPath(span[2], fileDir);
-      if (!named) continue;
-      warnings.push(
-        `${path.relative(ROOT, file)}:${idx + 1}: backticked path names a real document ` +
-        `→ ${named}   — write it as a link so agent-ks move maintains it; take the text from the target's title`,
-      );
-    }
 
     // A link shown inside backticks is being quoted, not used.
     const scanned = scannedLines[idx] ?? line;
@@ -239,9 +196,7 @@ reportAndExit({
   kind: 'link-form',
   root: ROOT,
   subtitle:
-    `(${linksChecked} link(s) across ${files.length} markdown file(s); ${resolvable} resolved on disk)` +
-    (warnings.length ? `\n${warnings.length} backticked path(s) name a real document — a link that was never written. Warned, not failed.` : ''),
+    `(${linksChecked} link(s) across ${files.length} markdown file(s); ${resolvable} resolved on disk)`,
   errors,
-  warnings,
   json: JSON_OUT,
 });

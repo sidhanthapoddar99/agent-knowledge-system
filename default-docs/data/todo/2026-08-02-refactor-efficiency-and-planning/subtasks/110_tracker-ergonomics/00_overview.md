@@ -25,6 +25,9 @@ that arrives too late to act on.
   reading.
 - [`035`](./035_the-plugin-declares-no-dependencies.md) — open. The cost the
   parser swap named: four undeclared dependencies and no `package.json`.
+- [`045`](./045_a-link-whose-label-wraps-is-never-checked.md) — open. Ten links in
+  this repo that no gate has ever seen, because every caller matches one line at a
+  time and their labels wrap. Pre-existing; found by counting against the renderer.
 
 **Done when** each entry is fixed *in the place that will be read next time* —
 the skill, the scaffolder, the validator — and not merely in a record of the
@@ -48,11 +51,15 @@ conversation that noticed it.
 - [x] [`025`](./025_an-index-is-checked-not-generated.md) — `done`
 - [ ] [`035`](./035_the-plugin-declares-no-dependencies.md) — open, and the first
       task is to **reproduce the failure rather than fix it**
+- [ ] [`045`](./045_a-link-whose-label-wraps-is-never-checked.md) — open; ten real
+      instances, and the fix is a design question about where link *finding* lives
 
 # Outcomes and Next Steps
 
-**Four closed 2026-08-04, one open.** The group stays open by design — it is a
-place to put small things, not a milestone, and entries close individually.
+**Four closed 2026-08-04, two open.** The group stays open by design — it is a
+place to put small things, not a milestone, and entries close individually. Both
+open entries were **raised by the reviews**, not planned: the parser swap paid for
+itself twice over in things it revealed.
 
 **What the four cost, and what they were worth.** Two review rounds over one
 diff, 44 findings, and **two of this group's own three deliverables were reversed

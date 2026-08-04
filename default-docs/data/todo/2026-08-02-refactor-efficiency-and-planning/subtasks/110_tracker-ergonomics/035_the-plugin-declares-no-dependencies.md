@@ -1,6 +1,6 @@
 ---
 title: "The plugin ships four undeclared dependencies and no package.json"
-status: open
+status: review
 ---
 
 # Overview

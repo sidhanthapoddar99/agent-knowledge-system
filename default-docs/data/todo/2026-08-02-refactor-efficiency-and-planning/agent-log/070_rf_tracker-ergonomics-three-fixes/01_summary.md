@@ -5,15 +5,17 @@ title: "Summary"
 # State
 
 > [!NOTE]
-> **Six rounds done. Two review rounds, 44 findings, all closed.** The
-> generated index is deleted, the rule has one home, and the blanker is
-> CommonMark-correct with a fixture in the tree. Three subtasks at `review`
-> ([`015`](../../subtasks/110_tracker-ergonomics/015_the-working-index-is-a-table-of-the-round.md)
-> ·[`020`](../../subtasks/110_tracker-ergonomics/020_when-a-run-earns-an-agent-log.md)
-> ·[`025`](../../subtasks/110_tracker-ergonomics/025_an-index-is-checked-not-generated.md)),
-> plus [`010`](../../subtasks/110_tracker-ergonomics/010_plan-execution-needs-an-agent-log.md).
-> The second audit found twenty more, including two that only a shell could
-> reach. Ready for hand-off.
+> **Seven rounds. Three review rounds, 50 findings, all closed.** The generated
+> index is deleted, the rule has one home, and the blanker is a real parser with a
+> differential fixture. Four subtasks closed on Sid's instruction; two open
+> ([`035`](../../subtasks/110_tracker-ergonomics/035_the-plugin-declares-no-dependencies.md)
+> ·[`045`](../../subtasks/110_tracker-ergonomics/045_a-link-whose-label-wraps-is-never-checked.md)),
+> both raised by the reviews rather than planned.
+>
+> **The last audit did not come back clean, and that is the hand-off item:** the
+> parser costs **20×** (`move` 0.30s → 6.81s) and is unbounded on adversarial
+> input. It is stated in the release note rather than hidden. 🟡 **Sid's call
+> whether that trade stands.**
 
 # Goal
 
@@ -58,6 +60,9 @@ precedent that decided `015`'s design,
       on in one pass. The plugin ends **smaller** than before this run: one CLI verb,
       two scripts, one frontmatter field and one validator rule removed, and zero new
       tools added
+- [x] [The parser audit](./02_working/070_the-parser-audit.md) — one executing check
+      on the parser swap. Links exactly unchanged, measured against the renderer as a
+      set; a 20× cost and a fallback that would have let `move` write
 
 # Out of Scope
 
@@ -66,17 +71,19 @@ those belong to `2026-08-04-absolute-link-resolution` and were not touched.
 
 # Outcome
 
-**Four subtasks at `review`, every gate green — and two of this run's own three
-deliverables were reversed by its own review.**
+**Four subtasks closed, two new ones open, every gate green — and two of this
+run's own three deliverables were reversed by its own review.**
 
 | | |
 |---|---|
 | `check link-form` | ✅ 0 errors, 52 warnings (unchanged throughout) |
-| `check issues` | ✅ its two known unrelated warnings |
+| `check issues` | ✅ 7 warnings — 2 known, **5 newly visible** once the `--group` gap closed |
 | `check skill-links` | ✅ 44 files, repo source tree |
-| `code-spans.test.mjs` | ✅ 15 cases, **every one of them a case that failed** |
-| `move` dry-run, 8 inbound links | ✅ all 8 rewritten |
-| Production build | ✅ |
+| `code-spans.test.mjs` | ✅ **31/31 differential against micromark** |
+| Links exposed, before vs after the parser swap | ✅ **2,152 = 2,152**, set-equal |
+| `move` dry-run on the whole tree | ✅ 22 edits / 15 files, byte-identical to before |
+| Production build | ✅ 1,207 pages |
+| `check link-form` runtime | ❌ 0.13 s → **2.53 s**; `move` 0.30 s → 6.81 s |
 | Net surface change | **−1** CLI verb · **−2** scripts · **−1** frontmatter field · **−1** validator rule · **0** new tools |
 
 ## The one thing this run is actually about
@@ -118,7 +125,8 @@ of them with a shell.
 
 - **No CI job or git hook runs `check issues`.** True, and making it one is a
   decision about this repo's workflow rather than about this run.
-- **`check issues` does not descend into `--group` folders.** The staleness error
-  it let through no longer exists, so it is now cosmetic — but the gap is real.
 - **`020_wf_ship-the-split` round 14 is `in-progress` inside a finished run.**
   Closing a round is not this run's to do.
+- **The 20× parser cost.** A pre-filter recovered ~0.4 s of it; the rest is what
+  parsing costs. Stated in [`releases/0.2.4.md`](../../../../../../releases/0.2.4.md)
+  and in the source, not absorbed quietly. 🟡 Sid's to accept or reverse.

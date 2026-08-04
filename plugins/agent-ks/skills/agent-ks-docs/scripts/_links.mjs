@@ -16,9 +16,6 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { fromMarkdown } from 'mdast-util-from-markdown';
-import { gfm } from 'micromark-extension-gfm';
-import { gfmFromMarkdown } from 'mdast-util-gfm';
 
 /**
  * Markdown link / image. Captures: leading `!` (optional), text, target, and the
@@ -146,77 +143,96 @@ export function makeFenceTracker() {
 }
 
 /**
- * Blank out inline code spans, replacing each with same-length filler so column
- * numbers still line up. A link inside backticks is being SHOWN, not used.
+ * Blank out inline code spans, replacing each with same-length filler so line
+ * and column numbers still line up. A link inside backticks is being SHOWN, not
+ * used — a worked example in a skill, a wrong form quoted in a guide — so it
+ * neither renders as a link nor resolves, and every tool that walks links has to
+ * skip it. `move`, which WRITES, would otherwise rewrite the example.
  *
- * The run length matters and a single-backtick pattern gets it wrong. Markdown
- * opens a code span on a run of N backticks and closes it on a run of N — which
- * is exactly how a document quotes markup that itself contains backticks:
+ * Three rules, and deliberately no more:
  *
- *     `` [`references/writing.md`](./references/writing.md) ``
+ *   1. **A span opens on a run of N backticks and closes on a run of N.** Not on
+ *      the next single backtick — that is how a document quotes markup which
+ *      itself contains backticks: `` [`writing.md`](./writing.md) ``. A
+ *      `/`[^`]*`/` pattern stops at the first inner backtick and reports the
+ *      link as real, which is a check accusing a document of the thing it is
+ *      correctly demonstrating.
+ *   2. **It scans the whole document, not line by line.** A span may wrap onto
+ *      the next line, and the agent-log scaffolder's own template wraps one — so
+ *      the per-line version failed on every agent log the tool had ever created.
+ *      That bug is the only reason this function was ever rewritten.
+ *   3. **A span never crosses a block boundary** — a blank line, a heading, a
+ *      list item, a blockquote marker, a `---` rule or a setext underline.
+ *      Without this, one stray backtick pairs with another fifty lines later and
+ *      blanks everything between, hiding real links. That is the dangerous
+ *      direction and the one worth spending code on: a check that goes quiet is
+ *      indistinguishable from a clean tree. It is an approximation of
+ *      CommonMark's block structure, not a reimplementation of it — the test
+ *      fixture below states exactly where the two part company.
  *
- * A `/`[^`]*`/` pattern stops at the first inner backtick, leaves the link
- * exposed, and reports it as content. That is a gate accusing a document of the
- * very thing it is correctly demonstrating — found 2026-08-04 in a subtask that
- * was quoting the right form.
+ * FENCED blocks are not this function's job: every caller runs `makeFenceTracker`
+ * over the same lines and skips fenced regions itself.
+ *
+ * THIS IS DELIBERATELY NOT A MARKDOWN PARSER, AND THAT IS A DECISION WITH A
+ * MEASUREMENT BEHIND IT. A full CommonMark parse was tried: it is stricter about
+ * escaped backticks, blockquotes, setext underlines, pipe-less GFM tables,
+ * indented code and raw HTML. Over this repo's 1,056 files it exposed **exactly
+ * the same 2,152 links** as the code above, while costing 20× the runtime and
+ * three undeclared npm dependencies under the module every check loads. Those
+ * cases have never occurred here. `fixtures/code-spans.test.mjs` measures the
+ * divergence against a real parser and names each case we do not handle — the
+ * limits are written down rather than engineered away.
+ *
+ * The blanked text has the same length and the same line count, so every
+ * reported line:column stays correct.
  */
+const BACKTICK_RUN_RE = /`+/g;
+
 /**
- * Blank out every span of markdown that is CODE rather than content, replacing
- * it with same-length filler so byte offsets and line numbers still line up. A
- * link inside backticks, inside a fence, inside an indented block or inside raw
- * HTML is being SHOWN, not used.
- *
- * THIS IS PARSED, NOT PATTERN-MATCHED, AND THAT IS THE WHOLE POINT. Three
- * hand-written versions of this shipped and each was wrong differently:
- *
- *   1. `/`[^`]*`/` — broke on the ``[`x`](./x)`` form a document uses to quote a
- *      link containing backticks.
- *   2. Run-length matching, per line — a code span may WRAP, and the scaffolder's
- *      own template wraps one, so every agent log the tool created failed the gate.
- *   3. Run-length matching over a paragraph, with a hand-rolled block splitter —
- *      ten more divergences from the spec, found by two independent reviewers
- *      against a CommonMark oracle: escaped backticks inside span content,
- *      blockquotes, blockquoted list items, setext `===` underlines, pipe-less
- *      GFM tables, ordered lists that cannot interrupt a paragraph, indented code,
- *      HTML blocks.
- *
- * **Four of those hid a genuinely broken link.** That is the dangerous direction:
- * a gate that goes quiet is indistinguishable from a clean tree. The pattern
- * across all three attempts is the same — each fixed the case in front of it and
- * met the spec somewhere new the next round. A parser has no next round.
- *
- * `mdast-util-from-markdown` is the same engine the site renders with, so the
- * gate and the renderer now disagree about nothing by construction.
+ * The start of a new block, scanned from a newline: a blank line, a blockquote
+ * marker, a bullet or ordered list item, an ATX heading, a thematic break, or a
+ * setext underline. Deliberately a shortlist of the common cases — see rule 3.
  */
-function blankCodeRegions(text) {
-  let tree;
-  try {
-    tree = fromMarkdown(text, { extensions: [gfm()], mdastExtensions: [gfmFromMarkdown()] });
-  } catch {
-    // A document the parser refuses is not a document this gate can judge. Blank
-    // nothing rather than guess — a false positive is loud, a false negative is not.
-    return text;
+const BLOCK_START_RE =
+  /\n[ \t]{0,3}(?:[ \t]*\r?\n|>|[-*+][ \t]|\d{1,9}[.)][ \t]|#{1,6}[ \t]|[=\-*_]{2,}[ \t\r]*(?:\n|$))/g;
+
+function blankCodeSpans(text) {
+  if (!text.includes('`')) return text;
+
+  const runs = [];
+  BACKTICK_RUN_RE.lastIndex = 0;
+  for (let m; (m = BACKTICK_RUN_RE.exec(text)) !== null; ) {
+    runs.push({ start: m.index, len: m[0].length });
   }
-  const out = text.split('');
-  const blank = (node) => {
-    const a = node.position?.start?.offset;
-    const b = node.position?.end?.offset;
-    if (a === undefined || b === undefined) return;
-    for (let i = a; i < b; i += 1) if (out[i] !== '\n') out[i] = ' ';
-  };
-  const walk = (node) => {
-    if (CODE_NODE_TYPES.has(node.type)) { blank(node); return; }
-    if (node.children) for (const child of node.children) walk(child);
-  };
-  walk(tree);
-  return out.join('');
+
+  const parts = [];
+  let cursor = 0;
+  for (let i = 0; i < runs.length; i += 1) {
+    const open = runs[i];
+    if (open.start < cursor) continue;
+
+    // Rule 3 — the closer must arrive before the current block ends.
+    BLOCK_START_RE.lastIndex = open.start;
+    const limit = BLOCK_START_RE.exec(text)?.index ?? text.length;
+
+    let close = -1;
+    for (let k = i + 1; k < runs.length && runs[k].start < limit; k += 1) {
+      if (runs[k].len === open.len) { close = k; break; }
+    }
+    if (close === -1) continue;
+
+    const end = runs[close].start + runs[close].len;
+    parts.push(text.slice(cursor, open.start));
+    parts.push(text.slice(open.start, end).replace(/[^\n]/g, ' '));
+    cursor = end;
+    i = close;
+  }
+  parts.push(text.slice(cursor));
+  return parts.join('');
 }
 
-/** Node types whose content is markup being shown rather than used. */
-const CODE_NODE_TYPES = new Set(['inlineCode', 'code', 'html']);
-
 /**
- * A file's lines with every code region blanked.
+ * A file's lines with every code span blanked.
  *
  * All four link-walking tools share this — `check-link-form`, `check
  * skill-links`, `issues/check` and `move`. They did not, twice: the wrapped-span
@@ -225,12 +241,12 @@ const CODE_NODE_TYPES = new Set(['inlineCode', 'code', 'html']);
  * classification with four private copies is four different answers.**
  */
 export function blankedProseLines(text) {
-  return blankCodeRegions(text).split('\n');
+  return blankCodeSpans(text).split('\n');
 }
 
 /** The whole-document form, for a caller that wants the text rather than lines. */
 export function blankCodeSpansDoc(text) {
-  return blankCodeRegions(text);
+  return blankCodeSpans(text);
 }
 
 // ── ordering labels ───────────────────────────────────────────────────────

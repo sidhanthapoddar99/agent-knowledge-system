@@ -30,6 +30,17 @@ title: "Rounds"
   instead of a list of bugs I remembered. Two findings only a shell could reach: I had
   called the `--group` validator gap cosmetic by reasoning, and it was hiding every
   agent-log check; and a **fourth** link-walking caller nobody had counted.
+- [the parser audit](./070_the-parser-audit.md) — one executing check on the parser
+  swap, the only unreviewed code in the run. **Not clean.** Links are exactly
+  unchanged (2,152 = 2,152, measured as a set against the renderer), and it costs
+  **20×** — `move` 0.30s → 6.81s, unbounded on hostile input. It also caught a
+  fallback that would have let `move` rewrite quoted examples, and ten links whose
+  labels wrap that no gate has ever seen.
+- [cut it back](./080_cut-it-back.md) — Sid on the audit: *"are we over-engineering?"*
+  Yes. The parser is out (same 2,157 links, 0.08s instead of 2.53s, 3 fewer
+  dependencies) and so is the rule that told authors to convert backticked paths
+  into links (52 warnings, all of them wrong to raise). The differential fixture
+  stays, now **stating** the 8 limits instead of removing them.
 
 # The slots
 

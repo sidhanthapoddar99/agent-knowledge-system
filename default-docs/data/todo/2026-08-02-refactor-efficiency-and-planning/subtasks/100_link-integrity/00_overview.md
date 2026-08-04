@@ -18,13 +18,13 @@ status: in-progress
 
 | | What it is | Still worth pursuing? |
 |---|---|---|
-| [`010`](./010_renderer-drops-a-url-level.md) | the depth-shift diagnosis + the shipped fix | 🔴 **Superseded, and the code is now GONE** — removed 2026-08-04 after Sid reproduced its failure in a browser. See [`190`](./190_the-depth-shift-is-removed.md). The permanent fix is still render-time absolute resolution on [`2026-06-09` `03`](../../../2026-06-09-issue-link-resolution/subtasks/03_comprehensive-panel-subdoc-links.md) |
-| [`020`](./020_relative-links-are-the-contract.md) | relative is the rule, on every surface | 🟢 **Done 2026-08-04.** Rule stated with its architectural reason on 15 surfaces, independently audited, and the asset "exception" deleted — there is none. Cross-root portability moved to [`160`](./160_base-url-and-folder-name-are-not-tied.md) |
+| [`010`](./010_renderer-drops-a-url-level.md) | the depth-shift diagnosis + the shipped fix | 🔴 **Superseded, and the code is now GONE** — removed 2026-08-04 after Sid reproduced its failure in a browser. See [`190`](./190_the-depth-shift-is-removed.md). The permanent fix is still render-time absolute resolution on [`2026-06-09` `03`](../../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/030_comprehensive-panel-subdoc-links.md) |
+| [`020`](./020_relative-links-are-the-contract.md) | relative is the rule, on every surface | 🟢 **Done 2026-08-04.** Rule stated with its architectural reason on 15 surfaces, independently audited, and the asset "exception" deleted — there is none. Cross-root portability moved to [`160`](../../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/040_base-url-and-folder-name-are-not-tied.md) |
 | [`030`](./030_user-guide-relative-links-404.md) | 85 broken links in the issues user-guide | 🟢 **Done 2026-08-04.** Measurement and its lesson kept; the reverted fix and the argument for root-relative form deleted. Its two open todos were delivered by [`070`](./070_reframe-the-link-checker.md) / [`090`](./090_tools-must-say-what-they-skip.md). Spawned [`170`](./170_relative-but-not-a-path.md) |
 | [`040`](./040_site-wide-link-rot.md) | "4,295 broken links site-wide" | 🟢 **Done 2026-08-04 at zero.** Re-measured: 342 pages, 15,586 in-body links, **0 broken** across the doc sections. The 4,295 is retracted in place. Nothing unique was left to move out |
 | [`050`](./050_correct-the-published-records.md) | correcting `0.2.1` and the records | 🟢 **Done 2026-08-04.** Three dated correction blocks on `0.2.1`; `030` and `040` closed with their wrong conclusions removed. Nothing published still recommends the absolute form |
 | [`060`](./060_does-the-tracker-share-it.md) | does the tracker share the bug? | 🟢 **Done 2026-08-04. No** — the tracker lacks both conditions (no trailing slash, prefixes kept). The `issue-body-links.ts` comment that asserted it now states the real reason |
-| [`070`](./070_reframe-the-link-checker.md) | reframe `check links` | 🟢 **Done 2026-08-04.** Reframed twice inside the wrong question — the real answer is that a `dist/`-reading gate does not belong in the plugin at all. Now [`180`](./180_rendered-link-check-belongs-to-this-repo.md) |
+| [`070`](./070_reframe-the-link-checker.md) | reframe `check links` | ⬜ **Dropped 2026-08-04.** Reframed three times; the third answer was that a `dist/`-reading gate does not belong in the plugin at all. Removing it is [retire the plugin's rendering gate](../../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/060_retire-the-plugin-rendering-gate.md) |
 | [`080`](./080_link-it-dont-name-it.md) | a file reference is a link, not a backticked path | 🟢 **Yes, and it is untouched.** Fully independent of everything above — the one item here no diagnosis affected |
 | [`090`](./090_tools-must-say-what-they-skip.md) | `move` and `check` must not skip silently | 🟢 **Yes.** The gate passes 306 links `move` cannot maintain, and both tools are wrong about site assets |
 | [`100`](./100_links-whose-target-does-not-exist.md) | 55 links with no target | 🟢 **Yes** — genuinely dead targets, independent of resolution |
@@ -32,10 +32,32 @@ status: in-progress
 | [`120`](./120_dev-and-build-disagree-on-the-base.md) | the real diagnosis + the three options | 🟡 **Sid's call**, and the June issue already decided it |
 | [`130`](./130_what-the-wrong-diagnosis-taught.md) | damage inventory, nine surfaces | 🟢 **Yes** — three fixed, the rest listed |
 | [`140`](./140_dual-slug-url-resolution.md) · [`150`](./150_plans-auto-resolution.md) | routing defects found by the live check | ⬜ **Pointers only** — the work is on `2026-06-09-issue-link-resolution` |
-| [`160`](./160_base-url-and-folder-name-are-not-tied.md) | `base_url` and the data folder are not tied | 🟢 **Yes.** A cross-section link resolves only while two independent `site.yaml` values happen to match. Split out of [`020`](./020_relative-links-are-the-contract.md) |
+| [`160`](../../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/040_base-url-and-folder-name-are-not-tied.md) | `base_url` and the data folder are not tied | ➡️ **Moved 2026-08-04** to the absolute-link-resolution issue, which owns the URL. Split out of [`020`](./020_relative-links-are-the-contract.md) |
 | [`170`](./170_relative-but-not-a-path.md) | 334 links relative in shape, a slug in fact | 🟢 **Yes.** Every gate passes them and `move` skips them silently. Found while closing [`030`](./030_user-guide-relative-links-404.md) |
-| [`180`](./180_rendered-link-check-belongs-to-this-repo.md) | the rendering gate is in the wrong tree | 🟢 **In progress.** `scripts/check-links.mjs` written — crawls a live server, not `dist/`. The plugin keeps the file-level question only |
-| [`190`](./190_the-depth-shift-is-removed.md) | the depth shift is removed | ⭐ **Removed 2026-08-04**, reproduced in a browser. It chose which half of the site to break; no constant offset is right. Awaiting review |
+| [`180`](./180_rendered-link-check-belongs-to-this-repo.md) | the rendering gate is in the wrong tree | ✅ **Done 2026-08-04.** `scripts/check-links.mjs` crawls a live server, is control-tested both directions, and gives a correct distinct answer in dev (4), preview (4) and a real static host (546) |
+| [`190`](./190_the-depth-shift-is-removed.md) | the depth shift is removed | ⬜ **Dropped 2026-08-04.** The shift is out and `trailingSlash: 'always'` was tried and reverted too. The class now has its own issue — see below |
+
+# ⭐ The class has moved — this group no longer owns the fix
+
+**Opened 2026-08-04: [the absolute-link-resolution issue](../../../2026-08-04-absolute-link-resolution/issue.md).**
+Everything about *how a URL is produced* is owned there, including the hosting
+path prefix. This group keeps what it was always right about — the **content**
+rule that a link is relative on disk, and the tooling that checks files.
+
+Three subtasks closed into it: [`070`](./070_reframe-the-link-checker.md) and
+[`190`](./190_the-depth-shift-is-removed.md) dropped,
+[`180`](./180_rendered-link-check-belongs-to-this-repo.md) done; `160` moved
+outright. **What stays live here** is
+[`170`](./170_relative-but-not-a-path.md) (334 links relative in shape but naming
+a slug, which no gate catches), [`090`](./090_tools-must-say-what-they-skip.md),
+[`100`](./100_links-whose-target-does-not-exist.md) and
+[`080`](./080_link-it-dont-name-it.md) — all file-level questions, none of which
+a renderer change answers.
+
+**The reason for the split** is the same three-stages test that moved the gate:
+whether a link *resolves in a browser* is the engine's output and the engine's to
+own; whether it *names a file that exists* is the content's, and every consumer
+can check it with no build at all.
 
 **The one thing to do next**, and everything else waits behind it: land
 render-time absolute link resolution. It removes [`010`](./010_renderer-drops-a-url-level.md)'s

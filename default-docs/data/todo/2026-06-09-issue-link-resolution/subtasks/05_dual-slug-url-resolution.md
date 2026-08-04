@@ -113,7 +113,7 @@ disagree — the hand-syncing this issue flagged is now one function.
 - The measurement that found it: [`110 the live check`](../../2026-08-02-refactor-efficiency-and-planning/subtasks/100_link-integrity/110_live-check.md)
 - The diagnosis and the three options: [`120 dev and build disagree`](../../2026-08-02-refactor-efficiency-and-planning/subtasks/100_link-integrity/120_dev-and-build-disagree-on-the-base.md)
 - The deeper fix already decided on this issue:
-  [`03 render-time absolute`](./03_comprehensive-panel-subdoc-links.md) — note it
+  [`03 render-time absolute`](../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/030_comprehensive-panel-subdoc-links.md) — note it
   is **not** a substitute. Render-time absolute resolution fixes links this
   project emits; this subtask fixes URLs a human types, a bookmark holds, or an
   external page links to

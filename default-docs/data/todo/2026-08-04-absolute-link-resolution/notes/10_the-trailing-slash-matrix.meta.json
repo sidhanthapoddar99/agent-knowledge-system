@@ -1,0 +1,52 @@
+{
+  "title": "The trailing-slash matrix",
+  "description": "One link, four combinations — why no fixed depth shift can be correct in both dev and production",
+  "sidebar_label": "Trailing-slash matrix",
+  "embed_height": "full",
+  "artifact": {
+    "purpose": "Show the four dev/production × shift-off/shift-on combinations side by side, each traced from the address bar to the resolved URL, so the diagonal is visible at a glance rather than reconstructed from prose.",
+    "type": "report",
+    "theme": "site",
+    "consumed_tokens": [
+      "--color-bg-primary", "--color-bg-secondary", "--color-bg-tertiary",
+      "--color-text-primary", "--color-text-secondary", "--color-text-muted",
+      "--color-border-default", "--color-border-light",
+      "--color-brand-primary", "--color-success", "--color-error",
+      "--color-warning", "--color-info",
+      "--font-family-base", "--font-family-mono",
+      "--ui-text-micro", "--ui-text-body", "--ui-text-title",
+      "--font-weight-normal", "--font-weight-semibold", "--font-weight-bold",
+      "--line-height-base", "--letter-spacing-tight", "--letter-spacing-wide",
+      "--spacing-xs", "--spacing-sm", "--spacing-md", "--spacing-lg", "--spacing-xl",
+      "--border-radius-sm", "--border-radius-md"
+    ],
+    "palette": {
+      "note": "No palette of its own — site mode. Pass/fail is carried by --color-success / --color-error; the neutral hex values written inline are the out-of-engine fallback layer only (#fafafa, #f5f5f5, #eeeeee, #1a1a1a, #525252, #737373, #e5e5e5, #f0f0f0, #2563eb, #16a34a, #dc2626, #ca8a04, #0891b2)."
+    },
+    "data": {
+      "link_traced": "[Installation](./02_installation.md) in user-guide/05_getting-started/01_overview.md",
+      "in_body_links_measured": 1245,
+      "pages_crawled": 940,
+      "dev_shift_off": "4 broken (anchors only)",
+      "dev_shift_on": "broken — reproduced in a browser",
+      "static_shift_off": "546 broken (43.9%)",
+      "static_shift_on": "4 broken (anchors only)",
+      "measured_on": "2026-08-04, against a running server",
+      "tree_state": "Both attempts reverted — no shift, no trailingSlash. The top-left cell is what ships.",
+      "preview_equals_dev": "0 disagreements over 1245 links; dev vs a real file server: 546 disagreements"
+    },
+    "key_facts": [
+      "A browser resolves a relative href against the directory portion of the current address; the trailing slash decides where that directory ends.",
+      "The two rows differ by exactly one URL segment — the same amount the shift changes — so no constant offset is correct in both, including zero.",
+      "astro dev and astro preview are route tables and never add the slash; a static host is a file server and always does, so dev-vs-preview tests one row twice.",
+      "The permanent fix is root-absolute resolution at render time; its one missing ingredient is the section base_url, which never reaches the parser layer."
+    ],
+    "sources": [
+      "../notes/20_what-happened-and-why.md",
+      "../../2026-08-02-refactor-efficiency-and-planning/subtasks/100_link-integrity/120_dev-and-build-disagree-on-the-base.md",
+      "../../2026-08-02-refactor-efficiency-and-planning/agent-log/060_wf_move-the-gate-and-drop-the-shift/01_summary.md",
+      "astro-doc-code/src/parsers/postprocessors/internal-links.ts",
+      "scripts/check-links.mjs"
+    ]
+  }
+}

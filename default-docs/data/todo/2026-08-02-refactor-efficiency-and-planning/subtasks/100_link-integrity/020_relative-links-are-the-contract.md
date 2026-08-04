@@ -275,7 +275,7 @@ under *Cross-linking between docs pages*.
 - [x] **3. Drop the stale depth claim.** The block says the renderer *"adjusts
       the URL depth for you"*. That is the interim one-level shift, correct only
       on the built site, and it is being deleted by
-      [`2026-06-09` `03`](../../../2026-06-09-issue-link-resolution/subtasks/03_comprehensive-panel-subdoc-links.md).
+      [`2026-06-09` `03`](../../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/030_comprehensive-panel-subdoc-links.md).
       Promise only what survives: `NN_` prefixes and `.md` stripped, and **both
       URL spellings accepted** (shipped in 0.2.2).
 
@@ -290,7 +290,7 @@ under *Cross-linking between docs pages*.
       values that only match here by naming convention, so a cross-section link
       resolves by luck. It needs reproducing and probably a config-load refusal,
       neither of which belongs in a documentation rewrite. Now
-      [`160`](./160_base-url-and-folder-name-are-not-tied.md).
+      [`160`](../../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/040_base-url-and-folder-name-are-not-tied.md).
 
 - [x] **6. Repeat the fact deliberately — do NOT deduplicate it.** Sid, 2026-08-04:
       **the fact belongs in three or four places in the skill, and five or six
@@ -357,7 +357,7 @@ closed on the writer's own report. Findings and their disposition:
 | The skill documents `/assets/…` as correct; the gate rejects it | **Fixed** — the skill was wrong, not the gate |
 | The asset exception reached the docs skill only, not the issues skill | **Fixed** — removed from both, so there is nothing to keep in sync |
 | `guide.ts` stated the rule with the tooling reason alone, and kept the boundary leak | **Fixed** — item 7 |
-| `docs-layout.md` asserted "no cross-section exception" more confidently than the tracker records it | **Fixed** — caveat added, pointing at [`160`](./160_base-url-and-folder-name-are-not-tied.md) |
+| `docs-layout.md` asserted "no cross-section exception" more confidently than the tracker records it | **Fixed** — caveat added, pointing at [`160`](../../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/040_base-url-and-folder-name-are-not-tied.md) |
 | `blog-layout.md` never swept | **Fixed** |
 | The commit message claimed all four script edits were comment-only; `move.mjs` changed four `console.log` strings | **Recorded here.** No control flow moved, and the run's own record stated it correctly — only the commit message overstated it |
 | `cover:` blog frontmatter is documented but nothing reads it | **Not pursued** — Sid, 2026-08-04: the blog is still under development |

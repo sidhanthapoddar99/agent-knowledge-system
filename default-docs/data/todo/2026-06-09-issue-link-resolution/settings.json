@@ -1,7 +1,7 @@
 {
   "title": "Issue content link resolution + `/issue` canonical redirect",
   "description": "Relative links inside issue.md under-resolved by one level because the root issue.md body is served at the collapsed detail URL (/<tracker>/<issue>), one segment shallower than its file position. Fixed via an issues-only re-rooting postprocessor + a /issue→detail-root redirect. Known remaining gap: sub-doc bodies embedded in the Comprehensive panel.",
-  "status": "open",
+  "status": "done",
   "priority": "medium",
   "component": ["loaders-and-renderers"],
   "labels": [

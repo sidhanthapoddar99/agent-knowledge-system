@@ -36,7 +36,7 @@ trailing-slash fragility"* this issue names: a relative href resolves against
 whatever base the current address happens to have, and dev and build do not
 agree on it. A constant offset cannot be correct in both.
 
-So **[`03`](./subtasks/03_comprehensive-panel-subdoc-links.md) is now the fix for
+So **[`03`](../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/030_comprehensive-panel-subdoc-links.md) is now the fix for
 docs and blog as well, not only the Comprehensive panel** — and it is the highest
 priority thing on this issue.
 

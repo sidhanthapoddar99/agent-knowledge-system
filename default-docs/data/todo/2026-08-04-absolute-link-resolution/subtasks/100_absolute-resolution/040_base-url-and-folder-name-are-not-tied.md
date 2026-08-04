@@ -33,9 +33,9 @@ config load, naming both values.
   and `pages.<section>.data`
 - Where the "no cross-section exception" claim was made, having only been tested
   inside one content root:
-  [`020`](./020_relative-links-are-the-contract.md)
+  [`020`](../../../2026-08-02-refactor-efficiency-and-planning/subtasks/100_link-integrity/020_relative-links-are-the-contract.md)
 - The structural fix, already decided:
-  [`2026-06-09-issue-link-resolution/subtasks/03_comprehensive-panel-subdoc-links.md`](../../../2026-06-09-issue-link-resolution/subtasks/03_comprehensive-panel-subdoc-links.md)
+  [`2026-06-09-issue-link-resolution/subtasks/03_comprehensive-panel-subdoc-links.md`](./030_comprehensive-panel-subdoc-links.md)
 - The transform that emits the relative href unchanged:
   `astro-doc-code/src/parsers/postprocessors/internal-links.ts`
 
@@ -54,7 +54,7 @@ config load, naming both values.
       invariant structural over documenting it
 - [ ] Check whether the tracker has the same exposure — it keeps its `NN_`
       prefixes and serves without a trailing slash, so its links resolve
-      differently. Coordinate with [`060`](./060_does-the-tracker-share-it.md)
+      differently. Coordinate with [`060`](../../../2026-08-02-refactor-efficiency-and-planning/subtasks/100_link-integrity/060_does-the-tracker-share-it.md)
 
 # Details
 

@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The trailing-slash matrix — one link, four combinations</title>
+<style>
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: var(--spacing-lg, 1.5rem);
+    background: var(--color-bg-primary, #fafafa);
+    color: var(--color-text-primary, #1a1a1a);
+    font-family: var(--font-family-base, system-ui, sans-serif);
+    font-size: var(--ui-text-body, 0.875rem);
+    line-height: var(--line-height-base, 1.6);
+  }
+
+  .wrap { max-width: 1180px; margin: 0 auto; }
+
+  /* ---------- masthead ---------- */
+
+  header { margin-bottom: var(--spacing-xl, 2rem); }
+
+  h1 {
+    margin: 0 0 var(--spacing-xs, 0.25rem);
+    font-size: var(--ui-text-title, 1.5rem);
+    font-weight: var(--font-weight-semibold, 600);
+    letter-spacing: var(--letter-spacing-tight, -0.025em);
+  }
+
+  .standfirst {
+    margin: 0;
+    max-width: 62ch;
+    color: var(--color-text-secondary, #525252);
+  }
+
+  /* ---------- the constant ---------- */
+
+  .constant {
+    margin: var(--spacing-lg, 1.5rem) 0;
+    padding: var(--spacing-md, 1rem);
+    background: var(--color-bg-secondary, #f5f5f5);
+    border: 1px solid var(--color-border-default, #e5e5e5);
+    border-radius: var(--border-radius-md, 6px);
+  }
+
+  .constant-label {
+    margin: 0 0 var(--spacing-sm, 0.5rem);
+    font-size: var(--ui-text-micro, 0.75rem);
+    font-weight: var(--font-weight-semibold, 600);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide, 0.025em);
+    color: var(--color-text-muted, #737373);
+  }
+
+  dl.kv {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 2px var(--spacing-md, 1rem);
+    margin: 0;
+  }
+
+  dl.kv dt {
+    font-size: var(--ui-text-micro, 0.75rem);
+    color: var(--color-text-muted, #737373);
+    white-space: nowrap;
+  }
+
+  dl.kv dd {
+    margin: 0;
+    font-family: var(--font-family-mono, monospace);
+    font-size: var(--ui-text-micro, 0.75rem);
+    overflow-wrap: anywhere;
+  }
+
+  /* ---------- the rule ---------- */
+
+  .rule {
+    margin: var(--spacing-lg, 1.5rem) 0;
+    padding: var(--spacing-md, 1rem) var(--spacing-lg, 1.5rem);
+    border-left: 3px solid var(--color-brand-primary, #2563eb);
+    background: var(--color-bg-secondary, #f5f5f5);
+    border-radius: 0 var(--border-radius-md, 6px) var(--border-radius-md, 6px) 0;
+  }
+
+  .rule p { margin: 0 0 var(--spacing-sm, 0.5rem); max-width: 68ch; }
+  .rule p:last-child { margin-bottom: 0; }
+
+  .rule-pair {
+    display: grid;
+    grid-template-columns: max-content max-content max-content;
+    gap: 2px var(--spacing-md, 1rem);
+    margin: var(--spacing-md, 1rem) 0 0;
+    font-family: var(--font-family-mono, monospace);
+    font-size: var(--ui-text-micro, 0.75rem);
+    align-items: baseline;
+  }
+
+  .rule-pair .arrow { color: var(--color-text-muted, #737373); }
+  .rule-pair .out { font-weight: var(--font-weight-semibold, 600); }
+
+  /* ---------- the matrix ---------- */
+
+  .matrix {
+    display: grid;
+    grid-template-columns: max-content 1fr 1fr;
+    gap: var(--spacing-sm, 0.5rem);
+    margin: var(--spacing-xl, 2rem) 0;
+    align-items: stretch;
+  }
+
+  .axis {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-sm, 0.5rem);
+    font-size: var(--ui-text-micro, 0.75rem);
+    font-weight: var(--font-weight-semibold, 600);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide, 0.025em);
+    color: var(--color-text-muted, #737373);
+    text-align: center;
+  }
+
+  .axis-row {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    padding: var(--spacing-md, 1rem) var(--spacing-xs, 0.25rem);
+  }
+
+  .axis-sub {
+    display: block;
+    writing-mode: horizontal-tb;
+    margin-top: 2px;
+    font-weight: var(--font-weight-normal, 400);
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .axis-row .axis-sub { writing-mode: vertical-rl; margin: 0 0 0 2px; }
+
+  .corner { }
+
+  /* ---------- a cell ---------- */
+
+  .cell {
+    display: flex;
+    flex-direction: column;
+    padding: var(--spacing-md, 1rem);
+    background: var(--color-bg-secondary, #f5f5f5);
+    border: 1px solid var(--color-border-default, #e5e5e5);
+    border-radius: var(--border-radius-md, 6px);
+    border-top-width: 3px;
+  }
+
+  .cell.pass { border-top-color: var(--color-success, #16a34a); }
+  .cell.fail { border-top-color: var(--color-error, #dc2626); }
+
+  .cell-head {
+    display: flex;
+    align-items: baseline;
+    gap: var(--spacing-sm, 0.5rem);
+    margin-bottom: var(--spacing-md, 1rem);
+    padding-bottom: var(--spacing-sm, 0.5rem);
+    border-bottom: 1px solid var(--color-border-light, #f0f0f0);
+  }
+
+  .verdict {
+    font-size: var(--ui-text-micro, 0.75rem);
+    font-weight: var(--font-weight-bold, 700);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide, 0.025em);
+  }
+
+  .pass .verdict { color: var(--color-success, #16a34a); }
+  .fail .verdict { color: var(--color-error, #dc2626); }
+
+  .cell-title {
+    font-weight: var(--font-weight-semibold, 600);
+    font-size: var(--ui-text-body, 0.875rem);
+  }
+
+  /* ---------- the trace ---------- */
+
+  .trace {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: var(--spacing-xs, 0.25rem) var(--spacing-md, 1rem);
+    margin: 0;
+    font-family: var(--font-family-mono, monospace);
+    font-size: var(--ui-text-micro, 0.75rem);
+  }
+
+  .trace dt {
+    color: var(--color-text-muted, #737373);
+    font-family: var(--font-family-base, system-ui, sans-serif);
+    white-space: nowrap;
+  }
+
+  .trace dd { margin: 0; overflow-wrap: anywhere; }
+
+  .trace .step {
+    grid-column: 1 / -1;
+    height: 1px;
+    background: var(--color-border-light, #f0f0f0);
+    margin: var(--spacing-xs, 0.25rem) 0;
+  }
+
+  .seg-base { color: var(--color-text-secondary, #525252); }
+
+  .seg-hot {
+    padding: 0 2px;
+    border-radius: var(--border-radius-sm, 3px);
+    font-weight: var(--font-weight-semibold, 600);
+  }
+
+  .pass .seg-hot {
+    background: color-mix(in srgb, var(--color-success, #16a34a) 18%, transparent);
+    color: var(--color-success, #16a34a);
+  }
+
+  .fail .seg-hot {
+    background: color-mix(in srgb, var(--color-error, #dc2626) 18%, transparent);
+    color: var(--color-error, #dc2626);
+  }
+
+  .result {
+    margin-top: auto;
+    padding-top: var(--spacing-md, 1rem);
+  }
+
+  .result-url {
+    display: block;
+    font-family: var(--font-family-mono, monospace);
+    font-size: var(--ui-text-micro, 0.75rem);
+    font-weight: var(--font-weight-semibold, 600);
+    overflow-wrap: anywhere;
+  }
+
+  .pass .result-url { color: var(--color-success, #16a34a); }
+  .fail .result-url { color: var(--color-error, #dc2626); }
+
+  .measured {
+    display: block;
+    margin-top: var(--spacing-xs, 0.25rem);
+    font-size: var(--ui-text-micro, 0.75rem);
+    color: var(--color-text-muted, #737373);
+  }
+
+  .why {
+    margin: var(--spacing-sm, 0.5rem) 0 0;
+    font-size: var(--ui-text-micro, 0.75rem);
+    color: var(--color-text-secondary, #525252);
+  }
+
+  /* ---------- closing panels ---------- */
+
+  .panels {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-md, 1rem);
+    margin-top: var(--spacing-xl, 2rem);
+  }
+
+  .panel {
+    padding: var(--spacing-md, 1rem);
+    background: var(--color-bg-secondary, #f5f5f5);
+    border: 1px solid var(--color-border-default, #e5e5e5);
+    border-radius: var(--border-radius-md, 6px);
+  }
+
+  .panel.spans { grid-column: 1 / -1; }
+
+  .panel h2 {
+    margin: 0 0 var(--spacing-sm, 0.5rem);
+    font-size: var(--ui-text-body, 0.875rem);
+    font-weight: var(--font-weight-semibold, 600);
+  }
+
+  .panel p { margin: 0 0 var(--spacing-sm, 0.5rem); max-width: 68ch; }
+  .panel p:last-child { margin-bottom: 0; }
+
+  .panel.now { border-left: 3px solid var(--color-warning, #ca8a04); }
+  .panel.out { border-left: 3px solid var(--color-info, #0891b2); }
+
+  code {
+    font-family: var(--font-family-mono, monospace);
+    font-size: 0.92em;
+    padding: 1px 4px;
+    background: var(--color-bg-tertiary, #eeeeee);
+    border-radius: var(--border-radius-sm, 3px);
+  }
+
+  strong { font-weight: var(--font-weight-semibold, 600); }
+
+  footer {
+    margin-top: var(--spacing-xl, 2rem);
+    padding-top: var(--spacing-md, 1rem);
+    border-top: 1px solid var(--color-border-default, #e5e5e5);
+    font-size: var(--ui-text-micro, 0.75rem);
+    color: var(--color-text-muted, #737373);
+  }
+
+  @media (max-width: 820px) {
+    .matrix { grid-template-columns: 1fr; }
+    .corner, .axis-row { display: none; }
+    .axis-col { text-align: left; justify-content: flex-start; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>The trailing-slash matrix</h1>
+    <p class="standfirst">
+      One link, four combinations. The markdown never changes and it is correct on
+      disk in all four. Only two things vary — what the renderer writes into the
+      <code>href</code>, and whether the server puts a slash on the end of the URL.
+      Docs only; blog and issues take a different code path.
+    </p>
+  </header>
+
+  <div class="constant">
+    <p class="constant-label">The constant — this is the same in every cell below</p>
+    <dl class="kv">
+      <dt>source file</dt>
+      <dd>default-docs/data/user-guide/05_getting-started/01_overview.md</dd>
+      <dt>markdown</dt>
+      <dd>[Installation](./02_installation.md)</dd>
+      <dt>target file</dt>
+      <dd>default-docs/data/user-guide/05_getting-started/02_installation.md &nbsp;— a sibling</dd>
+      <dt>target URL</dt>
+      <dd>/user-guide/getting-started/installation</dd>
+    </dl>
+  </div>
+
+  <div class="rule">
+    <p><strong>One rule decides all four cells.</strong> A browser resolves a
+    relative <code>href</code> against the <em>directory portion</em> of the address
+    it is currently on. The trailing slash is the only thing that says where the
+    directory ends.</p>
+    <div class="rule-pair">
+      <span>address /a/b/c</span>
+      <span class="arrow">→</span>
+      <span>c is a <em>file</em> inside /a/b/ &nbsp;→&nbsp; base is <span class="out">/a/b/</span></span>
+      <span>address /a/b/c/</span>
+      <span class="arrow">→</span>
+      <span>c is a <em>folder</em> I am in &nbsp;→&nbsp; base is <span class="out">/a/b/c/</span></span>
+    </div>
+    <p style="margin-top: var(--spacing-md, 1rem)">The two addresses differ by
+    <strong>exactly one segment</strong>. So does the shift. That is why the four
+    cells form two matching pairs and two broken ones — and why no fixed value of
+    the shift can be right in both rows.</p>
+  </div>
+
+  <div class="matrix">
+    <div class="corner"></div>
+    <div class="axis axis-col">shift off<span class="axis-sub">renderer writes <code>./installation</code></span></div>
+    <div class="axis axis-col">shift on<span class="axis-sub">renderer writes <code>../installation</code></span></div>
+
+    <div class="axis axis-row">dev<span class="axis-sub">no trailing slash</span></div>
+
+    <!-- dev + no shift -->
+    <div class="cell pass">
+      <div class="cell-head">
+        <span class="verdict">works</span>
+        <span class="cell-title">dev + shift off</span>
+      </div>
+      <dl class="trace">
+        <dt>you click</dt>
+        <dd>href="/user-guide/getting-started/overview"</dd>
+        <dt>server</dt>
+        <dd>200, no redirect — a route table, not a filesystem</dd>
+        <div class="step"></div>
+        <dt>address bar</dt>
+        <dd><span class="seg-base">/user-guide/getting-started/</span>overview</dd>
+        <dt>browser base</dt>
+        <dd><span class="seg-hot">/user-guide/getting-started/</span></dd>
+        <dt>href</dt>
+        <dd>./installation</dd>
+      </dl>
+      <div class="result">
+        <span class="result-url">= /user-guide/getting-started/installation</span>
+        <span class="measured">Measured 2026-08-04, independent audit: 940 pages,
+        1,245 in-body links, 4 broken — all missing anchors, no path failures.</span>
+      </div>
+    </div>
+
+    <!-- dev + shift -->
+    <div class="cell fail">
+      <div class="cell-head">
+        <span class="verdict">breaks</span>
+        <span class="cell-title">dev + shift on</span>
+      </div>
+      <dl class="trace">
+        <dt>you click</dt>
+        <dd>href="/user-guide/getting-started/overview"</dd>
+        <dt>server</dt>
+        <dd>200, no redirect</dd>
+        <div class="step"></div>
+        <dt>address bar</dt>
+        <dd><span class="seg-base">/user-guide/getting-started/</span>overview</dd>
+        <dt>browser base</dt>
+        <dd>/user-guide/getting-started/</dd>
+        <dt>href</dt>
+        <dd><span class="seg-hot">../</span>installation</dd>
+        <dt>up one</dt>
+        <dd><span class="seg-hot">/user-guide/</span></dd>
+      </dl>
+      <div class="result">
+        <span class="result-url">= /user-guide/installation &nbsp;— 404</span>
+        <p class="why"><strong>The <code>..</code> overshoots.</strong> Without the
+        slash the browser is <em>already</em> at <code>getting-started/</code>;
+        going up again lands in <code>user-guide/</code>.</p>
+        <span class="measured">Reproduced by Sid in a browser, 2026-08-04. This is
+        what caused the shift to be removed.</span>
+      </div>
+    </div>
+
+    <div class="axis axis-row">static host<span class="axis-sub">slash added</span></div>
+
+    <!-- prod + no shift -->
+    <div class="cell fail">
+      <div class="cell-head">
+        <span class="verdict">breaks</span>
+        <span class="cell-title">static host + shift off</span>
+      </div>
+      <dl class="trace">
+        <dt>you click</dt>
+        <dd>href="/user-guide/getting-started/overview"</dd>
+        <dt>server</dt>
+        <dd>overview/ <em>is a directory on disk</em> → 301 → adds the slash →
+        serves overview/index.html</dd>
+        <div class="step"></div>
+        <dt>address bar</dt>
+        <dd>/user-guide/getting-started/overview<span class="seg-hot">/</span></dd>
+        <dt>browser base</dt>
+        <dd><span class="seg-hot">/user-guide/getting-started/overview/</span></dd>
+        <dt>href</dt>
+        <dd>./installation</dd>
+      </dl>
+      <div class="result">
+        <span class="result-url">= /user-guide/getting-started/overview/installation &nbsp;— 404</span>
+        <p class="why"><strong>The link now points inside the page it is on.</strong>
+        The page's own name became a folder in the path, and nothing compensated
+        for it.</p>
+        <span class="measured">Measured 2026-08-04: 1,245 in-body links,
+        <strong>546 broken</strong> — 43.9%.</span>
+      </div>
+    </div>
+
+    <!-- prod + shift -->
+    <div class="cell pass">
+      <div class="cell-head">
+        <span class="verdict">works</span>
+        <span class="cell-title">static host + shift on</span>
+      </div>
+      <dl class="trace">
+        <dt>you click</dt>
+        <dd>href="/user-guide/getting-started/overview"</dd>
+        <dt>server</dt>
+        <dd>301 → adds the slash → serves overview/index.html</dd>
+        <div class="step"></div>
+        <dt>address bar</dt>
+        <dd>/user-guide/getting-started/overview<span class="seg-hot">/</span></dd>
+        <dt>browser base</dt>
+        <dd>/user-guide/getting-started/overview/</dd>
+        <dt>href</dt>
+        <dd><span class="seg-hot">../</span>installation</dd>
+        <dt>up one</dt>
+        <dd><span class="seg-hot">/user-guide/getting-started/</span></dd>
+      </dl>
+      <div class="result">
+        <span class="result-url">= /user-guide/getting-started/installation</span>
+        <p class="why"><strong>The <code>..</code> cancels the segment the trailing
+        slash added.</strong> Exactly what the shift was written for.</p>
+        <span class="measured">Measured 2026-08-04 with
+        <code>trailingSlash: 'always'</code> also set: 1,245 in-body links, 4 broken
+        — the same four missing anchors as the top-left cell.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="panels">
+
+    <div class="panel spans">
+      <h2>A perfect diagonal — and that is the proof there is no right answer</h2>
+      <p>The renderer writes the <code>href</code> at <strong>build time</strong>.
+      Which row the reader lands in is decided at <strong>request time</strong>, by
+      a server the renderer has never met. The rows differ by exactly one URL
+      segment, which is exactly the amount the shift changes — so no constant
+      offset satisfies both, <em>including zero</em>.</p>
+      <p><strong>Both previous rounds measured one row and concluded the other did
+      not exist.</strong> On 2026-08-03 the shift was added having seen only the
+      bottom row, through a tool that reads <code>dist/</code> and
+      <em>constructs</em> each page URL with a slash: it read as 418 → 55. On
+      2026-08-04 it was removed having seen only the top row — dev, preview, and a
+      browser — and that read as a clean fix. <code>astro dev</code> and
+      <code>astro preview</code> are route tables and never add the slash; a static
+      host is a file server and always does. <strong>So testing dev against preview
+      is testing one row twice.</strong></p>
+    </div>
+
+    <div class="panel now">
+      <h2>Where the tree stands now — the top-left cell</h2>
+      <p><strong>Both attempts are reverted.</strong> No shift, no
+      <code>trailingSlash</code> setting. The renderer emits the author's own
+      relative shape, which is correct for every URL the site's own navigation
+      produces.</p>
+      <p>That is a deliberate choice of column, not a solution.
+      <strong>Dev is where this project is actually used</strong>, so dev is the
+      column that has to work. The bottom row stays wrong until absolute
+      resolution lands.</p>
+      <p><code>trailingSlash: 'always'</code> also carried a second, unrecoverable
+      cost: it <strong>404s the whole
+      <code>/artifacts/&lt;file&gt;.html</code> route</strong>, whose URLs end in a
+      file extension and can never take a trailing slash. This page is served by
+      that route.</p>
+    </div>
+
+    <div class="panel out">
+      <h2>The way out — delete the question</h2>
+      <p>Resolve internal links to <strong>root-absolute at render time</strong>, so
+      the emitted href is <code>/user-guide/getting-started/installation</code> and
+      there is no directory portion to resolve against. The slash stops
+      <em>mattering</em> rather than being made uniform — which also survives a CDN
+      that rewrites URLs, and the Comprehensive panel, which renders a subtask's
+      HTML at a URL that is not the subtask's own.</p>
+      <p>Decided 2026-06-09. The one missing ingredient: the section's
+      <code>base_url</code> never reaches the parser layer, so the postprocessor
+      cannot know which section it is in. Threading that one field through deletes
+      this entire matrix.</p>
+    </div>
+
+  </div>
+
+  <footer>
+    Companion to this issue's note <em>“What happened, and why it took two
+    rounds”</em>. Every number here was measured on 2026-08-04 against a running
+    server — dev, preview, and a real file server over <code>dist/</code> — never
+    read off the filesystem.
+  </footer>
+
+</div>
+</body>
+</html>

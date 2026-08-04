@@ -1,6 +1,6 @@
 ---
 title: "The depth shift is removed — it chose which half of the site to break"
-status: review
+status: dropped
 ---
 
 # Overview
@@ -50,7 +50,7 @@ finding, and it is why this subtask does not propose a different number.
 - Added in `951e520` (2026-08-03), removed 2026-08-04
 - The subtask that added it: [`010`](./010_renderer-drops-a-url-level.md)
 - **The permanent fix, decided 2026-06-09:**
-  [`2026-06-09-issue-link-resolution/subtasks/03_comprehensive-panel-subdoc-links.md`](../../../2026-06-09-issue-link-resolution/subtasks/03_comprehensive-panel-subdoc-links.md)
+  [`2026-06-09-issue-link-resolution/subtasks/03_comprehensive-panel-subdoc-links.md`](../../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/030_comprehensive-panel-subdoc-links.md)
 - The environment split: [`120`](./120_dev-and-build-disagree-on-the-base.md)
 - The tool that could not see the failure:
   [`180`](./180_rendered-link-check-belongs-to-this-repo.md)
@@ -68,7 +68,7 @@ finding, and it is why this subtask does not propose a different number.
 - [x] Rewrite the file header, which described the shift as the file's purpose
 - [x] Build clean — 1,174 pages; `tsc` clean on this file
 - [ ] **Land render-time absolute resolution** —
-      [`2026-06-09` `03`](../../../2026-06-09-issue-link-resolution/subtasks/03_comprehensive-panel-subdoc-links.md).
+      [`2026-06-09` `03`](../../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/030_comprehensive-panel-subdoc-links.md).
       This is the only item that closes the class
 - [ ] Re-run the four link shapes handed to that subtask by
       [`010`](./010_renderer-drops-a-url-level.md) — query strings on asset and
@@ -223,7 +223,7 @@ layouts changed with it.
 **Or remove the question** — resolve internal links to root-absolute at render
 time, so the href is `/user-guide/getting-started/installation` and there is no
 directory portion to resolve against. Decided 2026-06-09 on
-[`2026-06-09-issue-link-resolution` subtask 03](../../../2026-06-09-issue-link-resolution/subtasks/03_comprehensive-panel-subdoc-links.md).
+[`2026-06-09-issue-link-resolution` subtask 03](../../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/030_comprehensive-panel-subdoc-links.md).
 **The slash stops mattering rather than being made uniform**, which is the
 stronger property: it survives a host we have not tested, a CDN that rewrites
 URLs, and the Comprehensive panel, which renders a subtask's HTML at a URL that
@@ -266,3 +266,36 @@ Blog and issues never reached this code: the postprocessor returns early for any
 `contentType !== 'docs'`, stripping the `.md` extension and nothing else. The
 tracker has its own separate pass (`issue-body-links.ts`) that fires only on a
 root `issue.md`. **So this removal affects `user-guide/` and `dev-docs/` only.**
+
+# Dropped 2026-08-04 — the live work moves to its own issue
+
+**Dropped rather than done: the shift is out of the tree, but the class it
+belonged to is not closed, and it needed an owner rather than a tail.** Sid's
+call, 2026-08-04.
+
+What this subtask settled and is worth keeping:
+
+- **The diagonal**, measured in both columns. It is the proof that no constant
+  offset is correct, including zero, and it is what stopped a third attempt at
+  picking a different number.
+- **`trailingSlash: 'always'` is not the way out either.** Tested here: it fixes
+  the shipped column (546 → 4) and 404s every page in dev *and* the entire
+  `/artifacts/<file>.html` route, whose URLs can never carry a trailing slash.
+  That second one is structural, not a layout fix.
+- **Both previous rounds measured one column and concluded the other did not
+  exist.** A control test proves the measurement responds to the change, not that
+  it is asking the right question.
+
+The trace, the numbers and the narrative now live with the issue that owns the
+fix:
+
+- [the trailing-slash matrix](../../../2026-08-04-absolute-link-resolution/notes/10_the-trailing-slash-matrix.html)
+  — the four combinations side by side
+- [what happened, and why it took two rounds](../../../2026-08-04-absolute-link-resolution/notes/20_what-happened-and-why.md)
+- [the path map](../../../2026-08-04-absolute-link-resolution/notes/30_the-path-map.md)
+  — the design that deletes the question
+
+**The tree is in the top-left cell deliberately.** No shift, no `trailingSlash`;
+the renderer emits the author's relative shape. That is correct for every URL the
+site's own navigation produces and wrong for a hand-typed slash-form URL on a
+static host — chosen because dev is where this project is used.

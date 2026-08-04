@@ -1,6 +1,6 @@
 ---
 title: "The rendering gate is in the wrong tree — it ships in the plugin and reads dist/"
-status: in-progress
+status: done
 ---
 
 # Overview
@@ -69,16 +69,61 @@ without. `check-content-links.mjs` *constructs* each page URL as `'/' + path +
 - [x] **Fail loudly when it inspected nothing.** No pages reachable, or zero
       links found, is an error and never a pass — the trap the skill checker fell
       into twice
-- [ ] **Run it against dev and preview together** (`--compare`) and record the
+- [x] **Run it against two servers together** (`--compare`) and record the
       disagreement set. That is [`120`](./120_dev-and-build-disagree-on-the-base.md)'s
-      question asked directly, and the numbers belong there
-- [ ] **Control-test it both directions**: break a link on purpose, watch it
-      fail; restore it, watch it return to zero. Do the same for a broken
-      *fragment*, which the old gate could not see at all
+      question asked directly — numbers below
+- [x] **Control-test it both directions**: break a link on purpose, watch it
+      fail; restore it, watch it return to zero. Done for a missing page **and**
+      for a broken *fragment*, which the old gate could not see at all
 - [ ] **Then remove `check-content-links.mjs` from the plugin** — the manifest
       entry, the script, and any skill text advertising `agent-ks check links`.
-      **Not before**, so there is never a window with no rendering gate
-- [ ] Decide whether it runs in CI, and against which server
+      Carried forward: [retire the plugin's rendering
+      gate](../../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/060_retire-the-plugin-rendering-gate.md)
+- [ ] Decide whether it runs in CI, and against which server. Carried forward:
+      [recheck the rendered links](../../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/070_recheck-rendered-links.md)
+
+# Closed 2026-08-04 — the tool works, and it works in all three environments
+
+**The replacement is written, control-tested in both directions, and gives a
+correct and distinct answer in dev, preview and a real static host.** That was
+the bar; it is met. The two remaining items are carried forward rather than
+abandoned — both are links in the chain above.
+
+## Measured 2026-08-04 — 1,245 in-body links, `--body-only`
+
+| Environment | Broken | What it is |
+|---|---:|---|
+| `./start dev` | **4** | a route table; never adds the trailing slash |
+| `astro preview` | **4** | also a route table — the *same column* as dev |
+| a real file server over `dist/` | **546** | 301s `/a/b` → `/a/b/`, which is what ships |
+
+The 4 are missing **anchors**, not path failures, and are the same 4 everywhere.
+
+**And the disagreement, asked directly:** dev vs preview → **0** links disagree;
+dev vs a real file server → **546**. That is [`120`](./120_dev-and-build-disagree-on-the-base.md)
+answered as a number, and it is the proof that testing dev against preview tests
+one environment twice.
+
+## The control tests, because a gate never proven to fail is not a gate
+
+| Control | Result |
+|---|---|
+| A link to a page that does not exist | ✅ reported — 4 → 6 |
+| A link to a page that exists, anchor that does not | ✅ reported — the exact class the old `dist/`-reading gate certified as clean |
+| Removing both | ✅ back to 4 |
+| `--compare` where a difference is known to exist | ✅ **546** |
+| `--compare` where none should exist | ✅ **0** |
+
+**The last two are a pair on purpose.** The zero only means something because the
+same mechanism produced 546 on the other input — which is the lesson this whole
+group exists to record, applied to the tool built to record it.
+
+## What carries forward
+
+[The rendered-link recheck](../../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/070_recheck-rendered-links.md)
+holds the baseline above and re-runs it once absolute resolution lands. The
+success condition there is **not** that 546 falls — it is that the two columns
+*converge*, which is the thing this gate was built to be able to see.
 
 # Details
 

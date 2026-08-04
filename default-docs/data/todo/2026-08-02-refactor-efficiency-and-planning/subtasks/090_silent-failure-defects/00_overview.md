@@ -1,13 +1,13 @@
 ---
-title: "Silent-failure defects — three gates that passed what they should have refused"
-status: done
+title: "Silent-failure defects — tools that passed what they should have refused"
+status: in-progress
 ---
 
 # Overview
 
-**Three defects found in the same week, all with one shape: a wrong answer that
-is indistinguishable from a right one until someone looks.** Nothing errored,
-nothing warned, and every surface rendered normally.
+**Defects with one shape: a wrong answer that is indistinguishable from a right
+one until someone looks.** Nothing errored, nothing warned, and every surface
+rendered normally.
 
 - [`010`](./010_using-with-ai-page-stale.md) — a guide page describing a world
   that no longer exists. It reads as current because nothing in a doc can go red.
@@ -26,7 +26,14 @@ And a fourth, which is `030`'s own fix caught doing the same thing:
   scans bundled skills and labels them `[source tree]`. Replaced with two explicit
   commands, `agent-ks` and `agent-ks-dev`.
 
-**Done when** all four are fixed and each has a mechanical guard that fails when
+And a fifth, found while moving an artifact between issues:
+
+- [`050`](./050_move-orphans-the-meta-sidecar.md) — `agent-ks move` moves a
+  first-class `.html` or diagram and **leaves its `.meta.json` sidecar behind
+  under the old name**, reporting `moved 1 file(s)` and nothing else. `check.mjs`
+  already knows sidecars exist; `move.mjs` has never heard of them.
+
+**Done when** every one is fixed and each has a mechanical guard that fails when
 the defect is reintroduced — not merely a note describing it.
 
 # References

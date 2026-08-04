@@ -252,7 +252,7 @@ a site-absolute path, and `./sub/index.md`. Full build passes — 1,169 pages.
 **Every one of these is a bug in the one-level shift, and the shift is going.**
 It is a constant offset, so it is right on the built site and wrong on the dev
 server, which serves the same page without a trailing slash.
-[`2026-06-09-issue-link-resolution/subtasks/03_comprehensive-panel-subdoc-links.md`](../../../2026-06-09-issue-link-resolution/subtasks/03_comprehensive-panel-subdoc-links.md)
+[`2026-06-09-issue-link-resolution/subtasks/03_comprehensive-panel-subdoc-links.md`](../../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/030_comprehensive-panel-subdoc-links.md)
 decided the replacement on 2026-06-09: resolve internal links to **root-absolute
 at render time**, so no browser base is involved at all. Patching four shapes of
 a function scheduled for deletion buys nothing; they are listed in that subtask

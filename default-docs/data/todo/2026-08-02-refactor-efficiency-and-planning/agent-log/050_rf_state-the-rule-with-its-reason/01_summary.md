@@ -68,7 +68,7 @@ that decides it, and no restatement may re-implement or contradict it.
 # Out of Scope
 
 - **Cross-root portability.** Moved out of `020` entirely and now
-  [`160`](../../subtasks/100_link-integrity/160_base-url-and-folder-name-are-not-tied.md)
+  [`160`](../../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/040_base-url-and-folder-name-are-not-tied.md)
   — `base_url` and the data folder are independent `site.yaml` values that match
   here only by naming convention. It needs reproducing and probably a
   config-load refusal, not wording. **Do not touch it.**

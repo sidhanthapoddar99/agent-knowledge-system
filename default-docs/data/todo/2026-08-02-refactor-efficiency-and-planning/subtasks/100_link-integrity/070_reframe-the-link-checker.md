@@ -1,6 +1,6 @@
 ---
 title: "check-content-links was built on the wrong model — reframe it as a rendering gate"
-status: done
+status: dropped
 ---
 
 # Overview
@@ -211,3 +211,34 @@ it reports."* That held, and it held twice more than expected: the tool blamed
 authors for a renderer defect, and it was placed in the tree that could not fix
 what it found. The header rewrite it produced is kept and moves to the
 replacement.
+
+# Dropped 2026-08-04 — reframed three times, and the third answer was "not here"
+
+**Status corrected from `done` to `dropped`.** It was marked done on the strength
+of the reframing work, but the thing it set out to deliver — a rendering gate
+that says the right thing — is not in this subtask and never could be. It is a
+different tool in a different tree.
+
+Three rounds, each inside a narrower question than the last:
+
+| Round | Asked | Answer |
+|---|---|---|
+| 1 | Does the checker blame the right layer? | No — rewrite the header |
+| 2 | Does it measure what it reports? | No — anchors discarded, count inflated ~27× |
+| 3 | **Does a gate that reads the built site belong in the plugin at all?** | **No** |
+
+The third answer voided the first two. `agent-ks` owns files and the links
+between them; whether a link resolves in a browser is the engine's output and the
+engine's to test.
+
+**The replacement is written and proven** —
+[the rendering gate that replaced it](./180_rendered-link-check-belongs-to-this-repo.md),
+now closed, with the control tests and the three-environment numbers. Removing
+the old tool from the plugin is
+[its own subtask](../../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/060_retire-the-plugin-rendering-gate.md)
+on the issue that owns the class.
+
+**The part that outlives it:** *a checker written while believing the wrong cause
+encodes that belief in what it reports.* It held twice over — the tool blamed
+authors for a renderer defect, and it sat in the tree that could not fix what it
+found.

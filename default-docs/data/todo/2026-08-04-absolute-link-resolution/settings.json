@@ -1,0 +1,13 @@
+{
+  "title": "The renderer owns the URL — absolute link resolution + a hosting path prefix",
+  "description": "Every internal link is emitted as a browser-relative href, so its correctness depends on whether the server put a trailing slash on the address the reader is standing on — which the renderer cannot know. No constant offset fixes it; a `../` shift and `trailingSlash: 'always'` were both tried and both reverted. The fix is a build-time path map (relative link → absolute file → absolute web URL) feeding one shared resolver that emits root-absolute hrefs for docs, blog and the tracker alike. Carries the sub-path hosting prefix (.env PREFIX_PATH) as the second half, because both are the same question: who owns the final URL.",
+  "status": "open",
+  "priority": "high",
+  "component": ["loaders-and-renderers"],
+  "labels": [
+    "bug",
+    "refactor"
+  ],
+  "author": "claude",
+  "assignees": []
+}

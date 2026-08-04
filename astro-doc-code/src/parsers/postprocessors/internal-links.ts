@@ -4,28 +4,41 @@
  *   - Strips .md/.mdx extensions
  *   - Strips XX_ position prefixes from path segments
  *   - Preserves fragment identifiers (#section)
- *   - Optionally shifts up one level — see DEPTH_SHIFT
  *
- * Example: ./02_consensus-mechanism.md#overview → ../consensus-mechanism#overview
+ * Example: ./02_consensus-mechanism.md#overview → ./consensus-mechanism#overview
  *
  * DOCS ONLY. Blog and issues take the early branch below and get the extension
  * stripped and nothing else.
  *
- * THE DEPTH ADJUSTMENT IS A NAMED SWITCH — `DEPTH_SHIFT` below, which carries
- * the full reasoning and the measured numbers. In short: a page is emitted as
- * `<slug>/index.html`, so a trailing-slash URL puts the page's own name in the
- * path and a sibling link resolves one level too deep. Whether the URL has that
- * slash is decided by the SERVER, not by anything visible here.
+ * ────────────────────────────────────────────────────────────────────────────
+ * THIS FILE EMITS A BROWSER-RELATIVE HREF, AND THAT IS THE OPEN DEFECT.
  *
- * **No constant offset is correct in two environments differing by one URL
- * segment.** The real fix is to stop emitting a browser-relative href — resolve
- * internal links to root-absolute at render time (decided 2026-06-09,
- * `2026-06-09-issue-link-resolution` subtask 03), which deletes the switch.
+ * The href it writes is resolved by the browser against the *directory portion*
+ * of whatever address the reader is standing on — and whether that address ends
+ * in a slash is decided by the SERVER, which this code has never met:
+ *
+ *   served /a/b/c    → base is /a/b/     → `./x` is correct
+ *   served /a/b/c/   → base is /a/b/c/   → `../x` is correct
+ *
+ * A page builds as `<slug>/index.html`, so a static host 301s to the slash form
+ * while `astro dev` and `astro preview` serve the no-slash form as asked. The
+ * two differ by exactly one URL segment, so **no constant offset is correct in
+ * both — including zero.** A `../` shift was added on 2026-08-03 and removed on
+ * 2026-08-04 for precisely that reason; do not re-add it, in either direction.
+ * `trailingSlash: 'always'` was tried too and is not the answer either: it 404s
+ * the whole `/artifacts/<file>.html` route, whose URLs cannot take a slash.
+ *
+ * What is emitted now is the author's own relative shape, which is correct for
+ * every URL the site's own navigation produces. THE FIX is to stop emitting a
+ * relative href at all — resolve internal links to root-absolute at render time
+ * through a build-time path map, under the link-resolution issue.
+ * ────────────────────────────────────────────────────────────────────────────
  *
  * DO NOT "FIX" A BROKEN LINK BY CONVERTING IT TO SITE-ABSOLUTE FORM in content.
  * That was done once to 341 links before anyone opened this file, and had to be
  * reverted: `agent-ks move` skips targets starting with `/`, so the absolute
- * form renders fine and silently leaves link maintenance forever.
+ * form renders fine and silently leaves link maintenance forever. The absolute
+ * URL is the RENDERER's to produce, never the author's to type.
  */
 
 import path from 'node:path';
@@ -69,8 +82,13 @@ function stripPrefix(segment: string): string {
  * so a link to a real diagram page was left unrewritten and 404'd.
  */
 function isDiagramPageLink(pathPart: string): boolean {
-  const last = pathPart.split('/').pop() ?? '';
+  const segments = pathPart.split('/');
+  const last = segments.pop() ?? '';
   if (!DIAGRAM_EXTENSIONS.includes(path.posix.extname(last).toLowerCase())) return false;
+  // The loader scans with `ignore: '**/assets/**'`, so a prefixed diagram inside
+  // an assets folder is still embed-only and still has no page. Mirroring only
+  // the prefix half of the loader's rule made this over-match.
+  if (segments.some((seg) => seg.toLowerCase() === 'assets')) return false;
   return hasOrderPrefix(last);
 }
 
@@ -90,46 +108,15 @@ function isIndexPage(context: ProcessContext): boolean {
 }
 
 /**
- * DOES A PAGE'S URL END IN A SLASH? That single question decides whether a
- * relative href needs one `..` in front of it, and it is the only thing this
- * switch controls.
- *
- *   served /a/b/c   → browser's base is /a/b/      → `./x` is correct
- *   served /a/b/c/  → browser's base is /a/b/c/    → `../x` is correct
- *
- * **It must agree with `trailingSlash` in `astro.config.mjs`.** `'always'` means
- * every environment serves the slash form, so the page's own name is a URL
- * segment and the shift is required — `true`. Unset (Astro's default) means
- * `astro dev` and `astro preview` serve without the slash while a real static
- * host 301s to add it, so **no value here is correct**: `true` breaks dev,
- * `false` breaks production. Measured 2026-08-04 over 1,245 in-body links:
- *
- *   |            | dev (no slash)     | static host (slash) |
- *   | false      | 4 broken (anchors) | 546 BROKEN          |
- *   | true       | broken             | 4 broken (anchors)  |
- *
- * A perfect diagonal, which is the proof this switch cannot be set correctly on
- * its own. It exists so both states are one edit apart while the real fix is
- * built — **not** as a knob anyone should be tuning.
- *
- * THE REAL FIX makes this switch meaningless: resolve internal links to
- * root-absolute at render time, so there is no browser base to resolve against.
- * Decided 2026-06-09, `2026-06-09-issue-link-resolution` subtask 03. Delete this
- * constant when that lands.
- *
- * Kept as a named switch rather than deleted code on Sid's instruction,
- * 2026-08-04: removing it removed the ability to compare the two states, which
- * is exactly what was needed for the rest of that day.
- */
-export const DEPTH_SHIFT = true;
-
-/**
  * Rewrite a relative href to match the generated slug.
  *
- * `addLevel` prepends one `..` to compensate for the page's URL being one
- * segment deeper than its source directory. False only for index pages.
+ * `addLevel` is which pages collapse onto their own directory — it is computed
+ * and deliberately unused (`void addLevel`). See the note at the end of this
+ * file for why it is kept rather than deleted.
  */
 function rewriteHref(href: string, addLevel: boolean): string {
+  void addLevel;
+
   // `mailto:` and friends are not paths. Checked first, because such a target
   // can end in `.md` and would otherwise pass every test below.
   if (URI_SCHEME_RE.test(href)) return href;
@@ -167,11 +154,10 @@ function rewriteHref(href: string, addLevel: boolean): string {
   // Remove /index suffix (index pages resolve to parent)
   pathPart = pathPart.replace(/\/index$/, '');
 
-  // THE DEPTH SHIFT — one switch, both states reachable. See DEPTH_SHIFT above.
-  if (DEPTH_SHIFT && addLevel && pathPart) {
-    pathPart = path.posix.join('..', pathPart);
-  }
-
+  // NO DEPTH ADJUSTMENT HAPPENS HERE, deliberately. The author's relative shape
+  // is emitted as written. See the header: a constant `../` cannot be right in
+  // both a slash and a no-slash environment, so the fix is absolute resolution
+  // rather than a different constant.
   return pathPart + fragment;
 }
 
@@ -192,6 +178,11 @@ export const internalLinksPostprocessor: Processor = {
       );
     }
 
+    // Still computed although `rewriteHref` ignores it: it encodes which pages
+    // collapse onto their own directory (`index.md`, via `generateSlug`'s
+    // `.replace(/\/index$/, '')`), and the absolute resolver that replaces this
+    // file needs exactly that fact. Deleting it would mean re-deriving it in a
+    // second place.
     const addLevel = !isIndexPage(context);
 
     return content.replace(

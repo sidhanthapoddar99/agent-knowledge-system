@@ -107,7 +107,7 @@ structure = drop in a module. The `/issue` redirect would have lived entirely in
    **root-absolute** links (`/tracker/<id>`), not `../`-relative ones. Relative
    links break whenever the same content is shown at a different URL depth than it
    was authored for (e.g. a sub-doc body embedded in the issues Comprehensive panel
-   — see [2026-06-09-issue-link-resolution/subtasks/03](../../../2026-06-09-issue-link-resolution/subtasks/03_comprehensive-panel-subdoc-links.md)).
+   — see [2026-06-09-issue-link-resolution/subtasks/03](../../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/030_comprehensive-panel-subdoc-links.md)).
 
    Absolute links are
    position-independent, so this whole bug class disappears by construction.

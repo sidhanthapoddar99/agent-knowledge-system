@@ -74,7 +74,7 @@ the folder URL itself. So a link to the real file on disk cannot resolve. Sid:
 > [!IMPORTANT]
 > **This was already decided, on 2026-06-09, and the decision was option A.**
 > `2026-06-09-issue-link-resolution` subtask
-> [`03`](../../../2026-06-09-issue-link-resolution/subtasks/03_comprehensive-panel-subdoc-links.md)
+> [`03`](../../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/030_comprehensive-panel-subdoc-links.md)
 > reads: *"stop depending on the browser to resolve relative links. Resolve all
 > internal links to root-absolute URLs at render time… also hardens docs/blog"*
 > — and it names **"the latent trailing-slash fragility in docs/blog"** as one of

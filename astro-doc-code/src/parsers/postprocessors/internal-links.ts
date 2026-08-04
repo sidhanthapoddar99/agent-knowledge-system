@@ -161,7 +161,12 @@ function rewriteHref(href: string, addLevel: boolean): string {
   // `addLevel` is still computed and passed in deliberately — it encodes which
   // pages collapse onto their own directory (`index.md`), which the absolute
   // resolver needs as well. It is unused here on purpose.
-  void addLevel;
+  // EXPERIMENT 2026-08-04 — shift restored, paired with `trailingSlash: 'always'`.
+  // With every environment serving the slash form, the page's own name IS a URL
+  // segment everywhere, so one constant offset is finally correct everywhere.
+  if (addLevel && pathPart) {
+    pathPart = path.posix.join('..', pathPart);
+  }
 
   return pathPart + fragment;
 }

@@ -24,6 +24,18 @@
  * So: fetch real URLs over HTTP, read the real status, and — with two servers —
  * DIFF them. A link that works in one and not the other is the finding.
  *
+ * THE THIRD ENVIRONMENT, and it is the one that ships. `astro dev` and
+ * `astro preview` are APPLICATION servers: they match a route table and serve
+ * `/a/b` as asked. A static host is a FILE server: `/a/b` is a directory on disk
+ * (every page builds as `<slug>/index.html`), and the web's oldest convention
+ * says a directory requested without a trailing slash must 301 to the slash form
+ * — a rule that exists precisely so relative links resolve correctly.
+ *
+ * So there are THREE behaviours, not two, and Astro's own servers do not
+ * reproduce the deployed one. Testing dev against preview is testing one
+ * environment twice. `--static <dir>` exists so the shipped behaviour is one
+ * flag away rather than a thing you remember to set up.
+ *
  * WHAT IT CHECKS THAT A FILE-LEVEL GATE CANNOT
  *   - the renderer's own transform (a correct file link emitted as a wrong href)
  *   - generated heading IDs — `#doesn't-require` becomes `doesn39t`
@@ -43,6 +55,10 @@
  *   --no-anchors      skip fragment checking
  *   --max <n>         page cap, a runaway guard (default 5000)
  *   --timeout <ms>    per-request timeout (default 10000)
+ *   --static <dir>    serve <dir> internally like a REAL STATIC HOST and use it
+ *                     as --base. This is the environment that ships and the one
+ *                     neither `astro dev` nor `astro preview` reproduces — see
+ *                     THE THIRD ENVIRONMENT below.
  *   --json
  *
  * Exit 0 = every link resolved, 1 = at least one did not.
@@ -55,6 +71,7 @@ const flag = (name, fallback = null) => {
 };
 const has = (name) => args.includes(`--${name}`);
 
+const STATIC_DIR = flag('static');
 const BASE = flag('base');
 const COMPARE = flag('compare');
 const BODY_ONLY = has('body-only');
@@ -70,14 +87,69 @@ const TIMEOUT_MS = Number(flag('timeout', '10000'));
 const JSON_OUT = has('json');
 const SEEDS = args.reduce((acc, a, i) => (a === '--start' ? [...acc, args[i + 1]] : acc), []);
 
-if (!BASE) {
-  console.error('check-links.mjs: --base <url> is required.\n');
+if (!BASE && !STATIC_DIR) {
+  console.error('check-links.mjs: --base <url> or --static <dir> is required.\n');
+  console.error('  The environment that SHIPS is a static host, and neither astro dev nor');
+  console.error('  astro preview reproduces it. Check that one first:');
+  console.error('    ./scripts/check-links.mjs --static astro-doc-code/dist --body-only\n');
   console.error('  Start a server first, then point this at it:');
   console.error('    ./start dev      & scripts/check-links.mjs --base http://localhost:4321');
   console.error('    ./start preview  & scripts/check-links.mjs --base http://localhost:4321\n');
   console.error('  Two servers at once? --compare <url> reports only the links they DISAGREE on,');
   console.error('  which is the dev-vs-built trailing-slash question this script exists for.');
   process.exit(2);
+}
+
+// ── a stand-in for the deployed host ───────────────────────────────────────
+
+/**
+ * Serve a directory the way an ordinary static host does — including the one
+ * behaviour that matters here: **a directory requested without a trailing slash
+ * 301s to the slash form**, and only then is `index.html` served.
+ *
+ * Deliberately not a general-purpose file server. It reproduces the deployed
+ * contract and nothing more, so the check is about the site rather than about
+ * whichever server someone happened to install.
+ */
+async function serveStatic(dir) {
+  const http = await import('node:http');
+  const fsp = await import('node:fs/promises');
+  const nodePath = await import('node:path');
+  const root = nodePath.resolve(dir);
+
+  const TYPES = {
+    '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript',
+    '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png',
+    '.jpg': 'image/jpeg', '.webp': 'image/webp', '.pdf': 'application/pdf',
+  };
+
+  const server = http.createServer(async (req, res) => {
+    const url = new URL(req.url, 'http://x');
+    let rel = decodeURIComponent(url.pathname);
+    const abs = nodePath.join(root, rel);
+    if (!abs.startsWith(root)) { res.writeHead(403).end(); return; }
+
+    let stat = null;
+    try { stat = await fsp.stat(abs); } catch { /* falls through to 404 */ }
+
+    // THE RULE THIS SERVER EXISTS FOR.
+    if (stat?.isDirectory() && !rel.endsWith('/')) {
+      res.writeHead(301, { Location: rel + '/' + url.search }).end();
+      return;
+    }
+
+    const file = stat?.isDirectory() ? nodePath.join(abs, 'index.html') : abs;
+    try {
+      const body = await fsp.readFile(file);
+      res.writeHead(200, { 'content-type': TYPES[nodePath.extname(file).toLowerCase()] ?? 'application/octet-stream' });
+      res.end(body);
+    } catch {
+      res.writeHead(404, { 'content-type': 'text/html' }).end('<h1>404</h1>');
+    }
+  });
+
+  await new Promise((r) => server.listen(0, '127.0.0.1', r));
+  return { origin: `http://127.0.0.1:${server.address().port}`, close: () => server.close() };
 }
 
 // ── the crawl ──────────────────────────────────────────────────────────────
@@ -230,7 +302,15 @@ async function crawl(origin) {
 
 // ── run ────────────────────────────────────────────────────────────────────
 
-const primary = await crawl(BASE);
+let staticServer = null;
+let baseOrigin = BASE;
+if (STATIC_DIR) {
+  staticServer = await serveStatic(STATIC_DIR);
+  baseOrigin = staticServer.origin;
+  console.log(`# serving ${STATIC_DIR} as a static host at ${baseOrigin}\n`);
+}
+
+const primary = await crawl(baseOrigin);
 
 // A run that inspected nothing must FAIL, never pass. Both sibling gates fell
 // into exactly this trap — printing "all checks passed" over files they had
@@ -245,26 +325,57 @@ for (const [page, findings] of primary.results) {
   for (const f of findings) if (f.verdict !== 'ok') broken.push({ page, ...f });
 }
 
+/**
+ * THE COMPARE KEY MUST IGNORE THE TRAILING SLASH — getting this wrong made the
+ * feature incapable of reporting the only thing it exists to report.
+ *
+ * Pages are keyed by their FINAL url after redirects. A trailing-slash host
+ * turns `/a/b` into `/a/b/`, so keyed naively no page on one side ever matches
+ * its counterpart: every lookup returns undefined and every disagreement is
+ * silently discarded. Measured before the fix — 162 links broken on one side, 0
+ * on the other, ZERO disagreements reported.
+ *
+ * That is the same shape as the `dist/`-reading tool this script replaced — a
+ * check that cannot fail — sitting inside the replacement. Found by an
+ * independent audit, 2026-08-04.
+ */
+const sameKey = (p, h) => `${p.replace(/\/+$/, '') || '/'}\u0001${h}`;
+
 let disagreements = [];
+let compareStats = null;
 if (COMPARE && !fatal.length) {
   const other = await crawl(COMPARE);
-  const key = (p, h) => `${p} ${h}`;
   const otherVerdict = new Map();
-  for (const [page, findings] of other.results) for (const f of findings) otherVerdict.set(key(page, f.href), f.verdict);
+  for (const [page, findings] of other.results) for (const f of findings) otherVerdict.set(sameKey(page, f.href), f.verdict);
+
+  let matched = 0;
   for (const [page, findings] of primary.results) {
     for (const f of findings) {
-      const v = otherVerdict.get(key(page, f.href));
-      if (v !== undefined && v !== f.verdict) disagreements.push({ page, href: f.href, base: f.verdict, compare: v });
+      const v = otherVerdict.get(sameKey(page, f.href));
+      if (v === undefined) continue;
+      matched++;
+      if (v !== f.verdict) disagreements.push({ page, href: f.href, base: f.verdict, compare: v });
     }
+  }
+  compareStats = { pages: other.pages, matched };
+
+  // A comparison that lined up nothing compared nothing. Without this the run
+  // prints a confident pass having matched zero pairs — which is exactly how the
+  // un-normalised key hid 162 failures.
+  if (otherVerdict.size > 0 && matched === 0) {
+    fatal.push(
+      `compared ${primary.pages} page(s) against ${other.pages} and ZERO links lined up — ` +
+      `the two crawls share no common keys, so this comparison proves nothing`,
+    );
   }
 }
 
 if (JSON_OUT) {
-  console.log(JSON.stringify({ base: BASE, compare: COMPARE, pages: primary.pages, links: totalLinks, fatal, broken, disagreements }, null, 2));
+  console.log(JSON.stringify({ base: BASE, compare: COMPARE, pages: primary.pages, links: totalLinks, compareStats, fatal, broken, disagreements }, null, 2));
   process.exit(fatal.length || broken.length || disagreements.length ? 1 : 0);
 }
 
-console.log(`# rendered-link check: ${BASE}${COMPARE ? `  vs  ${COMPARE}` : ''}`);
+console.log(`# rendered-link check: ${STATIC_DIR ? `static:${STATIC_DIR}` : BASE}${COMPARE ? `  vs  ${COMPARE}` : ''}`);
 console.log(`(${primary.pages} page(s), ${totalLinks} link(s) checked${BODY_ONLY ? ', <article> only' : ''}${CHECK_ANCHORS ? ', anchors included' : ''})\n`);
 
 for (const f of fatal) console.log(`  ✗ ${f}`);
@@ -288,4 +399,5 @@ if (disagreements.length) {
 }
 
 if (!fatal.length && !broken.length && !disagreements.length) console.log('✓ all checks passed');
+staticServer?.close();
 process.exit(fatal.length || broken.length || disagreements.length ? 1 : 0);

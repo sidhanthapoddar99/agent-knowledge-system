@@ -90,6 +90,20 @@ const isDev = process.env.NODE_ENV !== 'production';
 
 export default defineConfig({
   output: isDev ? 'server' : 'static',
+
+  /**
+   * EXPERIMENT 2026-08-04 — make dev behave like the deployed host.
+   *
+   * Every page builds as `<slug>/index.html`, so on a real static host `/a/b` is
+   * a DIRECTORY and gets 301'd to `/a/b/` before `index.html` is served. Astro's
+   * own dev and preview servers are route tables, not file servers, so they
+   * serve `/a/b` as asked and never add the slash.
+   *
+   * That divergence is what a relative link resolves against, so the renderer
+   * cannot be correct in both. `'always'` collapses the two behaviours onto the
+   * deployed one, which is the only one we do not control.
+   */
+  trailingSlash: 'always',
   server: {
     port: PORT ? parseInt(PORT, 10) : 4321,
     host: HOST === 'true' || HOST === '1',

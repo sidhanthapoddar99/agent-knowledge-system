@@ -64,6 +64,48 @@ References this run executes against:
 
 In progress. What is settled:
 
+## The four combinations, traced end to end
+
+Full step-by-step on
+[`190`](../../subtasks/100_link-integrity/190_the-depth-shift-is-removed.md)
+→ *The full trace*. The result in one table, docs only, same link throughout
+(`[Installation](./02_installation.md)`, a sibling on disk):
+
+| | dev — **no** trailing slash | prod — **has** trailing slash |
+|---|---|---|
+| **no shift** → `./installation` | ✅ 4 broken *(anchors only)* | ❌ **546 broken** |
+| **shift** → `../installation` | ❌ broken *(reproduced in a browser)* | ✅ 4 broken *(anchors only)* |
+
+**A perfect diagonal.** The renderer writes the href at build time; which column
+the reader lands in is decided at request time by a server it has never met. The
+columns differ by exactly one URL segment — the same amount the shift changes —
+so no constant can satisfy both.
+
+**Both previous rounds measured one column and concluded the other did not
+exist.** 2026-08-03 added the shift having seen only the trailing-slash column
+(a tool that reads `dist/` and *constructs* URLs with a slash): it read as
+`418 → 55`. 2026-08-04 removed it having seen only the no-slash column (dev,
+preview, a browser): it read as a clean fix. `astro dev` and `astro preview` are
+route tables and never add the slash; a static host is a file server and always
+does — **so testing dev against preview is testing one column twice.**
+
+## `trailingSlash: 'always'` — tested, and incomplete on its own
+
+Sid's proposal, tested 2026-08-04. On the shipped behaviour, paired with the
+shift restored: **546 → 4**, and those 4 are missing anchors rather than path
+failures.
+
+**But it breaks dev in a new way.** Astro's dev server then answers `404` for the
+no-slash form instead of redirecting, and **our own layouts still emit hrefs
+without the slash** — sidebar, pagination, index tables, all built by our code
+rather than Astro's. Clicking any sidebar item in dev gives a 404; 10 of 10 links
+broken across the first 40 pages crawled.
+
+So the config is most of an answer and needs a second piece: the layouts must
+emit trailing slashes too. **Left uncommitted and undecided — Sid's call.**
+
+## The rest:
+
 **The depth shift is gone, and why it survived a day is the finding.** It was
 control-tested in both directions — 418 broken with it off, 55 with it on — and
 **the control could not have failed.** Both numbers came from a tool that reads

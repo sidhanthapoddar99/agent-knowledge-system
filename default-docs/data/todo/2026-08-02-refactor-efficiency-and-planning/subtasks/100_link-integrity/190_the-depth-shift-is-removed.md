@@ -81,6 +81,154 @@ finding, and it is why this subtask does not propose a different number.
 - [ ] Re-measure with [`180`](./180_rendered-link-check-belongs-to-this-repo.md)'s
       live crawler, against **both** servers, once the fix lands
 
+# The full trace — one link, four combinations
+
+Everything below follows one real link. **Docs only** — blog and issues take a
+different code path.
+
+```
+SOURCE FILE      default-docs/data/user-guide/05_getting-started/01_overview.md
+MARKDOWN         [Installation](./02_installation.md)
+TARGET FILE      default-docs/data/user-guide/05_getting-started/02_installation.md   ← a SIBLING
+TARGET URL       /user-guide/getting-started/installation
+```
+
+The markdown is correct on disk and never changes in any of the four cases. Only
+two things vary:
+
+| Variable | Values |
+|---|---|
+| **the shift** — what `internal-links.ts` writes into the `href` | `./installation` (off) · `../installation` (on) |
+| **the base** — the URL the browser resolves against | no trailing slash (dev) · trailing slash (prod) |
+
+## The one rule that decides everything
+
+A browser resolves a relative href against the **directory portion** of the
+current address. The trailing slash is what says where the directory ends:
+
+```
+address /a/b/c      →  "c is a FILE inside /a/b/"     →  directory portion = /a/b/
+address /a/b/c/     →  "c is a FOLDER I am inside"    →  directory portion = /a/b/c/
+```
+
+**The two addresses differ by exactly one segment. So does the shift. That is why
+the four cases form two matching pairs and two broken ones.**
+
+## 1. dev + no shift — ✅ WORKS
+
+```
+you click a sidebar link           href="/user-guide/getting-started/overview"
+dev serves it as asked             200, no redirect        ← route table, not a filesystem
+address bar                        /user-guide/getting-started/overview
+                                                        ^ no slash
+browser's directory portion        /user-guide/getting-started/
+renderer wrote                     ./installation
+resolve                            /user-guide/getting-started/  +  installation
+                                 = /user-guide/getting-started/installation      ✅ 200
+```
+
+*Measured 2026-08-04 by independent audit: 940 pages, 1245 in-body links, 4
+broken — all missing anchors, no path failures.*
+
+## 2. dev + shift — ❌ BREAKS
+
+```
+address bar                        /user-guide/getting-started/overview
+browser's directory portion        /user-guide/getting-started/
+renderer wrote                     ../installation
+resolve                            /user-guide/getting-started/  then UP one
+                                 = /user-guide/
+                                 = /user-guide/installation                      ❌ 404
+```
+
+**The `..` overshoots.** Without the slash the browser is *already* at
+`getting-started/`; going up again lands in `user-guide/`.
+
+*Reproduced by Sid in a browser, 2026-08-04. This is what caused the shift to be
+removed.*
+
+## 3. prod + no shift — ❌ BREAKS
+
+```
+you click a sidebar link           href="/user-guide/getting-started/overview"
+static host looks on disk          user-guide/getting-started/overview/  IS A DIRECTORY
+                                   → 301 → /user-guide/getting-started/overview/
+                                   → then serves overview/index.html
+address bar                        /user-guide/getting-started/overview/
+                                                                       ^ slash added
+browser's directory portion        /user-guide/getting-started/overview/
+renderer wrote                     ./installation
+resolve                            /user-guide/getting-started/overview/ + installation
+                                 = /user-guide/getting-started/overview/installation  ❌ 404
+```
+
+**The link now points *inside* the page it is on.** The page's own name became a
+folder in the path, and nothing compensated for it.
+
+*Measured 2026-08-04: 1245 in-body links, **546 broken** — 43.9%.*
+
+## 4. prod + shift — ✅ WORKS
+
+```
+address bar                        /user-guide/getting-started/overview/
+browser's directory portion        /user-guide/getting-started/overview/
+renderer wrote                     ../installation
+resolve                            /user-guide/getting-started/overview/  then UP one
+                                 = /user-guide/getting-started/
+                                 = /user-guide/getting-started/installation      ✅ 200
+```
+
+**The `..` cancels the segment the trailing slash added.** Exactly what it was
+written for.
+
+*Measured 2026-08-04 with `trailingSlash: 'always'` also set: 1245 in-body links,
+**4 broken** — the same four missing anchors as case 1, no path failures.*
+
+## The whole thing on one line
+
+| | dev — **no** trailing slash | prod — **has** trailing slash |
+|---|---|---|
+| **no shift** (`./installation`) | ✅ 4 broken *(anchors only)* | ❌ **546 broken** |
+| **shift** (`../installation`) | ❌ broken *(reproduced in browser)* | ✅ 4 broken *(anchors only)* |
+
+**A perfect diagonal, and that is the proof there is no right answer.** The
+renderer writes the href at build time; which column you land in is decided at
+request time by a server it has never met. No constant can satisfy both columns,
+because the columns differ by exactly the amount the constant changes.
+
+**Why the diagonal was mistaken for a fix, twice.** Each time, someone measured
+one column and concluded the other did not exist:
+
+- 2026-08-03 added the shift, having measured only the trailing-slash column
+  (via a tool that reads `dist/` and *constructs* URLs with a slash). It looked
+  like `418 → 55`.
+- 2026-08-04 removed the shift, having measured only the no-slash column (dev,
+  preview, and a browser). It looked like a clean fix.
+
+**Both were right about their column and blind to the other.** `astro dev` and
+`astro preview` are route tables and never add the slash; a static host is a file
+server and always does. So testing dev against preview is testing one column
+twice.
+
+## The two ways out
+
+**Make the columns agree** — `trailingSlash: 'always'` in `astro.config.mjs`, so
+dev and preview redirect the way a static host does. Then one shift value is
+right everywhere. **Tested 2026-08-04 and it is incomplete on its own:** Astro's
+dev server then answers `404` for the no-slash form rather than redirecting, and
+**our own layouts still emit hrefs without the slash** — the sidebar, pagination,
+index tables. Clicking any sidebar item in dev gives a 404. The config needs the
+layouts changed with it.
+
+**Or remove the question** — resolve internal links to root-absolute at render
+time, so the href is `/user-guide/getting-started/installation` and there is no
+directory portion to resolve against. Decided 2026-06-09 on
+[`2026-06-09-issue-link-resolution` subtask 03](../../../2026-06-09-issue-link-resolution/subtasks/03_comprehensive-panel-subdoc-links.md).
+**The slash stops mattering rather than being made uniform**, which is the
+stronger property: it survives a host we have not tested, a CDN that rewrites
+URLs, and the Comprehensive panel, which renders a subtask's HTML at a URL that
+is not the subtask's own.
+
 # Details
 
 ## Why this was not caught for a day

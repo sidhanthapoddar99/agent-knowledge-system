@@ -145,6 +145,14 @@ reader the target is somewhere it is not.
   site, they cross-link each other relatively, and `agent-ks check skill-links`
   verifies exactly that. Relative links are how the *filesystem* holds a document
   tree together; being published is a separate question.
+- **Encounter a backticked document path while editing a file? Convert it.** Not
+  as a project — as part of whatever you were already doing there. Take the link
+  text from the target's own `title`, so the sentence gains a name instead of a
+  path. **There is no tracked sweep for this**; if the user asks for one, run it
+  as *detect → check → convert*: find backticked paths, keep only the ones that
+  **resolve to a real document on disk** (that test is what separates a reference
+  from a section name like `` `notes/` `` being discussed), then convert those and
+  re-run the gates. Delegate it if it is large.
 - **`Related:` lines** at the end of a body are the convention for soft references
   (duplicate-check hits, sibling subtasks, superseded issues).
 - **A tracker URL keeps its ordering prefixes** — `subtasks/020_impl/010_backend.md`

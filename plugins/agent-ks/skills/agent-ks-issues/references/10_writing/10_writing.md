@@ -129,6 +129,10 @@ reader the target is somewhere it is not.
   site-absolute link costs the first of those and hides it behind a link that
   renders perfectly** — `move` skips every target starting with `/`, correctly,
   because such a target was never a path to begin with.
+- **A non-markdown sub-doc is marked for you.** A diagram or an artifact beside an
+  issue's markdown carries a trailing **type glyph** in the sidebar, hover-named.
+  Markdown is the default and stays unmarked — so never hand-label a file's type in its
+  own title.
 - **Link text is free — use it.** `[the execution group's overview](../040_execution/00_overview.md)`
   reads inside a sentence; `` `subtasks/040_execution/00_overview.md` `` interrupts
   one and tells the reader nothing they did not already have.

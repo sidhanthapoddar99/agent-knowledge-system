@@ -414,9 +414,10 @@ export interface IssuesVocabulary {
   authors?: string[];
   /** Preset views defined in root settings.json — subtask 13 */
   views?: IssuesPresetView[];
-  /** Per-tracker status-colour overrides (colours-only — the statuses
-   *  themselves are fixed in code). Keys must be a subset of the seven
-   *  statuses; a key outside the vocabulary is a hard error. */
+  /** Present only so a LEFTOVER map can be detected and rejected. Status
+   *  colours are not configurable per tracker — they are theme CSS variables
+   *  (`--status-<name>`). A tracker carrying this key is a hard error, never a
+   *  customisation; see `statusColorsForbiddenMessage`. */
   statusColors?: Record<string, string>;
 }
 
@@ -424,8 +425,8 @@ export interface LoadedIssues {
   vocabulary: IssuesVocabulary;
   /** Root-level draft flag — if true, the whole tracker is dev-only */
   rootDraft: boolean;
-  /** Resolved seven-status colour map: framework defaults merged with the
-   *  tracker's `statusColors` overrides. The single place any surface (badges,
+  /** The seven-status colour map — `var(--status-<name>)` references, taken
+   *  from code and never from settings. The single place any surface (badges,
    *  the Guide modal) should read status colours from. */
   statusColors: Record<IssueStatus, string>;
   issues: Issue[];
@@ -587,10 +588,10 @@ function missingDescriptionsMessage(
  * Validate the tracker-root vocabulary and resolve its derived data. Run once
  * per load, before any issue is read, so a malformed root settings file fails
  * loudly and early:
- *  - a per-tracker `fields.status` block is rejected (statuses are code-fixed;
- *    only colours are overridable, under a top-level `statusColors` map);
- *  - `statusColors` is validated against the fixed vocabulary and merged onto
- *    the framework defaults;
+ *  - a per-tracker `fields.status` block is rejected — statuses are code-fixed
+ *    and so are their colours;
+ *  - a leftover top-level `statusColors` map is rejected for the same reason,
+ *    rather than silently ignored;
  *  - every `component` and `labels` value must carry a description;
  *  - an in-memory `fields.status` (fixed values + resolved colours) is
  *    synthesised so existing badge layouts keep reading `fields.status.colors`

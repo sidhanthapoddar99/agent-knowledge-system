@@ -238,6 +238,13 @@ after three wrong diagnoses has nothing but path. And a **verify** (*did I break
 not a stage — only an **audit** (*what is wrong here*) is, because its answer redirects
 the work.
 
+**Three things live only in [24_agent-logs.md](references/20_sections/24_agent-logs.md#when-an-agent-log-opens-at-all)
+and change the answer often enough to be worth the click:** delegation raises the weight
+of recording but **never triggers a log alone**; a log opened early that turns out
+unearned is **deleted**, not kept; and anything that changes a rule, an instruction or a
+skill is **weighted up sharply**. The 14 worked cases are there too, and they are the only
+place the rule is stated as instances.
+
 **Then, and only then, a separate question:** a run already open? **append to it**, even
 one line — never open a second. None open and nothing follows? the subtask's Outcomes.
 Unsure? **ask once per session, never per subtask**, and never make it a validator error.
@@ -398,8 +405,9 @@ The plugin ships one entrypoint, **`agent-ks`**, on `PATH`. Tracker work uses th
 
 Plus `agent-ks check issues`, `agent-ks find`, and `agent-ks move` (link-aware).
 Discover with `agent-ks help`; uniform contract (`--help`, `--json`, exit codes 0/1/2).
-**`agent-ks help <command>` abbreviates** — several commands accept more flags than it
-lists, so check `--help` on the command itself before concluding an option is missing.
+**An unrecognised flag is ignored silently** — `issue list --typo` returns the unfiltered
+list rather than an error. Check the spelling against `agent-ks help <command>` when a
+filter appears to do nothing.
 
 **Two slash commands and one agent belong to the tracker:**
 

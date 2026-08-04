@@ -16,10 +16,9 @@ reference is unclear or you need depth this folder doesn't cover.
 
 ## Operating model — what this tracker is
 
-The tracker is **comprehensive memory of thought-work for AI-augmented development**,
-not a project-management tool. An issue is a folder that captures one coherent unit
-of *thinking + execution*. The value is the recorded reasoning, not "what's left to
-do".
+What the tracker is for, and the one rule underneath it, are stated in the skill's
+**Operating model** section — not repeated here. This page owns the *anatomy*: what each
+section is, and what it must not hold.
 
 **Every section has ONE purpose, and no file stores a fact another file owns.**
 

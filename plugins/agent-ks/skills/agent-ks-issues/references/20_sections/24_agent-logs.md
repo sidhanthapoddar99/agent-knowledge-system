@@ -208,7 +208,7 @@ everything else.
 agent-log/
 └── NNN_<kind>_<name>/              ← an agent log
     ├── settings.json               ← optional: status → colours the kind symbol
-    ├── 01_summary.md               ← REQUIRED. The one conclusive file.
+    ├── 01_summary.md               ← the one conclusive file (warned if absent)
     ├── 02_working/                 ← one file per iteration, plus producers'
     │   ├── 00_index.md             ←   the round index — seeded empty, WRITTEN by hand
     │   ├── 010_<round>.md
@@ -635,8 +635,15 @@ legible as half-finished.
 **Written during the run, not only at the end** — a mid-run observation goes in when it
 is noticed.
 
-`01_handover.md` is a convention, not a mandate. **`02_working/` and `03_debrief/` are
-not required to exist** — `01_summary.md` is the one member that always is.
+`01_handover.md` is a convention, not a mandate. **`03_debrief/` exists only when
+something leaves the run**, and `02_working/` only once a round lands — the scaffolder
+creates it with an empty `00_index.md` so the run's shape is visible from the start, and
+a run that finished in one round can delete both.
+
+**`01_summary.md` is the one member that should always be there — but "should" is the
+honest word.** `check issues` **warns** on a log without one and only fails under
+`--strict`. Nothing in this section is enforced as an error; treat the validator as a
+reminder, not a gate.
 
 **Anything actionable leaves the log** and becomes a subtask or a dump entry; the
 debrief keeps the pointer. A bug recorded only as log prose dies in the log.

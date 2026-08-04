@@ -1,6 +1,6 @@
 ---
 title: "The skills disagree with the code, with each other, and with themselves"
-status: review
+status: done
 ---
 
 # Overview
@@ -62,21 +62,95 @@ sits in the file that owns it.
 - [x] **F5 · F10 · F11** — the migration script name, `check links`,
       `/agent-ks-quick-idea-note`, and the slash-command counts
 - [x] **F12** — the index-checker agent's hardcoded `00_overview.md`
-- [ ] **F17** — `agent-ks help` omits ~20 flags the tools really have. **Not done: it
-      is a code change, and D1 says code stays pristine.** The skill now warns that
-      `help` abbreviates, so nobody concludes a working flag is missing
+- [x] **F17** — `agent-ks help` omitted 20 real flags; the manifest now lists them
+- [x] **F18** — **the finding was wrong.** The loader rejects `statusColors`; only its
+      doc comments still described the removed override. Comments corrected
+- [x] **F19** — **the finding was wrong.** Verified in built output: every status
+      renders `var(--status-*)`, zero `undefined`. Nothing to fix
+- [x] **F20** — an unrecognised flag was silently ignored. Now exits 2 with a
+      did-you-mean, and the manifest declares all 35 previously-undeclared flags
+- [x] **F7** — `02_working/`/`03_debrief/` reconciled with what the scaffolder does
+- [x] **F9** — `SKILL.md` now points at the three limits and the worked examples it
+      had silently dropped
+- [x] **F13** — "REQUIRED" replaced with what the validator actually does (warns;
+      errors only under `--strict`)
+- [x] **F14** — the non-markdown type glyph documented in `10_writing.md`
+- [x] **F15** — the duplicated operating-model paragraph now has one home
 
 # Outcomes and Next Steps
 
-**Done and at `review`, 2026-08-04.** Every ruling landed in the file that owns it;
-plugin bumped to **0.8.1**.
+**Done, closed by Sid 2026-08-04.** Every ruling landed in the file that owns it; plugin
+bumped to **0.8.1**.
 
-**Three things are deliberately not done**, all for the same reason — **D1**, code stays
-pristine: **F17** (`help` under-reports its own flags), **F18** (the loader still
-implements a `statusColors` override the validator rejects) and **F19** (two layouts read
-that forbidden key, so every issue *detail* page renders its legend and status chips
-colourless while the index page renders them fine). F19 is user-visible and worth its own
-subtask when code is back in scope.
+**The todo list was not the finding list, and closing on it would have been wrong.**
+Asked whether this was complete, a check against the *findings* rather than against my
+own summary of them found five still open — F7, F9, F13, F14, F15. They are now done.
+The lesson is this subtask's own subject: **a checklist is a claim about work, and it
+goes stale exactly like an index does.**
+
+**F13 is the one worth remembering.** `24_agent-logs.md` said `01_summary.md` was
+**REQUIRED**; the validator warns and only fails under `--strict`. That is the same
+defect class as F1 and F4 — the skill asserting an enforcement the code does not
+provide — surviving inside the subtask written to remove it.
+
+**The three code items were done afterwards on Sid's say-so, and two of them turned out
+not to exist.**
+
+| | Verdict |
+|---|---|
+| **F17** | **Real.** `agent-ks help` listed 10 of `img`'s 25 flags and omitted `--include-closed`, `--created-after`, `--has-review-subtasks`, `--quiet-tips`, `--no-warnings`. All 20 added to the manifest |
+| **F18** | ❌ **Wrong.** `resolveVocabulary` **throws** on a tracker `statusColors` map — the loader agrees with the validator. Only three doc comments still described the removed override, and those are what the auditor read. Comments corrected; no behaviour changed |
+| **F19** | ❌ **Wrong.** `resolveVocabulary` synthesises `fields.status.colors` in memory precisely so layouts reading it keep working, so `DetailBody` receives the resolved map rather than `{}`. Confirmed in the built page: seven `color:var(--status-*)`, zero `color:undefined` |
+
+**Both false findings came from reading a comment instead of the code**, in the same
+audit that caught the skills for saying things the code rejects. A stale comment is a
+finding in its own right — it produced two — but it is not the defect it describes.
+
+### F20 · An unrecognised flag was accepted and ignored — found while checking the
+### other three, and fixed on Sid's instruction
+
+**The defect.** `agent-ks issue list --totally-fake-flag --count` returned the normal
+26 issues and exit 0. Every filter flag here **narrows** a result set, so a misspelled one
+returns a **wider** set that looks exactly like a legitimate answer — no error, no
+warning, a plausible number. `--has-review-subtaks` reported the whole tracker as needing
+review.
+
+**It also made every flag unverifiable by use.** Acceptance carried no information, which
+is why confirming `--include-closed` was real took running it twice and diffing the counts
+(26 vs 52) rather than simply running it.
+
+**`agent-ks img` already rejected unknown flags.** So this aligned the rest with a
+command that was already right, rather than inventing a policy.
+
+**Two things had to be fixed for one behaviour.**
+
+1. **The manifest was missing 35 real flags.** Rejecting unknowns is only safe once the
+   declared set is complete — otherwise the fix breaks working commands. An audit
+   comparing every script's `args.flags[…]` reads against its manifest entry found 20 (`img`
+   ×15, `issue list` ×4, `check issues` ×1) plus a further 15: `--has-open-subtasks`,
+   `--has-closed-subtasks`, `--subtasks-min/max`, `--created-before`, `--type`,
+   `--scope`, `--case-sensitive`, `--invert-match`, `--include-cancelled`,
+   `--quiet-tips`, `subtasks --status`, `set-state --subtask`, `new-stage --notes`,
+   `check issues --verbose`. All declared; the audit now reports **0 undeclared**.
+2. **The dispatcher hid the running command's identity.** `cli.mjs` rebuilt `process.argv`
+   keeping **its own path** at `argv[1]`, so a check resolving the command from there
+   matched nothing and skipped silently. It now passes the target script's path, which is
+   what a directly-invoked script would see anyway.
+
+**The check lives in `parseArgs`**, so no call site opts in and none can forget. Unknown
+flag → stderr, a did-you-mean by edit distance, the valid list, exit 2.
+
+```
+$ agent-ks issue list --has-review-subtaks
+agent-ks: unknown flag --has-review-subtaks  — did you mean --has-review-subtasks?
+Valid flags: --assignee --case-sensitive --component … --type
+exit 2
+```
+
+**Verified across 20 read commands and 7 write commands** (writes into a scratch tracker
+under `/tmp`, never the real one). One apparent breakage was my own test error:
+`set-state` takes the status as a **positional**, so rejecting `--status` there is
+correct.
 
 **What changed, by surface:**
 

@@ -99,6 +99,11 @@ if (entry.runtime && entry.runtime !== 'mjs') {
 // Rebuild argv so the target script sees its own args at process.argv.slice(2),
 // exactly as when invoked directly — whether reached via the internal-id form
 // (drop 1 token) or the `<group> <verb>` subcommand form (drop 2).
-process.argv = [process.argv[0], process.argv[1], ...rest];
+//
+// argv[1] becomes the TARGET script rather than this dispatcher, which is what a
+// directly-invoked script would see. `parseArgs` resolves the running command's
+// declared flags from it, so leaving the dispatcher's own path there made every
+// command look unrecognised and silently skip unknown-flag rejection.
+process.argv = [process.argv[0], scriptPath, ...rest];
 
 await import(pathToFileURL(scriptPath).href);

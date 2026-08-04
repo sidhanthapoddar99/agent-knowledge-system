@@ -71,12 +71,12 @@ conversation that noticed it.
 - [x] [`055`](./055_an-index-is-checked-by-a-cheap-agent.md) — `done`; five drafts,
       two control tests, and it found this overview's own staleness on first run
 - [x] [`065`](./065_the-skill-audit-and-its-rulings.md) — `done`
-- [x] [`075`](./075_move-skips-a-backticked-label.md) — `review`; 1 of 3 links
+- [x] [`075`](./075_move-skips-a-backticked-label.md) — `done`; 1 of 3 links
       rewritten before, 3 of 3 after
 
 # Outcomes and Next Steps
 
-**Eight closed, one at review.** The group was a place to put small things
+**All nine closed.** The group was a place to put small things
 rather than a milestone, and entries closed individually. The last two were
 **raised by the reviews**, not planned: the parser swap paid for itself twice over
 in things it revealed, and was then reverted.

@@ -1,6 +1,6 @@
 ---
 title: "move skips a link whose label is backticked"
-status: review
+status: done
 ---
 
 # Overview
@@ -59,8 +59,8 @@ plain one, and still refuses a link that is wholly inside backticks or a fence.
 
 # Outcomes and Next Steps
 
-**Done, at `review`.** Measured on a three-link fixture, two with backticked
-labels (one also wrapping across a newline):
+**Done.** Measured on a three-link fixture, two with backticked labels (one also
+wrapping across a newline):
 
 | | Links rewritten |
 |---|---|

@@ -19,17 +19,29 @@
  * while `/a/b` resolves it to `/a/x`. Two things make the tracker safe, and
  * neither is depth:
  *
- *   1. A tracker page is served WITHOUT a trailing slash, so the base is already
- *      the parent directory — where the author meant it.
+ *   1. **In dev**, a tracker page is served WITHOUT a trailing slash, so the base
+ *      is already the parent directory — where the author meant it.
+ *      **THIS DOES NOT HOLD IN PRODUCTION.** A tracker page builds as
+ *      `<slug>/index.html` exactly like a docs page, so a real static host sees
+ *      a directory and 301s to add the slash — confirmed against a file server
+ *      on 2026-08-04. `astro dev` and `astro preview` are route tables and never
+ *      add it; that difference is the environment, not the tracker.
  *   2. Tracker URLs KEEP their `NN_` ordering prefixes (`issues.ts`), so the
- *      source path and the URL path are the same string.
+ *      source path and the URL path are the same string. This one holds
+ *      everywhere.
  *
- * Docs have neither property, which is why they needed a fix and this does not.
- * Verified by request in 2026-08-03 — fifteen tracker links opened by hand,
- * covering sibling, cross-group, up-two, up-three into another issue, nested,
- * anchored and slug-form shapes. Note that a static read of `dist/` reports
- * these as broken: the BUILT site adds the trailing slash the dev server omits,
- * so `dist/` cannot answer this question at all.
+ * So the tracker has ONE of the two properties docs lack, not both, and the
+ * fifteen links opened by hand on 2026-08-03 — sibling, cross-group, up-two,
+ * up-three into another issue, nested, anchored and slug-form — were all opened
+ * against a DEV server. **That evidence does not cover a static host.** Whether
+ * these links survive the slash form is genuinely open; do not inherit the
+ * earlier "no" from this comment. It is tracked as a re-check on the
+ * absolute-link-resolution issue, under unifying the tracker and blog onto one
+ * resolver.
+ *
+ * The earlier wording here dismissed the built site's trailing slash as a
+ * limitation of reading `dist/`. It is not a reading artefact — it is what a web
+ * server does.
  *
  * Fix: re-root each relative link at the issue folder and emit it relative to
  * the tracker base, so it resolves correctly from the collapsed detail URL

@@ -41,7 +41,7 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { resolveProjectContext } from '../_env.mjs';
 import {
-  MD_LINK_RE, isIgnorableTarget, splitAnchor, collectMarkdownFiles,
+  MD_LINK_RE, isIgnorableTarget, splitAnchor, collectMarkdownFiles, blankCodeSpans,
   orderingPathFor, relabelOrdering, makeFenceTracker,
 } from '../_links.mjs';
 import { FIRST_CLASS_PAGE_EXTS, sidecarPathsFor } from '../_page-types.mjs';
@@ -258,10 +258,20 @@ const editsByFile = new Map(); // finalAbs -> [{line, old, new}]
 // exactly like a run that maintained 52.
 const unmaintainable = [];
 
-function addEdit(finalAbs, line, oldFull, newFull) {
+/**
+ * `col` is the match offset and it is load-bearing, not decoration.
+ *
+ * Edits used to be applied with `line.replace(old, new)` — first occurrence
+ * wins. That was harmless while every occurrence of a link was a link. It stopped
+ * being harmless once code spans were excluded from scanning: the SAME link can
+ * now appear twice on one line, once inside backticks as an example and once in
+ * prose, and a first-occurrence replace would edit whichever came first — the
+ * example. Splicing at the offset the scan actually matched cannot pick wrong.
+ */
+function addEdit(finalAbs, line, col, oldFull, newFull) {
   if (oldFull === newFull) return;
   if (!editsByFile.has(finalAbs)) editsByFile.set(finalAbs, []);
-  editsByFile.get(finalAbs).push({ line, old: oldFull, new: newFull });
+  editsByFile.get(finalAbs).push({ line, col, old: oldFull, new: newFull });
 }
 
 // Files to scan for links: every .md in scope, plus moved .md files (which may
@@ -286,10 +296,18 @@ for (const file of scanFiles) {
 
   lines.forEach((lineText, idx) => {
     if (!isProse(lineText)) return;   // inside a fenced example — not a link
+    // A link inside BACKTICKS is being shown, not used — a doc telling a reader
+    // what to type. Rewriting one edits the example into a lie, which is the
+    // same damage as rewriting a fenced block. `move` tracked fences and not
+    // spans until 2026-08-04; demonstrated on a fixture, where a dry run
+    // rewrote `[Overview](./01_overview.md)` inside a code span.
+    // The blanker replaces spans with same-length filler, so match offsets stay
+    // valid against the untouched line that actually gets edited.
+    const scanned = blankCodeSpans(lineText);
     let m;
     LINK_RE.lastIndex = 0;
-    while ((m = LINK_RE.exec(lineText)) !== null) {
-      const [full, bang, text, target] = m;
+    while ((m = LINK_RE.exec(scanned)) !== null) {
+      const [full, bang, text, target, title] = m;
       if (isIgnorableTarget(target)) {
         // A site-absolute INTERNAL link is not external and not an anchor — it
         // is a link this tool cannot maintain, because it cannot know what URL
@@ -325,9 +343,9 @@ for (const file of scanFiles) {
       const mirrored = mirrorText(text, target, rel, newTarget, newRel);
       const newText = relabelOrdering(mirrored, orderingPathFor(targetAbsFinal));
 
-      const newFull = `${bang}[${newText}](${newTarget})`;
+      const newFull = `${bang}[${newText}](${newTarget}${title || ''})`;
       if (newFull === full) continue; // neither target nor text changed
-      addEdit(finalFile, idx + 1, full, newFull);
+      addEdit(finalFile, idx + 1, m.index, full, newFull);
     }
   });
 }
@@ -445,15 +463,18 @@ for (const [finalAbs, arr] of editsByFile) {
   }
   const lines = content.split('\n');
   let touched = false;
-  for (const e of arr) {
+  // Right-to-left within a line, so an earlier edit never shifts a later offset.
+  for (const e of [...arr].sort((a, b) => b.line - a.line || b.col - a.col)) {
     const i = e.line - 1;
     if (i < 0 || i >= lines.length) continue;
-    if (lines[i].includes(e.old)) {
-      lines[i] = lines[i].replace(e.old, e.new);
+    // Assert at the offset rather than anywhere on the line. A mismatch here
+    // means the file changed under us, and skipping is the safe answer.
+    if (lines[i].slice(e.col, e.col + e.old.length) === e.old) {
+      lines[i] = lines[i].slice(0, e.col) + e.new + lines[i].slice(e.col + e.old.length);
       editedLinks++;
       touched = true;
     } else {
-      console.error(`warning: expected link not found at ${finalAbs}:${e.line} (skipped): ${e.old}`);
+      console.error(`warning: expected link not found at ${finalAbs}:${e.line}:${e.col + 1} (skipped): ${e.old}`);
     }
   }
   if (touched) {

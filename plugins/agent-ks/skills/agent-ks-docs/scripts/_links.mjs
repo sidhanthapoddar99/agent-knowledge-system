@@ -17,8 +17,25 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-/** Markdown link / image. Captures: leading `!` (optional), text, target. */
-export const MD_LINK_RE = /(!?)\[([^\]]*)\]\(([^)\s]+)\)/g;
+/**
+ * Markdown link / image. Captures: leading `!` (optional), text, target, and the
+ * optional TITLE with its leading whitespace (`` `[x](./y "why")` `` → ` "why"`).
+ *
+ * THE TITLE GROUP EXISTS BECAUSE ITS ABSENCE MADE LINKS INVISIBLE. The pattern
+ * used to end at `([^)\s]+)\)`, so a titled link simply did not match: the target
+ * class stops at the space, and the `)` that follows never arrives. Such a link
+ * was not reported, not counted, and — worse — not maintained by `move`, which
+ * silently left it behind on every rename. A link the tooling cannot see is a
+ * link the tooling cannot maintain.
+ *
+ * **Every caller that REBUILDS a link must emit group 4 back**, or fixing the
+ * blindness would start deleting titles instead: `[x](./y "why")` → `[x](./y)`.
+ * The group carries its own leading whitespace precisely so callers can
+ * concatenate it unconditionally — `${target}${title ?? ''}` — with no
+ * separator logic and no way to forget the space.
+ */
+export const MD_LINK_RE =
+  /(!?)\[([^\]]*)\]\(([^)\s]+)((?:\s+(?:"[^"]*"|'[^']*'|\([^)]*\)))?)\s*\)/g;
 
 /**
  * A link target that should never be rewritten (external, absolute, anchor).

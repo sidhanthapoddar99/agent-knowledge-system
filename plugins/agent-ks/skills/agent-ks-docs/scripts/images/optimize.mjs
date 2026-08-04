@@ -226,7 +226,7 @@ if (o.rewriteLinks && renames.length && !o.out) {
     let txt; try { txt = fs.readFileSync(md, 'utf-8'); } catch { continue; }
     const dir = path.dirname(md);
     let touched = false;
-    const next = txt.replace(LINK_RE, (full, bang, text, target) => {
+    const next = txt.replace(LINK_RE, (full, bang, text, target, title) => {
       const hash = target.indexOf('#');
       const url = hash === -1 ? target : target.slice(0, hash);
       const anchor = hash === -1 ? '' : target.slice(hash);
@@ -240,7 +240,7 @@ if (o.rewriteLinks && renames.length && !o.out) {
       if (!url.startsWith('./') && newRel.startsWith('./')) newRel = newRel.slice(2);
       const newText = text === url ? newRel : text;
       touched = true; linkEdits++;
-      return `${bang}[${newText}](${newRel}${anchor})`;
+      return `${bang}[${newText}](${newRel}${anchor}${title || ''})`;
     });
     if (touched) { fs.writeFileSync(md, next); linkFiles++; }
   }

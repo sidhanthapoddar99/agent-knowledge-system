@@ -4,33 +4,31 @@
  *   - Strips .md/.mdx extensions
  *   - Strips XX_ position prefixes from path segments
  *   - Preserves fragment identifiers (#section)
- *   - Shifts the link up one level, because the page's URL is one level deeper
- *     than its source directory (see below)
+ *   - Emits the link's own relative shape unchanged — no depth adjustment
  *
- * Example: ./02_consensus-mechanism.md#overview → ../consensus-mechanism#overview
+ * Example: ./02_consensus-mechanism.md#overview → ./consensus-mechanism#overview
  *
- * THE URL-DEPTH SHIFT, which is the whole reason this file is not a simple
- * string strip. Links are authored against the file's own directory on disk —
- * that is what an editor previews, what a link checker resolves, and what
- * `agent-ks move` recomputes. But a page is emitted as `<slug>/index.html` and
- * served with a trailing slash, so the file's own NAME has become a directory
- * segment in the URL:
+ * DOCS ONLY. Blog and issues take the early branch below and get the extension
+ * stripped and nothing else.
  *
- *   source  05_getting-started/02_installation.md   base: 05_getting-started/
- *   URL     /user-guide/getting-started/installation/   base: …/installation/
+ * WHY THERE IS NO DEPTH ADJUSTMENT HERE, since the absence is the design.
+ * A page is emitted as `<slug>/index.html`, so a trailing-slash URL puts the
+ * page's own name in the path and a sibling link resolves one level too deep.
+ * A one-level shift was added for that on 2026-08-03 and removed on 2026-08-04:
+ * the site's navigation links to the SAME page without the trailing slash, the
+ * server answers both with 200 and no redirect, and the shift breaks that form
+ * instead. It chose which half of the site to break.
  *
- * So `./05_claude-skills.md` — correct on disk, sitting right beside the file —
- * resolved to …/installation/claude-skills and 404'd. Every relative link on
- * every non-index page was broken this way.
+ * **No constant offset is correct in two environments differing by one URL
+ * segment.** The real fix is to stop emitting a browser-relative href — resolve
+ * internal links to root-absolute at render time (decided 2026-06-09,
+ * `2026-06-09-issue-link-resolution` subtask 03). Until then this emits the
+ * author's own shape, which is right for the URLs the navigation produces.
  *
- * This was originally diagnosed as an authoring problem and 341 content links
- * were rewritten to site-absolute form before anyone opened this file. Do not do
- * that: `agent-ks move` skips links starting with `/`, so the absolute form
- * renders fine and silently leaves link maintenance forever.
- *
- * INDEX PAGES ARE EXEMPT. `DocsParser.generateSlug` collapses a trailing
- * `/index`, so `a/index.md` publishes at `a` and its URL base already IS its
- * source directory. Shifting those would break them in the opposite direction.
+ * DO NOT "FIX" A BROKEN LINK BY CONVERTING IT TO SITE-ABSOLUTE FORM in content.
+ * That was done once to 341 links before anyone opened this file, and had to be
+ * reverted: `agent-ks move` skips targets starting with `/`, so the absolute
+ * form renders fine and silently leaves link maintenance forever.
  */
 
 import path from 'node:path';
@@ -138,12 +136,32 @@ function rewriteHref(href: string, addLevel: boolean): string {
   // Remove /index suffix (index pages resolve to parent)
   pathPart = pathPart.replace(/\/index$/, '');
 
-  // Shift up one level to cancel the segment the page's own URL adds.
-  // path.posix.join normalises all three input shapes correctly:
-  //   ./x → ../x     ../x → ../../x     x → ../x
-  if (addLevel && pathPart) {
-    pathPart = path.posix.join('..', pathPart);
-  }
+  // NO DEPTH SHIFT — removed 2026-08-04, and why it is not coming back in this
+  // form is worth the paragraph.
+  //
+  // A `path.posix.join('..', pathPart)` stood here from 2026-08-03. It
+  // compensated for the BUILT site serving a page as a directory with a trailing
+  // slash, where the page's own name becomes a URL segment. That much is real.
+  // But the site's own sidebar links to the form WITHOUT the slash, the server
+  // answers both with 200 and no redirect, and on that form the extra `..` sends
+  // every relative link one level too high. Reproduced in a browser.
+  //
+  // So the shift did not fix the bug — it chose which half of the site to break.
+  // **A single constant offset cannot be correct in two environments that differ
+  // by one URL segment**, and no value of that constant is right, including the
+  // zero this now emits. Today's output is correct for the no-slash form the
+  // navigation actually produces and wrong for a hand-typed trailing-slash URL.
+  // That is the better half, not a solution.
+  //
+  // The fix is to stop emitting a browser-relative href at all: resolve internal
+  // links to root-absolute at render time, decided 2026-06-09 in
+  // `2026-06-09-issue-link-resolution` subtask 03. Then no base is involved and
+  // the trailing slash stops mattering.
+  //
+  // `addLevel` is still computed and passed in deliberately — it encodes which
+  // pages collapse onto their own directory (`index.md`), which the absolute
+  // resolver needs as well. It is unused here on purpose.
+  void addLevel;
 
   return pathPart + fragment;
 }

@@ -18,7 +18,7 @@ status: in-progress
 
 | | What it is | Still worth pursuing? |
 |---|---|---|
-| [`010`](./010_renderer-drops-a-url-level.md) | the depth-shift diagnosis + the shipped fix | 🔴 **Superseded.** Correct for the built site, wrong in dev. Replaced by render-time absolute resolution on [`2026-06-09` `03`](../../../2026-06-09-issue-link-resolution/subtasks/03_comprehensive-panel-subdoc-links.md). **The code is still in the tree** — it goes when that lands, not before, or the breakage moves to production |
+| [`010`](./010_renderer-drops-a-url-level.md) | the depth-shift diagnosis + the shipped fix | 🔴 **Superseded, and the code is now GONE** — removed 2026-08-04 after Sid reproduced its failure in a browser. See [`190`](./190_the-depth-shift-is-removed.md). The permanent fix is still render-time absolute resolution on [`2026-06-09` `03`](../../../2026-06-09-issue-link-resolution/subtasks/03_comprehensive-panel-subdoc-links.md) |
 | [`020`](./020_relative-links-are-the-contract.md) | relative is the rule, on every surface | 🟢 **Done 2026-08-04.** Rule stated with its architectural reason on 15 surfaces, independently audited, and the asset "exception" deleted — there is none. Cross-root portability moved to [`160`](./160_base-url-and-folder-name-are-not-tied.md) |
 | [`030`](./030_user-guide-relative-links-404.md) | 85 broken links in the issues user-guide | 🟢 **Done 2026-08-04.** Measurement and its lesson kept; the reverted fix and the argument for root-relative form deleted. Its two open todos were delivered by [`070`](./070_reframe-the-link-checker.md) / [`090`](./090_tools-must-say-what-they-skip.md). Spawned [`170`](./170_relative-but-not-a-path.md) |
 | [`040`](./040_site-wide-link-rot.md) | "4,295 broken links site-wide" | 🟢 **Done 2026-08-04 at zero.** Re-measured: 342 pages, 15,586 in-body links, **0 broken** across the doc sections. The 4,295 is retracted in place. Nothing unique was left to move out |
@@ -34,6 +34,8 @@ status: in-progress
 | [`140`](./140_dual-slug-url-resolution.md) · [`150`](./150_plans-auto-resolution.md) | routing defects found by the live check | ⬜ **Pointers only** — the work is on `2026-06-09-issue-link-resolution` |
 | [`160`](./160_base-url-and-folder-name-are-not-tied.md) | `base_url` and the data folder are not tied | 🟢 **Yes.** A cross-section link resolves only while two independent `site.yaml` values happen to match. Split out of [`020`](./020_relative-links-are-the-contract.md) |
 | [`170`](./170_relative-but-not-a-path.md) | 334 links relative in shape, a slug in fact | 🟢 **Yes.** Every gate passes them and `move` skips them silently. Found while closing [`030`](./030_user-guide-relative-links-404.md) |
+| [`180`](./180_rendered-link-check-belongs-to-this-repo.md) | the rendering gate is in the wrong tree | 🟢 **In progress.** `scripts/check-links.mjs` written — crawls a live server, not `dist/`. The plugin keeps the file-level question only |
+| [`190`](./190_the-depth-shift-is-removed.md) | the depth shift is removed | ⭐ **Removed 2026-08-04**, reproduced in a browser. It chose which half of the site to break; no constant offset is right. Awaiting review |
 
 **The one thing to do next**, and everything else waits behind it: land
 render-time absolute link resolution. It removes [`010`](./010_renderer-drops-a-url-level.md)'s

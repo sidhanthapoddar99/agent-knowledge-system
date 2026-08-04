@@ -28,6 +28,7 @@ import {
   resolveTracker, isInsideAllowed, readIssueMeta,
   parseArgs, printHelp, relForLog, parseGroupSegments, sanitizeName,
 } from './_lib.mjs';
+import { writeWorkingIndex, WORKING_INDEX } from './_working-index.mjs';
 
 // What "done" looks like per kind of work unit. Stating it even when obvious is
 // the line that makes a half-finished file legible AS half-finished.
@@ -66,7 +67,8 @@ if (args.flags.help || !id || !logRaw || !rawName) {
     '--iteration   force the two-digit iteration number instead of deriving it',
     '--goal        seed # Goal',
     '--inputs      comma-separated paths to seed # Inputs (default: none)',
-    `--unit        kind of work unit — seeds # Expected Outcome (${Object.keys(EXPECTED).join('/')})`,
+    `--unit        kind of work unit — seeds # Expected Outcome AND the frontmatter`,
+    `              \`unit:\`, which is the Kind column of 00_index.md (${Object.keys(EXPECTED).join('/')})`,
     '--agent       frontmatter `agent:` — who wrote it. For an external tool, name the',
     '              TOOL: the finding is its, and its named owner is accountable for the',
     '              file existing',
@@ -193,10 +195,14 @@ const expectedBody = unit
   ? `${EXPECTED[unit]}\n`
   : `> [!NOTE]\n> What "done" looks like for this kind of work. State it even when obvious — it\n> is the line that makes a half-finished file legible as half-finished.\n`;
 
+// `unit` is persisted, not just used to seed a heading: it is the ONE honest
+// source for the round table's Kind column. Deriving that from a filename would
+// be guessing, and the index refuses to guess — so a round with no `--unit`
+// prints `—` rather than a plausible label.
 const body = `---
 title: "${title}"
 status: open
-agent: ${agent}
+agent: ${agent}${unit ? `\nunit: ${unit}` : ''}
 ---
 
 # Goal
@@ -218,6 +224,10 @@ ${expectedBody}
 
 fs.mkdirSync(workingDir, { recursive: true });
 fs.writeFileSync(abs, body);
+// Rewritten on EVERY round, not only at scaffold — an index written once is
+// stale from the second round onward, and a stale index is worse than none
+// because it reads as authoritative.
+writeWorkingIndex(workingDir);
 
 if (args.flags.json) {
   console.log(JSON.stringify({
@@ -228,10 +238,13 @@ if (args.flags.json) {
     iteration,
     fileDigit,
     producer: IS_PRODUCER,
+    unit: unit || null,
+    index: relForLog(path.join(workingDir, WORKING_INDEX)),
   }, null, 2));
 } else {
   console.log(
     `Created ${relForLog(abs)} — iteration ${String(iteration).padStart(2, '0')}, ` +
     `${IS_PRODUCER ? `producer file ${fileDigit}` : 'the iteration file'}`,
   );
+  console.log(`  rewrote ${WORKING_INDEX} — its cells come from this file's frontmatter, so edit them there`);
 }

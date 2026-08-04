@@ -23,19 +23,78 @@ than to explain.
 
 ## When an agent log opens at all
 
-> **When work is delegated, or when it runs over multiple rounds — and
-> executing a plan is always multiple rounds. Open the log before the first
-> stage, not after the last.**
+**A log exists so a finding can be withdrawn.** A finding nobody wrote down cannot be
+retracted — it just quietly keeps being believed. That is the whole value, and every
+test below is an approximation of one question:
 
-Nothing else opens one. A change you make inline gets a line in the plan and no folder.
-Without this rule, three files become the floor for a one-line change.
+> ### Is there something here that the finished work does not show?
+>
+> **TRIGGER — any one, and it earns a log:**
+> 1. a later step changed course because of what an earlier step **returned**
+> 2. something was **tried and discarded** — a rejected approach, a wrong diagnosis, a
+>    measurement that came back other than expected
+> 3. **the user asked** for a record
+>
+> **FLOOR — any one, and it does not, and the floor wins:**
+> 1. the log would **restate the subtask**
+> 2. one self-contained pass with **nothing discarded**
 
-**Plan execution is called out because it is the case that gets skipped.** A plan
-already has stages, each stage already has a record, and the work feels covered —
-so the run itself ends up with no folder, and nothing anywhere holds *what
-happened in order*: what was tried, what turned out to be wrong mid-run, what the
-gates said at each step. A stage records the outcome of a step; the agent log
-records the run.
+**Executing a plan always fires trigger 1**, and it is the case that gets skipped: the
+plan already has stages, each stage already has a record, and the work feels covered —
+so the run ends up with no folder and nothing holds *what happened in order*. Open the
+log **before the first stage, not after the last**; a log reconstructed from commits
+cannot contain what was tried and abandoned.
+
+**Then, and only then, a separate question — where does the record go?**
+
+| Situation | Where |
+|---|---|
+| A run is open and this belongs to it | **Append**, even one line. Never open a second log for work belonging to the first |
+| No run open, and nothing follows | **the subtask's Outcomes.** Setup exceeding the work is net negative |
+| No run open, but this is the first of several | **Open one now** — cheaper than reconstructing it at step four |
+
+Asking that first is the mistake to avoid: *is a log already open* answers **where**,
+never **whether**. Almost all of a log's cost is setup; appending costs a line.
+
+### The limits — what counts, and what never counts
+
+**A rule without numbers gets applied by mood.** The last two are prohibitions and
+matter as much as the triggers.
+
+| Limit | Value | Why this, and not something else |
+|---|---|---|
+| **Stages** | **≥ 2**, and the second must have *acted on* what the first returned | `edit → build → curl` is one pass however many commands it took. `audit → findings → fix` is two, because the findings changed what got fixed |
+| **Discarded work** | **≥ 1** rejected approach, wrong diagnosis, or surprising measurement | The only category **unrecoverable from the repository at all**. On its own it justifies a log |
+| **Delegated / unattended** | raises the weight of recording, **never triggers alone** | A completion message is not evidence — but one bounded job, one round, nothing found, is still one pass |
+| **The user asked** | always, no other test applies | — |
+| **File count** | 🚫 **never a factor** | A thirty-file rename has no path. A four-line fix after three wrong diagnoses has nothing *but* path |
+| **Time spent** | 🚫 **never a factor** | An hour grinding through one mechanical change has no stages; ten minutes that overturned an assumption has one. **Ask what was learned, not what was spent** |
+
+### A verify is not a stage
+
+Stages alone over-trigger, because almost any change can be narrated as having steps.
+This distinction is what keeps trigger 1 honest:
+
+| | What it is | A stage? |
+|---|---|---|
+| **Verify** | *did I break it* — a check whose expected answer is "no". Typecheck, build, gate, one curl against the fixed URL | **No.** The answer changes nothing about what you did; it only says whether you may stop |
+| **Audit / review** | *what is wrong here* — an open question whose answer you cannot predict, and which redirects the work | **Yes.** Its output is information that did not exist before |
+
+### When you are unsure
+
+**🟡 Ask — and cap it at once per session, never per subtask.** Two situations earn it:
+work whose value only becomes clear from what it produced (one independent review, one
+round — judge on what came back, not on the fact a review ran), and the interactive
+sitting where a user is solving subtasks one by one. An uncapped prompt becomes the
+noise it exists to prevent.
+
+**Never make this a validator error.** *Did a later step act on what came back* is not
+something a script can answer, and a gate that fails on judgement gets worked around.
+A hint at most.
+
+**The corollary, which matters more than the rule: if you are reaching for an audit on
+something small, the mistake is the audit, not the missing log.** Reach for an audit
+when you cannot predict the answer; reach for a verify when you can.
 
 ## Vocabulary
 
@@ -56,6 +115,7 @@ agent-log/
     ├── settings.json               ← optional: status → colours the kind symbol
     ├── 01_summary.md               ← REQUIRED. The one conclusive file.
     ├── 02_working/                 ← one file per iteration, plus producers'
+    │   ├── 00_index.md             ←   GENERATED round table — seeded, never typed
     │   ├── 010_<round>.md
     │   ├── 011_<what-it-produced>.md
     │   └── 020_<round>.md
@@ -208,6 +268,52 @@ subtask.
 ---
 
 # `02_working/`
+
+## `00_index.md` — the round table, generated and never typed
+
+**`agent-ks issue new-agent-log` seeds `02_working/00_index.md`, empty.** That is the
+one thing seeded beyond the summary, and it is seeded so the shape of a run is visible
+at the moment of use: before this, a fresh log showed a single file, so an agent could
+not tell that two thirds of the structure existed and wrote everything into the summary.
+It has to be a *file* rather than a bare folder — git does not track empty directories,
+so the folder would vanish on clone.
+
+It answers, without opening a single round file: **what happened in this run, in order,
+and who did each part.**
+
+| Column | Read from |
+|---|---|
+| `#` | the `NNN_` prefix — the first two digits, the iteration |
+| `Round` | the iteration file's `title:`, linked |
+| `Kind` | its `unit:` — what `new-iteration --unit` records. Absent prints `—` |
+| `Who` | its `agent:` — the orchestrator, or the named subagent |
+| `Status` | its `status:` |
+| `Produced` | that iteration's producer files, each with its own agent |
+
+**Every cell is read from a round file's frontmatter. Nothing here is typed, and nothing
+is inferred from a filename** — a `Kind` guessed from a title is a plausible label with
+no source, so a round with no `unit:` prints `—` instead.
+
+**A fan-out is one row, not N.** Several agents on one round is one iteration with
+producer files, and they fold into `Produced` — which is exactly the question a reader of
+someone else's run has: how much of this was delegated, and how much was judged.
+
+**Why generated rather than hand-written.** A status kept in two places with nothing
+keeping them honest is the defect; this tracker has already paid a day for a typed status
+column that read `review` for thirteen rows while all thirteen files said `done`. So:
+
+- `new-iteration` rewrites it on **every** round — written once, it is stale from the
+  second round onward, and a stale index is worse than none because it reads as
+  authoritative.
+- `agent-ks issue reindex <id>` regenerates it after a round's **status** changes, which
+  happens far more often than a round is created.
+- `agent-ks check issues` re-runs the generator and **errors** if the file disagrees with
+  the round files. Correct the round's frontmatter, then reindex — hand-edits to the
+  index are overwritten by design.
+
+**`03_debrief/` is not seeded**, and the asymmetry is the reason: every run that works
+has a round, but only some produce a handover, so seeding it everywhere puts an empty
+section on most logs. Open it by hand when the run has something to hand over.
 
 ## One iteration, one file — and an iteration is a GROUP
 
@@ -600,9 +706,21 @@ What this example teaches:
 agent-ks issue new-agent-log <id> --kind wf --name ship-the-decoder
 ```
 
-Creates the folder with `settings.json` and `01_summary.md`. `02_working/` and
-`03_debrief/` appear when there is something to put in them — git does not track an
-empty directory, so a scaffolded empty folder exists only for whoever ran the command.
+Creates the folder with `settings.json`, `01_summary.md` and an empty
+`02_working/00_index.md`. `03_debrief/` appears when there is something to put in it.
+The index is seeded as a **file** rather than the folder alone because git does not
+track an empty directory — a scaffolded empty folder would exist only for whoever ran
+the command.
+
+## Bring the round table back into agreement
+
+```bash
+agent-ks issue reindex <id>            # every log on the issue
+agent-ks issue reindex <id> --check    # report staleness, write nothing, exit 1 if stale
+```
+
+Run it after changing a round's `status`. `new-iteration` already rewrites the index
+when a round is created; this is for the far commoner case of a round finishing.
 
 ## Open the next iteration file
 

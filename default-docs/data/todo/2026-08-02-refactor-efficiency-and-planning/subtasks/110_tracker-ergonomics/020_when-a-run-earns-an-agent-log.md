@@ -1,6 +1,6 @@
 ---
 title: "The rule says when an agent log is required and never says when it is not"
-status: open
+status: review
 ---
 
 # Overview
@@ -329,27 +329,51 @@ shortness is the point:
 **What stays here and does not ship:** the 14 worked cases, the revision
 reasoning, and the factor archaeology. Instances rot; the tracker is their home.
 
-- [ ] Land the six items above on the surfaces
+- [x] Land the six items above on the surfaces
       [`010`](./010_plan-execution-needs-an-agent-log.md) changed — the issues
       skill, and `guide.ts`, its plugin-independent twin
-- [ ] **Carry the reasoning, not just the verdicts.** *A log exists so a finding
+- [x] **Carry the reasoning, not just the verdicts.** *A log exists so a finding
       can be withdrawn* is the sentence to lead with; a rule shipped without its
       reason gets applied literally, which is exactly how
       [`010`](./010_plan-execution-needs-an-agent-log.md) came to read "always"
-- [ ] Say it **at the point of use**: `agent-ks issue new-agent-log` is where
+- [x] Say it **at the point of use**: `agent-ks issue new-agent-log` is where
       someone is already committing to one. A line in its help text beats a
       paragraph in a reference
-- [ ] Give the interactive mode its hint, **capped at once per session** — a
+- [x] Give the interactive mode its hint, **capped at once per session** — a
       prompt on every subtask is the thing Sid asked to avoid, and an uncapped
       hint becomes the noise it exists to prevent
-- [ ] **Control-test both directions**, which is the acceptance test:
+- [x] **Control-test both directions**, which is the acceptance test:
       a plan execution still demands a log, and a two-minute subtask no longer
       does. The [`010`](./010_plan-execution-needs-an-agent-log.md) gate must
       keep firing once the floor exists
-- [ ] **Re-run the 14 cases against the new shape** and confirm every verdict is
+- [x] **Re-run the 14 cases against the new shape** and confirm every verdict is
       unchanged. That is the claim this restructure rests on — it changes what a
       reader holds in their head, not a single answer. If any verdict moves, the
       restructure is wrong rather than the case
+
+# Outcomes and Next Steps
+
+**Landed 2026-08-04 on four surfaces, and all 14 verdicts held.**
+
+| Surface | Carries |
+|---|---|
+| `references/20_sections/24_agent-logs.md` | the full rule — question, triggers, floor, limits with both prohibitions, verify-vs-audit, the Ask cap, the routing table |
+| `agent-ks-issues/SKILL.md` · `astro-doc-code/src/layouts/issues/default/guide.ts` | the short form, twice, so it holds with or without the plugin |
+| `scripts/issues/new-agent-log.mjs` `--help` | the rule at the point of use, above the flags |
+
+**The acceptance test passed: 14 of 14 verdicts unchanged.** The case worth
+naming is *one bounded delegated job* — under the old five factors *whose hands*
+was co-equal and could have carried it; under the new shape it is explicitly a
+weight that never triggers alone, so the floor wins. Same answer, arrived at
+without weighing.
+
+**Both directions still fire.** A four-stage plan execution is 🟢 required (the
+wording says executing a plan always fires trigger 1, and a plan is not one
+self-contained pass, so the floor cannot reach it); a four-line routing fix whose
+every check was a verify is ⬜ not required. Those are the two failures this
+subtask exists to keep apart, and they land on opposite sides.
+
+The run: [`070_rf_tracker-ergonomics-three-fixes`](../../agent-log/070_rf_tracker-ergonomics-three-fixes/01_summary.md).
 
 # References
 

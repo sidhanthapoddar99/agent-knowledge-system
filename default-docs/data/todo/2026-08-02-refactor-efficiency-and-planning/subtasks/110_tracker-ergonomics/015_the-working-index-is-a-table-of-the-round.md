@@ -1,6 +1,6 @@
 ---
 title: "02_working/ has no index — scaffold one, and make it say what each round was and who did it"
-status: open
+status: review
 ---
 
 # Overview
@@ -39,35 +39,67 @@ part"* without opening a single round file.
 
 # Todo list
 
-- [ ] **Decide derived vs typed first.** Everything else follows from it — see
+- [x] **Decide derived vs typed first.** Everything else follows from it — see
       Details. Recommendation: derived, or not at all
-- [ ] Seed `02_working/` with the index at scaffold time. **A directory alone
+- [x] Seed `02_working/` with the index at scaffold time. **A directory alone
       will not do: git does not track empty directories**, so the folder would
       vanish on clone. That constraint is why it must be a *file*
-- [ ] Settle the columns. Candidate set: number · round · kind · who · status ·
+- [x] Settle the columns. Candidate set: number · round · kind · who · status ·
       one line of what it found
-- [ ] `kind` needs a source. Round files carry `agent:` and `status:` but nothing
+- [x] `kind` needs a source. Round files carry `agent:` and `status:` but nothing
       saying *audit / iteration / workflow / fan-out* — add a field or derive it
       from the agent-log kind. **Do not guess it from the title**
-- [ ] `who` must distinguish **the orchestrator** from **a named subagent**, and
+- [x] `who` must distinguish **the orchestrator** from **a named subagent**, and
       handle a round that used several — a fan-out is one round with N workers,
       not N rounds
-- [ ] Rewrite the index on every `new-iteration`, not only at scaffold, or it is
+- [x] Rewrite the index on every `new-iteration`, not only at scaffold, or it is
       stale from the second round onward
-- [ ] **`03_debrief/` is a separate decision** — see the recommendation; do not
+- [x] **`03_debrief/` is a separate decision** — see the recommendation; do not
       seed it by reflex
-- [ ] Check `agent-ks check issues` accepts the index. The validator has opinions
+- [x] Check `agent-ks check issues` accepts the index. The validator has opinions
       about numeric prefixes and agent-log anatomy; a seed that trips it is worse
       than no seed
 
 # Outcomes and Next Steps
 
+**Built 2026-08-04 as `02_working/00_index.md` — generated, never typed.**
+
+**The decision: regenerated, not rendered.** Both candidates were derived, so
+neither risked the typed-column defect. Rendered stores nothing and cannot drift
+at all — but it leaves no file on disk, and the folder then vanishes on clone,
+which is the *entire* subtask. Regenerated gives a real file, which the project's
+filesystem-first principle wants anyway: `ls` and `cat` should answer the
+question, not only the site.
+
+**Drift is answered structurally rather than promised away.** `agent-ks check
+issues` re-runs the generator and **errors** when the file disagrees with its
+round files, so the precedent's failure mode becomes a gate rather than silent
+rot. `agent-ks issue reindex <id>` is the one-command fix the error names — added
+because a round's *status* changes far more often than a round is created, and
+without it the only way to answer the gate would have been to create an iteration
+nobody wanted.
+
+| Answer | |
+|---|---|
+| Columns | `#` · `Round` · `Kind` · `Who` · `Status` · `Produced` |
+| `kind` source | a persisted `unit:`, which `new-iteration --unit` already collected. **Absent prints `—`** — a kind guessed from a title is a plausible label with no source |
+| `who` | the iteration file's `agent:`; a fan-out is **one row** with its workers folded into `Produced` |
+| `03_debrief/` | **not seeded** — named in the scaffolder's help instead |
+| validator | `00_index.md` exempted from the `NNN_` rule, `unit` admitted to the frontmatter set |
+
+**Control-tested both directions:** hand-editing one cell makes `check issues`
+error on exactly that file; restoring makes it clean. Backfilling four historic
+runs was the generator's real test, and it showed something the flat filenames
+never did — `020_wf_ship-the-split` round 07 renders three named auditors and
+round 14 two, a fan-out legible without opening a file.
+
 > [!NOTE]
-> **Open — raised by Sid 2026-08-03, deliberately not implemented in the same
-> pass.** It looked like a one-line placeholder and is not: it changes the shape
-> of every agent log created from here on, it touches the validator, and the
-> derived-vs-typed question below has to be answered first. Answering it wrongly
-> reproduces a defect this issue has already paid for once.
+> **One finding, left alone deliberately.** The backfill surfaced a round in
+> `020_wf_ship-the-split` still marked `in-progress` inside a finished run. That
+> is a genuinely stale round file the table caught on first use. Closing a round
+> is not this run's to do, so it is reported rather than corrected.
+
+The run: [`070_rf_tracker-ergonomics-three-fixes`](../../agent-log/070_rf_tracker-ergonomics-three-fixes/01_summary.md).
 
 # Details
 

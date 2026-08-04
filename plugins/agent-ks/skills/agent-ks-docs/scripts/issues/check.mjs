@@ -33,6 +33,7 @@ import { resolveTracker, listIssueFolders, readVocabulary, parseArgs, printHelp,
 import { readJsonChecked, reportAndExit } from '../_check-lib.mjs';
 import { MD_LINK_RE, isIgnorableTarget, splitAnchor, orderingPathFor, parseOrderingLabel, makeFenceTracker, blankCodeSpans } from '../_links.mjs';
 import { isRetiredAgentLogShape } from './_agent-log-shape.mjs';
+import { renderWorkingIndex, WORKING_INDEX } from './_working-index.mjs';
 import { parseOrderPrefixLoose } from '../_order-prefix.mjs';
 
 const args = parseArgs(process.argv.slice(2));
@@ -93,8 +94,11 @@ const AGENT_MEMORY_FM_KEYS = new Set([...NOTE_FM_KEYS]);
 // retirement is enforced on new-shape files only (under `02_working/`), where
 // it is an actual mistake rather than a fact about how things used to be
 // written.
+// `unit` is the kind of work a round was — the flag `new-iteration --unit`
+// already took, now persisted, because it is the only non-guessing source for
+// the round table's Kind column.
 const AGENT_LOG_FM_KEYS = new Set([
-  'title', 'iteration', 'agent', 'status', 'date', 'sidebar_label', 'color',
+  'title', 'iteration', 'agent', 'status', 'unit', 'date', 'sidebar_label', 'color',
 ]);
 // `agent-logs` is deliberately ABSENT — retired 2026-08-03, and reported by its
 // own error below rather than as a generic unknown-key warning, because the fix
@@ -792,6 +796,10 @@ for (const entry of issueFolders) {
         const isDoc = f.isFile() && f.name.endsWith('.md');
         if (!isDoc && !f.isDirectory()) continue;
         const base = f.name.replace(/\.md$/, '');
+        // The generated round table. Two digits on purpose, so it sorts ahead of
+        // every `NNN_` round — and exempt here rather than renamed to `000_`,
+        // which would make the validator read it as iteration 00's round file.
+        if (f.name === WORKING_INDEX) continue;
         const pm = base.match(/^(\d{2})(\d)[_-]/);
         if (!pm) {
           if (/^\d/.test(base)) {
@@ -843,6 +851,22 @@ for (const entry of issueFolders) {
           warnings.push(`${rel}/02_working/: iteration ${iteration} has ${n} producer file${n === 1 ? '' : 's'} but no iteration file (\`${iteration}0_…\`) — the round's own record is what ties them together`);
         } else if (rounds.length > 1) {
           warnings.push(`${rel}/02_working/: iteration ${iteration} has ${rounds.length} files ending \`0\` (${rounds.map((f) => f.name).join(', ')}) — only ONE file per iteration is the round's own record. A producer's file ends 1-9`);
+        }
+      }
+
+      // The round table is GENERATED, so it can be checked rather than trusted:
+      // re-run the generator and compare. This is the whole reason the index was
+      // allowed to be a file on disk at all — this issue has already paid a day
+      // for a hand-typed status column that disagreed with the files it copied,
+      // and the lesson was that duplication is only safe when something keeps
+      // the two honest. Missing is fine on a log that predates the index; WRONG
+      // is not, because a stale table reads as authoritative.
+      const indexAbs = path.join(workingDir, WORKING_INDEX);
+      if (fs.existsSync(indexAbs)) {
+        let actual = null;
+        try { actual = fs.readFileSync(indexAbs, 'utf-8'); } catch { /* reported by the generic walk */ }
+        if (actual !== null && actual !== renderWorkingIndex(workingDir)) {
+          errors.push(`${rel}/02_working/${WORKING_INDEX}: stale — it disagrees with the round files it is generated from. Every cell is read from a round's own frontmatter (title / unit / agent / status); fix it THERE, then run \`agent-ks issue reindex ${id}\`. Hand-edits to this file are overwritten by design`);
         }
       }
     }

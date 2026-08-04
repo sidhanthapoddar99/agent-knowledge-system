@@ -10,12 +10,19 @@
  *   01_summary.md   the one conclusive file: State · Goal · Todo ·
  *                   Out of Scope (optional) · Outcome
  *
- * **No other slot is seeded, and that is deliberate.** The previous version of
- * this script created six files whether or not the run had anything to put in
- * them, which is how a one-line change acquired a three-file floor.
- * `02_working/` appears when the first iteration file is written (`agent-ks
- * issue new-iteration`); `03_debrief/` appears when the run has something to
- * hand over.
+ * plus `02_working/00_index.md` — a GENERATED table of the run's rounds, empty
+ * at scaffold time. It is seeded because the alternative was invisible
+ * structure: a fresh log showed one file, so an agent could not tell that two
+ * thirds of the shape existed, and wrote everything into the summary. It has to
+ * be a file rather than a bare folder because git does not track empty
+ * directories. Every cell is read from a round file's frontmatter and rewritten
+ * by `new-iteration` — never typed. See `_working-index.mjs`.
+ *
+ * **`03_debrief/` is still not seeded, and that is deliberate.** The previous
+ * version of this script created six files whether or not the run had anything
+ * to put in them, which is how a one-line change acquired a three-file floor.
+ * Every run that works has a round; only some produce a handover, so that slot
+ * gets a line in the printed hint instead of an empty section on every log.
  *
  * **The slots are numbered `01`–`03` and child activities start at 100.** That
  * is the whole grammar: a folder inside an activity is one of its own slots when
@@ -33,6 +40,7 @@ import {
   parseArgs, printHelp, relForLog, MAX_SUBFOLDER_DEPTH,
   parseGroupSegments, sanitizeName,
 } from './_lib.mjs';
+import { writeWorkingIndex, WORKING_INDEX } from './_working-index.mjs';
 
 // Framework-default kinds (mirror of src/loaders/issues.ts). An issue may add
 // custom codes via settings.json → agentLogKinds; unknown codes degrade
@@ -48,12 +56,23 @@ if (args.flags.help || !id || !kind || !rawName) {
   printHelp('issue new-agent-log', [
     '<issue-id> --kind <code> --name <slug> [--group <a[/b]>] [--prefix <NNN>] [--goal <text>] [--parent <path>] [--json] [--tracker <path>]',
     '',
+    'DOES THIS RUN EARN A LOG? A log exists so a finding can be withdrawn, so the',
+    'question is: is there something here the finished work does not show?',
+    '  TRIGGER, any one — a later step changed course because of what an earlier one',
+    '  RETURNED (executing a plan always does) · something was tried and DISCARDED ·',
+    '  the user asked.',
+    '  FLOOR, any one, and it WINS — the log would restate the subtask · one',
+    '  self-contained pass with nothing discarded.',
+    'Never file count, never time spent. A verify (did I break it) is not a stage.',
+    'And if a run is already OPEN, append to it — never open a second.',
+    '',
     'Scaffold an agent log at agent-log/[<group>/]NNN_<code>_<name>/ with settings.json',
-    '({"status": "open"}) and 01_summary.md (State / Goal / Todo / Out of Scope /',
-    'Outcome). Nothing else is seeded: 02_working/ appears with',
-    'the first iteration file (issue new-iteration), 03_debrief/ when the run has',
-    'something to hand over. A CHILD log (--parent) is numbered from 100 up, which',
-    'is what distinguishes it from the parent\'s own 01-03 slots.',
+    '({"status": "open"}), 01_summary.md (State / Goal / Todo / Out of Scope /',
+    'Outcome) and 02_working/00_index.md — a GENERATED round table, empty until the',
+    'first iteration file (issue new-iteration) rewrites it. 03_debrief/ is NOT',
+    'seeded: open it by hand when the run has something to hand over (handover,',
+    'questions, findings, caveats). A CHILD log (--parent) is numbered from 100 up,',
+    'which is what distinguishes it from the parent\'s own 01-03 slots.',
     '',
     `--kind    agent-log kind code (defaults: ${Object.keys(DEFAULT_KINDS).join('/')}; custom via settings.json agentLogKinds)`,
     '--name    kebab-case run name (sanitised to [a-z0-9-])',
@@ -227,7 +246,8 @@ ${goalBody}
 fs.mkdirSync(dir, { recursive: true });
 fs.writeFileSync(path.join(dir, 'settings.json'), `{\n  "status": "open"\n}\n`);
 fs.writeFileSync(path.join(dir, '01_summary.md'), summary);
-const written = ['settings.json', '01_summary.md'];
+writeWorkingIndex(path.join(dir, '02_working'));
+const written = ['settings.json', '01_summary.md', `02_working/${WORKING_INDEX}`];
 
 if (args.flags.json) {
   console.log(JSON.stringify({

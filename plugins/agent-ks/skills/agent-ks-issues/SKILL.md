@@ -215,14 +215,32 @@ Full contract: [28_plans.md](references/20_sections/28_plans.md).
 
 ### Agent logs — where runs are carried out
 
-**An agent log opens when work is delegated, or when it runs over multiple rounds — and executing a plan is always multiple rounds.** Open it before the first stage, not after the last.
-Nothing else opens one. Work you do inline gets a line in the plan and no folder.
+**A log exists so a finding can be withdrawn** — a finding nobody wrote down cannot be
+retracted, it just quietly keeps being believed. So one question decides it: **is there
+something here that the finished work does not show?**
+
+> **TRIGGER — any one, and it earns a log:** a later step changed course because of what
+> an earlier step **returned** (executing a plan always does — open the log **before the
+> first stage**) · something was **tried and discarded** · the user asked.
+>
+> **FLOOR — any one, and it does not, and the floor wins:** the log would **restate the
+> subtask** · one self-contained pass with **nothing discarded**.
+
+**Never file count, never time spent.** A thirty-file rename has no path; a four-line fix
+after three wrong diagnoses has nothing but path. And a **verify** (*did I break it*) is
+not a stage — only an **audit** (*what is wrong here*) is, because its answer redirects
+the work.
+
+**Then, and only then, a separate question:** a run already open? **append to it**, even
+one line — never open a second. None open and nothing follows? the subtask's Outcomes.
+Unsure? **ask once per session, never per subtask**, and never make it a validator error.
 
 ```
 agent-log/0NN_<kind>_<name>/     ← one run, one goal
 ├── settings.json                ←   optional: status → colours the kind symbol
 ├── 01_summary.md                ←   REQUIRED. The one conclusive file.
 ├── 02_working/                  ←   one file per iteration, plus producers'
+│   ├── 00_index.md              ←     GENERATED round table — seeded, never typed
 │   ├── 010_<round>.md           ←     iteration 01 — the orchestrator's file
 │   ├── 011_<what-it-produced>.md←     a producer within it
 │   └── 020_<round>.md           ←     iteration 02
@@ -249,6 +267,13 @@ iteration · `wf` workflow; custom codes via `agentLogKinds` in the issue's
 - **A file exists because something was produced, not because an agent ran.** Two
   executors writing code produce one iteration file between them; two auditors writing
   reports produce two, plus the iteration's own.
+- **`02_working/00_index.md` is the run's round table, and it is GENERATED** — number ·
+  round · kind · who · status · what it produced, every cell read from a round file's
+  frontmatter (`title` / `unit` / `agent` / `status`). Seeded empty at scaffold so the
+  shape of a run is visible before it has any; rewritten by `new-iteration`; brought
+  back into agreement with `agent-ks issue reindex <id>` after a round's status changes.
+  `check issues` errors when it disagrees with its round files. **Never hand-edit it** —
+  correct the round file instead.
 - **Own goal → child agent log. No own goal → iteration file.** That is the only
   nesting rule. Nesting may mirror a structure that exists; it may never invent one.
 - **Actionable items leave the log** and become subtasks. The debrief keeps a pointer.

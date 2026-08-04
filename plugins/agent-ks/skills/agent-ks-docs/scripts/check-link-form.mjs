@@ -82,7 +82,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { resolveProjectContext } from './_env.mjs';
 import { reportAndExit } from './_check-lib.mjs';
-import { MD_LINK_RE, makeFenceTracker, splitAnchor, resolveTargetOnDisk, blankCodeSpans } from './_links.mjs';
+import { MD_LINK_RE, makeFenceTracker, splitAnchor, resolveTargetOnDisk, blankCodeSpansDoc } from './_links.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const JSON_OUT = process.argv.includes('--json');
@@ -155,10 +155,26 @@ function backtickedDocumentPath(spanText, fromDir) {
   return s;
 }
 
+/**
+ * The file's lines with every inline code span blanked — computed over the whole
+ * document, because a span may wrap onto the next line.
+ *
+ * Fenced blocks are emptied FIRST, before any span matching. Otherwise a fence's
+ * own backtick run could pair with a run in the prose after it and blank real
+ * content; emptying them also puts a blank line either side of every fence,
+ * which is what stops a span pairing across one.
+ */
+function blankedProseLines(text, isProse) {
+  const prose = text.split('\n').map((line) => (isProse(line) ? line : ''));
+  return blankCodeSpansDoc(prose.join('\n')).split('\n');
+}
+
 for (const file of files) {
+  const raw = fs.readFileSync(file, 'utf-8');
+  const scannedLines = blankedProseLines(raw, makeFenceTracker());
   const isProse = makeFenceTracker();
   const fileDir = path.dirname(file);
-  fs.readFileSync(file, 'utf-8').split('\n').forEach((line, idx) => {
+  raw.split('\n').forEach((line, idx) => {
     if (!isProse(line)) return;
 
     // Read the code spans BEFORE blanking them — this is the one check whose
@@ -175,7 +191,7 @@ for (const file of files) {
     }
 
     // A link shown inside backticks is being quoted, not used.
-    const scanned = blankCodeSpans(line);
+    const scanned = scannedLines[idx] ?? line;
     let m;
     MD_LINK_RE.lastIndex = 0;
     while ((m = MD_LINK_RE.exec(scanned)) !== null) {

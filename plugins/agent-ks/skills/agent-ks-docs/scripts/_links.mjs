@@ -157,8 +157,62 @@ export function makeFenceTracker() {
  * very thing it is correctly demonstrating — found 2026-08-04 in a subtask that
  * was quoting the right form.
  */
+/**
+ * The scanner both blankers share. Hand-written rather than a regex, and the
+ * reason is backtracking: `/(`+)[\s\S]*?\1/` will happily match ONE backtick out
+ * of a run of three when no run of three closes it, pair that with the next
+ * unrelated single backtick, and blank everything between — leaving the real
+ * span after it exposed. An unmatched run is emitted as itself and scanning
+ * continues after it, which is also what markdown does.
+ */
+function scanCodeSpans(text, fill) {
+  let out = '';
+  let i = 0;
+  while (i < text.length) {
+    if (text[i] !== '`') { out += text[i]; i += 1; continue; }
+    let j = i;
+    while (j < text.length && text[j] === '`') j += 1;
+    const run = text.slice(i, j);
+    const close = text.indexOf(run, j);
+    // A closing run must be exactly this long — ```` ` ```` never closes ```` `` ````.
+    if (close === -1 || text[close + run.length] === '`') { out += run; i = j; continue; }
+    const end = close + run.length;
+    out += fill(text.slice(i, end));
+    i = end;
+  }
+  return out;
+}
+
 export function blankCodeSpans(line) {
-  return line.replace(/(`+)[\s\S]*?\1/g, (s) => ' '.repeat(s.length));
+  return scanCodeSpans(line, (s) => ' '.repeat(s.length));
+}
+
+/**
+ * The same thing over a whole document, because a code span may WRAP.
+ *
+ * `blankCodeSpans` is per line, and a line-based blanker cannot see a span that
+ * opens on one line and closes on the next — so the link inside it is scanned as
+ * content and reported. Not hypothetical: the agent-log scaffolder's own `# Todo`
+ * example is a wrapped span, so **every freshly scaffolded agent log failed the
+ * link gate** on a link the template is deliberately showing rather than using
+ * (found 2026-08-04).
+ *
+ * A span never crosses a blank line — that is a paragraph break in markdown — so
+ * blanking is done per paragraph rather than over the whole text. Blanking the
+ * whole text in one pass would let two unrelated stray backticks swallow
+ * everything between them, which trades a false positive for a false negative.
+ *
+ * Newlines are preserved inside the filler, so the result splits into exactly
+ * the same lines with exactly the same columns.
+ */
+export function blankCodeSpansDoc(text) {
+  const keepNewlines = (s) => s.replace(/[^\n]/g, ' ');
+  return text
+    .split(/(\n[ \t]*\n)/)                       // keep the separators, so offsets survive
+    .map((chunk, i) => (i % 2
+      ? chunk                                    // a blank-line separator: never blanked
+      : scanCodeSpans(chunk, keepNewlines)))
+    .join('');
 }
 
 // ── ordering labels ───────────────────────────────────────────────────────

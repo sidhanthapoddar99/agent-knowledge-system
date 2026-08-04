@@ -15,6 +15,10 @@ that arrives too late to act on.
 - [`015`](./015_the-working-index-is-a-table-of-the-round.md) — a scaffolded
   agent log shows one file, so two of its three slots are invisible. The fix is
   an index that carries the run's shape, not an empty placeholder.
+- [`020`](./020_when-a-run-earns-an-agent-log.md) — and the correction to
+  [`010`](./010_plan-execution-needs-an-agent-log.md) had a trigger and no floor,
+  so read literally it said *always*. The fix is one question, three triggers and
+  two floor conditions, with the floor winning.
 
 **Done when** each entry is fixed *in the place that will be read next time* —
 the skill, the scaffolder, the validator — and not merely in a record of the
@@ -30,8 +34,10 @@ conversation that noticed it.
 # Todo list
 
 - [x] [`010`](./010_plan-execution-needs-an-agent-log.md) — at `review`
-- [ ] [`015`](./015_the-working-index-is-a-table-of-the-round.md) — needs a
-      derived-vs-typed decision before anything is built
+- [x] [`015`](./015_the-working-index-is-a-table-of-the-round.md) — decided
+      *regenerated*, built, gated; at `review`
+- [x] [`020`](./020_when-a-run-earns-an-agent-log.md) — landed on four surfaces,
+      all 14 verdicts held; at `review`
 
 # Outcomes and Next Steps
 

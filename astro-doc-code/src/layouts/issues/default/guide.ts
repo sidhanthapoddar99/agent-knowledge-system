@@ -207,6 +207,7 @@ YYYY-MM-DD-<slug>/                    ← the issue folder
 │   └── 010_lp_implement-x/           ← NNN_<code>_<name>/ — one run, one goal
 │       ├── settings.json             ← optional {"status": "…"} — colours the symbol
 │       ├── 01_summary.md             ← the one conclusive file, and the brief
+│       ├── 02_working/00_index.md    ← GENERATED round table — never hand-edited
 │       ├── 02_working/010_round.md   ← first 2 digits = iteration, last = file in it
 │       ├── 03_debrief/01_handover.md ← what leaves the run
 │       └── 100_wf_sub-goal/          ← a child agent log — prefix ≥ 100, same shape
@@ -219,8 +220,19 @@ YYYY-MM-DD-<slug>/                    ← the issue folder
 
 Where a run is carried out, and where its outcome is recorded. **Execution, not scope.**
 
-- **An agent log opens when work is delegated, or when it runs over multiple rounds — and executing a plan is always multiple rounds.** Open it before the first stage, not after the last.
-  Nothing else opens one.
+- **A log exists so a finding can be withdrawn** — one nobody wrote down cannot be
+  retracted, it just quietly keeps being believed. One question decides it: **is there
+  something here that the finished work does not show?**
+  - **TRIGGER**, any one: a later step changed course because of what an earlier step
+    **returned** (executing a plan always does — open the log **before the first
+    stage**) · something was **tried and discarded** · the user asked.
+  - **FLOOR**, any one, and it **wins**: the log would **restate the subtask** · one
+    self-contained pass with **nothing discarded**.
+  - **Never file count, never time spent.** A thirty-file rename has no path; a
+    four-line fix after three wrong diagnoses has nothing but path. A **verify**
+    (*did I break it*) is not a stage — only an **audit** (*what is wrong here*) is.
+  - **Then, separately:** a run already open? **append**, even one line — never open a
+    second. None open and nothing follows? the subtask's Outcomes.
 - One folder per run: \`NNN_<code>_<name>/\` — \`NNN\` orders (2–5 digits, by value) ·
   \`<code>\` is the **kind** · \`<name>\` describes.
 - Kinds available **in this issue** (symbol shows on the folder row):
@@ -254,6 +266,13 @@ ${runStatusTable(statusColors)}
     which file within it** (\`0\` = the iteration file, \`1\`–\`9\` = producers).
   - **A file exists because something was produced, not because an agent ran.**
   - Flat. A folder only when one producer makes several artifacts.
+  - **\`00_index.md\` is the run's round table, and it is GENERATED** — number ·
+    round · kind · who · status · what it produced, every cell read from a round
+    file's frontmatter (\`title\` / \`unit\` / \`agent\` / \`status\`). Seeded empty at
+    scaffold so a run's shape is visible before it has one. **Never hand-edited:**
+    correct the round file, and the table follows. A fan-out is **one row**, its
+    workers folded into *what it produced* — several agents on one round is one
+    iteration, not N.
 - **\`03_debrief/\`** — what leaves the run: handover, questions, findings, lessons,
   caveats. Written when noticed, not only at the end. No slot is required to exist.
 - **A child agent log** is any nested folder whose prefix is **≥ 100** —

@@ -143,6 +143,16 @@ export const MANIFEST = [
     ],
   },
   {
+    bin: 'docs-reindex', group: 'issue', verb: 'reindex', category: 3, script: 'issues/reindex.mjs', runtime: 'mjs',
+    summary: "Regenerate 02_working/00_index.md — the round table — from the round files' frontmatter",
+    flags: [
+      { name: 'log', value: 'path', desc: 'limit to one agent log, path relative to agent-log/' },
+      { name: 'check', desc: 'report what would change and exit 1 if stale; write nothing' },
+      { name: 'json', desc: 'structured JSON output' },
+      { name: 'tracker', value: 'path', desc: 'non-default tracker' },
+    ],
+  },
+  {
     bin: 'docs-new-iteration', group: 'issue', verb: 'new-iteration', category: 3, script: 'issues/new-iteration.mjs', runtime: 'mjs',
     summary: "Create an iteration (or producer) file in an agent log's 02_working/, head pre-filled",
     flags: [

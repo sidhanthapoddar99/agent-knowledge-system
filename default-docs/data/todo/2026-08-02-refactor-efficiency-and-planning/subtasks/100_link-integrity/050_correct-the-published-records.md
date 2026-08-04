@@ -26,21 +26,25 @@ content links to absolute form.
 
 # Todo list
 
-- [ ] `releases/0.2.1.md:79` — "All 101 are now root-relative. The section reads
+**All six verified done 2026-08-04** — `0.2.1` carries dated correction blocks
+with the original wording deliberately left visible, `030`'s and `040`'s
+prescriptions are gone, and `CHANGELOG.md` never carried the claim.
+
+- [x] `releases/0.2.1.md:79` — "All 101 are now root-relative. The section reads
       210 links checked, 0 broken." **This describes work that has been
       reverted.** Correct it, and say plainly that the diagnosis was wrong
-- [ ] Decide **how** to correct a published note: amend in place with a dated
+- [x] Decide **how** to correct a published note: amend in place with a dated
       correction block, or leave it and correct in `0.2.2`. Recommended: a dated
       correction block in `0.2.1` **and** a line in the next release, because
       someone reading `0.2.1` alone must not be misled
-- [ ] [`030`](./030_user-guide-relative-links-404.md) — rewrite the *"Why
+- [x] [`030`](./030_user-guide-relative-links-404.md) — rewrite the *"Why
       root-relative, rather than fixing the relative form"* section. Keep the
       measurements; they were right. Replace the conclusion
-- [ ] [`040`](./040_site-wide-link-rot.md) — it currently prescribes "the same
+- [x] [`040`](./040_site-wide-link-rot.md) — it currently prescribes "the same
       scripted root-relative rewrite" for 313 more links. Remove that
       prescription before anyone follows it
-- [ ] Re-check `CHANGELOG.md` for the same claim
-- [ ] Keep the wrong reasoning visible rather than deleting it — a corrected
+- [x] Re-check `CHANGELOG.md` for the same claim
+- [x] Keep the wrong reasoning visible rather than deleting it — a corrected
       record teaches; a silently-fixed one repeats
 
 # Outcomes and Next Steps

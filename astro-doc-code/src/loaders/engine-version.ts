@@ -30,7 +30,7 @@
  */
 
 /** What this engine currently is. Major stays 0 while the project is in beta. */
-export const ENGINE_VERSION = '0.2.2';
+export const ENGINE_VERSION = '0.2.3';
 
 /**
  * Oldest content version this engine still parses.
@@ -42,6 +42,16 @@ export const ENGINE_VERSION = '0.2.2';
  * two agent-log numbering lints, and a report inside an existing migration.
  * Content written for 0.2.0 is byte-for-byte valid, so nobody is asked to
  * migrate and the floor stays put.
+ *
+ * **0.2.3 is the first release that ships a MIGRATION without moving the
+ * floor**, and that pairing is the point rather than an oversight. Its script
+ * rewrites slug-form links (`./design-philosophy`) to the source path they name
+ * (`./02_design-philosophy.md`). Unmigrated content keeps working perfectly —
+ * the router accepts both spellings and the rendered site is byte-identical —
+ * so nothing is refused. What the old form loses is *maintainability*: `move`
+ * cannot follow it, `grep` cannot find it, an editor cannot open it. A floor
+ * exists to refuse content the engine would MISREAD, not content that is merely
+ * worse to live with.
  *
  * It was equal to ENGINE_VERSION at 0.2.0 because every format change in *that*
  * release was breaking: 0.1.x content declares agent-log statuses from a

@@ -33,17 +33,19 @@ and every link that was deleted rather than repaired is accounted for.
 
 # Todo list
 
-- [ ] Work section by section, **gate after each**. Not one scripted sweep —
+**All done 2026-08-03 — the record is in Outcomes below.**
+
+- [x] Work section by section, **gate after each**. Not one scripted sweep —
       the last mass link edit in this repo was 341 files and wrong
-- [ ] For each: decide **repair or delete**, and never invent a target. A link to
+- [x] For each: decide **repair or delete**, and never invent a target. A link to
       a page that was deliberately removed should go, not be repointed at the
       nearest survivor
-- [ ] Correct into **relative** form. These are exactly the links that would
+- [x] Correct into **relative** form. These are exactly the links that would
       "resolve" if written site-absolute, and would then be invisible to
       `agent-ks move` forever
-- [ ] The 4 `/blog/tag/…` links need a product decision: build the tag route, or
+- [x] The 4 `/blog/tag/…` links need a product decision: build the tag route, or
       stop rendering tags as links
-- [ ] Re-measure and record; the target is **0**, because a gate that is red on
+- [x] Re-measure and record; the target is **0**, because a gate that is red on
       arrival is a gate people learn to ignore
 
 # Outcomes and Next Steps

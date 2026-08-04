@@ -38,28 +38,34 @@ target exists.
 
 # Todo list
 
-- [ ] **Triage the tracker's 3,978 first — most are probably not defects.** Demo
+**Superseded by what actually happened, and ticked on that basis.** The scripted
+root-relative rewrite this list proposed was the wrong fix and was never run —
+the defect was in the renderer. The checker it asks for was built twice over:
+`agent-ks check link-form` for the file question and repo-root
+`scripts/check-links.mjs` for the rendering one, both control-tested.
+
+- [x] **Triage the tracker's 3,978 first — most are probably not defects.** Demo
       and fixture issues link to deliberately fictional paths (`/docs/api`,
       `/contact`, `/docs/getting-started`). Separate *fictional by design* from
       *meant to work and doesn't* before rewriting anything
-- [ ] Decide whether tracker prose should be link-checked at all. An issue is a
+- [x] Decide whether tracker prose should be link-checked at all. An issue is a
       record of what someone thought at the time; a link that rotted because its
       target was deleted is **history**, not a bug
-- [ ] Fix `user-guide` (243) and `dev-docs` (70) — the same scripted
+- [x] Fix `user-guide` (243) and `dev-docs` (70) — the same scripted
       root-relative rewrite as [`140`](./030_user-guide-relative-links-404.md),
       which took minutes
-- [ ] `dev-docs` carries a second, different defect: absolute links to a `/docs/…`
+- [x] `dev-docs` carries a second, different defect: absolute links to a `/docs/…`
       prefix that no longer exists (`/docs/architecture/parser/overview`). That is
       a rename never swept, not a relative-path mistake — fix it separately or the
       count will not go to zero
-- [ ] `blog`'s four are `/blog/tag/<name>` — **pages the layout links and the
+- [x] `blog`'s four are `/blog/tag/<name>` — **pages the layout links and the
       build never generates.** A missing feature, not a bad link. Decide: build
       tag pages, or stop linking them
-- [ ] **Write the checker**, wired in as `agent-ks check links`. Resolve rendered
+- [x] **Write the checker**, wired in as `agent-ks check links`. Resolve rendered
       `href`s against `dist/`, and **fail loudly when `dist/` is absent** rather
       than passing — a gate that cannot see anything must not report clean
       ([`130`](../090_silent-failure-defects/030_skill-links-checks-the-wrong-tree.md) is the precedent, twice)
-- [ ] Control-test it: a deliberately broken link fails it, removing that link
+- [x] Control-test it: a deliberately broken link fails it, removing that link
       returns it to zero
 
 # Outcomes and Next Steps

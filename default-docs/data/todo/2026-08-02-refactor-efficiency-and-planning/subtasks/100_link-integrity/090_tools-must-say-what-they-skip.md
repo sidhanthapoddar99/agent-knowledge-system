@@ -50,9 +50,9 @@ link, and both are control-tested in each direction.
       exception to encode: `020` proved there isn't one
 - [x] **`check link-form` resolves the target on disk** — the existence test, not
       just the leading-slash test. Warns rather than fails; see below
-- [ ] **`check` flags a backticked path that resolves to a real file** — not
-      built. Deliberately left; the existence test above is the harder half and
-      shipped first. It was parked behind
+- [x] **`check` flags a backticked path that resolves to a real file** — built
+      2026-08-04 on [`200`](./200_link-tooling-blind-spots.md), warns, 52 found.
+      It had been parked behind
       [a file reference is a link](./080_link-it-dont-name-it.md)'s content
       sweep; that sweep was dropped on 2026-08-04 and the gate was named there
       as the higher-value half, because it catches every future instance instead
@@ -102,25 +102,25 @@ it rather than reasoning about it: fenced blocks (syntax being shown), and
 **inline code spans** — documentation that quotes the wrong form in order to
 forbid it must not trip the gate that forbids it.
 
-**Trackers are excluded by default**, matching `check links`. Not on principle:
-the issues pipeline re-roots links itself and its rendering is
-[`060`](./060_does-the-tracker-share-it.md)'s open question, so converting a
-tracker link to relative today could swap a working link for a broken one.
+**Trackers were excluded at first**, matching `check links`. That exclusion is
+**gone as of 2026-08-04** — its reason was replaced twice and never measured
+true, and including the tracker turned out to cost two findings rather than
+thousands. The gate now covers everything: **1,859 links across 991 files.**
 
-### What is not built
+### The backticked-path half, built later
 
-`check` does **not** flag a backticked path that could have been a link.
+`check` now reports a backticked path that names a real document — built
+2026-08-04 on [`200`](./200_link-tooling-blind-spots.md). It **warns**, on the
+same reasoning as `move`'s skip report, and it will stay a warning: resolvability
+proves a path *could* be a link and never that it *should* be one, so a page
+whose subject is paths trips it legitimately.
 
-**The reason it was deferred no longer holds.** It was waiting on
-[a file reference is a link](./080_link-it-dont-name-it.md)'s content sweep, so
-the gate would not land red. That sweep was **dropped** on 2026-08-04 — a script
-cannot tell a reference from an example, so the rule now fires when someone
-edits a file instead. The 95 existing instances stay.
-
-So the gate would light up 95 on arrival, and the decision to make is whether it
-warns or fails. **Warn**, on the same reasoning as `move`'s skip report: the
-existing 95 are honest text rather than broken links, and a gate that is red on
-arrival is a gate people learn to ignore.
+It had been parked behind
+[a file reference is a link](./080_link-it-dont-name-it.md)'s content sweep. That
+sweep was **dropped** — a script cannot tell a reference from an example — and
+the gate was named there as the higher-value half, because it catches every
+future instance instead of clearing today's. The honest test finds **52**, not
+the 95 the naive scan had estimated.
 
 # Details
 

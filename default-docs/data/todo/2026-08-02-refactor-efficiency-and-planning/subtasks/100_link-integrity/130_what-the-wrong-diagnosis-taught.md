@@ -1,6 +1,6 @@
 ---
 title: "Damage inventory — what the wrong diagnosis wrote into code, skills and docs"
-status: review
+status: done
 ---
 
 # Overview
@@ -23,7 +23,7 @@ against what was written about it.
 | # | Surface | What it said | Where it stands now |
 |---|---|---|---|
 | 1 | `internal-links.ts` — the docs depth shift | one-level shift when `contentType === 'docs'` | 🟢 **Deleted 2026-08-04**, together with opening the issue that builds the replacement. The file's header now states the open defect instead of a mechanism |
-| 2 | `check-link-form.mjs` | the gate skipped the whole tracker; the reason was wrong twice | 🟢 **Exclusion deleted 2026-08-04.** Coverage 569 → **1,857** links. The premise called false turned out true — see below |
+| 2 | `check-link-form.mjs` | the gate skipped the whole tracker; the reason was wrong twice | 🟢 **Exclusion deleted 2026-08-04.** Coverage 569 → **1,863** links. The premise called false turned out true — see below |
 | 3 | `check-content-links.mjs` header | trackers excluded, justified by 1,372 measured failures | 🟢 **Superseded — the file is being deleted**, not corrected. [Retire the plugin's rendering gate](../../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/060_retire-the-plugin-rendering-gate.md) |
 | 4 | The link rule in both skills | relative always, never a leading `/` | 🟢 **Correct, and now better founded.** Defended as a `move` requirement; it is actually a consequence of the filesystem-first principle |
 | 5 | The ordering-label form, `[19/04/02 name](…)` | live in both skills and `10_writing.md` | 🟢 **Kept, unaffected.** Verified 2026-08-03 |
@@ -51,7 +51,7 @@ Two. Both site-absolute cross-issue links parked on
 
 **A scope carve-out has to earn itself with a number.** This one could not,
 twice, so it was deleted rather than given a third reason — the two links were
-converted to relative and the gate now walks **1,857 links across 991 files**,
+converted to relative and the gate now walks **1,863 links across 991 files**,
 green. `--all` is still accepted and ignored so existing invocations work.
 
 ### And the "false" premise turned out to be true
@@ -105,9 +105,66 @@ nobody remembers.
 - [x] **2 — the tracker exclusion is gone**, not re-justified. Two links
       converted, gate green over everything, and the cost measured and written
       down rather than assumed away
-- [ ] Re-read the rest of both reviews. Their headline finding was wrong; the
-      other rows used different methods and are probably unaffected, but **none
-      has been checked against a live URL**
+- [x] **Re-read the rest of both reviews** — done 2026-08-04, each row against
+      the file or a live URL rather than against the report. Results below
+
+# The re-read — every other row, checked 2026-08-04
+
+**The headline finding of both reviews was wrong, so no other row could be
+trusted on its own authority.** Each was re-checked against the file as it stands
+or against a URL served by a real static host — not against the report.
+
+## Opus — the seven remaining rows
+
+| Row | Now |
+|---|---|
+| A published page still recommends `/todo/<id>#goal` | 🟢 **Fixed.** That page now says the URL form *"is not a path and nothing can maintain it"* |
+| *"No cross-section exception"* generalised from one content root to cross-root | 🟢 **Moved, not dropped** — it is [base_url and folder name are not tied](../../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/040_base-url-and-folder-name-are-not-tied.md) |
+| *"Prefixes are stripped from URL slugs"* false for the tracker | 🟢 **Corrected** — see row 6 of the inventory |
+| The docs skill breaks its own rule: 12 backticked `references/…` against 1 link | 🟢 **Fixed.** All nine remaining occurrences are the text-mirror link form |
+| The 341-link incident narrated inside a skill | 🟢 **Deleted.** History belongs to the tracker |
+| One mechanical fact asserted in 11 places | 🟡 **Still 10.** A known, accepted trade — the mechanism lives in one function and the prose restates it for readers who will never open that file |
+| `guide.ts` states the exception one clause narrower than the skill | 🟢 Confirmed still true, still harmless |
+
+## Codex — the five findings
+
+| # | Now |
+|---|---|
+| 1 — the critical finding | Retracted with the headline; the depth shift is deleted |
+| 2 — the gate passes 306 links it calls maintainable | 🟢 **Fixed and the content converted.** This became [`170`](./170_relative-but-not-a-path.md) |
+| 3 — *"0 broken"* is true only for path existence | 🟡 **Still true.** Four broken **anchors** exist; they are a content defect, carried on the new issue's re-measurement subtask |
+| 4 — the renderer fails several edge shapes | 🟢 **Moot or fixed.** Every "shifted" row was the depth shift, which is gone. The one real defect — `.mmd` treated as an asset — is fixed, and the page answers **200** on a static host |
+| 5 — the reports have false passes and a false failure | **Split — see below** |
+
+## Finding 5, run rather than read
+
+Built as a fixture and put through the gate today:
+
+| Case | Then | Now |
+|---|---|---|
+| `[x](/missed "title")` — titled link | missed, exit 0 | 🟢 **caught** |
+| `<a href="/raw">` — raw HTML | missed | 🔴 **still missed** |
+| A markdown link inside an HTML comment | falsely reported | 🔴 **still falsely reported** |
+| `[Download](/assets/spec.pdf)` fails the gate | called a defect | 🟢 **Correct, and deliberate.** Sid ruled 2026-08-04 that a document never names the site assets folder, and that the rule is not to be loosened |
+
+**Two remain, both narrow, both in the gate rather than the content**, and they
+are carried on [link tooling blind spots](./200_link-tooling-blind-spots.md).
+
+## The fixture also caught a defect I had just shipped
+
+The gate's *"and NOT ONE link resolves — suspect the resolver"* assertion counted
+**every** error rather than missing-target errors. Site-absolute links never
+reach the resolver, so a file whose only internal links are `/…` has zero
+resolvable ones honestly — and the assertion fired on it, accusing the resolver
+over a fixture it had never been asked to resolve.
+
+**An assertion that cries wolf is worse than no assertion**, and this one exists
+precisely to stop a gate becoming background noise. Fixed to count only
+missing-target findings; the fixture that exposed it is the control.
+
+**Which is this subtask's own rule, one more time:** the failure was found by
+running a case rather than reading the code, and it was found in the thing that
+had just been built to prevent this class.
 
 # The rule this is worth turning into
 

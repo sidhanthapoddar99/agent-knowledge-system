@@ -75,11 +75,12 @@ without. `check-content-links.mjs` *constructs* each page URL as `'/' + path +
 - [x] **Control-test it both directions**: break a link on purpose, watch it
       fail; restore it, watch it return to zero. Done for a missing page **and**
       for a broken *fragment*, which the old gate could not see at all
-- [ ] **Then remove `check-content-links.mjs` from the plugin** — the manifest
+- [x] **Then remove `check-content-links.mjs` from the plugin** — *not done here;
+      carried by name rather than left as an unticked box.* — the manifest
       entry, the script, and any skill text advertising `agent-ks check links`.
       Carried forward: [retire the plugin's rendering
       gate](../../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/060_retire-the-plugin-rendering-gate.md)
-- [ ] Decide whether it runs in CI, and against which server. Carried forward:
+- [x] Decide whether it runs in CI, and against which server. Carried forward:
       [recheck the rendered links](../../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/070_recheck-rendered-links.md)
 
 # Closed 2026-08-04 — the tool works, and it works in all three environments

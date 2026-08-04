@@ -11,6 +11,7 @@ and is stated inside each note.
 
 | Version | Date | What it is | Forces action? |
 |---|---|---|---|
+| **[0.2.3](./releases/0.2.3.md)** | 2026-08-04 | `check link-form` requires a link's target to exist on disk, and stops skipping the tracker; `move` no longer edits links inside code spans and now maintains titled ones | **Migration ships, floor stays `0.2.0`.** Unmigrated content renders identically — run `migration/0.2.3_slug-form-links.py` to keep links maintainable |
 | **[0.2.2](./releases/0.2.2.md)** | 2026-08-03 | A URL written against the file tree resolves: docs and blog accept both spellings, any file under a plan resolves to the plan, a missing page answers `404` instead of `200`, `agent-ks --version` | **No migration** — floor stays `0.2.0`. Every change adds a working URL; none removes one |
 | **[0.2.1](./releases/0.2.1.md)** | 2026-08-03 | Three gates that passed what they should have refused: a missing page `data` path, the skill-links checker reading the installed plugin, two agent-log numbering cases | **No migration** — floor stays `0.2.0`. A `site.yaml` page pointing at a missing folder now fails the build |
 | **[0.2.0](./releases/0.2.0.md)** | 2026-08-03 | Plans section · one status vocabulary across every file kind · status colours in theme CSS · numbered agent-log slots | **Yes** — floor raised to `0.2.0`; three migrations |

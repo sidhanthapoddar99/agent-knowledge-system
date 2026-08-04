@@ -109,6 +109,7 @@ const warnings = [];
 const files = walk(ROOT);
 let linksChecked = 0;
 let resolvable = 0;
+let missingTarget = 0;
 
 /**
  * A backticked string that names a real DOCUMENT is a link that was never
@@ -200,6 +201,7 @@ for (const file of files) {
       // one-character fix; a slug has to be matched back to the file it came from.
       const extLess = !path.extname(rel) &&
         ['.md', '.mdx'].find((e) => resolveTargetOnDisk(fromDir, rel + e));
+      missingTarget++;
       errors.push(
         `${path.relative(ROOT, file)}:${idx + 1}: target does not exist on disk ` +
         `→ ${rel}   "${text}"   — ` +
@@ -220,8 +222,15 @@ if (files.length && linksChecked === 0) errors.push(`${files.length} file(s) but
 // missing target FAILS. Every internal link resolving to nothing would mean the
 // resolver is broken rather than the content — and it would fail every run with
 // a wall of findings that all look like content defects. Say which it is.
-if (linksChecked && errors.length && resolvable === 0) {
-  errors.push(`${errors.length} finding(s) and NOT ONE link resolves — suspect the resolver, not the content`);
+//
+// It counts MISSING-TARGET findings only, not every error. Site-absolute links
+// never reach the resolver, so a file whose only internal links are `/…` has
+// `resolvable === 0` honestly — and an earlier version of this assertion fired
+// on exactly that, accusing the resolver over a fixture it had never been asked
+// to resolve. An assertion that cries wolf is worse than none: it is the thing
+// people learn to ignore, in the gate built to stop that happening.
+if (missingTarget && resolvable === 0) {
+  errors.push(`${missingTarget} missing-target finding(s) and NOT ONE link resolves — suspect the resolver, not the content`);
 }
 
 reportAndExit({

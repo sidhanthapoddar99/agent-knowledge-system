@@ -1,6 +1,6 @@
 ---
 title: "Three links the tooling still cannot see — and one it edits when it shouldn't"
-status: review
+status: done
 ---
 # Overview
 

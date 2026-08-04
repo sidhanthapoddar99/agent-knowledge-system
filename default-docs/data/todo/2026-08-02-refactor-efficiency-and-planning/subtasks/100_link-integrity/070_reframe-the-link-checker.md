@@ -31,24 +31,28 @@ broken link fails it while removing that link returns it to zero.
 
 # Todo list
 
-- [ ] Rewrite the header comment. It currently argues the content is at fault.
+**Dropped — the tool these items would improve is being removed, not improved.**
+The rendering question moved to repo-root `scripts/check-links.mjs`; the plugin
+keeps only the file-level gate. Ticked to mean *no longer applicable*.
+
+- [x] Rewrite the header comment. It currently argues the content is at fault.
       The tool measures whether **rendered links resolve** — that is a statement
       about the renderer, and a failure should send a reader to
       [`010`](./010_renderer-drops-a-url-level.md), not to the content
-- [ ] **Re-examine the tracker exclusion.** Trackers are skipped by default on
+- [x] **Re-examine the tracker exclusion.** Trackers are skipped by default on
       the argument that *"a link that rotted because its target was deleted is
       history, not a defect."* That reasoning was invented to fit the wrong model
       and has never been tested against the actual 3,978 — see
       [`060`](./060_does-the-tracker-share-it.md). Either justify it with the
       triage, or drop it
-- [ ] Keep the parts that are right, and say why in the file: it reads the
+- [x] Keep the parts that are right, and say why in the file: it reads the
       **rendered `href`**, resolves it the way a browser does, and **fails when
       it finds nothing to check** rather than reporting clean
-- [ ] Control-test in both directions — break a link, watch it fail; remove the
+- [x] Control-test in both directions — break a link, watch it fail; remove the
       break, watch it return to zero. Neither half alone proves anything
-- [ ] Re-run it after [`010`](./010_renderer-drops-a-url-level.md) lands and
+- [x] Re-run it after [`010`](./010_renderer-drops-a-url-level.md) lands and
       record before/after counts per section
-- [ ] Decide whether it belongs in `agent-ks check` as a default or an opt-in,
+- [x] Decide whether it belongs in `agent-ks check` as a default or an opt-in,
       given it needs a build first
 
 # Outcomes and Next Steps

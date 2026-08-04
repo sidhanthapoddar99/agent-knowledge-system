@@ -64,21 +64,24 @@ finding, and it is why this subtask does not propose a different number.
 
 # Todo list
 
+**Dropped — every item below moved to the absolute-link-resolution issue with the
+shift removal itself. Ticked to mean *rehomed*, not *finished*.**
+
 - [x] Remove the shift, keep the reasoning as a comment so it is not re-added
 - [x] Rewrite the file header, which described the shift as the file's purpose
 - [x] Build clean — 1,174 pages; `tsc` clean on this file
-- [ ] **Land render-time absolute resolution** —
+- [x] **Land render-time absolute resolution** —
       [`2026-06-09` `03`](../../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/030_comprehensive-panel-subdoc-links.md).
       This is the only item that closes the class
-- [ ] Re-run the four link shapes handed to that subtask by
+- [x] Re-run the four link shapes handed to that subtask by
       [`010`](./010_renderer-drops-a-url-level.md) — query strings on asset and
       `.md` targets, nested bare `index.md`, blog siblings
-- [ ] **Decide separately whether the server should redirect one URL form to the
+- [x] **Decide separately whether the server should redirect one URL form to the
       other.** Serving the same page at two URLs with no canonical form is a
       problem in its own right — for caching, for analytics, and for anything
       that resolves relatively. It is not required by the fix above, and it may
       still be right
-- [ ] Re-measure with [`180`](./180_rendered-link-check-belongs-to-this-repo.md)'s
+- [x] Re-measure with [`180`](./180_rendered-link-check-belongs-to-this-repo.md)'s
       live crawler, against **both** servers, once the fix lands
 
 # The full trace — one link, four combinations

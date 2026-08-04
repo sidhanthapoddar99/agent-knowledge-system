@@ -1,6 +1,6 @@
 ---
 title: "Link integrity — one renderer bug, and the wrong conclusion drawn from it"
-status: in-progress
+status: done
 ---
 
 # Overview
@@ -113,14 +113,14 @@ prescribed converting content to site-absolute form. That was carried out on
       [`090`](./090_tools-must-say-what-they-skip.md), and
       [`020`](./020_relative-links-are-the-contract.md)'s reach extended past the
       two skill files
-- [ ] **Sid's approval to begin** — then work the group in the order below
+- [x] **Sid's approval to begin** — given 2026-08-03; the group ran from there
 - [x] [`010`](./010_renderer-drops-a-url-level.md) — fix the renderer, with a
       control test that fails when the fix is reverted. **Closed 2026-08-04**:
       two audit edge cases fixed (`mailto:`, diagram pages), four handed to
       `2026-06-09` `03` because they are defects of the shift it deletes
 - [x] [`020`](./020_relative-links-are-the-contract.md) — one link-form rule,
       stated identically on every surface, with the reason attached
-- [ ] [`080`](./080_link-it-dont-name-it.md) — a file reference is a link, never a
+- [x] [`080`](./080_link-it-dont-name-it.md) — a file reference is a link, never a
       backticked path. Same defect shape as `020`, other half of the rule
 - [x] [`050`](./050_correct-the-published-records.md) — correct `0.2.1`'s release
       note and the two subtasks that argue for the wrong form
@@ -128,7 +128,7 @@ prescribed converting content to site-absolute form. That was carried out on
       pipeline has the same defect. **Unverified; do not act on it yet**
 - [x] [`070`](./070_reframe-the-link-checker.md) — reframe the link checker,
       which was built on the wrong model
-- [ ] [`090`](./090_tools-must-say-what-they-skip.md) — make `move` report its
+- [x] [`090`](./090_tools-must-say-what-they-skip.md) — make `move` report its
       skips and `check` gate link form. **Last, because it encodes whatever `020`
       decides**
 - [x] Re-measure [`040`](./040_site-wide-link-rot.md)'s counts once the renderer

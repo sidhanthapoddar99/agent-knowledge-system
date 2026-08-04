@@ -54,6 +54,13 @@ finding, and it is why this subtask does not propose a different number.
 - The environment split: [`120`](./120_dev-and-build-disagree-on-the-base.md)
 - The tool that could not see the failure:
   [`180`](./180_rendered-link-check-belongs-to-this-repo.md)
+- **The run record, and where the audit of this removal lands:**
+  [the gate-and-shift run](../../agent-log/060_wf_move-the-gate-and-drop-the-shift/01_summary.md)
+  — an independent audit of every path / URL / routing / asset change since
+  2026-08-01 was commissioned on 2026-08-04, told to **execute rather than read**
+  and to compare the dev and preview servers directly. Its findings, including
+  its verdict on whether this removal merely moved the breakage again, land in
+  that run's `02_working/`
 
 # Todo list
 

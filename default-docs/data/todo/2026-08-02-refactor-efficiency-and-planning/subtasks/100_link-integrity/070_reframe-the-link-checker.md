@@ -1,6 +1,6 @@
 ---
 title: "check-content-links was built on the wrong model — reframe it as a rendering gate"
-status: in-progress
+status: done
 ---
 
 # Overview
@@ -160,3 +160,54 @@ a real parser and found the tool's own numbers misleading.
 
 **So "0 broken in-body links" means "0 broken paths".** The direction of 418 → 0
 holds; the claim needs narrowing and the tool needs to check fragments.
+
+# Closed 2026-08-04 — the framing was still wrong, one level up
+
+**This subtask reframed the checker twice and both times inside the wrong
+question.** Round one said: it blames authors, make it blame the renderer. Round
+two said: it measures less than it reports, fix the four defects. Neither asked
+whether **a gate that reads the built site belongs in the plugin at all.**
+
+Sid's answer, 2026-08-04: it does not. `agent-ks` owns files and the links
+between them; whether a link resolves in a browser is the engine's output and the
+engine's to test. The tool was measuring the renderer and shipping to consumers.
+
+That is now [`180`](./180_rendered-link-check-belongs-to-this-repo.md), with the
+three stages written into the project `CLAUDE.md`. Run record:
+[the gate-and-shift run](../../agent-log/060_wf_move-the-gate-and-drop-the-shift/01_summary.md).
+
+## The four reopened findings, checked one by one
+
+Every one was verified rather than taken from the audit report, and **two of the
+four were attributed to the wrong tool**:
+
+| Finding | Verdict |
+|---|---|
+| **Anchors are never checked** — `.pathname` discards the fragment | ✅ **Real.** The replacement checks fragments against the target's `id`/`name` |
+| **The count is inflated ~27×** — the body regex matches `<article\|main>` and a built page opens `<main>` first, so every sidebar is counted | ✅ **Real, and measured on one real page: 112 counted, 9 actually in the body.** Corrected in [`040`](./040_site-wide-link-rot.md), which had quoted it |
+| Misses titled links `[x](/y "title")` and raw HTML `<a href>` | ❌ **Not this tool.** It reads HTML, where `href="/y" title="t"` matches fine. The gap is in `check-link-form.mjs`, which reads markdown: `MD_LINK_RE`'s `[^)\s]+` stops at the space. **Two such links exist in the content** — carried to [`170`](./170_relative-but-not-a-path.md) |
+| False failure on a link inside an HTML comment | ❌ **Does not reproduce.** Zero `<a>` tags inside comments anywhere in `dist/` |
+
+**Recording the two that were wrong matters as much as the two that were right.**
+An audit finding that reads plausibly and is misattributed sends the next person
+to edit a file that was never broken — the same failure this whole group is
+about, one layer up.
+
+## What the two real defects turned out to be evidence of
+
+Not bugs to patch. **Both exist only because the tool reads `dist/`**, and both
+vanish in a live-server crawler: fragments are checked against a real response,
+and body-versus-chrome is a crawl decision rather than a regex over a static file.
+
+**And the anchor gap is the sharper of the two.** The gate reported `0 broken`
+while four anchors were broken. A gate that cannot see a failure class does not
+merely miss it — **it certifies it.** That is the shape this group keeps finding,
+and it was inside the tool built to find it.
+
+## The part of this subtask that was right and outlives it
+
+*"A checker written while believing the wrong cause encodes that belief in what
+it reports."* That held, and it held twice more than expected: the tool blamed
+authors for a renderer defect, and it was placed in the tree that could not fix
+what it found. The header rewrite it produced is kept and moves to the
+replacement.

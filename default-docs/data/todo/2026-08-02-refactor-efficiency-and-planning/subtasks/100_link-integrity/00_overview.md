@@ -24,7 +24,7 @@ status: in-progress
 | [`040`](./040_site-wide-link-rot.md) | "4,295 broken links site-wide" | 🟢 **Done 2026-08-04 at zero.** Re-measured: 342 pages, 15,586 in-body links, **0 broken** across the doc sections. The 4,295 is retracted in place. Nothing unique was left to move out |
 | [`050`](./050_correct-the-published-records.md) | correcting `0.2.1` and the records | 🟢 **Done 2026-08-04.** Three dated correction blocks on `0.2.1`; `030` and `040` closed with their wrong conclusions removed. Nothing published still recommends the absolute form |
 | [`060`](./060_does-the-tracker-share-it.md) | does the tracker share the bug? | 🟢 **Done 2026-08-04. No** — the tracker lacks both conditions (no trailing slash, prefixes kept). The `issue-body-links.ts` comment that asserted it now states the real reason |
-| [`070`](./070_reframe-the-link-checker.md) | reframe `check links` | 🟢 **Yes.** Anchors are never checked, the count is inflated, and it can only ever see the built site |
+| [`070`](./070_reframe-the-link-checker.md) | reframe `check links` | 🟢 **Done 2026-08-04.** Reframed twice inside the wrong question — the real answer is that a `dist/`-reading gate does not belong in the plugin at all. Now [`180`](./180_rendered-link-check-belongs-to-this-repo.md) |
 | [`080`](./080_link-it-dont-name-it.md) | a file reference is a link, not a backticked path | 🟢 **Yes, and it is untouched.** Fully independent of everything above — the one item here no diagnosis affected |
 | [`090`](./090_tools-must-say-what-they-skip.md) | `move` and `check` must not skip silently | 🟢 **Yes.** The gate passes 306 links `move` cannot maintain, and both tools are wrong about site assets |
 | [`100`](./100_links-whose-target-does-not-exist.md) | 55 links with no target | 🟢 **Yes** — genuinely dead targets, independent of resolution |
@@ -104,7 +104,7 @@ prescribed converting content to site-absolute form. That was carried out on
       note and the two subtasks that argue for the wrong form
 - [x] [`060`](./060_does-the-tracker-share-it.md) — settle whether the tracker
       pipeline has the same defect. **Unverified; do not act on it yet**
-- [ ] [`070`](./070_reframe-the-link-checker.md) — reframe the link checker,
+- [x] [`070`](./070_reframe-the-link-checker.md) — reframe the link checker,
       which was built on the wrong model
 - [ ] [`090`](./090_tools-must-say-what-they-skip.md) — make `move` report its
       skips and `check` gate link form. **Last, because it encodes whatever `020`

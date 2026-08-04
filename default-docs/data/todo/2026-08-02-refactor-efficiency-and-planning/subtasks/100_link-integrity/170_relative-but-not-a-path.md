@@ -89,6 +89,13 @@ from a right one until someone looks.*
       **Build before and after and diff the emitted hrefs**
 - [ ] Re-run the `move` demonstration above afterwards: all eight links to
       `design-philosophy` should be rewritten, not two
+- [ ] **Titled links are invisible to the same gate**, inherited from
+      [`070`](./070_reframe-the-link-checker.md) on closing. `MD_LINK_RE`'s
+      target pattern is `[^)\s]+`, so it stops at the space in
+      `[x](/y "title")` and the link is never parsed at all — not reported, not
+      counted. **Two exist in the content today.** Same class as the rest of this
+      subtask: a link the tooling cannot see is a link the tooling cannot
+      maintain
 
 # Details
 

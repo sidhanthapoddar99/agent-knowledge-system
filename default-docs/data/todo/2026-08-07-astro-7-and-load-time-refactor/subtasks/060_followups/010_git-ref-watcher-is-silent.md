@@ -44,11 +44,26 @@ and fixed, and the finding is written down either way.
 
 # Details
 
-## What was observed
+## Reproduced end to end — this is a live user-visible bug, not just a silent log
 
-A commit was made with the dev server running. Its log showed no
-`git ref changed`, no `SSR module invalidated`, and no `no SSR modules in graph
-yet`. None of the three messages the handler can print appeared.
+Confirmed on Astro 7.2.0 against a running dev server, 2026-08-07:
+
+```
+  before the commit    server: 2026-08-02T23:51:24   git: 2026-08-02T23:51:24   agree
+  commit lands         git:    2026-08-07T14:39:31
+  after the commit     server: 2026-08-02T23:51:24   STALE, 4 days behind
+  after a restart      server: 2026-08-07T14:39:31   correct
+```
+
+**This is exactly the symptom
+[the updated-date issue](../../../2026-05-08-update-date-time-optimization/issue.md)
+was opened for**, and its note describes the same behaviour on 2026-05-08. The
+`moduleGraph` workaround added then does not prevent it, because the handler
+containing that workaround never runs.
+
+The log showed no `git ref changed`, no `SSR module invalidated`, and no
+`no SSR modules in graph yet`. None of the three messages the handler can print
+appeared.
 
 The paths **are** registered — the boot log shows them:
 

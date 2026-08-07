@@ -1,6 +1,6 @@
 ---
 title: "Theme loader — the extends cycle hang and the reachability of 'default'"
-status: open
+status: review
 ---
 
 # Overview
@@ -24,19 +24,80 @@ literal name to the built-in styles directory before any directory scan runs, an
 
 # Todo list
 
-- [ ] Write a failing fixture: two themes that extend each other
-- [ ] Make the cycle check throw, in every environment, not only under DEV
-- [ ] Write the cache entry before recursing, so the memo breaks the loop
-- [ ] Decide and document what happens to a user theme named `default`
-- [ ] Correct the user-guide page that claims the cycle already errors at startup
+- [x] Write a failing fixture: two themes that extend each other
+- [x] Make the cycle check throw, in every environment, not only under DEV
+- [x] Break the recursion — done with a re-entry guard, not a pre-written cache entry (see below)
+- [x] Decide and document what happens to a user theme named `default`
+- [x] Correct the user-guide page that claims the cycle already errors at startup
 
 # Outcomes and Next Steps
 
-> [!IMPORTANT]
-> **PLACEHOLDER** — filled at completion / hand-off: what landed (with evidence
-> — commits, measurements, links to the agent-log), what was deferred, and the
-> concrete next steps. A subtask reaching `review` with this marker still in
-> place is flagged by the template lint.
+Both defects fixed and proven end to end. Commit `36c0497`.
+
+## The cycle now throws — proven against a real build, not read off the code
+
+The detector was extracted into `findExtendsCycle` in
+`astro-doc-code/src/loaders/theme.ts`, called unconditionally from
+`loadThemeConfig` **outside** the `import.meta.env.DEV` gate. `validateTheme` calls
+the same function, so what gets reported and what gets enforced cannot drift.
+
+**One thing the audit did not catch:** the old check compared `extends` values as
+**strings**. The same theme is routinely named two ways — an absolute path when it
+comes from config load, `@theme/<name>` when it comes from another theme's
+`extends` — so a real cycle could walk straight past a string comparison.
+Comparison is now by resolved absolute path.
+
+The control that matters: a genuine `full-width → minimal → full-width` was written
+into the real `default-docs/themes/`, `bun run build` was run, and the themes were
+restored:
+
+```
+  exit=1   wall=5.5s
+  [ERROR] Circular theme inheritance: full-width → minimal → full-width.
+          A theme cannot extend itself, directly or through its ancestors.
+          Remove one of the "extends" values in the chain.
+```
+
+Five fixtures live in `scripts/check-theme-contract.mjs` gate C, and **two of them
+are negative controls** — a normal child/base pair, and a *diamond* (two paths
+reaching one shared ancestor, which is legal). Without those, a detector that
+returns a cycle unconditionally would pass every positive test.
+
+**Deviation from the plan, and why.** This subtask asked for the cache entry to be
+written *before* recursing, so the memo breaks the loop. That is not implementable
+as written — the value does not exist yet, so the entry would have to be a lie. The
+throw in `loadThemeConfig` fires before any recursion happens, which achieves the
+stated goal. A re-entry guard (`enterThemeCSS`) was added anyway, because
+`loadThemeConfig` returns early on a **cache hit** and that early return skips its
+own check — so the guard closes a hole the throw alone leaves open.
+
+## A user theme named `default` is rejected — and the subtask's recommendation was wrong
+
+Rejected at startup with a message naming the directory. Verified by creating
+`default-docs/themes/default/` and building: exit 1, correct message, fixture
+removed.
+
+**This subtask recommended option 2 (let the user win, scan first), on the grounds
+that it matches how `@ext-layouts` overrides built-in layouts. That reasoning does
+not carry over, and taking it would have made things worse.** `@theme/default` is
+not just a name that happens to be taken — it is *the documented reference to the
+built-in theme*, and **both** shipped user themes extend it:
+
+```
+default-docs/themes/minimal/theme.yaml     extends: "@theme/default"
+default-docs/themes/full-width/theme.yaml  extends: "@theme/default"
+```
+
+So a directory claiming the name silently retargets every `extends` in the project
+to that directory — and for the directory itself, resolves to itself, which is the
+cycle above. A layout override affects one layout; this affects the root of every
+theme chain. Reserving the name is the option that keeps `@theme/default` meaning
+one thing.
+
+## Next steps
+
+None for this subtask. The reserved-name list is a `Set` in `theme.ts` if another
+framework-owned name ever needs adding.
 
 # Details
 

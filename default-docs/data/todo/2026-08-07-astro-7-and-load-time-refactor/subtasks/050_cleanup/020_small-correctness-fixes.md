@@ -1,6 +1,6 @@
 ---
 title: "Two small correctness fixes — the production POST and the unhighlighted fences"
-status: open
+status: review
 ---
 
 # Overview
@@ -37,19 +37,102 @@ tool.
 
 # Todo list
 
-- [ ] Guard the subtask-toggle POST so it only fires in dev
-- [ ] Decide what a built site shows for that checkbox — read-only, or hidden
-- [ ] Add the six missing languages to the Shiki configuration
-- [ ] Re-count unhighlighted fences and confirm it reaches zero
-- [ ] Check the bundle-size effect of the added grammars
+- [x] Guard the subtask-toggle POST so it only fires in dev
+- [x] Decide what a built site shows for that checkbox — read-only, or hidden
+- [x] Add the missing languages — five grammars and one alias, not six grammars
+- [x] Re-count unhighlighted fences and confirm it reaches zero
+- [x] Check the bundle-size effect of the added grammars
 
 # Outcomes and Next Steps
 
-> [!IMPORTANT]
-> **PLACEHOLDER** — filled at completion / hand-off: what landed (with evidence
-> — commits, measurements, links to the agent-log), what was deferred, and the
-> concrete next steps. A subtask reaching `review` with this marker still in
-> place is flagged by the template lint.
+Both done. Commit `36c0497`.
+
+## The POST — read-only, and guarded in both halves
+
+**The product decision: the glyph stays, the control goes.** A subtask's status is
+*content* — it is the main thing an issue page communicates — so hiding it would
+remove information from every published page to fix an interaction bug. What has to
+go is the promise: a `<button>` labelled *"Click to cycle"* that silently reverts.
+
+Implemented server-side rather than in the client script, which matters for two
+reasons: no flash of a clickable-looking control before JS runs, and it is still
+correct with JS disabled.
+
+```
+  dev    <button ... aria-label="Subtask state: open. Click to cycle.">
+  build  <button disabled ... aria-label="Subtask state: open">
+```
+
+The listener guard in `subtask-state.ts` is the second half, so no handler attaches
+even if the markup is reached another way. Hover and `cursor: pointer` are dropped
+via `:not(:disabled)`.
+
+Verified against `dist/`:
+
+| Check | Result |
+|---|---|
+| JS chunks containing `/__editor/subtask-toggle` | **0** — dead-code eliminated, since `import.meta.env.DEV` is statically false |
+| State buttons on a sample issue page | 1 of 1 carries `disabled` |
+| `"Click to cycle"` occurrences | 0 |
+
+⚠️ **A grep for `__editor/subtask-toggle` across `dist/**/*.html` returns 14 hits and
+they are all false positives** — tracker pages that quote the endpoint as prose,
+including this one. Check the JS, not the HTML.
+
+## The fences — 137 → 0, and the bundle worry was misdirected
+
+Added `astro`, `jsonc`, `nginx`, `diff`, `dotenv`, plus an alias table so `env`
+resolves to `dotenv` (`env` has no Shiki grammar; `dotenv` is that syntax under a
+name nobody types in a fence). Language lookup is now case-insensitive too, so a
+```` ```JSON ```` fence no longer falls through to plain.
+
+**`text` was deliberately left alone.** It is not a missing grammar — Shiki treats it
+as "no highlighting", which is what the author asked for. Counting it as a defect
+inflated the census by 3.
+
+Measured with **one script run against both configurations**, asking the real
+highlighter the same question the renderer asks (`getLoadedLanguages()`), because
+comparing against the literal `langs:` list gets it wrong — Shiki resolves aliases,
+so `ts`, `js` and `md` are already covered without appearing in the list:
+
+```
+  before   137 unhighlighted   astro 105 · env 13 · jsonc 11 · nginx 6 · diff 2
+  after      0
+```
+
+### The grammars cost a reader nothing, and the audit's premise was wrong
+
+The subtask warned that `emacs-lisp` (764 KB) and `cpp` (612 KB) already ship as
+chunks, so adding six more would cost every reader. **Traced it instead of assuming,
+and the chain does not reach a reader:**
+
+```
+  emacs-lisp / cpp / wolfram chunks
+     ← referenced by  _astro/dist.C004Xhtd.js
+     ← referenced by  _astro/editor.astro_…_lang.NCg3Ym0F.js
+     ← referenced by  0 published pages
+```
+
+Shiki runs **server-side** in `parsers/renderers/marked.ts` and emits plain HTML.
+Those chunks exist because the **dev editor** bundles Shiki for its live preview —
+nothing a docs reader loads.
+
+| | before | after | delta |
+|---|---|---|---|
+| Build wall time (best of 2) | 5.97 s | 6.46 s | **+0.49 s** |
+| `dist/` total | 114 MB | 115 MB | **+1 MB** |
+| Bytes a reader downloads | — | — | **0** |
+| Pages | 1279 | 1279 | — |
+
+So aliasing over adding was the right call for `env` (no grammar exists) but was
+never needed as a *bundle-size* tactic.
+
+## Next steps
+
+Chasing that chunk chain surfaced something bigger, now filed separately:
+**the dev-only `/editor` route is built into the production site**, dragging
+10.8 MB across 427 chunks that no reader can reach — see
+[the editor bundle follow-up](../060_followups/050_editor-ships-in-production-builds.md).
 
 # Details
 

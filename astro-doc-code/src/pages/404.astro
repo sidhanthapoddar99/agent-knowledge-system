@@ -1,0 +1,97 @@
+---
+/**
+ * The site's not-found page.
+ *
+ * WHY THIS FILE EXISTS AT ALL. `[...slug].astro` already answers 404 for a URL
+ * inside a known section — an unknown docs slug renders that section's shell
+ * with a 404 status so the sidebar stays navigable. But that only covers paths
+ * the page route MATCHES. A URL under no configured section, or any dead link
+ * on a **deployed static site**, never reaches it: a static host looks for a
+ * file, does not find one, and serves whatever its own default is. Netlify,
+ * GitHub Pages, Cloudflare and nginx all look for `404.html` first, so shipping
+ * one is the whole mechanism.
+ *
+ * Before this file, `dist/` contained no `404.html` and every dead link on a
+ * published site landed on the host's generic page — off-theme, no navigation,
+ * no way back.
+ *
+ * WHY IT IS DELIBERATELY PLAIN. It cannot assume any content loaded. A 404 is
+ * also what gets served when configuration is wrong, so a page that needs the
+ * sidebar, the issue tracker or a section's settings to render is a page that
+ * can fail exactly when it is most needed. It takes the theme (so it looks like
+ * the site) and nothing else.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { loadSiteConfig } from '@loaders/index';
+
+const siteConfig = loadSiteConfig();
+
+// Link back to whatever the site considers its front door, falling back to the
+// root. Read defensively: this page must render even with a broken config.
+let homeUrl = '/';
+try {
+  const pages = siteConfig?.pages ?? {};
+  const first = Object.values(pages)[0] as { base_url?: string } | undefined;
+  homeUrl = first?.base_url || '/';
+} catch {
+  homeUrl = '/';
+}
+---
+
+<BaseLayout title="Page not found" description="The page you asked for does not exist.">
+  <main class="notfound">
+    <p class="notfound__code">404</p>
+    <h1 class="notfound__title">This page does not exist</h1>
+    <p class="notfound__body">
+      The address may be mistyped, or the page may have been renamed or removed.
+    </p>
+    <a class="notfound__home" href={homeUrl}>Go to {homeUrl}</a>
+  </main>
+</BaseLayout>
+
+<style>
+  .notfound {
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-2xl) var(--spacing-lg);
+    text-align: center;
+  }
+  .notfound__code {
+    font-family: var(--font-family-mono);
+    font-size: var(--display-md);
+    font-weight: 600;
+    color: var(--color-text-muted);
+    margin: 0;
+    line-height: 1;
+  }
+  .notfound__title {
+    font-size: var(--ui-text-title);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin: 0;
+  }
+  .notfound__body {
+    font-size: var(--ui-text-body);
+    color: var(--color-text-secondary);
+    margin: 0;
+    max-width: var(--max-width-secondary);
+  }
+  .notfound__home {
+    margin-top: var(--spacing-sm);
+    font-size: var(--ui-text-body);
+    font-weight: 600;
+    color: var(--color-brand-primary);
+    text-decoration: none;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border: 1px solid var(--color-border-default);
+    border-radius: var(--border-radius-md);
+    transition: background var(--transition-fast);
+  }
+  .notfound__home:hover {
+    background: var(--color-bg-secondary);
+  }
+</style>

@@ -461,14 +461,35 @@ interface CacheEntry {
 }
 const cache = new Map<string, CacheEntry>();
 
+/** One fully-rendered issue, keyed by absolute folder path. Detail and sub-doc
+ *  pages need ONE issue's bodies; serving them from the tracker-wide entry meant
+ *  rendering every sibling to answer for one. */
+interface FolderCacheEntry {
+  signature: number;
+  data: Issue;
+  embedded: string[];
+}
+const folderCache = new Map<string, FolderCacheEntry>();
+
 /**
- * Collector for the current `loadIssues` pass. Every issue markdown file goes
- * through the single `renderMarkdown` funnel below, which drops everything but
- * the HTML — this is where the parse's embedded-file list is caught instead.
- * Module-level because that funnel is called from a dozen places deep in the
- * folder walk; the walk is strictly sequential, so there is no interleaving.
+ * The render funnel for one load pass, created by `createRenderCtx` below.
+ *
+ * Passed down the folder walk as an ordinary argument rather than held in a
+ * module-level variable. Two loads can be in flight at once — a dev request for
+ * the index and one for a detail page — and they do not always want the same
+ * thing, so a shared mutable funnel would let one pass's mode leak into the
+ * other's output and be cached there.
  */
-let embedCollector: Set<string> | null = null;
+interface RenderCtx {
+  /** Markdown file → HTML. Returns `''` when this pass renders no bodies. */
+  render: (filePath: string, basePath: string) => Promise<string>;
+  /**
+   * Files spliced in by `[[path]]` embeds, discovered during this pass. They
+   * live in `assets/`, which the signature walk deliberately does not cover, so
+   * the cache entry carries them forward to be stat'd on the next lookup.
+   */
+  embedded: Set<string>;
+}
 
 function statMtime(p: string): number {
   try {
@@ -493,6 +514,49 @@ function isTrackedDocFile(name: string): boolean {
   );
 }
 
+/**
+ * Summed mtime over one issue folder — everything `loadIssueFolder` reads.
+ *
+ * Split out of the tracker-wide walk so a single issue can be cached on its
+ * own: `loadIssue` needs to know whether ONE folder changed, and re-walking
+ * every sibling to answer that is what made a detail-page visit cost as much as
+ * the whole index.
+ */
+function computeFolderSignature(folder: string): number {
+  let sig = statMtime(folder);
+  sig += statSettingsMtime(folder);
+  sig += statMtime(path.join(folder, 'issue.md'));
+  sig += statMtime(path.join(folder, 'glossary.md'));
+
+  for (const sub of SECTION_FOLDERS) {
+    const subDir = path.join(folder, sub);
+    sig += statMtime(subDir);
+    // Nesting is a per-section fact declared in the registry — `comments` is
+    // flat, `plans` has its own fixed two-level shape. Walk what the section
+    // actually supports so a deep edit still busts the cache.
+    const allowsNesting = sectionById(sub)?.nested ?? true;
+    const walkSig = (absDir: string, depth: number): void => {
+      let items: fs.Dirent[];
+      try { items = fs.readdirSync(absDir, { withFileTypes: true }); }
+      catch { return; /* dir absent / empty */ }
+      for (const item of items) {
+        const abs = path.join(absDir, item.name);
+        if (item.isFile() && isTrackedDocFile(item.name)) {
+          sig += statMtime(abs);
+        } else if (item.isDirectory() && allowsNesting && depth < MAX_SUBFOLDER_DEPTH) {
+          sig += statMtime(abs);
+          // Folder-level settings.json (grouping folders may carry one).
+          sig += statSettingsMtime(abs);
+          walkSig(abs, depth + 1);
+        }
+      }
+    };
+    walkSig(subDir, 0);
+  }
+
+  return sig;
+}
+
 function computeSignature(dataPath: string, embedded: readonly string[] = []): number {
   let sig = statSettingsMtime(dataPath);
   sig += statMtime(dataPath); // folder listing changes
@@ -510,46 +574,39 @@ function computeSignature(dataPath: string, embedded: readonly string[] = []): n
 
   for (const entry of entries) {
     if (!entry.isDirectory() || !FOLDER_PATTERN.test(entry.name)) continue;
-    const folder = path.join(dataPath, entry.name);
-    sig += statMtime(folder);
-    sig += statSettingsMtime(folder);
-    sig += statMtime(path.join(folder, 'issue.md'));
-    sig += statMtime(path.join(folder, 'glossary.md'));
-
-    for (const sub of SECTION_FOLDERS) {
-      const subDir = path.join(folder, sub);
-      sig += statMtime(subDir);
-      // Nesting is a per-section fact declared in the registry — `comments` is
-      // flat, `plans` has its own fixed two-level shape. Walk what the section
-      // actually supports so a deep edit still busts the cache.
-      const allowsNesting = sectionById(sub)?.nested ?? true;
-      const walkSig = (absDir: string, depth: number): void => {
-        let items: fs.Dirent[];
-        try { items = fs.readdirSync(absDir, { withFileTypes: true }); }
-        catch { return; /* dir absent / empty */ }
-        for (const item of items) {
-          const abs = path.join(absDir, item.name);
-          if (item.isFile() && isTrackedDocFile(item.name)) {
-            sig += statMtime(abs);
-          } else if (item.isDirectory() && allowsNesting && depth < MAX_SUBFOLDER_DEPTH) {
-            sig += statMtime(abs);
-            // Folder-level settings.json (grouping folders may carry one).
-            sig += statSettingsMtime(abs);
-            walkSig(abs, depth + 1);
-          }
-        }
-      };
-      walkSig(subDir, 0);
-    }
+    sig += computeFolderSignature(path.join(dataPath, entry.name));
   }
 
   return sig;
 }
 
-/** Invalidate the in-memory issues cache for a given dataPath (or all paths if omitted). */
+/** Per-folder variant: the folder's own signature plus its carried embeds. */
+function computeIssueSignature(folder: string, embedded: readonly string[] = []): number {
+  let sig = computeFolderSignature(folder);
+  for (const file of embedded) sig += statMtime(file);
+  return sig;
+}
+
+/**
+ * Invalidate the in-memory issues caches for a given dataPath (or all if
+ * omitted).
+ *
+ * Matches by PREFIX, because a cache key is `<dataPath>::<flags>` — a bare
+ * `delete(dataPath)` matched no real entry, so the targeted form silently did
+ * nothing and only the clear-everything form ever worked.
+ */
 export function invalidateIssuesCache(dataPath?: string): void {
-  if (dataPath) cache.delete(dataPath);
-  else cache.clear();
+  if (!dataPath) {
+    cache.clear();
+    folderCache.clear();
+    return;
+  }
+  for (const key of cache.keys()) {
+    if (key === dataPath || key.startsWith(`${dataPath}::`)) cache.delete(key);
+  }
+  for (const key of folderCache.keys()) {
+    if (key.startsWith(`${dataPath}${path.sep}`)) folderCache.delete(key);
+  }
 }
 
 function normalizeComponent(raw: unknown): string[] {
@@ -669,13 +726,32 @@ function getParser() {
   return parser;
 }
 
-async function renderMarkdown(filePath: string, basePath: string): Promise<string> {
-  const parsed = await getParser().parse(filePath, basePath);
-  // Catch the parse's `[[path]]` dependencies before the rest of it is dropped.
-  if (embedCollector && parsed?.embeddedFiles) {
-    for (const f of parsed.embeddedFiles) embedCollector.add(f);
-  }
-  return parsed?.content ?? '';
+/**
+ * Build the render funnel for one load pass.
+ *
+ * `metaOnly` is the whole point of the split. The issues INDEX reads `id`,
+ * `created`, `updated`, `meta.*` and its subtasks' statuses — and not one
+ * `html` field. Rendering every tracked file to build it is the single largest
+ * cost in the loader: measured at ~3.0 s against ~15 ms for the walk that
+ * actually produces the metadata.
+ *
+ * The tree is walked identically either way, so the object graph — folders,
+ * sub-docs, plans, stages, sub-task statuses — is the same shape in both modes.
+ * Only the `html` strings differ, which is why the cache key has to name the
+ * mode: a meta-only entry served to a detail page would render blank.
+ */
+function createRenderCtx(metaOnly: boolean): RenderCtx {
+  const embedded = new Set<string>();
+  if (metaOnly) return { render: async () => '', embedded };
+  return {
+    embedded,
+    render: async (filePath: string, basePath: string): Promise<string> => {
+      const parsed = await getParser().parse(filePath, basePath);
+      // Catch the parse's `[[path]]` dependencies before the rest of it is dropped.
+      if (parsed?.embeddedFiles) for (const f of parsed.embeddedFiles) embedded.add(f);
+      return parsed?.content ?? '';
+    },
+  };
 }
 
 // Inline renderer for one-line frontmatter fields (`outcome:`, `notes:`).
@@ -737,7 +813,11 @@ function readComments(commentsDir: string): IssueComment[] {
   });
 }
 
-async function loadIssueFolder(folderPath: string, dataPath: string): Promise<Issue | null> {
+async function loadIssueFolder(
+  folderPath: string,
+  dataPath: string,
+  ctx: RenderCtx,
+): Promise<Issue | null> {
   const id = path.basename(folderPath);
   const match = id.match(FOLDER_PATTERN);
   if (!match) return null;
@@ -751,42 +831,42 @@ async function loadIssueFolder(folderPath: string, dataPath: string): Promise<Is
   }
 
   const issuePath = path.join(folderPath, 'issue.md');
-  const html = fs.existsSync(issuePath) ? await renderMarkdown(issuePath, dataPath) : '';
+  const html = fs.existsSync(issuePath) ? await ctx.render(issuePath, dataPath) : '';
 
   // Optional per-issue glossary — a single root-level glossary.md. Null when
   // absent (the panel then shows an empty state prompting the author to add one).
   const glossaryPath = path.join(folderPath, 'glossary.md');
   const glossaryHtml = fs.existsSync(glossaryPath)
-    ? await renderMarkdown(glossaryPath, dataPath)
+    ? await ctx.render(glossaryPath, dataPath)
     : null;
 
   // Comments
   const commentsDir = path.join(folderPath, 'comments');
   const comments = readComments(commentsDir);
   for (const c of comments) {
-    c.html = await renderMarkdown(c.filePath, dataPath);
+    c.html = await ctx.render(c.filePath, dataPath);
   }
 
   // Subtasks: frontmatter-driven files under subtasks/ (body optional).
   // Nested grouping folders up to MAX_SUBFOLDER_DEPTH; folder = label only, no body file.
   const { subtasks, subtaskGroups } = await readSubtasks(
-    path.join(folderPath, 'subtasks'), dataPath, id,
+    path.join(folderPath, 'subtasks'), dataPath, id, ctx,
   );
 
   // Notes: rendered markdown under notes/, nested up to MAX_SUBFOLDER_DEPTH
-  const notes = await readFreeformDocs(path.join(folderPath, 'notes'), dataPath, id, 'notes');
+  const notes = await readFreeformDocs(path.join(folderPath, 'notes'), dataPath, id, 'notes', ctx);
 
   // Brainstorm: same free-form nested shape as notes
-  const brainstorm = await readFreeformDocs(path.join(folderPath, 'brainstorm'), dataPath, id, 'brainstorm');
+  const brainstorm = await readFreeformDocs(path.join(folderPath, 'brainstorm'), dataPath, id, 'brainstorm', ctx);
 
   // Agent memory: AI-mutable working state; same free-form nested shape as notes
-  const agentMemory = await readFreeformDocs(path.join(folderPath, 'agent-memory'), dataPath, id, 'agent-memory');
+  const agentMemory = await readFreeformDocs(path.join(folderPath, 'agent-memory'), dataPath, id, 'agent-memory', ctx);
 
   // Plans: one folder per plan, exactly one level deep (not a free-form tree)
-  const plans = await readPlans(path.join(folderPath, 'plans'), folderPath, dataPath);
+  const plans = await readPlans(path.join(folderPath, 'plans'), folderPath, dataPath, ctx);
 
   // Agent logs: same nested shape as notes; sequence resets per leaf folder
-  const agentLogs = await readAgentLogs(path.join(folderPath, 'agent-log'), dataPath, id);
+  const agentLogs = await readAgentLogs(path.join(folderPath, 'agent-log'), dataPath, id, ctx);
   const agentLogGroups = readAgentLogGroups(path.join(folderPath, 'agent-log'), dataPath);
 
   // Effective agent-log kind map: framework defaults + this issue's overrides.
@@ -924,6 +1004,7 @@ async function readFreeformDocs(
   dataPath: string,
   issueId: string,
   subName: string,
+  ctx: RenderCtx,
 ): Promise<IssueNote[]> {
   // First-class `.html` artifacts are supporting docs in the tracker's
   // design-thinking folders only; agent-memory stays markdown + diagrams. Which
@@ -978,7 +1059,7 @@ async function readFreeformDocs(
       groupPath,
       color: typeof fm.color === 'string' && fm.color.length > 0 ? fm.color : null,
       docType: 'markdown' as const,
-      html: await renderMarkdown(abs, dataPath),
+      html: await ctx.render(abs, dataPath),
     };
   }, extensions);
 
@@ -1013,6 +1094,7 @@ async function readAgentLogs(
   logsDir: string,
   dataPath: string,
   issueId: string,
+  ctx: RenderCtx,
 ): Promise<IssueAgentLog[]> {
   return walkSubfolderTree(logsDir, issueId, 'agent-log', async (abs, groupPath, fallbackSeq) => {
     // Diagram files are first-class log entries too (same rule as notes/
@@ -1048,7 +1130,7 @@ async function readAgentLogs(
       filePath: abs,
       relativePath: path.relative(dataPath, abs),
       color: typeof fm.color === 'string' && fm.color.length > 0 ? fm.color : null,
-      html: await renderMarkdown(abs, dataPath),
+      html: await ctx.render(abs, dataPath),
     };
   }, ['.md', ...DIAGRAM_EXTENSIONS]);
 }
@@ -1135,6 +1217,7 @@ async function readPlans(
   plansDir: string,
   issueDir: string,
   dataPath: string,
+  ctx: RenderCtx,
 ): Promise<IssuePlan[]> {
   if (!fs.existsSync(plansDir)) return [];
   let entries: fs.Dirent[];
@@ -1152,7 +1235,7 @@ async function readPlans(
 
     const overviewAbs = path.join(abs, PLAN_OVERVIEW);
     const overviewHtml = fs.existsSync(overviewAbs)
-      ? await renderMarkdown(overviewAbs, dataPath)
+      ? await ctx.render(overviewAbs, dataPath)
       : null;
 
     let stageNames: string[] = [];
@@ -1193,7 +1276,7 @@ async function readPlans(
         anchor: planStageAnchor(title),
         filePath: stageAbs,
         relativePath: path.relative(dataPath, stageAbs),
-        html: await renderMarkdown(stageAbs, dataPath),
+        html: await ctx.render(stageAbs, dataPath),
       });
     }
 
@@ -1301,6 +1384,7 @@ async function readSubtaskFile(
   abs: string,
   groupPath: string[],
   dataPath: string,
+  ctx: RenderCtx,
 ): Promise<IssueSubtask> {
   const name = path.basename(abs);
   const slug = name.replace(/\.md$/, '');
@@ -1323,7 +1407,7 @@ async function readSubtaskFile(
   } catch {
     // malformed frontmatter — fall back to defaults
   }
-  const html = await renderMarkdown(abs, dataPath);
+  const html = await ctx.render(abs, dataPath);
   return {
     slug,
     sequence,
@@ -1341,6 +1425,7 @@ async function readSubtasks(
   subtasksDir: string,
   dataPath: string,
   issueId: string,
+  ctx: RenderCtx,
 ): Promise<{ subtasks: IssueSubtask[]; subtaskGroups: SubtaskGroupMeta[] }> {
   const subtasks: IssueSubtask[] = [];
   const subtaskGroups: SubtaskGroupMeta[] = [];
@@ -1356,7 +1441,7 @@ async function readSubtasks(
       .map((e) => e.name)
       .sort();
     for (const name of files) {
-      subtasks.push(await readSubtaskFile(path.join(absDir, name), groupPath, dataPath));
+      subtasks.push(await readSubtaskFile(path.join(absDir, name), groupPath, dataPath, ctx));
     }
 
     const subFolders = entries
@@ -1392,16 +1477,18 @@ async function readSubtasks(
  */
 export async function loadIssues(
   dataPath: string,
-  options: { includeDrafts?: boolean } = {},
+  options: { includeDrafts?: boolean; metaOnly?: boolean } = {},
 ): Promise<LoadedIssues> {
   if (!path.isAbsolute(dataPath)) {
     throw new Error(`Expected absolute data path for issues, got "${dataPath}".`);
   }
 
-  const { includeDrafts = !import.meta.env.PROD } = options;
+  const { includeDrafts = !import.meta.env.PROD, metaOnly = false } = options;
 
-  // Cache lookup — key includes includeDrafts so dev and prod can coexist
-  const cacheKey = `${dataPath}::${includeDrafts ? 'd' : ''}`;
+  // Cache lookup — the key names includeDrafts (dev and prod coexist) AND the
+  // render mode. A meta-only entry carries empty `html` everywhere, so serving
+  // one to a caller that wanted bodies would render blank pages, not slow ones.
+  const cacheKey = `${dataPath}::${includeDrafts ? 'd' : ''}${metaOnly ? 'm' : ''}`;
   const cached = cache.get(cacheKey);
   // Read the entry first: its embedded-file list is part of what the signature
   // has to cover (see CacheEntry.embedded).
@@ -1437,18 +1524,12 @@ export async function loadIssues(
     .map((e) => path.join(dataPath, e.name));
 
   const issues: Issue[] = [];
-  // Arm the `[[path]]` dependency collector for the duration of the parse.
-  const collected = new Set<string>();
-  embedCollector = collected;
-  try {
-    for (const folder of folders) {
-      const issue = await loadIssueFolder(folder, dataPath);
-      if (!issue) continue;
-      if (!includeDrafts && issue.meta.draft) continue;
-      issues.push(issue);
-    }
-  } finally {
-    embedCollector = null;
+  const ctx = createRenderCtx(metaOnly);
+  for (const folder of folders) {
+    const issue = await loadIssueFolder(folder, dataPath, ctx);
+    if (!issue) continue;
+    if (!includeDrafts && issue.meta.draft) continue;
+    issues.push(issue);
   }
 
   // Default sort: most-recently-touched first. Layouts override on the
@@ -1456,7 +1537,7 @@ export async function loadIssues(
   issues.sort((a, b) => b.updated.localeCompare(a.updated));
 
   const result: LoadedIssues = { vocabulary, rootDraft, statusColors, issues };
-  cache.set(cacheKey, { signature, data: result, embedded: [...collected] });
+  cache.set(cacheKey, { signature, data: result, embedded: [...ctx.embedded] });
   return result;
 }
 
@@ -1470,12 +1551,20 @@ export async function loadIssue(dataPath: string, id: string): Promise<Issue | n
   }
   if (!FOLDER_PATTERN.test(id)) return null;
 
-  const { issues } = await loadIssues(dataPath);
-  const hit = issues.find((i) => i.id === id);
-  if (hit) return hit;
-
-  // Not in the filtered set (e.g. draft excluded); fall back to direct read
   const folderPath = path.join(dataPath, id);
   if (!fs.existsSync(folderPath)) return null;
-  return loadIssueFolder(folderPath, dataPath);
+
+  // Read ONE folder rather than the whole tracker. The old shape went through
+  // `loadIssues`, so opening a single issue rendered every other issue's bodies
+  // first — the same cost as the index, paid again on a page that shows one
+  // issue.
+  const cached = folderCache.get(folderPath);
+  const signature = computeIssueSignature(folderPath, cached?.embedded);
+  if (cached && cached.signature === signature) return cached.data;
+
+  const ctx = createRenderCtx(false);
+  const issue = await loadIssueFolder(folderPath, dataPath, ctx);
+  if (!issue) return null;
+  folderCache.set(folderPath, { signature, data: issue, embedded: [...ctx.embedded] });
+  return issue;
 }

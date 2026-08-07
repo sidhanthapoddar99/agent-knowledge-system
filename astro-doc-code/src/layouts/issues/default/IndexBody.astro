@@ -23,7 +23,10 @@ interface Props {
 }
 
 const { dataPath, baseUrl } = Astro.props;
-const { vocabulary, rootDraft, issues, statusColors } = await loadIssues(dataPath);
+// `metaOnly`: this page reads ids, dates, `meta.*` and its subtasks' statuses,
+// and not one rendered body. Asking for the bodies anyway was the whole of the
+// index's cold-load cost.
+const { vocabulary, rootDraft, issues, statusColors } = await loadIssues(dataPath, { metaOnly: true });
 
 const FILTER_FIELDS = ['priority', 'component', 'labels'] as const;
 const filterGroups: Array<{

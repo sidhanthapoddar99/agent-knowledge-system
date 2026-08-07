@@ -1,6 +1,12 @@
 ---
 title: "De-risk the upgrade"
+outcome: "`@astrojs/mdx` is gone and both caches follow the `globalThis` pattern, so stage 40 is one bump instead of two"
+notes: "⚠️ Hard prerequisite for [the upgrade](./40_the-upgrade.md), not a preference — and cheap. Reproduce the cache bug **before** fixing it"
+who: claude
 status: open
+subtasks:
+  - "[Module-level cache state](../../subtasks/030_correctness/010_cache-module-state.md)"
+  - "[Dead-code sweep](../../subtasks/050_cleanup/010_dead-code-sweep.md)"
 ---
 
 Two pieces of work that exist to make [stage 40](./40_the-upgrade.md) smaller and safer.

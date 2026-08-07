@@ -1,6 +1,12 @@
 ---
 title: "The upgrade"
+outcome: "Astro 7.2.0 builds 1,229+ pages with the toolbar, the editor and live theme switching all intact"
+notes: "**Buys no measured speed** — judge it on *nothing broke*. Waits on stages [10](./10_baseline-and-safety-net.md) and [30](./30_de-risk-the-upgrade.md); the dev toolbar is the real risk"
+who: claude
 status: open
+subtasks:
+  - "[Astro 5.17.1 → 7.2.0](../../subtasks/020_astro-7/010_astro-5-to-7-upgrade.md)"
+  - "[Typecheck baseline](../../subtasks/020_astro-7/020_typecheck-baseline.md)"
 ---
 
 Astro 5.17.1 → 7.2.0, dragging Vite 6 → 8. Two majors in one move.

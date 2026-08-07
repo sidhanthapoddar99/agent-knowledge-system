@@ -1,6 +1,11 @@
 ---
 title: "Baseline and safety net"
+outcome: "Every number the later stages are judged against is written down, re-measured on this machine"
+notes: "Nothing here changes behaviour. **There is no way back to these numbers once work starts**"
+who: claude
 status: open
+subtasks:
+  - "[Typecheck baseline](../../subtasks/020_astro-7/020_typecheck-baseline.md)"
 ---
 
 Record what the system does today, before anything changes it. Every later stage is judged

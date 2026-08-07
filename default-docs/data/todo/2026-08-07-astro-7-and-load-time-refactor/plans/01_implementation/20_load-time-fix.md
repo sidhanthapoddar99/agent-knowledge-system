@@ -1,6 +1,12 @@
 ---
 title: "The load-time fix"
+outcome: "Cold `/todo` under 300 ms, and per-page inline CSS under 5 KB gzipped with no flash"
+notes: "⭐ **The issue has paid for itself here.** Independent of the upgrade — this stage would still be worth running if stage 40 never happened"
+who: claude
 status: open
+subtasks:
+  - "[Index loader reads frontmatter only](../../subtasks/010_load-time/010_index-loader-frontmatter-only.md)"
+  - "[Theme CSS delivery](../../subtasks/010_load-time/020_theme-css-delivery.md)"
 ---
 
 The whole reason this issue is priority `high`. Both halves of the measured problem — the

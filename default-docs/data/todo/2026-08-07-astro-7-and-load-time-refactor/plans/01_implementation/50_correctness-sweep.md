@@ -1,6 +1,14 @@
 ---
 title: "Correctness sweep"
+outcome: "The remaining audit findings are closed, including the two that are live user-visible defects"
+notes: "Two of these close on a **written decision**, not a code change — the unreachable `default` theme name, and whether dependency tracking is built or deleted"
+who: claude
 status: open
+subtasks:
+  - "[Theme loader bugs](../../subtasks/030_correctness/030_theme-loader-bugs.md)"
+  - "[Undeclared CSS variables](../../subtasks/030_correctness/040_undeclared-css-variables.md)"
+  - "[cache-manager dependency tracking](../../subtasks/030_correctness/020_cache-manager-dependency-tracking.md)"
+  - "[Small correctness fixes](../../subtasks/050_cleanup/020_small-correctness-fixes.md)"
 ---
 
 The remaining audit findings. Four subtasks, none large, all applied to the post-upgrade

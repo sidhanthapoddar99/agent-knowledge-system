@@ -1,6 +1,11 @@
 ---
 title: "Routing parity"
+outcome: "Dev and the build resolve the same URL the same way, proven by a diff harness, and a missing page returns a real 404"
+notes: "🟡 **Larger than stages 10–50 combined** (5–8 days). The piece to lift out if this issue must shrink — that call is Sid's, and it is cheap only if taken before the stage starts"
+who: sid
 status: open
+subtasks:
+  - "[One URL resolver for dev and build](../../subtasks/040_routing-parity/010_unified-url-resolver.md)"
 ---
 
 One URL resolver serving both request matching and build enumeration, plus a real 404 page.

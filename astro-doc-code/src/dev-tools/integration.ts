@@ -24,6 +24,7 @@ import { EditorStore } from './server/editor-store';
 import { setupEditorMiddleware } from './server/middleware';
 import { PresenceManager, type PresenceConfig } from './server/presence';
 import { YjsSync } from './server/yjs-sync';
+import { watchGitRefs } from './server/git-ref-watcher';
 
 /**
  * Read editor configuration from site.yaml.
@@ -73,11 +74,33 @@ function getEditorConfig(): { autosaveInterval: number; presence: PresenceConfig
   return { autosaveInterval, presence };
 }
 
+/**
+ * URL → entrypoint for every route that exists only while developing.
+ * Injected in `astro dev` and in nothing else — see the gate below.
+ */
+const DEV_ROUTES: Record<string, string> = {
+  '/editor': './routes/editor.astro',
+  '/api/dev/themes': './routes/api/dev/themes.ts',
+  '/api/dev/layouts': './routes/api/dev/layouts.ts',
+  '/api/dev/errors': './routes/api/dev/errors.ts',
+};
+
 export function devToolbarIntegration(): AstroIntegration {
   return {
     name: 'dev-tools-apps',
     hooks: {
-      'astro:config:setup': ({ addDevToolbarApp, updateConfig }) => {
+      'astro:config:setup': ({ addDevToolbarApp, updateConfig, injectRoute, command }) => {
+        // Development-stage routes. They live under src/dev-tools/routes/ rather
+        // than src/pages/ precisely so that they are NOT routes by default —
+        // src/pages/ is built unconditionally, which is how /editor and its
+        // 10.8 MB of client chunks ended up in every consumer's dist/. Anything
+        // added here inherits the gate; anything added to src/pages/ does not.
+        if (command === 'dev') {
+          for (const [pattern, entry] of Object.entries(DEV_ROUTES)) {
+            injectRoute({ pattern, entrypoint: new URL(entry, import.meta.url).href });
+          }
+        }
+
         // Build watch paths from the initialized path system
         const watchPaths: string[] = [];
         for (const entry of getUserPaths().values()) {
@@ -187,11 +210,6 @@ export function devToolbarIntegration(): AstroIntegration {
                   // layouts are reading from. See:
                   //   default-docs/data/todo/2026-05-08-update-date-time-
                   //     optimization/notes/03_ssr-module-isolation.md
-                  let watchedGitPaths = new Set<string>(getIssueDateWatchPaths());
-                  for (const p of watchedGitPaths) {
-                    server.watcher.add(p);
-                    console.log('[HMR] Watching git ref:', p);
-                  }
                   // Absolute file paths of the modules we need to invalidate
                   // in the SSR context. Computed once so we can use the
                   // moduleGraph API reliably (which keys by absolute id).
@@ -204,8 +222,7 @@ export function devToolbarIntegration(): AstroIntegration {
                     '../loaders/issues.ts',
                   );
 
-                  server.watcher.on('change', async (file) => {
-                    if (!watchedGitPaths.has(file)) return;
+                  const gitRefWatcher = watchGitRefs(getIssueDateWatchPaths, (file) => {
                     console.log('[issue-dates] git ref changed:', path.basename(file));
 
                     // 1. Clear local (plugin-context) instances.
@@ -232,18 +249,10 @@ export function devToolbarIntegration(): AstroIntegration {
                       console.log('[issue-dates] no SSR modules in graph yet (first-load case)');
                     }
 
-                    const desired = new Set(getIssueDateWatchPaths());
-                    for (const p of watchedGitPaths) {
-                      if (!desired.has(p)) server.watcher.unwatch(p);
-                    }
-                    for (const p of desired) {
-                      if (!watchedGitPaths.has(p)) {
-                        server.watcher.add(p);
-                        console.log('[HMR] Watching git ref:', p);
-                      }
-                    }
-                    watchedGitPaths = desired;
-                  });
+                    // Re-pointing the watch set after a branch switch is the
+                    // watcher's own job — it re-resolves after every event.
+                  }, (msg) => console.log(msg));
+                  server.httpServer?.on('close', () => gitRefWatcher.close());
 
                   // Watch for file additions
                   server.watcher.on('add', (file) => {

@@ -6,7 +6,7 @@
  */
 
 import type { APIRoute } from 'astro';
-import { getAllIssues, getCacheStats } from '../../../loaders/cache';
+import { getAllIssues, getCacheStats } from '@loaders/cache';
 
 export const GET: APIRoute = async () => {
   // Only available in dev mode

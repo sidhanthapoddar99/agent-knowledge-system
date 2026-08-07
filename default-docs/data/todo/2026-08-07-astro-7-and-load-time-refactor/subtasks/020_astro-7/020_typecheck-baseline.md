@@ -1,6 +1,6 @@
 ---
 title: "Add a typecheck — as a report before the upgrade, a gate after"
-status: open
+status: in-progress
 ---
 
 # Overview

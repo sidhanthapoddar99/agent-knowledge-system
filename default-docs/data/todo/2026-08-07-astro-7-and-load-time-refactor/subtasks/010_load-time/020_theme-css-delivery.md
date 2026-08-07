@@ -1,6 +1,6 @@
 ---
 title: "Theme CSS delivery — stop inlining 65 KB into every page"
-status: open
+status: review
 ---
 
 # Overview

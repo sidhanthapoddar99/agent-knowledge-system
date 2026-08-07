@@ -1,6 +1,6 @@
 ---
 title: "Move the two bare module-level caches onto globalThis"
-status: open
+status: review
 ---
 
 # Overview

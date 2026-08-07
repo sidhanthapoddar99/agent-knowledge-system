@@ -7,6 +7,10 @@
 #   ./start clean          wipe build caches (.astro, dist, node_modules/.vite) and exit
 #   ./start clean <script> wipe caches, then run the script (e.g. './start clean dev')
 #
+#   ./start stop   [dev|preview]            stop a running server (default: both)
+#   ./start status [dev|preview]            is anything running, and where (default: both)
+#   ./start logs   [dev|preview] [--follow] read a running server's output (default: dev)
+#
 # Preflight steps when invoked with no args:
 #   0. Update check — fetch upstream; if behind, prompt Y/n to fast-forward pull.
 #   1. Pick a runner — prefer bun, fall back to npm.
@@ -23,6 +27,189 @@
 set -e
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+FRAMEWORK="$DIR/astro-doc-code"
+
+# ── runner ────────────────────────────────────────────────────────────────────
+# Silent on purpose: the server-control verbs need $RUN before there is anything
+# worth announcing. The launch paths print the runner themselves.
+pick_runner() {
+  if command -v bun >/dev/null 2>&1; then
+    RUNNER="bun"; RUN="bun run"; INSTALL="bun install"
+  elif command -v npm >/dev/null 2>&1; then
+    RUNNER="npm"; RUN="npm run"; INSTALL="npm install"
+  else
+    echo "[start] error: neither bun nor npm found on PATH — install one and retry" >&2
+    exit 1
+  fi
+}
+
+# ── server control ────────────────────────────────────────────────────────────
+# Astro owns the dev/preview server's lifecycle. It writes a per-project lock
+# file and exposes `stop` / `status` / `logs` against it, and EVERYTHING here
+# goes through that CLI rather than through the process tree.
+#
+# The reason is specific and it cost this project real memory: `astro dev`
+# re-spawns itself as a detached daemon when it detects an AI-agent environment.
+# `$!` is then the launcher, not the server — killing it leaves the server
+# holding its port and its heap, invisible to whoever started it. Eleven of them
+# leaked during the Astro 7 upgrade, one for 18 hours at 1.19 GB.
+#
+# `astro … stop` resolves the server through the lock file, so it is correct
+# whether the server is a child of this shell, a detached daemon, or a leftover
+# from a terminal that has since been closed.
+astro_srv() {                    # astro_srv <dev|preview> <subcommand|flags…>
+  ( cd "$FRAMEWORK" && $RUN astro -- "$@" )
+}
+
+# Is a <dev|preview> server up?
+#
+# `astro <cmd> status` prints the server's URL when one is running and a plain
+# sentence when none is, and wraps either in JSON when --json is on (an agent
+# environment forces it on). A URL is the one token present in every running
+# form and absent from every idle one, which is why this greps for a URL and not
+# for a phrase.
+#
+# NEVER match on the startup banner. In Astro 7 that banner is a JSON object,
+# so a grep for the old `astro v5.x ready in NNN ms` text does not fail — it
+# waits forever for a line that will never come. Two measurements during the
+# upgrade were bogus for exactly that reason.
+srv_running() {                  # srv_running <dev|preview>
+  [ -d "$FRAMEWORK/node_modules" ] || return 1
+  astro_srv "$1" status 2>/dev/null | grep -qE 'https?://'
+}
+
+# ── holding the foreground over a server Astro may have daemonised ────────────
+SRV_CMD=""
+SRV_OWNED=0
+SRV_LAUNCHING=0
+FOLLOW_PID=""
+
+# Stop a server, allowing for one that has not finished starting yet.
+#
+# Astro's launcher spawns the real server DETACHED, in a process group of its
+# own. An interrupt during the startup window therefore kills the launcher and
+# never reaches the server, which goes on booting and registers itself in the
+# lock file a second or two later — a live server that nobody is watching and
+# nobody was told about. That is the leak this whole file exists to close, so a
+# stop issued mid-launch waits for the late arrival instead of declaring
+# victory over an empty lock file.
+stop_server() {                  # stop_server <dev|preview>
+  local cmd="$1" i
+  astro_srv "$cmd" stop >/dev/null 2>&1 || true
+
+  if [ "$SRV_LAUNCHING" = "1" ]; then
+    echo "[start] interrupted mid-launch — waiting for the detached $cmd server to register so it can be stopped"
+    # Astro's own launcher gives a server 30s to come up; allow a little more.
+    for i in $(seq 1 35); do
+      if srv_running "$cmd"; then break; fi
+      sleep 1
+    done
+    if srv_running "$cmd"; then
+      astro_srv "$cmd" stop >/dev/null 2>&1 || true
+    fi
+  fi
+
+  if srv_running "$cmd"; then
+    echo "[start] warning: a $cmd server is STILL running — './start status' shows it, './start stop' stops it" >&2
+  else
+    echo "[start] $cmd server stopped"
+  fi
+}
+
+on_interrupt() {
+  trap - INT TERM HUP
+  echo
+  # The follower exits by itself once the server it watches is gone; this is for
+  # the case where the signal reached only this script.
+  if [ -n "$FOLLOW_PID" ]; then
+    kill "$FOLLOW_PID" 2>/dev/null || true
+  fi
+  if [ "$SRV_OWNED" = "1" ]; then
+    echo "[start] stopping $SRV_CMD server..."
+    stop_server "$SRV_CMD"
+  else
+    echo "[start] detached — the $SRV_CMD server is still running ('./start stop' stops it)"
+  fi
+  exit 0
+}
+
+# Start (or attach to) a server and hold this terminal on it.
+#
+# THE CONTRACT IS UNCHANGED: `./start dev` occupies your terminal, streams the
+# server's output, and Ctrl-C stops the server. What changed is how that is
+# enforced. The wrapper now starts the daemon deliberately (`--background`, the
+# same code path in every environment, rather than letting Astro decide) and
+# traps INT/TERM/HUP to call `astro … stop`. Nothing depends on the process
+# tree, which is the assumption Astro 7 broke.
+#
+# Attaching to a server this invocation did not start is READ-ONLY: Ctrl-C
+# detaches and says so. You stop what you started.
+run_server() {                   # run_server <dev|preview> [extra astro flags…]
+  local cmd="$1"; shift
+
+  SRV_CMD="$cmd"
+  SRV_OWNED=1
+  if srv_running "$cmd"; then SRV_OWNED=0; fi
+  # Armed before the launch, not after: a Ctrl-C during the ~2s startup window
+  # would otherwise leave behind exactly the daemon this is here to prevent.
+  trap on_interrupt INT TERM HUP
+
+  echo "[start] launching $cmd server..."
+  SRV_LAUNCHING=1
+  if ! $RUN "$cmd" -- --background "$@"; then
+    trap - INT TERM HUP
+    echo "[start] $cmd server failed to start" >&2
+    exit 1
+  fi
+  SRV_LAUNCHING=0
+
+  echo
+  astro_srv "$cmd" status || true
+  if [ "$SRV_OWNED" = "1" ]; then
+    echo "[start] Ctrl-C stops it.  Elsewhere: ./start stop | ./start status | ./start logs"
+  else
+    echo "[start] a $cmd server was already running — this terminal is FOLLOWING it, not owning it."
+    echo "[start] Ctrl-C detaches; './start stop' stops the server."
+  fi
+  echo
+
+  # `exec` so this pid IS the follower rather than a shell wrapping it — one
+  # less process between a signal and the thing meant to receive it.
+  ( cd "$FRAMEWORK" && exec $RUN astro -- "$cmd" logs --follow ) &
+  FOLLOW_PID=$!
+  wait "$FOLLOW_PID" || true
+
+  # Reached only when the follower returned on its own, which it does when the
+  # server it was watching went away.
+  trap - INT TERM HUP
+  echo "[start] $cmd server is no longer running"
+}
+
+# ── server-control verbs, before any preflight ────────────────────────────────
+# `./start status` must answer instantly and must never prompt to pull, install,
+# or build — it is the command you reach for when you suspect something is
+# already running.
+case "${1:-}" in
+  stop|status|logs)
+    pick_runner
+    VERB="$1"; shift
+    case "$VERB" in
+      logs) TARGETS="dev" ;;
+      *)    TARGETS="dev preview" ;;
+    esac
+    case "${1:-}" in
+      dev|preview) TARGETS="$1"; shift ;;
+    esac
+    if [ ! -d "$FRAMEWORK/node_modules" ]; then
+      echo "[start] dependencies are not installed — no server can be running"
+      exit 0
+    fi
+    for t in $TARGETS; do
+      astro_srv "$t" "$VERB" "$@"
+    done
+    exit 0
+    ;;
+esac
 
 # 0. Update check — if upstream has new commits, offer to fast-forward pull.
 #    Bails silently when: not a git repo, no upstream tracked, working tree
@@ -140,11 +327,23 @@ shallow_check() {
 
 shallow_check
 
-cd "$DIR/astro-doc-code"
+cd "$FRAMEWORK"
+
+pick_runner
 
 # Optional `clean` first arg — wipe caches, then either exit or continue
 if [ "${1:-}" = "clean" ]; then
   shift
+  # `.astro/` is where Astro keeps the dev and preview LOCK FILES. Wiping it
+  # under a running server orphans that server outright: `astro dev stop` can no
+  # longer find it, and it keeps its port and its heap until someone goes
+  # hunting for the pid. Stop first, then clean.
+  for t in dev preview; do
+    if srv_running "$t"; then
+      echo "[start] a $t server is running — stopping it before wiping .astro/ (its lock file lives there)"
+      stop_server "$t"
+    fi
+  done
   echo "[start] cleaning caches: .astro/, dist/, node_modules/.vite/"
   rm -rf .astro dist node_modules/.vite
   if [ $# -eq 0 ]; then
@@ -154,19 +353,6 @@ if [ "${1:-}" = "clean" ]; then
   echo "[start] clean done — continuing with: $*"
 fi
 
-# 1. Pick a runner
-if command -v bun >/dev/null 2>&1; then
-  RUNNER="bun"
-  RUN="bun run"
-  INSTALL="bun install"
-elif command -v npm >/dev/null 2>&1; then
-  RUNNER="npm"
-  RUN="npm run"
-  INSTALL="npm install"
-else
-  echo "[start] error: neither bun nor npm found on PATH — install one and retry" >&2
-  exit 1
-fi
 echo "[start] runner: $RUNNER"
 
 # 2. Install if node_modules is missing OR the dependency manifests changed
@@ -233,9 +419,15 @@ if [ -n "$NEED_INSTALL" ]; then
   deps_hash > "$STAMP"
 fi
 
-# Explicit script — skip preflight, just forward
+# Explicit script — skip preflight, just forward. `dev` and `preview` are the
+# two that start a server, so they go through run_server; everything else is a
+# plain script and is exec'd as before.
 if [ $# -gt 0 ]; then
-  exec $RUN "$@"
+  case "$1" in
+    dev|preview) run_server "$@" ;;
+    *)           exec $RUN "$@" ;;
+  esac
+  exit 0
 fi
 
 # 3. Build sanity check before launching dev
@@ -247,5 +439,4 @@ fi
 echo "[start] build clean"
 
 # 4. Start dev
-echo "[start] launching dev server..."
-exec $RUN dev
+run_server dev

@@ -27,8 +27,10 @@ Both answers can differ. 418 links once 404'd on the site while every one of the
 It compares environments rather than trusting one, because there are **three** and Astro's own servers reproduce only two: `astro dev` and `astro preview` are application servers that match a route table, while a static host is a file server where every page is a directory and a request without a trailing slash must 301 to the slash form. `--static <dir>` exists so the shipped behaviour is one flag away.
 
 ```bash
-./start dev &  scripts/check-links.mjs --base http://localhost:4321
-scripts/check-links.mjs --base http://localhost:4321 --compare http://localhost:4322
+./start dev                        # another terminal; Ctrl-C stops it
+scripts/check-links.mjs            # no --base: crawls whatever server is running
+scripts/check-links.mjs --base http://localhost:3088 --compare http://localhost:4322
+scripts/check-links.mjs --static astro-doc-code/dist --body-only   # no server at all
 ```
 
 ## `check-theme-contract.mjs`
@@ -84,12 +86,20 @@ It also asserts `dist/404.html` exists. Without it, every dead link on a deploye
 
 ```bash
 ./start build
-./start dev &
-scripts/check-route-parity.mjs --base http://localhost:4321
-scripts/check-route-parity.mjs --base http://localhost:4321 --json --limit 200
+./start dev                        # another terminal; Ctrl-C stops it
+scripts/check-route-parity.mjs
+scripts/check-route-parity.mjs --json --limit 200
 ```
 
 ⚠️ **Build before running it.** The harness compares against `dist/` as it finds it, so a stale build reports every page added since as a divergence. That is correct behaviour and a confusing first run.
+
+## Neither gate is allowed to guess a port
+
+Both server-backed scripts used to default to `http://localhost:4321`. That is *Astro's* default, not this project's — `.env` sets `PORT`, and a consumer sets whatever they like. Pointed at a dead port neither hangs, but each fails in its own vocabulary: "no HTML pages reachable", or every URL reported as divergent. Both read as a site defect when the real answer is that nothing was listening.
+
+So with no `--base` they ask **Astro's own lock file** — `astro-doc-code/.astro/dev.json`, the same file `./start status` reads — which server is running, and print the port and pid they found. The shared reader is `scripts/_astro-server.mjs`; the leading underscore marks it as imported rather than run.
+
+The one rule that governs anything waiting on a dev server here: **never grep the startup banner.** In Astro 7 that banner is a JSON object, so a check for the old `astro v5.x ready in NNN ms` text does not fail — it waits forever for a line that never comes. Poll the port, or read the lock file.
 
 ## Adding a fourth
 

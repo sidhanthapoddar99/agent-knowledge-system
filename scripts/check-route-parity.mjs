@@ -36,16 +36,20 @@
  *   DIVERGE      they differ and nothing accounts for it
  *
  * Usage:
- *   ./start build && ./start dev &
- *   scripts/check-route-parity.mjs --base http://localhost:4321
- *   scripts/check-route-parity.mjs --base http://localhost:4321 --json
- *   scripts/check-route-parity.mjs --base http://localhost:4321 --limit 200
+ *   ./start build              # dist/ is half of what this compares
+ *   ./start dev                # in another terminal; Ctrl-C stops it
+ *   scripts/check-route-parity.mjs
+ *   scripts/check-route-parity.mjs --json --limit 200
+ *
+ * With no --base it asks Astro's own lock file which dev server is running and
+ * probes that. Pass --base http://localhost:<port> to aim it somewhere else.
  */
 
 import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
+import { resolveServerBase, NO_SERVER_HELP } from './_astro-server.mjs';
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const FRAMEWORK = path.join(REPO, 'astro-doc-code');
@@ -60,7 +64,18 @@ const arg = (name, fallback) => {
   const i = argv.indexOf(`--${name}`);
   return i === -1 ? fallback : argv[i + 1];
 };
-const BASE = (arg('base', 'http://localhost:4321')).replace(/\/+$/, '');
+/**
+ * No hardcoded port. 4321 is Astro's default and not this project's, and a
+ * parity run against a dead port reports every single URL as divergent — a
+ * confident, wrong answer, which is the failure mode this file spends most of
+ * its comments guarding against. Ask the lock file which server is up.
+ */
+const DETECTED = resolveServerBase(arg('base', null), ['dev']);
+if (!DETECTED) {
+  console.error(`\n  ${NO_SERVER_HELP.replace(/\n/g, '\n  ')}\n`);
+  process.exit(2);
+}
+const BASE = DETECTED.origin;
 const JSON_OUT = argv.includes('--json');
 const LIMIT = Number(arg('limit', '0')) || Infinity;
 const CONCURRENCY = Number(arg('concurrency', '16'));
@@ -297,7 +312,7 @@ if (JSON_OUT) {
 }
 
 console.log(`\n  route parity — ${targets.length} URLs (${enumerated.length} enumerated from buildStaticPaths, ${targets.length - Math.min(enumerated.length, LIMIT)} negative probes)`);
-console.log(`  dev: ${BASE}    build: ${path.relative(REPO, DIST)}\n`);
+console.log(`  dev: ${BASE}${DETECTED.source === 'flag' ? '' : ` (found via .astro/${DETECTED.source}.json, pid ${DETECTED.pid})`}    build: ${path.relative(REPO, DIST)}\n`);
 console.log(`  ✅ agree      ${agree.length}`);
 console.log(`  ·  explained  ${explained.length}`);
 console.log(`  ${diverge.length ? '❌' : '✅'} DIVERGE    ${diverge.length}`);

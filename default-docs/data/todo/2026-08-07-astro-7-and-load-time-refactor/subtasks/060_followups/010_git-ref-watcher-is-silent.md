@@ -94,14 +94,7 @@ re-resolves the set, so a branch switch re-points the watch without a restart.
 Events are coalesced over 60 ms, since a single commit touches the lock, the ref
 and sometimes `HEAD` within milliseconds.
 
-## Verified end to end, on the same protocol that reproduced it
-
-```
-  BEFORE FIX  touch .git/HEAD + branch ref   → "git ref changed" lines: 0
-  AFTER FIX   real commit lands              → "git ref changed" fires
-              served updated  2026-08-08T00:44:56  →  <commit time>
-              git updated     matches, no restart
-```
+## Verified end to end
 
 Both watch directories register at boot:
 
@@ -109,6 +102,44 @@ Both watch directories register at boot:
   [git-refs] watching …/agent-knowledge-system/.git
   [git-refs] watching …/agent-knowledge-system/.git/refs/heads
 ```
+
+A real commit against a running server, no restart:
+
+```
+  [issue-dates] git ref changed: go-astro7-migration
+  [issue-dates] SSR module invalidated: issue-dates.ts
+  [issue-dates] SSR module invalidated: issues.ts
+
+  served updated   2026-08-08T00:44:56+05:30  →  2026-08-08T00:56:46+05:30
+  git updated                                    2026-08-08T00:56:46+05:30   agree
+```
+
+A bare `touch` on the ref fires it too — the case that never worked before.
+
+## The control, and a correction to how it was first run
+
+❗ **The first control run this session was invalid and briefly read as a pass.**
+It shelled `astro dev logs` through a form that silently resolved no project, so
+it counted zero lines in a log it never opened — "0 before, 0 after" from a
+command that would have printed 0 either way. **A control that cannot fail is not
+a control**, and this one was reporting the answer it was asked to disprove.
+
+The honest control does not involve the dev server at all. Two chokidar watchers,
+same file, same touch, differing only in `ignored`:
+
+```js
+const VITE_IGNORED = ['**/.git/**', '**/node_modules/**', '**/test-results/**'];
+chokidar.watch([], { ignored: VITE_IGNORED, ignoreInitial: true }).add(REF);  // → 0 events
+chokidar.watch([], {                        ignoreInitial: true }).add(REF);  // → 1 event
+```
+
+```
+  vite ignore list : 0 event(s)
+  no ignore list   : 1 event(s)
+```
+
+That isolates the cause to the ignore list rather than to WSL2, inotify, the
+project root, or the Astro version — every one of which was a live suspect.
 
 ## Next steps
 

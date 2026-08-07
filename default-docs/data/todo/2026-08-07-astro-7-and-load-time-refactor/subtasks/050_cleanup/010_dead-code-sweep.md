@@ -1,6 +1,6 @@
 ---
 title: "Delete the dead code the audit enumerated"
-status: in-progress
+status: review
 ---
 
 # Overview
@@ -26,20 +26,123 @@ to carry, and it is the cheapest work in this issue.
 
 # Todo list
 
-- [ ] Delete `@astrojs/mdx` and its `astro.config.mjs` entry — **do this before the upgrade**
-- [ ] Delete the presence system
-- [ ] Delete the unreferenced editor code
-- [ ] Decide on frontmatter validation: wire it up or remove it
-- [ ] Run a `knip` or `tsc --noUnusedLocals` pass to catch what the audit missed
-- [ ] Comment on the codebase-refactoring issue saying this ran
+- [x] Delete `@astrojs/mdx` and its `astro.config.mjs` entry — done before the upgrade, commit `033c5ff`
+- [ ] ~~Delete the presence system~~ — **kept, deliberately.** See *The presence decision* below
+- [x] Delete the unreferenced editor code — 7 files, **707 lines**
+- [x] Decide on frontmatter validation — **wired up as a warning.** See below
+- [x] Run a `tsc --noUnusedLocals` pass — 13 findings, all trivial, listed below
+- [x] Comment on the codebase-refactoring issue saying this ran — [comment 002](../../../2025-06-25-codebase-refactoring/comments/002_2026-08-07_claude.md)
 
 # Outcomes and Next Steps
 
-> [!IMPORTANT]
-> **PLACEHOLDER** — filled at completion / hand-off: what landed (with evidence
-> — commits, measurements, links to the agent-log), what was deferred, and the
-> concrete next steps. A subtask reaching `review` with this marker still in
-> place is flagged by the template lint.
+**707 lines deleted, 1 dependency removed, 1 rule made real, and one deletion
+refused.** The audit's list was right about the editor files and wrong about
+presence — which is exactly the split the *"do not trust the list"* section below
+predicted.
+
+## What was deleted — 707 lines, each verified first
+
+Every file was re-checked against all 188 source files for `from '…'`,
+`import('…')`, glob imports and bare-string mentions before deletion. No file was
+taken on the audit's word.
+
+| File | Lines | Importers found |
+|---|---:|---|
+| `editor/core/wysiwyg-decorations.ts` | 438 | 0 |
+| `editor/layout/shell.ts` | 99 | 0 |
+| `editor/layout/preview-panel.ts` | 51 | 0 |
+| `editor/core/codemirror-languages.ts` | 43 | 0 |
+| `editor/util/lazy-import.ts` | 42 | 0 |
+| `editor/util/prefix-utils.ts` | 27 | 0 |
+| `editor/layout/shell-styles.ts` | 7 | 1 — only `shell.ts`, itself dead |
+| **Total** | **707** | |
+
+Plus `@astrojs/mdx` and its `astro.config.mjs` entry, in commit `033c5ff`.
+
+> [!NOTE]
+> `shell.ts` was **edited earlier in this same issue** — the theme-CSS change
+> rewrote how it pulled in styles. That edit was to dead code and had no effect.
+> Nothing broke; it is recorded because it shows how invisible this file was.
+
+## The presence decision — kept, not deleted
+
+**The audit's evidence is correct and I reproduced it:** zero `EventSource` uses,
+nothing POSTs `/__editor/presence`, nothing GETs `/__editor/events`. The `users`
+map is never populated, so the broadcasts are permanent no-ops.
+
+**It is still wired**, which the one-line summary in this subtask's table got
+wrong. `integration.ts` constructs it, `yjs-sync.ts` calls it for cursor and
+latency handling, and the cache-inspector toolbar renders its user count. So this
+was never a matter of deleting an orphan file.
+
+**It is not deleted, because it is the server half of a feature that is wanted.**
+Multi-user editing is one of the six problems that opened this whole line of work.
+Presence is precisely the scaffolding for it: join/leave, cursors, stale cleanup.
+Deleting 267 lines of groundwork for a wanted feature is not a cleanup — and the
+audit itself said *"Port, delete, or finish — but not port as-is."*
+
+**This one is Sid's call**, because it asks what the product is rather than how the
+code should be shaped:
+
+- **Finish it** — build the client. Real work, not cleanup, and it delivers a
+  feature already asked for.
+- **Delete it** — 267 lines plus ~40 in `middleware.ts` plus 6 unread config keys,
+  and multi-user presence starts from zero later.
+
+Cost of keeping it meanwhile: one cleanup timer and one always-empty toolbar row.
+
+## Frontmatter validation — wired up, as a warning
+
+`validateFrontmatter` existed on every parser and **was called from nowhere**, so
+the documented rule *"`title` required in every doc file"* was enforced by nothing.
+A page with no title shipped silently titled after its own filename.
+
+It is now called from `parseMarkdownFile`. Three decisions, all deliberate:
+
+**It warns, it does not throw.** A missing title is a content mistake in somebody's
+markdown; stopping their whole build over one page is out of proportion. This
+engine reserves hard stops for configuration it cannot proceed without, like the
+engine-version gate.
+
+**It also prints to the console.** `addWarning` alone fills the dev toolbar's
+in-memory panel — which does not exist during a build, so a build reported nothing
+at all. Caught by testing it; the first wiring was silent where it mattered most.
+It now matches how the asset-embed preprocessor surfaces the same class of problem.
+
+**The cost of enforcing it was measured, not assumed.** This subtask warned that
+wiring it up *"will surface existing violations, which is work this subtask has not
+budgeted"*. Measured: **1 violation across 162 files**, and it is
+`default-docs/data/README.md`, which has no `NN_` prefix and is not routed as a
+page. **Real violations: zero.** The budgeting worry was unfounded.
+
+Control-tested both ways:
+
+```
+  with a file missing `title`   → [frontmatter] 05_getting-started/99_probe-no-title.md
+                                    - missing required field "title"
+  on the real tree              → 0 warnings
+```
+
+## The `--noUnusedLocals` pass — 13 findings, none worth acting on
+
+All are unused locals or parameters, not dead features: `_activePreview`,
+`canvas`, `Decoration`, `text`, `store`, `needsReview`, `CLOSED_STATUSES`,
+`fileType` (×3), `fileDir`, `blockStartLine`, `match`. Spread across 12 files.
+
+**Not deleted.** Touching 12 files for zero behaviour change is churn, and several
+are deliberately-named or destructured signature parameters. Recorded so the next
+sweep does not re-derive the list.
+
+## Next steps
+
+- [ ] **Sid decides on presence:** finish it, or delete it.
+- [x] Commented on [the codebase-refactoring issue](../../../2025-06-25-codebase-refactoring/comments/002_2026-08-07_claude.md)
+      so its own sweep does not redo this.
+- [ ] `cache-manager`'s ~120 unused lines stay with
+      [their own subtask](../030_correctness/020_cache-manager-dependency-tracking.md)
+      — untouched here, as this subtask instructed. Note that
+      [the partial-rebuild note](../../brainstorm/01_partial-rebuilds.md) now argues
+      for *implementing* rather than deleting them.
 
 # Details
 
@@ -62,9 +165,11 @@ grep for its symbols yourself. A dead-code list is exactly the kind of finding t
 
 ## Done when
 
-- [ ] `@astrojs/mdx` is gone from `package.json` and `astro.config.mjs`
-- [ ] Each deleted block was grep-verified unreachable first
-- [ ] The build still produces 1,229 pages or more
-- [ ] The dev toolbar and editor still work
-- [ ] The frontmatter-validation decision is written down either way
-- [ ] The line count removed is recorded in **Outcomes**
+- [x] `@astrojs/mdx` is gone from `package.json` and `astro.config.mjs`
+- [x] Each deleted block was grep-verified unreachable first — all 188 source files
+      searched for every import form, plus bare-string mentions
+- [x] The build still produces 1,229 pages or more — **1,292 `.html`**, build clean
+- [ ] The dev toolbar and editor still work — **server side verified** (routes answer,
+      middleware and sockets register); **how they look is unverified** and is Sid's check
+- [x] The frontmatter-validation decision is written down either way
+- [x] The line count removed is recorded in **Outcomes** — 707 lines, 7 files

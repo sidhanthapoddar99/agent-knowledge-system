@@ -19,7 +19,7 @@ import type {
   ParsedBlogFilename,
   Heading,
 } from '../types';
-import { ParserError } from '../types';
+import { addWarning } from '../../loaders/cache';
 import { hasOrderPrefix } from './order-prefix';
 import { ProcessingPipeline } from './pipeline';
 import { createMarkdownRendererAsync } from '../renderers/marked';
@@ -117,6 +117,11 @@ export abstract class BaseContentParser {
     const fileType = this.getFileType(filePath) as 'mdx' | 'md';
     const fileDir = path.dirname(filePath);
     const relativePath = path.relative(basePath, filePath);
+
+    // Report missing required fields. Every parser declared a schema and nothing
+    // ever checked one — see `validateFrontmatter` for why this warns rather
+    // than throws.
+    this.validateFrontmatter(frontmatter, relativePath);
 
     // Calculate frontmatter line count for accurate error line numbers
     // Frontmatter is between --- delimiters, so we count lines before rawContent starts
@@ -282,19 +287,42 @@ export abstract class BaseContentParser {
   }
 
   /**
-   * Validate frontmatter against schema
+   * Check frontmatter against this content type's schema and REPORT what is
+   * missing. Called from `parseMarkdownFile`.
+   *
+   * Reports rather than throws, deliberately. The rule it enforces — every doc
+   * file declares a `title` — is real, but a missing title is a content mistake
+   * in somebody's markdown, and stopping their whole build over one page is out
+   * of proportion. The engine reserves hard stops for configuration it cannot
+   * proceed without, such as the engine-version gate.
+   *
+   * Reporting is not the same as staying silent, which is what happened before:
+   * this method existed on every parser and was called from nowhere, so the
+   * documented rule was enforced by nothing. A page with no title silently
+   * shipped titled after its own filename — `_my-file` — which looks deliberate
+   * and is very hard to notice.
+   *
+   * Warnings land in the shared content-warning channel, so they surface in the
+   * dev toolbar's error panel and in the build log.
    */
   validateFrontmatter(frontmatter: Record<string, unknown>, filePath: string): void {
     const schema = this.getFrontmatterSchema();
 
     for (const field of schema.required) {
-      if (!(field in frontmatter)) {
-        throw new ParserError({
-          code: 'MISSING_FRONTMATTER',
-          path: filePath,
-          message: `Missing required frontmatter field "${field}" in ${filePath}`,
-        });
-      }
+      if (field in frontmatter) continue;
+      addWarning({
+        file: filePath,
+        type: 'config',
+        message: `Missing required frontmatter field "${field}"`,
+        suggestion:
+          `Add "${field}:" to the frontmatter. The page still renders, but ` +
+          `"${field}" falls back to a value derived from the filename.`,
+      });
+      // `addWarning` only fills the dev toolbar's in-memory panel, which does
+      // not exist during a build — so a build would report nothing at all.
+      // Printing as well matches how the asset-embed preprocessor surfaces the
+      // same class of authoring problem.
+      console.warn(`[frontmatter] ${filePath} - missing required field "${field}"`);
     }
   }
 }

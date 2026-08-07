@@ -1,9 +1,9 @@
 ---
 title: "Routing parity"
-outcome: "Proven: dev and the build agree on all 1285 URLs, zero divergences. The 404 page ships. The resolver merge is recommended CANCELLED — it was insurance against drift that does not exist and that the harness now detects for free"
-notes: "🟡 **One decision for Sid** — accept or reverse cancelling the merge. It was scoped at 5–8 days; the harness cost hours and catches the same class. Nothing done here is wasted either way: a merge would need this harness in front of it"
+outcome: "Proven: dev and the build agree on all 1285 URLs, zero divergences. The 404 page ships. The resolver merge did not happen here — it moved to the absolute-link-resolution issue, where the path map gives it a reason better than drift insurance"
+notes: "Closed. Sid accepted the recommendation and rehomed the merge to [100/100 unify the route resolvers](../../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/100_unify-the-route-resolvers.md), gated on that issue's path map. Deleting the duplicated traversal is the last step there, not the first"
 who: claude
-status: input-needed
+status: done
 subtasks:
   - "[One URL resolver for dev and build](../../subtasks/040_routing-parity/010_unified-url-resolver.md)"
 ---
@@ -38,8 +38,13 @@ Both harnesses were controlled in both directions. The route-parity one **failed
 - [x] **Does this lead, follow, or merge into [the default-route-resolution issue](../../../2026-05-07-default-route-resolution/issue.md)?** **Neither.** That issue is `done` and covers a hierarchical-sort bug that sent `/user-guide` to a stub. No overlap.
 - [x] **Is the harness the half that lasts?** Yes, and more so than the plan assumed. It is now the *whole* recommendation rather than the durable half of a bigger job.
 
-## 🟡 The one thing for Sid
+## ➡️ Where the merge went
 
-The subtask carries the argument in full. In short: the two resolvers already share every URL spelling by import, and measurement says they agree on all 1285 addresses. **Merging them was 5–8 days of unrested refactor to prevent drift the harness detects in three minutes** — and the harness is what a merge would need in front of it anyway, so nothing is wasted if you reverse this.
+**Settled: not cancelled, rehomed.** It is now
+[100/100 unify the route resolvers](../../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/100_unify-the-route-resolvers.md).
 
-Accept, or say the word and the merge goes back on.
+The reasoning that moved it, in one line: **that issue builds a path map — every source file to its published URL — which is the same knowledge `static-paths.ts` already derives.** Landing the map without unifying the route resolvers means three places produce a URL instead of two. That is a real reason to merge; "the two might drift" was not, because measurement says they have not.
+
+So the merge waits on that issue's
+[100/010 path map](../../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/010_thread-base-url-and-build-the-map.md),
+and removing the duplicated traversal is the **last** step there rather than the first.

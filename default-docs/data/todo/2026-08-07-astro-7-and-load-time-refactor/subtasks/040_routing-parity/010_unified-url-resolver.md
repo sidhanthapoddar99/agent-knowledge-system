@@ -1,6 +1,6 @@
 ---
 title: "One URL resolver for dev and build, plus a real 404 page"
-status: input-needed
+status: done
 ---
 
 # Overview
@@ -33,13 +33,42 @@ what makes it expensive.
 - [x] Add a real `404.html` to the static output
 - [x] Build a dev-versus-build URL diff harness
 - [x] Re-run both reproductions
-- [ ] 🟡 **Extract one resolver that both SSR matching and build-time enumeration call** — recommend NOT doing this; see below. Sid's call
-- [ ] 🟡 Enumerate build URLs from that resolver rather than beside it — same call
+- [x] ➡️ **Extract one resolver that both SSR matching and build-time enumeration call** — moved, not cancelled. See the hand-off below
+- [x] ➡️ Enumerate build URLs from that resolver rather than beside it — moved with it
 
 # Outcomes and Next Steps
 
-⭐ **One decision for you, and it is to cancel most of this subtask.** Commit
-`7001490`.
+**Closed. The harness and the 404 page shipped; the resolver merge moved to the
+issue that needs it for a reason.** Commits `7001490`, `0636902`.
+
+## ➡️ The merge now lives in the absolute-link-resolution issue
+
+New home:
+[100/100 unify the route resolvers](../../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/100_unify-the-route-resolvers.md),
+in the
+[absolute-resolution group](../../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/00_overview.md).
+
+**Sid asked whether that is the right home. It is, and for a stronger reason than
+filing.** That issue builds a **path map** — every source file to its published
+URL — as its prerequisite subtask
+[010](../../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/010_thread-base-url-and-build-the-map.md).
+That map holds *the same knowledge `static-paths.ts` already derives*. Landing it
+without unifying the route resolvers means **three** places produce a URL instead
+of two.
+
+That issue already makes exactly this argument for its own second half:
+
+> *A prefix is only implementable once something owns the final URL … Today there
+> is no single place that produces a URL, so there is nowhere to put the prefix.*
+
+So the merge stops being drift insurance — which measurement said was worth
+nothing — and becomes a seam that issue needs anyway. **Same work, real reason,
+and it lands after the map rather than before it.** The "delete the duplicate"
+step is written into that subtask as the *last* item, not the first.
+
+## What that leaves closed here
+
+Everything below still stands and is unchanged by the move.
 
 The harness got built first, ahead of the merge, because a refactor you cannot
 measure is a refactor you cannot check. It then measured something that changes
@@ -70,9 +99,15 @@ Both reported divergences were re-run. Neither is what it was described as:
 | `/plans/<plan>/<nonexistent>` **302s in dev, host-404s in the build** | Confirmed, exactly | ❌ Not a defect. `planStageAliasTarget`'s final return deliberately lands *any* file under a plan folder on the plan page, so a relative link to `overview.md` resolves. The build cannot enumerate names that do not exist. Dev is lenient by design |
 | `dist/` has no `404.html` | Confirmed | ✅ **Real.** Fixed — `src/pages/404.astro`, 9,916 bytes in `dist/` |
 
-## The recommendation, and what it rests on
+## The recommendation, and what it rests on — settled
 
-> 🟡 **Do not merge the two resolvers. Keep both walks and keep the harness.**
+> ✅ **Not merged here. Keep both walks and keep the harness.**
+> **Sid accepted this, and rehomed the merge to the issue that needs it** — see
+> the hand-off at the top.
+
+The argument below is what the decision rested on, kept because the new subtask
+depends on it: the merge is not worth doing *to prevent drift*, and is worth
+doing *once the path map exists*.
 
 The merge was scoped at 5–8 days, larger than stages 10–50 combined, on
 routing code with no test suite. It buys protection against drift. The harness
@@ -88,9 +123,8 @@ genuinely two-implementations bugs rather than environment differences. It runs 
 about three minutes, so that evidence is cheap to collect. Until then the merge is
 insurance against a fire that has not started, bought at the price of the building.
 
-⚠️ **This is a scope reduction on the largest piece of the issue, so it is yours to
-accept or reverse.** Reversing costs nothing that has been done here — the harness
-is what a merge would need in front of it anyway.
+✅ **Settled.** Sid accepted the scope reduction and rehomed the merge — see the
+hand-off at the top of this file.
 
 ## The harness
 
@@ -138,7 +172,10 @@ it is `done` and covers different ground: a hierarchical-sort bug that made
 
 ## Next steps
 
-- **Yours:** accept or reverse the recommendation above.
+- ➡️ The merge is
+  [100/100 unify the route resolvers](../../../2026-08-04-absolute-link-resolution/subtasks/100_absolute-resolution/100_unify-the-route-resolvers.md).
+  It is gated on that issue's path map — starting it earlier buys back exactly the
+  5–8 days this subtask declined.
 - Run the harness in CI. Three minutes, exits non-zero, no divergences to baseline
   away.
 - ⚠️ Build before running it. It compares against `dist/` as it finds it, so a

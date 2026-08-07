@@ -1,6 +1,6 @@
 ---
 title: "First-class draw.io pages"
-status: review
+status: done
 ---
 
 # Overview

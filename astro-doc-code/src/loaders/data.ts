@@ -284,11 +284,16 @@ export async function loadContent(
     dependencyFiles = [...diagramPages.dependencyFiles, ...artifactPages.dependencyFiles];
   }
 
+  // Files spliced into a page by `[[path]]` embeds. The page's own mtime does
+  // not move when one of them is edited, so without this the cache serves the
+  // old HTML — stale across manual reloads, not just missing hot reload.
+  const embeddedFiles = content.flatMap((item) => item.embeddedFiles ?? []);
+
   // Sort content
   content = sortContent(content, sort, order);
 
   // Store in cache with file dependencies (for mtime-based validation)
-  cacheManager.setCache('content', cacheKey, content, [...files, ...dependencyFiles]);
+  cacheManager.setCache('content', cacheKey, content, [...files, ...dependencyFiles, ...embeddedFiles]);
 
   // Filter drafts
   if (!includeDrafts) {

@@ -445,8 +445,30 @@ const COMMENT_PATTERN = /^(\d+)_(\d{4}-\d{2}-\d{2})_([a-z0-9-]+)\.md$/i;
 interface CacheEntry {
   signature: number;
   data: LoadedIssues;
+  /**
+   * Files spliced into these issues' pages by `[[path]]` embeds, discovered
+   * during the parse that produced `data`. They live in `assets/`, which the
+   * signature walk deliberately does not cover, so without carrying them here
+   * an edit to an embedded diagram or data file would never bust this cache.
+   *
+   * Chicken-and-egg, resolved by memory: the signature is computed before the
+   * decision to parse, so a cold cache has no set yet. The first parse
+   * discovers it and every later signature includes it. Adding a *new* embed
+   * needs no special case — that edits the markdown file, whose mtime the walk
+   * already covers.
+   */
+  embedded: string[];
 }
 const cache = new Map<string, CacheEntry>();
+
+/**
+ * Collector for the current `loadIssues` pass. Every issue markdown file goes
+ * through the single `renderMarkdown` funnel below, which drops everything but
+ * the HTML — this is where the parse's embedded-file list is caught instead.
+ * Module-level because that funnel is called from a dozen places deep in the
+ * folder walk; the walk is strictly sequential, so there is no interleaving.
+ */
+let embedCollector: Set<string> | null = null;
 
 function statMtime(p: string): number {
   try {
@@ -471,9 +493,13 @@ function isTrackedDocFile(name: string): boolean {
   );
 }
 
-function computeSignature(dataPath: string): number {
+function computeSignature(dataPath: string, embedded: readonly string[] = []): number {
   let sig = statSettingsMtime(dataPath);
   sig += statMtime(dataPath); // folder listing changes
+
+  // Files inlined by `[[path]]` embeds, carried over from the previous parse.
+  // They are usually under `assets/`, which the walk below never visits.
+  for (const file of embedded) sig += statMtime(file);
 
   let entries: fs.Dirent[];
   try {
@@ -645,6 +671,10 @@ function getParser() {
 
 async function renderMarkdown(filePath: string, basePath: string): Promise<string> {
   const parsed = await getParser().parse(filePath, basePath);
+  // Catch the parse's `[[path]]` dependencies before the rest of it is dropped.
+  if (embedCollector && parsed?.embeddedFiles) {
+    for (const f of parsed.embeddedFiles) embedCollector.add(f);
+  }
   return parsed?.content ?? '';
 }
 
@@ -1372,8 +1402,10 @@ export async function loadIssues(
 
   // Cache lookup — key includes includeDrafts so dev and prod can coexist
   const cacheKey = `${dataPath}::${includeDrafts ? 'd' : ''}`;
-  const signature = computeSignature(dataPath);
   const cached = cache.get(cacheKey);
+  // Read the entry first: its embedded-file list is part of what the signature
+  // has to cover (see CacheEntry.embedded).
+  const signature = computeSignature(dataPath, cached?.embedded);
   if (cached && cached.signature === signature) {
     return cached.data;
   }
@@ -1389,13 +1421,13 @@ export async function loadIssues(
 
   if (!fs.existsSync(dataPath)) {
     const empty: LoadedIssues = { vocabulary, rootDraft, statusColors, issues: [] };
-    cache.set(cacheKey, { signature, data: empty });
+    cache.set(cacheKey, { signature, data: empty, embedded: [] });
     return empty;
   }
 
   if (rootDraft && !includeDrafts) {
     const empty: LoadedIssues = { vocabulary, rootDraft, statusColors, issues: [] };
-    cache.set(cacheKey, { signature, data: empty });
+    cache.set(cacheKey, { signature, data: empty, embedded: [] });
     return empty;
   }
 
@@ -1405,11 +1437,18 @@ export async function loadIssues(
     .map((e) => path.join(dataPath, e.name));
 
   const issues: Issue[] = [];
-  for (const folder of folders) {
-    const issue = await loadIssueFolder(folder, dataPath);
-    if (!issue) continue;
-    if (!includeDrafts && issue.meta.draft) continue;
-    issues.push(issue);
+  // Arm the `[[path]]` dependency collector for the duration of the parse.
+  const collected = new Set<string>();
+  embedCollector = collected;
+  try {
+    for (const folder of folders) {
+      const issue = await loadIssueFolder(folder, dataPath);
+      if (!issue) continue;
+      if (!includeDrafts && issue.meta.draft) continue;
+      issues.push(issue);
+    }
+  } finally {
+    embedCollector = null;
   }
 
   // Default sort: most-recently-touched first. Layouts override on the
@@ -1417,7 +1456,7 @@ export async function loadIssues(
   issues.sort((a, b) => b.updated.localeCompare(a.updated));
 
   const result: LoadedIssues = { vocabulary, rootDraft, statusColors, issues };
-  cache.set(cacheKey, { signature, data: result });
+  cache.set(cacheKey, { signature, data: result, embedded: [...collected] });
   return result;
 }
 

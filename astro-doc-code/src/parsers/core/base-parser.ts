@@ -124,7 +124,10 @@ export abstract class BaseContentParser {
       ? raw.slice(0, raw.indexOf(rawContent)).split('\n').length - 1
       : 0;
 
-    // Create processing context
+    // Create processing context. `embeddedFiles` is the sink processors report
+    // inlined files into, so the loaders can treat them as cache dependencies
+    // of this page (see ProcessContext).
+    const embeddedFiles = new Set<string>();
     const context: ProcessContext = {
       filePath,
       fileDir,
@@ -132,6 +135,7 @@ export abstract class BaseContentParser {
       frontmatter,
       basePath,
       frontmatterLineCount,
+      embeddedFiles,
     };
 
     // Ensure highlighter is ready
@@ -163,6 +167,7 @@ export abstract class BaseContentParser {
       filePath,
       relativePath,
       fileType,
+      ...(embeddedFiles.size > 0 ? { embeddedFiles: [...embeddedFiles] } : {}),
     };
   }
 

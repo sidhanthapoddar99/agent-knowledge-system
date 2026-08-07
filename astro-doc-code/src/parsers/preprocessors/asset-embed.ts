@@ -101,6 +101,9 @@ export function createAssetEmbedPreprocessor(options: AssetEmbedOptions = {}): P
             // Keep original match
           } else {
             const fileContent = fs.readFileSync(absolutePath, 'utf-8').trimEnd();
+            // The page now contains this file's bytes, so it depends on it —
+            // report it or the caches never learn (see ProcessContext).
+            context.embeddedFiles?.add(absolutePath);
             replacements.push({ start: offset, end: offset + fullMatch.length, replacement: fileContent });
           }
         } catch (error) {
@@ -178,6 +181,10 @@ export function createAssetEmbedPreprocessor(options: AssetEmbedOptions = {}): P
               console.warn(`[asset-embed] ${aliasPath}:${lineNumber} - File not found: ${trimmedPath}`);
             } else {
               const fileContent = fs.readFileSync(absolutePath, 'utf-8').trimEnd();
+              // Same dependency record as the non-fenced pass above. This is
+              // the branch that matters most in practice — diagram source is
+              // embedded inside a ```mermaid / ```dot fence.
+              context.embeddedFiles?.add(absolutePath);
               blockReplacements.push({ start: offset, end: offset + fullMatch.length, replacement: fileContent });
             }
           } catch {

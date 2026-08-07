@@ -1,0 +1,14 @@
+{
+  "title": "An inlined file is a dependency \u2014 [[path]] embeds go stale in dev",
+  "description": "The asset-embed preprocessor inlines a file's bytes into a page at parse time but registers no cache dependency on it, so neither loader knows the page depends on that file. Edit an embedded .mmd, .dot, .json or .py and the dev server keeps serving the old HTML \u2014 not just without hot reload, but stale across manual reloads too, with nothing saying so. Two cache mechanisms have to learn the same fact: data.ts (explicit dependency list) and issues.ts (summed-mtime signature that never walks assets/). Production builds are unaffected \u2014 a cold cache reparses everything.",
+  "status": "review",
+  "priority": "medium",
+  "component": [
+    "loaders-and-renderers"
+  ],
+  "labels": [
+    "bug"
+  ],
+  "author": "claude",
+  "assignees": []
+}

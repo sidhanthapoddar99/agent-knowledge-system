@@ -26,6 +26,17 @@ export interface ProcessContext {
   basePath: string;
   /** Number of lines in frontmatter (including delimiters) for line number offset */
   frontmatterLineCount?: number;
+  /**
+   * Sink for files a processor reads and splices into the page — currently
+   * only `[[path]]` embeds. Absolute paths.
+   *
+   * A page that inlines another file's bytes DEPENDS on that file, but nothing
+   * downstream can see that read: the page's own mtime never changes, so both
+   * content caches would go on serving the old HTML after the embedded file is
+   * edited. Writing the path here is how that dependency reaches them.
+   * Mirrors the `dependencyFiles` contract in `loaders/diagram-pages.ts`.
+   */
+  embeddedFiles?: Set<string>;
 }
 
 // ============================================
@@ -68,6 +79,12 @@ export interface LoadedContent {
   relativePath: string;
   /** File type */
   fileType: FileType;
+  /**
+   * Absolute paths of files inlined into this page by `[[path]]` embeds.
+   * Loaders must treat these as cache dependencies of the page — see
+   * `ProcessContext.embeddedFiles`.
+   */
+  embeddedFiles?: string[];
 }
 
 export interface ContentData {

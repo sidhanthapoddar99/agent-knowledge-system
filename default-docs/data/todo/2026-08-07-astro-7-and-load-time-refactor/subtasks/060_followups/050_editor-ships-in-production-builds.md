@@ -1,6 +1,6 @@
 ---
 title: "The dev editor is built into the production site — 10.8 MB no reader can reach"
-status: review
+status: done
 ---
 
 # Overview

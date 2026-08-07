@@ -1,6 +1,6 @@
 ---
 title: "Look at the dev surfaces on a real screen"
-status: review
+status: done
 ---
 
 # Overview

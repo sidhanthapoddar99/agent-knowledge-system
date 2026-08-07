@@ -1,6 +1,6 @@
 ---
 title: "The ./start wrapper against Astro 7's changed CLI"
-status: review
+status: done
 ---
 
 # Overview

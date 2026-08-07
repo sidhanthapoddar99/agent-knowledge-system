@@ -1,6 +1,6 @@
 ---
 title: "Diagrams stop rendering in dev when the Vite dep cache goes stale"
-status: review
+status: done
 ---
 
 # Overview

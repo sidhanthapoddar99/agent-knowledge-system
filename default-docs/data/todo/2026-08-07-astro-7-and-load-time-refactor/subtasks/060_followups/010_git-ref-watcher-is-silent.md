@@ -1,6 +1,6 @@
 ---
 title: "The git-ref watcher does not fire on a commit"
-status: review
+status: done
 ---
 
 # Overview

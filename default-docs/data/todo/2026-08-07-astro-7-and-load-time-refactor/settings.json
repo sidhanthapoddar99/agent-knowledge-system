@@ -1,0 +1,16 @@
+{
+  "title": "Astro 7 upgrade and the load-time refactor",
+  "description": "Stay on Astro and fix what actually hurts. Two committed pieces: move the engine from Astro 5.17.1 to 7.2.0 (Vite 8, Node 22.12 floor), and fix the index loader that renders 861 tracker bodies to build a table of titles — the measured cause of a 3.2 s first request that grows linearly with the corpus. A third tier of audit-found defects is candidate scope, not yet agreed. Scoped by the runtime-stack-migration audit, which measured that Astro 7 alone changes nothing on load time and that the fix does about 90% of the work in either language.",
+  "status": "open",
+  "priority": "high",
+  "component": [
+    "architecture"
+  ],
+  "labels": [
+    "refactor",
+    "performance",
+    "task"
+  ],
+  "author": "claude",
+  "assignees": []
+}

@@ -11,9 +11,13 @@ import { getShellCSS } from './shell-styles.js';
 export function createShell(contentRootName: string): EditorV2Dom | null {
   if (document.getElementById('editor-v2-overlay')) return null;
 
-  // Grab theme CSS from the page
-  const themeStyleEl = document.getElementById('theme-styles');
-  const themeCSS = themeStyleEl ? themeStyleEl.innerHTML : '';
+  // Pull in the page's theme CSS. It used to be copied out of an inline
+  // <style id="theme-styles">; it is now served from /theme.css, so the overlay
+  // links the same URL. The browser already holds it, so this costs no request.
+  const themeHref =
+    document.documentElement.getAttribute('data-theme-css') ||
+    document.getElementById('theme-styles')?.getAttribute('href') ||
+    '/theme.css';
   const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
 
   const overlay = document.createElement('div');
@@ -21,7 +25,8 @@ export function createShell(contentRootName: string): EditorV2Dom | null {
   overlay.setAttribute('data-theme', currentTheme);
 
   overlay.innerHTML = `
-    <style>${themeCSS}${getShellCSS()}</style>
+    <link rel="stylesheet" href="${themeHref}">
+    <style>${getShellCSS()}</style>
 
     <div class="ev2-header">
       <span class="ev2-header-title">${contentRootName}</span>

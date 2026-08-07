@@ -5,6 +5,18 @@ status: open
 
 # Overview
 
+> [!IMPORTANT]
+> **Kept, but its target moved.** Astro 7.2's own incremental build now removes the
+> per-page render cost this was written to attack — measured at **-79%** in
+> [025](./025_evaluate-astros-own-incremental-build.md). What survives is the one
+> thing a per-page cache structurally cannot do: **`getStaticPaths()` runs in full,
+> every build, before any cache key is consulted.** That is 2.55 s and now the
+> largest single item in the build.
+>
+> So the remaining value is the todo item below that reads *"filter `getStaticPaths`
+> to the affected set"*. Read 025 before starting; most of the rest of this file is
+> now redundant with a first-party feature.
+
 The expensive layer, and the one that actually takes 7 seconds toward 0.1. It needs
 something the codebase does not have: a map from **a source file** to **the pages
 that file appears in**.
@@ -85,6 +97,17 @@ every output file.
 **The ceiling is about 1.5 seconds**, not zero, because the bundle step runs
 regardless. So the realistic win is 7 s → ~1.6 s, not 7 s → 0.1 s. Worth knowing
 before anyone budgets a week for it.
+
+> [!WARNING]
+> **The 4,280 ms is not all per-page render work, and this arithmetic is wrong
+> because of it.** Measured in
+> [025](./025_evaluate-astros-own-incremental-build.md): of an equivalent 5,180 ms
+> generate phase, **2,550 ms is `getStaticPaths()`** — loading and rendering every
+> markdown file — and only 2,630 ms is rendering the pages. Astro's flag already
+> takes the second number to 550 ms.
+>
+> So the ~1.5 s ceiling above was computed against a number that is roughly 60 %
+> something else. Re-derive it against `getStaticPaths` before budgeting anything.
 
 ## When this is not worth doing
 

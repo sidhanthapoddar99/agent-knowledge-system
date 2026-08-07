@@ -344,8 +344,13 @@ if [ "${1:-}" = "clean" ]; then
       stop_server "$t"
     fi
   done
-  echo "[start] cleaning caches: .astro/, dist/, node_modules/.vite/"
-  rm -rf .astro dist node_modules/.vite
+  # Two different directories with nearly the same name, and only one of them is
+  # the lock file's. `node_modules/.astro/` is Astro's cacheDir, where the
+  # incremental-build manifest and a full copy of the previous `dist/` live — so
+  # a "clean" that skipped it would leave behind the one cache most likely to be
+  # serving stale HTML, which is the opposite of what anyone types this for.
+  echo "[start] cleaning caches: .astro/, dist/, node_modules/.vite/, node_modules/.astro/"
+  rm -rf .astro dist node_modules/.vite node_modules/.astro
   if [ $# -eq 0 ]; then
     echo "[start] clean done"
     exit 0

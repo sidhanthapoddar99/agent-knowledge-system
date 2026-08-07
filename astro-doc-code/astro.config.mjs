@@ -15,7 +15,7 @@ const repoRoot = path.resolve(__dirname, '..');
 
 // Load environment variables from .env (lives at repo root)
 const env = loadEnv(process.env.NODE_ENV || 'development', repoRoot, '');
-const { PORT, HOST, CONFIG_DIR, LAYOUT_EXT_DIR } = env;
+const { PORT, HOST, CONFIG_DIR, LAYOUT_EXT_DIR, INCREMENTAL_BUILD } = env;
 
 // Propagate to process.env so SSR/render contexts that load paths.ts
 // independently (without going through initPaths()) read the same CONFIG_DIR
@@ -89,6 +89,23 @@ const isDev = process.env.NODE_ENV !== 'production';
 
 export default defineConfig({
   output: isDev ? 'server' : 'static',
+
+  experimental: {
+    // Skip re-rendering a page whose `cacheKey` from getStaticPaths() is
+    // unchanged. Measured at -33% on a no-op rebuild; see the incremental-builds
+    // issue, subtask 025.
+    //
+    // OFF BY DEFAULT, and the reason is the failure mode rather than the speed:
+    // a key that misses an input emits the previous build's HTML with exit code
+    // 0 and no warning. That was reproduced deliberately — one page went stale
+    // and nothing in the build said so. It stays opt-in until a staleness check
+    // runs in CI and `formatRelativeTime()` stops baking a wall-clock string
+    // into the HTML (which freezes "31 min ago" into any cached page).
+    //
+    // Keys are built in src/pages/lib/cache-key.ts — read its header first.
+    // Astro also disables the cache outright when build.concurrency > 1.
+    incrementalBuild: INCREMENTAL_BUILD === '1',
+  },
 
   server: {
     port: PORT ? parseInt(PORT, 10) : 4321,

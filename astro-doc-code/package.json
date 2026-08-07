@@ -2,7 +2,7 @@
   "name": "agent-knowledge-system",
   "type": "module",
   "version": "1.0.0",
-  "description": "agent-knowledge-system — a knowledge + task system for AI consumers, built with Astro",
+  "description": "agent-knowledge-system \u2014 a knowledge + task system for AI consumers, built with Astro",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
@@ -10,7 +10,6 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/mdx": "^4.3.13",
     "@codemirror/autocomplete": "^6.20.1",
     "@codemirror/commands": "^6.10.3",
     "@codemirror/lang-css": "^6.3.1",

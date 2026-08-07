@@ -1,9 +1,9 @@
 ---
 title: "The load-time fix"
 outcome: "Cold `/todo` under 300 ms, and per-page inline CSS under 5 KB gzipped with no flash"
-notes: "⭐ **The issue has paid for itself here.** Independent of the upgrade — this stage would still be worth running if stage 40 never happened"
-who: claude
-status: open
+notes: "Landed. `/todo` 1.206s → 0.155s, built HTML 136.6 MB → 73.8 MB. `review` for one thing only: whether a cold cache flashes"
+who: sid
+status: review
 subtasks:
   - "[Index loader reads frontmatter only](../../subtasks/010_load-time/010_index-loader-frontmatter-only.md)"
   - "[Theme CSS delivery](../../subtasks/010_load-time/020_theme-css-delivery.md)"
@@ -20,6 +20,40 @@ and correctness.
 
 - [ ] [the index loader](../../subtasks/010_load-time/010_index-loader-frontmatter-only.md) — stop rendering 861 bodies to build a table of titles
 - [ ] [theme CSS delivery](../../subtasks/010_load-time/020_theme-css-delivery.md) — stop inlining 65 KB into every page
+
+## What landed
+
+Two commits: `ae16663` (the loader) and `e22df2a` (the CSS).
+
+**The index loader.** It read ids, dates, `meta.*` and its subtasks' statuses —
+and not one rendered body — while rendering every tracked file in the tracker to
+produce them. A per-load render context now carries a `metaOnly` flag down the
+folder walk; the tree is walked identically either way, so the object graph keeps
+its shape and only the `html` strings differ. `loadIssue` reads one folder
+instead of going through the tracker-wide load, which is why a detail page no
+longer costs what the index costs.
+
+| | Before | After |
+|---|---|---|
+| `/todo`, module graph warm (protocol B) | 1.206 s | **0.155 s** |
+| `/todo`, first request of all (protocol A) | 2.570 s | 1.039 s |
+| Detail page, first request | 2.543 s | 1.576 s |
+
+**The protocol-A rows are not the win, and not a miss either.** What remains
+there is Vite compiling the layout module graph — `/user-guide`, which touches no
+issue code, costs 1.7–2.2 s on the same cold server. It is a per-route constant
+that does not grow with the tracker, which is the opposite of the problem this
+stage was opened for.
+
+**Theme CSS.** Identical on every page, so inlining put the same 65 KB in all
+1,016 rendered pages. Now served from `/theme.css` with a content-hashed URL.
+Built HTML **136.6 MB → 73.8 MB**; `/todo` gzipped **51,928 → 39,138 bytes**.
+`/artifacts/**` keeps its own inline block — those are standalone by contract.
+
+**Two defects fixed on the way**, both found by reading rather than by failing:
+`invalidateIssuesCache(dataPath)` deleted a key that never existed, because
+entries are keyed `<dataPath>::<flags>`; and the module-level `embedCollector`
+is gone, folded into the per-load context.
 
 ## Gate
 

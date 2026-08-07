@@ -459,7 +459,6 @@ interface CacheEntry {
    */
   embedded: string[];
 }
-const cache = new Map<string, CacheEntry>();
 
 /** One fully-rendered issue, keyed by absolute folder path. Detail and sub-doc
  *  pages need ONE issue's bodies; serving them from the tracker-wide entry meant
@@ -469,7 +468,39 @@ interface FolderCacheEntry {
   data: Issue;
   embedded: string[];
 }
-const folderCache = new Map<string, FolderCacheEntry>();
+
+/**
+ * Both caches live on `globalThis`, not in module scope.
+ *
+ * Vite gives the plugin context and the SSR request context their own instance
+ * of this module — reproduced by counting instantiations in one dev server:
+ * instance #1 at boot, instance #2 on the first request, both live at once. A
+ * module-level `Map` is therefore two Maps, and `invalidateIssuesCache()` called
+ * from the dev integration cleared the one the request path never reads.
+ *
+ * `integration.ts` works around that today by reaching into
+ * `server.moduleGraph` to force the SSR copy to re-instantiate. Sharing the
+ * state is the fix that workaround is standing in for. Same pattern as
+ * `paths.ts` and `cache.ts`.
+ */
+
+const ISSUES_CACHE_KEY = '__issues_cache_state__';
+
+interface IssuesCacheState {
+  cache: Map<string, CacheEntry>;
+  folderCache: Map<string, FolderCacheEntry>;
+}
+
+function cacheState(): IssuesCacheState {
+  const g = globalThis as any;
+  if (!g[ISSUES_CACHE_KEY]) {
+    g[ISSUES_CACHE_KEY] = {
+      cache: new Map<string, CacheEntry>(),
+      folderCache: new Map<string, FolderCacheEntry>(),
+    };
+  }
+  return g[ISSUES_CACHE_KEY];
+}
 
 /**
  * The render funnel for one load pass, created by `createRenderCtx` below.
@@ -596,6 +627,7 @@ function computeIssueSignature(folder: string, embedded: readonly string[] = [])
  * nothing and only the clear-everything form ever worked.
  */
 export function invalidateIssuesCache(dataPath?: string): void {
+  const { cache, folderCache } = cacheState();
   if (!dataPath) {
     cache.clear();
     folderCache.clear();
@@ -1489,6 +1521,7 @@ export async function loadIssues(
   // render mode. A meta-only entry carries empty `html` everywhere, so serving
   // one to a caller that wanted bodies would render blank pages, not slow ones.
   const cacheKey = `${dataPath}::${includeDrafts ? 'd' : ''}${metaOnly ? 'm' : ''}`;
+  const { cache } = cacheState();
   const cached = cache.get(cacheKey);
   // Read the entry first: its embedded-file list is part of what the signature
   // has to cover (see CacheEntry.embedded).
@@ -1558,6 +1591,7 @@ export async function loadIssue(dataPath: string, id: string): Promise<Issue | n
   // `loadIssues`, so opening a single issue rendered every other issue's bodies
   // first — the same cost as the index, paid again on a page that shows one
   // issue.
+  const { folderCache } = cacheState();
   const cached = folderCache.get(folderPath);
   const signature = computeIssueSignature(folderPath, cached?.embedded);
   if (cached && cached.signature === signature) return cached.data;

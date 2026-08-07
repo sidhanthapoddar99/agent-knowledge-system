@@ -1,6 +1,6 @@
 ---
 title: "Dev-server memory: get a controlled before-and-after"
-status: open
+status: dropped
 ---
 
 # Overview
@@ -30,8 +30,43 @@ and the delta is written down — including if the answer is "no change" or "wor
 
 # Outcomes and Next Steps
 
-> [!IMPORTANT]
-> **PLACEHOLDER** — filled at completion / hand-off.
+**Dropped by Sid. The comparison this asks for cannot be bought at a price worth
+paying, and the number that would matter is not the one it measures.**
+
+## Why it was dropped rather than done
+
+Running it means checking out the pre-upgrade commit, reinstalling the whole
+dependency tree, measuring, and restoring — to learn *what Astro 5 used to do*.
+Nothing downstream acts on that answer. The upgrade has already happened and is
+not being reversed, so the comparison is archaeology.
+
+The Details section below already admitted the deeper problem: the index-loader
+fix landed between the two states, so any delta mixes two causes and no protocol
+recovers that.
+
+## The one number this round did produce, and where it went
+
+An orphaned dev server from the previous day was found still running and holding
+**1.19 GB** after ~18 hours. That is the only real memory figure this follow-up
+generated, and it does not support the subtask's thesis — it is not evidence of a
+leak in normal use, it is evidence of a **leaked process**, which is a different
+defect with a different owner:
+[060/020 the ./start wrapper against Astro 7](./020_start-wrapper-against-astro-7.md).
+
+That same orphan is now the leading suspect for
+[060/060 diagrams stop rendering in dev](./060_dev-diagram-dep-cache.md) — two dev
+servers sharing one `node_modules/.vite`. **The leak turned out to matter for a
+reason this subtask never proposed**, which is the argument for chasing the leak
+rather than the megabytes.
+
+## If the question comes back
+
+Ask it the other way round and it becomes cheap: *does a single long-lived dev
+session grow without bound?* That needs one Astro 7 server, one fixed request
+sequence, and samples over time — no downgrade, no reinstall. The suspect is
+already named below: the caches hold rendered HTML per issue folder and nothing
+evicts them. Open it as its own subtask if a session ever feels heavy; do not
+reopen this one, which is tied to a comparison that stopped being answerable.
 
 # Details
 

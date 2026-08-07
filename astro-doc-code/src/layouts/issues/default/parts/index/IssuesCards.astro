@@ -54,14 +54,14 @@ const { issues, vocabulary, baseUrl, searchBlob } = Astro.props;
     margin-top: 1.25rem;
     margin-bottom: 0.25rem;
     border-radius: 8px;
-    background: color-mix(in srgb, var(--group-accent, var(--color-brand-primary)) 6%, var(--color-bg-secondary));
-    border: 1px solid color-mix(in srgb, var(--group-accent, var(--color-border-default)) 25%, transparent);
+    background: color-mix(in srgb, var(--color-brand-primary) 6%, var(--color-bg-secondary));
+    border: 1px solid color-mix(in srgb, var(--color-border-default) 25%, transparent);
   }
   :global(.issues-cards__group-header.is-first) { margin-top: 0; }
   :global(.issues-cards__group-accent) {
     width: 3px;
     height: 16px;
-    background: var(--group-accent, var(--color-brand-primary));
+    background: var(--color-brand-primary);
     border-radius: 2px;
     flex-shrink: 0;
   }
@@ -82,11 +82,11 @@ const { issues, vocabulary, baseUrl, searchBlob } = Astro.props;
     margin-left: auto;
     font-family: var(--font-family-mono);
     font-size: var(--ui-text-micro);
-    color: color-mix(in srgb, var(--group-accent, var(--color-text-muted)) 85%, var(--color-text-primary));
+    color: color-mix(in srgb, var(--color-text-muted) 85%, var(--color-text-primary));
     padding: 0.1rem 0.5rem;
     border-radius: 10px;
-    background: color-mix(in srgb, var(--group-accent, var(--color-border-default)) 18%, transparent);
-    border: 1px solid color-mix(in srgb, var(--group-accent, var(--color-border-default)) 30%, transparent);
+    background: color-mix(in srgb, var(--color-border-default) 18%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-border-default) 30%, transparent);
   }
 
   :global(.issue-card) {

@@ -407,7 +407,18 @@ The layout then calls `loadContentWithSettings(dataPath)` internally to build th
 
 ## Caching
 
-Content is cached using mtime-based validation — no hash computation. Cache is cleared automatically when files change (via HMR in dev, fresh build in production).
+Reads are **not** validated. `getCached` returns the entry it holds without stat-ing anything, because checking mtimes on every access measured 10–15 ms of overhead. Freshness is the writer's job, not the reader's: the dev-server watcher drops entries when a file changes, and a production build starts cold and parses everything from source.
+
+Two invalidation mechanisms run on every watched change, and they catch different things:
+
+| Mechanism | Keys off | Catches |
+|---|---|---|
+| **By dependency** | the paths an entry recorded in `deps` | a changed file that is not itself a page — a theme stylesheet, or a file a `[[path]]` embed splices into a page |
+| **By file type** | the extension / name of the changed file | the fan-out a single markdown edit has on sidebar, pagination and neighbour links |
+
+Dependency invalidation is the one that is easy to lose, because losing it is silent: an entry that forgets to record a dependency simply serves the old bytes, and no reload fixes it until the server restarts. The dev log reports it separately (`Invalidated: content, sidebar (1 by dependency)`) so a broken dependency list is visible rather than inferred.
+
+See [Unified Cache System](./06_optimizations/02_unified-cache-system.md) for full caching details.
 
 See [Unified Cache System](./06_optimizations/02_unified-cache-system.md) for full caching details.
 

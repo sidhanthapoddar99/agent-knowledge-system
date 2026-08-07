@@ -853,16 +853,17 @@ body.artifact-expanded-lock {
   height: 16px;
   min-width: 16px;
   border-radius: 50%;
-  border: 1.5px solid var(--color-text-tertiary, #888);
+  border: 1.5px solid var(--color-text-muted);
   margin-top: 3px;
   box-sizing: border-box;
 }
 
-/* Checked: filled gray circle with SVG tick */
+/* Checked: filled circle with SVG tick. The tick is the page background rather
+   than white, so it stays legible when the fill darkens in dark mode. */
 .markdown-content .task-checkbox-checked {
   border: none;
-  background: #555;
-  color: #fff;
+  background: var(--color-text-muted);
+  color: var(--color-bg-primary);
 }
 
 .markdown-content .task-checkbox svg {
@@ -884,8 +885,8 @@ body.artifact-expanded-lock {
 /* Checked: dimmed + strikethrough on content only (direct child, not nested) */
 .markdown-content .task-checked > .task-content {
   text-decoration: line-through;
-  text-decoration-color: rgba(128, 128, 128, 0.5);
-  color: var(--color-text-tertiary, #999);
+  text-decoration-color: color-mix(in srgb, var(--color-text-muted) 50%, transparent);
+  color: var(--color-text-muted);
 }
 
 /* Reset styling on nested lists inside checked task content */

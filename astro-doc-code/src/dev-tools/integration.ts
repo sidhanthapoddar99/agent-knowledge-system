@@ -286,9 +286,15 @@ export function devToolbarIntegration(): AstroIntegration {
                   if (!shouldTriggerReload(file)) return;
 
                   const shortPath = file.split('/').slice(-3).join('/');
-                  const { type, invalidated } = cacheManager.onFileChange(file);
+                  const { type, invalidated, byDep } = cacheManager.onFileChange(file);
                   console.log(`[cache] File changed (${type}):`, shortPath);
-                  console.log(`[cache] Invalidated: ${invalidated.join(', ') || 'none'}`);
+                  console.log(
+                    `[cache] Invalidated: ${invalidated.join(', ') || 'none'}` +
+                    // Reported separately because it is the half that is easy to
+                    // ship broken: a dependency edit that invalidates nothing
+                    // looks identical to one with no dependents.
+                    (byDep > 0 ? ` (${byDep} by dependency)` : '')
+                  );
 
                   // Suppress full-reload if file is being edited
                   // Caches are still cleared above, but we don't reload the page

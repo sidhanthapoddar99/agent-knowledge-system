@@ -27,6 +27,19 @@ const defaultOptions: MarkdownRendererOptions = {
 
 const DIAGRAM_LANGS = new Set(['mermaid', 'dot', 'graphviz']);
 
+/**
+ * Fence languages that authors actually write, mapped to the grammar that
+ * matches them. Aliasing beats adding a grammar wherever one already fits:
+ * `env` has no Shiki grammar of its own, but `dotenv` is exactly that syntax
+ * under a name nobody types in a fence.
+ *
+ * `text` deliberately has no entry. Shiki treats it as "no highlighting", which
+ * is what the author asked for — it is not a missing grammar.
+ */
+const LANG_ALIASES: Record<string, string> = {
+  env: 'dotenv',
+};
+
 function escapeHtml(text: string): string {
   return text
     .replace(/&/g, '&amp;')
@@ -50,6 +63,10 @@ function getHighlighter(): Promise<Highlighter> {
         'sql', 'graphql', 'markdown',
         'ruby', 'php', 'swift', 'kotlin',
         'dockerfile', 'toml', 'xml',
+        // Languages this project's own documentation is written in. Shiki runs
+        // at render time on the server and emits plain HTML, so a grammar here
+        // costs build memory — never reader bytes.
+        'astro', 'jsonc', 'nginx', 'diff', 'dotenv',
       ],
     });
   }
@@ -75,7 +92,13 @@ export async function createMarkdownRendererAsync(
           const type = lang.toLowerCase() === 'mermaid' ? 'mermaid' : 'graphviz';
           return `<div class="diagram diagram-${type}">${escapeHtml(text)}</div>`;
         }
-        const language = lang && highlighter.getLoadedLanguages().includes(lang) ? lang : 'text';
+        // Resolve case-insensitively and through the alias table, then fall back
+        // to plain text. The label below keeps what the AUTHOR wrote, so a
+        // ```env fence still reads "env" even though `dotenv` highlighted it.
+        const requested = lang?.toLowerCase();
+        const resolved = requested ? (LANG_ALIASES[requested] ?? requested) : undefined;
+        const language =
+          resolved && highlighter.getLoadedLanguages().includes(resolved) ? resolved : 'text';
         const html = highlighter.codeToHtml(text, {
           lang: language,
           themes: { light: 'github-light', dark: 'github-dark' },

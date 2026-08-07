@@ -1,12 +1,12 @@
 ---
 title: The Theme Contract
-description: The 46 CSS variables every theme must define — the fixed set the whole framework relies on
+description: The 65 CSS variables every theme must define — the fixed set the whole framework relies on
 sidebar_position: 2
 ---
 
 # The Theme Contract
 
-Every theme defines **exactly 46 CSS variables**. They're declared in `src/styles/theme.yaml → required_variables` and checked at load time. Any theme — built-in default, inheriting custom, or standalone — must define (or inherit) all 46, or the loader warns / errors.
+Every theme defines **exactly 65 CSS variables**. They're declared in `src/styles/theme.yaml → required_variables` and checked at load time. Any theme — built-in default, inheriting custom, or standalone — must define (or inherit) all 65, or the loader warns / errors.
 
 This page is the flat list. For the *what each one does* breakdown, see the [Tokens](./04_tokens/01_overview.md) section; for the CSS files the defaults live in, see the [Built-in Default Theme](./03_theme-structure.md#built-in-default-theme).
 
@@ -19,9 +19,19 @@ Before any discussion of aesthetics, this is the engineering answer: **every lay
 
 This is why inventing a variable like `--color-accent` in a layout is dangerous. The contract doesn't promise it exists, so the theme won't define it, so `var(--color-accent)` falls through to whatever fallback the layout wrote — and that hardcoded fallback freezes the value across dark/light mode. See [Rules for Layout Authors](./10_rules-for-layout-authors.md) for the full anti-pattern list.
 
-## The 46 variables
+## What decides whether a variable is on this list
 
-### Colors — 14 variables
+One rule, and it is narrower than "everything useful":
+
+> **A variable is required if a shipped layout reads it. Nothing else qualifies.**
+
+The reason is `replace` mode. A theme that extends the default and merges inherits every variable and never notices a gap. A theme with `override_mode: replace` skips the parent entirely — so anything the layouts need but this list doesn't name is simply *gone*, and validation stays quiet, because validation only checks this list.
+
+The corollary catches people out: **the list does not complete scales for tidiness.** `--font-weight-normal` is required; `--font-weight-bold` is not, because layouts read the first and write the second as a literal `700`. A theme may declare as many extra variables as it likes — that's its palette. The contract is only the part the layouts depend on.
+
+## The 65 variables
+
+### Colors — 21 variables
 
 | Variable | Role |
 |---|---|
@@ -42,9 +52,23 @@ This is why inventing a variable like `--color-accent` in a layout is dangerous.
 
 **One-tier** — these are semantic names used directly. No primitive colour palette sits behind them. Each is declared twice in the theme (once under `:root` for light mode, once under `[data-theme="dark"]` for dark mode).
 
+**Issue status — 7 variables.** One per status in the tracker's fixed vocabulary:
+
+| Variable | Status |
+|---|---|
+| `--status-open` | open |
+| `--status-blocked` | blocked |
+| `--status-in-progress` | in-progress |
+| `--status-input-needed` | input-needed |
+| `--status-review` | review |
+| `--status-done` | done |
+| `--status-dropped` | dropped |
+
+A theme may recolour these; it cannot add an eighth. The status *names* are fixed in the framework's `issue-status.ts` and are not configurable by any tracker — the colours are theme-owned, the vocabulary is not.
+
 Full details: [Tokens / Colors](./04_tokens/02_colors.md).
 
-### Fonts — 19 variables
+### Fonts — 22 variables
 
 **Primitive scale (8)** — the palette. Themes define; layouts don't consume these directly:
 
@@ -84,11 +108,22 @@ For emphasis at the "card title" level, use `--ui-text-body` + `font-weight: 600
 
 `h4`–`h6` are intentionally the same size as body. They're structural landmarks for outlines and tables-of-contents, not visual emphasis — differentiate via `font-weight` and `color`, not size.
 
+**Weight (1)** — `--font-weight-normal` (`400`). Only this one is required, because it's the only weight layouts read through a variable; the rest of the scale (`medium` / `semibold` / `bold`) is the theme's own palette.
+
+**Display tier (2)** — for marketing surfaces only:
+
+| Variable | Default value | Used by |
+|---|---|---|
+| `--display-sm` | `--font-size-3xl` | Home hero, countdown |
+| `--display-md` | `--font-size-4xl` | Home hero |
+
+These are required despite being marketing-only, because the home and countdown layouts ship with the framework. A theme that omits them breaks the landing page. (`--display-lg` exists in the default theme but no shipped layout reads it, so it isn't on the contract.)
+
 Full details: [Tokens / Typography](./04_tokens/03_typography.md).
 
-### Elements — 13 variables
+### Elements — 22 variables
 
-**Spacing scale (5):**
+**Spacing scale (7):**
 
 | Variable | Default |
 |---|---|
@@ -97,22 +132,26 @@ Full details: [Tokens / Typography](./04_tokens/03_typography.md).
 | `--spacing-md` | `1rem` (16px) |
 | `--spacing-lg` | `1.5rem` (24px) |
 | `--spacing-xl` | `2rem` (32px) |
+| `--spacing-2xl` | `3rem` (48px) |
+| `--spacing-3xl` | `4rem` (64px) |
 
-**Border radius (3):**
+**Border radius (4):**
 
 | Variable | Default |
 |---|---|
 | `--border-radius-sm` | `0.25rem` (4px) |
 | `--border-radius-md` | `0.5rem` (8px) |
 | `--border-radius-lg` | `0.75rem` (12px) |
+| `--border-radius-full` | `9999px` — pills, avatars |
 
-**Shadow (3):**
+**Shadow (4):**
 
 | Variable | Default |
 |---|---|
 | `--shadow-sm` | `0 1px 2px rgba(0, 0, 0, 0.05)` |
 | `--shadow-md` | `0 4px 6px rgba(0, 0, 0, 0.1)` |
 | `--shadow-lg` | `0 10px 15px rgba(0, 0, 0, 0.1)` |
+| `--shadow-xl` | `0 20px 25px rgba(0, 0, 0, 0.1)` |
 
 **Transitions (2):**
 
@@ -121,23 +160,47 @@ Full details: [Tokens / Typography](./04_tokens/03_typography.md).
 | `--transition-fast` | `150ms ease` |
 | `--transition-normal` | `250ms ease` |
 
-All one-tier. Full details: [Tokens / Spacing, Radius, Shadow](./04_tokens/04_spacing-radius-shadow.md).
+**Layout dimensions (5)** — these carry *structure*, not style. The docs layout reads them to size its grid, so a theme that drops one collapses the page rather than restyling it:
+
+| Variable | Default | Role |
+|---|---|---|
+| `--sidebar-width` | `280px` | Docs sidebar column |
+| `--navbar-height` | `64px` | Sticky nav offset — scroll anchoring depends on it |
+| `--outline-width` | `280px` | Right-hand outline column |
+| `--max-width-primary` | `1600px` | Main content width |
+| `--max-width-secondary` | `1336px` | Narrow content width |
+
+Full details: [Tokens / Spacing, Radius, Shadow](./04_tokens/04_spacing-radius-shadow.md) and [Tokens / Layout Dimensions](./04_tokens/05_layout-dimensions.md).
 
 ## Variables the framework uses but doesn't require
 
-The default theme defines extras for its own layouts to use. Custom themes that extend the default inherit these; standalone themes **don't have to** provide them, but if a layout uses one and the theme doesn't define it, it'll fall through to whatever fallback the layout wrote.
+The default theme defines extras for its own stylesheets to use. Custom themes that extend the default inherit them; standalone themes **don't have to** provide them, because no shipped layout reads them — they only travel between the default theme's own CSS files, and a `replace` theme swaps that whole set out together.
 
-| Extra variable | Purpose | Where used |
-|---|---|---|
-| `--font-size-xs` / `3xl` / `4xl` / `5xl` | Extended type scale | Marketing layouts, custom pages |
-| `--display-sm` / `md` / `lg` | Marketing hero tokens | `src/layouts/custom/home`, countdown |
-| `--spacing-2xl` / `3xl` / `4xl` | Extended spacing | Hero sections, large dividers |
-| `--max-width-primary` / `secondary` / `prose` | Page content widths | Docs, blog, custom layouts |
-| `--sidebar-width` / `outline-width` / `navbar-height` | Layout dimensions | Docs sidebar, outline, sticky nav |
-| `--z-index-dropdown` / `sticky` / `modal` / … | Stacking order | All overlays |
-| `--opacity-*`, `--border-width-*` | Fine control | Borderless states, skeletons |
+| Extra variable | Purpose |
+|---|---|
+| `--font-size-xs` / `3xl` / `4xl` / `5xl` | Extended type scale, behind the semantic tokens |
+| `--font-weight-medium` / `semibold` / `bold` | The rest of the weight scale |
+| `--display-lg` | Third display tier, currently unused by any layout |
+| `--line-height-tight` / `relaxed` | Rhythm variants |
+| `--font-family-heading` | Heading face, defaults to the base family |
+| `--z-index-dropdown` / `sticky` / `modal` / … | Stacking order, used only inside the default theme |
+| `--opacity-*`, `--border-width-*` | Fine control — borderless states, skeletons |
 
 These are documented in [Tokens / Layout Dimensions](./04_tokens/05_layout-dimensions.md). They're **optional** — a theme can override them but doesn't have to.
+
+## How the list is kept honest
+
+The count above drifts the moment a layout starts reading a new variable, and nothing about that failure is visible: the page still renders, just with a frozen colour. So it's checked rather than remembered.
+
+`scripts/check-theme-contract.mjs` runs three gates over the source:
+
+| Gate | Fails when |
+|---|---|
+| **A** | a `var(--x)` anywhere in the engine names something nothing declares |
+| **B** | a shipped layout reads a variable the contract doesn't require — the `replace`-mode hole |
+| **C** | a circular `extends` isn't detected, proven against five on-disk theme fixtures |
+
+Gate B is what makes this page's number trustworthy: it fails in *both* directions, so a variable can neither quietly leave the contract nor quietly enter the layouts without it.
 
 ## Variables you must NEVER invent
 

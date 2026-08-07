@@ -180,6 +180,14 @@ async function handleStateChange(key: string, filePath: string, nextState: Issue
 }
 
 export function wireStateButton(selector: string, itemSelector: string) {
+  // Cycling persists through `/__editor/subtask-toggle`, which only exists on
+  // the dev server. Without this guard a published site fires the POST anyway,
+  // the catch in `handleStateChange` rolls the UI back, and the reader sees a
+  // checkbox that flickers and reverts with no explanation. The buttons are
+  // rendered `disabled` in a build as well — this is the second half of that,
+  // so no listener is attached even if the markup is reached another way.
+  if (!import.meta.env.DEV) return;
+
   document.querySelectorAll<HTMLElement>(selector).forEach((btn) => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();

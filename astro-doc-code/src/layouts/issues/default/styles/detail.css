@@ -424,7 +424,9 @@
   flex-shrink: 0;
   border-radius: 3px;
 }
-.issue-overview-subtasks__state:hover { background: color-mix(in srgb, var(--color-border-default) 40%, transparent); }
+.issue-overview-subtasks__state:hover:not(:disabled) { background: color-mix(in srgb, var(--color-border-default) 40%, transparent); }
+/* Published site: the glyph still reports status, but it is not a control. */
+.issue-overview-subtasks__state:disabled { cursor: default; }
 .issue-overview-subtasks__state[data-state='in-progress'] { color: var(--color-info); }
 .issue-overview-subtasks__state[data-state='input-needed'] { color: var(--color-warning); }
 .issue-overview-subtasks__state[data-state='review'] { color: var(--color-warning); }
@@ -521,7 +523,8 @@
   flex-shrink: 0;
   border-radius: 3px;
 }
-.issue-comprehensive__state:hover { background: color-mix(in srgb, var(--color-border-default) 40%, transparent); }
+.issue-comprehensive__state:hover:not(:disabled) { background: color-mix(in srgb, var(--color-border-default) 40%, transparent); }
+.issue-comprehensive__state:disabled { cursor: default; }
 .issue-comprehensive__state[data-state='in-progress'] { color: var(--color-info); }
 .issue-comprehensive__state[data-state='input-needed'] { color: var(--color-warning); }
 .issue-comprehensive__state[data-state='review'] { color: var(--color-warning); }

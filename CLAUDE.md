@@ -119,7 +119,7 @@ src/
 │   ├── issues.ts         # Folder-per-item loader for the issues content type (settings.json-driven)
 │   ├── theme.ts          # Theme loading, inheritance, CSS merging; resolveThemeName()
 │   ├── cache.ts          # Error/warning collection
-│   ├── cache-manager.ts  # Unified mtime-based cache with dependency tracking
+│   ├── cache-manager.ts  # Unified cache; invalidation by dependency + by file type
 │   └── index.ts          # Barrel exports
 │
 ├── parsers/              # Modular content parsing pipeline
@@ -241,10 +241,14 @@ Every layout surface follows the framework's UX standards — truncation-only to
 | Font families | `--font-family-base` / `--font-family-mono` |
 | Font sizes (required) | `--font-size-sm` (14px) / `--font-size-base` (16) / `--font-size-lg` (18) / `--font-size-xl` (20) / `--font-size-2xl` (24) |
 | Font sizes (default-theme-only) | `--font-size-xs` (12px) — use with `--font-size-sm` fallback: `var(--font-size-xs, var(--font-size-sm))` |
-| Spacing | `--spacing-xs/sm/md/lg/xl/2xl` |
-| Radius | `--border-radius-sm/md/lg/xl` (plus `--border-radius-full` for pills) |
+| Spacing | `--spacing-xs/sm/md/lg/xl/2xl/3xl` |
+| Radius | `--border-radius-sm/md/lg/full` (`--border-radius-xl` exists but is theme-internal) |
 | Shadows | `--shadow-sm/md/lg/xl` |
 | Transitions | `--transition-fast` (150ms) / `--transition-normal` (250ms) |
+| Layout dimensions | `--sidebar-width` / `--navbar-height` / `--outline-width` / `--max-width-primary` / `--max-width-secondary` |
+| Weight | `--font-weight-normal` (the rest of the weight scale is theme-internal) |
+
+**What decides membership:** a variable is on the contract **if and only if a shipped layout reads it.** That is not tidiness — it is what `override_mode: replace` requires, since a replace-mode theme drops the parent and keeps only what the contract names. Do not complete a scale here for symmetry: `--font-weight-normal` is required and `--font-weight-bold` is not, because layouts read the first and write the second as a literal. `scripts/check-theme-contract.mjs` enforces this in both directions, so the list cannot drift either way.
 
 **Do not** reach for hex codes, arbitrary `rem` font sizes, or invented variable names. If something feels missing from the contract, propose adding it to `theme.yaml` before inventing a private name.
 

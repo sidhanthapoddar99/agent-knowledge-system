@@ -59,7 +59,11 @@ extends: "@theme/theme-b"
 extends: "@theme/theme-a"   # ← circular
 ```
 
-The loader detects this and errors at startup. No infinite loops.
+The loader throws at startup, in dev **and** in a production build, with the whole chain in the message. No infinite loops.
+
+A shared ancestor reached by two different paths (a *diamond*) is not a cycle and is not reported — only a chain that closes on itself is.
+
+Note that a theme directory cannot be named `default`: `@theme/default` is reserved for the framework's built-in theme, which is what almost every theme here extends. See [Validation](./09_validation.md#6-reserved-theme-names).
 
 ## The three override modes
 

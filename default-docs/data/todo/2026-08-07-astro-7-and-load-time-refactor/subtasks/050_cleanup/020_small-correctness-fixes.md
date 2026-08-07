@@ -1,6 +1,6 @@
 ---
 title: "Two small correctness fixes — the production POST and the unhighlighted fences"
-status: review
+status: done
 ---
 
 # Overview

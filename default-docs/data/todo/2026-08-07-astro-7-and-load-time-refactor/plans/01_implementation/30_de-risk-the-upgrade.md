@@ -3,7 +3,7 @@ title: "De-risk the upgrade"
 outcome: "`@astrojs/mdx` is gone and both caches follow the `globalThis` pattern, so stage 40 is one bump instead of two"
 notes: "Landed. **The cache split reproduced** — two live module instances in one dev server. Only the mdx half of the sweep ran; the rest moves to [stage 50](./50_correctness-sweep.md)"
 who: sid
-status: review
+status: done
 subtasks:
   - "[Module-level cache state](../../subtasks/030_correctness/010_cache-module-state.md)"
   - "[Dead-code sweep](../../subtasks/050_cleanup/010_dead-code-sweep.md)"

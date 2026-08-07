@@ -3,7 +3,7 @@ title: "The load-time fix"
 outcome: "Cold `/todo` under 300 ms, and per-page inline CSS under 5 KB gzipped with no flash"
 notes: "Landed. `/todo` 1.206s → 0.155s, built HTML 136.6 MB → 73.8 MB. `review` for one thing only: whether a cold cache flashes"
 who: sid
-status: review
+status: done
 subtasks:
   - "[Index loader reads frontmatter only](../../subtasks/010_load-time/010_index-loader-frontmatter-only.md)"
   - "[Theme CSS delivery](../../subtasks/010_load-time/020_theme-css-delivery.md)"

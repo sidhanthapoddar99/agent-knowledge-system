@@ -1,6 +1,6 @@
 ---
 title: "cache-manager dependency tracking — implement it or delete it"
-status: review
+status: done
 ---
 
 # Overview

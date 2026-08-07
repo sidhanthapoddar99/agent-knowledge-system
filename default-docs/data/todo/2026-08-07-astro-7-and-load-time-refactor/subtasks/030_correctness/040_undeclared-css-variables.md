@@ -1,6 +1,6 @@
 ---
 title: "44 CSS variables used but never declared"
-status: review
+status: done
 ---
 
 # Overview

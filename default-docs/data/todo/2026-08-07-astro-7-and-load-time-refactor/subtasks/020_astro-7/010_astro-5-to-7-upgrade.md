@@ -1,6 +1,6 @@
 ---
 title: "Astro 5.17.1 → 7.2.0"
-status: review
+status: done
 ---
 
 # Overview

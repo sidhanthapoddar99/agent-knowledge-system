@@ -1,6 +1,6 @@
 ---
 title: "Index loader reads frontmatter only"
-status: review
+status: done
 ---
 
 # Overview

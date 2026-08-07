@@ -3,7 +3,7 @@ title: "The upgrade"
 outcome: "Astro 7.2.0 builds 1,229+ pages with the toolbar, the editor and live theme switching all intact"
 notes: "Landed on 7.2.0 / Vite 8.2.1. **Build 2× faster and 38% lighter** — I predicted no speed win and was wrong. One break, and it was ours"
 who: sid
-status: review
+status: done
 subtasks:
   - "[Astro 5.17.1 → 7.2.0](../../subtasks/020_astro-7/010_astro-5-to-7-upgrade.md)"
   - "[Typecheck baseline](../../subtasks/020_astro-7/020_typecheck-baseline.md)"

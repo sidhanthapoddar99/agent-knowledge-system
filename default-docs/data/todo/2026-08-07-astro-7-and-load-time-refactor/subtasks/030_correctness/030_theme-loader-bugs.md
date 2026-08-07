@@ -1,6 +1,6 @@
 ---
 title: "Theme loader — the extends cycle hang and the reachability of 'default'"
-status: review
+status: done
 ---
 
 # Overview

@@ -1,5 +1,0 @@
----
-title: "Scope A"
----
-
-body

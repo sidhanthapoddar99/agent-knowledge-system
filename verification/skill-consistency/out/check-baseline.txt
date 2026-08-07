@@ -1,5 +1,0 @@
-# issues check: /home/sid/projects/02_OpenSource/04_knowledge_management/agent-knowledge-system/default-docs/data/todo
-(51 issue folders scanned)
-
-## 1 warning(s)
-  ⚠ 2026-04-10-issues-layout/agent-log/exploration/: no numeric order prefix — sorts last; convention is NNN_<code>_<name>/

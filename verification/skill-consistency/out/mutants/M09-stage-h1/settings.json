@@ -1,8 +1,0 @@
-{
-  "label": "Scratch",
-  "fields": {
-    "priority": { "values": ["low", "medium", "high"] },
-    "component": { "values": ["core"], "descriptions": { "core": "the core" } },
-    "labels": { "values": ["probe"], "descriptions": { "probe": "a probe" } }
-  }
-}

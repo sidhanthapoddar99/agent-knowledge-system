@@ -9,6 +9,7 @@
     "preview": "astro preview",
     "astro": "astro"
   },
+  "//clsx": "NOT UNUSED — do not remove. Nothing in src/ imports it. It is here to win a hoist: @excalidraw/excalidraw depends on clsx@1.1.1 (CJS), and without this direct ^2.1.1 entry bun hoists that copy over the ESM one Astro expects, breaking the production build at the generate step with \"Named export 'clsx' not found\". Two audits have now proposed deleting it on a grep. See dev-docs/15_scripts/10_diagrams.md.",
   "dependencies": {
     "@codemirror/autocomplete": "^6.20.1",
     "@codemirror/commands": "^6.10.3",

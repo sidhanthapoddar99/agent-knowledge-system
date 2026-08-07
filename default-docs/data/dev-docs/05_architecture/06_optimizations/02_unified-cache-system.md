@@ -178,7 +178,7 @@ interface ContentSettings {
 The dev toolbar integration watches all configured directories:
 
 ```typescript
-// src/dev-toolbar/integration.ts
+// src/dev-tools/integration.ts
 
 // Paths from site.yaml paths: section (resolved at config load time)
 const watchPaths = {

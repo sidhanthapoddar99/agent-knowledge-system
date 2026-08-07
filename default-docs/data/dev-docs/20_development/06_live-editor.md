@@ -289,7 +289,7 @@ While a file is open in the editor, hot module replacement (HMR) is suppressed f
 
 ## Source Files
 
-### Client-Side Modules (`src/dev-toolbar/editor-ui/`)
+### Client-Side Modules (`src/dev-tools/editor/`)
 
 | Module | Purpose |
 |--------|---------|
@@ -306,10 +306,49 @@ While a file is open in the editor, hot module replacement (HMR) is suppressed f
 
 | File | Purpose |
 |------|---------|
-| `src/dev-toolbar/editor/` | CodeMirror 6 client UI (mounted at `/editor`): `core/`, `file-tree/`, `layout/`, `live-preview/`, `views/`, `sync/` |
-| `src/dev-toolbar/server/editor-store.ts` | In-memory document store (`EditorStore`) — render pipeline, auto-save, `ignoreSaveSet` pattern |
-| `src/dev-toolbar/server/presence.ts` | Multi-user presence manager (`PresenceManager`) — SSE streams, user tracking, stale cleanup |
-| `src/dev-toolbar/server/yjs-sync.ts` | Yjs room management (`YjsSync`) — WS message routing, CRDT sync, cursor relay, render broadcast |
-| `src/dev-toolbar/server/middleware.ts` | HTTP endpoint handlers (editor API, `/__editor/system`, SSE stream setup) |
-| `src/dev-toolbar/server/metrics.ts` | `collectServerMetrics()` — CPU / RAM / load-avg snapshot for the system-metrics toolbar app |
-| `src/dev-toolbar/integration.ts` | Wires editor, presence, Yjs, and the toolbar apps into Vite's HMR pipeline |
+| `src/dev-tools/editor/` | CodeMirror 6 client UI (mounted at `/editor`): `core/`, `file-tree/`, `forms/`, `layout/`, `live-preview/`, `renderer/`, `styles/`, plus `editor-page.ts` as the mount entry |
+| `src/dev-tools/routes/editor.astro` | The `/editor` page itself. It lives here rather than in `src/pages/` so the build never emits it — see below |
+| `src/dev-tools/routes/api/dev/` | `themes.ts`, `layouts.ts`, `errors.ts` — the toolbar's data endpoints, gated the same way |
+| `src/dev-tools/server/editor-store.ts` | In-memory document store (`EditorStore`) — render pipeline, auto-save, `ignoreSaveSet` pattern |
+| `src/dev-tools/server/presence.ts` | Multi-user presence manager (`PresenceManager`) — SSE streams, user tracking, stale cleanup |
+| `src/dev-tools/server/yjs-sync.ts` | Yjs room management (`YjsSync`) — WS message routing, CRDT sync, cursor relay, render broadcast |
+| `src/dev-tools/server/middleware.ts` | HTTP endpoint handlers (editor API, `/__editor/system`, SSE stream setup) |
+| `src/dev-tools/server/metrics.ts` | `collectServerMetrics()` — CPU / RAM / load-avg snapshot for the system-metrics toolbar app |
+| `src/dev-tools/server/git-ref-watcher.ts` | Watches `.git` for commits so derived `updated` dates refresh. Separate from Vite's watcher, which ignores `**/.git/**` unconditionally |
+| `src/dev-tools/integration.ts` | Wires editor, presence, Yjs, and the toolbar apps into Vite's HMR pipeline, and injects the dev routes above |
+
+### Why the dev routes are not in `src/pages/`
+
+Astro routes **everything** in `src/pages/`, with no integration consulted. So for
+as long as `editor.astro` and `api/dev/*.ts` lived there, they were built into
+every production site — a `/editor` page rendering a live editor against
+save endpoints that do not exist outside dev, plus 426 client chunks no reader
+could reach (**49% of `_astro`**).
+
+They now live under `src/dev-tools/routes/` and are injected by the integration
+only when `command === 'dev'`:
+
+```ts
+const DEV_ROUTES: Record<string, string> = {
+  '/editor':          './routes/editor.astro',
+  '/api/dev/themes':  './routes/api/dev/themes.ts',
+  '/api/dev/layouts': './routes/api/dev/layouts.ts',
+  '/api/dev/errors':  './routes/api/dev/errors.ts',
+};
+
+if (command === 'dev') {
+  for (const [pattern, entry] of Object.entries(DEV_ROUTES)) {
+    injectRoute({ pattern, entrypoint: new URL(entry, import.meta.url).href });
+  }
+}
+```
+
+**Add a new dev surface here, not to `src/pages/`.** A file placed under
+`src/dev-tools/routes/` is invisible to the build by default and needs a
+deliberate line to become a route at all; a file placed in `src/pages/` ships to
+every consumer and nothing warns you.
+
+`api` and `editor` remain in `RESERVED_BASE_URLS` even though `dist/` has neither
+— a user section whose `base_url` normalized to one of them would still be
+shadowed in dev, silently. See
+[Routing](../05_architecture/02_routing.md#reserved-base-urls).

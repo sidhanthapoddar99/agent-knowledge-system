@@ -44,11 +44,13 @@
  *   - routing: redirects, dual-slug resolution, and 404-vs-200 status
  *
  * Usage:
- *   ./start dev      &  scripts/check-links.mjs --base http://localhost:4321
- *   ./start preview  &  scripts/check-links.mjs --base http://localhost:4321
- *   scripts/check-links.mjs --base http://localhost:4321 --compare http://localhost:4322
+ *   ./start dev   (in another terminal)  &&  scripts/check-links.mjs
+ *   scripts/check-links.mjs --base http://localhost:3088 --compare http://localhost:4322
  *
- *   --base <url>      server to crawl (required)
+ *   --base <url>      server to crawl. Optional: with no --base and no --static
+ *                     this asks Astro's own lock file which server is running
+ *                     and crawls that, so it can never be aimed at a port
+ *                     nothing is listening on by accident.
  *   --compare <url>   second server; report links whose verdict DIFFERS
  *   --start <path>    seed path, repeatable (default: /)
  *   --body-only       ignore links outside <article> (default: check everything)
@@ -64,6 +66,8 @@
  * Exit 0 = every link resolved, 1 = at least one did not.
  */
 
+import { resolveServerBase, NO_SERVER_HELP } from './_astro-server.mjs';
+
 const args = process.argv.slice(2);
 const flag = (name, fallback = null) => {
   const i = args.indexOf(`--${name}`);
@@ -72,7 +76,13 @@ const flag = (name, fallback = null) => {
 const has = (name) => args.includes(`--${name}`);
 
 const STATIC_DIR = flag('static');
-const BASE = flag('base');
+/**
+ * With no --base, find the server rather than assuming a port. Astro's default
+ * is 4321 and this project's is not; a hardcoded default turns "you forgot to
+ * start the server" into a report of hundreds of broken links.
+ */
+const DETECTED = STATIC_DIR ? null : resolveServerBase(flag('base'));
+const BASE = DETECTED?.origin ?? flag('base');
 const COMPARE = flag('compare');
 const BODY_ONLY = has('body-only');
 const CHECK_ANCHORS = !has('no-anchors');
@@ -88,16 +98,18 @@ const JSON_OUT = has('json');
 const SEEDS = args.reduce((acc, a, i) => (a === '--start' ? [...acc, args[i + 1]] : acc), []);
 
 if (!BASE && !STATIC_DIR) {
-  console.error('check-links.mjs: --base <url> or --static <dir> is required.\n');
+  console.error('check-links.mjs: nothing to crawl.\n');
+  console.error(`${NO_SERVER_HELP}\n`);
   console.error('  The environment that SHIPS is a static host, and neither astro dev nor');
-  console.error('  astro preview reproduces it. Check that one first:');
+  console.error('  astro preview reproduces it. Check that one without any server at all:');
   console.error('    ./scripts/check-links.mjs --static astro-doc-code/dist --body-only\n');
-  console.error('  Start a server first, then point this at it:');
-  console.error('    ./start dev      & scripts/check-links.mjs --base http://localhost:4321');
-  console.error('    ./start preview  & scripts/check-links.mjs --base http://localhost:4321\n');
   console.error('  Two servers at once? --compare <url> reports only the links they DISAGREE on,');
   console.error('  which is the dev-vs-built trailing-slash question this script exists for.');
   process.exit(2);
+}
+
+if (DETECTED?.source && DETECTED.source !== 'flag') {
+  console.log(`# no --base given; crawling the running ${DETECTED.source} server at ${BASE} (pid ${DETECTED.pid})\n`);
 }
 
 // ── a stand-in for the deployed host ───────────────────────────────────────
@@ -317,7 +329,7 @@ const primary = await crawl(baseOrigin);
 // never opened — so the assertion is cheap and non-negotiable.
 const totalLinks = [...primary.results.values()].reduce((n, f) => n + f.length, 0);
 const fatal = [];
-if (primary.pages === 0) fatal.push(`no HTML pages reachable at ${BASE} — is the server running?`);
+if (primary.pages === 0) fatal.push(`no HTML pages reachable at ${baseOrigin} — is the server running?`);
 else if (totalLinks === 0) fatal.push(`${primary.pages} page(s) crawled but ZERO links found — the extractor is broken, this proves nothing`);
 
 const broken = [];

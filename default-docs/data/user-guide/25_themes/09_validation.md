@@ -61,9 +61,31 @@ extends: "@theme/b"
 extends: "@theme/a"
 ```
 
-Detected and rejected. **Error** — theme chain can't resolve.
+**Throws, in every environment** — dev server and production build alike. The message names the whole chain:
 
-### 6. Required variables are defined (or inheritable)
+```
+Circular theme inheritance: full-width → minimal → full-width.
+A theme cannot extend itself, directly or through its ancestors.
+Remove one of the "extends" values in the chain.
+```
+
+This one throws rather than logging because a cycle doesn't degrade the site, it exhausts the call stack. A dev-only warning would leave a production build crashing with a stack-depth error that names nothing.
+
+Chains are compared by **resolved path**, not by the reference string — the same theme is routinely written two ways (an absolute path from config, `@theme/<name>` from an `extends`), and a string comparison would miss the cycle. A diamond (two paths reaching one shared ancestor) is legal and is not reported.
+
+### 6. Reserved theme names
+
+A theme directory may not be called `default`:
+
+```
+default-docs/themes/default/theme.yaml   # ❌ error at startup
+```
+
+`@theme/default` always means the framework's built-in theme, and it's what nearly every user theme extends. If a directory could claim the name, every `extends: "@theme/default"` in the project would silently retarget — and for the directory itself it would resolve to itself, which is a cycle. The error fires whenever themes are resolved, not only when something references `default`, so the collision surfaces at startup rather than the first time someone selects it.
+
+Rename the directory and update `site.yaml`'s `theme` value plus any `extends` pointing at it.
+
+### 7. Required variables are defined (or inheritable)
 
 For each variable in `required_variables`:
 

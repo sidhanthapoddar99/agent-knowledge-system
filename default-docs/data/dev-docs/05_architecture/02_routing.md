@@ -333,6 +333,15 @@ export const RESERVED_BASE_URLS =
   ['artifacts', 'assets', 'content-assets', 'api', 'editor'] as const;
 ```
 
+> [!IMPORTANT]
+> **`api` and `editor` stay reserved even though they are absent from `dist/`.**
+> They are dev-only routes — injected by the dev-tools integration under
+> `command === 'dev'` and built by nothing (see
+> [20/01 development overview](../20_development/01_overview.md)). Finding no
+> `dist/editor/` and concluding the reservation is dead would be wrong twice
+> over: a section whose `base_url` normalized to `editor` would still be
+> shadowed in dev, which is where authors work, and the shadowing is silent.
+
 `validateRoutes()` is called from `loadSiteConfig()` (`config.ts:223-228`) and
 its errors are **thrown**, not collected — the same hard-stop discipline as the
 missing-theme throw and the version gate, and it runs *before* the config is

@@ -7,7 +7,7 @@
 
 <sub>Both version badges read live values — the **engine** from the latest release tag, the **plugin** from `plugin.json` on `main`. Neither is a number typed into this file, so neither can drift.</sub>
 
-A **knowledge + task system designed for AI consumers**, with human-readable docs as a first-class output — modular Astro layouts, YAML configuration, a folder-per-issue tracker, and live editing via Yjs CRDT. Ships its own Claude Code plugin (skills + the `agent-ks` CLI) so agents operate the whole system natively.
+A **knowledge + task system designed for AI consumers**, with human-readable docs as a first-class output — modular Astro layouts, YAML configuration, a folder-per-issue tracker, and live editing via Yjs CRDT. Self-contained **HTML artifacts** and **Mermaid / Graphviz / Excalidraw / draw.io** diagrams are first-class pages, rendered natively with no external service. Ships its own Claude Code plugin (skills + the `agent-ks` CLI) so agents operate the whole system natively.
 
 > Formerly *documentation-template* — that repo is retired and being archived (tracked in `2026-04-26-project-rebrand`). If you have an old checkout, point your remote here: `git remote set-url origin https://github.com/sidhanthapoddar99/agent-knowledge-system.git`.
 
@@ -24,6 +24,45 @@ Every issue is a folder of plain markdown in your repo. The site is how a human 
 The index groups issues by component and filters them by **lifecycle category** rather than by individual status — Active, In Progress, Review, Not Started, Closed — with subtask progress on every row.
 
 ![The issue index, grouped by component with per-row subtask progress](.github/media/issue-index.webp)
+
+## Artifacts and diagrams are pages, not attachments
+
+Two things a docs folder normally cannot hold — an interactive HTML report, and a diagram you can actually edit — are **first-class pages here**. Both follow the same rule as everything else: it is a file on disk with an `NN_` prefix, and the app renders it.
+
+### Artifacts — drop in an `.html` file, get a page
+
+An **artifact** is a self-contained HTML document: a report, a dashboard, an interactive chart, a design-system showcase. Give it an `NN_` prefix, put it in a docs section, and it appears in the sidebar with a URL like any markdown page — embedded in the content area, or opened full-page at its own `/artifacts/` route.
+
+**It inherits the site's theme.** The same file, the same commit — light and dark:
+
+| Light | Dark |
+|---|---|
+| ![An embedded HTML artifact rendered in the light theme](.github/media/artifact-embed-light.webp) | ![The same artifact in the dark theme, colours re-resolved rather than inverted](.github/media/artifact-embed-dark.webp) |
+
+The artifact reads the host theme's tokens, so it re-resolves its colours for a dark canvas instead of being filtered or inverted. Agents build these through the `agent-ks-artifacts` skill, which carries the token vocabulary and a verify gate.
+
+### Diagrams — four formats, rendered natively, no external service
+
+**Mermaid**, **Graphviz**, **Excalidraw** and **draw.io** all render in the browser from the source file. Nothing calls out to `mermaid.live`, `diagrams.net`, or anywhere else — the draw.io viewer is vendored, so a build has **zero third-party requests**.
+
+Each works two ways:
+
+```markdown
+![Request flow](./assets/request-flow.mermaid)   ← embeds it in a page
+[Request flow](./assets/request-flow.mermaid)    ← stays an ordinary link
+```
+
+```
+15_writing-content/20_examples/
+├── 05_mermaid-full-page.mmd          → its own page, sidebar entry, URL
+├── 06_graphviz-full-page.dot         → same
+├── 07_excalidraw-full-page.excalidraw → same
+└── 08_drawio-full-page.drawio        → same
+```
+
+A prefixed diagram file **is** a page — no markdown wrapper, no shortcode. Both routes honour dark mode, take part in the shared slug pool, and accept an optional `.meta.json` sidecar for the title.
+
+Written up in the user-guide: [Diagram Pages](https://github.com/sidhanthapoddar99/agent-knowledge-system/blob/main/default-docs/data/user-guide/15_writing-content/06_diagram-pages.md), [draw.io Diagrams](https://github.com/sidhanthapoddar99/agent-knowledge-system/blob/main/default-docs/data/user-guide/15_writing-content/07_drawio.md), [Artifact Pages](https://github.com/sidhanthapoddar99/agent-knowledge-system/blob/main/default-docs/data/user-guide/15_writing-content/08_artifact-pages.md).
 
 ## Quick start
 

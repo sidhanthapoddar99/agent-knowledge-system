@@ -21,6 +21,7 @@
 
 import { loadSiteConfig, loadNavbarConfig, loadFooterConfig, getFavicon, getTheme } from '@loaders/config';
 import { getThemeCSS, resolveThemeName } from '@loaders/theme';
+import { themeCssHref } from '../pages/theme.css';
 
 const isDev = import.meta.env.DEV;
 
@@ -40,10 +41,17 @@ if (themeOverride) {
 }
 
 // Note: We intentionally do NOT import @styles/index.css via Vite.
-// The <style id="theme-styles"> tag below injects all CSS (parent + child) in the
+// The <link id="theme-styles"> tag below pulls all CSS (parent + child) in the
 // correct cascade order. A Vite import would add the default theme CSS to the module
 // graph permanently, injecting it AFTER the theme-styles tag on every response —
 // overriding any child theme overrides. CSS edits require a full page reload in dev.
+//
+// The CSS is served from /theme.css rather than inlined. It is identical on
+// every page, so inlining put the same 65 KB in all 1,293 built pages and
+// re-sent it on each navigation; a stylesheet is fetched once and cached. The
+// tag stays in <head>, where a stylesheet blocks the first paint, so the
+// flash-free load is unchanged. `themeCSS` is still resolved here to hash it
+// into the URL — a theme switch or a CSS edit becomes a different URL.
 
 interface Props {
   title?: string;
@@ -58,8 +66,10 @@ const siteConfig = loadSiteConfig();
 const navbarConfig = loadNavbarConfig();
 const footerConfig = loadFooterConfig();
 
-// Load theme CSS (themeRef already computed above)
+// Load theme CSS (themeRef already computed above) — resolved for its hash, and
+// served to the browser by the /theme.css endpoint rather than inlined here.
 const themeCSS = getThemeCSS(themeRef);
+const themeCssUrl = themeCssHref(themeCSS, themeRef);
 
 const {
   title,
@@ -75,7 +85,7 @@ const faviconUrl = getFavicon();
 ---
 
 <!doctype html>
-<html lang="en" data-content-type={contentType} data-editor-path={isDev ? editorPath : undefined}>
+<html lang="en" data-content-type={contentType} data-editor-path={isDev ? editorPath : undefined} data-theme-css={themeCssUrl}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -102,8 +112,8 @@ const faviconUrl = getFavicon();
       rel="stylesheet"
     />
 
-    <!-- Theme CSS (dynamically injected based on site.yaml theme setting) -->
-    <style id="theme-styles" set:html={themeCSS}></style>
+    <!-- Theme CSS (resolved from site.yaml, served by src/pages/theme.css.ts) -->
+    <link rel="stylesheet" id="theme-styles" href={themeCssUrl} />
 
     <!-- Dark Mode Script (prevents flash) -->
     <script is:inline>

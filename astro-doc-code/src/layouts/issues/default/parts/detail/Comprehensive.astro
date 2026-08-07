@@ -61,10 +61,14 @@ if (subtaskTotal === 0) return null as any;
             id={`comprehensive-${panelKey}`}
           >
             <div class="issue-comprehensive__item-head">
+              {/* Read-only on a published site — see OverviewSubtasks.astro. */}
               <button
                 type="button"
                 class="issue-comprehensive__state"
-                aria-label={`Subtask status: ${s.status}. Click to cycle.`}
+                disabled={!import.meta.env.DEV}
+                aria-label={import.meta.env.DEV
+                  ? `Subtask status: ${s.status}. Click to cycle.`
+                  : `Subtask status: ${s.status}`}
                 data-state={s.status}
                 data-tip={STATUS_LABELS[s.status]}
                 data-tip-always

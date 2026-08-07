@@ -36,11 +36,34 @@ interface CacheEntry {
   syncedAt: string;
 }
 
-/** Per-tracker cache, keyed by absolute tracker path. */
-const cache = new Map<string, CacheEntry>();
+/**
+ * Both maps live on `globalThis`, not in module scope.
+ *
+ * Vite hands the plugin context and the SSR request context their own instance
+ * of this module, so a module-level `Map` is really two Maps and
+ * `invalidateIssueDateCache()` — called from the dev integration's git-ref
+ * watcher — cleared the copy the request path never reads. Same pattern as
+ * `paths.ts` and `cache.ts`; see the note in `issues.ts` for the reproduction.
+ */
+const DATES_CACHE_KEY = '__issue_dates_state__';
 
-/** Repo-root resolution per absolute path — small map, never invalidated. */
-const repoRootByPath = new Map<string, string | null>();
+interface DatesState {
+  /** Per-tracker cache, keyed by absolute tracker path. */
+  cache: Map<string, CacheEntry>;
+  /** Repo-root resolution per absolute path — small map, never invalidated. */
+  repoRootByPath: Map<string, string | null>;
+}
+
+function datesState(): DatesState {
+  const g = globalThis as any;
+  if (!g[DATES_CACHE_KEY]) {
+    g[DATES_CACHE_KEY] = {
+      cache: new Map<string, CacheEntry>(),
+      repoRootByPath: new Map<string, string | null>(),
+    };
+  }
+  return g[DATES_CACHE_KEY];
+}
 
 const FOLDER_PATTERN = /^\d{4}-\d{2}-\d{2}-[a-z0-9][a-z0-9-]*$/;
 const RECORD_SEP = '§'; // §
@@ -55,7 +78,7 @@ const RECORD_SEP = '§'; // §
  */
 export function getIssueDate(trackerRoot: string, issueSlug: string): string | null {
   ensureFresh(trackerRoot);
-  const entry = cache.get(trackerRoot);
+  const entry = datesState().cache.get(trackerRoot);
   return entry?.issues.get(issueSlug) ?? null;
 }
 
@@ -65,7 +88,7 @@ export function getIssueDate(trackerRoot: string, issueSlug: string): string | n
  */
 export function getAllIssueDates(trackerRoot: string): Map<string, string> {
   ensureFresh(trackerRoot);
-  const entry = cache.get(trackerRoot);
+  const entry = datesState().cache.get(trackerRoot);
   return entry ? new Map(entry.issues) : new Map();
 }
 
@@ -74,6 +97,7 @@ export function getAllIssueDates(trackerRoot: string): Map<string, string> {
  * when a `.git/HEAD` watcher fires.
  */
 export function invalidateIssueDateCache(trackerRoot?: string): void {
+  const { cache } = datesState();
   if (trackerRoot) cache.delete(trackerRoot);
   else cache.clear();
 }
@@ -108,6 +132,7 @@ function ensureFresh(trackerRoot: string): void {
   // the entry, and the next read here lands in the cold path and rebuilds.
   // Reads never compare against HEAD; that kept this loader's hot path at
   // a Map.get() instead of a sync `git rev-parse` per call.
+  const { cache } = datesState();
   if (cache.has(trackerRoot)) return;
 
   const repoRoot = findRepoRoot(trackerRoot);
@@ -121,7 +146,7 @@ function ensureFresh(trackerRoot: string): void {
 
 function fullBuild(trackerRoot: string, repoRoot: string, headSha: string): void {
   const issues = walkLog(repoRoot, trackerRoot);
-  cache.set(trackerRoot, { issues, syncedAt: headSha });
+  datesState().cache.set(trackerRoot, { issues, syncedAt: headSha });
 }
 
 /** Walk `git log` and return per-issue most-recent-commit-date map. */
@@ -180,6 +205,7 @@ function issueSlugFromRepoPath(repoPath: string, trackerRel: string): string | n
 // ============================================================================
 
 function findRepoRoot(startDir: string): string | null {
+  const { repoRootByPath } = datesState();
   if (repoRootByPath.has(startDir)) return repoRootByPath.get(startDir)!;
   let dir = startDir;
   while (true) {

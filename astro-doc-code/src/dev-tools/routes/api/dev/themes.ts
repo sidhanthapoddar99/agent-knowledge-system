@@ -6,8 +6,8 @@
  */
 
 import type { APIRoute } from 'astro';
-import { getAvailableThemes, loadThemeConfig, resolveThemeName } from '../../../loaders/theme';
-import { getTheme } from '../../../loaders/config';
+import { getAvailableThemes, loadThemeConfig, resolveThemeName } from '@loaders/theme';
+import { getTheme } from '@loaders/config';
 
 export const GET: APIRoute = async () => {
   // Only available in dev mode

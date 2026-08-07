@@ -21,6 +21,24 @@ files:
 
 # Required CSS variables that themes extending this must define
 # (or inherit from this theme)
+#
+# THE RULE THIS LIST FOLLOWS, so it can be checked rather than argued about:
+# a variable belongs here if a SHIPPED LAYOUT reads it. Nothing else qualifies.
+#
+# That is not a style preference — it is what the list is for. A `merge` theme
+# inherits everything and never notices a gap. A `replace` theme skips the parent
+# entirely, so anything missing from this list is simply gone, and validation
+# stays quiet because validation only checks this list. So the contract has to
+# name exactly what the layouts reach for.
+#
+# The corollary is the part people get wrong: DO NOT complete a scale here for
+# tidiness. `--font-weight-normal` is required and `--font-weight-bold` is not,
+# because layouts read one and write the other as a literal. Adding the other
+# three would put an obligation on every theme author that buys nothing. The
+# theme is free to declare as many as it likes — that is its palette, not its
+# contract.
+#
+# `scripts/check-theme-contract.mjs` gate B enforces exactly this, both ways.
 required_variables:
   colors:
     - --color-bg-primary
@@ -73,17 +91,35 @@ required_variables:
     - --content-h5
     - --content-h6
     - --content-code
+    # Read by layouts directly, so a replace-mode theme must supply them.
+    - --font-weight-normal
+    # Display tier — marketing surfaces only (home hero, countdown), but those
+    # layouts ship, so a theme that omits these breaks the landing page.
+    - --display-sm
+    - --display-md
   elements:
     - --spacing-xs
     - --spacing-sm
     - --spacing-md
     - --spacing-lg
     - --spacing-xl
+    - --spacing-2xl
+    - --spacing-3xl
     - --border-radius-sm
     - --border-radius-md
     - --border-radius-lg
+    - --border-radius-full
     - --shadow-sm
     - --shadow-md
     - --shadow-lg
+    - --shadow-xl
     - --transition-fast
     - --transition-normal
+    # Layout dimensions. These carry structure rather than style: the sidebar,
+    # navbar and outline widths are read by the docs layout to size its grid, so
+    # a theme that drops them collapses the page rather than restyling it.
+    - --sidebar-width
+    - --navbar-height
+    - --outline-width
+    - --max-width-primary
+    - --max-width-secondary

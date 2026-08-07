@@ -22,8 +22,16 @@ everything else consumes them:
         │        └── 050 unify the tracker + blog onto one resolver
         │
         ├── 040 base_url vs folder name           (an assumption the map must not inherit)
-        └── 060 the link checkers, once the URLs are the renderer's
+        ├── 060 the link checkers, once the URLs are the renderer's
+        └── 100 unify the ROUTE resolvers onto the same map
 ```
+
+**100 is the routing-side twin of 020**, and it exists because the map this group
+builds holds the knowledge `static-paths.ts` already derives — so landing the map
+without it means three places produce a URL instead of two. It came from
+[stage 60 of the Astro 7 issue](../../../2026-08-07-astro-7-and-load-time-refactor/plans/01_implementation/60_routing-parity.md),
+which measured the two route resolvers as agreeing on all 1285 URLs and correctly
+declined to merge them for their own sake. **Do not start it before 010.**
 
 # What lands elsewhere
 

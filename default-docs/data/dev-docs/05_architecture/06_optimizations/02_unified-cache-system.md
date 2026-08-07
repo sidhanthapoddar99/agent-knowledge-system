@@ -9,9 +9,32 @@ description: Performance optimization with unified caching and selective invalid
 
 The framework uses a unified cache manager that provides:
 - **Single cache system** for content, sidebar, theme, settings, and config
+- **Dependency invalidation** — an entry is dropped when any file it was built from changes
 - **Selective invalidation** based on file type (no unnecessary cache clears)
 - **HMR integration** with automatic cache invalidation on file changes
 - **No hash computation overhead** - trusts HMR for change detection
+
+### Why there are two invalidation mechanisms
+
+They answer different questions and neither subsumes the other.
+
+**By file type** asks *what kind of file just changed, and which caches could that affect?* A `.md` edit clears content and sidebar wholesale, because one markdown file changes the sidebar entries, pagination and neighbour links of pages that never reference it. Tracking that fan-out precisely would cost more than clearing it.
+
+**By dependency** asks *which entries were built from this exact file?* This is the only mechanism that can catch a changed file which is not itself a page:
+
+- a theme stylesheet, which produces the CSS every page links
+- a file spliced into a page by a `[[path]]` embed
+
+For those, the consuming page's own mtime never moves. Nothing in the type switch can help, because the type switch keys off the changed file — and an embedded `.svg` is an `asset`, a type that deliberately clears nothing since assets normally go straight to the browser.
+
+**The failure mode is silence.** An entry that omits a real dependency serves the previous bytes, a manual reload does not fix it, and nothing on the page says so — you edit a diagram, refresh, see the old picture, and conclude your edit was wrong. So the dev log reports the two counts separately:
+
+```
+[cache] File changed (theme): themes/full-width/element.css
+[cache] Invalidated: theme (1 by dependency)
+```
+
+A dependency edit that invalidates nothing looks exactly like one with no dependents, which is why the count is printed rather than inferred.
 
 ---
 
@@ -155,7 +178,7 @@ interface ContentSettings {
 The dev toolbar integration watches all configured directories:
 
 ```typescript
-// src/dev-toolbar/integration.ts
+// src/dev-tools/integration.ts
 
 // Paths from site.yaml paths: section (resolved at config load time)
 const watchPaths = {

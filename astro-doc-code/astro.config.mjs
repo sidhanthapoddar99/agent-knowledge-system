@@ -1,6 +1,5 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import mdx from '@astrojs/mdx';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import fs from 'fs';
@@ -96,8 +95,12 @@ export default defineConfig({
     host: HOST === 'true' || HOST === '1',
     allowedHosts: siteConfig?.server?.allowedHosts ?? true,
   },
+  // No @astrojs/mdx: nothing here is MDX. There are no `.mdx` files, and page
+  // markdown is rendered by this project's own `marked` pipeline
+  // (src/parsers/), not by Astro's content pipeline. The `mdx` spellings that
+  // remain in globs and regexes are tolerated extensions in our own matchers
+  // and never reached Astro's integration.
   integrations: [
-    mdx(),
     devToolbarIntegration(),
   ],
   markdown: {

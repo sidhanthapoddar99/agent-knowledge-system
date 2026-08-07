@@ -1,11 +1,26 @@
 /**
  * Unified Cache Manager
  *
- * Single source of truth for all caching with:
- * - mtime-based fast change detection (no hash computation)
- * - File type routing for selective invalidation
- * - Dependency tracking between caches
- * - Unified statistics and monitoring
+ * Single source of truth for the loaders' in-memory caches.
+ *
+ * HOW INVALIDATION ACTUALLY WORKS, because the two halves look redundant and
+ * are not:
+ *
+ *  1. DEPENDENCY INVALIDATION. An entry records the files it was built from
+ *     (`deps`). When one of them changes, that entry is dropped. This is the
+ *     only mechanism that can catch a file which is not itself a page — a theme
+ *     stylesheet, or a file spliced into a page by a `[[path]]` embed. The
+ *     page's own mtime never moves when such a file is edited, so nothing else
+ *     has any reason to reparse it.
+ *
+ *  2. TYPE-BASED INVALIDATION. A change to a `.md` file clears the whole
+ *     content and sidebar caches, because a single markdown edit can change
+ *     the sidebar, pagination and neighbour links of pages that do not
+ *     reference it. Coarse on purpose: cheaper than tracking that fan-out.
+ *
+ * Both run on every change, (1) first. Read is deliberately NOT validated:
+ * `getCached` trusts the invalidation above rather than stat-ing dependencies
+ * per access, which measured 10-15ms of overhead.
  */
 
 import fs from 'fs';
@@ -32,8 +47,12 @@ export interface CacheStats {
 
 export interface CacheEntry<T> {
   data: T;
-  deps: string[];      // File paths this entry depends on
-  mtimes: Map<string, number>;  // mtime when cached
+  /**
+   * Absolute paths this entry was built from. Read by `invalidateByDep`, which
+   * runs on every watched change — so adding a path here is what makes an edit
+   * to a non-page file bust the pages that consume it.
+   */
+  deps: string[];
   created: number;
 }
 
@@ -149,42 +168,6 @@ export function getFileMtime(filePath: string): number {
   }
 }
 
-/**
- * Check if file has changed since last check
- */
-export function hasFileChanged(filePath: string): boolean {
-  const state = getState();
-  const currentMtime = getFileMtime(filePath);
-  const cached = state.fileRegistry.get(filePath);
-
-  if (!cached || cached.mtime !== currentMtime) {
-    // Update registry
-    state.fileRegistry.set(filePath, {
-      path: filePath,
-      mtime: currentMtime,
-      type: detectFileType(filePath, state.watchPaths),
-    });
-    return true;
-  }
-
-  return false;
-}
-
-/**
- * Check if any dependency has changed
- */
-export function haveDepsChanged(deps: string[], mtimes: Map<string, number>): boolean {
-  for (const dep of deps) {
-    const currentMtime = getFileMtime(dep);
-    const cachedMtime = mtimes.get(dep);
-
-    if (cachedMtime === undefined || cachedMtime !== currentMtime) {
-      return true;
-    }
-  }
-  return false;
-}
-
 // ============================================
 // Cache Operations
 // ============================================
@@ -220,10 +203,11 @@ export function getCached<T>(
 }
 
 /**
- * Set cache entry
+ * Set cache entry.
  *
- * Note: deps are stored for reference but not used for validation.
- * HMR handles invalidation via onFileChange/onFileAdd/onFileDelete.
+ * `deps` is load-bearing: every path passed here is a path whose edit will drop
+ * this entry, via `invalidateByDep` on the next watched change. A file the entry
+ * was genuinely built from and does not list here goes stale silently.
  */
 export function setCache<T>(
   cacheName: CacheName,
@@ -237,31 +221,8 @@ export function setCache<T>(
   cache.set(key, {
     data,
     deps,
-    mtimes: new Map(), // Not used - HMR handles invalidation
     created: Date.now(),
   });
-}
-
-/**
- * Invalidate specific cache entries by key pattern
- */
-export function invalidateByPattern(cacheName: CacheName, pattern: string | RegExp): number {
-  const state = getState();
-  const cache = state[cacheName] as Map<string, CacheEntry<any>>;
-  const stats = state.stats[cacheName];
-
-  let count = 0;
-  const regex = typeof pattern === 'string' ? new RegExp(pattern) : pattern;
-
-  for (const key of cache.keys()) {
-    if (regex.test(key)) {
-      cache.delete(key);
-      count++;
-    }
-  }
-
-  stats.invalidations += count;
-  return count;
 }
 
 /**
@@ -323,6 +284,7 @@ export function clearAllCaches(): void {
 export function onFileChange(filePath: string): {
   type: FileType;
   invalidated: CacheName[];
+  byDep: number;
 } {
   const state = getState();
   const fileType = detectFileType(filePath, state.watchPaths);
@@ -334,6 +296,21 @@ export function onFileChange(filePath: string): {
     mtime: getFileMtime(filePath),
     type: fileType,
   });
+
+  // Dependency invalidation runs FIRST, and for every file type.
+  //
+  // It is the only thing that catches a file which is not itself a page — a
+  // theme stylesheet, or a file a `[[path]]` embed splices into a page. The
+  // type switch below cannot: it keys off what the CHANGED file is, and an
+  // embedded `.svg` is an 'asset', a type that deliberately clears nothing
+  // because assets are normally served straight to the browser. So without
+  // this, editing an embedded asset leaves the page that inlined it serving
+  // the previous bytes until the server restarts.
+  const depCounts = invalidateByDep(filePath);
+  const byDep = Object.values(depCounts).reduce((n, c) => n + c, 0);
+  for (const [name, count] of Object.entries(depCounts)) {
+    if (count > 0) invalidated.push(name as CacheName);
+  }
 
   switch (fileType) {
     case 'content':
@@ -388,7 +365,7 @@ export function onFileChange(filePath: string): {
       invalidated.push('content', 'sidebar');
   }
 
-  return { type: fileType, invalidated };
+  return { type: fileType, invalidated: [...new Set(invalidated)], byDep };
 }
 
 /**
@@ -397,6 +374,7 @@ export function onFileChange(filePath: string): {
 export function onFileAdd(filePath: string): {
   type: FileType;
   invalidated: CacheName[];
+  byDep: number;
 } {
   // Same logic as change - new file affects same caches
   return onFileChange(filePath);
@@ -408,6 +386,7 @@ export function onFileAdd(filePath: string): {
 export function onFileDelete(filePath: string): {
   type: FileType;
   invalidated: CacheName[];
+  byDep: number;
 } {
   const state = getState();
   const fileType = detectFileType(filePath, state.watchPaths);
@@ -508,8 +487,7 @@ export default {
   // Utilities
   detectFileType,
   getFileMtime,
-  hasFileChanged,
-  haveDepsChanged,
+  invalidateByDep,
   setWatchPaths,
 
   // Stats

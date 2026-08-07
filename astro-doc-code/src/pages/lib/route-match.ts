@@ -166,7 +166,10 @@ export async function matchServerRoute(
     }
 
     if (pageConfig.type === 'issues') {
-      const loaded = await loadIssues(common.dataPath);
+      // Meta-only: this branch needs the vocabulary and the issue LIST. Every
+      // rendered body it goes on to serve comes from `loadIssue` below, which
+      // reads that one folder.
+      const loaded = await loadIssues(common.dataPath, { metaOnly: true });
       if (slug === baseUrl) {
         return {
           kind: 'render',

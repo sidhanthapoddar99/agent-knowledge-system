@@ -47,10 +47,17 @@ const pct = (n: number) => (subtaskTotal ? (n / subtaskTotal) * 100 : 0);
         data-file={s.filePath}
         data-state={s.status}
       >
+        {/* Cycling a status writes to settings.json through a dev-only endpoint,
+            so on a published site this is a read-only status glyph, not a
+            control. The glyph itself stays either way — a subtask's status is
+            content, and hiding it would remove the main thing the page says. */}
         <button
           type="button"
           class="issue-overview-subtasks__state"
-          aria-label={`Subtask state: ${s.status}. Click to cycle.`}
+          disabled={!import.meta.env.DEV}
+          aria-label={import.meta.env.DEV
+            ? `Subtask state: ${s.status}. Click to cycle.`
+            : `Subtask state: ${s.status}`}
           data-state={s.status}
           data-tip={STATUS_LABELS[s.status]}
           data-tip-always

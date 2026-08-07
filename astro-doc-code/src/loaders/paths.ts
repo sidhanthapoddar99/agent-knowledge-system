@@ -20,11 +20,42 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-// __dirname = <repo>/astro-doc-code/src/loaders
+
+/**
+ * The framework root — the directory that owns `src/`, i.e. `astro-doc-code/`.
+ *
+ * Found by walking UP from this module looking for the marker, rather than by
+ * counting directory levels. This module runs from two very different places:
+ * from source at `astro-doc-code/src/loaders/`, and from whatever path the
+ * bundler emits during a build. Counting levels ties a source-tree fact to a
+ * bundler layout detail, and that tie has already broken once — Astro 5 emitted
+ * chunks at `dist/chunks/`, where `../..` happened to land on the framework
+ * root; Astro 7 emits them at `dist/.prerender/chunks/`, one level deeper, so
+ * the same expression resolved to `dist/` and every theme lookup went looking
+ * for `dist/src/styles`.
+ *
+ * `src/styles/theme.yaml` is the marker because it is the one file the
+ * framework root must contain for anything here to work at all — it is the
+ * theme variable contract every layout is checked against.
+ */
+function findFrameworkRoot(startDir: string): string {
+  let dir = startDir;
+  for (let i = 0; i < 12; i++) {
+    if (fs.existsSync(path.join(dir, 'src', 'styles', 'theme.yaml'))) return dir;
+    const parent = path.dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  // Nothing found: fall back to the historical guess so the failure surfaces as
+  // the existing "theme directory not found" error naming a real-looking path,
+  // rather than as an unrelated crash here.
+  return path.resolve(startDir, '../..');
+}
+
+const frameworkRoot = findFrameworkRoot(__dirname);
 //   frameworkRoot = <repo>/astro-doc-code (where src/ lives)
 //   projectRoot   = <repo>/               (where default-docs/, .env live)
-const frameworkRoot = path.resolve(__dirname, '../..');
-const projectRoot = path.resolve(__dirname, '../../..');
+const projectRoot = path.resolve(frameworkRoot, '..');
 
 // ============================================
 // Env helper

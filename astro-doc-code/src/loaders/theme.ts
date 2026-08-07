@@ -35,6 +35,39 @@ export { clearThemeCache } from './cache-manager';
  *
  * Used at config load time to resolve theme references once.
  */
+/**
+ * Theme names the framework owns. A user theme directory may not use one.
+ *
+ * `default` is reserved because `@theme/default` is the documented reference to
+ * the built-in theme, and every user theme extends it. If a user directory could
+ * claim the name, `extends: "@theme/default"` would silently retarget for every
+ * other theme — and for a theme named `default` it would resolve to itself.
+ */
+const RESERVED_THEME_NAMES = new Set(['default']);
+
+/**
+ * Reject a user theme directory that claims a framework-owned name.
+ *
+ * Checked whenever a theme is resolved by name, not only when the reserved name
+ * is the one being asked for — so the collision surfaces the moment the site
+ * loads rather than the first time somebody references it.
+ */
+function assertNoReservedThemeDirectory(themeDirs: string[]): void {
+  for (const dir of themeDirs) {
+    for (const reserved of RESERVED_THEME_NAMES) {
+      const candidate = path.join(dir, reserved);
+      if (fs.existsSync(path.join(candidate, 'theme.yaml'))) {
+        throw new Error(
+          `Theme directory "${candidate}" uses the reserved name "${reserved}". ` +
+          `"@theme/${reserved}" always refers to the framework's built-in theme, which every ` +
+          `user theme extends — a user directory cannot claim it. Rename the directory and ` +
+          `update the "theme" value in site.yaml (and any "extends" pointing at it).`
+        );
+      }
+    }
+  }
+}
+
 export function resolveThemeName(name: string): string {
   // Absolute path — already resolved
   if (path.isAbsolute(name)) {
@@ -53,13 +86,15 @@ export function resolveThemeName(name: string): string {
     return resolveAliasPath(name);
   }
 
+  const themeDirs = getThemePaths();
+  assertNoReservedThemeDirectory(themeDirs);
+
   // "default" → built-in styles directory
   if (themeName === 'default') {
     return paths.styles;
   }
 
   // Scan theme-category directories for a matching subdirectory
-  const themeDirs = getThemePaths();
   for (const dir of themeDirs) {
     const candidate = path.join(dir, themeName);
     if (fs.existsSync(candidate)) {
@@ -202,6 +237,60 @@ export function loadThemeCSS(
 }
 
 /**
+ * Walk a theme's `extends` chain and return the chain if it closes on itself.
+ *
+ * Comparison is by **resolved absolute path**, not by the reference string: the
+ * same theme is routinely named two ways (an absolute path from config load,
+ * `@theme/<name>` from an `extends`), and a string comparison misses the cycle.
+ *
+ * `resolve` and `readManifest` are injected so the algorithm can be exercised
+ * against an in-memory theme graph, with no disk and no site config. The loader
+ * passes the real pair.
+ *
+ * @returns The chain of references ending in the repeat, or null if acyclic.
+ *          An unresolvable or unreadable parent returns null — that is a
+ *          different error, reported elsewhere, and not this function's to claim.
+ */
+export function findExtendsCycle(
+  startPath: string,
+  startManifest: ThemeManifest,
+  resolve: (ref: string) => string = (ref) =>
+    path.isAbsolute(ref) ? ref : resolveThemeAlias(ref).path,
+  readManifest: (resolvedPath: string) => ThemeManifest | null = loadThemeManifest
+): string[] | null {
+  if (!startManifest.extends) return null;
+
+  const chain: string[] = [startPath];
+  const seen = new Set<string>([startPath]);
+  let current: string | null | undefined = startManifest.extends;
+
+  while (current) {
+    chain.push(current);
+
+    let currentPath: string;
+    try {
+      currentPath = resolve(current);
+    } catch {
+      return null; // unresolvable parent — a missing-theme error, not a cycle
+    }
+
+    if (seen.has(currentPath)) return chain;
+    seen.add(currentPath);
+
+    const parent = readManifest(currentPath);
+    if (!parent) return null; // missing/invalid manifest — reported by the caller
+    current = parent.extends;
+  }
+
+  return null;
+}
+
+/** Render an extends chain as `a → b → a` for an error message. */
+function formatCycle(chain: string[]): string {
+  return chain.map((ref) => path.basename(ref) || ref).join(' → ');
+}
+
+/**
  * Validate theme structure and required variables
  *
  * @param themePath - Absolute path to theme directory
@@ -264,26 +353,15 @@ export function validateTheme(
     }
   }
 
-  // Check for circular extends
-  if (manifest.extends) {
-    const visited = new Set<string>();
-    let current: string | null | undefined = manifest.extends;
-
-    while (current) {
-      if (visited.has(current)) {
-        errors.push({
-          type: 'circular-extends',
-          message: `Circular theme inheritance detected: ${current}`,
-          suggestion: 'Remove the circular extends reference',
-        });
-        break;
-      }
-      visited.add(current);
-
-      const resolved = resolveThemeAlias(current);
-      const parentManifest = loadThemeManifest(resolved.path);
-      current = parentManifest?.extends;
-    }
+  // Check for circular extends — same detector the loader throws on, so the
+  // reported error and the enforced error can never disagree.
+  const cycle = findExtendsCycle(themePath, manifest);
+  if (cycle) {
+    errors.push({
+      type: 'circular-extends',
+      message: `Circular theme inheritance detected: ${formatCycle(cycle)}`,
+      suggestion: 'Remove the circular extends reference',
+    });
   }
 
   return {
@@ -326,6 +404,18 @@ export function loadThemeConfig(themeRef: string): ThemeConfig {
     throw new Error(
       `Theme manifest (theme.yaml) not found or invalid in: "${resolved.path}" (from theme ref "${themeRef}"). ` +
       `Every theme must have a theme.yaml with name, version, and files fields.`
+    );
+  }
+
+  // Circular `extends` — checked in EVERY environment, not just DEV. A cycle
+  // does not degrade the build, it exhausts the stack, so a production build
+  // must fail with a readable message rather than crash.
+  const cycle = findExtendsCycle(resolved.path, manifest);
+  if (cycle) {
+    throw new Error(
+      `Circular theme inheritance: ${formatCycle(cycle)}. ` +
+      `A theme cannot extend itself, directly or through its ancestors. ` +
+      `Remove one of the "extends" values in the chain.`
     );
   }
 
@@ -374,6 +464,33 @@ function getCombinedCSSCache(): Map<string, string> {
   return (globalThis as any)[COMBINED_CSS_CACHE_KEY];
 }
 
+// Theme refs whose CSS is mid-assembly, so re-entering one is provably a cycle.
+//
+// `loadThemeConfig` already throws on a cycle, and it runs before any recursion
+// here — but it returns early on a cache hit, and that early return skips its
+// check. This set closes that hole: the recursion below cannot loop regardless
+// of cache state.
+const RESOLVING_CSS_KEY = '__theme_css_resolving__';
+
+function getResolvingSet(): Set<string> {
+  if (!(globalThis as any)[RESOLVING_CSS_KEY]) {
+    (globalThis as any)[RESOLVING_CSS_KEY] = new Set<string>();
+  }
+  return (globalThis as any)[RESOLVING_CSS_KEY];
+}
+
+function enterThemeCSS(themeRef: string): void {
+  const resolving = getResolvingSet();
+  if (resolving.has(themeRef)) {
+    throw new Error(
+      `Circular theme inheritance: "${themeRef}" extends itself through its ancestors ` +
+      `(chain in progress: ${[...resolving].map((r) => path.basename(r) || r).join(' → ')}). ` +
+      `Remove one of the "extends" values in the chain.`
+    );
+  }
+  resolving.add(themeRef);
+}
+
 /**
  * Get combined theme CSS for injection (handles inheritance)
  * Result is cached to avoid rebuilding on every call.
@@ -388,41 +505,46 @@ export function getThemeCSS(themeRef: string): string {
     return cssCache.get(themeRef)!;
   }
 
-  const theme = loadThemeConfig(themeRef);
-  const overrideMode = theme.manifest.override_mode || 'merge';
+  enterThemeCSS(themeRef);
+  try {
+    const theme = loadThemeConfig(themeRef);
+    const overrideMode = theme.manifest.override_mode || 'merge';
 
-  let css = '';
+    let css = '';
 
-  if (theme.manifest.extends) {
-    switch (overrideMode) {
-      case 'replace':
-        // Skip parent entirely — child is standalone
-        break;
+    if (theme.manifest.extends) {
+      switch (overrideMode) {
+        case 'replace':
+          // Skip parent entirely — child is standalone
+          break;
 
-      case 'override': {
-        // Load parent chain but skip files that the child provides
-        const childFileNames = new Set(theme.cssPerFile.keys());
-        css += getThemeCSSWithSkip(theme.manifest.extends, childFileNames);
-        css += '\n/* --- Child Theme Overrides --- */\n\n';
-        break;
+        case 'override': {
+          // Load parent chain but skip files that the child provides
+          const childFileNames = new Set(theme.cssPerFile.keys());
+          css += getThemeCSSWithSkip(theme.manifest.extends, childFileNames);
+          css += '\n/* --- Child Theme Overrides --- */\n\n';
+          break;
+        }
+
+        case 'merge':
+        default:
+          // Current behavior: parent CSS loaded first, child appended
+          css += getThemeCSS(theme.manifest.extends);
+          css += '\n/* --- Child Theme Overrides --- */\n\n';
+          break;
       }
-
-      case 'merge':
-      default:
-        // Current behavior: parent CSS loaded first, child appended
-        css += getThemeCSS(theme.manifest.extends);
-        css += '\n/* --- Child Theme Overrides --- */\n\n';
-        break;
     }
+
+    // Then add this theme's CSS
+    css += theme.css;
+
+    // Cache the combined result
+    cssCache.set(themeRef, css);
+
+    return css;
+  } finally {
+    getResolvingSet().delete(themeRef);
   }
-
-  // Then add this theme's CSS
-  css += theme.css;
-
-  // Cache the combined result
-  cssCache.set(themeRef, css);
-
-  return css;
 }
 
 /**
@@ -434,37 +556,42 @@ export function getThemeCSS(themeRef: string): string {
  * @returns CSS string with skipped files excluded
  */
 function getThemeCSSWithSkip(themeRef: string, skipFiles: Set<string>): string {
-  const theme = loadThemeConfig(themeRef);
+  enterThemeCSS(themeRef);
+  try {
+    const theme = loadThemeConfig(themeRef);
 
-  let css = '';
+    let css = '';
 
-  // Recurse into grandparent if present (propagate skip set)
-  if (theme.manifest.extends) {
-    const parentMode = theme.manifest.override_mode || 'merge';
+    // Recurse into grandparent if present (propagate skip set)
+    if (theme.manifest.extends) {
+      const parentMode = theme.manifest.override_mode || 'merge';
 
-    if (parentMode === 'replace') {
-      // Parent itself is standalone — don't load its parent
-    } else if (parentMode === 'override') {
-      // Parent also overrides its own parent — merge skip sets
-      const combinedSkip = new Set([...skipFiles, ...theme.cssPerFile.keys()]);
-      css += getThemeCSSWithSkip(theme.manifest.extends, combinedSkip);
-      css += '\n/* --- Child Theme Overrides --- */\n\n';
-    } else {
-      // Parent uses merge — still apply our skip set up the chain
-      css += getThemeCSSWithSkip(theme.manifest.extends, skipFiles);
-      css += '\n/* --- Child Theme Overrides --- */\n\n';
+      if (parentMode === 'replace') {
+        // Parent itself is standalone — don't load its parent
+      } else if (parentMode === 'override') {
+        // Parent also overrides its own parent — merge skip sets
+        const combinedSkip = new Set([...skipFiles, ...theme.cssPerFile.keys()]);
+        css += getThemeCSSWithSkip(theme.manifest.extends, combinedSkip);
+        css += '\n/* --- Child Theme Overrides --- */\n\n';
+      } else {
+        // Parent uses merge — still apply our skip set up the chain
+        css += getThemeCSSWithSkip(theme.manifest.extends, skipFiles);
+        css += '\n/* --- Child Theme Overrides --- */\n\n';
+      }
     }
-  }
 
-  // Add this theme's CSS, skipping files in the skip set
-  css += `/* Theme: ${theme.manifest.name} v${theme.manifest.version} */\n\n`;
-  for (const [filename, fileCSS] of theme.cssPerFile) {
-    if (!skipFiles.has(filename)) {
-      css += fileCSS;
+    // Add this theme's CSS, skipping files in the skip set
+    css += `/* Theme: ${theme.manifest.name} v${theme.manifest.version} */\n\n`;
+    for (const [filename, fileCSS] of theme.cssPerFile) {
+      if (!skipFiles.has(filename)) {
+        css += fileCSS;
+      }
     }
-  }
 
-  return css;
+    return css;
+  } finally {
+    getResolvingSet().delete(themeRef);
+  }
 }
 
 /**

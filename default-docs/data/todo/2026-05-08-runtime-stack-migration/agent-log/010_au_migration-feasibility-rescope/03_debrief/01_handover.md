@@ -54,7 +54,15 @@ disagreement swings the dev-tools estimate by about three weeks.**
 ## 3 · Ten defects in the current code
 
 Found while auditing the current system to price a rewrite. All are live today and none
-waits on a migration decision. Proposed homes are suggestions, not filings.
+waits on a migration decision.
+
+> **Filed 2026-08-07 — every row below now lives in
+> [the Astro 7 and load-time refactor issue](../../../../2026-08-07-astro-7-and-load-time-refactor/issue.md).**
+> They were pulled into one issue rather than scattered across the six homes proposed here,
+> because most of them touch the same files as the Astro 5 → 7 upgrade and several are
+> prerequisites for it. The "proposed home" column is kept as the record of where each one
+> would otherwise have gone — check that issue before working any of them there, or the
+> work gets done twice.
 
 | Defect | Severity | Proposed home |
 |---|---|---|

@@ -158,15 +158,23 @@ active theme — feed it the surfaces to validate a chart palette against. The n
 - **Borders** `--color-border-default` / `-light`
 - **Brand** `--color-brand-primary` / `-secondary`
 - **Status** `--color-success` / `-warning` / `-error` / `-info`
+- **Issue status** `--status-open` / `-blocked` / `-in-progress` / `-input-needed` /
+  `-review` / `-done` / `-dropped` — one per value of the tracker's fixed
+  seven-status vocabulary. Colours are theme-owned; the vocabulary is not.
 - **Type — semantic UI** `--ui-text-micro` / `-body` / `-title`; **content**
   `--content-body` / `-h1`…`-h6` / `-code`. Consume these, not the primitive
-  `--font-size-*` scale. **Display** `--display-sm` / `-md` / `-lg` (marketing
-  surfaces only) are default-theme extras, not part of the required contract.
+  `--font-size-*` scale. **Display** `--display-sm` / `-md` (marketing surfaces
+  only) are on the contract; `--display-lg` is a default-theme extra.
 - **Font family / rhythm** `--font-family-base` / `-mono`; `--line-height-base`
-- **Spacing** `--spacing-xs` / `-sm` / `-md` / `-lg` / `-xl`
-- **Radius** `--border-radius-sm` / `-md` / `-lg` (`--border-radius-full` for pills
-  is a default-theme extra, not part of the required contract)
-- **Shadow / motion** `--shadow-sm` / `-md` / `-lg`; `--transition-fast` / `-normal`
+- **Weight** `--font-weight-normal` (the rest of the weight scale is a
+  default-theme extra, not part of the required contract)
+- **Spacing** `--spacing-xs` / `-sm` / `-md` / `-lg` / `-xl` / `-2xl` / `-3xl`
+- **Radius** `--border-radius-sm` / `-md` / `-lg` / `-full`
+- **Shadow / motion** `--shadow-sm` / `-md` / `-lg` / `-xl`; `--transition-fast` /
+  `-normal`
+- **Layout dimensions** `--sidebar-width` / `--navbar-height` / `--outline-width` /
+  `--max-width-primary` / `--max-width-secondary` — structural, read by the docs
+  layout to size its grid
 
 > **Coupling:** this list mirrors `theme.yaml → required_variables`. If those change
 > (add / rename / remove), this section must change in the same edit — repo source

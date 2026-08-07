@@ -131,14 +131,30 @@ Run from inside `agent-knowledge-system/` via the `./start` wrapper:
 | `./start clean` | Wipe `.astro/`, `dist/`, `node_modules/.vite/` (run after changing `.env` or paths) |
 | `./start clean <cmd>` | Wipe caches then forward — e.g. `./start clean build` |
 | `./start <script>` | Forward any other `package.json` script |
+| `./start stop` | Stop the running dev / preview server |
+| `./start status` | Is a server running, and on which port |
+| `./start logs` | Read a running server's output (`--follow` to stream) |
 
 The dev server, build output, and preview all run inside `astro-doc-code/`. If you're already `cd`'d into that folder, the equivalent `bun run dev` / `bun run build` / `bun run preview` work as well.
+
+### The three server verbs, and why they exist
+
+`./start dev` occupies your terminal and `Ctrl-C` stops the server, exactly as you'd expect. Underneath, though, the server runs as a **detached background process** — Astro's own model — and the terminal is following its log stream. That means a server can outlive the terminal that started it: close the window mid-run, or lose an SSH session, and it is still there holding its port.
+
+`./start status` finds it, `./start stop` stops it, and `./start logs` reads what it has been doing. Reach for those rather than hunting for a process id — the wrapper asks Astro through its lock file, which is right whatever happened to the terminal.
+
+Two follow-ons worth knowing:
+
+- **`./start dev` while a server is already running attaches to it** rather than starting a second one. `Ctrl-C` then detaches and leaves it running, and says so. You stop what you started.
+- **`./start clean` stops a running server first.** The lock file lives in `.astro/`, which `clean` wipes; removing it under a live server would leave one nothing can find.
 
 ## Troubleshooting
 
 ### Port Already in Use
 
-The server automatically finds an available port. Check terminal output for the actual URL.
+A second dev server **does not** pick a free port — Astro keeps one lock file per project, so starting another one reports the first one's URL and attaches to it instead. That is usually what you wanted; when it isn't, `./start status` tells you what is holding the port and `./start stop` releases it.
+
+If something *other than Astro* owns the port, change `PORT` in `.env`.
 
 ### Module Not Found Errors
 

@@ -119,7 +119,7 @@ src/
 │   ├── issues.ts         # Folder-per-item loader for the issues content type (settings.json-driven)
 │   ├── theme.ts          # Theme loading, inheritance, CSS merging; resolveThemeName()
 │   ├── cache.ts          # Error/warning collection
-│   ├── cache-manager.ts  # Unified mtime-based cache with dependency tracking
+│   ├── cache-manager.ts  # Unified cache; invalidation by dependency + by file type
 │   └── index.ts          # Barrel exports
 │
 ├── parsers/              # Modular content parsing pipeline
@@ -241,10 +241,14 @@ Every layout surface follows the framework's UX standards — truncation-only to
 | Font families | `--font-family-base` / `--font-family-mono` |
 | Font sizes (required) | `--font-size-sm` (14px) / `--font-size-base` (16) / `--font-size-lg` (18) / `--font-size-xl` (20) / `--font-size-2xl` (24) |
 | Font sizes (default-theme-only) | `--font-size-xs` (12px) — use with `--font-size-sm` fallback: `var(--font-size-xs, var(--font-size-sm))` |
-| Spacing | `--spacing-xs/sm/md/lg/xl/2xl` |
-| Radius | `--border-radius-sm/md/lg/xl` (plus `--border-radius-full` for pills) |
+| Spacing | `--spacing-xs/sm/md/lg/xl/2xl/3xl` |
+| Radius | `--border-radius-sm/md/lg/full` (`--border-radius-xl` exists but is theme-internal) |
 | Shadows | `--shadow-sm/md/lg/xl` |
 | Transitions | `--transition-fast` (150ms) / `--transition-normal` (250ms) |
+| Layout dimensions | `--sidebar-width` / `--navbar-height` / `--outline-width` / `--max-width-primary` / `--max-width-secondary` |
+| Weight | `--font-weight-normal` (the rest of the weight scale is theme-internal) |
+
+**What decides membership:** a variable is on the contract **if and only if a shipped layout reads it.** That is not tidiness — it is what `override_mode: replace` requires, since a replace-mode theme drops the parent and keeps only what the contract names. Do not complete a scale here for symmetry: `--font-weight-normal` is required and `--font-weight-bold` is not, because layouts read the first and write the second as a literal. `scripts/check-theme-contract.mjs` enforces this in both directions, so the list cannot drift either way.
 
 **Do not** reach for hex codes, arbitrary `rem` font sizes, or invented variable names. If something feels missing from the contract, propose adding it to `theme.yaml` before inventing a private name.
 
@@ -347,11 +351,25 @@ Use the `./start` wrapper at the repo root.
 ./start build      # Skip preflight, run build only
 ./start preview    # Skip preflight, run preview only
 ./start <script>   # Forward any package.json script
+
+./start stop       # Stop the running dev/preview server
+./start status     # Is anything running, and where
+./start logs       # Read a running server's output (--follow to stream)
 ```
 
-Preflight (no-arg form) does: update check (fetches upstream and prompts `Y/n` to fast-forward pull when behind — bails silently if no upstream, dirty tree, diverged, offline, or non-interactive), runner detection (bun preferred, npm fallback), `bun install` if `node_modules` is missing, full production build (aborts on failure), then dev. The update check runs for every form (`./start`, `./start dev`, `./start clean dev`); set `START_SKIP_UPDATE_CHECK=1` to bypass (CI, scripted use). Useful for a clean clone or after dependency changes; for the everyday tight loop use `./start dev` to skip the build step.
+Preflight (no-arg form) does: update check (fetches upstream and prompts `Y/n` to fast-forward pull when behind — bails silently if no upstream, dirty tree, diverged, offline, or non-interactive), runner detection (bun preferred, npm fallback), `bun install` if `node_modules` is missing, full production build (aborts on failure), then dev. The update check runs for every form (`./start`, `./start dev`, `./start clean dev`); set `START_SKIP_UPDATE_CHECK=1` to bypass (CI, scripted use). Useful for a clean clone or after dependency changes; for the everyday tight loop use `./start dev` to skip the build step. The three server-control verbs run *before* preflight, so `./start status` never prompts to pull, install, or build.
 
-**Windows (native cmd / PowerShell):** use `.\start.cmd` with the same arguments (`.\start.cmd dev`, `.\start.cmd clean build`, …). It launches `start.ps1`, a full port of the bash script (same preflight, update check, clean, runner fallback). Note the leading `.\` — bare `start` is a cmd built-in / PowerShell alias. Git Bash and WSL use `./start` as on Linux.
+**`./start dev` holds your terminal and `Ctrl-C` stops the server — that has not changed.** What changed is the mechanism, and it matters when something goes wrong. Astro runs the server as a **detached daemon** (the wrapper asks for that explicitly, so the behaviour is identical whether a human or an agent typed the command), the terminal follows its log stream, and the wrapper stops it through Astro's own lock file rather than through the process tree. The process tree is exactly what stopped being reliable: Astro re-spawns the server out of the launcher's own process group when it detects an AI-agent environment, so killing the thing you launched leaves the server holding its port and its heap — eleven of them leaked during the Astro 7 upgrade, one for 18 hours at 1.19 GB.
+
+Consequences worth knowing:
+
+- **A server that outlives its terminal is now findable.** `./start status` reads the lock file, `./start stop` stops it. That is the whole point of the three verbs, and it is why scripted and agent use should reach for them rather than for `kill`.
+- **`./start dev` attaches read-only when a server is already running** — Astro reports the existing one rather than opening a second port. `Ctrl-C` then *detaches* and says so. You stop what you started.
+- **`./start clean` stops a running server before wiping `.astro/`**, because the lock file lives there and wiping it under a live server orphans it outright.
+- **Never grep the startup banner.** In Astro 7 it is a JSON object; a check for the old `astro v5.x ready in NNN ms` text does not fail, it waits forever. Poll the port, or ask `./start status`.
+- `pgrep` for the astro binary path misses these servers — a background daemon runs `node_modules/astro/bin/astro.mjs`, not `node_modules/.bin/astro`. `./start status` is the reliable answer.
+
+**Windows (native cmd / PowerShell):** use `.\start.cmd` with the same arguments (`.\start.cmd dev`, `.\start.cmd stop`, `.\start.cmd clean build`, …). It launches `start.ps1`, a full port of the bash script (same preflight, update check, clean, runner fallback, server-control verbs). Note the leading `.\` — bare `start` is a cmd built-in / PowerShell alias. Git Bash and WSL use `./start` as on Linux.
 
 If you're inside `astro-doc-code/`, `bun run dev` / `bun run build` / `bun run preview` work directly.
 

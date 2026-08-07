@@ -1,6 +1,6 @@
 ---
 title: "draw.io embeds — vendored GraphViewer, native dark mode"
-status: review
+status: done
 ---
 
 # Overview

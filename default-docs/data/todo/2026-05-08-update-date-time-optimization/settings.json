@@ -1,10 +1,15 @@
 {
   "title": "Updated-date cache scaling",
   "description": "Scale the derived-`updated` cache loader so cold rebuild stays imperceptible at 3K+ issues / 10K+ tracker-touching commits. Five ranked optimizations: async background rebuild, pre-warm at server start, incremental refresh, disk persistence, watcher debounce. Frontend relative-time rendering lived briefly here too but moved to subtask 11 of the mental-model-alignment issue.",
-  "status": "open",
-  "priority": "medium",
-  "component": ["loaders-and-renderers"],
-  "labels": ["feature", "performance"],
+  "status": "in-progress",
+  "priority": "high",
+  "component": [
+    "loaders-and-renderers"
+  ],
+  "labels": [
+    "feature",
+    "performance"
+  ],
   "author": "sidhantha",
   "assignees": []
 }

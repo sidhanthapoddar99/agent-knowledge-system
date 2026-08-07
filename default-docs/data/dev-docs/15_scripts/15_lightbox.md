@@ -32,7 +32,9 @@ Turns images and rendered diagrams in markdown content into an interactive full-
 
 ## Toolbar
 
-Zoom out · zoom % (click resets) · zoom in · fit — plus a **copy split button** (default click = *Copy as PNG*, light) whose ▾ caret opens the copy/download dropdown, and ↗ *open original* for images and Excalidraw scenes.
+Zoom out · zoom % (click resets) · zoom in · fit — plus a **copy split button** (default click = *Copy as PNG*, light) whose ▾ caret opens the copy/download dropdown, and ↗ *open original* for images and reference-based diagrams (Excalidraw, draw.io).
+
+**The split button's primary half is hidden when the target can't rasterize** (`ActionTarget.rasterizable === false`, set for draw.io — its `<foreignObject>` labels taint the export canvas, so `toBlob` throws `SecurityError`). The caret stays: the menu still carries *Download SVG*, *copy source* and *download source*. The inline hover toolbar omits the same button. A button that always throws is worse than one that isn't there.
 
 ## Copy/Download Dropdown (`diagram-actions.ts`)
 
@@ -40,12 +42,12 @@ One menu, shared by the viewer toolbar and the inline hover toolbar. It is a sin
 
 | Item | Shown for | Behavior |
 |------|-----------|----------|
-| Copy as PNG | everything | rasterizes to PNG on a canvas (2×, white background for diagrams, 4096px cap) and writes it to the clipboard |
-| Copy as PNG (dark) | diagrams | same, re-drawn through the site's dark-mode invert filter |
-| Copy source | diagrams with source | Mermaid/Graphviz from `data-diagram-source` (set by `diagrams.ts`); Excalidraw fetches the scene JSON from `data-src` |
+| Copy as PNG | everything except draw.io | rasterizes to PNG on a canvas (2×, white background for diagrams, 4096px cap) and writes it to the clipboard |
+| Copy as PNG (dark) | diagrams except draw.io | same, re-drawn through the site's dark-mode invert filter |
+| Copy source | diagrams with source | Mermaid/Graphviz from `data-diagram-source` (set by `diagrams.ts`); Excalidraw and draw.io fetch the file from `data-src` |
 | Download PNG / PNG (dark) | everything / diagrams | same rasterization, saved as `diagram.png` / `diagram-dark.png` |
 | Download SVG | diagrams | serializes the displayed SVG |
-| Download source | diagrams with source | saves as `diagram.mmd` / `diagram.dot` / `diagram.excalidraw` by type |
+| Download source | diagrams with source | saves as `diagram.mmd` / `diagram.dot` / `diagram.excalidraw` / `diagram.drawio` by type |
 
 ## Inline Hover Toolbar
 

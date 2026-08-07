@@ -105,6 +105,7 @@ export function fileIcon(extension: string, size = 16): string {
     case '.py':
       return icon('file-code', size);
     case '.excalidraw':
+    case '.drawio':
       return icon('image', size);
     default:
       return icon('file', size);

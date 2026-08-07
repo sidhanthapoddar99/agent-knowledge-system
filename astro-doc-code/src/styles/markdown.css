@@ -454,20 +454,37 @@ body {
 }
 
 /* Dark mode: invert diagram colors so user-defined style
-   fills/strokes are also flipped, not just theme defaults */
-[data-theme="dark"] .markdown-content .diagram-rendered {
+   fills/strokes are also flipped, not just theme defaults.
+
+   draw.io is the exception and opts out everywhere below: its viewer resolves
+   a real dark palette itself (see scripts/drawio.ts), so inverting on top
+   would flip an already-dark diagram back to light — and draw.io files carry
+   raster icons and brand colors that an invert wrecks rather than adapts. */
+[data-theme="dark"] .markdown-content .diagram-rendered:not(.diagram-drawio) {
   filter: invert(1) hue-rotate(180deg) brightness(0.95);
 }
 
 /* Counter-invert the caption and hover toolbar so they keep theme colors */
-[data-theme="dark"] .markdown-content .diagram-rendered .diagram-caption,
-[data-theme="dark"] .markdown-content .diagram-rendered .diagram-tools {
+[data-theme="dark"] .markdown-content .diagram-rendered:not(.diagram-drawio) .diagram-caption,
+[data-theme="dark"] .markdown-content .diagram-rendered:not(.diagram-drawio) .diagram-tools {
   filter: invert(1) hue-rotate(180deg);
 }
 
-[data-theme="dark"] .lightbox-svg {
+[data-theme="dark"] .lightbox-svg:not(.lightbox-svg-themed) {
   filter: invert(1) hue-rotate(180deg) brightness(0.95);
   background: #fff;
+}
+
+/* draw.io host: the viewer sizes its own container, so this only has to stop
+   it collapsing before the graph is measured and keep it centered. */
+.markdown-content .diagram-drawio .drawio-host {
+  min-height: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.markdown-content .diagram-drawio .drawio-host > div {
+  max-width: 100%;
 }
 
 /* Artifact embeds — first-class .html pages rendered as a same-origin iframe

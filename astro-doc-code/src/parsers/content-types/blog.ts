@@ -17,7 +17,7 @@ import { createAssetEmbedPreprocessor, createBlogAssetResolver } from '../prepro
 import { headingIdsPostprocessor } from '../postprocessors/heading-ids';
 import { internalLinksPostprocessor } from '../postprocessors/internal-links';
 import { assetSrcPostprocessor } from '../postprocessors/asset-src';
-import { excalidrawEmbedPostprocessor } from '../postprocessors/excalidraw-embed';
+import { diagramEmbedPostprocessor } from '../postprocessors/diagram-embed';
 import { externalLinksPostprocessor } from '../postprocessors/external-links';
 import { tableWrapPostprocessor } from '../postprocessors/table-wrap';
 
@@ -34,8 +34,8 @@ export class BlogParser extends BaseContentParser {
       .addPreprocessor(blogAssetPreprocessor)
       .addPostprocessor(headingIdsPostprocessor)
       .addPostprocessor(internalLinksPostprocessor)
-      // ![x](./assets/y.excalidraw) → client-rendered diagram placeholder
-      .addPostprocessor(excalidrawEmbedPostprocessor)
+      // ![x](./assets/y.excalidraw|.drawio) → client-rendered diagram placeholder
+      .addPostprocessor(diagramEmbedPostprocessor)
       // Relative <img src> → absolute /content-assets/… URLs.
       .addPostprocessor(assetSrcPostprocessor)
       .addPostprocessor(externalLinksPostprocessor)

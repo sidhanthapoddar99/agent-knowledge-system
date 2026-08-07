@@ -10,7 +10,7 @@
  *   • frontmatter `title:` present on every .md file
  *   • prefixes don't collide within a folder (compared by numeric value, so 02_ and 002_ clash)
  *
- * First-class non-md pages — diagram sources (.mmd/.mermaid/.dot/.gv/.excalidraw)
+ * First-class non-md pages — diagram sources (.mmd/.mermaid/.dot/.gv/.excalidraw/.drawio)
  * and .html artifacts — are validated as pages (NN_ prefix + collision pool), not
  * warned about as stray files; their `.meta.json`/`.meta.jsonc` sidecars are
  * recognized companions. Any other non-md file warns (belongs in assets/).

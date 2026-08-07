@@ -693,7 +693,7 @@ directory — never the tracker.
 
 **The discriminator is audience, not size.**
 
-`agent-log/` renders `.md` plus `.mmd` `.mermaid` `.dot` `.gv` `.excalidraw` as log
+`agent-log/` renders `.md` plus `.mmd` `.mermaid` `.dot` `.gv` `.excalidraw` `.drawio` as log
 entries. `.html` artifacts render only in `notes/` and `brainstorm/`, so a run that
 produces a dashboard graduates it to the issue's `notes/`.
 

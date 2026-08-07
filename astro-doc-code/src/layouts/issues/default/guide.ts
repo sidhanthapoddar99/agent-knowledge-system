@@ -430,7 +430,7 @@ the deliberation that produced it (Brainstorm) or the steps that act on it (Subt
 
 - Plain \`NN_<slug>.md\` — the numbering is the author's **curated reading
   order**, not a timeline.
-- A **\`.html\` artifact** — or a diagram file (\`.excalidraw\`/\`.mmd\`/…) —
+- A **\`.html\` artifact** — or a diagram file (\`.excalidraw\`/\`.drawio\`/\`.mmd\`/…) —
   dropped here renders **embedded** as a first-class sub-doc: the artifact
   shows in an iframe with an open-full-page link (the same treatment docs
   sections give it), and an optional \`<name>.meta.json\` sidecar sets its title.

@@ -149,7 +149,7 @@ The file-level structure *inside* each content type is specific to its layout fa
 
 | Default folder | URL base | Naming pattern | Layout family | Authoring guide |
 |---|---|---|---|---|
-| `data/docs/` | `/docs` | `NN_folder/NN_file.md` (also `.mmd`/`.dot`/`.excalidraw` — [diagram pages](../15_writing-content/06_diagram-pages.md)) | `@docs/*` | [Docs section](../17_docs/01_overview.md) |
+| `data/docs/` | `/docs` | `NN_folder/NN_file.md` (also `.mmd`/`.dot`/`.excalidraw`/`.drawio` — [diagram pages](../15_writing-content/06_diagram-pages.md)) | `@docs/*` | [Docs section](../17_docs/01_overview.md) |
 | `data/blog/` | `/blog` | `YYYY-MM-DD-slug.md` | `@blog/*` | [Blogs section](../18_blogs/01_overview.md) |
 | `data/issues/` | `/issues` | `YYYY-MM-DD-slug/` (folder) | `@issues/*` | [Issues section](../19_issues/01_overview.md) |
 | `data/pages/` | (per page) | Any `.yaml` / `.md` | `@custom/*` | [Custom Pages section](../20_custom-pages/01_overview.md) |

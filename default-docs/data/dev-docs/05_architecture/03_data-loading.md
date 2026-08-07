@@ -117,9 +117,9 @@ loadContent(dataPath, 'docs')
 │
 ├─ glob('**/*.{md,mdx}')                    → markdown LoadedContent
 ├─ loadDiagramPages(dataPath, content)
-│    ├─ glob('**/*.{mmd,mermaid,dot,gv,excalidraw}', ignore: '**/assets/**')
+│    ├─ glob('**/*.{mmd,mermaid,dot,gv,excalidraw,drawio}', ignore: '**/assets/**')
 │    ├─ DIAGRAM_KINDS: .mmd/.mermaid → mermaid · .dot/.gv → graphviz
-│    │                 .excalidraw → excalidraw
+│    │                 .excalidraw → excalidraw · .drawio → drawio
 │    └─ each file → LoadedContent { fileType: 'diagram', … }
 └─ merged + sorted together → one array, one sidebar
 ```
@@ -127,10 +127,15 @@ loadContent(dataPath, 'docs')
 The design trick: a diagram page's `content` is the **same
 `<div class="diagram diagram-<kind>">` container the embed postprocessor
 emits** — so the client script, lightbox, and dark mode that already serve
-embeds render the page with zero new machinery. Mermaid/graphviz pages
-inline their (escaped) source into the div; excalidraw pages carry a
-`data-src` URL (+ `?v=<mtimeMs>`) and fetch the scene client-side, keeping
-the file as the single source of truth.
+embeds render the page with zero new machinery.
+
+Two container shapes, decided by `REFERENCED_KINDS` in the loader:
+mermaid/graphviz pages inline their (escaped) source into the div, while
+excalidraw and draw.io pages carry a `data-src` URL (+ `?v=<mtimeMs>`) and
+fetch the file client-side, keeping it as the single source of truth. The
+split follows the format: a text DSL is small and readable inlined, whereas
+a scene or an mxGraph document is an opaque file with its own embedded
+assets.
 
 Per-file rules (enforced in the loader):
 

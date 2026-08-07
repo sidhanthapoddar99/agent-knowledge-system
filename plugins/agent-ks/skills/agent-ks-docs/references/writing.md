@@ -68,14 +68,17 @@ flowchart LR
 
 Keep diagram source in its own `.mmd` / `.dot` file and embed it inside the fence — see "Content embedding (`[[path]]`)" below.
 
-**Excalidraw** — image syntax embeds a scene read-only (fetched by reference, rendered as SVG client-side); a plain link deliberately stays a link to the raw file:
+**Excalidraw and draw.io** — image syntax embeds the file read-only (fetched by reference, rendered as SVG client-side); a plain link deliberately stays a link to the raw file:
 
 ```markdown
 ![Architecture](./assets/arch.excalidraw)   ← embeds; alt = caption, click opens the pan/zoom viewer, caption links to the file
-[Architecture](./assets/arch.excalidraw)    ← plain link, opens the raw scene
+![Topology](./assets/topology.drawio)       ← same syntax, same behaviour
+[Architecture](./assets/arch.excalidraw)    ← plain link, opens the raw file
 ```
 
-Never inline scene JSON — the `.excalidraw` file stays the single source of truth. A missing file fails the build (`asset-missing`); a malformed scene shows an error box in place. Dark mode inverts automatically.
+Never inline scene JSON or mxGraph XML — the file stays the single source of truth. A missing file fails the build (`asset-missing`); a malformed one shows an error box in place.
+
+**Dark mode differs between the two, and it changes how you author.** Mermaid, Graphviz and Excalidraw are colour-inverted, so any colour is flipped for you. draw.io is **not** — its viewer resolves a real dark palette instead, because these files carry raster icons and screenshots that a filter turns into negatives, and because the dark version then lives in the SVG rather than over it. Author-set colours are re-resolved for a dark canvas (light green → darker green), not left untouched. So in a `.drawio`, **pick colours whose meaning survives on both canvases**; uncoloured shapes take care of themselves. Prefer saving uncompressed (*File → Properties → Compressed: off*) so the file diffs and greps like the rest of the content. draw.io's stencil icon sets (AWS/Azure/GCP/Cisco) are not bundled — a diagram using them renders fallback shapes; stick to the built-in palette, or install stencils into `assets/drawio/stencils/`.
 
 ## Asset embedding
 

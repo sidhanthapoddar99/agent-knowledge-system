@@ -1,10 +1,14 @@
 /**
  * Client-side diagram renderer
- * Lazily loads Mermaid and Graphviz via dynamic imports (Vite code-splits
- * them into separate chunks) only when diagram elements exist on the page.
+ * Lazily loads Mermaid, Graphviz and the draw.io viewer via dynamic imports
+ * (Vite code-splits them into separate chunks) only when diagram elements
+ * exist on the page.
  *
  * Dark mode is handled via CSS filter (invert + hue-rotate) so all colors
- * — including user-defined style directives — are inverted uniformly.
+ * — including user-defined style directives — are inverted uniformly. The one
+ * exception is draw.io, which renders its own dark palette natively; see
+ * `scripts/drawio.ts` for why, and the `.diagram-drawio` carve-out in
+ * `styles/markdown.css` for how it opts out of the filter.
  */
 
 let mermaidIdCounter = 0;
@@ -13,8 +17,12 @@ async function initDiagrams() {
   const mermaidDivs = document.querySelectorAll<HTMLDivElement>('.diagram-mermaid:not(.diagram-rendered):not(.diagram-error)');
   const graphvizDivs = document.querySelectorAll<HTMLDivElement>('.diagram-graphviz:not(.diagram-rendered):not(.diagram-error)');
   const excalidrawDivs = document.querySelectorAll<HTMLDivElement>('.diagram-excalidraw:not(.diagram-rendered):not(.diagram-error)');
+  const drawioDivs = document.querySelectorAll<HTMLDivElement>('.diagram-drawio:not(.diagram-rendered):not(.diagram-error)');
 
-  if (mermaidDivs.length === 0 && graphvizDivs.length === 0 && excalidrawDivs.length === 0) return;
+  if (
+    mermaidDivs.length === 0 && graphvizDivs.length === 0 &&
+    excalidrawDivs.length === 0 && drawioDivs.length === 0
+  ) return;
 
   const promises: Promise<void>[] = [];
 
@@ -28,6 +36,12 @@ async function initDiagrams() {
 
   if (excalidrawDivs.length > 0) {
     promises.push(renderExcalidraw(excalidrawDivs));
+  }
+
+  if (drawioDivs.length > 0) {
+    // Dynamic so the 3 MiB vendored viewer — and the theme observer that
+    // module installs — only reach pages that actually hold a .drawio.
+    promises.push(import('./drawio').then((m) => m.renderDrawio(drawioDivs)));
   }
 
   await Promise.all(promises);

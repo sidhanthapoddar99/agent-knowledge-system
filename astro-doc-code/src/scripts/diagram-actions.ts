@@ -16,6 +16,19 @@ export interface ActionTarget {
   source?: (() => Promise<string>) | null;
   /** Download filename for the source, e.g. "diagram.mmd". */
   sourceName?: string;
+  /**
+   * False when the SVG cannot be drawn to a canvas. draw.io renders its
+   * labels as `<foreignObject>`, and Chromium taints a canvas that an SVG
+   * image containing one is drawn onto — `toBlob` then throws SecurityError,
+   * so every PNG action fails outright. The PNG entries are withheld rather
+   * than offered and thrown from; SVG and source export still work.
+   *
+   * This is the same hazard `diagrams.ts` avoids for Mermaid with
+   * `htmlLabels: false`. We do not take that trade here: draw.io labels
+   * legitimately carry rich HTML, and degrading how a diagram *renders* to
+   * enable a secondary export would be the wrong way round.
+   */
+  rasterizable?: boolean;
 }
 
 const DARK_FILTER = 'invert(1) hue-rotate(180deg) brightness(0.95)';
@@ -215,15 +228,19 @@ export function openCopyMenu(anchor: HTMLElement, target: ActionTarget) {
   }
   menuAnchor = anchor;
   const isDiagram = !(target.el instanceof HTMLImageElement);
+  const canRasterize = target.rasterizable !== false;
 
   type Item = { label: string; run: () => void } | 'sep';
-  const items: Item[] = [{ label: 'Copy as PNG', run: () => copyPng(target, false) }];
-  if (isDiagram) items.push({ label: 'Copy as PNG (dark)', run: () => copyPng(target, true) });
+  const items: Item[] = [];
+  if (canRasterize) items.push({ label: 'Copy as PNG', run: () => copyPng(target, false) });
+  // The dark variant is the invert filter, which draw.io opts out of anyway —
+  // gated on the same flag, so it never appears for a non-rasterizable target.
+  if (isDiagram && canRasterize) items.push({ label: 'Copy as PNG (dark)', run: () => copyPng(target, true) });
   if (target.source) items.push({ label: 'Copy source', run: () => copySource(target) });
-  items.push('sep');
-  items.push({ label: 'Download PNG', run: () => downloadPng(target, false) });
+  if (items.length) items.push('sep');
+  if (canRasterize) items.push({ label: 'Download PNG', run: () => downloadPng(target, false) });
   if (isDiagram) {
-    items.push({ label: 'Download PNG (dark)', run: () => downloadPng(target, true) });
+    if (canRasterize) items.push({ label: 'Download PNG (dark)', run: () => downloadPng(target, true) });
     items.push({ label: 'Download SVG', run: () => downloadSvg(target) });
   }
   if (target.source) items.push({ label: 'Download source', run: () => downloadSource(target) });

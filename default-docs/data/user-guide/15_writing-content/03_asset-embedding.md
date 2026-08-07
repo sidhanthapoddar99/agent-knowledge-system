@@ -178,15 +178,18 @@ means for the file:
   fence.
 - **Image syntax — render-by-reference.** `![Alt](./path)` renders the
   *resource* in place while the file stays independently served. Images use
-  it natively; **Excalidraw scenes** use it too:
+  it natively; **Excalidraw scenes** and **draw.io files** use it too:
 
   ```markdown
   ![Architecture](./assets/arch.excalidraw)
+  ![Topology](./assets/topology.drawio)
   ```
 
-  The scene is fetched and rendered read-only as SVG. The alt text becomes a
+  The file is fetched and rendered read-only as SVG. The alt text becomes a
   caption with an *open file ↗* link, clicking the canvas opens it in the
-  full-screen pan/zoom viewer, and dark mode inverts it automatically. A **plain link**
+  full-screen pan/zoom viewer, and dark mode adapts it automatically (by
+  inversion for Excalidraw, by a native dark palette for draw.io — see
+  [draw.io Diagrams](./07_drawio.md)). A **plain link**
   `[Architecture](./assets/arch.excalidraw)` deliberately stays a link — it
   opens the raw file instead of embedding it.
 
@@ -201,7 +204,8 @@ error box in place of the diagram.
 
 **Embed or page?** Embedding fits diagrams that are figures inside prose.
 When the diagram *is* the content, skip the wrapper entirely — a prefixed
-`.mmd` / `.dot` / `.excalidraw` file renders as a first-class sidebar page:
+`.mmd` / `.dot` / `.excalidraw` / `.drawio` file renders as a first-class
+sidebar page:
 see [Diagram Pages](./06_diagram-pages.md).
 
 ## Best Practices

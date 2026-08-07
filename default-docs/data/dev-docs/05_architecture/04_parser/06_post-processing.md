@@ -20,7 +20,7 @@ Postprocessors run **after** HTML rendering to enhance the output.
  │                 │ ──>  │                 │ ──> │ <── YOU ARE HERE   │
  │                 │      │                 │     │ • heading-ids      │
  │                 │      │                 │     │ • internal-links   │
- │                 │      │                 │     │ • excalidraw-embed │
+ │                 │      │                 │     │ • diagram-embed    │
  │                 │      │                 │     │ • asset-src        │
  │                 │      │                 │     │ • external-links   │
  │                 │      │                 │     │ • table-wrap       │
@@ -34,11 +34,11 @@ Postprocessors run **after** HTML rendering to enhance the output.
 | `heading-ids.ts` | Adds IDs to headings for anchor links |
 | `internal-links.ts` | Rewrites relative links to match generated slugs |
 | `issue-body-links.ts` | Issues only: re-roots `issue.md` links for the detail-URL collapse |
-| `excalidraw-embed.ts` | Converts `![x](./y.excalidraw)` images into client-rendered diagram placeholders |
+| `diagram-embed.ts` | Converts `![x](./y.excalidraw)` / `![x](./y.drawio)` images into client-rendered diagram placeholders |
 | `asset-src.ts` | Rewrites relative `<img src>` and `<a href>` to colocated files → `/content-assets/…` URLs |
 | `external-links.ts` | Adds security attributes to external links |
 | `table-wrap.ts` | Wraps tables in a scroll container for horizontal overflow |
-| `index.ts` | Module exports (`excalidraw-embed` is imported directly by the content types, not barrel-exported) |
+| `index.ts` | Module exports (`diagram-embed` is imported directly by the content types, not barrel-exported) |
 
 ## Available Postprocessors
 
@@ -170,10 +170,12 @@ const customExternalLinks = createExternalLinksPostprocessor({
 });
 ```
 
-### Excalidraw Embeds
+### Diagram File Embeds
 
-`excalidraw-embed.ts` turns image syntax pointing at a `.excalidraw` file into
-a placeholder the client-side diagram script renders:
+`diagram-embed.ts` turns image syntax pointing at a whole-document diagram
+file — `.excalidraw` or `.drawio` — into a placeholder the client-side
+diagram script renders. (Mermaid and Graphviz need nothing here: they are
+fenced code blocks, and the markdown renderer emits their containers.)
 
 ```html
 <!-- Input (marked has already rendered the markdown image) -->
@@ -187,8 +189,9 @@ a placeholder the client-side diagram script renders:
 
 The mechanism, end to end:
 
-1. **Match** — only `<img>` tags whose `src` ends in `.excalidraw`. A plain
-   markdown link (`<a href>`) to the same file is deliberately left alone —
+1. **Match** — only `<img>` tags whose `src` ends in `.excalidraw` or
+   `.drawio`; the extension picks the container's `diagram-<kind>` class. A
+   plain markdown link (`<a href>`) to the same file is deliberately left alone —
    it stays a link (asset-src later rewrites its href so it downloads/opens).
 2. **Resolve + verify** — the relative src is resolved against the source
    file's directory via `resolveContentAssetUrl()` (shared with asset-src).
@@ -197,12 +200,12 @@ The mechanism, end to end:
 3. **Cache-bust** — the emitted URL carries `?v=<mtimeMs>` of the scene file,
    so long-lived browser/CDN caches invalidate when the scene changes even
    on static hosts where we don't control response headers.
-4. **Render client-side** — no JSON is inlined and no SVG is baked at build
-   time. `src/scripts/diagrams.ts` fetches the scene (with `cache:
-   'no-cache'`, so dev edits revalidate via ETag) and converts it with
-   Excalidraw's `exportToSvg` in the browser at view time. The scene file
-   stays independently openable — that's the *reference-based* embed
-   decision: one source of truth on disk.
+4. **Render client-side** — nothing is inlined and no SVG is baked at build
+   time. `src/scripts/diagrams.ts` fetches the file (with `cache:
+   'no-cache'`, so dev edits revalidate via ETag) and converts it in the
+   browser at view time — Excalidraw's `exportToSvg` for a scene, draw.io's
+   `GraphViewer` for a `.drawio`. The file stays independently openable —
+   that's the *reference-based* embed decision: one source of truth on disk.
 
 `data-title` falls back to a title-cased filename when the image has no alt
 text; the client renders it as a caption with an *open file ↗* link.
@@ -303,41 +306,45 @@ Postprocessors run in the order they are added. The real registration
 pipeline
   .addPostprocessor(headingIdsPostprocessor)      // anchor IDs
   .addPostprocessor(internalLinksPostprocessor)   // page-link slugs
-  .addPostprocessor(excalidrawEmbedPostprocessor) // img → diagram placeholder
+  .addPostprocessor(diagramEmbedPostprocessor)    // img → diagram placeholder
   .addPostprocessor(assetSrcPostprocessor)        // colocated file URLs
   .addPostprocessor(externalLinksPostprocessor)   // security attrs
   .addPostprocessor(tableWrapPostprocessor);      // scroll containers
 ```
 
-One ordering is load-bearing: **excalidraw-embed must run before asset-src**.
+One ordering is load-bearing: **diagram-embed must run before asset-src**.
 The embed matcher needs the author-written relative `src` to resolve the
 scene file; once it converts the `<img>` to a `<div data-src>`, asset-src no
 longer sees an `<img>` and can't double-rewrite it.
 
-## Adding a New Embed Type — the Excalidraw Pattern
+## Adding a New Embed Type — the Reference-Based Pattern
 
-Excalidraw is the reference implementation for "author references a file,
-the browser renders it". To add another render-by-reference format (e.g.
-`.drawio`, `.tldraw`), follow the same four pieces:
+Excalidraw and draw.io are the reference implementations for "author
+references a file, the browser renders it". To add another
+render-by-reference format (e.g. `.tldraw`), follow the same four pieces:
 
-1. **Postprocessor** — copy the `excalidraw-embed.ts` shape: match
-   `<img src="…\.<ext>">`, resolve via `resolveContentAssetUrl()`, verify the
-   file exists (build error if not), emit
+1. **Postprocessor** — add the extension to the `EMBEDDABLE` map in
+   `diagram-embed.ts`. That is the whole change: the matcher builds its
+   pattern from the map's keys, resolves via `resolveContentAssetUrl()`,
+   verifies the file exists (build error if not), and emits
    `<div class="diagram diagram-<kind>" data-src="<url>?v=<mtimeMs>">`.
-   Register it in all three content types (docs, blog, issues), **before**
-   `assetSrcPostprocessor`.
+   Registration in the three content types (docs, blog, issues) is already
+   done, **before** `assetSrcPostprocessor`.
 2. **Client renderer** — add a branch in `src/scripts/diagrams.ts`: select
    `.diagram-<kind>:not(.diagram-rendered)`, lazy-`import()` the render
    library (Vite code-splits it — pages without the format load nothing),
    fetch `data-src` with `cache: 'no-cache'`, render, then add
-   `diagram-rendered`. Errors get `.diagram-error`. The lightbox and dark
-   mode come free — both key off `.diagram-rendered`.
+   `diagram-rendered`. Errors get `.diagram-error`. The lightbox comes free —
+   it keys off `.diagram-rendered`. Dark mode comes free **only if inverting
+   is right for the format**; if it is not, follow draw.io's carve-out
+   ([Diagrams → Dark Mode](../../15_scripts/10_diagrams.md#dark-mode)).
 3. **MIME entry** — add the extension in `src/pages/lib/mime.ts` so
    `/content-assets/` serves it with a sane type.
 4. **First-class pages (optional)** — register the extension in
-   `DIAGRAM_KINDS` in `src/loaders/diagram-pages.ts` and prefixed files
-   become sidebar pages with no further work (see
-   [Data Loading → Diagram pages](../03_data-loading.md)).
+   `DIAGRAM_KINDS` in `src/loaders/diagram-pages.ts`, and add it to
+   `REFERENCED_KINDS` there if the container carries a `data-src` rather than
+   inline source. Prefixed files then become sidebar pages with no further
+   work (see [Data Loading → Diagram pages](../03_data-loading.md)).
 
 What you should **not** do: inline the file's content into the HTML (breaks
 the one-source-of-truth rule and bloats pages), render at build time

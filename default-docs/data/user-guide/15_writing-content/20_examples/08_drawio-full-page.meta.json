@@ -1,0 +1,5 @@
+{
+  "title": "draw.io as a Full Page",
+  "description": "A .drawio file with an NN_ prefix rendering as a standalone docs page.",
+  "sidebar_label": "draw.io Full Page"
+}

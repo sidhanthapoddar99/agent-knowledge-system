@@ -1,6 +1,6 @@
 ---
 title: Diagram Showcase
-description: All three diagram types rendering live on one page — Mermaid, Graphviz, and Excalidraw.
+description: All four diagram types rendering live on one page — Mermaid, Graphviz, Excalidraw, and draw.io.
 sidebar_position: 7
 ---
 
@@ -66,6 +66,21 @@ the caption links to the raw file):
 A plain link deliberately stays a link instead of embedding:
 [the same scene as a link](../assets/diagram-showcase.excalidraw).
 
+## draw.io
+
+![Diagram showcase drawing](../assets/diagram-showcase.drawio)
+
+Source — the same image syntax embeds a `.drawio` file read-only:
+
+```markdown
+![Diagram showcase drawing](../assets/diagram-showcase.drawio)
+```
+
+draw.io is the one format that is **not** colour-inverted in dark mode: its
+viewer resolves a real dark palette instead, so the green node above stays
+green (darker, still green) while the plain ones follow the theme. Toggle the
+theme and watch.
+
 ## Keeping diagram source in its own file
 
 Mermaid and Graphviz source can live in `assets/` too — embed it by
@@ -92,6 +107,13 @@ Every rendered diagram (and every image) on this page is interactive:
 - The viewer toolbar carries the same **copy menu** and can open the
   original file.
 
-Dark mode inverts all of the above automatically. Diagrams that fail to
-render show an error box in place; a missing referenced file fails the
-build with an `asset-missing` error.
+**draw.io is the exception on PNG.** It renders its labels as
+`<foreignObject>`, which taints the canvas a PNG would be drawn on, so the
+PNG entries are withheld from its toolbar rather than offered and failed.
+*Download SVG*, *copy source* and *download source* all work — and the SVG
+you get carries whichever theme you were viewing in.
+
+Dark mode adapts all of the above automatically — by colour inversion for
+Mermaid, Graphviz and Excalidraw, and by a native dark palette for draw.io.
+Diagrams that fail to render show an error box in place; a missing referenced
+file fails the build with an `asset-missing` error.

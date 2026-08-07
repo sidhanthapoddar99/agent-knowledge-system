@@ -43,7 +43,7 @@ An optional `color:` tints only the sidebar icon and is user-defined — **don't
 
 ## First-class artifacts + diagrams
 
-A note doesn't have to be markdown. Drop a self-contained **`.html` artifact** — a report, a dashboard, a design-system showcase — into `notes/` and it renders **embedded** as a first-class sub-doc in the issue detail view: an iframe onto the reserved `/artifacts/<path>` route, with an **open-full-page** link and an in-place **expand**, and the site's light/dark theme propagated into it. A **diagram file** (`.excalidraw` / `.mmd` / `.dot` / …) renders the same first-class way.
+A note doesn't have to be markdown. Drop a self-contained **`.html` artifact** — a report, a dashboard, a design-system showcase — into `notes/` and it renders **embedded** as a first-class sub-doc in the issue detail view: an iframe onto the reserved `/artifacts/<path>` route, with an **open-full-page** link and an in-place **expand**, and the site's light/dark theme propagated into it. A **diagram file** (`.excalidraw` / `.drawio` / `.mmd` / `.dot` / …) renders the same first-class way.
 
 - **Title** comes from an optional same-name **`<name>.meta.json`** (or `.meta.jsonc`) sidecar — the frontmatter equivalent for a non-markdown file; without one it derives from the filename. Nothing is injected into the `.html`, so the artifact stays a pristine, independently-openable document.
 - **Scope: `notes/` and `brainstorm/` only** — the tracker's design-thinking folders. Not the issue root, not `assets/`, not `agent-memory/`.

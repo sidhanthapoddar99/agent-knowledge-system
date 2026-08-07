@@ -1,6 +1,6 @@
 ---
 title: Diagram Pages
-description: Render .mmd / .dot / .excalidraw files as first-class docs pages — same sidebar, same routing as markdown.
+description: Render .mmd / .dot / .excalidraw / .drawio files as first-class docs pages — same sidebar, same routing as markdown.
 sidebar_position: 6
 ---
 
@@ -15,7 +15,7 @@ In the sidebar, diagram pages carry a small trailing **type glyph** (hover
 names it) so they're distinguishable from markdown pages at a glance —
 markdown is the default and stays unmarked.
 
-All three types rendering live (as embeds) are on the
+All four types rendering live (as embeds) are on the
 [Diagram Showcase](./20_examples/01_diagram-showcase.md) page.
 
 ## Supported formats
@@ -25,6 +25,7 @@ All three types rendering live (as embeds) are on the
 | `.mmd`, `.mermaid` | mermaid.js (lazy-loaded client-side) |
 | `.dot`, `.gv` | Graphviz WASM (lazy-loaded client-side) |
 | `.excalidraw` | Excalidraw SVG export (fetched by reference, read-only) |
+| `.drawio` | draw.io GraphViewer (fetched by reference, read-only) |
 
 ## Naming and URLs
 
@@ -75,9 +76,13 @@ All fields are optional; `.jsonc` (comments, trailing commas) works too.
   default) with a dropdown: copy as PNG light/dark, copy source, download
   PNG / SVG / source. Diagram text is selectable, and clicking a label
   copies it. Hovering the inline diagram shows the same toolbar plus expand.
-- Excalidraw pages show a caption with an *open file ↗* link to the raw
-  `.excalidraw` scene — the file stays independently openable and editable.
-- **Dark mode** inverts diagrams automatically.
+  **draw.io omits the PNG entries** — its `<foreignObject>` labels taint the
+  export canvas; SVG and source export work normally.
+- Excalidraw and draw.io pages show a caption with an *open file ↗* link to
+  the raw file — it stays independently openable and editable.
+- **Dark mode** adapts diagrams automatically: Mermaid, Graphviz and
+  Excalidraw are colour-inverted, while draw.io renders its own dark palette
+  (see [draw.io Diagrams](./07_drawio.md) for why the two differ).
 
 ## Opting a section out
 

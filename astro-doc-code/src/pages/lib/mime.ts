@@ -13,6 +13,7 @@ export const mimeTypes: Record<string, string> = {
   '.pdf': 'application/pdf',
   '.json': 'application/json',
   '.excalidraw': 'application/json',
+  '.drawio': 'application/xml',
   '.css': 'text/css',
   '.js': 'application/javascript',
   '.woff': 'font/woff',

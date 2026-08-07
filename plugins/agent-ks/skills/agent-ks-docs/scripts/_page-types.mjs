@@ -24,7 +24,7 @@ import path from 'node:path';
  * file: diagram sources and `.html` artifacts. Each takes an `NN_` prefix and
  * joins the same slug-collision pool as markdown.
  */
-export const FIRST_CLASS_PAGE_EXTS = new Set(['.mmd', '.mermaid', '.dot', '.gv', '.excalidraw', '.html']);
+export const FIRST_CLASS_PAGE_EXTS = new Set(['.mmd', '.mermaid', '.dot', '.gv', '.excalidraw', '.drawio', '.html']);
 
 /**
  * A first-class page may carry a same-name metadata sidecar holding its title,

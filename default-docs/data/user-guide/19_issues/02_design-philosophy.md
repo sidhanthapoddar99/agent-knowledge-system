@@ -119,7 +119,7 @@ See [Subtasks](./05_sub-docs/03_subtasks.md).
 
 - Internal / solo / small-team projects
 - Documentation-heavy workflows where issues and docs live next to each other
-- Text-first assets (excalidraw JSON, diagram sources, references)
+- Text-first assets (excalidraw JSON, draw.io XML, diagram sources, references)
 - Projects that benefit from AI-readable history
 - Active rotation of around ~100 issues (scales further with discipline)
 - Scenarios where offline access, git-tracked history, and self-contained backups are features, not limitations

@@ -228,7 +228,8 @@ Beyond standard markdown, the system provides:
 | Diagrams | Fenced ` ```mermaid ` / ` ```graphviz ` blocks | [above](#diagrams) |
 | Asset Embedding | `[[path]]` syntax for file inclusion | [Asset Embedding](./03_asset-embedding.md) |
 | Page Outline | Auto-generated table of contents | [Outline](./04_outline.md) |
-| Diagram Pages | `.mmd` / `.dot` / `.excalidraw` files as pages | [Diagram Pages](./06_diagram-pages.md) |
+| Diagram Pages | `.mmd` / `.dot` / `.excalidraw` / `.drawio` files as pages | [Diagram Pages](./06_diagram-pages.md) |
+| draw.io | `.drawio` files, embedded or as pages | [draw.io Diagrams](./07_drawio.md) |
 
 Markdown isn't the only page format: a diagram file with an `XX_` prefix
 renders as a first-class page in the sidebar — see

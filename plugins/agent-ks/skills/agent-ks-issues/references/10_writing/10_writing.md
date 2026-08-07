@@ -220,7 +220,7 @@ issue writes may name it.** So a leading `/` is wrong in a tracker document with
 no exception at all — assets included.
 
 A diagram file can also **be a supporting doc itself**: drop a `.mmd` / `.dot` /
-`.excalidraw` file directly into `notes/`, `brainstorm/`, `agent-memory/`, or
+`.excalidraw` / `.drawio` file directly into `notes/`, `brainstorm/`, `agent-memory/`, or
 `agent-log/` (no markdown wrapper) and it renders as a first-class entry — own
 sidebar item, own URL, rendered client-side like any embed. Consistent with
 first-class diagram pages in docs sections. Use this when the diagram *is* the
@@ -228,16 +228,26 @@ doc; keep embed-only diagrams in `assets/`. **Subtasks are the exception**:
 a subtask is a status-bearing checklist item, so it stays markdown — embed a
 diagram into a subtask body from `assets/` instead.
 
-**Excalidraw** — image syntax embeds a scene read-only (fetched by reference,
-rendered as SVG client-side); a plain link deliberately stays a link to the raw
-file. Never inline scene JSON — the `.excalidraw` file is the source of truth:
+**Excalidraw and draw.io** — image syntax embeds the file read-only (fetched by
+reference, rendered as SVG client-side); a plain link deliberately stays a link
+to the raw file. Never inline scene JSON or mxGraph XML — the file is the source
+of truth:
 
 ```markdown
 ![Architecture](./assets/arch.excalidraw)   ← embeds; alt = caption, click zooms
-[Architecture](./assets/arch.excalidraw)    ← plain link, opens the raw scene
+![Topology](./assets/topology.drawio)       ← same syntax, same behaviour
+[Architecture](./assets/arch.excalidraw)    ← plain link, opens the raw file
 ```
 
-Missing file → build error (`asset-missing`); malformed scene → visible error box.
+Missing file → build error (`asset-missing`); malformed file → visible error box.
+
+**Dark mode splits here.** Mermaid, Graphviz and Excalidraw are colour-inverted;
+draw.io is not — its viewer resolves a real dark palette instead, because
+`.drawio` files carry raster icons and screenshots that a filter turns into
+negatives. Author-set colours are re-resolved for a dark canvas rather than left
+untouched, so pick something whose meaning survives on both. Save uncompressed
+so the file diffs and greps.
+
 Live demo: `2026-04-10-editor-diagrams/notes/02_embed-verification.md`.
 
 ## Artifacts

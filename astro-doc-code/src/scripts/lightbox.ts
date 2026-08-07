@@ -160,6 +160,7 @@ function sourceName(container: HTMLElement): string {
   if (container.classList.contains('diagram-mermaid')) return 'diagram.mmd';
   if (container.classList.contains('diagram-graphviz')) return 'diagram.dot';
   if (container.classList.contains('diagram-excalidraw')) return 'diagram.excalidraw';
+  if (container.classList.contains('diagram-drawio')) return 'diagram.drawio';
   return 'diagram.txt';
 }
 
@@ -168,7 +169,7 @@ function sourceResolver(container: HTMLElement): (() => Promise<string>) | null 
   const inline = container.dataset.diagramSource;
   if (inline) return async () => inline;
   const src = container.dataset.src;
-  if (src && container.classList.contains('diagram-excalidraw')) {
+  if (src && (container.classList.contains('diagram-excalidraw') || container.classList.contains('diagram-drawio'))) {
     return async () => {
       const res = await fetch(src, { cache: 'no-cache' });
       if (!res.ok) throw new Error(`fetch failed (${res.status})`);
@@ -178,8 +179,21 @@ function sourceResolver(container: HTMLElement): (() => Promise<string>) | null 
   return null;
 }
 
+/**
+ * draw.io labels are `<foreignObject>`, which taints a canvas the SVG is
+ * drawn onto — every PNG action would throw. See `ActionTarget.rasterizable`.
+ */
+function isRasterizable(container: HTMLElement): boolean {
+  return !container.classList.contains('diagram-drawio');
+}
+
 function diagramTarget(container: HTMLElement, el: SVGSVGElement): ActionTarget {
-  return { el, source: sourceResolver(container), sourceName: sourceName(container) };
+  return {
+    el,
+    source: sourceResolver(container),
+    sourceName: sourceName(container),
+    rasterizable: isRasterizable(container),
+  };
 }
 
 function open(el: HTMLImageElement | HTMLDivElement) {
@@ -187,6 +201,9 @@ function open(el: HTMLImageElement | HTMLDivElement) {
   canvas!.innerHTML = '';
   canvas!.style.transform = '';
   currentTarget = null;
+  // Default for images and every rasterizable diagram; the diagram branch
+  // below hides it again for targets that can't be drawn to a canvas.
+  viewerCopyBtn!.hidden = false;
 
   if (el instanceof HTMLImageElement) {
     const img = document.createElement('img');
@@ -206,6 +223,9 @@ function open(el: HTMLImageElement | HTMLDivElement) {
     if (!svg) return;
     const clone = svg.cloneNode(true) as SVGSVGElement;
     clone.classList.add('lightbox-svg');
+    // draw.io renders its own dark palette, so the overlay's invert filter
+    // would flip an already-dark diagram back to light. Mark it to opt out.
+    if (el.classList.contains('diagram-drawio')) clone.classList.add('lightbox-svg-themed');
     const [w, h] = svgSize(svg);
     clone.removeAttribute('width');
     clone.removeAttribute('height');
@@ -214,6 +234,10 @@ function open(el: HTMLImageElement | HTMLDivElement) {
     clone.style.maxWidth = 'none';
     canvas!.appendChild(clone);
     currentTarget = diagramTarget(el, clone);
+    // The split button's primary action is Copy-as-PNG; hide it when the
+    // target can't rasterize rather than leave a button that always fails.
+    // The caret stays — its menu still offers SVG and source.
+    viewerCopyBtn!.hidden = currentTarget.rasterizable === false;
     const fileSrc = el.dataset.src;
     openBtn!.hidden = !fileSrc;
     if (fileSrc) openBtn!.href = fileSrc;
@@ -266,12 +290,16 @@ function bindDiagrams() {
     const expand = toolbarButton('⛶', 'Expand', () => open(diagram));
     expand.className = 'diagram-tool-btn';
     tools.appendChild(expand);
-    const copy = toolbarButton('⎘', 'Copy as PNG', () => {
-      const t = target();
-      if (t) copyPng(t);
-    });
-    copy.className = 'diagram-tool-btn';
-    tools.appendChild(copy);
+    // Same reasoning as the viewer toolbar: no primary copy button when the
+    // diagram can't rasterize. The caret menu still carries SVG and source.
+    if (isRasterizable(diagram)) {
+      const copy = toolbarButton('⎘', 'Copy as PNG', () => {
+        const t = target();
+        if (t) copyPng(t);
+      });
+      copy.className = 'diagram-tool-btn';
+      tools.appendChild(copy);
+    }
     const caret = toolbarButton('▾', 'More copy/download options', () => {
       const t = target();
       if (t) openCopyMenu(caret, t);

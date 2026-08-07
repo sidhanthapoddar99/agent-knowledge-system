@@ -112,7 +112,7 @@ The `NN_` prefixes are stripped when building URLs (any width, 2–5 digits).
 
 ## Diagram pages — non-markdown pages
 
-A prefixed `.mmd` / `.mermaid` / `.dot` / `.gv` / `.excalidraw` file is a
+A prefixed `.mmd` / `.mermaid` / `.dot` / `.gv` / `.excalidraw` / `.drawio` file is a
 **first-class page** — same sidebar, same slug rules as markdown
 (`20_architecture.mmd` → `/…/architecture`). Rules:
 
@@ -140,11 +140,14 @@ A prefixed `.mmd` / `.mermaid` / `.dot` / `.gv` / `.excalidraw` file is a
 - **Opt-out**: `"allow_diagram_pages": false` in the *section-root*
   `settings.json`.
 - The outline column auto-hides (no headings); click opens the pan/zoom lightbox viewer;
-  excalidraw pages carry an *open file ↗* link to the raw scene.
+  excalidraw and draw.io pages carry an *open file ↗* link to the raw file.
+- Dark mode: mermaid / graphviz / excalidraw are colour-inverted; draw.io
+  renders its own dark palette instead (see `writing.md`).
 - **Embed vs page**: figure inside prose → embed from `assets/`
   (see `writing.md`); the diagram IS the content → prefixed file as a page.
-- User-guide: `@root/default-docs/data/user-guide/15_writing-content/06_diagram-pages.md`;
-  all three types render live on `15_writing-content/07_diagram-showcase.md`.
+- User-guide: `@root/default-docs/data/user-guide/15_writing-content/06_diagram-pages.md`
+  (draw.io specifics: `15_writing-content/07_drawio.md`); all four types render
+  live on `15_writing-content/20_examples/01_diagram-showcase.md`.
 
 ## Artifact pages — self-contained HTML pages
 

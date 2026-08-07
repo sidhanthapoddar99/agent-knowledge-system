@@ -1,12 +1,16 @@
 /**
  * First-class diagram pages
  *
- * `.mmd` / `.mermaid` / `.dot` / `.gv` / `.excalidraw` files following the
- * `XX_` prefix convention render as first-class docs pages — same sidebar,
- * same routing as markdown. The page body is the same `.diagram` container
- * the embeds emit, so the BaseLayout client script renders it with zero new
- * machinery (mermaid/graphviz carry their source inline; excalidraw carries
- * a `data-src` URL and is fetched client-side).
+ * `.mmd` / `.mermaid` / `.dot` / `.gv` / `.excalidraw` / `.drawio` files
+ * following the `XX_` prefix convention render as first-class docs pages —
+ * same sidebar, same routing as markdown. The page body is the same
+ * `.diagram` container the embeds emit, so the BaseLayout client script
+ * renders it with zero new machinery.
+ *
+ * Two container shapes, by how the source travels: mermaid and graphviz are
+ * text DSLs small enough to inline escaped into the page, while excalidraw
+ * (JSON) and draw.io (XML) are opaque documents carrying embedded fonts and
+ * images — those get a `data-src` URL and are fetched client-side.
  *
  * Metadata: an optional sibling `XX_name.meta.json` sidecar carries what
  * frontmatter would (title / description / sidebar_label / sidebar_position /
@@ -34,15 +38,24 @@ import { resolveContentAssetUrl } from '../parsers/postprocessors/asset-src';
 import type { LoadedContent } from '../parsers/types';
 import type { ProcessContext } from '../parsers/types';
 
-const DIAGRAM_KINDS: Record<string, 'mermaid' | 'graphviz' | 'excalidraw'> = {
+export type DiagramKind = 'mermaid' | 'graphviz' | 'excalidraw' | 'drawio';
+
+const DIAGRAM_KINDS: Record<string, DiagramKind> = {
   '.mmd': 'mermaid',
   '.mermaid': 'mermaid',
   '.dot': 'graphviz',
   '.gv': 'graphviz',
   '.excalidraw': 'excalidraw',
+  '.drawio': 'drawio',
 };
 
-export const DIAGRAM_PAGE_GLOB = '**/*.{mmd,mermaid,dot,gv,excalidraw}';
+/**
+ * Kinds whose container references the file by URL instead of inlining it.
+ * The client fetches the source itself (see `scripts/diagrams.ts`).
+ */
+const REFERENCED_KINDS = new Set<DiagramKind>(['excalidraw', 'drawio']);
+
+export const DIAGRAM_PAGE_GLOB = '**/*.{mmd,mermaid,dot,gv,excalidraw,drawio}';
 
 /** Lowercase diagram file extensions, dot included (`.mmd`, …). */
 export const DIAGRAM_EXTENSIONS = Object.keys(DIAGRAM_KINDS);
@@ -50,21 +63,21 @@ export const DIAGRAM_EXTENSIONS = Object.keys(DIAGRAM_KINDS);
 /**
  * Build the client-rendered `.diagram` container for a diagram file — the
  * same container the embed postprocessor emits (mermaid/graphviz inline
- * their escaped source; excalidraw carries a `data-src` URL with an mtime
- * `?v=` cache-buster). Returns null when the extension isn't a diagram
+ * their escaped source; excalidraw and draw.io carry a `data-src` URL with an
+ * mtime `?v=` cache-buster). Returns null when the extension isn't a diagram
  * type. `title` defaults to the prefix-stripped, title-cased filename.
  */
 export function diagramContainerHtml(file: string, title?: string): string | null {
   const kind = DIAGRAM_KINDS[path.extname(file).toLowerCase()];
   if (!kind) return null;
 
-  if (kind === 'excalidraw') {
+  if (REFERENCED_KINDS.has(kind)) {
     const context = { fileDir: path.dirname(file) } as ProcessContext;
     const url = resolveContentAssetUrl(`./${path.basename(file)}`, context);
     const basename = path.basename(file, path.extname(file));
     const caption = title ?? titleFromCleanName(parseOrderPrefix(basename).cleanName);
     const version = Math.floor(fs.statSync(file).mtimeMs);
-    return `<div class="diagram diagram-excalidraw" data-src="${escapeHtml(url ? `${url}?v=${version}` : '')}" data-title="${escapeHtml(caption)}"></div>`;
+    return `<div class="diagram diagram-${kind}" data-src="${escapeHtml(url ? `${url}?v=${version}` : '')}" data-title="${escapeHtml(caption)}"></div>`;
   }
 
   const source = fs.readFileSync(file, 'utf-8');
@@ -96,7 +109,7 @@ function titleFromCleanName(cleanName: string): string {
 function diagramSlug(relativePath: string): string {
   return relativePath
     .replace(/\\/g, '/')
-    .replace(/\.(mmd|mermaid|dot|gv|excalidraw)$/i, '')
+    .replace(/\.(mmd|mermaid|dot|gv|excalidraw|drawio)$/i, '')
     .split('/')
     .map((segment) => parseOrderPrefix(segment).cleanName)
     .join('/');

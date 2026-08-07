@@ -70,7 +70,7 @@ src/parsers/
     ├── heading-ids.ts          # Add IDs to headings
     ├── internal-links.ts       # Rewrite relative links (strip NN_ prefixes, .md extensions)
     ├── issue-body-links.ts     # Issues only: re-root issue.md links for the detail-URL collapse
-    ├── excalidraw-embed.ts     # ![x](./y.excalidraw) → client-rendered diagram placeholder
+    ├── diagram-embed.ts        # ![x](./y.excalidraw|.drawio) → client-rendered diagram placeholder
     ├── asset-src.ts            # Shared: relative <img src> + <a href> → /content-assets/… URLs
     ├── external-links.ts       # Security attrs for external links
     └── table-wrap.ts           # Wrap tables for horizontal overflow scrolling

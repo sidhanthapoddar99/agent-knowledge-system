@@ -2,8 +2,8 @@
  * Shared machinery for first-class non-markdown pages.
  *
  * A docs section can contain several kinds of non-markdown file that each
- * render as a first-class page: diagrams (`.mmd`/`.dot`/`.excalidraw`, see
- * `diagram-pages.ts`) and artifacts (`.html`, see `artifact-pages.ts`). Every
+ * render as a first-class page: diagrams (`.mmd`/`.dot`/`.excalidraw`/`.drawio`,
+ * see `diagram-pages.ts`) and artifacts (`.html`, see `artifact-pages.ts`). Every
  * such scanner needs the same slug-collision pass so a `.md`, a `.mmd`, and a
  * `.html` can't silently claim the same URL. Keeping that pass here means the
  * scanners resolve collisions against **one shared pool** with **one

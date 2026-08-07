@@ -510,7 +510,7 @@ directory — never the tracker.
 `02_working/`. If the run wants to pass it forward, `03_debrief/`. If a later run or a reader
 of the issue needs it, the issue's `notes/`.
 
-`agent-log/` renders `.md` plus `.mmd` `.mermaid` `.dot` `.gv` `.excalidraw` as log
+`agent-log/` renders `.md` plus `.mmd` `.mermaid` `.dot` `.gv` `.excalidraw` `.drawio` as log
 entries. `.html` artifacts render only in `notes/` and `brainstorm/`, so a run that
 produces a dashboard graduates it to the issue's `notes/`.
 

@@ -266,8 +266,8 @@ export async function loadContent(
   }
 
   // First-class non-markdown pages (docs sections only) — diagram files
-  // (.mmd/.dot/.excalidraw) then artifact files (.html), each with an NN_
-  // prefix; opt-out via `allow_diagram_pages` / `allow_artifact_pages: false`
+  // (.mmd/.dot/.excalidraw/.drawio) then artifact files (.html), each with an
+  // NN_ prefix; opt-out via `allow_diagram_pages` / `allow_artifact_pages: false`
   // in the section root settings.json. Handles slug-collision errors in place.
   //
   // Sequencing matters: the artifact scan runs AFTER the diagram push and is

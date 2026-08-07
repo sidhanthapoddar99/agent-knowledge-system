@@ -1,0 +1,15 @@
+{
+  "title": "Incremental builds — stop rebuilding 1,290 pages to change one",
+  "description": "Rebuild and rewrite only the pages a change affects. Measured: 98.7% of built pages are byte-identical between builds.",
+  "status": "open",
+  "priority": "medium",
+  "component": [
+    "architecture"
+  ],
+  "labels": [
+    "feature",
+    "performance"
+  ],
+  "author": "claude",
+  "assignees": []
+}

@@ -27,7 +27,7 @@ to carry, and it is the cheapest work in this issue.
 # Todo list
 
 - [x] Delete `@astrojs/mdx` and its `astro.config.mjs` entry — done before the upgrade, commit `033c5ff`
-- [ ] ~~Delete the presence system~~ — **kept, deliberately.** See *The presence decision* below
+- [x] ~~Delete the presence system~~ — **kept.** Sid's ruling; see *The presence decision* below
 - [x] Delete the unreferenced editor code — 7 files, **707 lines**
 - [x] Decide on frontmatter validation — **wired up as a warning.** See below
 - [x] Run a `tsc --noUnusedLocals` pass — 13 findings, all trivial, listed below
@@ -81,13 +81,13 @@ Presence is precisely the scaffolding for it: join/leave, cursors, stale cleanup
 Deleting 267 lines of groundwork for a wanted feature is not a cleanup — and the
 audit itself said *"Port, delete, or finish — but not port as-is."*
 
-**This one is Sid's call**, because it asks what the product is rather than how the
-code should be shaped:
+**Sid ruled on 2026-08-07: keep it.** Multi-user editing is wanted, later rather
+than now, and the server half should not have to be written twice.
 
-- **Finish it** — build the client. Real work, not cleanup, and it delivers a
-  feature already asked for.
-- **Delete it** — 267 lines plus ~40 in `middleware.ts` plus 6 unread config keys,
-  and multi-user presence starts from zero later.
+Handed to the issue that owns the feature —
+[Yjs sync and multi-user presence](../../../2026-04-10-sync-and-presence/comments/001_2026-08-07_claude.md)
+— with what is on disk, what is missing, and the caution that a code path with zero
+call sites has never actually run.
 
 Cost of keeping it meanwhile: one cleanup timer and one always-empty toolbar row.
 
@@ -135,7 +135,7 @@ sweep does not re-derive the list.
 
 ## Next steps
 
-- [ ] **Sid decides on presence:** finish it, or delete it.
+- [x] **Presence: Sid ruled keep**, handed to [the sync-and-presence issue](../../../2026-04-10-sync-and-presence/comments/001_2026-08-07_claude.md).
 - [x] Commented on [the codebase-refactoring issue](../../../2025-06-25-codebase-refactoring/comments/002_2026-08-07_claude.md)
       so its own sweep does not redo this.
 - [ ] `cache-manager`'s ~120 unused lines stay with

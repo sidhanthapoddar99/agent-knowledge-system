@@ -1,6 +1,6 @@
 ---
 title: "Make the build deterministic — move relative time to the client"
-status: review
+status: done
 ---
 
 # Overview

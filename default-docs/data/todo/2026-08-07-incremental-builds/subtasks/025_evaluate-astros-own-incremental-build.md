@@ -1,6 +1,6 @@
 ---
 title: "Astro 7.2 ships an incremental build — evaluate it before writing ours"
-status: review
+status: done
 ---
 
 # Overview

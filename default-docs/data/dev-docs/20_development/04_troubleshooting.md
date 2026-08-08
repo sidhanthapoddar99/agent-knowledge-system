@@ -27,7 +27,7 @@ windowEl.appendChild(contentWrapper);
 contentWrapper.querySelectorAll('.option-btn').forEach(btn => { ... });
 ```
 
-**File:** `src/dev-toolbar/layout-selector.ts`
+**File:** `src/dev-tools/layout-selector/index.ts`
 
 ## Issue 2: URL Changes But Layout Doesn't
 
@@ -142,5 +142,5 @@ Check for JavaScript errors that might prevent the dev toolbar from functioning.
 | `src/middleware.ts` | Capture `?layout=` param |
 | `src/env.d.ts` | TypeScript types for `Astro.locals` |
 | `src/pages/[...slug].astro` | Read layout override, dynamic props |
-| `src/dev-toolbar/integration.ts` | Register toolbar app |
-| `src/dev-toolbar/layout-selector.ts` | UI and click handlers |
+| `src/dev-tools/integration.ts` | Register toolbar app |
+| `src/dev-tools/layout-selector/index.ts` | UI and click handlers |

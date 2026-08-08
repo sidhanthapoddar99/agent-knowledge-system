@@ -84,21 +84,21 @@ The layout switcher uses **cookies** to persist selections across page reloads. 
 
 Cookies expire after 7 days and are only used in development mode.
 
-### 1. Dev Toolbar Integration (`src/dev-toolbar/integration.ts`)
+### 1. Dev Toolbar Integration (`src/dev-tools/integration.ts`)
 
 Registers the custom app with Astro's dev toolbar:
 
 ```typescript
 export function devToolbarIntegration(): AstroIntegration {
   return {
-    name: 'dev-toolbar-layout-selector',
+    name: 'dev-tools-apps',
     hooks: {
       'astro:config:setup': ({ addDevToolbarApp }) => {
         addDevToolbarApp({
           id: 'layout-theme-selector',
           name: 'Layout & Theme',
           icon: `<svg>...</svg>`,
-          entrypoint: './src/dev-toolbar/layout-selector.ts',
+          entrypoint: './src/dev-tools/layout-selector/index.ts',
         });
       },
     },
@@ -106,7 +106,7 @@ export function devToolbarIntegration(): AstroIntegration {
 }
 ```
 
-### 2. Layout Selector UI (`src/dev-toolbar/layout-selector.ts`)
+### 2. Layout Selector UI (`src/dev-tools/layout-selector/index.ts`)
 
 The client-side code that:
 - Renders layout/theme/navbar/footer options in the toolbar panel

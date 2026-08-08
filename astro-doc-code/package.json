@@ -9,6 +9,7 @@
     "preview": "astro preview",
     "astro": "astro"
   },
+  "//sass": "THERE IS NO DIRECT sass DEPENDENCY, AND THAT IS CORRECT — nothing here uses SCSS. But `sass@1.51.0` (2022) IS installed, because @excalidraw/excalidraw pins it as a direct dependency, and bun hoists it. Vite 8 wants the modern Sass API, which 1.51.0 predates. So the FIRST `.scss` file anyone adds will fail or misbehave in a way that looks like a Vite bug. The fix at that point is to add a current `sass` to devDependencies to win the hoist — the same mechanism as the clsx note below. Do not add it pre-emptively: it is weight for a feature nobody uses.",
   "//clsx": "NOT UNUSED — do not remove. Nothing in src/ imports it. It is here to win a hoist: @excalidraw/excalidraw depends on clsx@1.1.1 (CJS), and without this direct ^2.1.1 entry bun hoists that copy over the ESM one Astro expects, breaking the production build at the generate step with \"Named export 'clsx' not found\". Two audits have now proposed deleting it on a grep. See dev-docs/15_scripts/10_diagrams.md.",
   "dependencies": {
     "@codemirror/autocomplete": "^6.20.3",

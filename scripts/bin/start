@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# `start` as a bare command, via mise's PATH entry — so you can type `start`
+# from any subdirectory instead of hunting for `../../start`.
+#
+# UNIX ONLY, and that is deliberate: `start` is a cmd builtin on Windows, which
+# is exactly why the docs tell Windows users to type `.\start.cmd`. Putting the
+# bare name on PATH there would recreate that ambiguity, so this shim is not
+# mirrored into a .cmd twin.
+set -e
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+exec "$DIR/../../start" "$@"

@@ -94,7 +94,7 @@ cd agent-knowledge-system
 echo "CONFIG_DIR=../config" > .env
 
 # 4. Run
-./start                                    # preflight: bun (else npm) → install → sanity build → dev
+./start                                    # bun (else npm) → install if needed → dev
 ```
 
 After step 4, the site is live at `http://localhost:4321` showing your customised "My Docs" homepage.

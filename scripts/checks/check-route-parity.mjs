@@ -38,8 +38,8 @@
  * Usage:
  *   ./start build              # dist/ is half of what this compares
  *   ./start dev                # in another terminal; Ctrl-C stops it
- *   scripts/check-route-parity.mjs
- *   scripts/check-route-parity.mjs --json --limit 200
+ *   scripts/checks/check-route-parity.mjs
+ *   scripts/checks/check-route-parity.mjs --json --limit 200
  *
  * With no --base it asks Astro's own lock file which dev server is running and
  * probes that. Pass --base http://localhost:<port> to aim it somewhere else.
@@ -51,7 +51,7 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { resolveServerBase, NO_SERVER_HELP } from './_astro-server.mjs';
 
-const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const FRAMEWORK = path.join(REPO, 'astro-doc-code');
 
 // Dependencies live in the framework's node_modules — this script has no

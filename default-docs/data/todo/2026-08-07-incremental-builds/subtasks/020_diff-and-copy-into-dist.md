@@ -1,9 +1,25 @@
 ---
 title: "Diff and copy — write only the files that changed"
-status: open
+status: dropped
 ---
 
 # Overview
+
+> [!WARNING]
+> **Dropped. The problem it solved stopped existing.**
+>
+> This exists to end disk churn — *"17 file writes instead of 1,290"*. That churn
+> came from `./start` running a full production build before every dev start. It
+> no longer does: dev writes **0.4 MB** where the old command wrote **~100 MB**,
+> and dev never reads `dist/` at all.
+>
+> So the 1,290 writes now happen only on a real publish, where writing the site
+> you are about to ship is the correct behaviour rather than churn. Scratch-build
+> plus compare plus copy would add a full extra copy of `dist/` and a comparison
+> pass to save writes nobody makes any more.
+>
+> Where the remaining measurement lives:
+> [the closing comment](../comments/001_closed-the-flag-works-and-stays-off.md).
 
 Build to a scratch directory, compare each output against what `dist/` already
 holds, and copy across only what differs. Delete what disappeared.

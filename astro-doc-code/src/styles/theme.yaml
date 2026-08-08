@@ -38,7 +38,7 @@ files:
 # theme is free to declare as many as it likes — that is its palette, not its
 # contract.
 #
-# `scripts/check-theme-contract.mjs` gate B enforces exactly this, both ways.
+# `scripts/checks/check-theme-contract.mjs` gate B enforces exactly this, both ways.
 required_variables:
   colors:
     - --color-bg-primary

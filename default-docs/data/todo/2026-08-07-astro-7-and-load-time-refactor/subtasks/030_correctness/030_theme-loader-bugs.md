@@ -58,7 +58,7 @@ restored:
           Remove one of the "extends" values in the chain.
 ```
 
-Five fixtures live in `scripts/check-theme-contract.mjs` gate C, and **two of them
+Five fixtures live in `scripts/checks/check-theme-contract.mjs` gate C, and **two of them
 are negative controls** — a normal child/base pair, and a *diamond* (two paths
 reaching one shared ancestor, which is legal). Without those, a detector that
 returns a cycle unconditionally would pass every positive test.

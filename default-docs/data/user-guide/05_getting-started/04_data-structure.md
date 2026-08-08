@@ -7,7 +7,7 @@ description: How your content, configuration, and assets are organised at your p
 
 This page covers **your project's content folders** — `config/`, `data/`, `assets/`, `themes/`. These live at the root of *your* docs project (the parent of the framework folder), and they're the only files you actually author or edit. Everything inside the framework folder (`astro-doc-code/`, `default-docs/`, `plugins/`) is shipped by the framework and shouldn't be touched.
 
-For the framework's internal code layout, see the [dev-docs](../../dev-docs/01_overview/02_code-structure.md). For what `default-docs/` is and why it ships inside the framework, see the [Overview](./01_overview.md).
+For the framework's internal code layout, see the [dev-docs](../../dev-docs/01_overview/01_code-structure.md). For what `default-docs/` is and why it ships inside the framework, see the [Overview](./01_overview.md).
 
 ## What the framework actually requires
 

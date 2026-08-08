@@ -42,7 +42,7 @@ target exists.
 root-relative rewrite this list proposed was the wrong fix and was never run —
 the defect was in the renderer. The checker it asks for was built twice over:
 `agent-ks check link-form` for the file question and repo-root
-`scripts/check-links.mjs` for the rendering one, both control-tested.
+`scripts/checks/check-links.mjs` for the rendering one, both control-tested.
 
 - [x] **Triage the tracker's 3,978 first — most are probably not defects.** Demo
       and fixture issues link to deliberately fictional paths (`/docs/api`,

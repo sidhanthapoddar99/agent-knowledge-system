@@ -31,8 +31,8 @@
  * that fires on everything passes a positive-only test while being useless.
  *
  * Usage:
- *   scripts/check-theme-contract.mjs
- *   scripts/check-theme-contract.mjs --json
+ *   scripts/checks/check-theme-contract.mjs
+ *   scripts/checks/check-theme-contract.mjs --json
  */
 
 import fs from 'node:fs';
@@ -41,7 +41,7 @@ import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 
-const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 
 // Dependencies live in the framework's node_modules, not the repo root — this
 // script has no package.json of its own and should not grow one.

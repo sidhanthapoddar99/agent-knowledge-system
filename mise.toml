@@ -1,10 +1,13 @@
-# Puts `bin/` on PATH inside this repo, which is what makes `agent-ks-dev`
-# available as a bare command from any subdirectory — and available NOWHERE
-# else, so it cannot be typed by accident in a consumer project. A stale
-# invocation outside this repo fails with "command not found" rather than
-# quietly checking something you did not mean.
+# Puts `scripts/bin/` on PATH inside this repo, which is what makes
+# `agent-ks-dev` and `start` available as bare commands from any subdirectory —
+# and available NOWHERE else, so neither can be typed by accident in a consumer
+# project. A stale invocation outside this repo fails with "command not found"
+# rather than quietly checking something you did not mean.
 #
-# Anyone without mise still has ./bin/agent-ks-dev. mise buys the bare name,
-# not the capability.
+# Anyone without mise still has ./scripts/bin/agent-ks-dev and ./start. mise
+# buys the bare name, not the capability.
+#
+# `start` is Unix-only here on purpose: it is a cmd builtin on Windows, where
+# the entry point is `.\start.cmd`.
 [env]
-_.path = ["bin"]
+_.path = ["scripts/bin"]

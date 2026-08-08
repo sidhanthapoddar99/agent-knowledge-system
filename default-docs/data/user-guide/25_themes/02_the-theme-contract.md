@@ -192,7 +192,7 @@ These are documented in [Tokens / Layout Dimensions](./04_tokens/05_layout-dimen
 
 The count above drifts the moment a layout starts reading a new variable, and nothing about that failure is visible: the page still renders, just with a frozen colour. So it's checked rather than remembered.
 
-`scripts/check-theme-contract.mjs` runs three gates over the source:
+`scripts/checks/check-theme-contract.mjs` runs three gates over the source:
 
 | Gate | Fails when |
 |---|---|

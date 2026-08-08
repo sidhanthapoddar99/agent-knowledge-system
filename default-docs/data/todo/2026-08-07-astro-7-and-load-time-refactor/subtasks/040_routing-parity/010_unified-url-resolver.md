@@ -128,7 +128,7 @@ hand-off at the top of this file.
 
 ## The harness
 
-`scripts/check-route-parity.mjs`. Enumerates from `buildStaticPaths` — the build's
+`scripts/checks/check-route-parity.mjs`. Enumerates from `buildStaticPaths` — the build's
 own source of truth — then checks each URL against a running dev server *and* the
 files in `dist/`, plus a hand-written set of addresses that must **not** resolve.
 That negative set matters: it is the half nothing enumerates, and it is where both
@@ -142,7 +142,7 @@ current entries are environment behaviour, not resolver disagreement:
   *file* request to `astro dev` and never reaches the page route; `/…/03_docs.html/`
   resolves fine. The build writes it as a directory and a static host 301s the bare
   form to the slash form. This is the same three-environment split
-  `scripts/check-links.mjs` was built around.
+  `scripts/checks/check-links.mjs` was built around.
 - **6 · an unknown docs slug renders the section shell** with a 404 status. Both
   sides say "not found"; only the body differs.
 

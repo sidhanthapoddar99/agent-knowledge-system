@@ -2,7 +2,7 @@
  * Pure row-matching + sort helpers. No DOM state outside row data
  * attributes; all context flows in via arguments.
  */
-import { CLOSED_STATUSES, FIELDS, MULTI_FIELDS, PSEUDO_VALUES } from './types';
+import { CLOSED_STATUSES, DATE_GROUP_FIELDS, FIELDS, MULTI_FIELDS, PSEUDO_VALUES } from './types';
 import type { Config, FilterState, StateTab } from './types';
 import { categoryOf, isValidStatus } from '@loaders/issue-status';
 
@@ -66,6 +66,92 @@ export function rowValues(row: HTMLElement, field: string): string[] {
   }
   const v = row.dataset[field as keyof DOMStringMap] as string | undefined;
   return v ? [v] : [];
+}
+
+const MONTH_NAMES = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+];
+const DATE_ONLY = /^(\d{4})-(\d{2})-(\d{2})$/;
+const DAY_MS = 86_400_000;
+/** Days behind today that still count as "Past week". Today is its own tier. */
+const PAST_WEEK_DAYS = 7;
+
+/** One bucket a row belongs to: `key` sorts, `label` is what a reader sees.
+ *  For a vocabulary field the two are the same string. */
+export type GroupValue = { key: string; label: string };
+
+/**
+ * A date string reduced to the reader's LOCAL calendar day, at midnight.
+ *
+ * The two input shapes need opposite treatment, and getting either wrong is
+ * an off-by-one-day that nobody reports:
+ *
+ *   `2026-08-08`              a calendar date with no timezone. `new Date()`
+ *                             reads it as UTC midnight, which is the previous
+ *                             day everywhere west of Greenwich. Built by parts.
+ *   `2026-08-08T18:21+05:30`  a real instant. Parsed, then read back through
+ *                             the LOCAL getters, so "today" means the reader's
+ *                             today rather than the committer's.
+ */
+function localDay(iso: string | undefined): Date | null {
+  const s = (iso || '').trim();
+  if (!s) return null;
+  const m = DATE_ONLY.exec(s);
+  if (m) return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+  const d = new Date(s);
+  return Number.isNaN(d.getTime()) ? null : new Date(d.getFullYear(), d.getMonth(), d.getDate());
+}
+
+/**
+ * The bucket a date falls in, relative to `now`. Three tiers:
+ *
+ *   Today          the same calendar day
+ *   Past week      1 to 7 days back
+ *   <Month> <Year> everything older, and anything dated ahead of today
+ *
+ * `now` is an argument rather than a `Date.now()` call inside, for the same
+ * reason relative timestamps moved to the client: this MUST NOT be evaluated
+ * at build time. A "Today" heading baked into static HTML is correct for one
+ * day and then silently wrong for as long as the build is deployed. Callers
+ * read the clock once per render so every row agrees with every other row.
+ *
+ * The key is a sort key, not a display value. A leading tier digit puts Today
+ * above Past week above every month, and the `YYYY-MM` tail then orders the
+ * months among themselves — all under one plain descending string compare.
+ */
+export function dateBucket(iso: string | undefined, now: number): GroupValue | null {
+  const day = localDay(iso);
+  if (!day) return null;
+
+  const n = new Date(now);
+  const today = new Date(n.getFullYear(), n.getMonth(), n.getDate());
+  // Both sides are local midnights, so this is a whole number of days. A DST
+  // boundary moves it by an hour, never by a day, and the rounding absorbs it.
+  const daysBack = Math.round((today.getTime() - day.getTime()) / DAY_MS);
+
+  if (daysBack === 0) return { key: '2', label: 'Today' };
+  if (daysBack > 0 && daysBack <= PAST_WEEK_DAYS) return { key: '1', label: 'Past week' };
+
+  const y = day.getFullYear();
+  const mo = day.getMonth();
+  return { key: `0:${y}-${String(mo + 1).padStart(2, '0')}`, label: `${MONTH_NAMES[mo]} ${y}` };
+}
+
+/**
+ * The bucket(s) a row belongs to for a group-by dimension.
+ *
+ * Separate from `rowValues` on purpose: `rowValues` answers "what does this
+ * row hold for this field", which is what CHIP FILTERING needs and must stay
+ * literal. Grouping is allowed to derive a value the row does not carry, and
+ * for dates it has to.
+ */
+export function groupValues(row: HTMLElement, field: string, now: number): GroupValue[] {
+  if (DATE_GROUP_FIELDS.has(field)) {
+    const b = dateBucket(row.dataset[field as keyof DOMStringMap] as string | undefined, now);
+    return b ? [b] : [];
+  }
+  return rowValues(row, field).map((v) => ({ key: v, label: v }));
 }
 
 /** Global filters only — search + field chips. Used by the grouped view

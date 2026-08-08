@@ -1,12 +1,24 @@
 ---
 title: "Render only the pages a change affects"
-status: open
+status: dropped
 ---
 
 # Overview
 
+> [!WARNING]
+> **Dropped, and kept on disk for one number.** Astro 7.2 ships the per-page cache
+> this was written to build, so the implementation is redundant. What is left is
+> the measurement below — **`getStaticPaths()` is 2.55 s, identical warm and cold,
+> 61% of the build** — which is the figure any future attempt starts from. The file
+> stays because that number outlives the plan.
+>
+> It is dropped rather than kept open because the work only pays off in a build,
+> and about 98% of runs are dev, which does not build. If the deploy model ever
+> moves to an SSR node server, there is no 1300-page build to optimise at all.
+> See [the closing comment](../comments/001_closed-the-flag-works-and-stays-off.md).
+
 > [!IMPORTANT]
-> **Kept, but its target moved.** Astro 7.2's own incremental build now removes the
+> **Its target had already moved before it was dropped.** Astro 7.2's own incremental build now removes the
 > per-page render cost this was written to attack — measured at **-79%** in
 > [025](./025_evaluate-astros-own-incremental-build.md). What survives is the one
 > thing a per-page cache structurally cannot do: **`getStaticPaths()` runs in full,

@@ -93,7 +93,7 @@ default, not this project's (`PORT=3088`). Neither hangs against a dead port,
 but `check-route-parity.mjs` reports *every* URL as divergent and
 `check-links.mjs` reports "no HTML pages reachable"; both read as a site defect.
 They now resolve the server from Astro's lock file through a shared reader,
-`scripts/_astro-server.mjs` — one implementation, two callers — and print the
+`scripts/checks/_astro-server.mjs` — one implementation, two callers — and print the
 port and pid they found.
 
 ## Verified, with what evidence

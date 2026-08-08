@@ -42,7 +42,7 @@ does not reach the others. Concretely, this has already cost:
       subtasks, notes, comments, agent-log files
 - [ ] `issue-body-links.ts` is **deleted**, not disabled, and its re-rooting is
       shown to be redundant rather than assumed to be
-- [ ] `scripts/check-links.mjs` run with the tracker in scope, against dev **and**
+- [ ] `scripts/checks/check-links.mjs` run with the tracker in scope, against dev **and**
       a static host, before and after
 - [ ] The [Comprehensive panel check](./030_comprehensive-panel-subdoc-links.md)
       still passes afterwards

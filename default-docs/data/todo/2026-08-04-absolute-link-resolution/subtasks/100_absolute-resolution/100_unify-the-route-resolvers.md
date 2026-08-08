@@ -23,7 +23,7 @@ copy.** Build the map once, and have request matching and build enumeration both
 read it.
 
 Done when one structure produces the request match, the build's `getStaticPaths`,
-and the link resolver's lookups — and `scripts/check-route-parity.mjs` still
+and the link resolver's lookups — and `scripts/checks/check-route-parity.mjs` still
 reports zero divergences.
 
 # Where this came from
@@ -39,7 +39,7 @@ they do not disagree**:
 
 **That measurement is why the merge was cancelled there, and why it is worth doing
 here.** As drift insurance it was not worth 5–8 days — nothing has drifted, and
-`scripts/check-route-parity.mjs` now catches it in three minutes if it starts. As
+`scripts/checks/check-route-parity.mjs` now catches it in three minutes if it starts. As
 *the seam this issue needs anyway*, it is work that has to happen regardless.
 
 The reasoning is the same one this issue already makes about the hosting prefix:
@@ -60,7 +60,7 @@ Three places that produce a URL is worse than two.
   — the measurement, and the cancelled-there decision
 - [the parity harness subtask](../../../2026-08-07-astro-7-and-load-time-refactor/subtasks/040_routing-parity/010_unified-url-resolver.md)
   — what the harness checks, and what its two `explained` classes mean
-- `scripts/check-route-parity.mjs` — the gate this must not break
+- `scripts/checks/check-route-parity.mjs` — the gate this must not break
 - [the trailing-slash matrix](../../notes/10_the-trailing-slash-matrix.html) — the
   harness's `dotted-segment-needs-trailing-slash` class is this phenomenon, seen
   from the routing side

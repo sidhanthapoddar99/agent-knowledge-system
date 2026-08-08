@@ -23,7 +23,20 @@ function formatDate(dateStr?: string): string {
   });
 }
 
+/**
+ * `datetime` must be a valid HTML date string, and the raw frontmatter value is
+ * not one: YAML parses an unquoted date into a `Date`, which stringifies to
+ * "Mon Jan 15 2024 05:30:00 GMT+0530 (India Standard Time)". That reads fine to
+ * a human and is unparseable to everything else.
+ */
+function machineDate(dateStr?: string): string | undefined {
+  if (!dateStr) return undefined;
+  const d = new Date(dateStr);
+  return Number.isNaN(d.getTime()) ? undefined : d.toISOString().slice(0, 10);
+}
+
 const formattedDate = formatDate(date);
+const machineReadableDate = machineDate(date);
 ---
 
 <article class="blog-post">
@@ -47,7 +60,7 @@ const formattedDate = formatDate(date);
 
       <div class="blog-post__meta">
         {author && <span class="blog-post__author">By {author}</span>}
-        {formattedDate && <time class="blog-post__date" datetime={date}>{formattedDate}</time>}
+        {formattedDate && <time class="blog-post__date" datetime={machineReadableDate}>{formattedDate}</time>}
       </div>
     </header>
 

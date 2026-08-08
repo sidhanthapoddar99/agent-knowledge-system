@@ -6,7 +6,7 @@ status: open
 # Overview
 
 **The live crawler is built and proven; this subtask is the re-measurement it
-exists for.** `scripts/check-links.mjs` crawls a *running server*, follows
+exists for.** `scripts/checks/check-links.mjs` crawls a *running server*, follows
 redirects, resolves each link against the **post-redirect** URL, and checks
 fragments as well as status. It gave the numbers that made the trailing-slash
 diagonal visible.
@@ -54,7 +54,7 @@ number, and it is why testing dev against preview proves nothing.
 
 # References
 
-- The tool: repo-root `scripts/check-links.mjs`
+- The tool: repo-root `scripts/checks/check-links.mjs`
 - What the numbers mean: [the trailing-slash matrix](../../notes/10_the-trailing-slash-matrix.html)
 - The change being measured: [the shared resolver](./020_the-shared-resolver.md)
 - The old gate this replaced, and its removal:

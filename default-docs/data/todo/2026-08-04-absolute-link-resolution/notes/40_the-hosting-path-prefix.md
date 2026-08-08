@@ -66,5 +66,5 @@ about, which is a reason to be exhaustive rather than incremental:
 # Done when
 
 A built site serves correctly from a sub-path with **no link, asset, redirect or
-client-side navigation broken** — verified by `scripts/check-links.mjs` against a
+client-side navigation broken** — verified by `scripts/checks/check-links.mjs` against a
 static host mounted at that sub-path, not by inspection.

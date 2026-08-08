@@ -48,7 +48,7 @@ without. `check-content-links.mjs` *constructs* each page URL as `'/' + path +
 
 # References
 
-- The replacement, written 2026-08-04: repo-root `scripts/check-links.mjs`
+- The replacement, written 2026-08-04: repo-root `scripts/checks/check-links.mjs`
 - The gate it replaces:
   `plugins/agent-ks/skills/agent-ks-docs/scripts/check-content-links.mjs`,
   registered in `_manifest.mjs` as `docs-check-links` / `agent-ks check links`
@@ -63,7 +63,7 @@ without. `check-content-links.mjs` *constructs* each page URL as `'/' + path +
 
 - [x] **Write the stages into the project `CLAUDE.md`**, with the "what does it
       need to run" test and the two link checkers as the worked example
-- [x] **Write `scripts/check-links.mjs`** — crawl a running server, follow
+- [x] **Write `scripts/checks/check-links.mjs`** — crawl a running server, follow
       redirects, check status *and* fragments, `--compare` two servers and report
       only the links they disagree on
 - [x] **Fail loudly when it inspected nothing.** No pages reachable, or zero

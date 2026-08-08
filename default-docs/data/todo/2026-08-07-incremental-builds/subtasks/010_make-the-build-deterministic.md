@@ -1,6 +1,6 @@
 ---
 title: "Make the build deterministic — move relative time to the client"
-status: review
+status: done
 ---
 
 # Overview
@@ -111,7 +111,7 @@ carries an answer, it carries the data.
 
 [025](./025_evaluate-astros-own-incremental-build.md) recorded this as blocker 1
 of 3 for turning on Astro's incremental build. It is cleared, and the staleness
-gate (`scripts/check-incremental-staleness.mjs`) is now meaningful in its strict
+gate (`scripts/checks/check-incremental-staleness.mjs`) is now meaningful in its strict
 default mode rather than flaky.
 
 **It does not by itself justify enabling the cache.** Blockers 2 and 3 stand:

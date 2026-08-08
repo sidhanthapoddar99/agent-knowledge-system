@@ -46,7 +46,7 @@
       "../../2026-08-02-refactor-efficiency-and-planning/subtasks/100_link-integrity/120_dev-and-build-disagree-on-the-base.md",
       "../../2026-08-02-refactor-efficiency-and-planning/agent-log/060_wf_move-the-gate-and-drop-the-shift/01_summary.md",
       "astro-doc-code/src/parsers/postprocessors/internal-links.ts",
-      "scripts/check-links.mjs"
+      "scripts/checks/check-links.mjs"
     ]
   }
 }

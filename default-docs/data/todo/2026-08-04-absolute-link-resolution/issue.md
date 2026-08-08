@@ -101,4 +101,4 @@ hand-typed trailing-slash URL on a static host.
   `astro-doc-code/src/parsers/postprocessors/internal-links.ts` (docs) and
   `issue-body-links.ts` (the tracker's root `issue.md` only)
 - The live rendering gate that measures all of this:
-  repo-root `scripts/check-links.mjs`
+  repo-root `scripts/checks/check-links.mjs`

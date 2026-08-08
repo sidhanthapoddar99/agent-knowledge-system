@@ -11,12 +11,14 @@
 import {
   FIELDS,
   PSEUDO_VALUES,
+  groupLabel,
   type Config,
   type FilterState,
   type StateTab,
   type ViewMode,
 } from './types';
 import {
+  groupValues,
   needsReview,
   rowMatchesExcluding,
   rowMatchesStateTab,
@@ -399,31 +401,54 @@ function apply(cfg: Config) {
     resetGroupStateIfNeeded(groupField);
 
     const order = cfg.groupOrderByField[groupField] || [];
+    // No declared order means the dimension is DERIVED (the date fields) —
+    // its sections are discovered from the rows and ordered here instead of
+    // being looked up. See types.ts → DATE_GROUP_FIELDS.
+    const derived = order.length === 0;
     const buckets = new Map<string, HTMLElement[]>();
+    const sortKeys = new Map<string, string>();
     for (const v of order) buckets.set(v, []);
     const unknown: HTMLElement[] = [];
+    // Read the clock ONCE for the whole pass, so every row is bucketed against
+    // the same "today". Read it again on the next render rather than caching it,
+    // so a page left open across midnight re-buckets when it next redraws.
+    const now = Date.now();
     for (const r of rows) {
       if (!rowMatchesGlobal(r, state)) continue;
       // Multi-valued fields (e.g. component) put the row into EVERY matching
       // bucket. Unknown values fall through to a trailing "—" bucket.
-      const vals = rowValues(r, groupField);
+      const vals = groupValues(r, groupField, now);
       if (vals.length === 0) {
         unknown.push(r);
         continue;
       }
       let placed = false;
-      for (const v of vals) {
-        if (buckets.has(v)) {
-          buckets.get(v)!.push(r);
+      for (const { key, label } of vals) {
+        if (derived && !buckets.has(label)) {
+          buckets.set(label, []);
+          sortKeys.set(label, key);
+        }
+        if (buckets.has(label)) {
+          buckets.get(label)!.push(r);
           placed = true;
         }
       }
       if (!placed) unknown.push(r);
     }
     const sections: Array<[string, HTMLElement[]]> = [];
-    for (const v of order) {
-      const rs = buckets.get(v)!;
-      if (rs.length) sections.push([v, rs]);
+    if (derived) {
+      // Newest first: Today, then Past week, then months. The key carries a
+      // leading tier digit and a `YYYY-MM` tail, so one descending string
+      // compare orders the tiers AND the months inside the last tier.
+      const labels = [...buckets.keys()].sort(
+        (a, b) => (sortKeys.get(b) || '').localeCompare(sortKeys.get(a) || ''),
+      );
+      for (const l of labels) sections.push([l, buckets.get(l)!]);
+    } else {
+      for (const v of order) {
+        const rs = buckets.get(v)!;
+        if (rs.length) sections.push([v, rs]);
+      }
     }
     if (unknown.length) sections.push(['—', unknown]);
 
@@ -502,7 +527,7 @@ function apply(cfg: Config) {
   const gValue = document.getElementById('issues-groupby-value');
   const groupActive = !!(state.group && cfg.groupDimensions.includes(state.group));
   gWrap?.classList.toggle('is-active', groupActive);
-  if (gValue) gValue.textContent = groupActive ? state.group! : 'None';
+  if (gValue) gValue.textContent = groupActive ? groupLabel(state.group!) : 'None';
   document.querySelectorAll<HTMLElement>('[data-group-option]').forEach((opt) => {
     opt.classList.toggle('is-selected', (opt.dataset.groupOption || '') === (state.group || ''));
   });

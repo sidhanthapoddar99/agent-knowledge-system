@@ -20,9 +20,12 @@ interface FilterGroup {
   pseudoValues?: string[];
 }
 
+import { groupLabel } from '../../scripts/index/types';
+
 interface Props {
   filterGroups: FilterGroup[];
-  /** Dimensions eligible for group-by; passed from IndexBody after checking vocabulary */
+  /** Dimensions eligible for group-by; passed from IndexBody. Vocabulary
+   *  fields first, then the derived date dimensions. */
   groupDimensions?: string[];
 }
 
@@ -69,7 +72,7 @@ const { filterGroups, groupDimensions = [] } = Astro.props;
               <span class="issues-filters__groupby-option-check" aria-hidden="true">
                 <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8l3 3 7-7"/></svg>
               </span>
-              <span>{d}</span>
+              <span>{groupLabel(d)}</span>
             </button>
           ))}
         </div>

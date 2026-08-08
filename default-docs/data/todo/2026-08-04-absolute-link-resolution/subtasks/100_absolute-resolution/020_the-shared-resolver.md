@@ -35,7 +35,7 @@ without one, or embedded at a different URL depth.
 
 - [ ] Docs links render as root-absolute; `curl` the traced link and confirm
       `href="/user-guide/getting-started/installation"`
-- [ ] **`scripts/check-links.mjs` against a dev server AND a real static host**,
+- [ ] **`scripts/checks/check-links.mjs` against a dev server AND a real static host**,
       before and after, both recorded here. The target is the two numbers
       *converging*, not just the static one falling — today they are 4 and 546
 - [ ] Control it: break one link's target file, confirm the miss is reported with

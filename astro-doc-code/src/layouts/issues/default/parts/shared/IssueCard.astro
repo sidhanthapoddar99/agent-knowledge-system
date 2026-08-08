@@ -1,6 +1,7 @@
 ---
 import StatusBadge from './StatusBadge.astro';
-import { formatRelativeTime, effectiveStatus } from '../../server/helpers';
+import { effectiveStatus } from '../../server/helpers';
+import { fullLabel, RELATIVE_TIME_ATTR } from '@modules/relative-time';
 import type { Issue, IssuesVocabulary } from '@loaders/issues';
 
 interface Props {
@@ -11,7 +12,7 @@ interface Props {
 
 const { issue, href, vocabulary } = Astro.props;
 const { meta } = issue;
-const { rel: updatedRel, full: updatedFull } = formatRelativeTime(issue.updated);
+const updatedFull = fullLabel(issue.updated);
 ---
 
 <article class="issue-card">
@@ -28,7 +29,7 @@ const { rel: updatedRel, full: updatedFull } = formatRelativeTime(issue.updated)
     </div>
     <div class="issue-card__meta">
       <span class="issue-card__id">{issue.id}</span>
-      {updatedRel && <span class="issue-card__updated">updated <time datetime={issue.updated} title={updatedFull}>{updatedRel}</time></span>}
+      {updatedFull && <span class="issue-card__updated">updated <time datetime={issue.updated} title={updatedFull} {...{ [RELATIVE_TIME_ATTR]: '' }}>{updatedFull}</time></span>}
     </div>
   </a>
 </article>

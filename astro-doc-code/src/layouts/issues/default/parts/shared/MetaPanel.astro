@@ -11,7 +11,7 @@
  * layout is needed again later, reintroduce it as a sibling component.
  */
 import StatusBadge from './StatusBadge.astro';
-import { formatRelativeTime } from '../../server/helpers';
+import { fullLabel, RELATIVE_TIME_ATTR } from '@modules/relative-time';
 import type { Issue, IssuesVocabulary } from '@loaders/issues';
 
 interface Props {
@@ -29,7 +29,7 @@ function formatDate(value: string | null | undefined): string {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
 }
 
-const { rel: updatedRel, full: updatedFull } = formatRelativeTime(issue.updated);
+const updatedFull = fullLabel(issue.updated);
 ---
 
 <aside class="issue-meta-panel">
@@ -54,8 +54,8 @@ const { rel: updatedRel, full: updatedFull } = formatRelativeTime(issue.updated)
       ? meta.assignees.join(', ')
       : <span class="issue-meta-panel__empty">—</span>}</dd></div>
     <div class="issue-meta-panel__cell"><dt>Created</dt><dd>{formatDate(issue.created)}</dd></div>
-    <div class="issue-meta-panel__cell"><dt>Updated</dt><dd>{updatedRel
-      ? <time datetime={issue.updated} title={updatedFull}>{updatedRel}</time>
+    <div class="issue-meta-panel__cell"><dt>Updated</dt><dd>{updatedFull
+      ? <time datetime={issue.updated} title={updatedFull} {...{ [RELATIVE_TIME_ATTR]: '' }}>{updatedFull}</time>
       : <span class="issue-meta-panel__empty">—</span>}</dd></div>
   </div>
 </aside>

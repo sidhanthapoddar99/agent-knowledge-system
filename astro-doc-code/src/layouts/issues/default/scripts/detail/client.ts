@@ -10,8 +10,10 @@ import { wirePanelSwitching } from './panels';
 import { wireStateButton } from './subtask-state';
 import { wireComprehensive } from './comprehensive';
 import { wireTocObserver } from './toc-observer';
+import { hydrateRelativeTimes } from '@modules/relative-time';
 
 export function initIssuesDetail() {
+  hydrateRelativeTimes();
   wirePanelSwitching();
   wireStateButton('.issue-overview-subtasks__state', '.issue-overview-subtasks__item');
   wireStateButton('.issue-comprehensive__state', '.issue-comprehensive__item');

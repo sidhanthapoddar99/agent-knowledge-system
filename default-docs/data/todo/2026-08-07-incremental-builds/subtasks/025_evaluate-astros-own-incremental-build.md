@@ -128,10 +128,15 @@ on, and it is why this stays opt-in.
 
 Three blockers, in the order they have to be cleared.
 
-**1. The build is not deterministic, and a cache makes that worse.**
-[010](./010_make-the-build-deterministic.md) already names `formatRelativeTime`
+**1. ~~The build is not deterministic, and a cache makes that worse.~~
+CLEARED — [010](./010_make-the-build-deterministic.md) landed.** The server no
+longer reads the clock, `dist` contains zero relative strings, and two cold
+builds 75 s apart are byte-identical across all 1307 pages. The rest of this
+section is kept because it is why the flag was off, and why the gate exists.
+
+[010](./010_make-the-build-deterministic.md) already named `formatRelativeTime`
 as the whole cause; this run reproduced it independently — two *cold* builds one
-minute apart differ:
+minute apart differed:
 
 ```
 - <time datetime="2026-08-08T02:16:43+05:30" …>31 min ago</time>
@@ -172,8 +177,9 @@ arrives later as a migration nobody planned. Opt-in keeps it out of the contract
 - **Editing `astro.config.mjs` invalidates the entire manifest** via `configHash`.
   Correct, but it makes "why did nothing cache?" a confusing question during any
   config work.
-- **Strict-mode gate runs are flaky until 010 lands** — whether they go red
-  depends on a minute boundary falling between two builds.
+- **Strict-mode gate runs were flaky until 010 landed** — whether they went red
+  depended on a minute boundary falling between two builds. Now fixed: strict is
+  the default and `--ignore-clock` should no longer be needed by anyone.
 
 ## The decision on 030 — keep it, and change its target
 
@@ -214,8 +220,8 @@ Off by default; opt in with `INCREMENTAL_BUILD=1`.
 
 ## Next steps, in order
 
-1. **Land [010](./010_make-the-build-deterministic.md).** It is a live defect on
-   its own, and nothing here can be trusted while it stands.
+1. ~~**Land [010](./010_make-the-build-deterministic.md).**~~ **Done** — the build
+   is deterministic and the strict gate is meaningful.
 2. **Run the gate in CI** on any change to a key or to what a layout loads.
 3. **Then flip the default**, and only then.
 4. **Rescope [030](./030_reverse-dependency-graph.md)** to `getStaticPaths`

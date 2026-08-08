@@ -34,6 +34,7 @@ import {
   presetMatchesState,
   presetToParams,
 } from './presets';
+import { hydrateRelativeTimes } from '@modules/relative-time';
 
 const VIEW_KEY = 'issues-view-mode';
 const PAGESIZE_KEY = 'issues-page-size';
@@ -589,6 +590,11 @@ function closeAllAddMenus() {
 // ================= init =================
 
 export function initIssuesIndex() {
+  // Before anything else: the grouped view builds its sections by cloning <tr>
+  // nodes, so hydrating first is what makes the clones carry real relative text
+  // instead of the absolute label the server had to render.
+  hydrateRelativeTimes();
+
   _cfg = readConfig();
 
   // Subtask 10: restore cached filters when URL has no query params.

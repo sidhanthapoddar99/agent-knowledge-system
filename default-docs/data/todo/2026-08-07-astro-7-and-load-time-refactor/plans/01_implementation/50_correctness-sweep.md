@@ -1,7 +1,7 @@
 ---
 title: "Correctness sweep"
 outcome: "Closed. Both live defects fixed and proven end to end; both decisions taken and written down — `default` is reserved, dependency tracking is built. Three of the four audit findings were partly wrong about their own subject, which is recorded per subtask"
-notes: "Left behind a gate rather than four fixes: `scripts/check-theme-contract.mjs`, each of its three gates deliberately broken and confirmed to fail alone. One new finding filed — the dev editor ships in production builds, 10.8 MB no reader can reach"
+notes: "Left behind a gate rather than four fixes: `scripts/checks/check-theme-contract.mjs`, each of its three gates deliberately broken and confirmed to fail alone. One new finding filed — the dev editor ships in production builds, 10.8 MB no reader can reach"
 who: claude
 status: done
 subtasks:
@@ -31,7 +31,7 @@ Commit `36c0497`. Every check below was run, not read:
 | Check | Result |
 |---|---|
 | Production build | ✅ 1279 pages, 6.69 s |
-| `scripts/check-theme-contract.mjs` | ✅ all three gates, 5 cycle fixtures |
+| `scripts/checks/check-theme-contract.mjs` | ✅ all three gates, 5 cycle fixtures |
 | Each gate broken deliberately | ✅ fails alone, no cross-talk, tree restores |
 | Real circular `extends`, real build | ✅ exit 1 in 5.5 s naming the chain |
 | Real theme directory named `default` | ✅ exit 1 with the reserved-name message |

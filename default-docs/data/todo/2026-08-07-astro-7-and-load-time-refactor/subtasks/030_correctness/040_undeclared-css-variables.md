@@ -107,7 +107,7 @@ read the first and write the second as a literal `700`.
 
 ## The check, and the fact that it can fail
 
-`scripts/check-theme-contract.mjs`, development-stage (it reads framework source,
+`scripts/checks/check-theme-contract.mjs`, development-stage (it reads framework source,
 which a consumer does not have):
 
 | Gate | Fails when |

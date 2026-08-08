@@ -56,7 +56,7 @@ question. Confirm this first; it changes the whole design.
       chrome, assets, the artifact route, redirects, canonical/meta URLs,
       client-side navigation
 - [ ] **Crawl a static host mounted at the prefix** with
-      `scripts/check-links.mjs` and get the same result as the unprefixed build.
+      `scripts/checks/check-links.mjs` and get the same result as the unprefixed build.
       Two configurations, same number
 - [ ] **Dev parity:** `./start dev` behaves identically with the prefix set, or
       the prefix recreates the dev-versus-production split that caused every
@@ -72,7 +72,7 @@ question. Confirm this first; it changes the whole design.
   [the hosting path prefix](../../notes/40_the-hosting-path-prefix.md)
 - The prerequisite:
   [the shared resolver](../100_absolute-resolution/020_the-shared-resolver.md)
-- The gate: repo-root `scripts/check-links.mjs`
+- The gate: repo-root `scripts/checks/check-links.mjs`
 - The `.env` and config surface: `astro-doc-code/astro.config.mjs`, which already
   reads `.env` from the repo root rather than `process.cwd()`
 

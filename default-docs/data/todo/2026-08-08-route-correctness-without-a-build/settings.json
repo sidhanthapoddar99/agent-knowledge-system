@@ -1,0 +1,15 @@
+{
+  "title": "Nothing checks the route set on a normal day, now that ./start does not build",
+  "description": "The bare ./start used to run a full production build before handing over to dev. That build was the only routine thing that enumerated the whole address space — dev resolves one URL per request through matchServerRoute() and can never see an address it was not asked for. Removing the preflight build was right (~6 s and ~100 MB per invocation, ~20×/day), but it silently retired the only day-to-day check on the route set. A live instance is already shipping: src/pages/lib/*.ts are picked up by Astro's file-based routing and emitted as five addresses under dist/lib/, each serving the 404 page — the build publishes them, dev 404s them, and check-route-parity.mjs is blind to them because it enumerates from buildStaticPaths() rather than from what the build actually wrote.",
+  "status": "open",
+  "priority": "high",
+  "component": [
+    "architecture"
+  ],
+  "labels": [
+    "bug",
+    "task"
+  ],
+  "author": "claude",
+  "assignees": []
+}

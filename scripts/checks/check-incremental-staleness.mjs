@@ -24,8 +24,8 @@
  * that matters: anything cheaper tests that the fast path *ran*, not that it was
  * *right*.
  *
- *   bun scripts/check-incremental-staleness.mjs
- *   bun scripts/check-incremental-staleness.mjs --ignore-clock
+ *   bun scripts/checks/check-incremental-staleness.mjs
+ *   bun scripts/checks/check-incremental-staleness.mjs --ignore-clock
  *
  * ON `--ignore-clock`. `formatRelativeTime()` bakes a wall-clock-relative string
  * ("31 min ago") into the HTML at render time, so two builds a minute apart
@@ -47,7 +47,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const APP = path.join(REPO, 'astro-doc-code');
 const DIST = path.join(APP, 'dist');
 const CACHE = path.join(APP, 'node_modules', '.astro');

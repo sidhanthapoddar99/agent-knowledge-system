@@ -7,7 +7,7 @@ status: open
 
 **`agent-ks check links` asks a question about the renderer and ships to
 consumers inside the plugin.** Its replacement, repo-root
-`scripts/check-links.mjs`, is written, control-tested and in use. What remains is
+`scripts/checks/check-links.mjs`, is written, control-tested and in use. What remains is
 removing the old one — and that was deliberately left until the replacement was
 proven, so there was never a window with no rendering gate.
 

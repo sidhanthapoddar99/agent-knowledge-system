@@ -44,8 +44,8 @@
  *   - routing: redirects, dual-slug resolution, and 404-vs-200 status
  *
  * Usage:
- *   ./start dev   (in another terminal)  &&  scripts/check-links.mjs
- *   scripts/check-links.mjs --base http://localhost:3088 --compare http://localhost:4322
+ *   ./start dev   (in another terminal)  &&  scripts/checks/check-links.mjs
+ *   scripts/checks/check-links.mjs --base http://localhost:3088 --compare http://localhost:4322
  *
  *   --base <url>      server to crawl. Optional: with no --base and no --static
  *                     this asks Astro's own lock file which server is running
@@ -102,7 +102,7 @@ if (!BASE && !STATIC_DIR) {
   console.error(`${NO_SERVER_HELP}\n`);
   console.error('  The environment that SHIPS is a static host, and neither astro dev nor');
   console.error('  astro preview reproduces it. Check that one without any server at all:');
-  console.error('    ./scripts/check-links.mjs --static astro-doc-code/dist --body-only\n');
+  console.error('    ./scripts/checks/check-links.mjs --static astro-doc-code/dist --body-only\n');
   console.error('  Two servers at once? --compare <url> reports only the links they DISAGREE on,');
   console.error('  which is the dev-vs-built trailing-slash question this script exists for.');
   process.exit(2);

@@ -32,7 +32,7 @@ broken link fails it while removing that link returns it to zero.
 # Todo list
 
 **Dropped — the tool these items would improve is being removed, not improved.**
-The rendering question moved to repo-root `scripts/check-links.mjs`; the plugin
+The rendering question moved to repo-root `scripts/checks/check-links.mjs`; the plugin
 keeps only the file-level gate. Ticked to mean *no longer applicable*.
 
 - [x] Rewrite the header comment. It currently argues the content is at fault.

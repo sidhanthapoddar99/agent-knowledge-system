@@ -10,7 +10,7 @@ This project ships a Claude Code plugin (`agent-ks`) — source at `plugins/agen
 
 The plugin's skills carry the full operating manual, including the `agent-ks` CLI — defer to them for command usage rather than duplicating the toolkit here. They trigger automatically on docs/issue/blog/config work.
 
-**Two commands, and they mean different trees.** In this repo use **`agent-ks-dev`** — it runs the plugin source you are editing. Bare **`agent-ks`** is the *installed* plugin, which is what a consumer has and is frozen at the last release. Neither guesses: the command you type is what states which tree you mean, and every gate prints the tree it read (`[repo source tree]` / `[installed plugin]`) — **read that line before quoting a pass.** `agent-ks-dev` is a repo-root shim on PATH via `mise.toml`, so it exists here and nowhere else. Having both also makes before-and-after a command rather than a git dance: run each against the same input and diff.
+**Two commands, and they mean different trees.** In this repo use **`agent-ks-dev`** — it runs the plugin source you are editing. Bare **`agent-ks`** is the *installed* plugin, which is what a consumer has and is frozen at the last release. Neither guesses: the command you type is what states which tree you mean, and every gate prints the tree it read (`[repo source tree]` / `[installed plugin]`) — **read that line before quoting a pass.** `agent-ks-dev` is a shim in `scripts/bin/`, put on PATH by `mise.toml`, so it exists here and nowhere else. Having both also makes before-and-after a command rather than a git dance: run each against the same input and diff.
 
 **Skills are lean and history-free.** A skill (and any published doc) describes the *current* system only — never past formats, removed features, renamed fields, or "content written before X may…" notes. History lives in git and the issue tracker; format transitions live in `migration/` scripts (surfaced through the skill's `doc-migration.md` protocol, which is the one legitimate place that talks about legacy formats). When editing a skill and you find a historical aside, delete it rather than preserving it — same rule as removed designs in the tracker: negative/removed things are deleted, not narrated.
 
@@ -93,9 +93,10 @@ own route and the framework's own business.
 
 ```
 <repo-root>/
-├── start                    # Bash wrapper — `./start dev | build | preview`
+├── start, start.cmd         # Entrypoint shims → scripts/start.mjs
 ├── astro-doc-code/          # Framework code (src/, package.json, astro.config.mjs, tsconfig.json, bun.lock)
 ├── default-docs/            # User content (data, config, themes, assets)
+├── scripts/                 # Development-stage tooling: start.mjs, lib/, bin/, checks/
 ├── migration/               # Content-format migrations, version-named `<to-version>_<statement>.py`
 ├── plugins/                 # Repo-local plugin sources (e.g. agent-ks)
 ├── .claude/, .claude-plugin/, .mcp.json
@@ -248,7 +249,7 @@ Every layout surface follows the framework's UX standards — truncation-only to
 | Layout dimensions | `--sidebar-width` / `--navbar-height` / `--outline-width` / `--max-width-primary` / `--max-width-secondary` |
 | Weight | `--font-weight-normal` (the rest of the weight scale is theme-internal) |
 
-**What decides membership:** a variable is on the contract **if and only if a shipped layout reads it.** That is not tidiness — it is what `override_mode: replace` requires, since a replace-mode theme drops the parent and keeps only what the contract names. Do not complete a scale here for symmetry: `--font-weight-normal` is required and `--font-weight-bold` is not, because layouts read the first and write the second as a literal. `scripts/check-theme-contract.mjs` enforces this in both directions, so the list cannot drift either way.
+**What decides membership:** a variable is on the contract **if and only if a shipped layout reads it.** That is not tidiness — it is what `override_mode: replace` requires, since a replace-mode theme drops the parent and keeps only what the contract names. Do not complete a scale here for symmetry: `--font-weight-normal` is required and `--font-weight-bold` is not, because layouts read the first and write the second as a literal. `scripts/checks/check-theme-contract.mjs` enforces this in both directions, so the list cannot drift either way.
 
 **Do not** reach for hex codes, arbitrary `rem` font sizes, or invented variable names. If something feels missing from the contract, propose adding it to `theme.yaml` before inventing a private name.
 
@@ -346,30 +347,41 @@ heading IDs, routing, redirects.
 Use the `./start` wrapper at the repo root.
 
 ```bash
-./start            # Preflight: pick bun (else npm) → install if needed → build sanity check → dev
-./start dev        # Skip preflight, run dev only
-./start build      # Skip preflight, run build only
-./start preview    # Skip preflight, run preview only
+./start            # Dev server. This is the default and the 99% case.
+./start dev        # Same thing, spelled out
+./start build      # Production build (wipes caches first; --no-clean to keep them)
+./start preview    # Serve the built site from dist/
+./start doctor     # Update check + install + a full build — the pre-publish check
 ./start <script>   # Forward any package.json script
 
 ./start stop       # Stop the running dev/preview server
 ./start status     # Is anything running, and where
 ./start logs       # Read a running server's output (--follow to stream)
+./start clean      # Wipe build caches (optionally then run a command)
+./start --help     # All of the above, authoritatively
+
+--detach           # Background the server instead of holding the terminal
 ```
 
-Preflight (no-arg form) does: update check (fetches upstream and prompts `Y/n` to fast-forward pull when behind — bails silently if no upstream, dirty tree, diverged, offline, or non-interactive), runner detection (bun preferred, npm fallback), `bun install` if `node_modules` is missing, full production build (aborts on failure), then dev. The update check runs for every form (`./start`, `./start dev`, `./start clean dev`); set `START_SKIP_UPDATE_CHECK=1` to bypass (CI, scripted use). Useful for a clean clone or after dependency changes; for the everyday tight loop use `./start dev` to skip the build step. The three server-control verbs run *before* preflight, so `./start status` never prompts to pull, install, or build.
+**One implementation: `scripts/start.mjs`.** `./start` and `.\start.cmd` are three-line shims that exec it. It replaced a 447-line bash script *and* its 397-line PowerShell twin — the twin being the actual problem, since every feature had to be written twice, the two drifted, and the Windows half was only ever parse-verified. Supporting modules live in `scripts/lib/` (`runner`, `server`, `update`, `util`, `version`). `scripts/bin/` holds the bare-name shims (`agent-ks-dev`, `start`) that `mise.toml` puts on PATH inside this repo and nowhere else, and `scripts/checks/` holds the development-stage gates (`check-links`, `check-route-parity`, `check-theme-contract`, `check-incremental-staleness`) plus the `_astro-server` lock-file reader they share.
 
-**`./start dev` holds your terminal and `Ctrl-C` stops the server — that has not changed.** What changed is the mechanism, and it matters when something goes wrong. Astro runs the server as a **detached daemon** (the wrapper asks for that explicitly, so the behaviour is identical whether a human or an agent typed the command), the terminal follows its log stream, and the wrapper stops it through Astro's own lock file rather than through the process tree. The process tree is exactly what stopped being reliable: Astro re-spawns the server out of the launcher's own process group when it detects an AI-agent environment, so killing the thing you launched leaves the server holding its port and its heap — eleven of them leaked during the Astro 7 upgrade, one for 18 hours at 1.19 GB.
+**Every launching or building command prechecks the version contract.** `dev`, `preview`, `build`, `doctor` and any forwarded script compare `site.yaml → engine_version` against the engine's `[MIN_CONTENT_VERSION, ENGINE_VERSION]` before anything starts, and stop with the migration chain to run when it falls outside. This does not replace the engine's gate — it fixes *when* that gate fires: in dev it fires at the first request, after the server has already said "ready", and in `preview` it never fires at all, so a `dist/` built from unmigrated content is served in silence. `scripts/lib/version.mjs` parses the two constants out of `engine-version.ts` rather than copying them, and downgrades to a warning whenever it cannot read a value — the engine stays the authority, and a precheck that guessed would become a new reason a working project fails to start.
+
+**The bare command is `dev`, and it does not build.** It used to run a full production build first as a sanity check. That check is real — dev resolves a request through `matchServerRoute()` while the build enumerates through `getStaticPaths()`, so a duplicate-URL bug fails the build and is *invisible* in dev — but it was the wrong cadence: measured at ~6 s and ~100 MB written per invocation, on a command typed ~20 times a day, for an answer that only matters at publish time. It now lives in **`./start doctor`**. Dev never reads `dist/` (verified by deleting it and serving every route).
+
+**The update check is throttled** — at most once every 6 h (`START_UPDATE_INTERVAL_HOURS`, `0` = every time; `START_SKIP_UPDATE_CHECK=1` disables). A git fetch plus a `Y/n` prompt on every dev start is friction on a 20×/day command, and the fetch is the thing most likely to hang on a bad connection. Server-control verbs never prompt at all.
+
+**`./start` holds your terminal and `Ctrl-C` stops the server.** `--detach` opts out and leaves it running for `./start stop`. The mechanism matters when something goes wrong: Astro runs the server as a **detached daemon** regardless, the terminal follows its log stream, and the wrapper stops it through Astro's own lock file rather than through the process tree. The process tree is exactly what stopped being reliable — Astro re-spawns the server out of the launcher's own process group when it detects an AI-agent environment, so killing the thing you launched leaves the server holding its port and its heap. Eleven leaked during the Astro 7 upgrade, one for 18 hours at 1.19 GB.
 
 Consequences worth knowing:
 
 - **A server that outlives its terminal is now findable.** `./start status` reads the lock file, `./start stop` stops it. That is the whole point of the three verbs, and it is why scripted and agent use should reach for them rather than for `kill`.
 - **`./start dev` attaches read-only when a server is already running** — Astro reports the existing one rather than opening a second port. `Ctrl-C` then *detaches* and says so. You stop what you started.
-- **`./start clean` stops a running server before wiping `.astro/`**, because the lock file lives there and wiping it under a live server orphans it outright.
+- **`./start clean` stops a running server before wiping `.astro/`**, because the lock file lives there and wiping it under a live server orphans it outright. It wipes `node_modules/.astro/` too — a different directory with a confusingly similar name, holding Astro's build cache.
 - **Never grep the startup banner.** In Astro 7 it is a JSON object; a check for the old `astro v5.x ready in NNN ms` text does not fail, it waits forever. Poll the port, or ask `./start status`.
 - `pgrep` for the astro binary path misses these servers — a background daemon runs `node_modules/astro/bin/astro.mjs`, not `node_modules/.bin/astro`. `./start status` is the reliable answer.
 
-**Windows (native cmd / PowerShell):** use `.\start.cmd` with the same arguments (`.\start.cmd dev`, `.\start.cmd stop`, `.\start.cmd clean build`, …). It launches `start.ps1`, a full port of the bash script (same preflight, update check, clean, runner fallback, server-control verbs). Note the leading `.\` — bare `start` is a cmd built-in / PowerShell alias. Git Bash and WSL use `./start` as on Linux.
+**Windows (native cmd / PowerShell):** use `.\start.cmd` with the same arguments (`.\start.cmd dev`, `.\start.cmd stop`, `.\start.cmd clean build`, …). It execs the same `scripts/start.mjs` every other platform runs — there is no separate Windows port to keep in step any more. Note the leading `.\` — bare `start` is a cmd built-in, which is also why `mise` only puts the bare `start` name on PATH for Unix. Git Bash and WSL use `./start` as on Linux.
 
 If you're inside `astro-doc-code/`, `bun run dev` / `bun run build` / `bun run preview` work directly.
 

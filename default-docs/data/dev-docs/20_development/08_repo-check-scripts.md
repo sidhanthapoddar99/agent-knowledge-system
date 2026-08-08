@@ -1,12 +1,14 @@
 ---
 title: Repo check scripts
-description: The development-stage gates in scripts/ — what each one asks, and why none of them ship
+description: The development-stage gates in scripts/checks/ — what each one asks, and why none of them ship
 sidebar_position: 8
 ---
 
 # Repo check scripts
 
-Three executables live in repo-root `scripts/`. They are **development-stage tools**: each needs something a consumer authoring documents does not have — the framework source, a running dev server, or a `dist/`. None of them ship in the plugin, and none should ever be asked of a consumer. See the "Three stages" section of the repo `CLAUDE.md` for the rule.
+The executables live in repo-root `scripts/checks/`. They are **development-stage tools**: each needs something a consumer authoring documents does not have — the framework source, a running dev server, or a `dist/`. None of them ship in the plugin, and none should ever be asked of a consumer. See the "Three stages" section of the repo `CLAUDE.md` for the rule.
+
+They sit in their own folder because they are a different kind of thing from the rest of `scripts/`: `start.mjs` and `lib/` are what you *run the project with*, `checks/` is what you *interrogate the project with*. A file that needs a live server to answer a question belongs with the other files that do.
 
 They exist because each guards a failure that is **silent**. Nothing here checks something a person would notice by looking.
 
@@ -28,9 +30,9 @@ It compares environments rather than trusting one, because there are **three** a
 
 ```bash
 ./start dev                        # another terminal; Ctrl-C stops it
-scripts/check-links.mjs            # no --base: crawls whatever server is running
-scripts/check-links.mjs --base http://localhost:3088 --compare http://localhost:4322
-scripts/check-links.mjs --static astro-doc-code/dist --body-only   # no server at all
+scripts/checks/check-links.mjs            # no --base: crawls whatever server is running
+scripts/checks/check-links.mjs --base http://localhost:3088 --compare http://localhost:4322
+scripts/checks/check-links.mjs --static astro-doc-code/dist --body-only   # no server at all
 ```
 
 ## `check-theme-contract.mjs`
@@ -50,8 +52,8 @@ Three gates over the framework source. It needs no server.
 **Gate C** runs fixtures rather than reading the code, and two of the five are **negative** controls — a normal child/base pair, and a diamond, where two paths reach one shared ancestor. A diamond is legal. Without those, a detector that reports a cycle unconditionally would pass every positive test.
 
 ```bash
-scripts/check-theme-contract.mjs
-scripts/check-theme-contract.mjs --json
+scripts/checks/check-theme-contract.mjs
+scripts/checks/check-theme-contract.mjs --json
 ```
 
 ## `check-route-parity.mjs`
@@ -87,8 +89,8 @@ It also asserts `dist/404.html` exists. Without it, every dead link on a deploye
 ```bash
 ./start build
 ./start dev                        # another terminal; Ctrl-C stops it
-scripts/check-route-parity.mjs
-scripts/check-route-parity.mjs --json --limit 200
+scripts/checks/check-route-parity.mjs
+scripts/checks/check-route-parity.mjs --json --limit 200
 ```
 
 ⚠️ **Build before running it.** The harness compares against `dist/` as it finds it, so a stale build reports every page added since as a divergence. That is correct behaviour and a confusing first run.
@@ -97,7 +99,7 @@ scripts/check-route-parity.mjs --json --limit 200
 
 Both server-backed scripts used to default to `http://localhost:4321`. That is *Astro's* default, not this project's — `.env` sets `PORT`, and a consumer sets whatever they like. Pointed at a dead port neither hangs, but each fails in its own vocabulary: "no HTML pages reachable", or every URL reported as divergent. Both read as a site defect when the real answer is that nothing was listening.
 
-So with no `--base` they ask **Astro's own lock file** — `astro-doc-code/.astro/dev.json`, the same file `./start status` reads — which server is running, and print the port and pid they found. The shared reader is `scripts/_astro-server.mjs`; the leading underscore marks it as imported rather than run.
+So with no `--base` they ask **Astro's own lock file** — `astro-doc-code/.astro/dev.json`, the same file `./start status` reads — which server is running, and print the port and pid they found. The shared reader is `scripts/checks/_astro-server.mjs`; the leading underscore marks it as imported rather than run.
 
 The one rule that governs anything waiting on a dev server here: **never grep the startup banner.** In Astro 7 that banner is a JSON object, so a check for the old `astro v5.x ready in NNN ms` text does not fail — it waits forever for a line that never comes. Poll the port, or read the lock file.
 

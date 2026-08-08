@@ -42,14 +42,18 @@ If you'd rather track the framework as a submodule (so updates pull cleanly), su
 
 ## Step 2: Install Dependencies
 
-The framework ships a `./start` wrapper at its root that handles dependency install, build sanity check, and dev launch in one go.
+The framework ships a `./start` wrapper at its root that handles dependency install and dev launch in one go.
 
 ```bash
 cd agent-knowledge-system/
 ./start
 ```
 
-The wrapper checks for upstream updates and offers a fast-forward pull (`Y/n`), detects `bun` (falling back to `npm` if Bun isn't installed — with a red disk-usage warning and a confirm, since npm can't share packages across projects; see [Storage & Disk Footprint](07_storage-and-footprint.md)), runs `bun install` if `node_modules/` is missing, runs a build sanity check, then launches the dev server. After the first run you can skip the preflight by passing the script name explicitly (see [Available Commands](#available-commands) below). The update check still runs for explicit-script forms; bypass it entirely with `START_SKIP_UPDATE_CHECK=1` (useful in CI).
+The wrapper detects `bun` (falling back to `npm` if Bun isn't installed — with a red disk-usage warning and a confirm, since npm can't share packages across projects; see [Storage & Disk Footprint](07_storage-and-footprint.md)), runs `bun install` if `node_modules/` is missing or the manifests changed, then launches the dev server.
+
+**It does not build.** Dev never reads `dist/`, so building before it was ~6 s and ~100 MB of writes for an answer you only need at publish time. Run [`./start doctor`](#available-commands) for that check instead.
+
+It also looks upstream for updates and offers a fast-forward pull (`Y/n`) — at most once every 6 hours, so a command you type twenty times a day does not fetch twenty times. Tune with `START_UPDATE_INTERVAL_HOURS` (`0` = every run) or disable with `START_SKIP_UPDATE_CHECK=1` (useful in CI).
 
 If you'd rather drive `bun`/`npm` directly, `cd astro-doc-code/` first:
 
@@ -109,7 +113,7 @@ From `agent-knowledge-system/`:
 ./start dev
 ```
 
-Open `http://localhost:4321` in your browser (or whatever `PORT` you set in `.env` — this repo's bundled `.env.example` ships with `PORT=3088`, so the dogfood site runs there). `./start` with no args also works — it just runs the install-and-build preflight first.
+Open `http://localhost:4321` in your browser (or whatever `PORT` you set in `.env` — this repo's bundled `.env.example` ships with `PORT=3088`, so the dogfood site runs there). `./start` with no args does exactly the same thing: the bare command *is* dev.
 
 ## Verifying Installation
 
@@ -124,15 +128,21 @@ Run from inside `agent-knowledge-system/` via the `./start` wrapper:
 
 | Command | Description |
 |---------|-------------|
-| `./start` | Preflight (update check + install + build) then dev — use on a fresh clone |
-| `./start dev` | Start dev server with hot reload (skip preflight) |
-| `./start build` | Build production site to `dist/` (skip preflight) |
-| `./start preview` | Preview production build locally (skip preflight) |
-| `./start clean` | Wipe `.astro/`, `dist/`, `node_modules/.vite/` (run after changing `.env` or paths) |
+| `./start` | Dev server with hot reload. The default |
+| `./start dev` | The same thing, spelled out |
+| `./start build` | Build production site to `dist/` (wipes caches first; `--no-clean` keeps them) |
+| `./start preview` | Preview production build locally |
+| `./start doctor` | Update check + install + a full build — run before you publish |
+| `./start clean` | Wipe `.astro/`, `dist/`, `node_modules/.vite/`, `node_modules/.astro/` |
 | `./start clean <cmd>` | Wipe caches then forward — e.g. `./start clean build` |
 | `./start <script>` | Forward any other `package.json` script |
 | `./start stop` | Stop the running dev / preview server |
 | `./start status` | Is a server running, and on which port |
+| `./start logs` | Read a running server's output (`--follow` to stream) |
+| `./start --help` | Every command and flag, authoritatively |
+
+Add `--detach` to `dev` or `preview` to background the server instead of holding
+the terminal. Without it, `Ctrl-C` stops the server.
 | `./start logs` | Read a running server's output (`--follow` to stream) |
 
 The dev server, build output, and preview all run inside `astro-doc-code/`. If you're already `cd`'d into that folder, the equivalent `bun run dev` / `bun run build` / `bun run preview` work as well.
@@ -161,13 +171,13 @@ If something *other than Astro* owns the port, change `PORT` in `.env`.
 ```bash
 # From inside agent-knowledge-system/
 rm -rf astro-doc-code/node_modules astro-doc-code/bun.lockb
-./start          # re-runs preflight (install + build + dev)
+./start          # reinstalls dependencies, then dev
 ```
 
 ### Stale build after changing `.env` or paths
 
 ```bash
-./start clean    # wipes .astro/, dist/, node_modules/.vite/
+./start clean    # wipes .astro/, dist/, node_modules/.vite/, node_modules/.astro/
 ./start          # then rebuild
 ```
 

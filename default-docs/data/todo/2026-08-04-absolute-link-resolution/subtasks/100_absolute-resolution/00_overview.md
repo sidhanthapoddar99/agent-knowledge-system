@@ -47,6 +47,6 @@ declined to merge them for their own sake. **Do not start it before 010.**
 **Dev must keep working.** This project is used in `./start dev`, so no change
 lands that trades dev correctness for production correctness — that is what both
 reverted attempts did. Every subtask that touches URL generation reports
-`scripts/check-links.mjs` against **both** a dev server and a real static host,
+`scripts/checks/check-links.mjs` against **both** a dev server and a real static host,
 before and after. One number is not a measurement here; it is how this went wrong
 twice.

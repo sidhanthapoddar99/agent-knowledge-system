@@ -32,7 +32,7 @@ strength of that number.
   it solves the disk-churn half and neither approach here does
 - `astro-doc-code/src/pages/lib/cache-key.ts` — the keys, and the dependency map
   they encode
-- `scripts/check-incremental-staleness.mjs` — the only thing that catches a wrong key
+- `scripts/checks/check-incremental-staleness.mjs` — the only thing that catches a wrong key
 
 # Todo list
 
@@ -150,7 +150,7 @@ already a live defect without any cache** — a deployed static site freezes tha
 text at build time — which makes 010 worth doing on its own merits.
 
 **2. Nothing detects a stale page except a full second build.** The gate now
-exists (`scripts/check-incremental-staleness.mjs`) but it costs three builds, so
+exists (`scripts/checks/check-incremental-staleness.mjs`) but it costs three builds, so
 it is a CI job, not something anyone runs by reflex. Until it runs somewhere, a
 wrong key is invisible.
 
@@ -213,7 +213,7 @@ Off by default; opt in with `INCREMENTAL_BUILD=1`.
   contain
 - `astro-doc-code/src/pages/lib/static-paths.ts` — a `cacheKey` per entry
 - `astro-doc-code/astro.config.mjs` — `incrementalBuild: INCREMENTAL_BUILD === '1'`
-- `scripts/check-incremental-staleness.mjs` — the gate. Strict by default;
+- `scripts/checks/check-incremental-staleness.mjs` — the gate. Strict by default;
   `--ignore-clock` is a diagnostic, and [010](./010_make-the-build-deterministic.md)
   is explicit that ignoring `<time>` is not an acceptable permanent answer
 - `start` — `clean` now wipes `node_modules/.astro/`

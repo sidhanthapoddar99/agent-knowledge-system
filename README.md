@@ -118,9 +118,9 @@ cp .env.example .env               # CONFIG_DIR=./default-docs/config (dogfood d
 ./start
 ```
 
-`./start` is a thin wrapper at the framework folder root: it checks for upstream updates and offers a fast-forward pull (`Y/n`), detects `bun` (falls back to `npm`), installs dependencies on first run, runs a build sanity check, then starts the dev server. Skip the update check with `START_SKIP_UPDATE_CHECK=1`.
+`./start` is a thin shim at the framework folder root over `scripts/start.mjs`: it detects `bun` (falls back to `npm`), installs dependencies on first run, occasionally checks upstream for updates and offers a fast-forward pull, then starts the dev server. It does **not** build — run `./start doctor` for that, before you publish. Skip the update check with `START_SKIP_UPDATE_CHECK=1`.
 
-On native Windows (cmd / PowerShell), use `.\start.cmd` with the same arguments — it runs `start.ps1`, a full port of the bash wrapper. The leading `.\` matters: bare `start` is a cmd built-in. Git Bash and WSL use `./start` as-is.
+On native Windows (cmd / PowerShell), use `.\start.cmd` with the same arguments — it execs the same `scripts/start.mjs` as every other platform. The leading `.\` matters: bare `start` is a cmd built-in. Git Bash and WSL use `./start` as-is.
 
 For a deeper walkthrough (folder layout, what each path means, when to use which mode), see the user-guide: [Installation](https://github.com/sidhanthapoddar99/agent-knowledge-system/blob/main/default-docs/data/user-guide/05_getting-started/02_installation.md), [Environment Variables](https://github.com/sidhanthapoddar99/agent-knowledge-system/blob/main/default-docs/data/user-guide/10_configuration/02_env.md), [Init and the Starter Template](https://github.com/sidhanthapoddar99/agent-knowledge-system/blob/main/default-docs/data/user-guide/05_getting-started/06_init-and-template.md).
 
@@ -129,10 +129,12 @@ For a deeper walkthrough (folder layout, what each path means, when to use which
 From the repo root, use the `./start` wrapper:
 
 ```bash
-./start          # preflight (update check + install + build check) then dev server
-./start dev      # dev server with hot reload
+./start          # dev server with hot reload — the default
+./start dev      # same thing, spelled out
 ./start build    # production build → astro-doc-code/dist/
 ./start preview  # preview production build locally
+./start doctor   # update + install + full build: the pre-publish check
+./start --help   # every command and flag
 ./start <script> # forward any package.json script
 ```
 
@@ -144,7 +146,7 @@ Inside `astro-doc-code/`, the usual `bun run dev` / `bun run build` / `bun run p
 
 ```
 agent-knowledge-system/                 ← THIS repo (= framework folder)
-├── start                               ← bash entrypoint (preflight + dev/build/preview/clean)
+├── start                               ← entrypoint shim → scripts/start.mjs
 ├── .env, .env.example                  ← bootstrap (CONFIG_DIR points at the active config dir)
 ├── plugins/
 │   └── agent-ks/                       ← plugin source (skill + wrappers + commands + bundled template) — distributed via sids-plugin-marketplace

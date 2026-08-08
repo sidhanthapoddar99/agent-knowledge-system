@@ -12,4 +12,4 @@
 # It has to be a real file that execs the real dispatcher.
 set -euo pipefail
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-exec "$DIR/../plugins/agent-ks/bin/agent-ks" "$@"
+exec "$DIR/../../plugins/agent-ks/bin/agent-ks" "$@"

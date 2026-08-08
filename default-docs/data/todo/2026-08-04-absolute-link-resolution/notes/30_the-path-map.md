@@ -124,6 +124,6 @@ collapse into one call.
 - **A missing target becomes a build-time error rather than a 404 at read time.**
   That is a gain, but it needs a decision on strictness: hard-fail, or warn and
   emit the link unresolved. Warn first, then tighten once the count is zero.
-- **The gate that proves it is `scripts/check-links.mjs`**, run against a real
+- **The gate that proves it is `scripts/checks/check-links.mjs`**, run against a real
   static host as well as dev. Both numbers, before and after, belong in the
   subtask that lands the change.

@@ -28,7 +28,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const ASTRO_DIR = path.join(REPO, 'astro-doc-code', '.astro');
 
 /** Is this pid still ours to talk to? A lock file outlives a crashed server. */

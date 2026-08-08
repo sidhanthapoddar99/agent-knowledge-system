@@ -1,38 +1,33 @@
 # Footer Configuration
+#
+# Prefer `page:` over `href:` for anything inside this site. `page:` names an
+# entry in site.yaml's `pages:` block and resolves to whatever `base_url` that
+# entry currently declares — so renaming a section's URL updates the footer for
+# free. A hardcoded `href` is a second copy of the same fact, and it is how this
+# file ended up shipping four dead links on all 1039 pages.
 layout: "@footer/default"
 
-copyright: "© {year} My Docs. All rights reserved."
+copyright: "© {year} Agent Knowledge System"
 
 columns:
   - title: "Documentation"
     links:
-      - label: "Getting Started"
-        href: "/docs/getting-started"
-      - label: "Guides"
-        href: "/docs/guides"
-      - label: "API Reference"
-        href: "/docs/api"
+      - label: "User Guide"
+        page: "user-guide"
+      - label: "Dev Docs"
+        page: "dev-docs"
+      - label: "Issue Tracker"
+        page: "todo"
 
-  - title: "Community"
-    links:
-      - label: "Blog"
-        page: "blog"
-      - label: "Discord"
-        href: "https://discord.gg/example"
-      - label: "GitHub"
-        href: "https://github.com/user/repo"
-
-  - title: "Company"
+  - title: "Project"
     links:
       - label: "About"
         page: "about"
-      - label: "Contact"
-        href: "/contact"
+      - label: "Blog"
+        page: "blog"
+      - label: "GitHub"
+        href: "https://github.com/sidhanthapoddar99/agent-knowledge-system"
 
 social:
   - platform: "github"
-    href: "https://github.com/user/repo"
-  - platform: "twitter"
-    href: "https://twitter.com/user"
-  - platform: "discord"
-    href: "https://discord.gg/example"
+    href: "https://github.com/sidhanthapoddar99/agent-knowledge-system"

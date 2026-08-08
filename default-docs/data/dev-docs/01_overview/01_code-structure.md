@@ -1,7 +1,7 @@
 ---
 title: Code Structure
 description: Understanding the framework source code organization
-sidebar_position: 2
+sidebar_position: 1
 ---
 
 # Code Structure

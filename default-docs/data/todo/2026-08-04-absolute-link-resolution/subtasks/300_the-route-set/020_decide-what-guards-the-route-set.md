@@ -16,8 +16,8 @@ a different name would undo the measurement rather than answer it.
 
 ## References
 
-- [the issue](../issue.md) — why dev structurally cannot cover this
-- [010 — the leak this would have caught](./010_stop-emitting-src-pages-lib-as-routes.md)
+- [the group overview](./00_overview.md) — why dev structurally cannot cover this
+- [300/010 — the leak this would have caught](./010_stop-emitting-src-pages-lib-as-routes.md)
 - `scripts/checks/check-route-parity.mjs` — the existing harness, and its blind spot
 - `scripts/start.mjs` — `doctor`, the candidate host
 - `default-docs/data/dev-docs/20_development/08_repo-check-scripts.md` — the gate

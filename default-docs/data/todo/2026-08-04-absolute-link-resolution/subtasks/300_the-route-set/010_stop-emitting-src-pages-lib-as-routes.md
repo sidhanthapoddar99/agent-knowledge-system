@@ -17,7 +17,7 @@ module. Only their location says otherwise.
 
 ## References
 
-- [the issue](../issue.md) — why nothing caught this
+- [the group overview](./00_overview.md) — why nothing caught this
 - `astro-doc-code/src/pages/lib/` — the five modules
 - `astro-doc-code/src/pages/[...slug].astro` — the real route, and their only consumer
 - `scripts/checks/check-route-parity.mjs` — imports `static-paths.ts` as a module, by path

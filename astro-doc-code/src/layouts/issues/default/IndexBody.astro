@@ -6,6 +6,7 @@
  */
 import { loadIssues, STATUSES, categoryOf } from '@loaders/issues';
 import { needsReview } from './server/helpers';
+import { DATE_GROUP_FIELDS } from './scripts/index/types';
 import './styles/index.css';
 import './styles/groups.css';
 import ViewToggle from './parts/index/ViewToggle.astro';
@@ -84,11 +85,17 @@ const activeCount = issues.filter((i) => issueCategory(i) !== 'closed').length;
 // otherwise there's nothing to group under. `status` intentionally
 // excluded (state tabs already group by status).
 const GROUP_CANDIDATES = ['component', 'priority'] as const;
-const groupDimensions = GROUP_CANDIDATES.filter(
+const vocabDimensions = GROUP_CANDIDATES.filter(
   (d) => vocabulary.fields?.[d]?.values?.length,
 );
+// Date dimensions are DERIVED, not declared. Every issue carries `created`
+// (parsed from its folder slug) and `updated` (from git history), so there is
+// no vocabulary to check and no value list to order by. They get no entry in
+// `groupOrderByField` at all, and that absence is the signal the client reads:
+// no declared order means bucket by calendar month and sort newest-first.
+const groupDimensions = [...vocabDimensions, ...DATE_GROUP_FIELDS];
 const groupOrderByField = Object.fromEntries(
-  groupDimensions.map((d) => [d, vocabulary.fields[d].values]),
+  vocabDimensions.map((d) => [d, vocabulary.fields[d].values]),
 );
 
 const presets = Array.isArray(vocabulary.views) ? vocabulary.views : [];

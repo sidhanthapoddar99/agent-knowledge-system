@@ -8,7 +8,8 @@
  * client (priority desc, then updated desc) — see scripts/index/client.ts.
  */
 import StatusBadge from '../shared/StatusBadge.astro';
-import { avatarColor, initial, formatRelativeTime, effectiveStatus } from '../../server/helpers';
+import { avatarColor, initial, effectiveStatus } from '../../server/helpers';
+import { fullLabel, RELATIVE_TIME_ATTR } from '@modules/relative-time';
 import type { Issue, IssuesVocabulary } from '@loaders/issues';
 
 interface Props {
@@ -138,9 +139,9 @@ const VISIBLE_AVATARS = 3;
             </td>
             <td class="issues-table__date">{formatDate(issue.created) || <span class="issues-table__muted">—</span>}</td>
             <td class="issues-table__date">{(() => {
-              const { rel, full } = formatRelativeTime(issue.updated);
-              return rel
-                ? <time datetime={issue.updated} title={full}>{rel}</time>
+              const full = fullLabel(issue.updated);
+              return full
+                ? <time datetime={issue.updated} title={full} {...{ [RELATIVE_TIME_ATTR]: '' }}>{full}</time>
                 : <span class="issues-table__muted">—</span>;
             })()}</td>
           </tr>

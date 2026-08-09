@@ -495,12 +495,17 @@ body {
   background: #fff;
 }
 
-/* draw.io host: the viewer sizes its own container, so this only has to stop
-   it collapsing before the graph is measured and keep it centered. */
+/* draw.io host: the viewer writes a fixed pixel width onto this div itself,
+   and a block box ignores the container's text-align:center — so it needs
+   auto margins. The min-height stops it collapsing before the graph is
+   measured; the flex centering covers the case where the viewer sizes an
+   inner child instead. */
 .markdown-content .diagram-drawio .drawio-host {
   min-height: 2rem;
   display: flex;
   justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .markdown-content .diagram-drawio .drawio-host > div {

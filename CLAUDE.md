@@ -352,6 +352,7 @@ Use the `./start` wrapper at the repo root.
 ./start build      # Production build (wipes caches first; --no-clean to keep them)
 ./start preview    # Serve the built site from dist/
 ./start doctor     # Update check + install + a full build — the pre-publish check
+./start update     # Check upstream now and offer to pull — starts and builds nothing
 ./start <script>   # Forward any package.json script
 
 ./start stop       # Stop the running dev/preview server
@@ -369,7 +370,7 @@ Use the `./start` wrapper at the repo root.
 
 **The bare command is `dev`, and it does not build.** It used to run a full production build first as a sanity check. That check is real — dev resolves a request through `matchServerRoute()` while the build enumerates through `getStaticPaths()`, so a duplicate-URL bug fails the build and is *invisible* in dev — but it was the wrong cadence: measured at ~6 s and ~100 MB written per invocation, on a command typed ~20 times a day, for an answer that only matters at publish time. It now lives in **`./start doctor`**. Dev never reads `dist/` (verified by deleting it and serving every route).
 
-**The update check is throttled** — at most once every 6 h (`START_UPDATE_INTERVAL_HOURS`, `0` = every time; `START_SKIP_UPDATE_CHECK=1` disables). A git fetch plus a `Y/n` prompt on every dev start is friction on a 20×/day command, and the fetch is the thing most likely to hang on a bad connection. Server-control verbs never prompt at all.
+**The update check is throttled** — at most once every 6 h (`START_UPDATE_INTERVAL_HOURS`, `0` = every time; `START_SKIP_UPDATE_CHECK=1` disables). A git fetch plus a `Y/n` prompt on every dev start is friction on a 20×/day command, and the fetch is the thing most likely to hang on a bad connection. Server-control verbs never prompt at all. **`./start update` is the override**: it checks now, ignores both the interval and `START_SKIP_UPDATE_CHECK`, and names the reason when it cannot update (no upstream, dirty tree, diverged, offline) rather than returning quietly — a throttle you cannot see is a throttle you cannot tell apart from a bug. It touches git only; it starts nothing and builds nothing.
 
 **`./start` holds your terminal and `Ctrl-C` stops the server.** `--detach` opts out and leaves it running for `./start stop`. The mechanism matters when something goes wrong: Astro runs the server as a **detached daemon** regardless, the terminal follows its log stream, and the wrapper stops it through Astro's own lock file rather than through the process tree. The process tree is exactly what stopped being reliable — Astro re-spawns the server out of the launcher's own process group when it detects an AI-agent environment, so killing the thing you launched leaves the server holding its port and its heap. Eleven leaked during the Astro 7 upgrade, one for 18 hours at 1.19 GB.
 

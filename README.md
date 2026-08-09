@@ -118,7 +118,7 @@ cp .env.example .env               # CONFIG_DIR=./default-docs/config (dogfood d
 ./start
 ```
 
-`./start` is a thin shim at the framework folder root over `scripts/start.mjs`: it detects `bun` (falls back to `npm`), installs dependencies on first run, occasionally checks upstream for updates and offers a fast-forward pull, then starts the dev server. It does **not** build — run `./start doctor` for that, before you publish. Skip the update check with `START_SKIP_UPDATE_CHECK=1`.
+`./start` is a thin shim at the framework folder root over `scripts/start.mjs`: it detects `bun` (falls back to `npm`), installs dependencies on first run, occasionally checks upstream for updates and offers a fast-forward pull, then starts the dev server. It does **not** build — run `./start doctor` for that, before you publish. Skip the automatic check with `START_SKIP_UPDATE_CHECK=1`; `./start update` checks on demand regardless, and says why when it cannot.
 
 On native Windows (cmd / PowerShell), use `.\start.cmd` with the same arguments — it execs the same `scripts/start.mjs` as every other platform. The leading `.\` matters: bare `start` is a cmd built-in. Git Bash and WSL use `./start` as-is.
 
@@ -134,6 +134,7 @@ From the repo root, use the `./start` wrapper:
 ./start build    # production build → astro-doc-code/dist/
 ./start preview  # preview production build locally
 ./start doctor   # update + install + full build: the pre-publish check
+./start update   # check upstream now and offer to pull — starts nothing
 ./start --help   # every command and flag
 ./start <script> # forward any package.json script
 ```

@@ -55,6 +55,8 @@ The wrapper detects `bun` (falling back to `npm` if Bun isn't installed — with
 
 It also looks upstream for updates and offers a fast-forward pull (`Y/n`) — at most once every 6 hours, so a command you type twenty times a day does not fetch twenty times. Tune with `START_UPDATE_INTERVAL_HOURS` (`0` = every run) or disable with `START_SKIP_UPDATE_CHECK=1` (useful in CI).
 
+**To check right now, run `./start update`.** It ignores the 6-hour interval and `START_SKIP_UPDATE_CHECK`, offers the same pull, and tells you why if it cannot — no upstream branch, uncommitted changes, a diverged branch, or no network. It starts no server and runs no build.
+
 If you'd rather drive `bun`/`npm` directly, `cd astro-doc-code/` first:
 
 ```bash

@@ -41,6 +41,9 @@ COMMANDS
   build             production build. Cleans caches first.
   preview           serve the built site from dist/
   doctor            update check + install + a full build, as a pre-publish check
+  update            check upstream now and offer to pull. Ignores the 6h
+                    throttle and START_SKIP_UPDATE_CHECK, and says why when
+                    it cannot update. Does not start or build anything.
   stop   [dev|preview]              stop a running server (default: both)
   status [dev|preview]              is anything running, and where (default: both)
   logs   [dev|preview] [--follow]   read a running server's output (default: dev)
@@ -54,7 +57,8 @@ OPTIONS
   -h, --help        this text
 
 ENVIRONMENT
-  START_SKIP_UPDATE_CHECK=1        never check git for updates
+  START_SKIP_UPDATE_CHECK=1        never check git for updates automatically
+                                   ('start update' still checks)
   START_UPDATE_INTERVAL_HOURS=N    how often to check (default 6, 0 = every time)
   START_SKIP_VERSION_CHECK=1       skip the content/engine version precheck
   START_NONINTERACTIVE=1           never prompt; assume the safe answer
@@ -98,6 +102,15 @@ async function main(argv) {
 
   let command = args[0] ?? 'dev';
   const rest = args.slice(1);
+
+  // The manual counterpart to the throttled check on a launch. It touches git
+  // and nothing else — no runner, no install, no version gate — because the
+  // answer to "is there a newer version" should not depend on whether this
+  // checkout can currently build.
+  if (command === 'update') {
+    await updateCheck({ force: true });
+    return;
+  }
 
   // Server-control verbs answer instantly and never prompt to pull, install or
   // build — they are what you reach for when you suspect something is running.

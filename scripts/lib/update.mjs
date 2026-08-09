@@ -13,8 +13,18 @@
  * So it checks at most once per interval (default 6h) and records when it last
  * looked. You still hear about updates; you do not pay on start #2 through #20.
  *
- * Every function here bails silently rather than blocking a launch. Nothing in
- * this file is allowed to be the reason a dev server did not start.
+ * ## `start update` is the way out of the throttle
+ *
+ * A timer you cannot see is a timer you cannot trust: inside the window a clone
+ * one commit behind says nothing, and "up to date" is indistinguishable from
+ * "not looking today". So the throttle has an explicit override — `updateCheck
+ * ({ force: true })`, which `start update` calls. It ignores the interval, it
+ * ignores `START_SKIP_UPDATE_CHECK`, and it **explains every bail-out** instead
+ * of returning quietly. Ambient settings shape the automatic check; a command
+ * you typed on purpose is not an ambient setting.
+ *
+ * Every function here bails rather than blocking a launch. Nothing in this file
+ * is allowed to be the reason a dev server did not start.
  */
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
@@ -63,43 +73,69 @@ function safeToTouch() {
   return tryGit(['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{u}']);
 }
 
-export async function updateCheck() {
-  if (skip() || !isInteractive()) return;
+/**
+ * Look upstream and offer a fast-forward pull.
+ *
+ * `force` is what `start update` passes: check regardless of the interval and
+ * of START_SKIP_UPDATE_CHECK, and say out loud why nothing happened. Returns
+ * true when a pull actually landed, so the caller can report it.
+ */
+export async function updateCheck({ force = false } = {}) {
+  // Only `force` gets to talk about a condition the automatic check treats as a
+  // reason to stay quiet — the automatic one runs before a dev server and must
+  // not become chatter.
+  const explain = (msg) => { if (force) say(msg); };
+
+  if (!force && (skip() || !isInteractive())) return false;
+
   const dir = gitDir();
-  if (!dir) return;
-  if (!dueForCheck(dir)) return;
+  if (!dir) { explain('not a git checkout — nothing to update from'); return false; }
+  if (!force && !dueForCheck(dir)) return false;
 
   const upstream = safeToTouch();
   if (upstream === null) {
     // Distinguish "dirty" from "no upstream" — only the first is worth saying.
     if (tryGit(['rev-parse', '@{u}'])) say('working tree has uncommitted changes — skipping update check');
-    return;
+    else explain('this branch tracks no upstream (detached HEAD, or a clone with no remote branch)');
+    return false;
   }
 
   say(`checking ${upstream} for updates...`);
   if (tryGit(['fetch', '--quiet']) === null) {
     say('fetch failed (offline?) — skipping update check');
-    return;
+    return false;
   }
 
   const local = tryGit(['rev-parse', 'HEAD']);
   const remote = tryGit(['rev-parse', '@{u}']);
-  if (!local || !remote) return;
-  if (local === remote) { say('up to date'); return; }
+  if (!local || !remote) { explain('could not read the local or remote commit'); return false; }
+  if (local === remote) { say('up to date'); return false; }
 
   const base = tryGit(['merge-base', 'HEAD', '@{u}']);
   if (base !== local) {
     say(`local branch has diverged from ${upstream} — resolve manually before pulling`);
-    return;
+    return false;
   }
 
   const ahead = tryGit(['rev-list', '--count', 'HEAD..@{u}']) ?? '?';
   say(`${ahead} new commit(s) available on ${upstream}`);
-  const reply = (await ask('pull now? [Y/n] ')).trim();
-  if (!/^(y|yes)?$/i.test(reply)) { say('skipping pull — continuing with current version'); return; }
 
-  if (tryGit(['pull', '--ff-only', '--quiet']) !== null) say(`pulled ${ahead} commit(s) — continuing`);
-  else warn('pull failed — continuing with current version');
+  // No terminal, so no honest prompt. Report the finding and leave the decision
+  // to whoever reads the log — better than pulling under someone unattended.
+  if (!isInteractive()) {
+    say('not an interactive terminal — run "start update" yourself to pull');
+    return false;
+  }
+
+  const reply = (await ask('pull now? [Y/n] ')).trim();
+  if (!/^(y|yes)?$/i.test(reply)) { say('skipping pull — continuing with current version'); return false; }
+
+  if (tryGit(['pull', '--ff-only', '--quiet']) === null) {
+    warn('pull failed — continuing with current version');
+    return false;
+  }
+  say(`pulled ${ahead} commit(s) — continuing`);
+  return true;
 }
 
 /**

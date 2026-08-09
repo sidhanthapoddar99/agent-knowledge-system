@@ -25,6 +25,7 @@ platforms. On Windows, use `.\start.cmd`. It runs the same file.
 | `./start build` | Makes the production site in `dist/`. |
 | `./start preview` | Serves the site that is already in `dist/`. |
 | `./start doctor` | Runs a full build. Use it as a check before you publish. |
+| `./start update` | Looks at the git remote now, and offers to pull. It starts nothing. |
 | `./start stop` | Stops a server. |
 | `./start status` | Tells you if a server runs, and where. |
 | `./start logs` | Shows the output of a server. Add `--follow` to read it live. |
@@ -75,6 +76,7 @@ is WSL2. The site has about 1300 pages.
 |---|---|---|---|
 | `dev`, `preview`, `build`, `doctor`, `<script>` | Yes, once in 6 hours | Yes | Yes |
 | `clean <command>` | Yes | Yes | Yes |
+| `update` | Yes, always | No | No |
 | `clean` alone | No | No | No |
 | `stop`, `status`, `logs`, `--help` | No | No | No |
 
@@ -88,6 +90,32 @@ wrong. A question at that moment is not useful.
 - **Install.** Makes a hash of `package.json` and the lock file. A different hash installs
   the dependencies again.
 - **Version.** Compares `site.yaml → engine_version` with the range the engine supports.
+
+### `./start update`
+
+The 6-hour timer is not visible. Inside the window, a checkout one commit behind says
+nothing. You cannot tell "up to date" from "not looking today".
+
+`./start update` is the way out. It checks now. It ignores the 6-hour timer. It also
+ignores `START_SKIP_UPDATE_CHECK=1`, because a command you typed is a stronger signal than
+a setting in your environment.
+
+It also tells you why it cannot update. The automatic check stays quiet in these cases.
+`./start update` does not:
+
+| What it finds | What it prints |
+|---|---|
+| No git checkout | `not a git checkout — nothing to update from` |
+| Detached HEAD, or no remote branch | `this branch tracks no upstream …` |
+| Edited files in the checkout | `working tree has uncommitted changes — skipping update check` |
+| No network | `fetch failed (offline?) — skipping update check` |
+| Your branch moved too | `local branch has diverged … — resolve manually before pulling` |
+| Nothing new | `up to date` |
+| New commits | The count, then `pull now? [Y/n]` |
+
+`./start update` starts no server and runs no build. It does not install dependencies, and
+it does not run the version precheck. Whether a newer version exists is a question about
+git. It must not depend on whether this checkout can build today.
 
 ### The version precheck
 

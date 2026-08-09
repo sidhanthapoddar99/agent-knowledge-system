@@ -303,6 +303,21 @@ body {
   border-radius: var(--border-radius-md);
 }
 
+/* A standalone image is a figure, so center it — same treatment the diagram
+   containers get. `:only-child` keeps images that sit inside a sentence
+   (badges, inline icons) inline and left-aligned where they belong. The
+   second selector covers the linked form, `[![alt](img.png)](target)`. */
+.markdown-content p > img:only-child,
+.markdown-content p > a:only-child > img:only-child {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.markdown-content p > a:only-child:has(> img:only-child) {
+  display: block;
+}
+
 /* Strong & Emphasis */
 .markdown-content strong,
 .markdown-content b {
@@ -448,9 +463,14 @@ body {
   color: var(--color-text-muted);
 }
 
+/* The reset makes every svg `display: block`, so the container's
+   `text-align: center` does not reach it — a diagram narrower than the page
+   sat against the left edge. Auto margins center the block itself. */
 .markdown-content .diagram svg {
   max-width: 100%;
   height: auto;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Dark mode: invert diagram colors so user-defined style

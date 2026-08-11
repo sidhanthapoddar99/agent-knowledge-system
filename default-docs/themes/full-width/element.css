@@ -26,6 +26,9 @@
   --max-width-secondary: 1336px;
   /* --max-width-secondary: none; */
   --max-width-prose: 65ch;
+  /* Tables keep the default theme's content width and stay centred, even when
+     the rest of the page runs full width. See table.css. */
+  --max-width-table: 1336px;
   --sidebar-width: 280px;
   --outline-width: 280px;
   --navbar-height: 64px;

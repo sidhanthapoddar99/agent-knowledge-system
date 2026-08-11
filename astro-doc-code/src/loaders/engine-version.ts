@@ -30,7 +30,7 @@
  */
 
 /** What this engine currently is. Major stays 0 while the project is in beta. */
-export const ENGINE_VERSION = '0.3.4';
+export const ENGINE_VERSION = '0.3.5';
 
 /**
  * Oldest content version this engine still parses.

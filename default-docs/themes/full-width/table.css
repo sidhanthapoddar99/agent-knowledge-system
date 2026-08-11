@@ -1,0 +1,27 @@
+/**
+ * Table Overrides — Full Width theme
+ *
+ * The rest of this theme lets content stretch to the viewport. A table that
+ * stretches with it becomes unreadable: the rows get long and the eye loses
+ * the row it is on. So the table keeps the default theme's content width and
+ * sits centred in whatever space the page gives it.
+ *
+ * The table-wrap postprocessor wraps every rendered table in
+ * `.table-wrapper`, so the wrapper is the element to bound. Two content
+ * containers exist — `.docs-body` and `.markdown-content` — and both need the
+ * rule.
+ */
+
+.docs-body .table-wrapper,
+.markdown-content .table-wrapper {
+  max-width: var(--max-width-table);
+  margin-inline: auto;
+}
+
+/* A table rendered without a wrapper (hand-written HTML in a page) centres
+   the same way. */
+.docs-body table,
+.markdown-content table {
+  max-width: var(--max-width-table);
+  margin-inline: auto;
+}

@@ -11,6 +11,7 @@ and is stated inside each note.
 
 | Version | Date | What it is | Forces action? |
 |---|---|---|---|
+| **[0.3.5](./releases/0.3.5.md)** | 2026-08-12 | Tables under the bundled **Full Width** theme stop stretching to the viewport — they cap at the default theme's content width (`--max-width-table`, 1336px) and centre | **No migration** — floor stays `0.2.0`. CSS only, one theme; set `--max-width-table: none` to restore the old behaviour |
 | **[0.3.4](./releases/0.3.4.md)** | 2026-08-10 | Embedded draw.io diagrams centre in the content column — the viewer writes a fixed pixel width onto its block host div, which `text-align: center` cannot move; the host now gets auto side margins | **No migration** — floor stays `0.2.0`. CSS only; one rule |
 | **[0.3.3](./releases/0.3.3.md)** | 2026-08-10 | `./start update` — check upstream on demand, ignoring the 6 h throttle and `START_SKIP_UPDATE_CHECK`, and naming the reason (no upstream, dirty tree, diverged, offline) instead of returning silently | **No migration** — floor stays `0.2.0`. Pure addition; the automatic check and its throttle are unchanged |
 | **[0.3.2](./releases/0.3.2.md)** | 2026-08-10 | Embedded diagrams (excalidraw, mermaid, graphviz) and standalone images centre instead of hugging the left edge — the reset's `svg { display: block }` was defeating the container's `text-align: center` | **No migration** — floor stays `0.2.0`. CSS only; a hand-rolled `<div align="center">` wrapper can be deleted |

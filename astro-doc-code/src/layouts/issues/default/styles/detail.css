@@ -230,6 +230,7 @@
 .issue-sidebar__item[data-state='review'] .issue-sidebar__check { color: var(--color-warning); }
 .issue-sidebar__item[data-state='done'] .issue-sidebar__check { color: var(--color-success); }
 .issue-sidebar__item[data-state='dropped'] .issue-sidebar__check { color: var(--color-error); }
+.issue-sidebar__item[data-state='superseded'] .issue-sidebar__check { color: var(--status-superseded); }
 .issue-sidebar__item.is-done { color: var(--color-text-muted); }
 .issue-sidebar__item.is-done .issue-sidebar__label { text-decoration: line-through; }
 .issue-sidebar__empty {
@@ -396,6 +397,7 @@
 .issue-overview-subtasks__seg { height: 100%; transition: width 0.2s ease; }
 .issue-overview-subtasks__seg--closed { background: var(--color-success); }
 .issue-overview-subtasks__seg--cancelled { background: var(--color-error); }
+.issue-overview-subtasks__seg--superseded { background: var(--status-superseded); }
 .issue-overview-subtasks__seg--review { background: var(--color-warning); }
 .issue-overview-subtasks__list {
   list-style: none;
@@ -432,6 +434,7 @@
 .issue-overview-subtasks__state[data-state='review'] { color: var(--color-warning); }
 .issue-overview-subtasks__state[data-state='done'] { color: var(--color-success); }
 .issue-overview-subtasks__state[data-state='dropped'] { color: var(--color-error); }
+.issue-overview-subtasks__state[data-state='superseded'] { color: var(--status-superseded); }
 .issue-overview-subtasks__num {
   font-family: var(--font-family-mono);
   font-size: var(--ui-text-micro);
@@ -530,6 +533,7 @@
 .issue-comprehensive__state[data-state='review'] { color: var(--color-warning); }
 .issue-comprehensive__state[data-state='done'] { color: var(--color-success); }
 .issue-comprehensive__state[data-state='dropped'] { color: var(--color-error); }
+.issue-comprehensive__state[data-state='superseded'] { color: var(--status-superseded); }
 .issue-comprehensive__num {
   font-family: var(--font-family-mono);
   font-size: var(--ui-text-body);

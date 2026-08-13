@@ -1,5 +1,5 @@
 /**
- * SVG markup for the subtask status icon (7-status lifecycle vocabulary).
+ * SVG markup for the subtask status icon (8-status lifecycle vocabulary).
  *
  * Rendered server-side so the client can swap in place when a status cycles
  * without re-rendering the whole page. Also serialized into a JSON script
@@ -31,6 +31,9 @@ export function stateIconSvg(status: IssueStatus): string {
     case 'dropped':
       // cross — deliberately abandoned
       return '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>';
+    case 'superseded':
+      // right arrow — the scope left this item and lives somewhere else
+      return '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8h10"/><path d="M9 4.5L12.5 8 9 11.5"/></svg>';
   }
 }
 

@@ -22,7 +22,7 @@ own small schema:
 |---|---|
 | `issue.md` | `title` only — metadata lives in `settings.json` |
 | `comments/NNN_*.md` | `author` + `date` (YYYY-MM-DD) only — no `title` needed by the loader, but harmless |
-| `subtasks/**.md` | `title` + `status` (one of the 7 statuses) |
+| `subtasks/**.md` | `title` + `status` (one of the 8 statuses) |
 | `notes/**`, `brainstorm/**`, `agent-memory/**` | `title` (+ optional `color:`) |
 | `plans/**/NN_<stage>.md` | `title` + `status`, plus `outcome`, `notes`, `who`, and `subtasks:` — **the only ref list**. `agent-logs:` is retired and now errors; link a run from the body instead ([plans](../20_sections/28_plans.md)) |
 | `agent-log/**/02_working/*.md` | `title` + `status` + `agent` (+ optional `date`, `color:`) |

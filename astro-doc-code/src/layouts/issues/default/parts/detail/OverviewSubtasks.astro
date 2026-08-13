@@ -16,13 +16,14 @@ interface Props {
   subtaskReview: number;
   closedCount: number;
   cancelledCount: number;
+  supersededCount: number;
   baseUrl: string;
   issue: Issue;
 }
 
 const {
   sortedSubtasks, subtaskDone, subtaskReview, closedCount, cancelledCount,
-  baseUrl, issue,
+  supersededCount, baseUrl, issue,
 } = Astro.props;
 const subtaskTotal = sortedSubtasks.length;
 if (subtaskTotal === 0) return null as any;
@@ -36,6 +37,7 @@ const pct = (n: number) => (subtaskTotal ? (n / subtaskTotal) * 100 : 0);
     <div class="issue-overview-subtasks__bar" aria-hidden="true" id="overview-subtasks-bar">
       <div class="issue-overview-subtasks__seg issue-overview-subtasks__seg--closed" style={`width: ${pct(closedCount)}%`}></div>
       <div class="issue-overview-subtasks__seg issue-overview-subtasks__seg--cancelled" style={`width: ${pct(cancelledCount)}%`}></div>
+      <div class="issue-overview-subtasks__seg issue-overview-subtasks__seg--superseded" style={`width: ${pct(supersededCount)}%`}></div>
       <div class="issue-overview-subtasks__seg issue-overview-subtasks__seg--review" style={`width: ${pct(subtaskReview)}%`}></div>
     </div>
   </div>

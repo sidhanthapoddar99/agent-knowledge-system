@@ -143,7 +143,7 @@ The choice persists in the browser (`localStorage`) — it isn't part of the URL
 
 ### Guide button
 
-Beside the view toggle sits a **Guide** button. It opens a tracker-level reference modal that lays out the fixed lifecycle — the seven statuses and four categories with their built-in meanings — alongside this tracker's own `component`, `labels`, and `priority` values and their descriptions, tagged to show what's **fixed in code** versus **editable** in `settings.json`. It's the in-app companion to the vocabulary: the same `descriptions` maps you write in the root settings render here. (Distinct from each issue's own **Guide** panel, which explains that one issue's anatomy.)
+Beside the view toggle sits a **Guide** button. It opens a tracker-level reference modal that lays out the fixed lifecycle — the eight statuses and four categories with their built-in meanings — alongside this tracker's own `component`, `labels`, and `priority` values and their descriptions, tagged to show what's **fixed in code** versus **editable** in `settings.json`. It's the in-app companion to the vocabulary: the same `descriptions` maps you write in the root settings render here. (Distinct from each issue's own **Guide** panel, which explains that one issue's anatomy.)
 
 ## Issue rows
 

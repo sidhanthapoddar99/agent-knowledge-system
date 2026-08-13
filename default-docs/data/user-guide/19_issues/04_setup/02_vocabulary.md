@@ -22,7 +22,7 @@ The settings file may be plain `settings.json` **or** `settings.jsonc` — JSON 
 {
   "label": "Todo",
 
-  // NOTHING about status appears here. The seven statuses and their four
+  // NOTHING about status appears here. The eight statuses and their four
   // categories are FIXED in framework code, and their COLOURS are theme CSS
   // variables. Both a `fields.status` block and a `statusColors` map are hard
   // errors — see "Status colors" below.
@@ -135,7 +135,7 @@ this file — not the values, not the colours.
 
 | You want to… | Where |
 |---|---|
-| Change what the statuses **are** | Nowhere. Fixed in framework code: seven values, four categories |
+| Change what the statuses **are** | Nowhere. Fixed in framework code: eight values, four categories |
 | Change what a status **looks like** | Your theme's `color.css` — override `--status-<name>` |
 | Put either in `settings.json` | **Neither works.** `fields.status` and `statusColors` are both hard errors |
 
@@ -146,16 +146,17 @@ One variable per status, and this is the only place light and dark can differ:
   --status-open: #6b7280;         --status-blocked: #c2410c;
   --status-in-progress: #2563eb;  --status-input-needed: #d97706;
   --status-review: #ca8a04;       --status-done: #16a34a;
-  --status-dropped: #dc2626;
+  --status-dropped: #dc2626;      --status-superseded: #7c3aed;
 }
 
 [data-theme="dark"] {
   --status-dropped: #e06c75;      /* brighter on a dark background */
+  --status-superseded: #c678dd;
 }
 ```
 
 Override only what you want to change — the rest inherit from the default theme. All
-seven are listed under `required_variables.colors` in `theme.yaml`.
+eight are listed under `required_variables.colors` in `theme.yaml`.
 
 #### Why they moved out of `settings.json`
 
@@ -172,9 +173,10 @@ somehow"*, with nothing pointing at the cause. Run
 `migration/0.2.0_status-colors-to-css.py` — it reports every non-default colour it removes
 so you can re-declare it in CSS, and tells you to check the comments left behind.
 
-The seven statuses group into four categories — **Not Started** (`open`, `blocked`) ·
+The eight statuses group into four categories — **Not Started** (`open`, `blocked`) ·
 **In Progress** (`in-progress`) · **Review** (`input-needed`, `review`) · **Closed**
-(`done`, `dropped`). The UI filters by category; the status is the per-row badge. Full
+(`done`, `dropped`, `superseded`). The UI filters by category; the status is the per-row
+badge. Full
 meanings and transition conventions are in [Lifecycle and Review](./06_lifecycle-and-review.md).
 
 **The status set is fixed in framework code — you cannot add, remove, or rename statuses

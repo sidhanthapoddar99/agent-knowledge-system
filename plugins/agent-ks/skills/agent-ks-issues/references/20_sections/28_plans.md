@@ -156,9 +156,9 @@ you can point somewhere. **Point with a link, never a number** — see
 [Linking](../10_writing/10_writing.md#linking); a note reading *"blocked on 14"* is
 unreadable the moment 14 is renumbered.
 
-## Stage status — what the canonical seven mean on a stage
+## Stage status — what the canonical eight mean on a stage
 
-Same seven values, same icons and colours as everywhere else; their general definitions
+Same eight values, same icons and colours as everywhere else; their general definitions
 live in [00_overview.md](../00_anatomy/00_overview.md) and are not repeated here. What is
 specific to a stage is the subject: **a stage's status describes the SCHEDULE, never the
 work.** The subtasks it references render their own live status underneath it, so the

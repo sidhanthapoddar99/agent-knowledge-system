@@ -183,7 +183,7 @@ Optional, per agent log **and** per child agent log.
 { "status": "in-progress" }
 ```
 
-- **Vocabulary:** the canonical seven **minus `blocked` and `review`**, which mean
+- **Vocabulary:** the canonical eight **minus `blocked`, `review` and `superseded`**, which mean
   nothing for a run. So `open`, `in-progress`, `input-needed`, `done`, `dropped`.
 - **Not inherited.** Each folder's status is set independently — a child may be `done`
   inside a parent that is still `in-progress`.
@@ -347,7 +347,7 @@ Every iteration file opens with four `#` sections. Everything after them is free
 ```markdown
 ---
 title: "Scope A — the byte surface"
-status: done           # the canonical seven
+status: done           # the canonical eight
 agent: sol             # who wrote it
 ---
 
@@ -379,7 +379,7 @@ unless the inputs are on the file.
 | Field | Type | Purpose |
 |---|---|---|
 | `title` | string | Display title. |
-| `status` | string | The canonical seven — see below. |
+| `status` | string | The canonical eight — see below. |
 | `agent` | string | Which agent, model or tool produced it. |
 | `date` | ISO date | Optional — when it landed. |
 | `color` | CSS color | Optional label tint; document it in the issue's `glossary.md`. |

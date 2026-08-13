@@ -107,10 +107,22 @@ const PLAN_SETTINGS_KEYS = new Set(['title', 'status', 'description']);
 // `dropped` says why in prose as well as in its status.
 const ROUND_FAILURE_CALLOUT = /^\s*>\s*\[!(NOTE|IMPORTANT|WARNING|CAUTION|TIP)\]/m;
 // An agent log's status is a SUBSET of the one canonical vocabulary — the same
-// seven values, minus the two that describe a work item rather than a run.
+// eight values, minus the three that describe a work item rather than a run.
 // One vocabulary, one palette; the subset is a convention this validator holds,
-// not a second status axis.
+// not a second status axis. `superseded` is excluded with `blocked` and
+// `review`: a run whose scope moved elsewhere did not finish, which is
+// `dropped`. Where the scope went belongs in the round's `# Outcome`.
 const AGENT_LOG_STATUSES = ['open', 'in-progress', 'input-needed', 'done', 'dropped'];
+
+// A `superseded` item must name where its scope went. The convention is a line
+// opening with an arrow — `→ absorbed into phase-3 notes/10, decision D2`. Both
+// the ASCII `->` and the arrow character count, and the line may be a list item
+// or a blockquote, because that is how people actually write it.
+const SUPERSEDED_POINTER = /^\s*(?:[-*+]\s+|>\s*)?(?:→|->)\s*\S/m;
+// The advice printed with every missing-pointer warning. One sentence, one
+// example — the warning is only useful if it says what to type.
+const SUPERSEDED_POINTER_HINT =
+  'status `superseded` means the scope moved elsewhere, so the file must say where — add a line like `→ absorbed into phase-3 notes/10, decision D2`';
 const COMMENT_FM_KEYS = new Set(['author', 'date', 'title', 'sidebar_label']);
 
 // Known issue sub-folders (the anatomy) + colocated assets. Anything else at
@@ -166,7 +178,7 @@ const validLabels = vocab?.fields?.labels?.values || [];
 //      marker in its "Outcomes and Next Steps" section.
 const TEMPLATE_LINT = !!args.flags['subtask-template'] || vocab?.subtaskTemplate === true;
 const TEMPLATE_SECTIONS = ['Overview', 'References', 'Todo list', 'Outcomes and Next Steps', 'Details'];
-const OUTCOME_DUE_STATUSES = new Set(['review', 'done']);
+const OUTCOME_DUE_STATUSES = new Set(['review', 'done', 'superseded']);
 // Index leaves (any 00_-prefixed leaf — a group's series guide; naming it
 // 00_overview.md / 00_index.md is good practice, not a mandate) are exempt:
 // they are a status surface, not a work order.
@@ -564,8 +576,30 @@ for (const entry of issueFolders) {
   }
 
   // issue.md required
-  if (!fs.existsSync(path.join(folder, 'issue.md'))) {
+  const issueBodyPath = path.join(folder, 'issue.md');
+  if (!fs.existsSync(issueBodyPath)) {
     errors.push(`${id}/issue.md: missing`);
+  } else if (normalizeStatus(meta.status) === 'superseded') {
+    // The pointer may sit in issue.md or in a comment — a scope move is often
+    // recorded as the closing comment, and either place is readable on disk.
+    let pointed = false;
+    try { pointed = SUPERSEDED_POINTER.test(fs.readFileSync(issueBodyPath, 'utf-8')); }
+    catch { pointed = false; }
+    if (!pointed) {
+      const commentsDir = path.join(folder, 'comments');
+      try {
+        for (const f of fs.readdirSync(commentsDir)) {
+          if (!f.endsWith('.md')) continue;
+          if (SUPERSEDED_POINTER.test(fs.readFileSync(path.join(commentsDir, f), 'utf-8'))) {
+            pointed = true;
+            break;
+          }
+        }
+      } catch { /* no comments/ folder — nothing to search */ }
+    }
+    if (!pointed) {
+      warnings.push(`${id}/issue.md: ${SUPERSEDED_POINTER_HINT} (a comment carrying the line counts too)`);
+    }
   }
 
   // Stray *.md at folder root + unknown sub-folders (loader ignores both).
@@ -625,6 +659,10 @@ for (const entry of issueFolders) {
               warnings.push(`${id}/subtasks/${rel}: no \`status:\` — defaults to open`);
             }
             reportDrift(`${id}/subtasks/${rel}`, unknownKeys(fm, SUBTASK_FM_KEYS), SUBTASK_FM_KEYS);
+            if (normalizeStatus(rawStatus) === 'superseded'
+                && !SUPERSEDED_POINTER.test(parsed.content || '')) {
+              warnings.push(`${id}/subtasks/${rel}: ${SUPERSEDED_POINTER_HINT}`);
+            }
             if (TEMPLATE_LINT) lintSubtaskTemplate(`${id}/subtasks/${rel}`, parsed.content || '', rawStatus);
             if (INDEX_LEAF.test(e.name)) indexLeaf = { rel, status: normalizeStatus(rawStatus) };
             else siblingStatuses.push(normalizeStatus(rawStatus));
@@ -639,7 +677,10 @@ for (const entry of issueFolders) {
         const allOpen = siblingStatuses.every((s) => s === 'open');
         const allClosed = siblingStatuses.every((s) => TERMINAL_STATUSES.includes(s));
         const derived = allClosed ? 'done' : allOpen ? 'open' : 'in-progress';
-        if (indexLeaf.status !== derived && !(derived === 'done' && indexLeaf.status === 'dropped')) {
+        // Any Closed-category status on the index satisfies a derived `done` —
+        // an index can be dropped or superseded while its siblings all finished.
+        if (indexLeaf.status !== derived
+            && !(derived === 'done' && TERMINAL_STATUSES.includes(indexLeaf.status))) {
           warnings.push(`${id}/subtasks/${indexLeaf.rel}: index-leaf status \`${indexLeaf.status}\` disagrees with its siblings — derived \`${derived}\` (open=all-open, in-progress=any started, done=all closed)`);
         }
       }

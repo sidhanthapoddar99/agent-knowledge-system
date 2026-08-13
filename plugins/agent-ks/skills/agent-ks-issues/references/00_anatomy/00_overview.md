@@ -58,9 +58,9 @@ rot under continuous AI-driven shipping.
 
 ---
 
-## Lifecycle — 7 statuses, 4 categories, closing authority & AI rules
+## Lifecycle — 8 statuses, 4 categories, closing authority & AI rules
 
-**7 statuses in 4 categories** — one field, one vocabulary, across issues, subtasks,
+**8 statuses in 4 categories** — one field, one vocabulary, across issues, subtasks,
 plans, plan stages, agent logs and iteration files. Fixed in framework code:
 
 | Category | Statuses | Notes |
@@ -68,28 +68,56 @@ plans, plan stages, agent logs and iteration files. Fixed in framework code:
 | **Not Started** | `open` · `blocked` | `blocked` = depends on another issue/subtask; reason in prose |
 | **In Progress** | `in-progress` | Agent sets it automatically when work starts |
 | **Review** | `input-needed` · `review` | `input-needed` = stuck on a question (written inline); `review` = done, awaiting sign-off |
-| **Closed** | `done` · `dropped` | Terminal. **Who may set them depends on what carries the status** — [Closing authority](#closing-authority) |
+| **Closed** | `done` · `dropped` · `superseded` | Terminal. **Who may set them depends on what carries the status** — [Closing authority](#closing-authority) |
 
 Transitions are **unenforced** — any jump is legal. The category grouping is what the UI
 filters by; the status is the per-row badge.
 
-**Runs use five of the seven.** An agent log, a child agent log and an iteration file
-carry `open` · `in-progress` · `input-needed` · `done` · `dropped`. `blocked` and
-`review` are excluded because both describe a *work item*: a run does not wait on another
-run, and a run is never signed off — the subtask is. Fixed as `RUN_STATUSES` in
+### `superseded` — closed because the scope moved
+
+`superseded` is the third terminal status, and it says something the other two cannot.
+`done` claims the work shipped. `dropped` claims the idea was abandoned. `superseded`
+claims neither: **the work closed here because its scope moved elsewhere** — absorbed
+into another design, folded into a later phase, or reshaped into a different item.
+
+**A `superseded` file must name where the scope went.** Write a line that opens with an
+arrow, in the file's own body:
+
+```
+→ absorbed into phase-3 notes/10, decision D2
+```
+
+`agent-ks check issues` warns when the line is missing. Both `→` and `->` count, and the
+line may be a list item or a blockquote. For an **issue**, the arrow line may sit in
+`issue.md` or in a comment — a scope move is often recorded as the closing comment.
+
+Pick between the three by asking what a reader needs to do next. After `done` they read
+the artefact. After `dropped` they read why, and stop. After `superseded` they **follow
+the arrow** — which is why a `superseded` file with no arrow is a dead end.
+
+**Runs use five of the eight.** An agent log, a child agent log and an iteration file
+carry `open` · `in-progress` · `input-needed` · `done` · `dropped`. `blocked`, `review`
+and `superseded` are excluded because all three describe a *work item*: a run does not
+wait on another run, a run is never signed off — the subtask is — and a run whose scope
+moved elsewhere simply did not finish, which is `dropped`. Fixed as `RUN_STATUSES` in
 `issue-status.ts`.
 
 ### Closing authority
 
-**Who may set `done` and `dropped`. This section is that rule's only home** — every other
-file in the skill links here instead of restating it.
+**Who may set a Closed-category status. This section is that rule's only home** — every
+other file in the skill links here instead of restating it.
+
+**`superseded` is the exception, and it is the same at every level: you may set it.**
+It makes no claim that work shipped and no claim that an idea was abandoned — it only
+records where the scope went, and you are the one who moved it. Write the `→` line in
+the same edit. `done` and `dropped` follow the table below.
 
 The discriminator is **what the status is attached to**: a thing that carries the *work*,
 or a thing that carries a *record of* or a *schedule for* the work.
 
 | The status sits on | Who may close it | Why |
 |---|---|---|
-| An **issue** or a **subtask** | **The user, only.** Your ceiling is `review` — or `input-needed` with the question written inline | Closing signs off the work. The user inspects the artefact (PR, diff, screenshot, test output) and flips it |
+| An **issue** or a **subtask** | **The user, only.** Your ceiling is `review` — or `input-needed` with the question written inline, or `superseded` with the `→` line | Closing signs off the work. The user inspects the artefact (PR, diff, screenshot, test output) and flips it |
 | An **agent log**, a child agent log, or an **iteration file** | **You.** You close your own run | It records what *you* did. Nobody else is in a position to say whether the run finished |
 | A **plan** or a **plan stage** | **You.** Closing ends a *schedule*, not a piece of work | A plan stores no status of the work — the subtasks it references render their own live status — so closing one certifies nothing about it ([28_plans.md](../20_sections/28_plans.md)) |
 
@@ -113,7 +141,8 @@ says what happened.
    when you start executing, and hand off with a verifiable artefact (PR, diff,
    screenshot, test output). Before setting `done` or `dropped` on *anything*, read
    [Closing authority](#closing-authority) above — the answer differs by what carries the
-   status, and guessing is how a subtask gets self-certified.
+   status, and guessing is how a subtask gets self-certified. The one status you may
+   close with is `superseded`, when the scope moved — write the `→` line in the same edit.
 
 2. **Hit a wall → `input-needed`, not `blocked`.** Set `input-needed` and write the
    actual question **inline in the subtask/issue body** so a fresh session picks it up.
@@ -121,8 +150,8 @@ says what happened.
 
 3. **Default search scope is everything not Closed** (`open`, `blocked`, `in-progress`,
    `input-needed`, `review`). When the user asks an open-ended question ("what's in
-   progress?", "what needs review?"), skip the Closed category (`done`/`dropped`) unless
-   the prompt explicitly asks for closed history.
+   progress?", "what needs review?"), skip the Closed category (`done`, `dropped`,
+   `superseded`) unless the prompt explicitly asks for closed history.
 
 4. **Subtask review-debt promotion.** An active (non-closed) issue with **any** subtask in
    the **Review category** (`review` or `input-needed`) is treated as review-gated —
@@ -181,6 +210,6 @@ contents.
 
 - `@root/default-docs/data/user-guide/19_issues/` — the canonical user-guide section
 - `…/19_issues/02_design-philosophy.md` — why the tracker is shaped this way
-- `…/19_issues/04_setup/06_lifecycle-and-review.md` — deep dive on the seven-status / four-category model
+- `…/19_issues/04_setup/06_lifecycle-and-review.md` — deep dive on the eight-status / four-category model
 - `…/19_issues/09_using-with-ai.md` — agent-facing rules
 - For docs / blog / config work outside the tracker: the **`agent-ks-docs`** skill

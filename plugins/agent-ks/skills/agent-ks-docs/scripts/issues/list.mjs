@@ -111,7 +111,7 @@ const reFlags = caseSensitive ? '' : 'i';
 const ALL_STATUSES = STATUSES;
 // Default scope = everything not in the Closed category (open · blocked ·
 // in-progress · input-needed · review). `--include-closed` (alias
-// `--include-cancelled`) widens to all seven; `--status all` does the same.
+// `--include-cancelled`) widens to all eight; `--status all` does the same.
 const ACTIVE_STATUSES = STATUSES.filter((s) => !TERMINAL_STATUSES.includes(s));
 const includeClosed = !!args.flags['include-closed'] || !!args.flags['include-cancelled'];
 const scope = filterStatus.length
@@ -256,7 +256,7 @@ if (pathPattern) {
 }
 
 // ---------- Apply the status scope (last) ----------------------------------
-// Everything above ran across all seven statuses. Split by the active scope now:
+// Everything above ran across all eight statuses. Split by the active scope now:
 // what's in-scope is the real result; what's out-of-scope (only possible under
 // the default non-closed scope) powers the discoverability tip below.
 const hiddenByScope = results.filter((r) => !scope.includes(r.status));

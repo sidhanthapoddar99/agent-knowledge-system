@@ -37,7 +37,7 @@ interface Props {
    *  from this map and a folder mapped to `null` mean the same thing and render
    *  the same defined grey. Only used for `kind==='log'`. */
   statusMap?: Record<string, string | null>;
-  /** Resolved seven-status colour map — the same one every other status surface
+  /** Resolved eight-status colour map — the same one every other status surface
    *  reads, so a tracker overriding `fields.status.colors` restyles this too. */
   statusColors?: Record<string, string>;
   /** This node's path relative to `agent-log/` — the key into `statusMap`.
@@ -113,7 +113,7 @@ function leafNum(item: IssueNote | IssueAgentLog): string {
  *
  * **Both halves must be present**: a parseable `NNN_` prefix (there is nothing
  * to tint otherwise) and a `status` in frontmatter that is one of the fixed
- * seven. A file with no status keeps the default number colour — untinted means
+ * eight. A file with no status keeps the default number colour — untinted means
  * "said nothing", which has to stay distinguishable from any status it might
  * have declared.
  *

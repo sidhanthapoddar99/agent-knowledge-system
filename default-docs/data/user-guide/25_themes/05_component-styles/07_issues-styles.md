@@ -115,7 +115,7 @@ The two halves come from different places, and this is the distinction to get ri
 | Colours for | Declared in | Who can change them |
 |---|---|---|
 | `priority`, `component`, `labels` | tracker `settings.json` → `fields.<name>.colors` | that tracker only |
-| **the seven statuses** | **this theme's `color.css`** | **any theme** |
+| **the eight statuses** | **this theme's `color.css`** | **any theme** |
 
 **Status colours are the theme's to set.** One CSS variable per status — and because they
 are CSS, light and dark can differ, which the tracker's JSON could never express:
@@ -125,15 +125,16 @@ are CSS, light and dark can differ, which the tracker's JSON could never express
   --status-open: #6b7280;         --status-blocked: #c2410c;
   --status-in-progress: #2563eb;  --status-input-needed: #d97706;
   --status-review: #ca8a04;       --status-done: #16a34a;
-  --status-dropped: #dc2626;
+  --status-dropped: #dc2626;      --status-superseded: #7c3aed;
 }
 
 [data-theme="dark"] {
   --status-dropped: #e06c75;      /* brighter on a dark background */
+  --status-superseded: #c678dd;
 }
 ```
 
-Override only what you want to change; the rest inherit from the default theme. All seven
+Override only what you want to change; the rest inherit from the default theme. All eight
 are listed under `required_variables.colors` in `theme.yaml`, so a theme redefining the
 palette wholesale gets told which it missed.
 
@@ -212,9 +213,10 @@ Same sticky pattern as docs — offset by `--navbar-height`.
 .issue-subtask__state--review        { color: var(--color-warning); }
 .issue-subtask__state--done          { color: var(--color-success); }
 .issue-subtask__state--dropped       { color: var(--color-error); }
+.issue-subtask__state--superseded    { color: var(--status-superseded); }
 ```
 
-Icon colours pull from status semantics — `review` is warning (yellow/gold), `done` is success (green), `dropped` is error (red). The seven statuses fall in four categories (Not Started · In Progress · Review · Closed); the tabs above filter by category.
+Icon colours pull from status semantics — `review` is warning (yellow/gold), `done` is success (green), `dropped` is error (red), `superseded` is its own violet token. The eight statuses fall in four categories (Not Started · In Progress · Review · Closed); the tabs above filter by category.
 
 ## Customising issues styling
 

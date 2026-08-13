@@ -101,14 +101,15 @@ function applySubtaskState(key: string, state: IssueStatus) {
 function updateOverviewProgress() {
   const items = document.querySelectorAll<HTMLElement>('.issue-overview-subtasks__item');
   if (!items.length) return;
-  let doneN = 0, dropped = 0, review = 0;
+  let doneN = 0, dropped = 0, superseded = 0, review = 0;
   items.forEach((i) => {
     const s = i.dataset.state || '';
     if (s === 'done') doneN++;
     else if (s === 'dropped') dropped++;
+    else if (s === 'superseded') superseded++;
     else if (isValidStatus(s) && categoryOf(s) === 'review') review++;
   });
-  const done = doneN + dropped;
+  const done = doneN + dropped + superseded;
   const total = items.length;
   const count = document.getElementById('overview-subtasks-count');
   if (count) count.textContent = `${done} / ${total}`;
@@ -116,9 +117,11 @@ function updateOverviewProgress() {
   if (bar) {
     const pct = (n: number) => `${total ? (n / total) * 100 : 0}%`;
     const segs = bar.querySelectorAll<HTMLElement>('.issue-overview-subtasks__seg');
+    // Segment order matches OverviewSubtasks.astro: done · dropped · superseded · review.
     if (segs[0]) segs[0].style.width = pct(doneN);
     if (segs[1]) segs[1].style.width = pct(dropped);
-    if (segs[2]) segs[2].style.width = pct(review);
+    if (segs[2]) segs[2].style.width = pct(superseded);
+    if (segs[3]) segs[3].style.width = pct(review);
   }
 }
 

@@ -78,6 +78,9 @@ When picking up an issue, read in this order. Stop as soon as you have enough:
    **Review category** (`review` or `input-needed`); `done`/`dropped` are the human's, and
    `dropped` also needs a comment written first. Always hand off through Review. (Agent logs and
    plans are the other way round — see [Closing](#5-closing-and-the-one-place-done-is-yours).)
+   **`superseded` is the one Closed status you may set.** Use it when the item's scope
+   moved into another item, and write a `→ where it went` line in the body — see
+   [When the scope moves](#when-the-scope-moves-superseded).
 2. **Manage `in-progress` yourself.** Set a subtask/issue to `in-progress` when you start
    executing it — no ceremony, no waiting to be told.
 3. **When you hit a wall, use `input-needed` — not `blocked`.** Set the status to
@@ -117,20 +120,40 @@ for an autonomous agent are:
 | any active | `input-needed` | Stuck on a question; write it inline in the body |
 | any active | `blocked` | Depends on another specific issue/subtask (named in prose) |
 | `review` | `in-progress` | Got pushback in a comment; resuming work |
+| any | `superseded` | The scope moved into another item; write the `→` line naming where |
+
+#### When the scope moves — `superseded`
+
+`superseded` is terminal, like `done` and `dropped`, and it claims something neither of
+them does: **the work closed here because its scope went somewhere else.** A subtask gets
+absorbed into a later phase. A design is reshaped into a different item. An issue's whole
+scope lands inside another issue's plan.
+
+You may set it yourself, at both the issue and the subtask level. It certifies nothing
+about the work, so it does not cross the review boundary — but it is only useful with a
+pointer. **Write a line opening with an arrow, in the file's own body:**
+
+```
+→ absorbed into phase-3 notes/10, decision D2
+```
+
+`agent-ks check issues` warns when the line is missing. For an issue, the line may sit in
+`issue.md` or in a comment. An **agent log cannot be `superseded`** — a run whose scope
+moved did not finish, which is `dropped`.
 
 ### 5. Closing — and the one place `done` is yours
 
-`done` and `dropped` are one vocabulary with two authorities, and which one applies depends on **what the status is attached to** — a thing that carries the *work*, or a thing that carries a *record of* or a *schedule for* it.
+`done` and `dropped` are one vocabulary with two authorities (`superseded` is always yours to set), and which one applies depends on **what the status is attached to** — a thing that carries the *work*, or a thing that carries a *record of* or a *schedule for* it.
 
 | The status sits on | Who closes it | Why |
 |---|---|---|
-| An **issue** or a **subtask** | **The human, only.** Your terminal move is `review`, or `input-needed` with the question inline | Closing signs off the work. The human inspects the artefact — diff, screenshot, test output — and flips it |
+| An **issue** or a **subtask** | **The human, only.** Your terminal move is `review`, `input-needed` with the question inline, or `superseded` with the `→` line | Closing signs off the work. The human inspects the artefact — diff, screenshot, test output — and flips it |
 | An **agent log**, a child agent log, or an **iteration file** | **You.** You close your own run | It records what *you* did; nobody else is positioned to say whether the run finished |
 | A **plan** or a **plan stage** | **You.** Closing ends a *schedule*, not a piece of work | A plan stores no status of the work — the subtasks it references render their own — so closing one certifies nothing about them |
 
 **Never self-certify a subtask by closing the agent log that worked on it.** Same word, same vocabulary, opposite authority — and the log's `done` is not evidence for the subtask's.
 
-**An agent log's `done` means the agent finished its assignment, never that the news was good.** An audit that ran to completion and found five defects is `done`; the five defects are prose in its `# Outcome`. `dropped` means the run did not deliver — it crashed, was refused, or was superseded.
+**An agent log's `done` means the agent finished its assignment, never that the news was good.** An audit that ran to completion and found five defects is `done`; the five defects are prose in its `# Outcome`. `dropped` means the run did not deliver — it crashed, was refused, or was called off. A run whose scope moved elsewhere is `dropped` too; `superseded` describes a work item, never a run.
 
 The one exception on the first row: if the human explicitly pre-authorises direct closure in the issue prompt (typo fixes, comment-only edits), that's fine — but it must be explicit.
 
@@ -230,7 +253,7 @@ A well-briefed agent, equipped with the skill and the CLI, can run for hours aut
 ## See also
 
 - [Claude Code Plugin](../05_getting-started/05_claude-skills.md) — installing the skills and the CLI
-- [Lifecycle and Review](./04_setup/06_lifecycle-and-review.md) — the seven-status / four-category model the skill enforces
+- [Lifecycle and Review](./04_setup/06_lifecycle-and-review.md) — the eight-status / four-category model the skill enforces
 - [Agent Log](./05_sub-docs/05_agent-log.md) — the run shape, the round-file head, the worked examples
 - [Plans](./05_sub-docs/09_plans.md) — where order lives, and what a stage may reference
 - [Review and Close](./08_workflows/03_review-and-close.md) — the human's counterpart to the agent's workflow

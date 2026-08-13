@@ -57,7 +57,7 @@ Status does not appear in this file at all — not its values, not its colours. 
 
 ### Rules
 
-- **The seven statuses are fixed in framework code** — `open / blocked / in-progress / input-needed / review / done / dropped`. You don't declare them anywhere: a `fields.status` block is a hard error, and so is a `statusColors` map, because their colours are theme CSS variables (`--status-<name>` in your theme's `color.css`) rather than settings. An unknown status value on an issue hard-errors. The UI's category tabs and review handoff depend on this fixed vocabulary.
+- **The eight statuses are fixed in framework code** — `open / blocked / in-progress / input-needed / review / done / dropped / superseded`. You don't declare them anywhere: a `fields.status` block is a hard error, and so is a `statusColors` map, because their colours are theme CSS variables (`--status-<name>` in your theme's `color.css`) rather than settings. An unknown status value on an issue hard-errors. The UI's category tabs and review handoff depend on this fixed vocabulary.
 - **Other fields are yours to design.** Pick values that match how you actually triage.
 - **`component` and `labels` values each need a `descriptions` entry** — a parallel `"<value>": "<meaning>"` map (a missing one is a hard error). `priority` descriptions are optional. These glosses render in the tracker's **Guide** modal and steer where new issues land.
 - **Colors are optional** but useful — they drive badge fills on the list view.

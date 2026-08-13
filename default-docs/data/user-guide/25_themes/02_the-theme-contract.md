@@ -52,7 +52,7 @@ The corollary catches people out: **the list does not complete scales for tidine
 
 **One-tier** — these are semantic names used directly. No primitive colour palette sits behind them. Each is declared twice in the theme (once under `:root` for light mode, once under `[data-theme="dark"]` for dark mode).
 
-**Issue status — 7 variables.** One per status in the tracker's fixed vocabulary:
+**Issue status — 8 variables.** One per status in the tracker's fixed vocabulary:
 
 | Variable | Status |
 |---|---|
@@ -63,8 +63,9 @@ The corollary catches people out: **the list does not complete scales for tidine
 | `--status-review` | review |
 | `--status-done` | done |
 | `--status-dropped` | dropped |
+| `--status-superseded` | superseded |
 
-A theme may recolour these; it cannot add an eighth. The status *names* are fixed in the framework's `issue-status.ts` and are not configurable by any tracker — the colours are theme-owned, the vocabulary is not.
+A theme may recolour these; it cannot add a ninth. The status *names* are fixed in the framework's `issue-status.ts` and are not configurable by any tracker — the colours are theme-owned, the vocabulary is not.
 
 Full details: [Tokens / Colors](./04_tokens/02_colors.md).
 

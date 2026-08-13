@@ -31,7 +31,7 @@ Typical flow for working one atomic unit:
 
 Three ways:
 
-- **UI** — click the status icon in the detail-page sidebar or subtask checklist. Cycles `open → in-progress → review → done` (the off-path statuses `blocked`, `input-needed`, and `dropped` are set by editing the file).
+- **UI** — click the status icon in the detail-page sidebar or subtask checklist. Cycles `open → in-progress → review → done` (the off-path statuses `blocked`, `input-needed`, `dropped`, and `superseded` are set by editing the file).
 - **Manual edit** — change `status:` in the subtask's frontmatter. Loader picks up the change on the next mtime invalidation.
 - **CLI** — `agent-ks issue set-state <issue-id> review --subtask 01` (or pass an explicit `…/subtasks/01_foo.md` path). Writes the `status` field; `--subtask` targets the subtask (never the issue).
 
@@ -78,7 +78,7 @@ Each round:
 ---
 title: "FilterBar state persistence"
 agent: claude-opus-4-6
-status: done          # the canonical seven — did the agent FINISH, not what it found
+status: done          # the canonical eight — did the agent FINISH, not what it found
 date: 2026-04-21
 ---
 
@@ -151,7 +151,7 @@ The list view shows an Updated date for each issue, derived from git history —
 
 ## See also
 
-- [Lifecycle and Review](../04_setup/06_lifecycle-and-review.md) — the full seven-status / four-category model
+- [Lifecycle and Review](../04_setup/06_lifecycle-and-review.md) — the full eight-status / four-category model
 - [Review and Close](./03_review-and-close.md) — the human side of the handoff
 - [Using with AI](../09_using-with-ai.md) — agent-specific workflow
 - [Sub-Documents](../05_sub-docs/01_issue-md.md) — per-file-type conventions

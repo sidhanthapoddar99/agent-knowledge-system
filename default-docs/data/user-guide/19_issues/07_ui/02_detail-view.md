@@ -75,6 +75,7 @@ Each section lists its files as links to **their own URLs** (`/<issue>/notes/<na
   | filled dot | `review` | amber (`--color-warning`) |
   | check | `done` | green (`--color-success`) |
   | cross | `dropped` | red (`--color-error`) |
+  | right arrow | `superseded` | violet (`--status-superseded`) |
 
   Group folders show a **done/total** count; the section header shows the issue-wide done/total with an amber dot when anything is in the Review category. The same legend renders live (real symbols, real colors) on every issue's **Guide** panel.
 - **Agent log** — each run's folder renders `NN <symbol> <name> … <count>` — the **number** leads, because an activity is referred to by its number ("run 020") while its kind is a property of the run; the subtask and plan rows above it still lead with their status icon, being read for state rather than identity; the kind symbol's tooltip names the kind and its colour comes from that folder's optional `settings.json` status (a folder without one renders a defined grey, distinct from `open`). Inside, nothing is pinned: the run's slots are numbered, so plain prefix order gives `01_summary.md`, `02_working/`, `03_debrief/`, then any child agent log (prefix `100` and up).
@@ -85,7 +86,7 @@ Each section lists its files as links to **their own URLs** (`/<issue>/notes/<na
 
 ## Interactions
 
-- **Subtask status cycling** — clicking a subtask's status icon cycles the happy path `open → in-progress → review → done` (dev-mode editor endpoint writes the frontmatter); the other statuses (`blocked`, `input-needed`, `dropped`) are set by editing; counts update live.
+- **Subtask status cycling** — clicking a subtask's status icon cycles the happy path `open → in-progress → review → done` (dev-mode editor endpoint writes the frontmatter); the other statuses (`blocked`, `input-needed`, `dropped`, `superseded`) are set by editing; counts update live.
 - **Tooltips** — one site-wide cursor-anchored tooltip: kind symbols, status icons, type glyphs, and the review dot always show theirs; text tips appear only when the text is actually cropped.
 - **Sub-doc pages** — each has the same three-column shell with its own right-rail TOC; the sidebar keeps your place.
 

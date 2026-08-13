@@ -154,7 +154,7 @@ entry graduates to a real issue exactly when it passes the litmus test — and i
 ## Lifecycle — statuses & AI rules
 
 **One status vocabulary across the whole tracker** — issues, subtasks, plans, plan
-stages, agent logs and iteration files all use these seven values in the `status` field.
+stages, agent logs and iteration files all use these eight values in the `status` field.
 **Fixed in framework code, colours included.** A tracker overrides nothing here: a
 `fields.status` block or a `statusColors` map in the tracker root is a hard error, not a
 customisation. Restyle a status through the theme's `--status-<name>` CSS variable, which
@@ -165,10 +165,17 @@ applies to the whole tracker.
 | **Not Started** | `open` · `blocked` (depends on another item; reason in prose) |
 | **In Progress** | `in-progress` |
 | **Review** | `input-needed` (stuck, question inline) · `review` (done, awaiting sign-off) |
-| **Closed** | `done` · `dropped` |
+| **Closed** | `done` (shipped) · `dropped` (abandoned) · `superseded` (scope moved elsewhere) |
 
-**Agent logs and iteration files use five of the seven** — `blocked` and `review` mean
-nothing for a run.
+**Agent logs and iteration files use five of the eight** — `blocked`, `review` and
+`superseded` mean nothing for a run.
+
+**`superseded` is yours to set, at both the issue and the subtask level.** Use it when
+work closes here because its scope moved — absorbed into another design, folded into a
+later phase, reshaped into a different item. It claims neither shipping nor abandonment.
+**Write a line naming where the scope went, in the file's own body:**
+`→ absorbed into phase-3 notes/10, decision D2`. `agent-ks check issues` warns when that
+line is missing. For an issue, the line may live in `issue.md` or in a comment.
 
 > **Who may set `done` / `dropped` — and what those two words mean — depends on what
 > carries the status.** An issue, a subtask, a plan, a plan stage and an agent log do not
@@ -186,7 +193,8 @@ The AI rules are the most important rules in this skill:
    the subtask/issue body** so a fresh session sees it; reserve `blocked` for a structural
    dependency on another issue/subtask.
 3. **Default search scope is everything not Closed** (open, blocked, in-progress,
-   input-needed, review) — skip the Closed category (`done`/`dropped`) unless explicitly asked.
+   input-needed, review) — skip the Closed category (`done`, `dropped`, `superseded`)
+   unless explicitly asked.
 4. **Review-debt promotion:** an active (non-closed) issue with any subtask in the
    **Review category** (`review` or `input-needed`) surfaces as "needs review" — it lands on
    the Review tab and **displays a `review` badge on the index** (display-only; the stored

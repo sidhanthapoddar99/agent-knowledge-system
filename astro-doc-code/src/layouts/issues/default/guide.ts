@@ -382,7 +382,7 @@ work; the **agent log** carries it out; the **plan** says when it runs.
 ${statusTable(statusColors)}
 
 - Surfaces: sidebar tree · **Comprehensive** panel (all subtasks, one page) ·
-  right-rail index · the overview progress bar.
+  right-rail index.
 - Frontmatter:
 
 | Field | Meaning |

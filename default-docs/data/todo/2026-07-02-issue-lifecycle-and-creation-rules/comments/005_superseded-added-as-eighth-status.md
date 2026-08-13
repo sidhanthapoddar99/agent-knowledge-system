@@ -33,16 +33,29 @@ recorded here because they are reversible and were not asked about.
 | Glyph | A right arrow | Sits beside the check (`done`) and the cross (`dropped`); reads as "the scope left here". |
 | Progress bars | Derived from **category**, not from named statuses | The old code counted `done` and `dropped` by name, so a new terminal status would have silently landed in the `active` remainder. |
 
-## One defect found and not fixed
+## One defect found, and removed
 
-`astro-doc-code/src/layouts/issues/default/parts/detail/OverviewSubtasks.astro`
-is **orphaned** — nothing imports it. Its CSS
-(`.issue-overview-subtasks__*` in `styles/detail.css`) and its client half
-(`updateOverviewProgress()` in `scripts/detail/subtask-state.ts`) are still
-present, so the client function runs against a selector that never matches and
-does nothing. Both halves were updated for `superseded` so the path is correct
-whenever it is revived, but **the dead code itself was left alone** — removing it
-is a separate decision about whether the overview progress bar is wanted.
+The sweep turned up an **orphaned component**:
+`astro-doc-code/src/layouts/issues/default/parts/detail/OverviewSubtasks.astro`.
+Nothing imported it, yet its CSS, its click wiring and its live-count function
+were all still present — so `updateOverviewProgress()` ran on every status
+change against a selector that never matched, and did nothing.
+
+Sid called it: **delete it.** All five pieces went together —
+
+- the component file;
+- 88 lines of `.issue-overview-subtasks__*` CSS in `styles/detail.css`;
+- `updateOverviewProgress()` and its call site in `scripts/detail/subtask-state.ts`;
+- the overview branch of `applySubtaskState()`;
+- the `wireStateButton('.issue-overview-subtasks__state', …)` call in
+  `scripts/detail/client.ts`.
+
+Three prose references that named it were corrected too (`Comprehensive.astro`,
+`server/helpers.ts`, and the Guide's subtask "Surfaces" line, which had been
+advertising a progress bar no reader could see).
+
+The live status surfaces are unaffected: sidebar tree, **Comprehensive** panel,
+subtask page, and the right-rail index. Build clean at 1290 pages.
 
 ## Scope of the change
 

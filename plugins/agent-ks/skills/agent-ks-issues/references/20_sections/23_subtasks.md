@@ -54,7 +54,7 @@ status: open
 Body — the five-section work order, below.
 ```
 
-`status` uses the **canonical seven** — one shared field name, one shared set across the
+`status` uses the **canonical eight** — one shared field name, one shared set across the
 whole tracker (see
 [03_overall-issue-tracker-vocabulary.md](../00_anatomy/03_overall-issue-tracker-vocabulary.md)),
 tracked independently per subtask.
@@ -186,8 +186,10 @@ agent-ks issue set-state <issue> review --subtask NN      # resolves the subtask
 ```
 
 > **AI rule:** set `in-progress` when you start, hand off at `review` (or
-> `input-needed` with the question inline). Who may close it —
-> and why the answer is different for an agent log — is stated once, in
+> `input-needed` with the question inline). When the subtask's scope moves into
+> another item instead, close it `superseded` and write the `→ where it went`
+> line in the body. Who may close it with `done` or `dropped` — and why the
+> answer is different for an agent log — is stated once, in
 > [Closing authority](../00_anatomy/00_overview.md#closing-authority).
 
 ## Rapid mechanical changes

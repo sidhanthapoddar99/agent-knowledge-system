@@ -29,7 +29,7 @@ Every issue folder has a `settings.json` at its root. It holds the metadata — 
 |---|---|:---:|---|
 | `title` | string | ✅ | Shown on list + detail views |
 | `description` | string | — | Shown under the title on list + detail |
-| `status` | enum | ✅ | One of the seven fixed lifecycle statuses (framework-defined; a tracker overrides only their colors). See [Lifecycle and Review](./06_lifecycle-and-review.md) |
+| `status` | enum | ✅ | One of the eight fixed lifecycle statuses (framework-defined; a tracker overrides only their colors). See [Lifecycle and Review](./06_lifecycle-and-review.md) |
 | `priority` | enum | ✅ | Single value from `fields.priority.values` |
 | `component` | string[] | ✅ | Multi-select from `fields.component.values`. Convention is one entry; multiple is allowed for genuinely cross-cutting work. A bare string (`"x"`) is accepted and normalised to `["x"]` |
 | `labels` | string[] | ✅ | Multi-select from `fields.labels.values` — any subset |
@@ -126,7 +126,7 @@ Optional dictionary declaring **custom agent-log kind codes** for this issue. Ea
 Load-time validation covers:
 
 - **Required fields present** — missing `title`, `status`, etc. produces a warning; the issue is skipped (won't appear in the index).
-- **Enum values known** — an unknown `priority`, `component[i]`, or `labels[i]` produces a warning but doesn't block the load. An unknown `status` is the exception: it's a hard error, since the seven lifecycle statuses are fixed in framework code.
+- **Enum values known** — an unknown `priority`, `component[i]`, or `labels[i]` produces a warning but doesn't block the load. An unknown `status` is the exception: it's a hard error, since the eight lifecycle statuses are fixed in framework code.
 - **`authors[]` membership** — `author` and each entry in `assignees` should be in the tracker-root `authors[]`. Extensible — new people can be added to the root list at any time.
 
 Warnings surface in the **error-logger** dev-toolbar app. Builds succeed; the loader errs on the side of not crashing when metadata drift is the only problem.

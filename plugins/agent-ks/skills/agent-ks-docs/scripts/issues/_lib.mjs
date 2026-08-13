@@ -73,14 +73,14 @@ const COMMENT_PATTERN = /^(\d+)_(\d{4}-\d{2}-\d{2})_([a-z0-9-]+)\.md$/i;
 
 // Lifecycle vocabulary — the CLI's mirror of the framework constant
 // (astro-doc-code/src/loaders/issue-status.ts). Fixed in code: issues and
-// subtasks share these seven statuses grouped into four categories. Keep in
+// subtasks share these eight statuses grouped into four categories. Keep in
 // sync with the loader (both are the single source on their side of the wall).
-export const STATUSES = ['open', 'blocked', 'in-progress', 'input-needed', 'review', 'done', 'dropped'];
+export const STATUSES = ['open', 'blocked', 'in-progress', 'input-needed', 'review', 'done', 'dropped', 'superseded'];
 export const CATEGORIES = {
   'not-started': ['open', 'blocked'],
   'in-progress': ['in-progress'],
   'review': ['input-needed', 'review'],
-  'closed': ['done', 'dropped'],
+  'closed': ['done', 'dropped', 'superseded'],
 };
 export const TERMINAL_STATUSES = CATEGORIES.closed;
 export const REVIEW_STATUSES = CATEGORIES.review;

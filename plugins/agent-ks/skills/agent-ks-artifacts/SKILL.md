@@ -159,8 +159,8 @@ active theme — feed it the surfaces to validate a chart palette against. The n
 - **Brand** `--color-brand-primary` / `-secondary`
 - **Status** `--color-success` / `-warning` / `-error` / `-info`
 - **Issue status** `--status-open` / `-blocked` / `-in-progress` / `-input-needed` /
-  `-review` / `-done` / `-dropped` — one per value of the tracker's fixed
-  seven-status vocabulary. Colours are theme-owned; the vocabulary is not.
+  `-review` / `-done` / `-dropped` / `-superseded` — one per value of the tracker's
+  fixed eight-status vocabulary. Colours are theme-owned; the vocabulary is not.
 - **Type — semantic UI** `--ui-text-micro` / `-body` / `-title`; **content**
   `--content-body` / `-h1`…`-h6` / `-code`. Consume these, not the primitive
   `--font-size-*` scale. **Display** `--display-sm` / `-md` (marketing surfaces

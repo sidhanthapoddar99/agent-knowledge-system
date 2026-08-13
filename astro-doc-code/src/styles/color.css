@@ -45,6 +45,7 @@
   --status-review: #ca8a04;
   --status-done: #16a34a;
   --status-dropped: #dc2626;
+  --status-superseded: #7c3aed;
 }
 
 /* =================================
@@ -83,4 +84,5 @@
   --status-review: #f0c674;
   --status-done: #7ec699;
   --status-dropped: #e06c75;
+  --status-superseded: #c678dd;
 }

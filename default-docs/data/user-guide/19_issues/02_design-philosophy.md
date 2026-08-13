@@ -49,7 +49,7 @@ Every issue folder is named `YYYY-MM-DD-<slug>`. The date IS the creation date �
 
 The general principle still holds for *genuinely* cross-cutting tags — `bug`, `feature`,
 `docs`, `blocked-external` remain labels. What changed is that lifecycle position (now
-seven statuses in four categories) is the single source of truth for where work stands,
+eight statuses in four categories) is the single source of truth for where work stands,
 and it is **fixed in framework code** rather than user-definable — see below.
 
 ### Composite work uses multi-select labels
@@ -62,12 +62,13 @@ When several issues form a bundle, link them in prose. A bundle that earns a str
 
 ## What we do have
 
-### Seven statuses in four categories, with Review as a first-class category
+### Eight statuses in four categories, with Review as a first-class category
 
 ```
 Not Started      In Progress    Review              Closed
   open             in-progress    input-needed        done
   blocked                         review              dropped
+                                                      superseded
 ```
 
 The **Review category** is the missing primitive for AI-driven workflows. Without a
@@ -78,7 +79,8 @@ dedicated "a human needs to look at this" bucket, you have two bad options:
 
 Review is the third path, and it holds two signals: `review` ("I think this is done —
 confirm or reject") and `input-needed` ("I'm stuck on a question, answer inline"). The
-agent's ceiling is this category; `done`/`dropped` are human-only. It's a deliberate
+agent's ceiling is this category, plus `superseded` when the scope moves elsewhere;
+`done`/`dropped` are human-only. It's a deliberate
 handoff — the only way async AI work scales.
 
 **The statuses and categories are fixed in framework code — not user-definable.** A
@@ -103,7 +105,7 @@ See [Sub-Documents → agent-log](./05_sub-docs/05_agent-log.md).
 ### Subtasks share the issue status vocabulary
 
 An issue isn't a single unit of work — it's a collection. Each subtask carries its own
-`status` in the subtask file's frontmatter — the **same seven statuses** as issues, under
+`status` in the subtask file's frontmatter — the **same eight statuses** as issues, under
 the **same field name** (`status:`; subtasks used to use a separate `state:` field, now
 unified). That means:
 
@@ -151,6 +153,6 @@ That's what this is.
 
 ## See also
 
-- [Lifecycle and Review](./04_setup/06_lifecycle-and-review.md) — how the seven statuses / four categories and the review handoff work in practice
+- [Lifecycle and Review](./04_setup/06_lifecycle-and-review.md) — how the eight statuses / four categories and the review handoff work in practice
 - [Sub-Documents → agent-log](./05_sub-docs/05_agent-log.md) — iteration discipline
 - [Using with AI](./09_using-with-ai.md) — the skill + agent workflows

@@ -707,7 +707,7 @@ Per agent log and per child agent log. Optional; absent renders grey.
 { "status": "in-progress" }
 ```
 
-- **Vocabulary:** the canonical seven **minus `blocked` and `review`**.
+- **Vocabulary:** the canonical eight **minus `blocked`, `review` and `superseded`**.
 - **Not inherited.** Each folder's status is set independently — a child may be `done`
   inside a parent that is still `in-progress`.
 - **Status only.** The kind is the two-letter code in the folder name, which draws the

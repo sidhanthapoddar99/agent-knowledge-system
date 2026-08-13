@@ -33,7 +33,8 @@ if (args.flags.help || !target || !status) {
     '  Subtask by num:   set-state 2026-04-19-foo done --subtask 02',
     '',
     `status must be one of: ${STATUSES.join(' | ')}.`,
-    'Agents set up to `review` (or `input-needed`); `done`/`dropped` are human-only.',
+    'Agents set up to `review`, `input-needed` or `superseded`; `done`/`dropped` are human-only.',
+    '`superseded` = the scope moved elsewhere. Write a `→ where it went` line in the file.',
     'Refuses to write outside the content root.',
   ]);
   process.exit(target && status ? 0 : 1);

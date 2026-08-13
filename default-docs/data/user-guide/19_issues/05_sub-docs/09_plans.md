@@ -61,7 +61,7 @@ reusing it costs a disambiguating clause every time either word appears.
 { "title": "Decoder and retention", "status": "in-progress" }
 ```
 
-`status` is the canonical seven. It is the plan's *own* lifecycle — open, running,
+`status` is the canonical eight. It is the plan's *own* lifecycle — open, running,
 closed — not a summary of the work inside it.
 
 ## Numbering — the prefix is both the order and the id
@@ -112,7 +112,7 @@ subtasks:
 | `outcome` | One line: what "done" means for this stage |
 | `notes` | One line: why it sits here, what it waits on, the caveat the other columns cannot say |
 | `who` | Who the stage waits on |
-| `status` | The canonical seven |
+| `status` | The canonical eight |
 | `subtasks:` | Markdown links to the subtasks this stage schedules — **the only ref list**, and only these are rendered |
 
 `outcome` and `notes` render as **inline markdown**, so a link, `code`, emphasis or an
@@ -316,4 +316,4 @@ divided for the next insertion. `--subtask a.md,b.md` seeds the `subtasks:` list
 - [Subtasks](./03_subtasks.md) — the scope a stage schedules; filed by category, never by order
 - [Agent Log](./05_agent-log.md) — where the stages are actually carried out
 - [Agent Memory](./07_agent-memory.md) — what is still true; it holds no plan
-- [Lifecycle and Review](../04_setup/06_lifecycle-and-review.md) — the seven-status vocabulary
+- [Lifecycle and Review](../04_setup/06_lifecycle-and-review.md) — the eight-status vocabulary

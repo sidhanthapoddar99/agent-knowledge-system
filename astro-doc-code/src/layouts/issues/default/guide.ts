@@ -88,7 +88,7 @@ function statusTable(statusColors: Record<IssueStatus, string>): string {
  *
  * The Agent log section used to describe this subset in prose — "colours the
  * kind symbol… absent renders grey" — and show no colour anywhere, so the one
- * surface where the tint IS the signal had no legend. The full seven-status
+ * surface where the tint IS the signal had no legend. The full eight-status
  * legend lives under Subtasks, which is the wrong place to look when you are
  * reading about runs.
  */
@@ -107,7 +107,7 @@ const RUN_STATUS_MEANING: Record<RunStatus, string> = {
   'in-progress': 'Running now.',
   'input-needed': 'Stopped on a question — asked inline, where a fresh session will see it.',
   done: '**The agent finished its assignment.** What it *concluded* is prose in `# Outcome` — an audit that completed and found five defects is `done`, not `dropped`.',
-  dropped: 'The agent did **not** finish: crashed, refused, or was superseded.',
+  dropped: 'The agent did **not** finish: it crashed, refused, or was called off. A run whose scope moved elsewhere is `dropped` too — `superseded` describes a work item, not a run.',
 };
 
 /** Inline type glyph (diagram / artifact) for legend prose. */
@@ -329,7 +329,7 @@ this round. Everything else about the work lives in the subtasks its stages refe
 | \`outcome\` | One line — what "done" means for this stage. |
 | \`notes\` | One line — why it sits here, what it waits on, the caveat the other columns cannot say. |
 | \`who\` | Who it waits on. |
-| \`status\` | The canonical seven. A waiting stage is \`blocked\`, with what it waits on in one line of body. |
+| \`status\` | The canonical eight. A waiting stage is \`blocked\`, with what it waits on in one line of body. |
 | \`subtasks:\` | Markdown links to the subtasks it schedules. **The only ref list** — rendered as a status-marked list under the stage. |
 
 - \`outcome\` and \`notes\` render as **inline markdown**, so a link, \`code\` or an emoji
@@ -373,8 +373,10 @@ work; the **agent log** carries it out; the **plan** says when it runs.
 - Status is the shared lifecycle vocabulary (same as the issue) — **${STATUSES.length} statuses
   in ${CATEGORIES.length} categories**: ${lifecycleLine()}.
   Agents auto-set \`in-progress\`, hand off at \`review\` (or \`input-needed\` with the
-  question inline); \`done\`/\`dropped\` are human-only. Terminal (done) = the Closed
-  category. The UI filters by category; the badge shows the status.
+  question inline), and may close an item as \`superseded\` when its scope moved
+  elsewhere — write a \`→ where it went\` line when you do. \`done\`/\`dropped\` stay
+  human-only. Terminal (done) = the Closed category. The UI filters by category;
+  the badge shows the status.
 - Status icons — shown on every subtask surface; hover any icon for its name:
 
 ${statusTable(statusColors)}

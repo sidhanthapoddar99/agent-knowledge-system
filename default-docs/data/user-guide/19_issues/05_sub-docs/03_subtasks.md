@@ -1,6 +1,6 @@
 ---
 title: 03 · Subtasks
-description: Atomic units of work sharing the issue lifecycle (seven statuses, four categories)
+description: Atomic units of work sharing the issue lifecycle (eight statuses, four categories)
 sidebar_position: 3
 ---
 
@@ -78,14 +78,14 @@ User-guide and dev-docs coverage for the issues content type.
 | Field | Type | Purpose |
 |---|---|---|
 | `title` | string | Display title. If absent, derived from the slug (`02_theme-system-docs` → `theme system docs`). |
-| `status` | one of the seven lifecycle statuses | The subtask's lifecycle status — the **same field and vocabulary as issues**. |
+| `status` | one of the eight lifecycle statuses | The subtask's lifecycle status — the **same field and vocabulary as issues**. |
 
-Subtasks share the issue lifecycle exactly: **one field name (`status`), one set of seven
+Subtasks share the issue lifecycle exactly: **one field name (`status`), one set of eight
 statuses.** (Historically subtasks used a separate `state:` field with a four-value set;
 that has been unified — `state:` is the legacy name and is auto-mapped with a
 migrate-me warning until you rename it.) If `status` is missing, the default is `open`.
 
-## The seven statuses (shared with issues)
+## The eight statuses (shared with issues)
 
 | Category | Status | Meaning | Typical transition |
 |---|---|---|---|
@@ -96,6 +96,7 @@ migrate-me warning until you rename it.) If `status` is missing, the default is 
 | Review | `review` | Claims done; awaiting sign-off | `→ review` when AI / author believes it's complete |
 | Closed | `done` | Verified, shipped | `review → done` by a human |
 | Closed | `dropped` | Decided not to do | `→ dropped` by a human, with a reason in a comment |
+| Closed | `superseded` | The scope moved elsewhere — absorbed, folded into a later phase, or reshaped | Set by an agent or a human, with a `→ where it went` line in the body |
 
 Same vocabulary as issue-level status. See [Lifecycle and Review](../04_setup/06_lifecycle-and-review.md)
 for the full model — especially the **review handoff** and **review-debt promotion** rules
@@ -131,7 +132,7 @@ Three common paths:
 2. **Author writes it `open` → they do it themselves → mark `done` directly.** Fine for solo work.
 3. **Author writes it `open` → discussion concludes it shouldn't happen → a human marks it `dropped` with a comment explaining why.** Leave the file in place — the audit trail is valuable.
 
-There's a built-in endpoint for cycling statuses in the UI — `POST /__editor/subtask-toggle` — so clicking a subtask's status icon in the detail view progresses through the happy path `open → in-progress → review → done → open`. (The other statuses — `blocked`, `input-needed`, `dropped` — are set by editing the frontmatter.) Agents can also edit the frontmatter directly.
+There's a built-in endpoint for cycling statuses in the UI — `POST /__editor/subtask-toggle` — so clicking a subtask's status icon in the detail view progresses through the happy path `open → in-progress → review → done → open`. (The other statuses — `blocked`, `input-needed`, `dropped`, `superseded` — are set by editing the frontmatter.) Agents can also edit the frontmatter directly.
 
 See [Work an Issue](../08_workflows/02_work-an-issue.md) and [Review and Close](../08_workflows/03_review-and-close.md) for step-by-step guides.
 
@@ -153,6 +154,6 @@ The Comprehensive tab on the parent issue concatenates every subtask body with i
 
 ## See also
 
-- [Lifecycle and Review](../04_setup/06_lifecycle-and-review.md) — how the seven statuses interact at issue + subtask level
+- [Lifecycle and Review](../04_setup/06_lifecycle-and-review.md) — how the eight statuses interact at issue + subtask level
 - [Work an Issue](../08_workflows/02_work-an-issue.md) — adding subtasks, transitioning state
 - [Using with AI](../09_using-with-ai.md) — how agents are expected to handle subtasks

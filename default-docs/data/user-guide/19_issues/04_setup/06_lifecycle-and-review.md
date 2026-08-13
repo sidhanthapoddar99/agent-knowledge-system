@@ -1,25 +1,26 @@
 ---
 title: Lifecycle and Review
-description: The seven-status, four-category lifecycle model — and why the review handoff is the whole point
+description: The eight-status, four-category lifecycle model — and why the review handoff is the whole point
 sidebar_position: 6
 ---
 
 # Lifecycle and Review
 
-The tracker's lifecycle is **seven statuses grouped into four categories**. Both the
+The tracker's lifecycle is **eight statuses grouped into four categories**. Both the
 statuses and the categories are fixed in framework code — a tracker cannot invent its
 own (it can only override the colors). The categories are what the UI filters by; the
 status is the precise signal on each row.
 
-## The four categories, seven statuses
+## The four categories, eight statuses
 
 ```
-Not Started        In Progress      Review                 Closed
-  open               in-progress      input-needed           done
-  blocked                             review                 dropped
+Not Started        In Progress         Review              Closed
+- open             - in-progress       - input-needed      - done
+- blocked                              - review            - dropped
+                                                           - superseded
 ```
 
-| Category | Status | Meaning | Color | Who sets it |
+| Category | Status | Meaning | Color (dark) | Who sets it |
 |---|---|---|---|---|
 | **Not Started** | `open` | Default entry state — not started | `#888888` | Creation default |
 | **Not Started** | `blocked` | Structurally depends on another issue/subtask; reason lives in prose | `#d1854f` | Anyone, with the dependency named |
@@ -27,15 +28,48 @@ Not Started        In Progress      Review                 Closed
 | **Review** | `input-needed` | Stuck — needs a human answer to proceed; the question is written inline | `#e8a54b` | Agent (or human) when blocked on input |
 | **Review** | `review` | Work claims to be done — awaiting human sign-off | `#f0c674` | Agent or author on completion |
 | **Closed** | `done` | Reviewed and accepted — shipped | `#7ec699` | **Human only** |
-| **Closed** | `dropped` | Deliberately abandoned — needs a comment saying why | `#c678dd` | **Human only** |
+| **Closed** | `dropped` | Deliberately abandoned — needs a comment saying why | `#e06c75` | **Human only** |
+| **Closed** | `superseded` | The scope moved elsewhere — needs a `→` line saying where | `#c678dd` | Agent or human |
 
-Statuses are **hard-enforced**: a value outside these seven is a build/loader error, not
+Statuses are **hard-enforced**: a value outside these eight is a build/loader error, not
 a silent default. Transitions, by contrast, are **unenforced guidance** — any jump is
 legal (you can go `open → done` directly). The rules below are convention, not a state
 machine.
 
 `blocked` is specifically for a *structural dependency* on another item — it is **not**
 the "agent has a question" state. That's `input-needed`.
+
+## The three Closed statuses answer three different questions
+
+They are all terminal, and they are not interchangeable. Pick by asking what a reader
+should do after reading the row.
+
+| Status | The claim it makes | What the reader does next |
+|---|---|---|
+| `done` | The work shipped | Reads the artefact — a diff, a screenshot, a test run |
+| `dropped` | The idea was abandoned on purpose | Reads the comment saying why, and stops |
+| `superseded` | The scope moved somewhere else | **Follows the arrow** to where the scope went |
+
+`superseded` exists because real work often closes without shipping and without being
+abandoned. A subtask gets absorbed into a later phase. A design is reshaped into a
+different item. An issue's whole scope lands inside another issue's plan. Calling any of
+that `done` overstates it, and calling it `dropped` throws away the pointer.
+
+**A `superseded` file must name where the scope went.** Write a line that opens with an
+arrow, in the file's own body:
+
+```
+→ absorbed into phase-3 notes/10, decision D2
+```
+
+`agent-ks check issues` warns when the line is missing. Both `→` and `->` count, and the
+line may be a list item or a blockquote. For an **issue**, the arrow line may sit in
+`issue.md` or in any comment — closing an issue by comment is common, so both places are
+searched.
+
+**An agent log cannot be `superseded`.** A run's status answers *did the agent finish*,
+and a run whose scope moved did not finish — that is `dropped`. See
+[Agent log — status](../05_sub-docs/05_agent-log.md).
 
 ## The Review category is the whole point
 
@@ -65,6 +99,11 @@ The one hard trust boundary: an agent's terminal move is `review` (or `input-nee
 the human does, after inspecting the artefact. `dropped` additionally requires a comment
 explaining the decision.
 
+`superseded` sits outside this boundary, and an agent may set it. It certifies nothing
+about the work — it only records that the scope moved, which is a fact the agent that
+moved it is best placed to write down. The `→` line is what makes it safe: the reader
+can always go and check the destination.
+
 ### Agent transition conventions
 
 - Agent starts executing → sets `in-progress` automatically (no ceremony).
@@ -72,6 +111,7 @@ explaining the decision.
 - Stuck on a question → `input-needed`, question written inline. (Not `blocked` — that's
   for dependencies.)
 - Depends on another item → `blocked`, dependency named in a comment or the body.
+- Scope moved into another item → `superseded`, with a `→` line naming the destination.
 - **Never** `→ done` or `→ dropped` — those are the human's flips.
 
 ### When humans close
@@ -82,7 +122,7 @@ trail closes cleanly instead of leaving dangling in-progress entries.
 
 ## Subtasks share the same vocabulary
 
-Every subtask carries its own `status` in frontmatter — the **same seven statuses** as
+Every subtask carries its own `status` in frontmatter — the **same eight statuses** as
 issues, under the **same field name**. (Subtasks previously used a separate `state:`
 field; that has been unified to `status:`.)
 
@@ -167,17 +207,28 @@ An agent should mark an issue (or subtask) `review` when:
 - [ ] The agent log captures what was tried and what the final state is
 - [ ] Any dangling questions are surfaced as `input-needed` with the question inline
 
-## When to drop
+## When to drop, and when to supersede instead
 
-Dropping (abandoning) is legitimate, not a failure — but it's a **human** transition and
-needs a comment. Valid reasons:
+Closing without shipping is legitimate, not a failure. Which of the two you use depends
+on one question: **is there somewhere to point?**
 
-- Scope changed; the work is no longer relevant
-- Duplicate of another issue (link it in the body / comment)
-- Absorbed by a larger refactor
+**Use `dropped` when the work simply should not happen.** It is a **human** transition
+and needs a comment. Valid reasons:
+
 - Turned out to be a misunderstanding on discovery
+- The premise was wrong, and nothing replaces it
+- Decided against on cost or priority, with no successor item
 
-Leave the folder on disk — the audit trail is valuable. Don't `rm -rf` dropped issues.
+**Use `superseded` when the scope lives on somewhere else.** An agent may set it, and it
+needs a `→` line naming the destination. Valid reasons:
+
+- Absorbed by a larger refactor (`→ absorbed into 2026-08-01-refactor/plans/02`)
+- Duplicate of another issue (`→ duplicate of 2026-07-14-parser-rewrite`)
+- Moved to a later phase (`→ moved to phase 3, notes/10`)
+- Reshaped into a different item after a design decision
+
+Leave the folder on disk either way — the audit trail is valuable. Don't `rm -rf` a
+closed issue.
 
 ## Status vs labels
 
@@ -191,6 +242,7 @@ Leave the folder on disk — the audit trail is valuable. Don't `rm -rf` dropped
 | "Stuck on an external/third-party dependency" | Label `blocked-external` (still a label — outside the repo) |
 | "Waiting for sign-off" | **`status: review`** |
 | "Decided not to do" | **`status: dropped`** (human, with a comment) |
+| "The scope moved into another item" | **`status: superseded`** (with a `→` line naming where) |
 
 The rule: the lifecycle status is the single source of truth for where a piece of work
 stands. Labels are for genuinely cross-cutting tags (`bug`, `feature`, `docs`,

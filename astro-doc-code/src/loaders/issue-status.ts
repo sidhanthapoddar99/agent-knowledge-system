@@ -11,11 +11,11 @@
  * Everything that needs to know about lifecycle vocabulary — the loader, the
  * layouts, the `guide.ts` panel, and (by mirrored copy, since it is `.mjs`)
  * the `agent-ks` CLI — consumes THIS module so the vocabulary is declared
- * exactly once on the framework side. Issues and subtasks share it: same seven
+ * exactly once on the framework side. Issues and subtasks share it: same eight
  * statuses, same field name (`status`), same validation.
  */
 
-/** The seven canonical statuses. Order is the natural lifecycle progression. */
+/** The eight canonical statuses. Order is the natural lifecycle progression. */
 export const STATUSES = [
   'open',
   'blocked',
@@ -24,6 +24,7 @@ export const STATUSES = [
   'review',
   'done',
   'dropped',
+  'superseded',
 ] as const;
 
 export type IssueStatus = (typeof STATUSES)[number];
@@ -34,7 +35,7 @@ export const CATEGORIES = [
   { id: 'in-progress', label: 'In Progress', statuses: ['in-progress'] },
   { id: 'review', label: 'Review', statuses: ['input-needed', 'review'] },
   { id: 'not-started', label: 'Not Started', statuses: ['open', 'blocked'] },
-  { id: 'closed', label: 'Closed', statuses: ['done', 'dropped'] },
+  { id: 'closed', label: 'Closed', statuses: ['done', 'dropped', 'superseded'] },
 ] as const;
 
 export type CategoryId = (typeof CATEGORIES)[number]['id'];
@@ -44,11 +45,12 @@ export type CategoryId = (typeof CATEGORIES)[number]['id'];
  * subset of {@link STATUSES}: one vocabulary and one palette, fewer values,
  * never a second set of words.
  *
- * `blocked` and `review` are excluded because both describe a work item rather
- * than a run: a run does not wait on another run, and runs are not signed off —
- * the subtask is. A run's `status` answers **did the agent finish**, not *was
- * the news good*, which is why a completed audit that found five defects is
- * `done`.
+ * `blocked`, `review` and `superseded` are excluded because all three describe a
+ * work item rather than a run: a run does not wait on another run, runs are not
+ * signed off — the subtask is — and a run whose scope moved elsewhere simply did
+ * not finish, which is `dropped`. A run's `status` answers **did the agent
+ * finish**, not *was the news good*, which is why a completed audit that found
+ * five defects is `done`.
  *
  * Exported so the guide legend and the validator read one list. The same five
  * are currently hand-written in `check.mjs` and in five places of skill prose;
@@ -113,6 +115,7 @@ export const STATUS_LABELS: Record<IssueStatus, string> = {
   review: 'Review',
   done: 'Done',
   dropped: 'Dropped',
+  superseded: 'Superseded',
 };
 
 /** One-line meaning per status — the fixed vocabulary's built-in legend, shared
@@ -126,6 +129,7 @@ export const STATUS_DESCRIPTIONS: Record<IssueStatus, string> = {
   review: 'Work is done and awaiting human sign-off.',
   done: 'Shipped. Human-only — an agent never sets this.',
   dropped: 'Deliberately abandoned. Human-only, and needs a comment saying why.',
+  superseded: 'Closed because the scope moved elsewhere — absorbed into another design, or reshaped. Needs a `→` line naming where it went.',
 };
 
 /** One-line meaning per category, in the same UI order as {@link CATEGORIES}. */
@@ -133,7 +137,7 @@ export const CATEGORY_DESCRIPTIONS: Record<CategoryId, string> = {
   'in-progress': 'Actively moving.',
   review: 'Needs a human — either an answer or a sign-off.',
   'not-started': 'Not begun yet.',
-  closed: 'Finished — shipped or abandoned.',
+  closed: 'Finished — shipped, abandoned, or superseded.',
 };
 
 const STATUS_SET = new Set<string>(STATUSES);

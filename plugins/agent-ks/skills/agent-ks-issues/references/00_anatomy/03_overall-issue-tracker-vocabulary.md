@@ -6,7 +6,7 @@ The tracker-root settings file defines the enum values every issue draws from:
 {
   "label": "Todo",
 
-  // NOTHING about status appears here. The 7 statuses / 4 categories are FIXED
+  // NOTHING about status appears here. The 8 statuses / 4 categories are FIXED
   // in framework code, and their COLOURS are theme CSS variables. Both a
   // `fields.status` block and a `statusColors` map are hard errors.
 
@@ -22,11 +22,11 @@ The tracker-root settings file defines the enum values every issue draws from:
 
 When creating an issue, **all enum values must come from this vocabulary**. To add a new value to `component` / `labels` / `priority`, edit the tracker settings file first (add both the `values` entry **and**, for `component`/`labels`, its `descriptions` entry), then use it.
 
-**`status` is the exception, and nothing about it is configurable here.** Its seven values are fixed in framework code, and its colours are theme CSS. An unknown status value is a hard error, not a new value.
+**`status` is the exception, and nothing about it is configurable here.** Its eight values are fixed in framework code, and its colours are theme CSS. An unknown status value is a hard error, not a new value.
 
 | You want to… | Where |
 |---|---|
-| Change what the statuses **are** | Nowhere — fixed in `issue-status.ts`. Seven values, four categories |
+| Change what the statuses **are** | Nowhere — fixed in `issue-status.ts`. Eight values, four categories |
 | Change what a status **looks like** | Your theme's `color.css` — override `--status-<name>` |
 | Anything in `settings.json` | **Neither.** `fields.status` and `statusColors` are both hard errors |
 
@@ -39,7 +39,7 @@ One CSS variable per status, in the theme. This is also the only place light and
 [data-theme="dark"] { --status-dropped: #ef4444; }
 ```
 
-The seven tokens are `--status-open` · `--status-blocked` · `--status-in-progress` · `--status-input-needed` · `--status-review` · `--status-done` · `--status-dropped`, all listed under `required_variables.colors` in `theme.yaml`.
+The eight tokens are `--status-open` · `--status-blocked` · `--status-in-progress` · `--status-input-needed` · `--status-review` · `--status-done` · `--status-dropped` · `--status-superseded`, all listed under `required_variables.colors` in `theme.yaml`.
 
 **A leftover `statusColors` map fails the build rather than being ignored.** That is deliberate: an override that silently stops applying shows up much later as *"the colours look wrong somehow"*, with nothing pointing at the cause. Run `migration/0.2.0_status-colors-to-css.py` — it reports any non-default colour it removes so you can re-declare it in CSS. The same goes for an old `fields.status` block; run the migration chain per the `agent-ks-docs` skill's `doc-migration.md` rather than hand-editing.
 
@@ -78,8 +78,8 @@ Keep the descriptions accurate as the taxonomy evolves — a stale gloss is wors
 
 1. **Tracker-wide** — root `settings.json` (above)
 2. **Per-issue** — values picked from the tracker vocabulary (see [02_per-issue-settings.md](02_per-issue-settings.md))
-3. **Per-subtask** — the `status` field uses the same seven-status vocabulary as issue `status` (one shared field name), tracked independently per subtask (see [23_subtasks.md](../20_sections/23_subtasks.md))
-4. **Per-plan-stage, per-agent-log, per-iteration-file** — the same seven, with agent
+3. **Per-subtask** — the `status` field uses the same eight-status vocabulary as issue `status` (one shared field name), tracked independently per subtask (see [23_subtasks.md](../20_sections/23_subtasks.md))
+4. **Per-plan-stage, per-agent-log, per-iteration-file** — the same eight, with agent
    logs and iteration files using the five that mean something for a run (see
    [28_plans.md](../20_sections/28_plans.md), [24_agent-logs.md](../20_sections/24_agent-logs.md))
 

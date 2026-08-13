@@ -86,13 +86,13 @@ The validator emits an info-level hint when these are violated; both stay legal 
 | Purpose | Published reading material | Recorded thought-work |
 | Storage | One file per page | **One folder per item** |
 | Metadata | Frontmatter | **`settings.json`** (UI-editable) |
-| Lifecycle | Published / not | **open → in-progress → review → done** (7 statuses / 4 categories) |
+| Lifecycle | Published / not | **open → in-progress → review → done** (8 statuses / 4 categories) |
 | Sub-content | Nothing | `brainstorm/` · `notes/` · `subtasks/` · `agent-log/` · `agent-memory/` · `comments/` |
 | Audience | End users | Team + AI agents |
 
 ## AI-native by design
 
-Every file is plain markdown in a predictable folder. No API, no auth, no schema — an agent can `ls` the tracker, read any issue, write subtasks, append to agent logs. The seven-status, four-category lifecycle (`open → in-progress → review → done`, plus `blocked`, `input-needed`, and `dropped` for the off-path cases) exists specifically so AI-driven work can ship to **review** and hand the final call to a human — `done` and `dropped` are human-only transitions. Subtasks share the same `status` field and carry it independently — an issue can stay `open` while three of five subtasks are already `done` or in `review`.
+Every file is plain markdown in a predictable folder. No API, no auth, no schema — an agent can `ls` the tracker, read any issue, write subtasks, append to agent logs. The eight-status, four-category lifecycle (`open → in-progress → review → done`, plus `blocked`, `input-needed`, `dropped`, and `superseded` for the off-path cases) exists specifically so AI-driven work can ship to **review** and hand the final call to a human — `done` and `dropped` are human-only transitions. `superseded` closes an item whose scope moved elsewhere, and an agent may set it. Subtasks share the same `status` field and carry it independently — an issue can stay `open` while three of five subtasks are already `done` or in `review`.
 
 Agents working with the tracker should invoke the `agent-ks-issues` skill — the self-contained issue-tracker skill (anatomy, creation rules, lifecycle, agent-logs, agent-memory) is the canonical agent-facing companion to this page.
 
@@ -102,7 +102,7 @@ Agents working with the tracker should invoke the `agent-ks-issues` skill — th
 - [Folder Structure](./03_folder-structure.md) — the data layout in detail
 - [Per-Issue Settings](./04_setup/01_per-issue.md) — metadata schema
 - [Vocabulary](./04_setup/02_vocabulary.md) — tracker-root `settings.json`
-- [Lifecycle and Review](./04_setup/06_lifecycle-and-review.md) — the seven-status / four-category model
+- [Lifecycle and Review](./04_setup/06_lifecycle-and-review.md) — the eight-status / four-category model
 - [Sub-Documents](./05_sub-docs/01_issue-md.md) — each file type's conventions
 - [List View](./07_ui/01_list-view.md) and [Detail View](./07_ui/02_detail-view.md)
 - [Workflows](./08_workflows/01_create-an-issue.md) — step-by-step guides

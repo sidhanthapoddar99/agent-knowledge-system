@@ -5,7 +5,7 @@
  *
  * The detail-page Guide (guide.ts) explains ONE issue's anatomy; this explains
  * the whole tracker's VOCABULARY:
- *   - the FIXED lifecycle — seven statuses / four categories, rendered straight
+ *   - the FIXED lifecycle — eight statuses / four categories, rendered straight
  *     from the code constant (issue-status.ts) so it can never drift;
  *   - the EDITABLE per-tracker vocabulary — priority / component / labels,
  *     rendered from root settings.json with each value's description.
@@ -73,7 +73,7 @@ const editableSections: Array<{ title: string; field: IssuesVocabularyField | un
           Status &amp; categories <span class="issues-guide__tag">fixed in code</span>
         </h3>
         <p class="issues-guide__note">
-          The seven statuses and four categories live in the framework
+          The eight statuses and four categories live in the framework
           (<code>issue-status.ts</code>) and cannot be redefined per-tracker — only their colours are
           overridable. Agents set <em>in-progress</em> automatically and stop at the Review category;
           <em>done</em> and <em>dropped</em> are human-only. The list filters by <em>category</em>; the

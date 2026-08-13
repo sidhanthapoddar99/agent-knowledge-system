@@ -38,7 +38,7 @@ There is **one binary** (`agent-ks`, plus its Windows `agent-ks.cmd` twin) routi
 
 | Command | What it does | Key flags |
 |---|---|---|
-| `agent-ks issue list` | Multi-field filter + free-text regex search over the tracker | `--status open,blocked,in-progress,input-needed,review,done,dropped` (default: not-Closed; `all` = every status; `--include-closed` widens) · `--priority` · `--component` · `--label` · `--assignee` · `--search <regex>` · `--search-fields body,settings,comments,subtasks,notes,agent-log` · `--path <regex>` · `--meta <regex>` · `--count` · `--limit <N>` · `--paths-only` · `--json` · `--tracker <path>` |
+| `agent-ks issue list` | Multi-field filter + free-text regex search over the tracker | `--status open,blocked,in-progress,input-needed,review,done,dropped,superseded` (default: not-Closed; `all` = every status; `--include-closed` widens) · `--priority` · `--component` · `--label` · `--assignee` · `--search <regex>` · `--search-fields body,settings,comments,subtasks,notes,agent-log` · `--path <regex>` · `--meta <regex>` · `--count` · `--limit <N>` · `--paths-only` · `--json` · `--tracker <path>` |
 | `agent-ks issue show <id>` | One issue's metadata + subtask/comment/agent-log heads | `--full` (bodies) · `--json` · `--tracker` |
 | `agent-ks issue subtasks [id]` | Subtasks for one issue, or `--all` cross-issue | `--all` · `--status <vals>` · `--flat` · `--json` · `--tracker` |
 | `agent-ks issue set-state <id> <status>` | Set an issue status, or a subtask status via `--subtask <num\|slug>` (or a subtask path) | `--subtask <num\|slug>` · `--tracker` |

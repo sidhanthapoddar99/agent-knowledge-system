@@ -425,7 +425,7 @@ export interface LoadedIssues {
   vocabulary: IssuesVocabulary;
   /** Root-level draft flag — if true, the whole tracker is dev-only */
   rootDraft: boolean;
-  /** The seven-status colour map — `var(--status-<name>)` references, taken
+  /** The eight-status colour map — `var(--status-<name>)` references, taken
    *  from code and never from settings. The single place any surface (badges,
    *  the Guide modal) should read status colours from. */
   statusColors: Record<IssueStatus, string>;

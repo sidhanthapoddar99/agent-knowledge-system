@@ -27,7 +27,7 @@ Marking the default inverts the signal: if every row had an icon, no icon would 
 
 ## 3. Color belongs to status — nothing else
 
-Status color always comes from the theme status variables — `--color-info` (in progress), `--color-warning` (needs a human: review / input-needed), `--color-success` (done), `--color-error` (dropped/failed) — never hardcoded hex, so themes and dark mode keep working. Two corollaries:
+Status color always comes from the theme status variables — `--color-info` (in progress), `--color-warning` (needs a human: review / input-needed), `--color-success` (done), `--color-error` (dropped/failed), `--status-superseded` (scope moved elsewhere) — never hardcoded hex, so themes and dark mode keep working. Two corollaries:
 
 - **File-type glyphs are monochrome** (muted text color). Type is secondary information; tinting it would compete with status.
 - **Resting states stay neutral.** `open` and `blocked` render in muted grey — blocked is a *resting* state (its reason is read in prose), not an alarm.

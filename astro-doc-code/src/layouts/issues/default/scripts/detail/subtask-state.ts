@@ -1,9 +1,9 @@
 /**
- * Subtask state cycling. Clicking a state icon cycles
- * open → review → closed → cancelled → open, updates every surface that
- * shows the subtask (overview list, comprehensive list, subtask page,
- * sidebar, subtasks index), and POSTs to /__editor/subtask-toggle so the
- * change persists to settings.json. Failed POSTs roll back the UI.
+ * Subtask state cycling. Clicking a state icon cycles the happy path
+ * open → in-progress → review → done → open, updates every surface that shows
+ * the subtask (comprehensive list, subtask page, sidebar tree, right-rail
+ * index), and POSTs to /__editor/subtask-toggle so the change persists to the
+ * file's frontmatter. Failed POSTs roll back the UI.
  */
 import { CYCLE, TERMINAL, readIcons, type IssueStatus } from './types';
 import { categoryOf, isValidStatus, STATUS_LABELS } from '@loaders/issue-status';
@@ -36,17 +36,6 @@ function setIconTip(el: HTMLElement | null, state: IssueStatus) {
 
 function applySubtaskState(key: string, state: IssueStatus) {
   const isDone = TERMINAL.includes(state);
-
-  const overviewItem = document.querySelector<HTMLElement>(
-    `.issue-overview-subtasks__item[data-subtask-key="${CSS.escape(key)}"]`,
-  );
-  setStateOn(overviewItem, state);
-  const overviewBtn = overviewItem?.querySelector<HTMLElement>('.issue-overview-subtasks__state');
-  if (overviewBtn) {
-    overviewBtn.dataset.state = state;
-    overviewBtn.innerHTML = ICONS[state];
-    setIconTip(overviewBtn, state);
-  }
 
   const compItem = document.querySelector<HTMLElement>(
     `.issue-comprehensive__item[data-subtask-key="${CSS.escape(key)}"]`,
@@ -93,36 +82,8 @@ function applySubtaskState(key: string, state: IssueStatus) {
     setIconTip(indexIcon, state);
   }
 
-  updateOverviewProgress();
   updateSidebarSubtasksCount();
   updateComprehensiveTabCounts();
-}
-
-function updateOverviewProgress() {
-  const items = document.querySelectorAll<HTMLElement>('.issue-overview-subtasks__item');
-  if (!items.length) return;
-  let doneN = 0, dropped = 0, superseded = 0, review = 0;
-  items.forEach((i) => {
-    const s = i.dataset.state || '';
-    if (s === 'done') doneN++;
-    else if (s === 'dropped') dropped++;
-    else if (s === 'superseded') superseded++;
-    else if (isValidStatus(s) && categoryOf(s) === 'review') review++;
-  });
-  const done = doneN + dropped + superseded;
-  const total = items.length;
-  const count = document.getElementById('overview-subtasks-count');
-  if (count) count.textContent = `${done} / ${total}`;
-  const bar = document.getElementById('overview-subtasks-bar');
-  if (bar) {
-    const pct = (n: number) => `${total ? (n / total) * 100 : 0}%`;
-    const segs = bar.querySelectorAll<HTMLElement>('.issue-overview-subtasks__seg');
-    // Segment order matches OverviewSubtasks.astro: done · dropped · superseded · review.
-    if (segs[0]) segs[0].style.width = pct(doneN);
-    if (segs[1]) segs[1].style.width = pct(dropped);
-    if (segs[2]) segs[2].style.width = pct(superseded);
-    if (segs[3]) segs[3].style.width = pct(review);
-  }
 }
 
 function updateComprehensiveTabCounts() {

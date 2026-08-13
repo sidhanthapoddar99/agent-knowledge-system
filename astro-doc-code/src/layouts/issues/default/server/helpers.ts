@@ -46,10 +46,10 @@ export function pad(n: number | null): string {
 }
 
 /** Status-grouped subtask sort: active statuses (anything not in the Closed
- *  category) first, terminal (Closed: done | dropped) after; within each group,
- *  ascending by sequence. Drives the Overview panel, MetaSidebar, the
- *  active/terminal divider, and Comprehensive-doc order. NOT the detail sidebar
- *  tree — that sorts by sequence only (see SubtaskTree.astro). */
+ *  category) first, terminal (the Closed category) after; within each group,
+ *  ascending by sequence. Drives MetaSidebar, the active/terminal divider, and
+ *  Comprehensive-doc order. NOT the detail sidebar tree — that sorts by
+ *  sequence only (see SubtaskTree.astro). */
 export function sortSubtasksByState(subtasks: IssueSubtask[]): IssueSubtask[] {
   return [...subtasks].sort((a, b) => {
     const g = (isTerminalStatus(a.status) ? 1 : 0) - (isTerminalStatus(b.status) ? 1 : 0);

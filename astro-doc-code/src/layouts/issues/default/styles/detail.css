@@ -709,15 +709,9 @@
   border-left-color: var(--color-brand-primary);
   background: color-mix(in srgb, var(--color-brand-primary) 8%, transparent);
 }
-.issue-meta-toc__level-1 .issue-meta-toc__link,
-.issue-meta-toc__level-2 .issue-meta-toc__link { padding-left: 0.5rem; }
-.issue-meta-toc__level-3 .issue-meta-toc__link { padding-left: 1.15rem; }
-.issue-meta-toc__level-4 .issue-meta-toc__link,
-.issue-meta-toc__level-5 .issue-meta-toc__link,
-.issue-meta-toc__level-6 .issue-meta-toc__link {
-  padding-left: 1.8rem;
-  color: var(--color-text-muted);
-}
+.issue-meta-toc__level-1 .issue-meta-toc__link { padding-left: 0.5rem; }
+.issue-meta-toc__level-2 .issue-meta-toc__link { padding-left: 1.15rem; }
+.issue-meta-toc__level-3 .issue-meta-toc__link { padding-left: 1.8rem; }
 .issue-meta-toc__section-label {
   padding: 0.5rem 0.5rem 0.2rem;
   font-size: var(--ui-text-micro);

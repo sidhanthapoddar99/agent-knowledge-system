@@ -11,6 +11,7 @@ and is stated inside each note.
 
 | Version | Date | What it is | Forces action? |
 |---|---|---|---|
+| **[0.3.7](./releases/0.3.7.md)** | 2026-08-22 | The "On this page" rail indents by heading level from `#` down, instead of treating `#` and `##` as one level, and stops listing `####` and deeper — on docs pages and on issue sub-doc pages | **No migration** — floor stays `0.2.0`. Layout + CSS only; deep headings keep their anchor IDs |
 | **[0.3.6](./releases/0.3.6.md)** | 2026-08-13 | `superseded` — a third terminal status for work that closed because its scope moved elsewhere, valid on both issues and subtasks; agents may set it, and `agent-ks check issues` warns when the required `→ where it went` line is missing | **No migration** — floor stays `0.2.0`. Additive. `replace`-mode themes owe one more variable, `--status-superseded` |
 | **[0.3.5](./releases/0.3.5.md)** | 2026-08-12 | Tables under the bundled **Full Width** theme stop stretching to the viewport — they cap at the default theme's content width (`--max-width-table`, 1336px) and centre | **No migration** — floor stays `0.2.0`. CSS only, one theme; set `--max-width-table: none` to restore the old behaviour |
 | **[0.3.4](./releases/0.3.4.md)** | 2026-08-10 | Embedded draw.io diagrams centre in the content column — the viewer writes a fixed pixel width onto its block host div, which `text-align: center` cannot move; the host now gets auto side margins | **No migration** — floor stays `0.2.0`. CSS only; one rule |

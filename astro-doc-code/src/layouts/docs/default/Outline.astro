@@ -15,13 +15,16 @@ interface Props {
 }
 
 const { headings, title = 'On this page' } = Astro.props;
+
+// Outline shows three levels only: h1 → h2 → h3. Deeper headings are noise here.
+const visibleHeadings = headings.filter((heading) => heading.depth <= 3);
 ---
 
 <aside class="outline">
   <nav class="outline__nav" aria-label="Table of contents">
     <h2 class="outline__title">{title}</h2>
     <ul class="outline__list">
-      {headings.map((heading) => (
+      {visibleHeadings.map((heading) => (
         <li class:list={['outline__item', `outline__item--depth-${heading.depth}`]}>
           <a
             href={`#${heading.slug}`}

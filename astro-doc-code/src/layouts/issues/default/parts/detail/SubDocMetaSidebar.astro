@@ -12,15 +12,18 @@ interface Props {
 }
 
 const { toc } = Astro.props;
+
+// Three levels only: h1 -> h2 -> h3. Deeper headings are noise in the rail.
+const visibleToc = toc.filter((h) => h.level <= 3);
 ---
 
 <aside class="issue-meta">
   <div class="issue-meta__panel is-active" data-meta-panel="subdoc">
     <div class="issue-meta-index">
       <div class="issue-meta-index__heading">On this page</div>
-      {toc.length > 0 ? (
+      {visibleToc.length > 0 ? (
         <ul class="issue-meta-toc">
-          {toc.map((h) => (
+          {visibleToc.map((h) => (
             <li class={`issue-meta-toc__level-${h.level}`}>
               <a href={`#${h.id}`} class="issue-meta-toc__link" data-toc-link={h.id} data-tip={h.text}>{h.text}</a>
             </li>

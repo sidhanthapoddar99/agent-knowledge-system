@@ -55,7 +55,7 @@ issues need only `memory.md` plus a few topic files at its root. See
 **Inside an agent log the numeric prefix says what a member is, and nothing else does:**
 `< 100` is one of the run's own three slots (`01_summary.md`, `02_working/`,
 `03_debrief/`), `≥ 100` is a child agent log. The bands cannot overlap, so no name is
-special — which is why a child agent log may now be called anything, `working` included
+special and a child agent log may be called anything
 ([24_agent-logs.md](../20_sections/24_agent-logs.md)).
 
 **Folder naming regex:** `^\d{4}-\d{2}-\d{2}-[a-z0-9-]+$` (date + kebab-case slug).

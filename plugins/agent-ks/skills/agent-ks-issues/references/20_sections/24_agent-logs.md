@@ -231,20 +231,10 @@ The two bands cannot collide: slots have `01`–`99` to grow into and children s
 `100`. The band applies **inside** an agent log only — everything directly under
 `agent-log/` is a run whatever its number, and those stay gap-spaced from `010`.
 
-**Why the slots carry numbers.** Summary → working → debrief is the order they are
-meant to be read in, and until they were numbered there was nowhere to *say* so — the
-sidebar enforced it with a hand-written pin-the-summary rule. **The prefix states the
-read order in the one place every other section already states it: the filename.**
-
-**And it makes the read-time discriminator arithmetic instead of a name list.** A
-reserved-name set is a rule the code carries and the filesystem does not; a prefix band
-is visible in `ls`, is unambiguous, and lets a fourth slot (`04_`) be added without
-teaching any code a fourth name. Same preference as everywhere else here: **make an
-invariant structural rather than documenting it.**
-
-**It also removes a collision that could not be expressed.** Under the reserved-name
-rule a child agent log literally could not be called `working` — a restriction that
-existed, was never written down, and is now gone.
+**Why the slots carry numbers.** Summary → working → debrief is the read order, and the
+prefix states it in the filename, where every other section states its order too. The
+band also makes the discriminator arithmetic instead of a name list: it is visible in
+`ls`, a fourth slot (`04_`) needs no code change, and a child log may carry any name.
 
 Kind codes: `lp` loop · `au` audit · `rf` refactor · `it` iteration · `wf` workflow.
 Custom codes via `agentLogKinds` in the issue's `settings.json`.
@@ -353,9 +343,7 @@ them. If it is worth writing, it goes in `03_debrief/`.
 
 **`# Outcome` is detailed, and that is deliberate.** The rule it must obey is *point at
 detail rather than copying it* — link the iteration file that holds the working, do not
-re-narrate it. Length is not the constraint; restatement is. An earlier version of this
-skill capped Outcome at one sentence, which aimed at restatement and hit the summary
-instead: the file a reader opens first was the one forbidden to say anything.
+re-narrate it. Length is not the constraint; restatement is.
 
 **The Todo list is run-local and disposable.** An item that outlives the run becomes a
 subtask.
@@ -366,11 +354,8 @@ subtask.
 
 ## `00_index.md` — the round index, written by hand
 
-**`new-agent-log` seeds it empty.** That is the one thing seeded beyond the summary, and
-the reason is discoverability: before it, a fresh log showed a single file, so an agent
-could not tell that two thirds of the structure existed and wrote everything into the
-summary. It has to be a *file* rather than a bare folder — git does not track empty
-directories, so the folder would vanish on clone.
+**`new-agent-log` seeds it empty**, so the run's shape is visible before it has one. It
+is a *file* rather than a bare folder because git does not track empty directories.
 
 **Write one entry per round as it lands:** its number and name as a link, and **a line of
 what it found.** That last part is the whole point, and it is the part no header carries.
@@ -387,14 +372,9 @@ label](../10_writing/10_writing.md) and resolved against the target's full path,
 so `[01 · …]` is reported as wrong. The filename already carries the order.
 
 > [!IMPORTANT]
-> **This was a generated table once, and generating it was the mistake.** The generator
-> read each round's frontmatter, and a validator compared the file against the generator.
-> Both shared one blind spot — a round stored as a **folder** was invisible to each — so
-> a table missing a round was certified correct. **Two things that make the same mistake
-> cannot check each other.**
->
-> The deeper reason is simpler: a generated table can only restate frontmatter, and the
-> line worth reading is what the round *found*.
+> **Written by hand, never generated.** A generated table can only restate frontmatter,
+> and the line worth reading is what the round *found*. A generator and a validator built
+> from the same model share the same blind spots, so they cannot check each other.
 
 ## Keeping an index honest — a reading job, not a script
 
@@ -455,7 +435,7 @@ Same job, same order, no tooling:
 | Diff that listing against what the index names | The one class of defect that following links cannot reach |
 | Every link resolves to a file that exists | shape-checkable, but only in the same pass |
 | Every status the index states matches the target file's own frontmatter | the target is the authority; the index is a copy |
-| **A plan stage whose scheduled subtasks are all `done`/`dropped` but which is not itself closed** | requires reading through a reference to another file's status |
+| **A plan stage whose scheduled subtasks are all Closed but which is not itself closed** | requires reading through a reference to another file's status |
 | A checklist item ticked in an index whose target says `open` — or unticked while its target says `done` | same. An index that explains why it is stale is still stale |
 
 ## One iteration, one file — and an iteration is a GROUP
@@ -508,7 +488,7 @@ them is free-form.
 ```markdown
 ---
 title: "Scope A — the byte surface"
-status: done           # five of the canonical 7 — see below
+status: done           # five of the canonical 8 — see below
 agent: sol             # who wrote it
 ---
 
@@ -858,9 +838,6 @@ agent-ks issue new-agent-log <id> --kind wf --name ship-the-decoder
 
 Creates the folder with `settings.json`, `01_summary.md` and an empty
 `02_working/00_index.md`. `03_debrief/` appears when there is something to put in it.
-The index is seeded as a **file** rather than the folder alone because git does not
-track an empty directory — a scaffolded empty folder would exist only for whoever ran
-the command.
 
 ## Open the next iteration file
 

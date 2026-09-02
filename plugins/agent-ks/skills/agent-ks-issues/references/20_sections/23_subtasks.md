@@ -72,7 +72,7 @@ folder is a label only** — no folder body file.
 
 Folders
 use the same numbering as leaves and sort interleaved with them. In the sidebar a group
-folder shows **done/total** (the Closed category — `done`/`dropped` — counts as done);
+folder shows **done/total** (the whole Closed category counts as done);
 the section header carries the same count plus an amber review-dot when any subtask sits
 in the Review category.
 

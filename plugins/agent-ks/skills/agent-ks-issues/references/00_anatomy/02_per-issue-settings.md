@@ -19,7 +19,7 @@ Per-issue metadata. Values are drawn from the tracker vocabulary (see [03_overal
 |---|---|---|---|
 | `title` | string | ✅ | Display label |
 | `description` | string | optional | Short summary; longer detail goes in `issue.md` |
-| `status` | enum | ✅ | One of the 7 fixed lifecycle statuses / 4 categories (see [00_overview.md](00_overview.md)) |
+| `status` | enum | ✅ | One of the 8 fixed lifecycle statuses / 4 categories (see [00_overview.md](00_overview.md)) |
 | `priority` | enum | ✅ | From tracker vocabulary (`fields.priority.values`) |
 | `component` | **string[]** | ✅ | Multi-select; values from `fields.component.values`. Convention: prefer one |
 | `labels` | string[] | ✅ | Multi-select; values from `fields.labels.values` (often `[]`) |

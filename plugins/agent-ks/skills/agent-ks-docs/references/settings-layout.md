@@ -23,7 +23,7 @@ Site chrome, routing, theming, aliases. Everything *above* the per-content-type 
 ├── themes/                                ← OPTIONAL — your custom themes
 ├── layouts/                               ← OPTIONAL — your custom layouts
 └── agent-knowledge-system/                ← FRAMEWORK FOLDER — don't edit
-    ├── start                              ← bash wrapper: `./start [dev|build|preview]`
+    ├── start                              ← entrypoint: `./start [dev|build|preview|doctor]`
     ├── .env                               ← CONFIG_DIR=../config (consumer mode)
     ├── astro-doc-code/                    ← framework code
     ├── default-docs/                      ← framework's bundled docs/themes/template
@@ -37,7 +37,7 @@ Clone the framework into a project:
 # Inside your project root:
 git clone --depth 1 https://github.com/sidhanthapoddar99/agent-knowledge-system.git
 cd agent-knowledge-system
-./start          # preflight: pick bun (else npm) → install if needed → sanity build → dev
+./start          # installs if needed, then runs the dev server; `./start doctor` for a full build check
 ```
 
 ---
@@ -326,7 +326,7 @@ These are resolved at config load (paths become absolute), then used wherever th
 
 ## 8. Themes
 
-The full theme contract (46 required CSS variables) lives in the framework's bundled `@root/default-docs/data/user-guide/25_themes/` — **read it before doing any theme work**. Don't invent variable names. Don't hardcode colours / fonts / spacing.
+The full theme contract (`required_variables` in `astro-doc-code/src/styles/theme.yaml`) is documented in the framework's bundled `@root/default-docs/data/user-guide/25_themes/` — **read it before doing any theme work**. Don't invent variable names. Don't hardcode colours / fonts / spacing.
 
 Quick orientation:
 

@@ -67,7 +67,7 @@ title: "Journal compatibility"
 outcome: "6.7 journals still open in the new reader"
 notes: "⏸ Held until [the codec lands](../01_decoder/20_codec.md) — reader half only"
 who: sid                             # who it waits on
-status: in-progress                  # the canonical 7
+status: in-progress                  # the canonical 8
 subtasks:
   - "[Mandatory catalog](../../subtasks/16_slide-type/80_mandatory-catalog.md)"
   - "[Byte stability](../../subtasks/13_memory/86_byte-stability.md)"
@@ -119,10 +119,9 @@ rendering three looks exactly like a stage that listed three.
 
 ## The frontmatter ref list is for SUBTASKS only
 
-`subtasks:` is the one structured reference list a stage carries. **There was an
-`agent-logs:` list beside it; it is retired** (`agent-ks check issues` errors on
-one), and a run that carried the stage out goes in the **body**, as an ordinary
-markdown link:
+`subtasks:` is the one structured reference list a stage carries. An `agent-logs:` key
+is a validator error. A run that carried the stage out goes in the **body**, as an
+ordinary markdown link:
 
 ```markdown
 ## The run
@@ -173,7 +172,8 @@ another.
 | `input-needed` | Stalled part-way on an answer only the user can give. The question goes in the stage's `## Questions`, written out in full — never "waiting on an answer" |
 | `review` | The stage's work is finished and what remains is the user's — signing off its subtasks, or taking a decision. Use it when the `outcome` is not yours to declare met |
 | `done` | The `outcome` line is met and nothing further is scheduled here |
-| `dropped` | This stage will not run — superseded, folded into another stage, or the work was abandoned. One line of body says which. **Never delete it**; the plan is the record of what was in scope at the time |
+| `dropped` | This stage will not run — the work was abandoned. One line of body says why. **Never delete it**; the plan is the record of what was in scope at the time |
+| `superseded` | This stage's scope moved — folded into another stage or another plan. The `→` line in the body says where |
 
 **Who may set `done` or `dropped` on a stage:**
 [Closing authority](../00_anatomy/00_overview.md#closing-authority) — the answer is not
@@ -208,7 +208,7 @@ heading instead of a dead URL.
 
 ## Which plan is active — derived, never stored
 
-> **The highest-numbered plan whose status is not `done` or `dropped`.**
+> **The highest-numbered plan whose status is not Closed** (`done`, `dropped`, `superseded`).
 
 No field, nothing to keep in sync. One active plan at a time is convention, not
 enforcement.
@@ -232,9 +232,8 @@ never edited after:
 - a pointer to the successor plan if there is one.
 
 **A closed plan is never deleted.** Numbering rather than editing one file forever is
-what answers *"what did we think was in scope back then?"*
-
-**Superseded is `dropped` plus the pointer** — no separate status.
+what answers *"what did we think was in scope back then?"* A plan whose scope moved into
+a successor closes as `superseded`, with the `→` line pointing at the successor.
 
 ## Ownership
 

@@ -32,7 +32,7 @@ When creating an issue, **all enum values must come from this vocabulary**. To a
 
 ### Restyling the lifecycle
 
-One CSS variable per status, in the theme. This is also the only place light and dark can differ, which the old JSON map could not express:
+One CSS variable per status, in the theme. Light and dark can differ here:
 
 ```css
 :root               { --status-dropped: #dc2626; }
@@ -41,7 +41,7 @@ One CSS variable per status, in the theme. This is also the only place light and
 
 The eight tokens are `--status-open` · `--status-blocked` · `--status-in-progress` · `--status-input-needed` · `--status-review` · `--status-done` · `--status-dropped` · `--status-superseded`, all listed under `required_variables.colors` in `theme.yaml`.
 
-**A leftover `statusColors` map fails the build rather than being ignored.** That is deliberate: an override that silently stops applying shows up much later as *"the colours look wrong somehow"*, with nothing pointing at the cause. Run `migration/0.2.0_status-colors-to-css.py` — it reports any non-default colour it removes so you can re-declare it in CSS. The same goes for an old `fields.status` block; run the migration chain per the `agent-ks-docs` skill's `doc-migration.md` rather than hand-editing.
+**A `statusColors` map or a `fields.status` block fails the build rather than being ignored**, so a stale override cannot surface later as *"the colours look wrong somehow"* with nothing pointing at the cause. The migration chain removes them — see the `agent-ks-docs` skill's `doc-migration.md`.
 
 ## Prefer `settings.jsonc` for the root vocabulary — annotate the meanings
 

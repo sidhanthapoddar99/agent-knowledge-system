@@ -4,8 +4,6 @@ How to add and configure blog posts.
 
 **Canonical source of truth:** the framework's bundled `@root/default-docs/data/user-guide/18_blogs/` — read those pages when this reference is unclear.
 
-> **Status:** stub. Detailed spec under `2025-06-25-claude-skills/subtasks/05_blog-layout-skill.md`. For now, this file captures the essentials.
-
 ---
 
 ## File naming
@@ -34,7 +32,6 @@ author: "Sidhantha"
 tags: ["release", "issues"]
 draft: false
 featured: false                   ← pinned to top of index
-cover: /assets/blog/cover.png     ← optional cover image
 ---
 ```
 
@@ -47,13 +44,13 @@ Auto-generated at `/blog/`. Shows:
 
 ## Asset embedding
 
-Same as other content — **colocated and relative, never the site assets folder.** Blog files are flat, so each post's assets live in a per-post subfolder beside them, `assets/<post-slug>/`, referenced relatively:
+Colocated and relative, like every content type. Blog files are flat, so a post's assets live in `assets/<post-slug>/` beside them:
 
 ```markdown
 ![Flow](./assets/2026-04-19-introducing-issues/flow.png)
 ```
 
-The build rewrites it to `/content-assets/…` like every other colocated asset. A leading `/` is as wrong here as anywhere else — see *Asset embedding* in [the writing reference](../writing.md).
+The rule and the reasons: [writing.md → Asset embedding](../writing.md#asset-embedding).
 
 ## URL
 

@@ -5,118 +5,78 @@ description: Use this skill for ANY non-tracker content work in an agent-knowled
 
 # Documentation skill
 
-Operating manual for working in an agent-knowledge-system project (Astro-based engine). The project's content + config live under the user's `data/` and `config/` folders and render through Astro layouts shipped inside the `agent-knowledge-system/` framework folder. The framework's *own* bundled docs (the canonical user-guide for the framework itself) live at `agent-knowledge-system/default-docs/data/user-guide/` — read those when this skill is unclear.
+Operating manual for content and config work in an agent-knowledge-system project. Content lives under the project's `data/` and `config/` folders and renders through Astro layouts shipped in the `agent-knowledge-system/` framework folder.
 
-> **Two modes.** *Consumer mode* (the default) — the framework is a subfolder of the user's project (`<project>/agent-knowledge-system/`) and the user's content lives at the project root (`config/`, `data/`, `assets/`, `themes/` next to the framework folder). *Dogfood mode* — the framework repo *is* the project; content lives under `default-docs/`. The scripts derive the actual location from `.env` (`CONFIG_DIR`), so this skill describes paths relative to **the user's content folders** and the underlying scripts handle both modes. Where this skill says `data/`, the script resolves to `<project>/data/` (consumer) or `<framework>/default-docs/data/` (dogfood).
+**Canonical source of truth:** the framework's bundled user-guide at `agent-knowledge-system/default-docs/data/user-guide/`. When this skill is unclear or stale, the user-guide wins, and the skill should then be updated (tell the user).
 
-> **Sibling skill — `agent-ks-issues`.** This plugin also ships a self-contained `agent-ks-issues` skill that owns the **entire issue-tracker domain** — issues, subtasks, comments, brainstorms, notes, agent-logs, agent-memory, the tracker vocabulary, the issues dump, and the execution verbs (audit / refactor / loop / discuss) against a tracked issue. For any work under `data/todo/` (or another tracker), load that skill; this one covers everything else.
+**Two modes, one code path.** *Consumer mode* — the framework is a subfolder of the user's project and content sits at the project root. *Dogfood mode* — the framework repo is the project and content lives under `default-docs/`. The scripts read `.env` (`CONFIG_DIR`) to find the content, so this skill says `data/` and the script resolves it. The full tree is in [settings-layout.md §1](./references/settings-layout.md#1-project-structure).
+
+**Sibling skills.** `agent-ks-issues` owns the whole issue tracker: issues, subtasks, comments, brainstorms, notes, plans, agent logs, agent memory, the vocabulary, the dump, and the execution verbs (audit / refactor / loop / discuss) against a tracked issue. `agent-ks-artifacts` owns building HTML artifacts. Load those for that work; this skill covers everything else.
 
 ## Triage — which reference file to read
 
-Pick the reference file that matches the task. Read **only the one(s) you need** — they're independent and self-contained.
+Read **only the one(s) you need**. They are independent.
 
-| If the task involves… | Domain | Read |
-|---|---|---|
-| Writing markdown, frontmatter, callouts & diagrams, asset embedding (across any content type) | writing | [`references/writing.md`](./references/writing.md) |
-| Files under `data/<sidebar-driven-section>/` (e.g. `user-guide/`, `dev-docs/`) | docs-layout | [`references/layouts/docs-layout.md`](./references/layouts/docs-layout.md) |
-| Files under `data/blog/` (flat `YYYY-MM-DD-<slug>.md`) | blog-layout | [`references/layouts/blog-layout.md`](./references/layouts/blog-layout.md) |
-| Files under `data/todo/` or any issue tracker | issues | **the `agent-ks-issues` skill** (self-contained — load it instead of a reference here) |
-| `site.yaml` / `navbar.yaml` / `footer.yaml` / `.env` / paths / themes / project setup | settings-layout | [`references/settings-layout.md`](./references/settings-layout.md) |
-| Optimizing / shrinking images or screenshots before committing (resize, grayscale, webp/avif, strip) | images | [`references/images.md`](./references/images.md) |
-| Building / designing an HTML **artifact** — a report, dashboard, data-viz, or design-system / brand-guideline page (a self-contained `NN_.html` page served at `/artifacts`) | artifacts | **the `agent-ks-artifacts` skill** (self-contained — load it instead of a reference here) |
+| If the task involves… | Read |
+|---|---|
+| Writing markdown, frontmatter, **links**, callouts, diagrams, assets, `[[path]]` embedding — any content type | [`references/writing.md`](./references/writing.md) |
+| Files under `data/<sidebar-driven-section>/` (`user-guide/`, `dev-docs/`, …): prefixes, `settings.json`, diagram and artifact pages, `agent-ks move` | [`references/layouts/docs-layout.md`](./references/layouts/docs-layout.md) |
+| Files under `data/blog/` (flat `YYYY-MM-DD-<slug>.md`) | [`references/layouts/blog-layout.md`](./references/layouts/blog-layout.md) |
+| `site.yaml` / `navbar.yaml` / `footer.yaml` / `.env` / paths / themes / project setup | [`references/settings-layout.md`](./references/settings-layout.md) |
+| Shrinking images or screenshots before committing | [`references/images.md`](./references/images.md) |
+| Every `agent-ks` command and flag | [`references/cli-toolkit.md`](./references/cli-toolkit.md) |
+| Migrating content to a new format; a build error or validator warning naming a legacy field; "does X need migrating?" | [`references/doc-migration.md`](./references/doc-migration.md) |
+| Files under `data/todo/` or any issue tracker | **the `agent-ks-issues` skill** |
+| Building an HTML artifact (report, dashboard, data-viz, design system) | **the `agent-ks-artifacts` skill** |
 
-Cross-cutting tasks read multiple references. Example: *"add a new docs section and write its first page"* → read [`references/settings-layout.md`](./references/settings-layout.md) (registering the section) **and** [`references/writing.md`](./references/writing.md) (writing the page).
+Cross-cutting tasks read more than one. *"Add a docs section and write its first page"* → `settings-layout.md` (register the section) and `writing.md` (write the page).
 
-**Artifact pages.** An `NN_`-prefixed `.html` file in a docs section is a **first-class page** — it shows in the sidebar, renders **embedded in the content area** (an iframe; the sidebar and outline chrome stay), and opens full-page at its own **`/artifacts/<path>`** URL. It takes an optional same-name **`.meta.json` / `.meta.jsonc` sidecar** (the frontmatter equivalent for a non-markdown page). See [`references/layouts/docs-layout.md`](./references/layouts/docs-layout.md) for placement + the sidecar; **building** the artifact HTML itself (design, dual-theme, dataviz, the palette validator) is the **`agent-ks-artifacts` skill's** job — hand off to it. Note `artifacts` is a **reserved base URL** (with `assets`, `content-assets`, `api`, `editor`) — see [`references/settings-layout.md`](./references/settings-layout.md).
+**Artifact pages in a docs section.** An `NN_`-prefixed `.html` file is a first-class page with an optional `.meta.json` sidecar. Placement and the sidecar: `docs-layout.md`. Building the HTML: the `agent-ks-artifacts` skill.
 
-**Format migrations / legacy content** → see [`references/doc-migration.md`](./references/doc-migration.md). Reach for it when any of these surface: the user **explicitly asks to migrate / convert / upgrade** content to a new format; a **build error or validator warning points at a legacy, deprecated, old-format, or unknown frontmatter field** (e.g. a removed field still present in `.md` files); or the user asks to **"check legacy" / "does X need migrating?" / "is this the old format?"**. Keywords: *migrate, migration, legacy, deprecated, old format, convert content, upgrade format, backfill field, bulk frontmatter rewrite*. Migrations rewrite content in place — **always run the detect pass and confirm with the user before applying** (except when they explicitly asked to run it).
-
-## Project orientation
-
-**Consumer mode** (default) — the user's project root, with the framework as a subfolder:
-
-```
-<your-project>/                   ← user's project root
-├── config/                       ← site.yaml, navbar.yaml, footer.yaml
-├── data/                         ← all content (docs, blog, issues, custom)
-│   ├── user-guide/               ← (your own user-guide, if any)
-│   ├── blog/                     ← blog posts
-│   ├── todo/                     ← issue tracker (folder-per-item)
-│   └── README.md                 ← MAP of every top-level data folder (read first)
-├── assets/                       ← static assets served at /assets/
-├── themes/                       ← optional custom themes
-├── layouts/                      ← optional custom layouts (with LAYOUT_EXT_DIR set)
-└── agent-knowledge-system/       ← FRAMEWORK FOLDER — don't edit
-    ├── start                     ← bash wrapper: `./start [dev|build|preview|<script>]`
-    ├── .env                      ← CONFIG_DIR=../config (consumer) or ./default-docs/config (dogfood)
-    ├── astro-doc-code/           ← framework code (src/, package.json, astro.config.mjs)
-    │   └── src/layouts/          ← per-content-type layouts (docs, blog, issues, custom)
-    ├── default-docs/             ← framework's bundled content (its own user-guide / dev-docs / themes / template)
-    └── plugins/                  ← repo-local plugins (e.g. agent-ks)
-```
-
-**Dogfood mode** — the framework repo *is* the project; the structure above collapses (no outer wrapper). Content lives under `agent-knowledge-system/default-docs/` and `CONFIG_DIR=./default-docs/config`. Same code path either way; only `CONFIG_DIR` differs.
-
-**The most important rule:** the framework's bundled user-guide at `agent-knowledge-system/default-docs/data/user-guide/` is the **canonical source of truth** for everything this skill describes. When this skill is unclear, ambiguous, or stale, the user-guide wins. Each reference file points to its corresponding user-guide section.
+**Migrations rewrite content in place.** Always run the detect pass and confirm with the user before applying, unless they explicitly asked to run it. Never bump `engine_version` past the gate without running the chain. Details: `doc-migration.md`.
 
 ## Read `data/README.md` first
 
-Every project should have a `data/README.md` that maps the data layout — what each top-level folder contains, its purpose, and how it's served. **Read it at the start of any task** to learn the project's content shape. The framework supports `user-guide/`, `dev-docs/`, `blog/`, `todo/`, `pages/` out of the box, but a project may add custom ones (e.g. an `internal-knowledge-base/`, a separate `meeting-notes/`, etc.).
-
-If `data/README.md` doesn't exist, **create one** before doing the requested task — the skill is far more useful when this map exists, and the cost is low. When you add or remove a top-level folder under `data/`, **update the README in the same change** so future agents (and humans) don't drift.
+Every project should have a `data/README.md` mapping the data layout: what each top-level folder holds and how it is served. **Read it at the start of any task.** If it does not exist, create one before the requested task. When you add or remove a top-level folder under `data/`, update the README in the same change.
 
 ## Universal conventions
 
-These apply across all domains. Reference files don't repeat them — they assume you know.
+Reference files assume these.
 
-- **`NN_` prefix** — folders and files inside `data/<docs-section>/` use a numeric prefix for ordering, sorted by value so widths coexist (`05_`, `010_`, `110_`). Width is 2–5 digits, used as a tier: **`NN_` is the convention** (use it almost always); **`NNN_` only when there's a special requirement** — a section with many entries that needs the headroom, or grouping via the leading digit; **`NNNN_`/`NNNNN_` are very rare** — reach for them only when the user explicitly demands it or a case is genuinely exceptional. Never 1 digit or 6+. Gap-space them to leave room to insert. The **issue tracker** uses the same grammar with looser conventions (both `NN_` and `NNN_` conventional; prefix optional for most subdocs — see the `agent-ks-issues` skill); blog posts use no prefix. Full rules: [`references/layouts/docs-layout.md`](./references/layouts/docs-layout.md).
-- **`settings.json`** — every docs folder has one (sidebar label, position). Issue trackers have a root `settings.json` declaring vocabulary. Issues have a per-issue `settings.json` for metadata. Any of these may instead be **`settings.jsonc`** (JSON + `//`/`/* */` comments + trailing commas); loaders and the `agent-ks` toolkit read either, and `.jsonc` wins when both exist. **Prefer `.jsonc` for the tracker-root vocabulary** and comment what each `component`/`label` means — see the `agent-ks-issues` skill.
-- **Reference by LINK, never by number — and never by a backticked path either** — one page refers to another with a markdown link whose text says what the target *is* (`[Theme variables](../25_themes/03_variables.md)`), never by its ordering prefix (`` see `03` ``) and never as a path quoted in prose (`` `25_themes/03_variables.md` ``). Both are strings that look like references and neither is one: `move` cannot rewrite them, a reader cannot click them, and an agent has to search to resolve them. The exception is a target that is **not a document** — source code, config, a binary — which has nothing to link to. Prefixes are gap-spaced so files can be inserted between them, and `agent-ks move` rewrites real links when a file moves — a backticked number is prose to every tool that exists, so it breaks silently and reports nothing. A link reading `[03](./03_thing.md)` is still a number, just clickable: the link text must name the thing. **To keep the number as well, use an ORDERING LABEL** — open the text with the target's ordering path (its folders' and its own numeric prefixes joined by `/`), then the name: `[19/04/02 the vocabulary page](../19_issues/04_setup/02_vocabulary.md)`. The sidebar lists entries by number, so the label is what lets a reader match a link to what they can already see there. It is optional, `agent-ks move` recomputes it when it rewrites the target, and the issue validator warns when one has drifted. Same rule in the tracker — see the `agent-ks-issues` skill's universal conventions.
-- **Relative links, always — `./x` and `../x`** — internal references are relative to the file's own directory, including across sections. **The reason is the project's load-bearing principle, not a tooling quirk:** these documents are filesystem-first, so that filesystem tools work on them — `agent-ks move`, `grep`, an editor, an agent walking the tree. A relative link is the only form that is **true on disk**, so it is the only form all of those can follow; the rendered site is one consumer of the documents, not the thing being built. Mechanically that shows up as `agent-ks move` skipping every link starting with `/` — a site-absolute link renders perfectly and has silently left link maintenance forever. Link the **source path** (`../25_themes/03_variables.md`), not the published slug; the renderer strips `NN_` prefixes and the `.md` extension and accepts both URL spellings. A relative link that 404s on the built site is a renderer bug — file it, never convert it to `/` to make it resolve. **There is no leading-`/` exception, assets included** — a page's images are colocated `./assets/…` beside it and move with it; `/assets/` is the framework's own route, named from layout and config code, never from a document body. See [`references/writing.md`](./references/writing.md) → *Asset embedding*. Full rule: [`references/layouts/docs-layout.md`](./references/layouts/docs-layout.md) → *Cross-linking between docs pages*.
-- **Frontmatter `title`** — required on every markdown file. Astro builds will fail without it.
-- **Theme variables only** — when editing CSS in layouts, consume declared theme variables (see `astro-doc-code/src/styles/theme.yaml → required_variables`). Never hardcode colours, fonts, or invent variable names.
-- **Edit, don't rewrite** — prefer `Edit` over `Write` for existing files. Surgical regex replaces preserve formatting and key order in JSON.
-- **`./start` is the entrypoint** — from the repo root, `./start` (preflight: detect bun/npm → install if needed → sanity build → dev), or `./start dev | build | preview` to skip preflight and forward to that script. Inside `astro-doc-code/`, `bun run dev` / `bun run build` / `bun run preview` still work directly. For helper scripts and any Node CLI tool, prefer `bun` if available, fall back to `npm` / `node`.
-- **Never commit raw screenshots** — images bloat git history, which caps repo size (~1–2 GB *with* every version kept). Run `agent-ks img` on any image you add under `data/` (undo capture-DPR, grayscale, re-encode to webp, strip metadata) so figures stay ≈ 60–100 KB instead of MBs. See [`references/images.md`](./references/images.md).
+- **`NN_` ordering prefix** on docs folders and files. 2–5 digits, sorted by numeric value, gap-spaced. `NN_` is the convention; wider only on a real need. Blog uses no prefix; the tracker is looser (see `agent-ks-issues`). Full rules: [docs-layout.md](./references/layouts/docs-layout.md).
+- **`settings.json`** in every docs folder (label, position). May be `settings.jsonc` (comments + trailing commas); `.jsonc` wins when both exist.
+- **Links are relative, and a link, never a backticked path or a leading `/`.** Assets included. This is the project's load-bearing principle, not a style. The rule, the reasons and the ordering label: [writing.md → Linking](./references/writing.md#linking).
+- **Frontmatter `title`** on every markdown file.
+- **Theme variables only** in layout CSS. Consume `astro-doc-code/src/styles/theme.yaml → required_variables`; never hardcode colours or invent names.
+- **Edit, don't rewrite.** Prefer `Edit` over `Write` for existing files; keep JSON key order.
+- **`./start` is the entrypoint** at the framework root: `./start` runs the dev server; `./start build | preview | doctor` for the rest. Inside `astro-doc-code/`, `bun run dev | build | preview` work directly.
+- **Never commit a raw screenshot.** Run `agent-ks img` first. See [images.md](./references/images.md).
 
-## Helper CLI — use `agent-ks`
+## The CLI — `agent-ks`
 
 > [!IMPORTANT]
-> This plugin ships a single command-line entrypoint, **`agent-ks`**, on `PATH` (added automatically on install). Every operation is a subcommand: **`agent-ks <group> <verb> [flags]`** — e.g. `agent-ks issue list`, `agent-ks find <regex>`, `agent-ks check issues`, `agent-ks git updated <path>`.
+> One entrypoint on `PATH`: **`agent-ks <group> <verb> [flags]`** — e.g. `agent-ks find <regex>`, `agent-ks check section <dir>`, `agent-ks move <from> <to>`.
 >
-> - **Discover, don't guess:** `agent-ks help` lists everything grouped · `agent-ks help <group> <verb>` shows one command's flags · `agent-ks help --json` dumps the manifest.
-> - **Uniform contract:** every command takes `--help`/`-h` (→ stdout, exit 0) and `--json` where it returns data; exit codes `0` ok · `1` no-result/handled-error · `2` usage.
-> - **Full command + option reference:** [`references/cli-toolkit.md`](./references/cli-toolkit.md) — every group, command, and flag.
-> - **Inside a git worktree** (agent sandboxes, `.claude/worktrees/…`): the CLI's `.env` search stops at the worktree root — write a worktree-local `.env` or pass explicit paths (`--tracker`, positional dirs, `DOCS_PROJECT_ROOT`) before any command that writes.
->
-> **`agent-ks` is the only entrypoint** — flat `docs-<name>` binaries (`docs-list`, `docs-check-blog`, …) do not exist. If a project's `CLAUDE.md`, agent memory, or scripts invoke one, **rewrite it to the `agent-ks <group> <verb>` form** as you go.
+> - **Discover, don't guess:** `agent-ks help` lists everything · `agent-ks help <group> <verb>` shows one command's flags · `agent-ks help --json` dumps the manifest.
+> - **Uniform contract:** `--help` everywhere; `--json` where a command returns data; exit codes `0` ok · `1` no-result or handled error · `2` usage.
+> - **Every command and flag:** [`cli-toolkit.md`](./references/cli-toolkit.md).
+> - **Inside a git worktree** the `.env` search stops at the worktree root. Write a worktree-local `.env` or pass explicit paths before any command that writes.
 
-**Searching across content — use `agent-ks find`, not the `Grep` tool**, for a string anywhere across all content types at once. Tracker-specific searching (schema-aware `agent-ks issue list`) is covered by the `agent-ks-issues` skill.
+**Search content with `agent-ks find`, not the `Grep` tool.** It searches every content type at once. Tracker search (`agent-ks issue list`) is the `agent-ks-issues` skill's.
 
-## Slash commands — bootstrap & section scaffolding
-
-The plugin ships four slash commands. Two scaffold a project:
+## Slash commands
 
 | Command | What it does |
 |---|---|
-| `/agent-ks-init` | Bootstrap a new agent-knowledge-system project from zero — interactive: scope (whole repo vs subfolder) → site name/title/description → first section name → writes `config/`, `data/`, starter page, README, patches `CLAUDE.md` at the repo root. Prints the framework-clone command at the end. |
-| `/agent-ks-add-section [name]` | Add a new top-level docs section under `data/`. Auto-computes next `NN_` prefix, creates `settings.json` + `01_overview.md`, optionally registers in `config/site.yaml`'s `pages:` block. |
+| `/agent-ks-init` | Bootstrap a new project from zero: scope, site name, first section; writes `config/`, `data/`, a starter page, README, and patches `CLAUDE.md`. |
+| `/agent-ks-add-section [name]` | Add a top-level docs section under `data/`: next `NN_` prefix, `settings.json`, `01_overview.md`, optional `site.yaml` registration. |
 
-Two belong to the tracker and are documented in the `agent-ks-issues` skill:
+When the user says "set up a new docs project" or "add a new section / handbook", route to these rather than hand-authoring. The two tracker commands (`/agent-ks-quick-idea-note`, `/agent-ks-fast-index-check`) are documented in the `agent-ks-issues` skill.
 
-| Command | What it does |
-|---|---|
-| `/agent-ks-quick-idea-note [idea]` | Capture a half-formed idea into the issue dump as a subtask entry — no folder ceremony |
-| `/agent-ks-fast-index-check [path]` | Report whether an index still agrees with the files it references. Read-only, never edits |
+## Subagents
 
-When the user says "set up a new docs project", "scaffold a new site", "add a new section / area / handbook", route to these commands rather than hand-authoring.
-
-## When to spawn a subagent
-
-For bulk file reads (10+ files), spawn a Haiku subagent via the Task/Agent tool to summarise rather than loading every file into the main context. Pattern: give the subagent the file list + the question, ask for a tight report (under 200 words).
-
-The reference files document concrete subagent patterns for their domain where relevant.
+For bulk reads (10+ files), hand the file list and the question to a Haiku subagent and ask for a report under 200 words. Patterns: the `agent-ks-issues` skill's `41_searching.md`.
 
 ## When to update this skill
 
-This skill mirrors the framework's bundled user-guide. If you discover the skill is wrong or out of date relative to the user-guide, **update the skill** rather than working around it — and tell the user. The skill catalogue page (`@root/default-docs/data/user-guide/05_getting-started/05_claude-skills.md` — i.e. inside the framework folder) is the user-facing index of installed skills; keep it in sync.
+This skill mirrors the bundled user-guide. If it is wrong or out of date, **update the skill** rather than working around it, and tell the user. Keep the skill catalogue page (`@root/default-docs/data/user-guide/05_getting-started/05_claude-skills.md`) in sync.

@@ -1,81 +1,43 @@
-# Issue tracker — overview & entry point
+# Lifecycle, closing authority, AI rules — and the reference index
 
-How to read, write, and navigate any issue tracker in this project. The default
-tracker lives at `data/todo/`; a project may have multiple trackers, all following
-this same shape.
-
-This reference is **split into focused files** so a narrow task ("how do I add a
-comment?") reads one ~60–150 line file instead of the whole reference. **Start
-here**, then drill into the sibling you need (index below).
+What the tracker is for, the one rule underneath it, and the section table are in the
+skill's `SKILL.md`. This page owns three things: the **lifecycle in full**, **closing
+authority** (who may set a Closed status, on anything), and the **AI rules**. The index
+of every reference file is at the bottom.
 
 **Canonical source of truth:** the framework's bundled
 `@root/default-docs/data/user-guide/19_issues/` — read those pages when this
 reference is unclear or you need depth this folder doesn't cover.
 
----
-
-## Operating model — what this tracker is
-
-What the tracker is for, and the one rule underneath it, are stated in the skill's
-**Operating model** section — not repeated here. This page owns the *anatomy*: what each
-section is, and what it must not hold.
-
-**Every section has ONE purpose, and no file stores a fact another file owns.**
-
-| Section | Purpose | In a word |
-|---|---|---|
-| `brainstorm/` | Initial ideation, and the iterating that follows it | **thinking** |
-| `notes/` | Finalization — what is settled and binding | **conclusions** |
-| `plans/` | Grouping, structuring, and the order of execution | **order** |
-| `subtasks/` | Actionable items, their detail, and the links to the notes that scope them | **scope** |
-| `agent-log/` | Where a run is carried out, and where its outcome is recorded | **execution + outcome** |
-| `agent-memory/` | What is worth remembering across this issue | **memory** |
-| `comments/` | That something happened, and when | **events** |
-
-The natural flow inside an issue, with no required order: **deliberate**
-(`brainstorm/`) → **write down** (`notes/`) → **scope** (`subtasks/`) → **order**
-(`plans/`) → **execute** (`agent-log/`). Subtasks are the AI-handoff units — each an
-explicit "did this happen yet?" a next agent can pick up cold.
-
-**Ordering is `priority` desc, then recency (`updated`) desc. Recency is derived from
-git** (most recent commit touching any file under the issue folder). `created` comes
-from the folder slug. Execution state (actively-working, stuck) is carried by the
-**status** itself — `in-progress`, `blocked`, `input-needed` — never by a label.
-
 **Best-practice rules** (convention, not enforcement):
 - **One component per issue.** Multi-component is allowed for genuinely cross-cutting
-  work but is the exception. When tempted to list two, ask "should this be two
-  issues?" — usually yes.
+  work but is the exception. When tempted to list two, ask "should this be two issues?"
 - **AI-handoff-bound issues declare ≥1 subtask.** The subtask is the handoff anchor.
-- **The creation litmus test:** a thought earns a full issue only if you can name its
-  component and its first subtask in one breath — otherwise it's a subtask on an
-  existing issue, a brainstorm entry, or a dump entry. Full rules:
-  [42_updating.md](../40_operations/42_updating.md).
-
-**Don't add scheduling, release-bucket, or single-type fields without an explicit
-policy reversal.** This tracker treats those as project-management primitives that
-rot under continuous AI-driven shipping.
+- **Ordering is `priority` desc, then `updated` desc.** `updated` is derived from git
+  (most recent commit under the folder); `created` comes from the folder slug.
+  Execution state is carried by the **status**, never by a label.
 
 ---
 
-## Lifecycle — 8 statuses, 4 categories, closing authority & AI rules
+## Lifecycle — 8 statuses, 4 categories
 
-**8 statuses in 4 categories** — one field, one vocabulary, across issues, subtasks,
-plans, plan stages, agent logs and iteration files. Fixed in framework code:
+One field, one vocabulary, across issues, subtasks, plans, plan stages, agent logs and
+iteration files. Fixed in framework code (`issue-status.ts`); colours are theme CSS
+variables (`--status-<name>`). A `fields.status` block or a `statusColors` map in the
+tracker root is a hard error.
 
 | Category | Statuses | Notes |
 |---|---|---|
 | **Not Started** | `open` · `blocked` | `blocked` = depends on another issue/subtask; reason in prose |
-| **In Progress** | `in-progress` | Agent sets it automatically when work starts |
+| **In Progress** | `in-progress` | You set it when work starts |
 | **Review** | `input-needed` · `review` | `input-needed` = stuck on a question (written inline); `review` = done, awaiting sign-off |
-| **Closed** | `done` · `dropped` · `superseded` | Terminal. **Who may set them depends on what carries the status** — [Closing authority](#closing-authority) |
+| **Closed** | `done` · `dropped` · `superseded` | Terminal. Who may set them: [Closing authority](#closing-authority) |
 
-Transitions are **unenforced** — any jump is legal. The category grouping is what the UI
-filters by; the status is the per-row badge.
+Transitions are **unenforced** — any jump is legal. The category is what the UI filters
+by; the status is the per-row badge.
 
 ### `superseded` — closed because the scope moved
 
-`superseded` is the third terminal status, and it says something the other two cannot.
 `done` claims the work shipped. `dropped` claims the idea was abandoned. `superseded`
 claims neither: **the work closed here because its scope moved elsewhere** — absorbed
 into another design, folded into a later phase, or reshaped into a different item.
@@ -89,28 +51,28 @@ arrow, in the file's own body:
 
 `agent-ks check issues` warns when the line is missing. Both `→` and `->` count, and the
 line may be a list item or a blockquote. For an **issue**, the arrow line may sit in
-`issue.md` or in a comment — a scope move is often recorded as the closing comment.
+`issue.md` or in a comment.
 
 Pick between the three by asking what a reader needs to do next. After `done` they read
 the artefact. After `dropped` they read why, and stop. After `superseded` they **follow
-the arrow** — which is why a `superseded` file with no arrow is a dead end.
+the arrow**.
 
-**Runs use five of the eight.** An agent log, a child agent log and an iteration file
-carry `open` · `in-progress` · `input-needed` · `done` · `dropped`. `blocked`, `review`
-and `superseded` are excluded because all three describe a *work item*: a run does not
-wait on another run, a run is never signed off — the subtask is — and a run whose scope
-moved elsewhere simply did not finish, which is `dropped`. Fixed as `RUN_STATUSES` in
-`issue-status.ts`.
+### Runs use five of the eight
 
-### Closing authority
+An agent log, a child agent log and an iteration file carry `open` · `in-progress` ·
+`input-needed` · `done` · `dropped`. `blocked`, `review` and `superseded` describe a
+*work item*: a run does not wait on another run, a run is never signed off (the subtask
+is), and a run whose scope moved elsewhere did not finish, which is `dropped`. Fixed as
+`RUN_STATUSES` in `issue-status.ts`. Plans and plan stages carry all eight.
+
+## Closing authority
 
 **Who may set a Closed-category status. This section is that rule's only home** — every
 other file in the skill links here instead of restating it.
 
 **`superseded` is the exception, and it is the same at every level: you may set it.**
-It makes no claim that work shipped and no claim that an idea was abandoned — it only
-records where the scope went, and you are the one who moved it. Write the `→` line in
-the same edit. `done` and `dropped` follow the table below.
+It records only where the scope went, and you are the one who moved it. Write the `→`
+line in the same edit. `done` and `dropped` follow the table below.
 
 The discriminator is **what the status is attached to**: a thing that carries the *work*,
 or a thing that carries a *record of* or a *schedule for* the work.
@@ -118,78 +80,70 @@ or a thing that carries a *record of* or a *schedule for* the work.
 | The status sits on | Who may close it | Why |
 |---|---|---|
 | An **issue** or a **subtask** | **The user, only.** Your ceiling is `review` — or `input-needed` with the question written inline, or `superseded` with the `→` line | Closing signs off the work. The user inspects the artefact (PR, diff, screenshot, test output) and flips it |
-| An **agent log**, a child agent log, or an **iteration file** | **You.** You close your own run | It records what *you* did. Nobody else is in a position to say whether the run finished |
+| An **agent log**, a child agent log, or an **iteration file** | **You.** You close your own run | It records what *you* did. Nobody else can say whether the run finished |
 | A **plan** or a **plan stage** | **You.** Closing ends a *schedule*, not a piece of work | A plan stores no status of the work — the subtasks it references render their own live status — so closing one certifies nothing about it ([28_plans.md](../20_sections/28_plans.md)) |
 
 **Never self-certify a subtask by closing the agent log that worked on it.** The two
-`done`s are the same word from the same vocabulary with opposite authority, and the log's
-`done` is not evidence for the subtask's.
+`done`s are the same word with opposite authority; the log's `done` is not evidence for
+the subtask's.
 
 **An agent log's `status` answers *did the agent finish its assignment*, never *was the
-news good*.** An audit that ran to completion and found five defects is `done` — the
-five defects are prose in its `01_summary.md`. `dropped` means the run did not deliver:
-it crashed, was refused, or was superseded. A run is never `dropped` for reporting bad
-news.
+news good*.** An audit that ran to completion and found five defects is `done`; the
+defects are prose in its `01_summary.md`. `dropped` means the run did not deliver: it
+crashed, was refused, or was superseded. A `dropped` run needs no comment; its
+`01_summary.md` says what happened.
 
-On an issue or subtask, `dropped` additionally needs its explaining comment written first
-(the last of the AI rules below). A `dropped` run needs no comment; its `01_summary.md`
-says what happened.
-
-### AI rules — the most important rules in the whole skill
+## AI rules — the most important rules in the whole skill
 
 1. **Manage `in-progress` yourself; hand off at the Review category.** Set `in-progress`
    when you start executing, and hand off with a verifiable artefact (PR, diff,
    screenshot, test output). Before setting `done` or `dropped` on *anything*, read
-   [Closing authority](#closing-authority) above — the answer differs by what carries the
-   status, and guessing is how a subtask gets self-certified. The one status you may
-   close with is `superseded`, when the scope moved — write the `→` line in the same edit.
+   [Closing authority](#closing-authority) — the answer differs by what carries the
+   status. The one status you may close with is `superseded`, when the scope moved.
 
-2. **Hit a wall → `input-needed`, not `blocked`.** Set `input-needed` and write the
-   actual question **inline in the subtask/issue body** so a fresh session picks it up.
-   Reserve `blocked` for a structural dependency on another issue/subtask (named in prose).
+2. **Hit a wall → `input-needed`, not `blocked`.** Write the actual question **inline in
+   the subtask/issue body** so a fresh session picks it up. Reserve `blocked` for a
+   structural dependency on another issue/subtask, named in prose.
 
 3. **Default search scope is everything not Closed** (`open`, `blocked`, `in-progress`,
-   `input-needed`, `review`). When the user asks an open-ended question ("what's in
-   progress?", "what needs review?"), skip the Closed category (`done`, `dropped`,
-   `superseded`) unless the prompt explicitly asks for closed history.
+   `input-needed`, `review`). Skip the Closed category (`done`, `dropped`, `superseded`)
+   unless the prompt asks for closed history.
 
-4. **Subtask review-debt promotion.** An active (non-closed) issue with **any** subtask in
-   the **Review category** (`review` or `input-needed`) is treated as review-gated —
-   surface it under "needs review". `blocked` and other resting states don't promote —
-   their reason sits in a comment or `issue.md` for whoever opens the issue.
+4. **Subtask review-debt promotion.** An active issue with **any** subtask in the Review
+   category (`review` or `input-needed`) surfaces as "needs review": it lands on the
+   Review tab and shows a `review` badge on the index (display-only; the stored status is
+   unchanged). `blocked` never promotes — it rests, reason read in place.
 
-5. **Mark `review` only when:** implementation is done from your perspective, all subtasks
-   are `review`/`done`, there's a verifiable artefact (PR, file diff, screenshot, test
-   output), and the agent-log captures what was tried.
+5. **Mark an issue `review` only when** implementation is done from your perspective,
+   all subtasks are `review`/`done`, there is a verifiable artefact, and the record
+   captures what was tried.
 
 6. **`dropped` on an issue or subtask requires a comment first.** Write
-   `comments/NNN_….md` explaining why, before the flip — [Closing authority](#closing-authority)
-   says whose flip it is.
+   `comments/NNN_….md` explaining why, before the flip — and the flip itself is the
+   user's ([Closing authority](#closing-authority)).
 
 ---
 
 ## Where to find what
 
-Read **only the file(s) you need** — each is self-contained.
-
-Files live in five band folders — the folder listing itself reads as this table of
-contents.
+Read **only the file(s) you need** — each is self-contained. Files live in five band
+folders; the folder listing reads as this table of contents.
 
 | File | Read it for |
 |---|---|
 | **`00_anatomy/` — orientation** | |
-| [00_overview.md](00_overview.md) | *(this file)* operating model, lifecycle, **closing authority** (who may set `done`/`dropped`, on anything), AI rules, this index |
+| [00_overview.md](00_overview.md) | *(this file)* lifecycle, **closing authority**, AI rules, this index |
 | [01_folder-layout.md](01_folder-layout.md) | the `<issue>/` folder tree, the 5-level nesting cap, URL shapes |
 | [02_per-issue-settings.md](02_per-issue-settings.md) | per-issue `settings.json`; derived vs stored; `agentLogKinds` |
-| [03_overall-issue-tracker-vocabulary.md](03_overall-issue-tracker-vocabulary.md) | the tracker-root `settings.json(c)` — `fields` vocabulary, authors, views |
+| [03_overall-issue-tracker-vocabulary.md](03_overall-issue-tracker-vocabulary.md) | the tracker-root `settings.json(c)` — `fields` vocabulary, authors, views; the fields not to add |
 | **`10_writing/` — writing inside issues** | |
-| [10_writing.md](../10_writing/10_writing.md) | writing markdown inside issues — frontmatter, tags, diagrams, assets, linking |
+| [10_writing.md](../10_writing/10_writing.md) | per-subdoc frontmatter, body conventions, tracker linking, diagrams and artifacts in an issue, prefixes |
 | **`20_sections/` — sub-document types** | |
 | [20_issue-md.md](../20_sections/20_issue-md.md) | `issue.md` — the goal/context body |
 | [21_comments.md](../20_sections/21_comments.md) | comments — flat evolution log, **+ add-a-comment recipe** |
 | [22_notes.md](../20_sections/22_notes.md) | notes — finalized output, **+ add-a-note recipe** |
-| [23_subtasks.md](../20_sections/23_subtasks.md) | subtasks — **categories**, numbering, statuses, **+ create/update recipes** |
-| [24_agent-logs.md](../20_sections/24_agent-logs.md) | agent-log — the folder shape, iteration files, **+ worked examples** |
+| [23_subtasks.md](../20_sections/23_subtasks.md) | subtasks — **categories**, numbering, the work-order template, **+ create/update recipes** |
+| [24_agent-logs.md](../20_sections/24_agent-logs.md) | agent-log — when one opens, the folder shape, iteration files, **+ worked examples** |
 | [25_brainstorm.md](../20_sections/25_brainstorm.md) | brainstorm — kinds, threads, the graduation marker |
 | [26_agent-memory.md](../20_sections/26_agent-memory.md) | agent-memory — index + topic files, always-on rules |
 | [27_guide-and-glossary.md](../20_sections/27_guide-and-glossary.md) | the Guide panel + per-issue `glossary.md` |
@@ -204,12 +158,9 @@ contents.
 | [63_agent-loops.md](../60_examples/63_agent-loops.md) | an issue worked across many rounds of agent work |
 | [64_phase-index.md](../60_examples/64_phase-index.md) | the phase / index issue — subtasks promoted to their own issues |
 
----
-
 ## Cross-references
 
 - `@root/default-docs/data/user-guide/19_issues/` — the canonical user-guide section
 - `…/19_issues/02_design-philosophy.md` — why the tracker is shaped this way
 - `…/19_issues/04_setup/06_lifecycle-and-review.md` — deep dive on the eight-status / four-category model
 - `…/19_issues/09_using-with-ai.md` — agent-facing rules
-- For docs / blog / config work outside the tracker: the **`agent-ks-docs`** skill

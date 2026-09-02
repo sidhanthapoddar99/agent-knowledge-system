@@ -102,4 +102,3 @@ Exit `0` clean / `1` problems found (CI-friendly). All support `--json`.
 
 - **Single source of truth** is `../scripts/_manifest.mjs`; help and this contract are generated from it. The self-test harness (`../scripts/_selftest.mjs`, run under **bun**) checks every command against the contract.
 - **Polyglot-ready**: the dispatcher routes by each command's `runtime`; a future Python command drops in via a manifest entry + a `.py` script honouring the contract, with no dispatcher change.
-- **Legacy `docs-*` names**: earlier versions shipped 28 flat binaries (`docs-list`, `docs-check-blog`, …). Those are retired — everything is now `agent-ks <group> <verb>`. The flat names survive only as internal manifest ids (and `agent-ks help docs-list` still resolves them). If you find old `docs-<name>` invocations in a project's `CLAUDE.md`, memory, or scripts, update them to the `agent-ks` subcommand form.

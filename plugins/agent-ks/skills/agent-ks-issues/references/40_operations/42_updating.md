@@ -70,7 +70,7 @@ The check has three modes depending on how the user phrased the request:
 - **No hits** → proceed with creation. Move on.
 - **Strong match (same scope, similar title, open or review status)** → **don't create**. Tell the user: "This looks like it overlaps with `<id>` — want me to (a) extend that issue with a new subtask, (b) add a comment there, or (c) create the new one anyway?" Wait for the call.
 - **Partial match (related but distinct)** → create the new item but **link to the related ones** in the body (e.g. "Related: `…/subtasks/05_ai-search-api.md` — covers the upstream HTTP API; this is the offline fallback"). Surface the relationship in your reply.
-- **Closed-category match (`done` / `dropped`)** → usually fine to proceed; mention the prior issue in the body if it's load-bearing context.
+- **Closed-category match (`done` / `dropped` / `superseded`)** → usually fine to proceed; mention the prior issue in the body if it's load-bearing context.
 
 ### Run the check itself via Pattern C
 
@@ -125,7 +125,7 @@ Four optional flags shape the output:
 
 ## When NOT to edit
 
-- Don't touch closed-category issues (`done` / `dropped`) without an explicit human prompt.
+- Don't touch closed-category issues (`done` / `dropped` / `superseded`) without an explicit human prompt.
 - Don't rewrite history in `comments/` or `agent-log/` — append, don't edit prior entries. The one exception is `# State` in a run's `01_summary.md`, which is rewritten in place by design ([24_agent-logs.md](../20_sections/24_agent-logs.md)).
 - Don't change `author` or `date` on someone else's comment.
 - Don't mark an issue or subtask `done` or `dropped` — closing is a human-only transition (AI rule #1, [00_overview.md](../00_anatomy/00_overview.md)).

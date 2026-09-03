@@ -191,6 +191,35 @@ function lintTemplate(fileLabel, content, templateName, rawStatus) {
   }
 }
 
+// A subtask points at the log that ran it from one place: the `## Agent log`
+// sub-head under `# 02`. Its body is the word `none` or exactly one markdown
+// link. A subtask holds the outcome; the log holds the path. Anything written
+// beside the link is a copy of what the log owns.
+const AGENT_LOG_HEAD = /^## Agent log\s*$/;
+function lintAgentLogLine(fileLabel, content, subtaskAbs) {
+  const section = splitSections(content).sections.find((s) => s.heading === RESULT_SECTION);
+  if (!section) return;
+  const lines = section.body.split('\n');
+  const at = lines.findIndex((l) => AGENT_LOG_HEAD.test(l));
+  if (at < 0) {
+    warnings.push(`${fileLabel}: \`# ${RESULT_SECTION}\` has no \`## Agent log\` sub-head — write \`none\` or one link to the log that ran it`);
+    return;
+  }
+  const body = [];
+  for (const l of lines.slice(at + 1)) {
+    if (/^##? /.test(l)) break;
+    if (l.trim()) body.push(l.trim());
+  }
+  if (body.length === 1 && body[0] === 'none') return;
+  const m = body.length === 1 ? body[0].match(STAGE_LINK) : null;
+  if (!m) {
+    warnings.push(`${fileLabel}: \`## Agent log\` must be \`none\` or exactly one markdown link, got ${body.length ? JSON.stringify(body.join(' ')) : 'nothing'}`);
+    return;
+  }
+  const target = path.resolve(path.dirname(subtaskAbs), m[2].split('#')[0]);
+  if (!fs.existsSync(target)) warnings.push(`${fileLabel}: \`## Agent log\` link → ${m[2]} does not exist`);
+}
+
 // ---- plans/ ----------------------------------------------------------------
 // A plan is a SCHEDULE, and its whole design is that it stores no status of its
 // own about the work: stages REFERENCE subtasks and the renderer pulls their
@@ -671,7 +700,10 @@ for (const entry of issueFolders) {
                 && !SUPERSEDED_POINTER.test(parsed.content || '')) {
               warnings.push(`${id}/subtasks/${rel}: ${SUPERSEDED_POINTER_HINT}`);
             }
-            if (TEMPLATE_LINT) lintTemplate(`${id}/subtasks/${rel}`, parsed.content || '', 'subtask', rawStatus);
+            if (TEMPLATE_LINT) {
+              lintTemplate(`${id}/subtasks/${rel}`, parsed.content || '', 'subtask', rawStatus);
+              lintAgentLogLine(`${id}/subtasks/${rel}`, parsed.content || '', abs);
+            }
             if (INDEX_LEAF.test(e.name)) indexLeaf = { rel, status: normalizeStatus(rawStatus) };
             else siblingStatuses.push(normalizeStatus(rawStatus));
           } catch (err) {

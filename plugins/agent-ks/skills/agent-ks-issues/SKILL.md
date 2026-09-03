@@ -33,7 +33,7 @@ The routing test, for any sentence you are about to write: which one section own
 
 | Boundary | The line |
 |---|---|
-| subtask ↔ agent log | The subtask defines the work. The log carries it out |
+| subtask ↔ agent log | The subtask holds the outcome. The log holds the path. A decision goes in the subtask; the options tried go in the log |
 | plan ↔ subtask | The plan owns order and blocking. The subtask owns what the work is |
 | notes ↔ subtask | A note states the conclusion. The subtask states what to do about it |
 | brainstorm ↔ notes | Deliberation stays in brainstorm. Only the conclusion moves to notes |

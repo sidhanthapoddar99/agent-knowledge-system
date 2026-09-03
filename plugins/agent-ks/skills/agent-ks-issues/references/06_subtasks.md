@@ -1,6 +1,6 @@
 # Subtasks — scope
 
-A subtask is one work item and the AI handoff anchor. Each leaf file has its own status, URL and count. A subtask defines the work. The agent log carries it out.
+A subtask is one work item and the AI handoff anchor. Each leaf file has its own status, URL and count. A subtask owns the job, start to finish: what to do, when it is done, what came out, what went wrong, what to watch for, what was decided, what was asked and answered.
 
 | Holds | Does not hold |
 |---|---|
@@ -8,8 +8,11 @@ A subtask is one work item and the AI handoff anchor. Each leaf file has its own
 | links to the notes that scope it | the deliberation behind those notes |
 | the result, with evidence | how the result was reached, step by step. That is the log's |
 | acceptance criteria | a narration of the run |
+| the decision taken | the options tried before it. Those are the log's |
 
-One exception: an agent log opened for one subtask only. Then the log holds the narration, and the subtask holds the result.
+The line between a subtask and a log: the subtask holds the outcome, the log holds the path. When there is no log, the subtask holds a short version of the path under `05 Notes & Analysis`. Never both.
+
+A log never holds the only copy of a result. A log may serve many subtasks, so each subtask pulls its own conclusion back as one line under `## Result`, and links to the log for the rest.
 
 ## Category, not order
 
@@ -53,16 +56,60 @@ Its status is derived from its siblings: `open` while every sibling is `open`; `
 
 Test: a competent person with none of your context can build the right thing from the file. If they would ask "but what exactly", it is not written.
 
-| Section | Must hold |
-|---|---|
-| opening | what triggered it and what "done" looks like |
-| `01 To Do` | deliverables, concrete and enumerable: which actions, what they return, what gets recorded. Include the acceptance criteria |
-| `02 Status and Result` | filled before the status flips to `review`: what landed with evidence, what was deferred, next steps |
-| `03 References` | the notes that scope it, the log that ran it, the brainstorm it came from. A spec that lives only in a conversation is not a scope |
-| `04 Decisions` | rulings taken mid-flight, with author and date |
-| `05 Notes & Analysis` | the spec, inline. Shared material stays in `notes/`; link it |
+````markdown
+---
+title: "Move the link checker into the plugin"
+status: in-progress
+---
 
-`agent-ks check issues --template` warns on a missing section, and on a Review or Closed subtask whose `02` still carries the placeholder.
+Why this exists. What triggered it. Two or three lines, no heading.
+
+# 01 To Do
+- [ ] **Concrete item.** The things to do. Enumerable, no implied order.
+    - [ ] A sub-item, with the paths it touches.
+        - [ ] Nest as deep as the work needs.
+- [ ] **Another item.**
+
+## Done when
+- A plain test that says the job is complete. A list, not a checklist.
+- Another test.
+
+# 02 Status and Result
+One line: where it stands now.
+
+## Result
+What came out, with evidence. Filled before the status flips to `review`.
+
+## Agent log
+none
+
+# 03 References
+- [the note that scopes it](../notes/link-rules.md)
+- [the benchmark](../agent-log/030_lp_run/21_benchmark.md) as a link. The file lives in the log.
+
+# 04 Decisions
+## 01 Keep the check in the plugin
+- Decided (sid, 2026-09-03): what and why.
+
+## Q&A
+- Q: the question asked. A: the answer given.
+
+# 05 Notes & Analysis
+## Issues hit
+What went wrong and how it was handled.
+
+## Watch out
+Caveats for the next person.
+
+## 01 Any other point
+Shared material stays in `notes/`. Link it.
+````
+
+A spec that lives only in a conversation is not a scope. Write it into `03` or `05`.
+
+The five `#` sections are fixed. The `##` sub-heads are the standard set. Drop one you do not need. Never add a `#` section.
+
+`agent-ks check issues --template` warns on a missing section, on a Review or Closed subtask whose `02` still carries the placeholder, and on an `## Agent log` that is missing, is not `none`, is not exactly one link, or links to a path that does not exist.
 
 ## Create a subtask
 

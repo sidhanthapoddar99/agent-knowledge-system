@@ -40,7 +40,7 @@ Refer to a stage as "stage 20". There is no id field. A reference is a markdown 
 
 Frontmatter: `title`, `status`, `outcome`, `notes`, `who`, `subtasks:`. Body: all five template sections. Skeleton: [plan-stage.md](../../agent-ks-cli/templates/plan-stage.md).
 
-```yaml
+````markdown
 ---
 title: "Journal compatibility"
 status: in-progress
@@ -51,15 +51,30 @@ subtasks:
   - "[Mandatory catalog](../../subtasks/16_slide-type/80_mandatory-catalog.md)"
   - "[Byte stability](../../subtasks/13_memory/86_byte-stability.md)"
 ---
-```
 
-| Section | On a stage |
-|---|---|
-| `01 To Do` | the stage's items. A small item needs no subtask |
-| `02 Status and Result` | what the stage produced. Never a copied subtask status |
-| `03 References` | a link to the log that ran it, with an ordering label: `[010/01 the section loop](../../agent-log/010_lp_implement-sections/01_summary.md)` |
-| `04 Decisions` | rulings taken in this stage |
-| `05 Notes & Analysis` | why it sits here, what would unblock it, what was tried and rejected, a `## Questions` point |
+Why this stage exists. One or two lines.
+
+# 01 To Do
+- [ ] The stage's items. A small item needs no subtask.
+
+# 02 Status and Result
+What the stage produced. Never a copied subtask status.
+
+# 03 References
+- [010/01 the section loop](../../agent-log/010_lp_implement-sections/01_summary.md), the log that ran it, with an ordering label.
+
+# 04 Decisions
+- Decided (sid, 2026-09-03): a ruling taken in this stage.
+
+# 05 Notes & Analysis
+## 01 Why it sits here
+What would unblock it. What was tried and rejected.
+
+## Questions
+A question only the user can answer, in full.
+````
+
+`outcome` says what "done" means here. `notes` says why it sits here, what it waits on, what would surprise a reader. Both are one line. Both render as inline markdown: a link, `code`, emphasis. Point with a link, never a number. "Blocked on 14" is unreadable once 14 is renumbered.
 
 Keep it short, but not thin. A stage with three unexplained checkboxes leaves its reasoning unrecorded.
 
@@ -68,17 +83,6 @@ Keep it short, but not thin. A stage with three unexplained checkboxes leaves it
 A `subtasks:` entry is one plain markdown link. Nothing before it. Nothing after it. The validator errors on anything else. The path is truth; the link text is a reading aid. The renderer resolves the path and shows the subtask's live title and status. A path that resolves to nothing is a validator error, and the plan page lists it in red.
 
 `subtasks:` is the only structured list a stage carries. An `agent-logs:` key is a validator error. Link a run from `03 References` as an ordinary link with an ordering label. `agent-ks move` rewrites it, and it can sit in a sentence that says why the run matters.
-
-## `outcome` and `notes`
-
-Both are one line. Both render as inline markdown: a link, `code`, emphasis.
-
-| Field | Answers |
-|---|---|
-| `outcome` | what does "done" mean here |
-| `notes` | why does it sit here, what does it wait on, what would surprise a reader |
-
-Point with a link, never a number. "Blocked on 14" is unreadable once 14 is renumbered.
 
 ## Stage status
 

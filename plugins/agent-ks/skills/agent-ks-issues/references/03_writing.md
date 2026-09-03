@@ -4,22 +4,13 @@ Markdown mechanics have one home: the docs skill's [writing.md](../../agent-ks-d
 
 ## The one body template
 
-Every work file uses one body shape. The problem statement comes first, with no heading. Five `#` sections follow, numbered. `##` appears only under section 05, for indexed points. The skeletons live in the cli skill's `templates/` folder. The scaffolders write them.
-
-| Section | Holds |
-|---|---|
-| opening, no heading | why the file exists: a feature, a bug, an upgrade. What it broke and the impact |
-| `# 01 To Do` | `- [ ] item`, with sub-items nested one level |
-| `# 02 Status and Result` | what is done and what is not. Partial results are fine |
-| `# 03 References` | links: agent logs, notes, subtasks, docs, external sources, industry practice |
-| `# 04 Decisions` | `- Decided (author, YYYY-MM-DD): ...` |
-| `# 05 Notes & Analysis` | indexed points under `## 01 First point`, `## 02 Second point` |
+Every work file uses one body shape. The problem statement comes first, with no heading. Five `#` sections follow, numbered: `01 To Do`, `02 Status and Result`, `03 References`, `04 Decisions`, `05 Notes & Analysis`. Each file kind has a standard set of `##` sub-heads. Drop a sub-head you do not need. Never add a `#` section. What each section holds, and a filled example, sits in the file kind's own reference. The skeletons live in the cli skill's `templates/` folder. The scaffolders write them.
 
 | File | Sections | Frontmatter | Skeleton |
 |---|---|---|---|
-| subtask | all five | `title`, `status` | [subtask.md](../../agent-ks-cli/templates/subtask.md) |
+| subtask | all five. Example: [subtasks](06_subtasks.md) | `title`, `status` | [subtask.md](../../agent-ks-cli/templates/subtask.md) |
 | plan `overview.md` | all five | `title`. Status lives in the plan's `settings.json` | [plan-overview.md](../../agent-ks-cli/templates/plan-overview.md) |
-| plan stage | all five | `title`, `status`, `outcome`, `notes`, `who`, `subtasks:` | [plan-stage.md](../../agent-ks-cli/templates/plan-stage.md) |
+| plan stage | all five. Example: [plans](07_plans.md) | `title`, `status`, `outcome`, `notes`, `who`, `subtasks:` | [plan-stage.md](../../agent-ks-cli/templates/plan-stage.md) |
 | log `01_summary.md` | all five | `title`. Status lives in the log's `settings.json` | [log-summary.md](../../agent-ks-cli/templates/log-summary.md) |
 | log round | all five | `title`, `status`, `agent` | [log-round.md](../../agent-ks-cli/templates/log-round.md) |
 | note | 03, 04, 05 | `title`, optional `color` | [note.md](../../agent-ks-cli/templates/note.md) |

@@ -206,10 +206,11 @@ entry there, or a line in the dump issue. A one-line change earns no record at a
 
 - One job per \`NN_<slug>.md\`. Group folders are areas, not phases. Numbers are ids, not an order.
 - Every subtask body has the same five sections:
-  \`01 To Do\` (the list, then \`Questions\`, then \`Done when\`) ·
+  \`01 To Do\` (the list, then \`Guardrails\`, \`Questions\`, \`Done when\`) ·
   \`02 Status and Result\` (\`Result\`, and \`Agent log\`: \`none\` or one link) ·
   \`03 References\` · \`04 Decisions\` (one per point) ·
   \`05 Notes & Analysis\` (\`Issues hit\`, \`Watch out\`, other points).
+- \`Guardrails\` are yours: the limits for this job. The agent reads them first and never edits them.
 - \`Questions\` holds only what is still unanswered, and then the status is \`input-needed\`.
   An answer becomes a decision that says what was asked. The question is deleted. No open
   question, no section.

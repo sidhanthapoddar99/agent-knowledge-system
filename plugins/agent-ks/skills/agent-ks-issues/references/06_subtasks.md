@@ -44,22 +44,11 @@ subtasks/
     └── 020_release-note.md
 ```
 
-| Rule | Detail |
-|---|---|
-| a group folder has no body file | an optional `settings.json` `{ "title": "..." }` sets the sidebar label |
-| folders and leaves share one numbering per level | they sort interleaved |
-| 5 levels is the loader's cap | past it the folder is ignored with one console warning. One level is the convention |
-| the sidebar shows done/total per group | the Closed category counts as done. A review dot marks any Review subtask |
+A group folder has no body file; an optional `settings.json` `{ "title": "..." }` sets its sidebar label. Folders and leaves share one numbering per level and sort interleaved. One level is the convention; the loader's cap is 5, past which a folder is ignored with one console warning. The sidebar shows done/total per group, where Closed counts as done, and a review dot marks any Review subtask.
 
 ## Numbering
 
-| Width | When |
-|---|---|
-| `NN_` | the baseline for most lists |
-| `NNN_` | a large or grouped flat set. The leading digit may mark a group: `110_`, `120_` in group 1; `210_` in group 2 |
-| `NNNN_` | rare |
-
-Gap-number either width: step 10, or 5 for dense sets. `_` is canonical; the loader tolerates `-`. Widths coexist: `01_` and `010_` sort as 1 and 10.
+`NN_` is the baseline. `NNN_` suits a large or grouped set, where the leading digit may mark the group: `110_`, `120_` in group 1; `210_` in group 2. `NNNN_` is rare. Gap-number either width: step 10, or 5 for dense sets. `_` is canonical; the loader tolerates `-`. Widths coexist: `01_` and `010_` sort as 1 and 10.
 
 ## The index leaf
 
@@ -85,12 +74,25 @@ Why this exists. What triggered it. Two or three lines, no heading.
         - [ ] Nest as deep as the work needs.
 - [ ] **Another item.**
 
+## Guardrails
+The user's limits for this job: what not to touch, what must stay true, which gate must pass.
+Read them before the first step. Never edit them, except to add a limit the user stated in
+conversation. They sit here because a limit is part of the work order, not a note about it.
+- Do not touch the engine. The check stays in the plugin.
+- Keep `agent-ks check link-form` passing after every step.
+
 ## Questions
-- A question only the user can answer. Present only while it is open; status is `input-needed`.
+Transient. Only questions still unanswered, so the reader sees at once what is blocked.
+While one is here, the status is `input-needed`. When the user answers, do not keep the
+question: write the answer as a decision under `04`, say what was asked, and delete the
+question. No open question, no section. A stored question goes stale the moment it is
+answered; a decision does not.
+- Should the check also run in CI?
 
 ## Done when
-- A plain test that says the job is complete. A list, not a checklist.
-- Another test.
+A plain list of tests, not a checklist. The job is complete when every line holds.
+- `agent-ks check link-form` passes on the user guide with the check moved.
+- The engine tree has no link-checking code left.
 
 # 02 Status and Result
 One line: where it stands now.
@@ -107,7 +109,8 @@ none
 
 # 04 Decisions
 ## 01 Keep the check in the plugin
-- Decided (sid, 2026-09-03): what and why. Asked whether the check belongs in the engine; the answer was no, because a consumer has no build.
+- Decided (sid, 2026-09-03): what and why. When it answers a question, say what was asked:
+  asked whether the check belongs in the engine; no, because a consumer has no build.
 
 # 05 Notes & Analysis
 ## Issues hit
@@ -123,8 +126,6 @@ Shared material stays in `notes/`. Link it.
 A spec that lives only in a conversation is not a scope. Write it into `03` or `05`.
 
 The five `#` sections are fixed. The `##` sub-heads are the standard set. Drop one you do not need. Never add a `#` section.
-
-`## Questions` is transient. It holds only the questions still unanswered, and it sits right under the to-do list so the reader sees at once what is blocked. While it has an entry, the status is `input-needed`. When the user answers, the question is not kept: write the answer as a decision under `04`, and say in that line what was asked, so the reader knows the ruling was made for this case and why. Then delete the question. When nothing is open, delete the section. A stored question is a fact that goes stale the moment it is answered; a decision does not.
 
 `agent-ks check issues --template` warns on a missing section, on a Review or Closed subtask whose `02` still carries the placeholder, on an `## Agent log` that is missing, is not `none`, is not exactly one link, or links to a path that does not exist, and on a `## Questions` sub-head with an entry while the status is not `input-needed`.
 
@@ -146,4 +147,4 @@ Set `in-progress` when you start. Hand off at `review`, or `input-needed` with t
 
 ## Rapid mechanical changes
 
-For a burst of small changes, one subtask serves as a running checklist. Create it once. Append one line per change. Tick them off. When each change carries reasoning worth keeping, open one agent log of kind `it` instead. When unsure, ask.
+For a burst of small changes, one subtask is the running checklist: create it once, append one line per change, tick them off. When each change carries reasoning worth keeping, open one agent log of kind `it` instead. When unsure, ask.

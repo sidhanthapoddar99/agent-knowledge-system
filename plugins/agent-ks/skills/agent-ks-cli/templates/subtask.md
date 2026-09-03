@@ -8,7 +8,9 @@ Why this exists: a feature, a bug, an upgrade. What it broke and the impact.
 # 01 To Do
 - [ ] item
     - [ ] sub-item
-        - [ ] deeper, as the work needs
+
+## Guardrails
+- a limit the user set for this job: what not to touch, what must stay true
 
 ## Questions
 Only questions still unanswered. Delete the section when there are none.

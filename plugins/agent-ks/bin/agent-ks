@@ -16,7 +16,7 @@
 # dependencies at all, so the requirement is bun and nothing else: it works
 # offline, on a cold cache, forever.
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-CLI="$DIR/../skills/agent-ks-docs/scripts/cli.mjs"
+CLI="$DIR/../skills/agent-ks-cli/scripts/cli.mjs"
 if ! command -v bun >/dev/null 2>&1; then
   echo "agent-ks: bun is required and was not found on PATH." >&2
   echo "  These scripts parse frontmatter with Bun.YAML, which node does not have" >&2

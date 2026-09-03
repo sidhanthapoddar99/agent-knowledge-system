@@ -7,7 +7,7 @@ rem frontmatter parsing uses `Bun.YAML`, which node has no equivalent of, so nod
 rem dies at the first command that reads a file. A fallback that always fails is
 rem worse than none — it turns "install bun" into "debug a ReferenceError".
 setlocal
-set "CLI=%~dp0..\skills\agent-ks-docs\scripts\cli.mjs"
+set "CLI=%~dp0..\skills\agent-ks-cli\scripts\cli.mjs"
 where bun >nul 2>nul
 if not %errorlevel%==0 (
   echo agent-ks: bun is required and was not found on PATH.>&2

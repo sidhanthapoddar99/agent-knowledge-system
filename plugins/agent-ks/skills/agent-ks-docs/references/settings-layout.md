@@ -1,442 +1,148 @@
-# Site-level settings — reference
+# Site settings
 
-Site chrome, routing, theming, aliases. Everything *above* the per-content-type layer.
+Site chrome, routing, aliases and themes: everything above the content types. The user guide sections are `@root/default-docs/data/user-guide/05_getting-started/`, `10_configuration/`, `16_layout-system/`, `20_custom-pages/` and `25_themes/`.
 
-**Canonical source of truth:** the framework's bundled `@root/default-docs/data/user-guide/05_getting-started/`, `10_configuration/`, `16_layout-system/`, `20_custom-pages/`, `25_themes/` — read those when this reference is unclear or when you need depth this file doesn't cover.
+## Project structure
 
-**Contents** (this file is long — jump to the section you need):
-
-1. [Project structure](#1-project-structure) · 2. [`.env` — bootstrap layer](#2-env--the-bootstrap-layer) · 3. [`site.yaml`](#3-siteyaml--the-main-config-file) · 4. [`pages:` routing](#4-pages--routing--content-type-binding) · 5. [`navbar.yaml`](#5-navbaryaml--top-level-navigation) · 6. [`footer.yaml`](#6-footeryaml--site-footer) · 7. [Path aliases](#7-path-aliases--built-in-vs-user-defined) · 8. [Themes](#8-themes) · 9. [Worked example](#9-worked-example--adding-a-new-section) · 10. [Common patterns](#10-common-patterns) · 11. [Validate](#11-validate) · 12. [Cross-references](#12-cross-references)
-
----
-
-## 1. Project structure
-
-**Consumer mode** (default — framework is a subfolder of the user's project):
+Consumer mode: the framework is a subfolder of the user's project.
 
 ```
-<your-project>/                            ← user's project root
-├── config/                                ← site.yaml, navbar.yaml, footer.yaml
-├── data/                                  ← all content (docs, blog, issues, custom)
-│   └── README.md                          ← MAP of every top-level data folder (see SKILL.md)
-├── assets/                                ← static assets served at /assets/
-├── themes/                                ← OPTIONAL — your custom themes
-├── layouts/                               ← OPTIONAL — your custom layouts
-└── agent-knowledge-system/                ← FRAMEWORK FOLDER — don't edit
-    ├── start                              ← entrypoint: `./start [dev|build|preview|doctor]`
-    ├── .env                               ← CONFIG_DIR=../config (consumer mode)
-    ├── astro-doc-code/                    ← framework code
-    ├── default-docs/                      ← framework's bundled docs/themes/template
-    └── plugins/                           ← repo-local plugins
+<your-project>/
+├── config/                     site.yaml, navbar.yaml, footer.yaml
+├── data/                       all content; data/README.md maps the folders
+├── assets/  themes/  layouts/  static files served at /assets/; optional themes; optional layouts
+└── agent-knowledge-system/     the framework folder; do not edit
+    ├── start  .env             ./start [dev|build|preview|doctor]; CONFIG_DIR=../config
+    ├── astro-doc-code/         framework code
+    └── default-docs/           bundled docs, themes, template
 ```
 
-**Dogfood mode** — the framework repo *is* the project; content lives under `agent-knowledge-system/default-docs/`, `.env` has `CONFIG_DIR=./default-docs/config`. Same code path, only `CONFIG_DIR` differs.
+Dogfood mode: the framework repo is the project, content lives under `default-docs/`, and `.env` has `CONFIG_DIR=./default-docs/config`. Same code path; only `CONFIG_DIR` differs. Install: in the project root run `git clone --depth 1 https://github.com/sidhanthapoddar99/agent-knowledge-system.git`, then `./start` inside the clone.
 
-Clone the framework into a project:
-```bash
-# Inside your project root:
-git clone --depth 1 https://github.com/sidhanthapoddar99/agent-knowledge-system.git
-cd agent-knowledge-system
-./start          # installs if needed, then runs the dev server; `./start doctor` for a full build check
-```
+## `.env`
 
----
+`.env` lives inside the framework folder, not inside `astro-doc-code/`. Paths are relative to the framework folder. Absolute paths work.
 
-## 2. `.env` — the bootstrap layer
-
-The framework reads exactly one thing from `.env`: where to find `config/`. Everything else lives in the YAML files inside that config dir. **`.env` lives inside the framework folder** (`agent-knowledge-system/.env`, not inside `astro-doc-code/`). Paths are relative to the framework folder.
-
-```bash
-# Consumer mode — config sits beside the framework folder
-CONFIG_DIR=../config                 # REQUIRED — path to the folder containing site.yaml
-LAYOUT_EXT_DIR=../layouts            # OPTIONAL — only when shipping custom layout styles
-PORT=3088                            # dev server port
-HOST=true                            # bind to all interfaces (for LAN access)
-
-# Dogfood mode — config inside the framework's bundled default-docs/
-# CONFIG_DIR=./default-docs/config
-# LAYOUT_EXT_DIR=./default-docs/layouts
-```
-
-Absolute paths work too. The plugin's helper scripts (and `_env.mjs`) derive the project's content root from `CONFIG_DIR`, so this single env var locates everything.
-
----
-
-## 3. `site.yaml` — the main config file
-
-Everything site-wide. The full schema (taken from a working example):
-
-```yaml
-# 3a. Site identity
-site:
-  name: "My Docs"
-  title: "My Documentation"
-  description: "Modern documentation built with Astro"
-
-# 3a½. Version contract — engine version this content targets (N.N.N).
-# The engine hard-stops when content is outside its supported range; missing →
-# treated as 0.0.0. After running repo-root migration/ scripts, bump to match
-# the engine. See references/doc-migration.md for the upgrade flow.
-engine_version: "0.2.0"
-
-# 3b. Vite dev server
-server:
-  allowedHosts: true                       # true | array of host patterns
-  # Example: allowedHosts: [".localhost", "127.0.0.1", "my-app.local", ".ngrok.io"]
-
-# 3c. Path aliases — each key becomes an @key alias
-paths:
-  data: "../data"                          # @data/...
-  assets: "../assets"                      # @assets/...
-  themes: "../themes"                      # @themes/...
-  # User-defined aliases work the same way:
-  # data2: "/other/project/data"
-
-# 3d. Theme
-theme: "full-width"                        # active theme name (folder name under @themes)
-theme_paths:                               # where to scan for custom themes
-  - "@themes"
-
-# 3e. Logo + favicon
-logo:
-  src: "@assets/astro-dark.svg"            # default
-  alt: "Docs"
-  theme:                                   # optional dark/light variants
-    dark: "@assets/astro-dark.svg"
-    light: "@assets/astro-light.svg"
-  favicon: "@assets/astro.png"
-
-# 3f. Live editor (dev toolbar)
-editor:
-  autosave_interval: 10000                 # ms
-  presence:
-    ping_interval: 5000
-    stale_threshold: 30000
-    cursor_throttle: 100
-    content_debounce: 150
-    render_interval: 5000
-    sse_keepalive: 15000
-    sse_reconnect: 2000
-
-# 3g. Pages — see §4 below (the most important block)
-pages:
-  user-guide:
-    base_url: "/user-guide"
-    type: docs
-    layout: "@docs/default"
-    data: "@data/user-guide"
-  # … more entries …
-```
-
-**Field-by-field cheatsheet:**
-
-| Block | Field | Type | Notes |
+| Variable | Required | Value | Meaning |
 |---|---|---|---|
-| `site` | `name` / `title` / `description` | string | Site identity, used in `<title>` + meta tags |
-| `server` | `allowedHosts` | `true` or `string[]` | Vite host whitelist for dev server |
-| `paths` | `<key>: <path>` | object | Each becomes `@<key>` — relative to config dir or absolute |
-| top-level | `theme` | string | Folder name of the active theme |
-| top-level | `theme_paths` | `string[]` | Dirs to scan for theme folders |
-| `logo` | `src`, `alt`, `theme.dark`, `theme.light`, `favicon` | strings | All accept `@<alias>/...` paths |
-| `editor` | nested timing knobs | numbers (ms) | Defaults are sane; tune only if you have a reason |
-| top-level | `pages` | object (keyed) | **Routes — see §4** |
+| `CONFIG_DIR` | yes | `../config` (consumer) or `./default-docs/config` (dogfood) | The folder that holds `site.yaml`. The CLI derives the content root from it |
+| `LAYOUT_EXT_DIR` | no | `../layouts` | Custom layout styles at `<LAYOUT_EXT_DIR>/<type>/<style>/`. A style with a built-in name overrides it |
+| `PORT` | no | `3088` | Dev server port; the default is `4321` |
+| `HOST` | no | `true` | Bind to all interfaces, for LAN access |
 
----
+## `site.yaml`
 
-## 4. `pages:` — routing & content-type binding
+```yaml
+site: { name: "My Docs", title: "My Documentation", description: "…" }
+engine_version: "0.3.7"                       # the engine version this content targets
+server: { allowedHosts: true }                # true, or a list of host patterns
+paths: { data: "../data", assets: "../assets", themes: "../themes" }   # each key becomes @key
+theme: "full-width"                           # the active theme name
+theme_paths: ["@themes"]                      # folders to scan for themes
+logo: { src: "@assets/logo.svg", alt: "Docs", theme: { dark: "…", light: "…" }, favicon: "@assets/favicon.png" }
+editor: { autosave_interval: 10000 }          # required; presence timing keys are optional
+pages: …                                      # the routes; next section
+```
 
-This is the heart of `site.yaml`. **`pages` is an object, not an array** — each key is the route's internal id; the value binds a URL prefix to a content type, layout, and data source.
+| Field | Type | Meaning |
+|---|---|---|
+| `site.name`, `site.title`, `site.description` | string | Site identity for `<title>` and meta tags |
+| `engine_version` | `"N.N.N"` | Missing counts as `0.0.0`. The engine stops on content outside its range: [doc-migration.md](./doc-migration.md) |
+| `server.allowedHosts` | `true` or `string[]` | Vite host allowlist for the dev server |
+| `paths.<key>` | path | Relative to the config dir, absolute, or `@root/…`. Becomes `@<key>` |
+| `theme`, `theme_paths` | string, `string[]` | The active theme name; the folders to scan |
+| `logo.*` | `@alias/…` paths | `src`, `alt`, `theme.dark`, `theme.light`, `favicon` |
+| `editor` | object | Required. `autosave_interval` and `presence` timings in ms. The defaults are fine |
+
+## Pages: routing
+
+`pages` is an object, not a list. Each key is the route id. The value binds a URL prefix to a content type, a layout and a data source.
 
 ```yaml
 pages:
-  # Docs section — sidebar-driven, uses NN_ prefix folders
-  user-guide:
-    base_url: "/user-guide"
-    type: docs
-    layout: "@docs/default"                # or @docs/compact, or a custom @ext-layouts alias
-    data: "@data/user-guide"               # FOLDER
-
-  # Issues tracker — folder-per-item
-  todo:
-    base_url: "/todo"
-    type: issues
-    layout: "@issues/default"
-    data: "@data/todo"                     # FOLDER (with root settings.json declaring vocabulary)
-
-  # Blog — flat YYYY-MM-DD-<slug>.md files
-  blog:
-    base_url: "/blog"
-    type: blog
-    layout: "@blog/default"
-    data: "@data/blog"                     # FOLDER
-
-  # Custom page — single YAML file backing a layout
-  home:
-    base_url: "/"
-    type: custom
-    layout: "@custom/home"                 # @custom/home | @custom/info | @custom/countdown | custom layouts
-    data: "@data/pages/home.yaml"          # FILE (YAML)
-
-  about:
-    base_url: "/about"
-    type: custom
-    layout: "@custom/info"
-    data: "@data/pages/about.yaml"
+  user-guide: { base_url: "/user-guide", type: docs, layout: "@docs/default", data: "@data/user-guide" }
+  todo:       { base_url: "/todo", type: issues, layout: "@issues/default", data: "@data/todo" }
+  blog:       { base_url: "/blog", type: blog, layout: "@blog/default", data: "@data/blog" }
+  home:       { base_url: "/", type: custom, layout: "@custom/home", data: "@data/pages/home.yaml" }
 ```
 
-**Required fields per `pages:` entry:**
-
-| Field | Type | Notes |
+| Field | Value | Note |
 |---|---|---|
-| `base_url` | string | URL prefix; `/` for the homepage |
-| `type` | enum | `docs` \| `issues` \| `blog` \| `custom` |
-| `layout` | string | `@<type>/<style>` — see "Layout" section below |
-| `data` | string | Folder for `docs` / `issues` / `blog`; YAML file for `custom` |
+| `base_url` | a URL prefix | `/` for the home page. Reserved: `artifacts`, `assets`, `content-assets`, `api`, `editor`. A reserved value stops config load with an error that names the clash |
+| `type` | `docs`, `issues`, `blog`, `custom` | Fixed by the framework |
+| `layout` | `@<type>/<style>` | `@docs/default`, `@docs/compact`, `@blog/default`, `@issues/default`, `@custom/home`, `@custom/info`, `@custom/countdown`. Built-ins live at `astro-doc-code/src/layouts/<type>/<style>/` |
+| `data` | a folder, or a YAML file for `custom` | An issues folder holds a root `settings.json` with the vocabulary |
 
-> [!IMPORTANT]
-> **Reserved base URLs.** A handful of base URLs are claimed by built-in routes and **may not** be used as a section `base_url` — `artifacts`, `assets`, `content-assets`, `api`, `editor` (compared with or without a leading/trailing slash). `loadSiteConfig()` **hard-fails at config load** (dev, build, and preview alike) with an actionable error naming the clash, so a section can never shadow-fight a serving route. `artifacts` in particular backs the full-page artifact route (`/artifacts/<path>` — see `references/layouts/docs-layout.md`). Rename the section to any non-reserved value.
-
-**Choosing a layout** — every type has a `default` style; some have alternatives:
-
-| Type | Available styles | Located at |
-|---|---|---|
-| `docs` | `@docs/default`, `@docs/compact` | `astro-doc-code/src/layouts/docs/<style>/` |
-| `blog` | `@blog/default` | `astro-doc-code/src/layouts/blogs/<style>/` |
-| `issues` | `@issues/default` | `astro-doc-code/src/layouts/issues/<style>/` |
-| `custom` | `@custom/home`, `@custom/info`, `@custom/countdown`, plus user-shipped ones | `astro-doc-code/src/layouts/custom/<style>/` |
-
-User-shipped layouts under your `layouts/<type>/<style>/` (consumer mode — sibling of `config/` and `data/`) are picked up automatically when `LAYOUT_EXT_DIR=../layouts` is set in `.env`; they override built-in styles of the same name.
-
----
-
-## 5. `navbar.yaml` — top-level navigation
+## `navbar.yaml`
 
 ```yaml
-layout: "@navbar/default"                  # or @navbar/minimal
-# layout: "@navbar/minimal"                # tighter, no logo block
-
+layout: "@navbar/default"        # or @navbar/minimal
 items:
-  - label: "Home"
-    href: "/"
-  - label: "User Guide"
-    href: "/user-guide"
-  - label: "Blog"
-    href: "/blog"
-  - label: "GitHub"
-    href: "https://github.com/sidhanthapoddar99/agent-knowledge-system"
+  - { label: "Home", href: "/" }
+  - { label: "Resources", items: [ { label: "Blog", href: "/blog" }, { label: "GitHub", href: "https://github.com/user/repo" } ] }
 ```
 
-| Field | Type | Notes |
+| Field | Value | Note |
 |---|---|---|
-| `layout` | string | `@navbar/default` (full-featured) or `@navbar/minimal` |
-| `items` | `array` | Top-level nav items — flat list; order matters |
+| `layout` | `@navbar/default` or `@navbar/minimal` | `default` has dropdowns, a mobile menu and the theme toggle. `minimal` is a flat list |
 | `items[].label` | string | Display text |
-| `items[].href` | string | Internal path (`/user-guide`) or external URL |
+| `items[].href` | an internal path or an external URL | An `http` URL opens in a new tab with an external icon |
+| `items[].items` | nested items | Makes the parent a dropdown in `@navbar/default`; the framework ignores its `href` |
+| the logo | `site.yaml → logo:` | Not here |
 
-**Grouping** — the default navbar layout is a flat list. For dropdown groups (e.g. "Resources ▾" expanding to multiple links), check the layout source under `astro-doc-code/src/layouts/navbar/<style>/` to see what nested item shape it accepts. Some layouts support `items[].children: [...]`. If the layout you've chosen doesn't, either pick a different layout or build a custom one.
-
-**External links** — any `href` starting with `http://` or `https://` is treated as external (opens in new tab, may render an external icon).
-
-**Logo** — lives in `site.yaml` under `logo:`, NOT here. The navbar layout reads it from there.
-
----
-
-## 6. `footer.yaml` — site footer
+## `footer.yaml`
 
 ```yaml
-layout: "@footer/default"
-
-copyright: "© {year} My Docs. All rights reserved."   # {year} is auto-substituted
-
+layout: "@footer/default"        # or @footer/minimal
+copyright: "© {year} My Docs."   # the renderer substitutes {year}
 columns:
-  - title: "Documentation"
-    links:
-      - label: "Getting Started"
-        href: "/docs/getting-started"
-      - label: "API Reference"
-        href: "/docs/api"
-
-  - title: "Community"
-    links:
-      - label: "Blog"
-        page: "blog"                       # ← resolves to the page's base_url
-      - label: "Discord"
-        href: "https://discord.gg/example"
-
+  - { title: "Community", links: [ { label: "Blog", page: "blog" }, { label: "Discord", href: "https://discord.gg/example" } ] }
 social:
-  - platform: "github"
-    href: "https://github.com/user/repo"
-  - platform: "twitter"
-    href: "https://twitter.com/user"
-  - platform: "discord"
-    href: "https://discord.gg/example"
+  - { platform: "github", href: "https://github.com/user/repo" }
 ```
 
-| Field | Type | Notes |
+| Field | Value | Note |
 |---|---|---|
-| `layout` | string | `@footer/default` (or a minimal variant if shipped) |
-| `copyright` | string | Supports `{year}` token (substituted at render) |
-| `columns` | array | **Each column is a grouping** — `title` + `links[]` |
-| `columns[].links[].label` | string | Display text |
-| `columns[].links[].href` | string | Direct URL (internal or external) |
-| `columns[].links[].page` | string | **Page id** — resolves to that page's `base_url` (single source of truth; survives URL renames) |
-| `social` | array | Auto-rendered with platform icons |
-| `social[].platform` | string | `github`, `twitter`, `discord`, etc. (icons live in the layout) |
-| `social[].href` | string | The social profile URL |
+| `columns[]` | `title` plus `links[]` | Each column is a group. Three or four columns at most |
+| `links[].href` | a URL | A direct link, internal or external |
+| `links[].page` | a page id from `site.yaml` | Prefer it for your own routes. A `base_url` change updates the link |
+| `social[]` | `platform` plus `href` | Icons exist for `github`, `twitter`, `linkedin`, `youtube`, `discord` |
 
-**`href` vs `page`** — prefer `page:` for any link to one of your own routes. If you ever change `base_url:` for that page in `site.yaml`, footer links update automatically.
+## Path aliases
 
-**Grouping** — each column IS a group. Use 3-4 columns max; more becomes visually noisy on narrow viewports.
-
----
-
-## 7. Path aliases — built-in vs user-defined
-
-**Built-in aliases (always available):**
-
-| Alias | Resolves to | Used when |
+| Alias | Resolves to | Used in |
 |---|---|---|
-| `@docs/<style>` | `astro-doc-code/src/layouts/docs/<style>/` | `pages[].layout` for docs |
-| `@blog/<style>` | `astro-doc-code/src/layouts/blogs/<style>/` | `pages[].layout` for blog |
-| `@issues/<style>` | `astro-doc-code/src/layouts/issues/<style>/` | `pages[].layout` for issues |
-| `@custom/<style>` | `astro-doc-code/src/layouts/custom/<style>/` | `pages[].layout` for custom |
-| `@navbar/<style>` | `astro-doc-code/src/layouts/navbar/<style>/` | `navbar.yaml → layout` |
-| `@footer/<style>` | `astro-doc-code/src/layouts/footer/<style>/` | `footer.yaml → layout` |
-| `@ext-layouts` | `LAYOUT_EXT_DIR` from `.env` | for user-shipped layouts (overrides built-ins by name) |
-| `@theme/<name>` | a theme folder | inside `theme.yaml → extends:` |
-| `@root/<sub>` | the framework folder + `<sub>` (i.e. the framework's install location on disk — `agent-knowledge-system/` in consumer mode, the repo root in dogfood mode) | reaching the framework's bundled content (`@root/default-docs/...`); path-traversal blocked. **NOT the consumer's outer project root** — see §2 (".env — the bootstrap layer") for the two-mode model |
+| `@docs/…`, `@blog/…`, `@issues/…`, `@custom/…`, `@navbar/…`, `@footer/…` | `astro-doc-code/src/layouts/<type>/<style>/` | `pages[].layout`, `navbar.yaml`, `footer.yaml` |
+| `@ext-layouts` | `LAYOUT_EXT_DIR` | custom layout styles |
+| `@theme/<name>` | a theme folder | `theme.yaml → extends:` |
+| `@root/<sub>` | the framework folder; not the consumer's project root | the bundled content, `@root/default-docs/…` |
+| `@<key>` from `paths:` | the declared path | anywhere the YAML takes a path |
 
-**User-defined aliases** — declared in `site.yaml → paths:`:
+A `paths:` value is relative to the config dir, absolute, or `@root/…`. `@root` is the only alias allowed inside a value. The loader rejects a value that names another user alias, such as `derived: "@data/sub"`, and rejects traversal such as `@root/../x`. Reserved keys: `docs`, `blog`, `issues`, `custom`, `navbar`, `footer`, `theme`, `config`, `root`.
 
-```yaml
-paths:
-  data: "../data"                            # → @data/<sub>
-  assets: "../assets"                        # → @assets/<sub>
-  themes: "../themes"                        # → @themes/<sub>
-  # Add your own (relative to config dir, absolute, or @root-prefixed):
-  shared: "../shared"                        # → @shared/<sub>
-  default-docs: "@root/default-docs/data"    # → @default-docs/<sub>
-```
+## Themes
 
-Values can be relative (to config dir), absolute, or `@root/<path>` — that last form is the only alias allowed inside `paths:` values. User-aliases-referencing-other-user-aliases (e.g. `derived: "@data/sub"`) and other system aliases (`@docs`, `@theme`, …) are rejected with a clear error to keep declaration order unambiguous.
-
-These are resolved at config load (paths become absolute), then used wherever the YAML accepts a path-like string (`pages[].data`, `logo.src`, etc.).
-
----
-
-## 8. Themes
-
-The full theme contract (`required_variables` in `astro-doc-code/src/styles/theme.yaml`) is documented in the framework's bundled `@root/default-docs/data/user-guide/25_themes/` — **read it before doing any theme work**. Don't invent variable names. Don't hardcode colours / fonts / spacing.
-
-Quick orientation:
+Read the user guide section `25_themes/` before any theme work. Do not invent variable names. Do not hardcode colours, fonts or spacing. The contract is `required_variables` in `astro-doc-code/src/styles/theme.yaml`. `agent-ks theme tokens --json` prints the live values for light and dark. Themes are site-wide; a `pages:` entry cannot set one.
 
 | What | Where |
 |---|---|
-| Built-in default theme | the framework's `astro-doc-code/src/styles/` (read-only — don't edit) |
-| Framework-bundled themes | `@root/default-docs/themes/<name>/` (e.g. `full-width`, `minimal`) — accessed via `theme_paths: ["@root/default-docs/themes"]` |
-| User themes | the project's `themes/<name>/theme.yaml` (usually `extends: "@theme/default"`) — accessed via `theme_paths: ["@themes"]` |
-| Active theme selector | `site.yaml → theme: "<name>"` |
-| Theme discovery | `site.yaml → theme_paths: ["@themes"]` (and/or `["@root/default-docs/themes"]`) |
+| The built-in default theme | `astro-doc-code/src/styles/`; read-only |
+| The bundled themes `full-width` and `minimal` | `@root/default-docs/themes/<name>/`; scan with `theme_paths: ["@root/default-docs/themes"]` |
+| User themes | the project's `themes/<name>/theme.yaml`, usually `extends: "@theme/default"`; scan with `theme_paths: ["@themes"]` |
+| The active theme | `site.yaml → theme: "<name>"` |
 
-**For any non-trivial theme work, read `@root/default-docs/data/user-guide/25_themes/` first. The skill doesn't duplicate the theme contract.**
+## Add a section
 
----
+Use the [add-section skill](../../agent-ks-add-section/SKILL.md). It creates `data/<name>/` with a `settings.json` and a starter page, registers the route in `site.yaml`, and adds the navbar item. Then add a row to `data/README.md` and restart the dev server with `./start`.
 
-## 9. Worked example — adding a new section
+Two patterns. Register several `type: issues` pages for several trackers, each with its own vocabulary. Reuse one layout with different `data:` paths.
 
-**Goal:** add a "Tutorials" section served at `/tutorials/`.
+## Validate
 
-```bash
-# 1. Create the folder + root settings.json (sidebar label)
-#    (Paths shown for consumer mode — adjust to default-docs/data/tutorials/ in dogfood mode.)
-mkdir -p data/tutorials
-cat > data/tutorials/settings.json <<'EOF'
-{
-  "label": "Tutorials",
-  "position": 17
-}
-EOF
+`agent-ks check config [dir]` reads the config dir from `.env` or from the argument. Exit `0` is clean, `1` found errors. It uses regex over the YAML text, so run the dev server for deeper errors. The checks:
 
-# 2. Add a starter page
-cat > data/tutorials/01_overview.md <<'EOF'
----
-title: Tutorials Overview
-description: Hands-on tutorials for common workflows.
----
-
-# Tutorials
-
-…
-EOF
-```
-
-```yaml
-# 3. Register the route in site.yaml under pages:
-pages:
-  # … existing entries …
-  tutorials:
-    base_url: "/tutorials"
-    type: docs
-    layout: "@docs/default"
-    data: "@data/tutorials"
-```
-
-```yaml
-# 4. Add a navbar entry (navbar.yaml)
-items:
-  # … existing entries …
-  - label: "Tutorials"
-    href: "/tutorials"
-```
-
-```markdown
-<!-- 5. Update data/README.md so future agents see the new folder -->
-| `tutorials/` | Hands-on workflow walkthroughs | NN_ docs | `/tutorials/…` | `@docs/default` |
-```
-
-Restart the dev server (`./start dev` from the framework folder, or `bun run dev` inside `astro-doc-code/`) — the new route is live.
-
----
-
-## 10. Common patterns
-
-- **Multiple trackers** — register more than one `type: issues` page, each pointing at a different folder (e.g. `todo/` for active, `archive/` for resolved). Each gets its own vocabulary file.
-- **Same layout, different content** — same `layout: "@docs/default"`, different `data:` paths. Cheap to scale.
-- **Per-section theming** — not currently supported via `pages:`. Themes are site-wide.
-- **Subpath deployment** — set `base:` (top-level in `site.yaml`) to the subpath; all routes shift accordingly. Used when serving at `app.com/docs`.
-
----
-
-## 11. Validate
-
-The plugin ships **`agent-ks check config`** (on your `PATH` after install) — runs presence + structural checks against `site.yaml` / `navbar.yaml` / `footer.yaml` so you don't have to eyeball each.
-
-```bash
-# Default: resolves the config dir from .env
-agent-ks check config
-
-# Or point at any config dir explicitly
-agent-ks check config ./config
-```
-
-What it checks:
-- All three files exist (`site.yaml` is hard-required; `navbar.yaml` / `footer.yaml` warned)
-- `site.yaml` has the required top-level keys (`site`, `paths`, `theme`, `pages`)
-- Each `pages:` entry has the required fields (`base_url`, `type`, `layout`, `data`)
-- Each page's `data:` path resolves on disk (after `@alias` substitution)
-- `footer.yaml` `page:` references resolve to a registered page in `site.yaml`
-
-Uses regex over the YAML text — no YAML library dependency. Catches the common breakage; for deeper schema validation, run the dev server and watch its startup warnings. Exit code `0` = clean, `1` = errors found.
-
----
-
-## 12. Cross-references
-
-- `data/README.md` (the project's) — map of every top-level data folder (read this first for orientation)
-- `@root/default-docs/data/user-guide/05_getting-started/` (framework's bundled) — installation, aliases, structure
-- `@root/default-docs/data/user-guide/10_configuration/` — every config file in microscopic detail (per-field reference)
-- `@root/default-docs/data/user-guide/16_layout-system/` — picking + customising layouts
-- `@root/default-docs/data/user-guide/20_custom-pages/` — custom page definitions + creating custom layouts
-- `@root/default-docs/data/user-guide/25_themes/` — theme contract + creation walkthroughs
-- `references/writing.md` — markdown content authoring (per-content-type concerns are NOT in this file)
-- `references/layouts/docs-layout.md` / `blog-layout.md` — per-content-type structure (the issue tracker is the `agent-ks-issues` skill's domain)
+- `site.yaml` exists (error). A missing `navbar.yaml` or `footer.yaml` is a warning.
+- `site.yaml` has `site`, `paths`, `theme`, `pages`.
+- Every `pages:` entry has `base_url`, `type`, `layout`, `data`.
+- Every `data:` path resolves on disk after alias substitution.
+- Every `footer.yaml` `page:` names a registered page.

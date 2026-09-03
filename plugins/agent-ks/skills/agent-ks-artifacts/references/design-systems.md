@@ -1,193 +1,90 @@
 # Design systems and brand guidelines
 
-Artifacts are how a project's **design system / brand guideline** gets authored and
-maintained by an agent: a set of artifact pages (swatches, a type specimen, a
-component gallery) plus commentary that states the explicit values. This file
-carries the doctrine for *what a design system is*, *where it lives*, *how to write
-its conventions so an agent can act on them*, and *the rubric that gates it as done*.
-(The upstream doctrine here is design-sync's, stripped of its claude.ai upload
-pipeline — none of that machinery is needed; the value is the doctrine.)
+A design system is a set of artifact pages plus commentary pages that state the explicit values. The artifact pages are swatches, a type specimen and a component gallery. An agent authors it and maintains it. This file covers the parts of a design system, its two homes, its conventions document, and its verification.
 
-> **Theme mode: a design-system artifact is always `theme: "self"`** (SKILL §1
-> mode-choice doctrine). Its subject *is* a look, so it owns its theme inside the
-> HTML — even when the system it presents resembles the docs engine's own theme.
-> Reading `theme.yaml` / `color.css` here is to *start from* the contract's values,
-> never to inherit them by injection (which is the `site` mode, for data artifacts).
+A design-system artifact is always `theme: "self"`; the [mode rule](../SKILL.md#theme-mode) decides that by subject. Read `theme.yaml`, `color.css` and `font.css` to start from the contract's values, never to inherit them by injection.
 
-## What a design system is — a consumable contract
+## What a design system is
 
-Treat a design system as something an agent (or a builder) *consumes*, not a mood
-board. A complete one is an enumerable contract with these parts:
+Treat a design system as a contract that an agent or a builder consumes, not a mood board. A complete one has six parts.
 
-- **Tokens** — the color, type, spacing, radius, shadow, and motion values, named.
-- **Fonts** — the actual faces, with how they're delivered.
-- **A component / pattern inventory** — the real parts (button, card, table, badge,
-  form field…) with their variants and states.
-- **A usage contract** — how each part is composed, with examples.
-- **A conventions document** — the prose that teaches the system's idiom (below).
-- **Where-truth-lives pointers** — the source files a reader should open before
-  styling. For this framework that is `astro-doc-code/src/styles/theme.yaml` (the
-  contract), `color.css`, and `font.css`.
+| Part | Content |
+|---|---|
+| Tokens | The named color, type, spacing, radius, shadow and motion values |
+| Fonts | The faces, and how they are delivered |
+| Inventory | The real components and patterns (button, card, table, badge, field) with their variants and states |
+| Usage contract | How each part is composed, with examples |
+| Conventions document | The prose that teaches the system's idiom; see below |
+| Where-truth-lives pointers | The source files to open before styling: `astro-doc-code/src/styles/theme.yaml`, `color.css`, `font.css` |
 
-A Home-B section (below) is "complete" when it contains all of these; the rubric at
-the end is the gate before it is called done.
+A Home B section is complete when it holds all six. The verify gate decides when it is done.
 
-## The two homes — and when each applies
+## The two homes
 
-The same artifact primitive serves two very different contexts. The decision rule:
-**in flux → Home A; settled and referenced by others → Home B.** A system graduates
-from A to B when the deliberation closes.
+The decision rule: in flux → Home A; settled and referenced by others → Home B. A system graduates from A to B when the deliberation closes.
 
-### Home A — inside an issue's `brainstorm/` (or `notes/`)
+### Home A: an issue's brainstorm or notes folder
 
-The system is *in flux*: a brand exploration, competing palette directions, a
-component look being argued out. Artifacts here are **thinking-artifacts** — drafts
-beside the deliberation that produced them, versioned with the issue. Because
-`brainstorm/` deliberates real alternatives (per the agent-ks-issues skill), a
-design-system brainstorm ships **multiple** artifact options with commentary and a
-recommendation, not one polished result:
+The system is in flux: a brand exploration, competing palettes, a component look under debate. Artifacts here are thinking-artifacts beside the deliberation, versioned with the issue. A brainstorm weighs real alternatives (see [05_brainstorm-notes-memory.md](../../agent-ks-issues/references/05_brainstorm-notes-memory.md)), so a design-system brainstorm ships several options with commentary and a recommendation.
 
-- Keep each option a self-contained artifact **when the options are competing
-  systems** — whole palettes, brand directions, full visual worlds. When the
-  options are N variations of *one element or screen*, do the opposite: one
-  artifact holding all of them — see the variation-set section below.
-- Declare each option's `palette` / `purpose` in its sidecar, so the trade-off
-  discussion can cite *declared values* rather than re-reading each HTML.
-- Promote the chosen direction outward (to Home B) only once it's settled.
+- Competing whole systems (palettes, brand directions, full visual worlds) get one self-contained artifact each.
+- N variations of one element or screen get one artifact that holds all of them; see "Variation sets" below.
+- Declare each option's `palette` and `purpose` in its sidecar, so the discussion cites declared values.
+- Promote the chosen direction to Home B only when it is settled.
 
-### Home B — a published docs section of artifacts + commentary
+### Home B: a published docs section
 
-The system is *settled and canonical*: the project's brand guideline, referenced by
-builders. It is its own `NN_` docs section holding artifact pages (the swatches, the
-type specimen, the component gallery) **interleaved with markdown commentary
-documents that state the explicit values** — the token table, the usage rules, the
-do/don't. The commentary is the reborn "conventions document": an agent consuming
-the system reads the *commentary's* declared values and **never has to parse an
-artifact's HTML**. (Pick a base URL outside the reserved set — not `artifacts` — see
-`publishing.md`.)
+The system is settled and canonical. It is its own `NN_` docs section. Artifact pages (swatches, specimen, gallery) interleave with markdown commentary pages that state the explicit values: the token table, the usage rules, the do and don't list. An agent that consumes the system reads the commentary's declared values and never parses an artifact's HTML. Pick a base URL outside the reserved set; see [publishing.md](publishing.md#where-an-artifact-lives).
 
-## Variation-set / options-explorer artifacts — one element, N workable options
+## Variation sets
 
-The decision pattern: **one artifact carrying 4–10 labeled design variations of
-a single UI element or screen** — a mobile nav five ways, an action-button
-placement four ways, a panel's glass treatments — built so reviewers can *feel*
-each option working and pick one. This is not Home A's multiple-artifacts rule
-(that covers competing whole systems): variations of one element always ship as
-**one artifact with N options inside it** — separate files kill side-by-side
-comparison and would duplicate the shared fixture N times.
+A variation set is one artifact that carries 4–10 labeled design options of one UI element or screen: a mobile nav five ways, a button placement four ways. Reviewers operate each option and pick one. Variations of one element always ship as one artifact. Separate files kill side-by-side comparison and duplicate the shared fixture N times. Home A's one-artifact-per-option rule covers competing whole systems, not this.
 
-Four qualities define the pattern; each is a requirement, not a flourish:
+| Requirement | Rule |
+|---|---|
+| Labeled options with decision furniture | Every option gets a real name ("Bottom tab bar", never "Option 3"), a one-line identity, and its trade-offs: pros, cons, best for. |
+| Layout by count | 2–3 options: all visible at once, stacked or side by side. 4–6: a switcher (tab strip or numbered rail) over one stage. 7–10: a switcher with the selection persisted in `localStorage`. |
+| Operable, not mocked | Every behavior an option proposes works in the artifact: buttons press, drawers open, states toggle, transitions play. A static picture fails the pattern. |
+| One shared, realistic fixture | All options render inside the same host frame: the same phone, app shell or page. The fixture looks like a real product: real screen names, real content, the host app's type and color. Greeked bars and placeholder boxes sink the comparison. Spend explicit effort here. |
+| Built for the pick | Carry an at-a-glance comparison strip or table. Mark a recommendation when you have one. Optionally add a vote control with a rationale field, persisted locally, with a copy-out. The decision graduates to the issue's notes or comments once made. |
 
-1. **N labeled options with decision furniture.** Every option gets a real name
-   ("Bottom tab bar", never "Option 3"), a one-line identity, and its
-   trade-offs (pros/cons, "best for"). Structure by count: **2–3** → all
-   visible at once, stacked or side by side; **4–6** → a switcher (tab strip /
-   numbered rail) over one stage; **7–10** → a switcher with the selection
-   persisted (`localStorage`) so a reviewer's place survives reloads.
-2. **Operable, not mocked.** Whatever behavior an option proposes must actually
-   work in the artifact — buttons press, drawers open, states toggle,
-   transitions play. A static picture of an interactive element fails the
-   pattern even when it looks perfect. (The verify gate exercises this —
-   SKILL.md §3.)
-3. **A shared, realistic fixture.** All options render inside the *same* host
-   frame — the same phone, app shell, or page — so they compare like-for-like.
-   And the fixture must look like a **real product**: real screen names, real
-   content, the host app's type and color world. Greeked skeleton bars and
-   placeholder boxes sink the comparison — a reviewer should squint and see
-   *their app* wearing each option. This is the quality even otherwise-good
-   runs miss; spend explicit effort here.
-4. **Built for the "which one?" moment.** Carry an at-a-glance comparison strip
-   or table; mark a recommendation when you have one; optionally offer a pick
-   affordance (a vote / selection control with a rationale field, persisted
-   locally, with a copy-out). The decision itself graduates to the issue's
-   notes / comments once made — the artifact is where the decision gets *made*,
-   not where it is archived.
+The treatment is decision tooling; see [SKILL.md](../SKILL.md#calibrate-the-treatment). The theme is `self`; reuse the contract's token names per the inline contract. The sidecar declares `"type": "variation-set"` with `options`, and `recommendation` and `decision` when they exist; the keys are in [publishing.md](publishing.md#the-sidecar).
 
-**Treatment override: the don't-over-design governor does not apply here.**
-This is decision tooling — each option must reach "could be the shipped
-design", because the polish *is* what the reviewer is judging. Keep the chrome
-around the options (switcher, comparison table, vote box) utilitarian; spend
-the craft on the options themselves.
-
-**Theme is `self`** (mode-choice doctrine — the options' look is the subject);
-per SKILL §1's naming preference, reuse the host contract's token *names* for
-overlapping roles, adding your own only for roles beyond the contract's scope.
-**Sidecar:** declare
-`type: "variation-set"` with the `options` list, plus `recommendation` /
-`decision` when they exist — contract in `publishing.md`.
-
-A worked skeleton (the shape, not markup to copy):
+The shape, not markup to copy:
 
 ```html
 <body>
-  <header><!-- what's being decided, in one line + option count --></header>
+  <header><!-- what is decided, in one line, plus the option count --></header>
   <nav class="switcher"><!-- one tab per option, real names --></nav>
   <main class="stage">
-    <!-- ONE shared fixture: the host app's screen with realistic content.
-         Switching options swaps ONLY the element under decision, and its
-         interactions genuinely run (tap, drag, toggle, navigate). -->
+    <!-- ONE shared fixture. Switching swaps only the element under decision.
+         Its interactions run: tap, drag, toggle, navigate. -->
   </main>
   <section class="verdict">
-    <!-- per-option pros/cons + "best for" · at-a-glance table ·
-         recommendation · vote + rationale (localStorage) + copy-summary -->
+    <!-- per-option pros, cons, best for · comparison table ·
+         recommendation · vote + rationale (localStorage) + copy summary -->
   </section>
 </body>
 ```
 
-## Writing conventions an agent can act on
+## Conventions an agent can act on
 
-The conventions document (a markdown commentary page in Home B, or the deliberation
-prose in Home A) is written for a specific reader: an agent that will build *with*
-this system, many times, and **cannot follow guidance that isn't there**. It won't
-run your build or read your source unless you point at it; it gets the prose and the
-artifacts. So:
+The conventions document is a commentary page in Home B, or the deliberation prose in Home A. Its reader is an agent that builds with the system many times and cannot follow guidance that is absent. It gets the prose and the artifacts, not your build or your source.
 
-- **Hold every sentence to a single standard: *can the reader do something with
-  it, with zero guesswork?*** A line like "follow the design system's conventions"
-  flunks — cut it and spell the convention out. When you name the token, the agent
-  uses that token; when the vocabulary goes unnamed, the agent makes one up.
-- **Teach *this* system's idiom with its real vocabulary.** A token system gets the
-  `var(--*)` pattern with the real names (this framework's `--color-*`,
-  `--ui-text-*`, `--content-*`, `--spacing-*`); a utility-class system gets a compact
-  family table with real class names; a prop/theme system gets prop-based styling
-  documented through the specific props that express the design language. Don't
-  graft on an idiom that isn't native to the system.
-- **Name where the truth lives.** Point at the real source files the agent should
-  read before styling (`theme.yaml`, `color.css`, `font.css`, and any per-component
-  page) — an agent working from the actual files will always outperform one working
-  from a paraphrase.
-- **Include one idiomatic build snippet.** A short, real example that composes the
-  system correctly — adapt one you've already rendered, so it's code you know works.
-- **Validate every named thing against what actually ships.** A conventions file
-  that lists tokens, classes, or components with no real counterpart does *more
-  damage than no file at all* — the reader takes it at face value, builds with
-  vocabulary that resolves to nothing, and the output goes out unstyled with no
-  error raised. Before shipping: every token you enumerate must exist in
-  `theme.yaml` / the CSS; every component you name must exist as an artifact or
-  documented part. Verifies in neither → fix the name or cut it.
+| Rule | Do |
+|---|---|
+| Zero guesswork | Hold every sentence to one test: the reader can act on it with no guess. "Follow the design system's conventions" fails; spell the convention out. Name the token, or the agent invents one. |
+| Teach this system's idiom | A token system gets the `var(--*)` pattern with the real names: `--color-*`, `--ui-text-*`, `--content-*`, `--spacing-*`. A utility-class system gets a compact family table with real class names. A prop or theme system gets prop-based styling through its real props. Do not graft a foreign idiom. |
+| Name where the truth lives | Point at the real source files to read before styling: `theme.yaml`, `color.css`, `font.css`, any per-component page. |
+| One idiomatic snippet | Include one short, real example that composes the system correctly. Adapt one you have already rendered. |
+| Validate every named thing | Every token you list exists in `theme.yaml` or the CSS. Every component you name exists as an artifact or a documented part. A name that resolves to nothing does more damage than no file: the reader builds with it and ships unstyled with no error. Fix the name or cut it. |
 
-## The verify rubric — Styled / Complete / Plausible
+## Verify a section
 
-An absolute, three-word gate for any artifact, and the bar a design-system section
-must clear before it is called done. **Render it and look at it** — the palette
-validator checks color math, not layout; open or screenshot the output before
-grading.
+Every artifact page passes the verify gate in [publishing.md](publishing.md#verify-before-you-publish). A Home B section also passes as a whole:
 
-- **Styled.** The theme tokens visibly resolve. An unresolved `var()` freezing its
-  fallback — a frozen color, a dead dark mode, a silently fallen-back font — is the
-  exact failure this catches. Check the *computed* values, not the vibe.
-- **Complete.** Nothing collapsed or overflowing; no horizontal body scroll; focus
-  states visible; `prefers-reduced-motion` honored; every chart passes its dataviz
-  checks; every declared state (empty / loading / error) is actually shown.
-- **Plausible.** Real content throughout — never `foo` / `test` / lorem. Curate real
-  values before inventing. For a system: the canonical example, a variant sweep, and
-  the static states.
+- The commentary declares every value.
+- Every pointer resolves.
+- The inventory is complete.
 
-Run the render check in **both themes** and **both viewports** (the embed column
-~700–900px and the full page) — see `SKILL.md` §3 for the full pre-publish sequence.
-For a Home-B section, the rubric applies to every artifact page *and* to the section
-as a whole (does the commentary declare every value; do the pointers resolve; is the
-inventory complete). Playwright MCP tools can automate the screenshots if wanted; a
-purpose-built ~50-line Playwright snippet against the `/artifacts` route beats any
-heavier harness — do not reach for a component-library sync pipeline, which targets a
-different contract entirely.
+Playwright tools can take the screenshots. A purpose-built Playwright snippet of about 50 lines against the `/artifacts` route beats any heavier harness. Do not reach for a component-library sync pipeline; it targets a different contract.

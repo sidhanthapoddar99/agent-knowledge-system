@@ -1,109 +1,80 @@
-# Images — optimizing screenshots & figures (`agent-ks img`)
+# Images
 
-Reference for keeping images small in an agent-knowledge-system project. Read this
-whenever you add or update an image/screenshot under `data/`.
+How to keep images small with `agent-ks img`. Read this when you add or update an image or a screenshot under `data/`.
 
-## Why this matters
+## The rule
 
-Git stores every version of every binary forever. A repo realistically caps at
-**~1–2 GB including history**. At 1 MB/image that's ~1,000 images before the repo
-is unusable; at ~100 KB you get ~10,000 — enough to illustrate issues, guides, and
-blog posts for the life of the project. **Git-LFS is overkill** for small docs
-figures; the answer is to shrink images *before* they ever land in history.
+Never commit a raw screenshot. Run `agent-ks img` on it first. Git stores every version of every binary forever, so image size decides how long the repo stays usable.
 
-Rule: **never commit a raw screenshot.** Run `agent-ks img` on it first.
+| Size per image | Images before the repo reaches about 1 to 2 GB |
+|---|---|
+| 1 MB | about 1,000 |
+| 100 KB | about 10,000 |
 
-## What `agent-ks img` is (and isn't)
+Git-LFS is not needed for docs figures. Shrink images before they enter history.
 
-- It **optimizes** images: resize, grayscale, re-encode (webp/avif/png/jpg),
-  strip metadata, and rewrite Markdown links when the extension changes.
-- It does **not capture** anything. It works on whatever image you give it —
-  a Playwright screenshot, a manual screen grab you pasted in, an exported PNG.
-- **Engine:** the ImageMagick CLI (`magick`). One system prerequisite, no npm
-  install. If it's missing, `agent-ks img` tells you how to install it.
+## What `agent-ks img` does
 
-### Capturing web pages (optional, separate)
+| Does | Does not |
+|---|---|
+| Resize, grayscale, re-encode to webp, avif, png or jpg, strip metadata | Capture anything. It works on the image you give it |
+| Rewrite markdown links when the extension changes | Need an npm install. The engine is the ImageMagick CLI `magick`; when it is missing, the tool prints install steps |
 
-If you need a *screenshot of a running web page* and have **Playwright**
-installed, you can capture with it (`page.screenshot()` for raster,
-`page.pdf()` for crisp-text vector), then run `agent-ks img` to shrink the result.
-This is independent of `agent-ks img` — capture is not its job.
+To capture a running web page, use Playwright: `page.screenshot()` for raster, `page.pdf()` for vector text. Then run `agent-ks img` on the result.
 
-## The one decision: what kind of image is it?
+## Choose a recipe
 
 | Image | Recipe |
 |---|---|
-| **Flat UI / screenshot / text** (no photographic gradients) | `--gray` (if monochrome UI) + `--format webp --quality 80`. Add `--dpr 2` if captured on a retina/2× display. |
-| **Photo / rich gradient** | `--format webp --quality 80` (or `avif` lower), no `--gray`, no `--colors`. |
-| **Must stay pixel-perfect** (diagram you'll zoom) | `--format webp --lossless`, keep full resolution. |
+| Flat UI, screenshot, text | `--format webp --quality 80`. Add `--gray` for a monochrome UI. Add `--dpr 2` for a retina capture |
+| Photo or rich gradient | `--format webp --quality 80`, or `avif` for less. No `--gray`, no `--colors` |
+| Must stay pixel-perfect, a diagram to zoom | `--format webp --lossless`, full resolution |
 
-## Default recipe (most screenshots)
+The default recipe for most screenshots:
 
 ```bash
-agent-ks img path/to/images/*.png --dpr 2 --gray --format webp --quality 80 \
-  --rewrite-links
+agent-ks img path/to/images/*.png --dpr 2 --gray --format webp --quality 80 --rewrite-links
 ```
 
-- `--dpr 2` — **the biggest free win.** Browser/retina screenshots render at 2×
-  (e.g. 2880×1800 for a 1440×900 layout). Dividing by 2 quarters the pixels with
-  zero loss a 1× display can show.
-- `--gray` — grayscale UI shots shrink with no visible change.
-- `--format webp --quality 80` — text-crisp and far smaller than PNG.
-- `--rewrite-links` — since the extension changed (`.png`→`.webp`), fix every
-  `![](…)` reference automatically. In-place runs back up originals first.
+| Flag | Effect |
+|---|---|
+| `--dpr 2` | The biggest win. A retina capture is 2×. Halving it quarters the pixels, with no loss on a 1× display |
+| `--gray` | A grayscale UI shot shrinks with no visible change |
+| `--format webp --quality 80` | Crisp text, far smaller than PNG |
+| `--rewrite-links` | Fixes every `![](…)` reference when `.png` becomes `.webp`. An in-place run backs up the originals first |
 
-Typical result: a 10-shot set of dense modals goes from ~2.3 MB → ~250 KB.
+A set of ten dense modals goes from about 2.3 MB to about 250 KB.
 
-## Budget mode — hit a size target
+## Budget mode
 
 ```bash
 agent-ks img images/*.png --dpr 2 --gray --format webp --target-size 100KB --rewrite-links
 ```
 
-`--target-size` steps quality down (80 → 30) until each file fits. If even q30 is
-over budget, it warns — then reach for `--trim` (crop the dead backdrop behind a
-modal) or `--max-dim`/`--scale` (smaller pixels beat lower quality for size).
+`--target-size` steps quality down from 80 to 30 until each file fits. If quality 30 is still over budget, the tool warns. Then use `--trim` to crop a dead backdrop, or `--max-dim` or `--scale` to cut pixels. Fewer pixels beat lower quality.
 
-## Format cheat-sheet
+## Formats
 
-| Format | Use when | Notes |
+| Format | Use when | Note |
 |---|---|---|
-| **webp** | default for everything | lossy *or* `--lossless`; great on text, tiny |
-| **avif** | you need the absolute smallest | best ratios, but some Markdown viewers don't render it |
-| **png** | line art / you need lossless + max compatibility | pair with `--colors N` (palette) to shrink |
-| **jpg** | photos for legacy targets | never for text (ringing on glyph edges) |
+| webp | the default for everything | lossy, or `--lossless`; small and crisp on text |
+| avif | the smallest file matters most | the best ratios; some markdown viewers do not render it |
+| png | line art, or lossless with maximum compatibility | pair with `--colors N` to shrink |
+| jpg | photos for legacy targets | never for text; it rings on glyph edges |
 
-## Gotchas (learned the hard way)
+## Pitfalls
 
-- **`--colors N` helps PNG, hurts lossy webp/avif.** Palette-posterizing smooth
-  anti-aliased edges *adds* high-frequency detail the lossy codec must spend bits
-  on — the file gets *bigger*. `agent-ks img` warns if you combine them. Use
-  `--colors` only with `--format png`.
-- **Resolution, not codec, is the main lever.** `--dpr`/`--scale`/`--trim`
-  shrink more than quality tweaks. Drop DPR and crop first.
-- **Don't upscale.** `--max-dim` only shrinks; `--width` larger than the source
-  just wastes bytes.
-- **Metadata is stripped by default** (`--strip`); pass `--no-strip` only if you
-  truly need EXIF/orientation retained.
-- **`--rewrite-links` only fires on extension change, in-place.** With `--out`
-  (originals untouched) it doesn't rewrite — that mode is for previewing.
-- **Always backed up.** In-place writes copy originals to a temp backup dir
-  (printed in the report) unless you pass `--no-backup`.
+| Pitfall | Rule |
+|---|---|
+| `--colors N` helps PNG and hurts lossy webp and avif | Posterized edges add detail the codec must encode, so the file grows. The tool warns. Use `--colors` only with `--format png` |
+| Resolution is the main lever | `--dpr`, `--scale` and `--trim` shrink more than a quality change. Cut pixels first |
+| Never upscale | `--max-dim` only shrinks. A `--width` above the source wastes bytes |
+| The tool strips metadata by default | Pass `--no-strip` only when EXIF or orientation must stay |
+| `--rewrite-links` fires only in place, on an extension change | With `--out` the tool rewrites nothing; that mode is for a preview |
+| The tool backs up originals | An in-place write copies originals to a backup dir named in the report, unless you pass `--no-backup` |
 
-## Full flag list
+Every flag: `agent-ks img --help`, or [cli-toolkit.md](../../agent-ks-cli/references/cli-toolkit.md).
 
-Run `agent-ks img --help`. Highlights: geometry (`--dpr --scale --width --height
---max-dim --trim`), color/quality (`--gray --quality/-q --lossless --colors
---depth --dither`), format (`--format --no-strip`), output (`--out --backup
---no-backup`), docs (`--rewrite-links --links-root --target-size`), misc
-(`-r/--recursive --dry-run --quiet`).
+## SVG
 
-## SVG?
-
-Vector with real (selectable) text would be ideal for flat UI, but **PNG→SVG
-tracing doesn't deliver it** — it turns glyphs into fuzzy outlines and the file
-usually ends up *larger* than a quantized webp. The only real win is
-**capture-time** (`<foreignObject>`/`dom-to-svg`, or `page.pdf()` for vector
-text), which belongs in a capture step, not in `agent-ks img`. So: don't convert
-existing raster images to SVG; if you want crisp-text vector figures, capture
-them as SVG/PDF from the live DOM.
+Do not trace a raster image to SVG. Tracing turns glyphs into fuzzy outlines, and the file is usually larger than a quantized webp. A vector figure with real text comes only from the capture step: `page.pdf()`, or a DOM-to-SVG capture. That is not the job of `agent-ks img`.

@@ -1,17 +1,10 @@
 # agent-ks
 
-Claude Code plugin for the [agent-knowledge-system](https://github.com/sidhanthapoddar99/agent-knowledge-system) framework. Ships:
+The plugin for the [agent-knowledge-system](https://github.com/sidhanthapoddar99/agent-knowledge-system) framework. It teaches an AI agent to write docs and blog posts, and to run the folder-per-issue tracker. It also covers HTML artifacts and the `agent-ks` CLI. Every command is a skill folder under `skills/`. Claude Code and Codex both read skill folders. The CLI runs on bun.
 
-- **3 skills** — `agent-ks-docs` (operating manual for docs / blog / config / writing / themes — triages to domain-specific reference files), `agent-ks-issues` (the complete, self-contained issue-tracker skill: anatomy, creation rules, subtasks, brainstorms, agent-logs, agent-memory, the dump — also fires on the execution verbs audit / refactor / loop / discuss), and `agent-ks-artifacts` (building self-contained HTML artifacts — reports, dashboards, data visualizations, design systems — as `.html` content files served at `/artifacts`, with a `.meta.json` sidecar; bundles a palette validator)
-- **The `agent-ks` CLI** — one dispatcher on `PATH`; every operation is `agent-ks <group> <verb>` (issue tracker, validators, docs+blog content, git metadata, cross-content `find`, link-aware `move`, `img`). Discover with `agent-ks help`
-- **4 slash commands** — `/agent-ks-init` (bootstrap a new docs project from zero), `/agent-ks-add-section` (scaffold a new top-level section), `/agent-ks-quick-idea-note` (capture an ad-hoc idea into the issue dump), and `/agent-ks-fast-index-check` (check whether an index still agrees with the files it points at)
-- **1 agent** — `agent-ks-index-checker`, a fast read-only subagent that reports index staleness and never edits
+## Install for Claude Code
 
-The skills teach Claude Code how to navigate agent-knowledge-system (an Astro-based engine): the project's `data/` content layout, frontmatter conventions, the folder-per-issue tracker, `site.yaml` configuration, custom themes, and more. Each task is triaged to a domain-specific reference file rather than dumping everything into one long prompt.
-
-## Install
-
-Distributed via [`sids-plugin-marketplace`](https://github.com/sidhanthapoddar99/sids-plugin-marketplace):
+The plugin ships through [sids-plugin-marketplace](https://github.com/sidhanthapoddar99/sids-plugin-marketplace):
 
 ```
 /plugin marketplace add sidhanthapoddar99/sids-plugin-marketplace
@@ -19,54 +12,103 @@ Distributed via [`sids-plugin-marketplace`](https://github.com/sidhanthapoddar99
 /reload-plugins
 ```
 
-After install, `agent-ks` is on your `PATH` automatically (Claude Code adds the plugin's `bin/` to PATH at session start), as an extensionless bash shim (Linux / macOS / WSL / Git Bash) plus a `.cmd` shim (native Windows cmd / PowerShell). Try:
+Claude Code adds the plugin's `bin/` to `PATH` at session start. So `agent-ks` is on `PATH` at once. Try:
 
 ```
+agent-ks help
 agent-ks issue list --priority high
-agent-ks issue list --search "indexer" --status open,review
-agent-ks issue review-queue
-agent-ks check config             # validate site.yaml / navbar.yaml / footer.yaml
-agent-ks check section ./data/user-guide
+agent-ks check config
 ```
 
-The skills trigger automatically whenever you work on docs (agent-ks-docs) or the issue tracker (agent-ks-issues) in an agent-knowledge-system project (i.e. one with a `agent-knowledge-system/` framework folder, with `.env`'s `CONFIG_DIR` pointing at the project's config).
+## Install for Codex
 
-## Bootstrap a new project
+Codex 0.149 or later installs the plugin from the same marketplace. Codex reads `.codex-plugin/plugin.json` in this folder:
 
-In a fresh directory:
-
-```
-/agent-ks-init
-```
-
-Walks you through scope (whole repo vs subfolder), site name, and first section name; scaffolds `config/`, `data/`, starter page, and patches `CLAUDE.md`. Prints the framework-clone command at the end.
-
-To add another top-level section to an existing project:
-
-```
-/agent-ks-add-section [name]
+```bash
+codex plugin marketplace add sidhanthapoddar99/sids-plugin-marketplace
+codex plugin add agent-ks@sids-plugin-marketplace
 ```
 
-Computes the next `NN_` prefix, scaffolds `settings.json` + `01_overview.md`, and (optionally) registers the section in `config/site.yaml`.
+Codex lists the skills with the prefix `agent-ks:`. Then put the CLI on `PATH`. See [The CLI on PATH](#the-cli-on-path).
 
-## What's inside
+## Install the skills only, no plugin, no marketplace
 
-| Capability | Where |
+The [skills CLI](https://github.com/vercel-labs/skills) copies skill folders from a git repo straight into the skills folder of each agent. It knows Claude Code, Codex, OpenCode, Hermes and more. One command, pick the agents and skills when it asks:
+
+```bash
+npx skills add sidhanthapoddar99/agent-knowledge-system -g
+```
+
+Or with no questions, every skill into every agent it finds:
+
+```bash
+npx skills add sidhanthapoddar99/agent-knowledge-system -g --all
+```
+
+`npx skills add sidhanthapoddar99/agent-knowledge-system --list` shows the skill names. `--skill <name>` picks some. `-a <agent>` picks agents. Drop `-g` to install into the current project only. `npx skills update` pulls new versions.
+
+This installs the skills alone. The CLI is not on `PATH` yet. See [The CLI on PATH](#the-cli-on-path).
+
+**Claude Code, one session, from a checkout.** Load the plugin folder with a flag. No install at all:
+
+```bash
+claude --plugin-dir /path/to/agent-knowledge-system/plugins/agent-ks
+```
+
+## Install for OpenCode, Hermes and other agents
+
+Every skill is a plain folder with a `SKILL.md`. Any agent that reads the skill format can use them. Clone the framework repo once, then link the `skills/` folder into the place your agent scans:
+
+| Agent | Skill folder it scans |
 |---|---|
-| Docs/blog/config skill | `skills/agent-ks-docs/SKILL.md` (+ reference files in `references/`) |
-| Issue-tracker skill | `skills/agent-ks-issues/SKILL.md` (+ ~20 reference files in `references/`) |
-| Artifacts skill | `skills/agent-ks-artifacts/SKILL.md` (+ `references/` incl. a `dataviz/` sub-folder, and a bundled `scripts/validate_palette.js`) |
-| CLI entrypoint | `bin/agent-ks` (bash) + `bin/agent-ks.cmd` (Windows) |
-| CLI dispatcher | `skills/agent-ks-docs/scripts/cli.mjs` — the `<group> <verb>` → script map |
-| 4 slash commands | `commands/agent-ks-init.md`, `commands/agent-ks-add-section.md`, `commands/agent-ks-quick-idea-note.md`, `commands/agent-ks-fast-index-check.md` |
-| Index-checker agent | `agents/agent-ks-index-checker.md` |
-| Helper scripts | `skills/agent-ks-docs/scripts/{issues,blog,config,docs}/*.mjs` (the dispatcher routes to these) |
+| OpenCode | `.agents/skills/` in the project, or `~/.config/opencode/skills/` for all projects |
+| Hermes Agent | `~/.hermes/skills/` |
+| Other | the agent's own skills folder, one sub-folder per skill |
+
+```bash
+git clone https://github.com/sidhanthapoddar99/agent-knowledge-system.git
+ln -s "$PWD/agent-knowledge-system/plugins/agent-ks/skills/"* ~/.config/opencode/skills/   # OpenCode
+ln -s "$PWD/agent-knowledge-system/plugins/agent-ks/skills/"* ~/.hermes/skills/            # Hermes
+```
+
+Restart the agent, or start a new session, so it finds the new skills. Then put the CLI on `PATH`.
+
+The `agents/` folder is Claude-only. Elsewhere, [the index-check skill](./skills/agent-ks-index-check/SKILL.md) runs the check by hand.
+
+## The CLI on PATH
+
+Claude Code puts `bin/` on `PATH` by itself. Every other agent needs one line in the shell profile, pointing at a checkout of the framework repo:
+
+```bash
+export PATH="$PATH:/path/to/agent-knowledge-system/plugins/agent-ks/bin"
+```
+
+Install [bun](https://bun.sh) if it is missing. The CLI requires bun and refuses to run on node. Check with `agent-ks help`.
+
+## The skills
+
+| Skill | Use | Invoke |
+|---|---|---|
+| [agent-ks-cli](./skills/agent-ks-cli/SKILL.md) | the CLI contract, every command and flag, the file templates | loads when a command is needed |
+| [agent-ks-docs](./skills/agent-ks-docs/SKILL.md) | docs pages, blog posts, site config, themes, images | triggers on docs work |
+| [agent-ks-issues](./skills/agent-ks-issues/SKILL.md) | the issue tracker: issues, subtasks, plans, agent logs, agent memory | triggers on tracker work |
+| [agent-ks-artifacts](./skills/agent-ks-artifacts/SKILL.md) | self-contained HTML artifacts: reports, dashboards, data visualizations, design systems | triggers on artifact work |
+| [agent-ks-init](./skills/agent-ks-init/SKILL.md) | set up a new project from the starter template | `/agent-ks-init` |
+| [agent-ks-add-section](./skills/agent-ks-add-section/SKILL.md) | add a top-level docs section | `/agent-ks-add-section [name]` |
+| [agent-ks-quick-idea-note](./skills/agent-ks-quick-idea-note/SKILL.md) | capture an idea into the issue dump | `/agent-ks-quick-idea-note [idea]` |
+| [agent-ks-index-check](./skills/agent-ks-index-check/SKILL.md) | check an index against the files it names; reports only | `/agent-ks-index-check [path]` |
+
+The Claude-only agent `agent-ks-index-checker`, in [agents/](./agents/agent-ks-index-checker.md), is a shim. It reads the index-check skill and follows it.
+
+## The CLI
+
+One entrypoint, `agent-ks`. Every operation is `agent-ks <group> <verb>`. The groups: `issue` (tracker), `check` (validators), `doc` and `blog` (content), `git` (content history), `theme` (tokens). Three verbs stand alone: `find`, `move` and `img`. `agent-ks help` lists every command. `agent-ks help <command>` shows its flags. `--json` gives machine output. The code lives in `skills/agent-ks-cli/scripts/`. `bin/agent-ks` (bash) and `bin/agent-ks.cmd` (Windows) are shims that run it with bun. [The cli skill](./skills/agent-ks-cli/SKILL.md) holds the contract and the exit codes.
 
 ## Requirements
 
-- A agent-knowledge-system-shaped project (the `agent-knowledge-system/` framework folder cloned somewhere, with `.env`'s `CONFIG_DIR` pointing at the project's `config/`)
-- `bun` preferred for running the helpers and the framework; `npm` / `node` work as fallbacks
+- bun on `PATH`.
+- A project shaped for the framework: the `agent-knowledge-system/` framework folder, with `CONFIG_DIR` in its `.env` pointing at the project's `config/`.
 
 ## License
 
-TBD — placeholder. Decide before any public distribution.
+MIT. See [LICENSE](./LICENSE).

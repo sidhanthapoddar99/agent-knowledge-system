@@ -1,46 +1,64 @@
 # Format migrations
 
-How the on-disk content format evolves without hand-editing every file. **Reach for this reference rarely** — migrations are not part of normal authoring.
+How the on-disk content format moves to a new version without hand edits. Migrations are rare. They are not part of normal authoring.
 
-## When to use
+## When to use this file
 
-Only in these cases:
+| Trigger | Action |
+|---|---|
+| The engine's version gate fired: "This content targets engine X, but this engine is Y" | Run the upgrade flow below. The gate names the range to migrate across |
+| The user asks to run or write a migration | Run the flow. A new script is framework maintenance; see the last section |
+| A build error or a validator warning names a legacy field | Run the detect pass, report the count and the locations, and wait for a go-ahead |
+| The user asks "does X need migrating?" or "check legacy" | Run the detect passes and report |
 
-- **The engine's version gate fired** — the build stopped with *"This content targets engine X, but this engine is Y…"*. This is the primary trigger: content and engine carry an explicit version contract (site.yaml `engine_version` vs `ENGINE_VERSION` / `MIN_CONTENT_VERSION` in `astro-doc-code/src/loaders/engine-version.ts`; missing declaration → `0.0.0`), and the gate names exactly the range to migrate across. Follow "The upgrade flow" below — bumping `engine_version` without running the chain is never the answer.
-- The user **explicitly asks** to run / write a migration ("migrate the `done` field", "convert these to the new format").
-- A build error or validator warning points at a **legacy / old-format field** in content. In this case, **surface it and confirm before migrating** — report what the detect pass finds (count + locations) and get the user's go-ahead; do not migrate just because a warning appeared.
-- The user asks a **"does X need migrating?" / "check legacy"** question about a section.
+If none applies, author content in the current format from the other references.
 
-If none of these apply, you do not need migrations — author content with the current format documented in the other references.
+The contract: `site.yaml → engine_version` names the version the content targets; a missing value counts as `0.0.0`. The engine accepts the range `[MIN_CONTENT_VERSION, ENGINE_VERSION]` from `astro-doc-code/src/loaders/engine-version.ts`.
 
-> **Always confirm before applying a migration.** Migrations rewrite content in place. Run the detect/locate pass, show the user the count and affected files, and wait for an explicit go-ahead before the write pass — even when an error or warning triggered it. The only exception is when the user has already explicitly asked you to run that migration.
+**Confirm before you apply.** A migration rewrites content in place. Run the detect pass, show the count and the files, and wait for an explicit go-ahead. The one exception: the user asked you to run that migration.
 
-## Where they live — the framework repo root, NOT this plugin
+## Where migrations live
 
-```
-<repo-root>/migration/<to-version>_<statement>.py
-```
+`<framework-repo>/migration/<to-version>_<statement>.py`. The code is part of the framework repo. This skill holds only the operating manual.
 
-**The migration code is part of the framework repo itself — refer to that folder and check it**; the plugin only carries this operating manual. One file per migration, named by the **engine version it brings content to** (`N.N.N`), then a short statement — version order is execution order (authoring dates live inside the docstrings; provenance, not ordering). They are **Python (stdlib only)** because they are **one-off runs**, not part of the live `.mjs` validator/CLI path. Each script is **self-documenting**: its module docstring carries the full purpose, behaviour, and usage. This reference does not enumerate individual scripts — open the script and read its docstring; `migration/README.md` carries the convention.
+| Fact | Detail |
+|---|---|
+| One file per migration | Named by the engine version it brings content to, `N.N.N`, then a short statement |
+| Version order is execution order | Authoring dates live inside docstrings, as provenance only |
+| Python, stdlib only | One-off runs, outside the live CLI |
+| Self-documenting | The module docstring carries purpose, behaviour and usage. Read it before you run the script |
 
-## The upgrade flow — never bump past the gate
+The convention lives in `migration/README.md` in the framework repo.
 
-When the gate reports *content targets X, engine is Y*, the **only** legitimate exit is running the migration chain. Editing `engine_version` to Y without migrating defeats the mechanism's entire purpose: the gate exists precisely so format drift is *detected here, loudly* — a bare bump moves the breakage downstream, where it resurfaces as silent misrendering with no error pointing at the cause. **This holds regardless of what the user asks.** If asked to "just change the version and move on", explain the above and run the checks instead — the detect passes are read-only and cost seconds; there is no scenario where skipping them is the right trade.
+## The upgrade flow
 
-The chain, in full — no skipping, no sampling:
+The gate exists to detect format drift here, loudly. A bare bump of `engine_version` moves the breakage downstream, where it shows as silent misrendering. So the only exit from a gate error is the chain. If the user asks to "just change the version", explain this and run the detect passes. They are read-only and take seconds.
 
-1. Enumerate **every** script in `migration/` with a version in `(X, Y]` — migrating 0.0.5 → 0.1.2 means checking *all* scripts above 0.0.5 up to and including 0.1.2, not just the newest one.
-2. For each, ascending, run its **detect** pass first (read-only, always safe). A detect that finds zero instances is a **passed check, not a skipped script** — note it and continue.
-3. Where detect finds instances: `--dry-run`, show the user the count + affected files, get the go-ahead, migrate, then **re-run detect and confirm zero** — that re-run is the migration test.
-4. Verify the whole tree: `agent-ks check issues` / `check section …` clean, and a build passes.
-5. **Only now** set `engine_version: "Y"` in `site.yaml`. The bump is the last step, never the first.
+| Step | Action |
+|---|---|
+| 1 | List every script in `migration/` with a version in `(X, Y]`. All of them, not only the newest |
+| 2 | For each script, ascending, run `detect`. Zero hits is a passed check, not a skipped script |
+| 3 | Where detect finds hits: run `migrate --dry-run`, show the user, get the go-ahead, run `migrate`. Then run `detect` again and confirm zero |
+| 4 | Verify the tree: `agent-ks check issues`, `agent-ks check section …`, and a build |
+| 5 | Set `engine_version: "Y"` in `site.yaml`. This is the last step, never the first |
 
-## Migration structure
+## Script structure
 
-Every script follows one standardized shape, so once you know it you can run any of them:
+Every script has one shape.
 
-- **Subcommands**: `detect` (summary counts — does this need migrating, how big?) · `locate` (every instance, file + line) · `migrate [--dry-run]` (apply, or preview without writing) · `verify` (assert clean after migrating; exits non-zero if legacy remains — newer scripts may exit-code `detect` instead of shipping a separate `verify`).
-- **Two function families** inside: read-only test/detect functions and writing fix functions. `verify` reuses the same detection core the migration is judged against, so migrate → verify exit 0 proves the tree is clean.
-- **A detailed module docstring** on top. **Read it carefully before running the script**: it states exactly what gets migrated, why the format changed, how to run each mode — and, crucially, **any manual migration steps** the script cannot automate (edge cases needing human judgement, follow-up actions beyond the rewrite). A clean `verify` proves the automated part only; the docstring is where the rest of the procedure lives.
+| Subcommand | Does |
+|---|---|
+| `detect` | Summary counts. Does the tree need this migration, and how much |
+| `locate` | Every instance, with file and line |
+| `migrate [--dry-run]` | Apply, or preview without writing |
+| `verify` | Assert the tree is clean; exits non-zero when legacy content remains. Some scripts exit-code `detect` instead |
 
-Writing a *new* migration happens in framework-maintenance sessions, not through this skill — the authoring contract and shipping checklist are in dev-docs **Versioning → Authoring Migrations** (`default-docs/data/dev-docs/30_versioning/05_authoring-migrations.md`).
+Inside, read-only detect functions sit apart from writing fix functions. `verify` reuses the detection core, so `migrate` then `verify` with exit `0` proves the tree is clean.
+
+The docstring also lists the manual steps the script cannot automate. A clean `verify` proves the automated part only.
+
+`agent-ks check legacy-tags [root]` finds custom-tag syntax the renderer does not support (`:::callout`, `<callout>`, `<tabs>`, `<collapsible>`). It names the native replacement for each hit and skips fenced examples.
+
+## Writing a new migration
+
+That is framework maintenance, not this skill. The authoring contract and the shipping checklist: `@root/default-docs/data/dev-docs/30_versioning/05_authoring-migrations.md`.

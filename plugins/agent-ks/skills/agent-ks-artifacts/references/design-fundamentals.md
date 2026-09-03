@@ -1,168 +1,110 @@
 # Design fundamentals
 
-The craft that applies to **every** artifact, whatever its treatment (`SKILL.md`
-§0 decides the treatment; this file is what you execute afterward). Work like a
-versatile studio serving a client: palette, type, and layout decisions made
-deliberately *for this subject*, with the templated default never the reason a
-choice was made.
+Calibrate the treatment first. Then these rules apply to every artifact. Make each palette, type and layout decision for this subject; a templated default is never the reason for a choice.
 
-## Fundamentals for every artifact
+## Calibrate the treatment
 
-- **Anchor everything to the subject.** A subject that hasn't been pinned gets
-  pinned first: name one concrete subject, who reads it, and the one job the page
-  performs. Distinctive decisions grow out of the subject's own territory — the
-  materials it involves, the instruments around it, the vocabulary its people use.
-  Populate the page with real content from the start (§ *Realistic content*).
-- **Neutrals are decisions too.** Dead-center mid-grey announces that nobody chose
-  it; a grey leaning faintly toward the page's accent announces that somebody did.
-  Plain white and near-black grounds are perfectly good — *when the subject wants
-  them*. What matters is a neutral somebody selected on purpose rather than one
-  that arrived by default. (In `site` mode the neutrals arrive via `--color-bg-*` /
-  `--color-text-*`; the pick-don't-default rule concerns `self` artifacts, which
-  declare their own.)
-- **Space with layout, not margins.** Sibling groups get flex or grid plus `gap`;
-  per-element margins collapse and double without telling you. Anything wide — a
-  table, a code block, a diagram — scrolls inside its *own* `overflow-x: auto`
-  wrapper, and the page body itself never grows a horizontal scrollbar. Digit
-  columns take `font-variant-numeric: tabular-nums` (big standalone numbers do
-  not — the dataviz figure rules cover why).
-- **Build so the output matches the source.** The gap between what you wrote and
-  what renders is where visual bugs live: elements overlapping, cascade rules
-  colliding, a font silently falling back. Every non-void element gets closed,
-  every attribute double-quoted; keyboard focus is visibly styled, and
-  `prefers-reduced-motion` is respected. When a graphic is generative or decorative, draw it
-  with Canvas or WebGL instead of hand-writing long runs of SVG path data.
-- **Watch selector specificity.** Generated CSS loves producing classes that undo
-  each other — a `.section` rule and a `.cta` rule wrestling over the same padding
-  is the classic case. Arrange the cascade so no rule quietly cancels the spacing
-  another one set.
-- **Copy is part of the design.** Stand on the reader's side of the screen when
-  naming things: people recognize what they *do*, not the system's internal
-  wiring — a person manages *notifications*, no one manages *webhook config*. Keep the voice
-  active, and let a control declare its exact effect: a button reading "Publish",
-  a toast confirming "Published". An error message states what broke and what to
-  do about it — never an apology, never a shrug. Concrete wording beats clever
-  wording.
-- **Structure must tell the truth.** Numbering, eyebrows, dividers, labels — every
-  structural device has to encode a real property of the content, not dress it up.
-  Markers like 01 / 02 / 03 are honest only when the content actually runs in
-  order (a genuine process, a dated timeline). Before adding any device, ask what
-  fact about the content it expresses.
+Read the request before any visual decision. The question is never whether to design; a plan deserves the same craft as a landing page. The question is which treatment carries that craft. Pick one row.
+
+| Treatment | Use for | Rule |
+|---|---|---|
+| Utilitarian, the default | An embedded explainer, a status dashboard, a metrics report, a decision memo | Real typographic hierarchy, considered spacing, a chosen palette. No giant hero. Flourishes few and tasteful. A well-composed page is never wrong. |
+| Editorial | A standalone showcase: a brand-guideline landing surface, a poster-like specimen, an interactive toy to keep or share | Ask three questions before code. Purpose: what job, whose eyes. Tone: a concrete direction from the tone menu below. Differentiation: the one thing a reader remembers. Commit to strong choices. Let one aesthetic gamble land where the work can carry it. |
+| Decision tooling | A variation set: N options of one element, built to pick one | Each option is editorial and reads as a shippable design; the governor does not apply to the options. The chrome around them (switcher, comparison table) stays utilitarian. See [design-systems.md](design-systems.md#variation-sets). |
+
+When unsure, choose utilitarian: an over-composed page is sometimes wrong, a clean one never is. The editorial branch below runs only on an editorial read.
+
+## Fundamentals
+
+| Rule | Do |
+|---|---|
+| Anchor to the subject | Name one concrete subject, its reader and the one job the page does. Draw distinctive choices from the subject's own materials, instruments and vocabulary. Fill the page with real content from the start. |
+| Neutrals are decisions | A dead-center mid-grey reads as unchosen. Lean a grey toward the page's accent. Plain white and near-black grounds are good when the subject wants them. In `site` mode the neutrals come from `--color-bg-*` and `--color-text-*`; this rule concerns `self` mode. |
+| Space with layout | Give sibling groups flex or grid plus `gap`. Per-element margins collapse and double without warning. Wide content follows the [never-table](../SKILL.md#never). |
+| Output matches source | Close every non-void element. Double-quote every attribute. Style keyboard focus visibly. Honor `prefers-reduced-motion`. Draw generative or decorative graphics with Canvas or WebGL, not long hand-written SVG paths. |
+| Watch specificity | Arrange the cascade so no rule cancels the spacing another rule set. A `.section` rule and a `.cta` rule that fight over one padding is the common case. |
+| Structure tells the truth | Every numbering, eyebrow, divider or label encodes a real property of the content. Use 01 / 02 / 03 only when the content runs in that order. |
+| Digits | Digit columns take `font-variant-numeric: tabular-nums`. Big standalone numbers do not; see [dataviz.md](dataviz.md#figures). |
+
+## Copy
+
+Copy is part of the design.
+
+- Name things by what people do: a person manages notifications, not webhook config.
+- Keep the voice active.
+- Let a control state its exact effect: a button reads "Publish"; a toast reads "Published".
+- An error states what broke and what to do. No apology. No vague message.
+- Concrete wording beats clever wording.
 
 ## The anti-generic rules
 
-AI-produced design keeps collapsing into the same few looks. When the user names a
-visual direction, **deliver that direction verbatim — their words outrank every
-rule here, even when what they name sits on this list.** When no direction is
-given, don't burn that latitude reproducing one of these:
+AI-produced design repeats a few looks. The user's named direction outranks every rule here, even when it is on the list. With no direction given, do not spend that freedom on one of these.
 
-- a cream ground (`#F4F1EA`) under a serif display face, accented in terracotta
-- a near-black page rescued by one acid-green or vermilion highlight
-- a hero washing purple into blue over a white page
-- Inter or Space Grotesk picked as the "safe" face
-- a broadsheet look — hairline rules over dense text columns
-- sections flagged with emoji
-- center-aligning the entire page
-- `rounded-lg` applied to everything indiscriminately
-- rounded cards wearing an accent bar or rail
+Color and type defaults:
 
-No entry here is *banned* — each earned its place only by being the unconsidered
-default. A subject that genuinely calls for one gets it, deliberately.
+- A cream ground (`#F4F1EA`) under a serif display face, accented in terracotta.
+- A near-black page with one acid-green or vermilion highlight.
+- A hero that washes purple into blue over a white page.
+- Inter or Space Grotesk as the "safe" face.
 
-**Scale the execution to the vision.** A maximalist direction demands elaborate
-follow-through; a minimal one demands exactness of spacing, of type, of detail.
-Elegance means the chosen vision executed well, not the dial turned to maximum.
-Concentrate boldness at a single point and let its surroundings stay quiet; an
-accent at war with its ground gets pulled toward an analogous hue or desaturated —
-not swapped out.
+Layout defaults:
 
-## Editorial branch only — the tone menu and texture
+- A broadsheet look: hairline rules over dense text columns.
+- Sections flagged with emoji.
+- The whole page center-aligned.
+- `rounded-lg` on everything.
+- Rounded cards with an accent bar or rail.
 
-Everything in this section applies **only** when `SKILL.md` §0 read the request as
-*editorial*, and it stays under the restraint governor — these are aids for
-picking a direction on a standalone showcase, never permission to over-design a
-utilitarian page.
+No entry is banned. A subject that calls for one gets it, deliberately.
 
-- **Commit to a specific tone** instead of settling into a neutral one: brutally
-  minimal, maximalist, retro-futuristic, organic/natural, luxury/refined,
-  playful/toy-like, editorial-magazine, brutalist/raw, art-deco/geometric,
-  soft/pastel, industrial/utilitarian. Treat the list as a springboard — design a
-  tone that belongs to *this* subject rather than transplanting a flavour whole.
-- **Diverge between generations; never settle on one face.** Reaching for the same
-  display family every time (Space Grotesk being the canonical offender) is
-  convergence. Rotate light against dark, the type pairing, the entire aesthetic
-  from artifact to artifact.
-- **A background can be atmosphere, not just fill.** Where the direction supports
-  it: gradient meshes, restrained noise or grain, geometric pattern, layered
-  transparency, dramatic shadow, a decorative border. Texture stays only while it
-  serves the tone — never as filler, and always answering to
-  `prefers-reduced-motion`.
-- **Open with a thesis.** An editorial artifact leads with whatever is most
-  characteristic of its subject — a headline, an image, a live demo, an interactive
-  moment. Motion is choreographed, not sprinkled: one orchestrated page-load or
-  scroll reveal beats scattered micro-effects, and over-animation is itself a
-  recognizable AI-design tell.
+Scale the execution to the vision. A maximalist direction needs elaborate follow-through. A minimal one needs exact spacing, type and detail. Put boldness at one point and keep its surroundings quiet. When an accent fights its ground, pull it toward an analogous hue or desaturate it. Do not swap it.
 
-(Intensity is not decided here — the treatment governor in §0 owns that call.)
+## Editorial branch
+
+This section applies only when the treatment is editorial. It stays under the treatment governor.
+
+| Rule | Do |
+|---|---|
+| Commit to a tone | Pick one: brutally minimal, maximalist, retro-futuristic, organic, luxury, playful, editorial-magazine, brutalist, art-deco, soft pastel, industrial. Treat the list as a start. Design a tone that belongs to this subject. |
+| Diverge between generations | Do not reach for the same display face every time; Space Grotesk is the common offender. Rotate light against dark, the type pairing and the whole aesthetic from artifact to artifact. |
+| Background as atmosphere | Where the direction supports it: a gradient mesh, restrained grain, a geometric pattern, layered transparency, dramatic shadow, a decorative border. Keep texture only while it serves the tone. Texture answers to `prefers-reduced-motion`. |
+| Open with a thesis | Lead with the most characteristic thing about the subject: a headline, an image, a live demo, an interactive moment. Choreograph motion into one page-load or scroll reveal. Over-animation marks a page as AI-made. |
 
 ## Typography
 
-Type carries an artifact even when the artifact isn't *about* type.
+Type carries an artifact even when the artifact is not about type.
 
-- **Measure.** Hold running text around a 65-character line. Commit to a type
-  scale and don't leave it. In `site` mode that means the semantic tokens
-  (`--content-*` for prose, `--ui-text-*` for chrome); in `self` mode define a
-  scale of your own — but it must remain a scale.
-- **Pairing.** Put a characterful display face (dosed sparingly) against a body
-  face that complements it, with a third, utilitarian face on caption-and-data
-  duty when needed. Headings get `text-wrap: balance`; body text gets air; uppercase labels
-  get a whisper of letter-spacing.
-- **Font delivery is a publishing concern.** The face ships as `.woff2` under the
-  repo assets, referenced relatively — a webfont CDN link is out (see
-  `publishing.md` → *Fonts*). A font that silently fell back still "looks fine"
-  because *something* rendered; the check that catches it is inspecting the
-  **computed** font, not trusting the impression.
+- Hold running text near a 65-character measure.
+- Commit to one type scale. In `site` mode use the semantic tokens: `--content-*` for prose, `--ui-text-*` for chrome. In `self` mode define your own scale and keep to it.
+- Pair a characterful display face, used sparingly, with a body face that complements it. Add a utility face for captions and data when needed.
+- Give headings `text-wrap: balance`. Give body text air. Give uppercase labels a little letter-spacing.
+- Font delivery is a publishing concern; see [publishing.md](publishing.md#fonts).
 
-## When the artifact is a UI, not a document — route into dataviz
+## When the artifact is a UI
 
-A dashboard or tool gets *scanned and operated* rather than read top to bottom,
-which moves the craft from typography toward information design:
+A dashboard or a tool is scanned and operated, not read top to bottom. The craft moves from typography to information design.
 
-- Put the summary in front of the detail.
-- Let **form** carry state alongside the number — a chip, a pill, a severity
-  stripe — keeping whatever needs attention legible at a glance.
-- **Semantic color (good / warning / critical) lives apart from the accent and
-  never counts toward it.**
-- Anything interactive should announce it visually.
+- Put the summary before the detail.
+- Let form carry state beside the number: a chip, a pill, a severity stripe.
+- Keep semantic color (good, warning, critical) apart from the accent. It never counts toward the accent.
+- Make every interactive part announce it visually.
 
-The moment an artifact has a chart, a stat tile, a meter, or any plotted data,
-**switch to [`dataviz/00_overview.md`](dataviz/00_overview.md)** and follow its
-procedure — the chart-specific craft (forms, color jobs, marks, interaction,
-anti-patterns) lives there, deliberately not duplicated here.
+When an artifact holds a chart, a stat tile, a meter or any plotted data, switch to [dataviz.md](dataviz.md). Follow its procedure.
 
-## Process — plan before code
+## Process
 
-No code until a compact design plan exists:
+Write no code before a compact plan exists.
 
-- **Color** — 4–6 hex values, each with a name (or the named theme tokens, in
-  `site` mode).
-- **Type** — faces for at least two roles: a display face dosed with restraint, a
-  body face, plus a utility face for captions/data when called for.
-- **Layout** — the layout idea, stated in a sentence or two.
+| Part | Content |
+|---|---|
+| Color | Four to six hex values, each named; or the theme tokens in `site` mode |
+| Type | Faces for at least two roles: a display face and a body face; a utility face when needed |
+| Layout | The layout idea in one or two sentences |
 
-Build from the plan, tracing each color choice and each type choice back to it.
-**Editorial addendum:** hold the finished plan up against the subject before any
-code — any part of it that could have been produced for *any* similar page gets
-revised, with a note on what changed and why. The code gets written only after the
-plan has proven its uniqueness, and then it follows the revised plan to the
-letter.
+Build from the plan. Trace each color and type choice back to it.
+
+Editorial addendum: hold the plan against the subject before code. Revise any part that could serve any similar page. Note what changed and why. Then follow the revised plan exactly.
 
 ## Realistic content
 
-One rule, everywhere: **real content — no lorem, no `foo` / `test`.** Curate
-before inventing: real values win whenever they exist, and anything fabricated is
-fabricated *plausibly* and labeled as such. Whatever exhibits variants (a design
-system, a component gallery) shows the canonical example first, then the variant
-sweep, then the static states — empty, loading, error — which are content in their
-own right, not afterthoughts. The verify gate (`SKILL.md` §3, *Plausible*) checks
-this.
+Use real content everywhere. No lorem. No `foo` or `test`. Curate before you invent: real values win when they exist. Make a fabricated value plausible and label it as fabricated. Anything with variants (a design system, a component gallery) shows the canonical example first. Then the variant sweep. Then the static states: empty, loading, error. The verify gate in [publishing.md](publishing.md#verify-before-you-publish) checks this.

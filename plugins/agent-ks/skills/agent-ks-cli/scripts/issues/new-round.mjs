@@ -21,7 +21,7 @@ import {
   parseArgs, printHelp, relForLog, parseGroupSegments, sanitizeName, csv, AGENT_LOG_INDEX,
 } from './_lib.mjs';
 import { frontmatterData } from '../_frontmatter.mjs';
-import { renderTemplate, readTemplate } from '../_templates.mjs';
+import { renderTemplate, readTemplate, TEMPLATE_NAMES } from '../_templates.mjs';
 
 const args = parseArgs(process.argv.slice(2));
 const id = args._[0];
@@ -188,7 +188,8 @@ if (!hasIndex) {
 } else {
   // Drop the template's placeholder sentence the first time a real entry lands.
   const placeholder = new Set(
-    (readTemplate('log-index').lead.split(/\n## Files\n/)[1] || '').split(/\n## /)[0].split('\n').map((l) => l.trim()).filter(Boolean),
+    TEMPLATE_NAMES.filter((n) => n.startsWith('log-index')).flatMap((n) =>
+      (readTemplate(n).lead.split(/\n## Files\n/)[1] || '').split(/\n## /)[0].split('\n').map((l) => l.trim()).filter(Boolean)),
   );
   let end = head + 1;
   while (end < lines.length && !/^#{1,2} /.test(lines[end])) {

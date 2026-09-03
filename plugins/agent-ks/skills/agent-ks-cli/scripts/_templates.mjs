@@ -18,7 +18,13 @@ import { makeFenceTracker } from './_links.mjs';
 export const TEMPLATE_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'templates');
 
 /** Every template name, one per file type. */
-export const TEMPLATE_NAMES = ['subtask', 'plan-overview', 'plan-stage', 'log-index', 'log-round', 'note', 'comment'];
+export const TEMPLATE_NAMES = ['subtask', 'plan-overview', 'plan-stage', 'log-index', 'log-index-lp', 'log-index-rf', 'log-index-au', 'log-index-re', 'log-index-it', 'log-index-wf', 'log-round', 'note', 'comment'];
+
+/** The index template for one agent-log kind: `log-index-<kind>` when it exists, else the fallback. */
+export function logIndexTemplateFor(kind) {
+  const name = `log-index-${kind}`;
+  return TEMPLATE_NAMES.includes(name) && fs.existsSync(templatePath(name)) ? name : 'log-index';
+}
 
 const cache = new Map();
 

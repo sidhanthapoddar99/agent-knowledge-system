@@ -338,6 +338,7 @@ export const DEFAULT_AGENT_LOG_KINDS: Record<string, AgentLogKind> = {
   lp: { name: 'loop', icon: 'repeat', desc: 'Autonomous multi-iteration runs toward one goal.' },
   au: { name: 'audit', icon: 'search', desc: 'Systematic review / inspection sweeps.' },
   rf: { name: 'refactor', icon: 'wrench', desc: 'Structural rework with no behaviour change.' },
+  re: { name: 'research', icon: 'book', desc: 'Research over many segments; the bulk stays here, the summary goes to notes.' },
   it: { name: 'iteration', icon: 'refresh-cw', desc: 'Rapid ad-hoc change bursts.' },
   wf: { name: 'workflow', icon: 'git-branch', desc: 'Multi-stage orchestrated pipelines.' },
 };

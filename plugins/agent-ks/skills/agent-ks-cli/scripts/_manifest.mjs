@@ -147,11 +147,11 @@ export const MANIFEST = [
   },
   {
     bin: 'docs-new-agent-log', group: 'issue', verb: 'new-agent-log', category: 3, script: 'issues/new-agent-log.mjs', runtime: 'mjs',
-    summary: 'Scaffold an agent log — settings.json and 00_index.md from templates/log-index.md',
+    summary: 'Scaffold an agent log — settings.json and 00_index.md from templates/log-index-<kind>.md (log-index.md for a custom kind)',
     flags: [
       { name: 'kind', value: 'code', desc: 'agent-log kind code (lp/au/rf/it/wf or a custom agentLogKinds code) — required' },
       { name: 'name', value: 'slug', desc: 'kebab-case run name, sanitised to [a-z0-9-] — required' },
-      { name: 'group', value: 'a[/b]', desc: 'nest under a grouping folder path (created if missing; numbering scoped to the group)' },
+      { name: 'group', value: 'a[/b]', desc: 'nest under a grouping folder path, or a log folder for a child log (numbered from 120; numbering scoped to the folder)' },
       { name: 'prefix', value: 'NNN', desc: 'explicit number (2–5 digits) instead of the next gap-spaced one' },
       { name: 'goal', value: 'text', desc: 'the lead line of 00_index.md: why this run exists' },
       { name: 'for', value: 'a,b', desc: 'comma-separated subtasks the run serves (number, slug, or path); each becomes one plain link on the `Serves:` line' },

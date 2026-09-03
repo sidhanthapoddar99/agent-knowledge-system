@@ -6,11 +6,12 @@
  * It starts with two files:
  *
  *   settings.json   { "status": "in-progress" } — the run's status
- *   00_index.md        templates/log-index.md — the brief, the file index, the handover
+ *   00_index.md     templates/log-index-<kind>.md, or log-index.md for a custom
+ *                   kind — the brief, the file index, the handover
  *
  * Files are added beside the index with `agent-ks issue new-round`, which also
- * lists each one under `## Files`. The folder holds files only: no working
- * folder, no child log.
+ * lists each one under `## Files`. A child log inside a loop numbers from 120;
+ * 100 and 110 stay free for a results or debrief folder.
  *
  * `00_index.md` is the brief. Point an agent at it and spend the prompt on the
  * delta. `--for` names the subtasks the run serves, as plain links.
@@ -23,12 +24,12 @@ import {
   parseArgs, printHelp, relForLog, MAX_SUBFOLDER_DEPTH,
   parseGroupSegments, sanitizeName, resolveSubtaskSelector, AGENT_LOG_INDEX,
 } from './_lib.mjs';
-import { renderTemplate, readTemplate } from '../_templates.mjs';
+import { renderTemplate, readTemplate, logIndexTemplateFor } from '../_templates.mjs';
 
 // Framework-default kinds (mirror of src/loaders/issues.ts). An issue may add
 // custom codes via settings.json → agentLogKinds; an unknown code renders
 // without a symbol, so it is a warning and not an error.
-const DEFAULT_KINDS = { lp: 'loop', au: 'audit', rf: 'refactor', it: 'iteration', wf: 'workflow' };
+const DEFAULT_KINDS = { lp: 'loop', au: 'audit', rf: 'refactor', re: 'research', it: 'iteration', wf: 'workflow' };
 
 const args = parseArgs(process.argv.slice(2));
 const id = args._[0];
@@ -40,14 +41,15 @@ if (args.flags.help || !id || !kind || !rawName) {
     '<issue-id> --kind <code> --name <slug> [--group <a[/b]>] [--prefix <NNN>] [--goal <text>] [--for <a,b>] [--json] [--tracker <path>]',
     '',
     'Scaffold agent-log/[<group>/]NNN_<code>_<name>/ with settings.json',
-    '({"status": "in-progress"}) and 00_index.md from templates/log-index.md.',
+    '({"status": "in-progress"}) and 00_index.md from templates/log-index-<kind>.md',
+    '(log-index.md for a custom kind).',
     'Add files beside the index with `agent-ks issue new-round`.',
     'If a run is already open for this work, append a file to it instead.',
     '',
     `--kind    kind code (defaults: ${Object.keys(DEFAULT_KINDS).join('/')}; custom via settings.json agentLogKinds)`,
     '--name    kebab-case run name (sanitised to [a-z0-9-])',
     '--group   nest under a folder path (created if missing; `_` preserved). Give a log folder',
-    '          to open a child log inside it; child logs number from 100, gap-spaced by ten',
+    '          to open a child log inside it; child logs number from 120, gap-spaced by ten',
     '--prefix  explicit number (2–5 digits, e.g. 013) instead of the next gap-spaced one',
     '--goal    the lead line of 00_index.md: why this run exists',
     '--for     comma-separated subtasks the run serves (number, slug or path); each',
@@ -99,8 +101,9 @@ const baseDir = path.join(tracker, id, 'agent-log', ...groupSegments);
 /**
  * Next run prefix: gap-spaced by ten over the run folders already there.
  * A log nested inside another log (the parent folder is itself
- * `NNN_<kind>_<name>`) starts at 100: the engine reads a sub-folder as a
- * child run only from prefix 100 up; below that it is a slot with no status.
+ * `NNN_<kind>_<name>`) starts at 120: the engine reads a sub-folder as a
+ * child run only from prefix 100 up, and 100 and 110 stay free for a results
+ * or debrief folder.
  */
 const LOG_FOLDER = /^\d{2,5}[_-][a-z]{2}[_-]/;
 function nextRunPrefix(dir) {
@@ -113,7 +116,7 @@ function nextRunPrefix(dir) {
       if (m) max = Math.max(max, parseInt(m[1], 10));
     }
   }
-  const floor = nested ? 100 : 10;
+  const floor = nested ? 120 : 10;
   return max < floor ? floor : max + 10;
 }
 
@@ -151,16 +154,17 @@ for (const sel of csv(args.flags.for)) {
   serves.push(`[${text}](${rel})`);
 }
 
-// The template's lead holds three placeholder lines: the goal, `Serves:` and
-// `Out of scope:`. Seed the first two; the third stays for the author.
-const t = readTemplate('log-index');
+// The template is chosen by kind. Its lead opens with the goal line and holds
+// a `Serves:` line; seed those two and leave the rest for the author.
+const templateName = logIndexTemplateFor(kind);
+const t = readTemplate(templateName);
 const leadLines = t.lead.split('\n');
 if (goal) leadLines[0] = goal;
 if (serves.length) {
   const i = leadLines.findIndex((l) => l.startsWith('Serves:'));
   if (i >= 0) leadLines[i] = `Serves: ${serves.join(', ')}`;
 }
-const index = renderTemplate('log-index', [['title', 'Index']], { lead: leadLines.join('\n') });
+const index = renderTemplate(templateName, [['title', 'Index']], { lead: leadLines.join('\n') });
 
 fs.mkdirSync(dir, { recursive: true });
 fs.writeFileSync(path.join(dir, 'settings.json'), `{\n  "status": "in-progress"\n}\n`);

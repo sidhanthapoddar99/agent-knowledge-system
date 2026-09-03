@@ -91,7 +91,8 @@ Install [bun](https://bun.sh) if it is missing. The CLI requires bun and refuses
 |---|---|---|
 | [agent-ks-cli](./skills/agent-ks-cli/SKILL.md) | the CLI contract, every command and flag, the file templates | loads when a command is needed |
 | [agent-ks-docs](./skills/agent-ks-docs/SKILL.md) | docs pages, blog posts, site config, themes, images | triggers on docs work |
-| [agent-ks-issues](./skills/agent-ks-issues/SKILL.md) | the issue tracker: issues, subtasks, plans, agent logs, agent memory | triggers on tracker work |
+| [agent-ks-issues](./skills/agent-ks-issues/SKILL.md) | the issue tracker: issues, subtasks, plans, agent memory | triggers on tracker work |
+| [agent-ks-logs](./skills/agent-ks-logs/SKILL.md) | agent logs: when a run earns one, the six kinds, the shape of each | triggers on agent-log work |
 | [agent-ks-artifacts](./skills/agent-ks-artifacts/SKILL.md) | self-contained HTML artifacts: reports, dashboards, data visualizations, design systems | triggers on artifact work |
 | [agent-ks-init](./skills/agent-ks-init/SKILL.md) | set up a new project from the starter template | `/agent-ks-init` |
 | [agent-ks-add-section](./skills/agent-ks-add-section/SKILL.md) | add a top-level docs section | `/agent-ks-add-section [name]` |

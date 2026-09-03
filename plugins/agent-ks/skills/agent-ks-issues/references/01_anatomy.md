@@ -24,7 +24,7 @@ A tracker is a folder of issues. The default tracker is `data/todo/`. A project 
 | comment | one file under `comments/` that records an event |
 | agent memory | `agent-memory/`, the agent's working state for the issue |
 | dump issue | an issue with component `issue-dump`. Each subtask in it is an unhomed idea |
-| kind code | the two-letter code in an agent log folder name: `lp`, `au`, `rf`, `it`, `wf`, or a custom code |
+| kind code | the two-letter code in an agent log folder name: `lp`, `au`, `rf`, `re`, `it`, `wf`, or a custom code |
 | ordering prefix | the leading digits of a file or folder name, `NN_` or `NNN_`. It sets the sort position |
 | template | the one body shape every work file uses. See [writing](03_writing.md) |
 | Closed | the status category that holds `done`, `dropped` and `superseded` |

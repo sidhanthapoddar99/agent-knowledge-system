@@ -438,4 +438,6 @@ Agreed in discussion with Sid. These supersede the matching lines in section 15.
 - **Engine.** No change. The entry file is `00_index.md`, so the existing prefix sort puts it first.
 - **Docs shape.** Each file kind shows a filled markdown example in its own reference. The writing reference keeps only the shared rule and the file table. A dedupe review by Codex is in [the brainstorm](../brainstorm/skills-v2-dedupe-review.md); its real items are the next pass.
 
-Owed, not done: the engine version bump and release note, `guide.ts` and the user guide in sync, SKILL.md of the issues skill back under 600 words.
+- **Agent logs are their own skill.** `agent-ks-logs/SKILL.md`, one file, allowed past the 600-word budget, so a long run reads it in one hop. It carries the two purposes (written for a human to review; a store for information too large for notes), the six kinds `lp`, `rf`, `au`, `re`, `it`, `wf` with a guided file set each, and the reasoning. `wf` stays but only for very large multi-stage runs. Child logs number from `120`; `100` and `110` stay free inside a loop. The issues skill keeps a two-paragraph pointer. Guidance only, nothing checked.
+
+Done since: `guide.ts` is in sync with the skills. Owed, not done: the engine version bump and release note, the user guide `19_issues/` in sync, SKILL.md of the issues skill back under 600 words.

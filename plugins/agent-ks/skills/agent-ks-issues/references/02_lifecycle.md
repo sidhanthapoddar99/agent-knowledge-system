@@ -1,6 +1,6 @@
 # Lifecycle — statuses, closing authority, AI rules
 
-One status field. One vocabulary of eight values in four categories. It applies to issues, subtasks, plans, stages, agent logs and rounds. The values are fixed in framework code (`issue-status.ts`). A tracker overrides nothing here. A value outside the eight is a hard error: the loader throws and the build stops. It is never a new status. Colours are the theme variables `--status-<name>`.
+One status field. One vocabulary of eight values in four categories. It applies to issues, subtasks, plans, stages, agent logs and rounds. The values are fixed in framework code (`issue-status.ts`). A tracker overrides nothing here. A value outside the eight is a hard error: the loader throws and the build stops. It is never a new status.
 
 ## The eight statuses
 
@@ -45,7 +45,7 @@ This section is the one home of the rule. Every other file links here.
 
 Never certify a subtask by closing the agent log that worked on it. The log's `done` is not evidence for the subtask's `done`.
 
-A run's status answers "did the agent finish", never "was the news good". An audit that ran to the end and found five defects is `done`. The defects go in its summary. `dropped` means the run did not deliver: it crashed, was refused, or was superseded. A `dropped` run needs no comment. Its summary says what happened.
+A run's status answers "did the agent finish", never "was the news good". An audit that ran to the end and found five defects is `done`. The defects go in its files. `dropped` means the run did not deliver: it crashed, was refused, or was superseded. A `dropped` run needs no comment. Its `00_index.md` handover says what happened.
 
 ## AI rules
 
@@ -57,12 +57,3 @@ A run's status answers "did the agent finish", never "was the news good". An aud
 | 4. Review debt promotes | An active issue with any subtask in `review` or `input-needed` lands on the Review tab with a `review` badge. The stored status does not change. `blocked` never promotes |
 | 5. Mark an issue `review` only when | implementation is done, every subtask is `review` or `done`, an artefact exists, and the record says what was tried |
 | 6. `dropped` needs a comment first | Write `comments/NNN_….md` that says why. The flip itself is the user's |
-
-## Best-practice rules
-
-| Rule | Detail |
-|---|---|
-| one component per issue | tag the layer that holds most of the work. The validator warns on more than one |
-| an AI-handoff issue declares at least one subtask | the subtask is the handoff anchor |
-| ordering is `priority` desc, then `updated` desc | `updated` comes from git; `created` comes from the folder name |
-| execution state is a status, never a label | `in-progress`, `blocked` and `input-needed` carry it |

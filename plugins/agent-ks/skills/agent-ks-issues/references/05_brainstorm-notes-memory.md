@@ -51,7 +51,7 @@ Test: a future reader needs it to answer "why did we do it this way", or to exec
 
 Content arrives three ways: a resolved brainstorm graduates, a spec or how-to arrives complete, or a run produces it. Write it when it is produced, never at wrap-up.
 
-Shape: sections `03 References`, `04 Decisions` and `05 Notes & Analysis` of the [template](03_writing.md). Frontmatter is `title` and optional `color`. Preserve `color` when editing.
+Shape: sections `03 References`, `04 Decisions` and `05 Notes & Analysis` of the [template](03_writing.md). Frontmatter is `title` and optional `color`.
 
 | Placement | Path |
 |---|---|

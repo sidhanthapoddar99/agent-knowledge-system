@@ -15,7 +15,6 @@ import {
   resolveTracker, readIssueMeta, readIssueSubtasks, readIssueComments,
   readIssueAgentLogFolders, parseArgs, printHelp, issueDateFromId,
 } from './_lib.mjs';
-import { OLD_SHAPE_HINT } from './_agent-log-shape.mjs';
 
 const args = parseArgs(process.argv.slice(2));
 const id = args._[0];
@@ -76,7 +75,6 @@ for (const log of agentLogs) {
   const reports = log.rounds.filter((r) => r.report !== null && r.report > 0).length;
   const tags = [log.status || '—', `${rounds} round${rounds === 1 ? '' : 's'}`];
   if (reports) tags.push(`${reports} report${reports === 1 ? '' : 's'}`);
-  if (log.oldShape) tags.push(OLD_SHAPE_HINT);
   console.log(`  ${grp}${log.name}  [${tags.join(' · ')}]`);
 }
 
@@ -92,11 +90,10 @@ if (args.flags.full) {
   }
   for (const log of agentLogs) {
     const grp = log.groupPath.length > 0 ? `${log.groupPath.join('/')}/` : '';
-    if (log.summary) {
-      console.log(`\n---\n## agent-log/${grp}${log.name}/${log.summary.fileName}\n`);
-      console.log(fs.readFileSync(log.summary.filePath, 'utf-8'));
+    if (log.index) {
+      console.log(`\n---\n## agent-log/${grp}${log.name}/${log.index.fileName}\n`);
+      console.log(fs.readFileSync(log.index.filePath, 'utf-8'));
     }
-    if (log.oldShape) continue;
     for (const r of log.rounds) {
       console.log(`\n---\n## agent-log/${grp}${log.name}/${r.fileName}\n`);
       console.log(fs.readFileSync(r.filePath, 'utf-8'));

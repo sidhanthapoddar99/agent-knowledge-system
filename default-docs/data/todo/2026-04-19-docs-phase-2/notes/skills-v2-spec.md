@@ -424,3 +424,18 @@ asked to add a subtask; the judge checks it used the CLI and the template.
 - `new-round` replaces `new-iteration`. The old name stays as an alias.
 - The link rule and the markdown mechanics live in the docs skill's `writing.md`.
 - Commands are skills. The Claude agent file is a shim.
+
+## 16. Decisions taken on 2026-09-03, after the swap
+
+Agreed in discussion with Sid. These supersede the matching lines in section 15.
+
+- **Roles.** Issue and comments: the problem and its timeline. Brainstorm: scratch. Notes: conclusions. Plan: order, stages, blocking, result. Subtask: the whole job. Agent log: the working folder of a long run. Agent memory: what is still true.
+- **Subtask owns the job.** What to do, done when, what came out, what went wrong, what to watch for, decisions, Q&A. Five `#` sections stay. Standard `##` sub-heads: `Done when` under 01; `Result` and `Agent log` under 02; `NN <decision>` and `Q&A` under 04; `Issues hit`, `Watch out`, `NN <point>` under 05. To-dos nest as deep as needed. `Done when` is a plain list. `## Agent log` is `none` or exactly one link; the validator warns otherwise.
+- **Subtask holds the outcome, the log holds the path.** A log never holds the only copy of a result.
+- **Agent logs are opt-in.** Ask before a `lp`, `wf` or `it` log. `au` and `rf` need no ask. No log for a one-pass change.
+- **Agent log shape.** Two fixed things: the folder name and `00_index.md`. `00_index.md` holds the goal, a `Serves:` line, `## Files` and `## Handover`. Every other file is free. Loops keep rounds `NN_` gap ten and reports `N1–N9` by convention. Work done inside a run (an audit, a refactor, a workflow) nests as a child log `1NN_<kind>_<name>/`, numbered from 100 because the engine reads a child run only from that prefix. Two levels to aim for, three at most. The shape is guidance only: nothing in the validator checks a log's structure, and older logs are read as they are. The five-section template no longer applies to log files. Size hints only: index 60 lines, other files 40.
+- **`add-agent-log` is retired.** `new-agent-log` gains `--for`. `new-round` appends its line to `## Files`.
+- **Engine.** No change. The entry file is `00_index.md`, so the existing prefix sort puts it first.
+- **Docs shape.** Each file kind shows a filled markdown example in its own reference. The writing reference keeps only the shared rule and the file table. A dedupe review by Codex is in [the brainstorm](../brainstorm/skills-v2-dedupe-review.md); its real items are the next pass.
+
+Owed, not done: the engine version bump and release note, `guide.ts` and the user guide in sync, SKILL.md of the issues skill back under 600 words.

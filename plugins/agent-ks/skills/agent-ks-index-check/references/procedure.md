@@ -9,7 +9,7 @@ The procedure behind [the index-check skill](../SKILL.md). Terms: an index is a 
 | one `.md` file | that one index |
 | an issue folder (`settings.json` plus `issue.md`) | every kind in the kinds table |
 | `plans/<NN_name>/` | `overview.md`, `settings.json`, every stage |
-| `agent-log/<NNN_kind_name>/` | `01_summary.md` against the round and report files beside it |
+| `agent-log/<NNN_kind_name>/` | `00_index.md` against the files beside it |
 | `subtasks/<NNN_group>/` | the group's index leaf: any file that matches `00_*.md` |
 | a whole tracker | say so, and ask for one issue. A tracker-wide sweep is too large for one run |
 
@@ -29,7 +29,7 @@ List two levels deep before you open the index. Reading the index first tells yo
 
 | For | List |
 |---|---|
-| an agent log | every file and every folder beside `01_summary.md` |
+| an agent log | every file and every folder beside `00_index.md` |
 | a subtask group | every `.md` beside the `00_*.md` leaf |
 | a plan | every stage file beside `overview.md` and `settings.json` |
 | an issue folder | every section folder and its contents |
@@ -50,12 +50,12 @@ A link in frontmatter, inside a checkbox, or in the middle of a sentence all cou
 
 ## 5. The kinds
 
-Direction B is the same move for each kind: list, strike off, report the rest. Two kinds need a second listing. For a log summary's `01 To Do`, list the subtasks and stages the run touched, from the round files, and report every one the todo list does not name. For `notes/` and `brainstorm/` cross-references, list both folders and report every file no index, note or `issue.md` points at. Direction A differs.
+Direction B is the same move for each kind: list, strike off, report the rest. Two kinds need a second listing. For a log's `00_index.md`, list the subtasks and stages the run's files touched, and report every one the `Serves:` line does not name. For `notes/` and `brainstorm/` cross-references, list both folders and report every file no index, note or `issue.md` points at. Direction A differs.
 
 | Index | Direction A: test these claims |
 |---|---|
-| `agent-log/<log>/01_summary.md`, section `03 References` | a round line whose link resolves to nothing; a round line contradicted by the round file itself |
-| `agent-log/<log>/01_summary.md`, section `01 To Do` | an unticked box whose work the round files show landed. A ticked box whose linked subtask still says `open`. An empty `02 Status and Result` while finished rounds sit beside it |
+| `agent-log/<log>/00_index.md`, section `## Files` | a file line whose link resolves to nothing; a file line contradicted by the file itself |
+| `agent-log/<log>/00_index.md`, section `## Handover` | a handover that says a subtask is open while the subtask says `review` or closed. An empty handover while finished files sit beside it |
 | `subtasks/<NNN_group>/00_*.md` | an entry the leaf calls open whose file says `review` or closed. The leaf's own `status` still `open` or `in-progress` when every member is closed |
 | `issue.md`, where it points at its own sections | a mention of a note, a plan, a brainstorm or a log that is not on disk |
 | `notes/` and `brainstorm/` cross-references | a pointer to a note that moved or graduated; a "still being decided" whose target records the decision |
@@ -87,11 +87,11 @@ Write the findings first. Then count them and fill the header from that count. L
 ## Direction B: files the index does not mention
 
 - **MISSING**: `<log>/` holds `30_parser-audit.md` and `40_cut-back.md`;
-  `01_summary.md` section `03 References` lists neither
+  `00_index.md` section `## Files` lists neither
 
 ## Direction A: claims the index makes that do not hold
 
-### <relative/path/to/index.md>
+### <relative/path/to/00_index.md>
 
 - **STALE**: <the index says X>; <the file says Y>
   `<relative/path/to/target.md>`: `status: done`
@@ -102,7 +102,7 @@ The coverage table has one row per check and carries evidence. Run every row bef
 ```
 | # | Check | What I read |
 |---|---|---|
-| 0 | DIR B: folder listing vs index | 8 files beside `01_summary.md`; index names 6; 2 MISSING |
+| 0 | DIR B: folder listing vs index | 8 files beside `00_index.md`; index names 6; 2 MISSING |
 | 1 | stage status vs its `subtasks:` list | 4 stages @ `review`; 10 refs: 9 `done`, 1 `dropped` |
 | 2 | unticked `01 To Do` boxes vs their targets | 3 unticked: `080`=`done`, `060`=`done`, `040`=`done` |
 | 3 | plan `settings.json` vs its stages | plan=`open`; stages=`review`x4; `overview.md` `02` holds a result |

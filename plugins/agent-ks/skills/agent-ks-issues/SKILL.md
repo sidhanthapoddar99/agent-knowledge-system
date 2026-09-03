@@ -25,7 +25,7 @@ The routing test, for any sentence you are about to write: which one section own
 | plan overview | the goal, what goes where, stage order, plan-level decisions and result | subtask detail |
 | plan stage | its subtasks, its result, its decisions, a link to the log that ran it | a copied status |
 | subtask | one work item, full template | when it runs |
-| agent log | what was tried, what came back, what was thrown away, what changed | a restated subtask or plan |
+| agent log | the working folder of a long run: the path, reports, caveats, the handover | the outcome. That is the subtask's |
 | agent memory | agent working state: index plus topic files | decisions, the plan |
 | comments | two lines and a pointer | debate |
 
@@ -64,7 +64,9 @@ A run uses five: `open`, `in-progress`, `input-needed`, `done`, `dropped`.
 | Rename or move with `mv` | `agent-ks move` |
 | Write a document path in backticks | A relative markdown link with a name |
 | Save a discussion nobody asked to save | Offer once |
-| Open a second log for work that belongs to an open one | Append a round |
+| Open a `lp`, `wf` or `it` log without asking | Ask once, wait for yes. `au` and `rf` need no ask |
+| Open a log for a one-pass change | The result goes in the subtask's `## Result` |
+| Open a second log for work that belongs to an open one | Append a file there |
 
 ## Triage
 

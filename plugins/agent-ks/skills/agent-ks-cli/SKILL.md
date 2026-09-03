@@ -40,7 +40,7 @@ Exit codes:
 | Group | Verbs | Use |
 |---|---|---|
 | (none) | `help` `resolve-context` `find` `move` `img` | search all content, link-aware move, image optimisation |
-| `issue` | `list` `show` `subtasks` `agent-logs` `review-queue` `set-state` `add-comment` `add-agent-log` `new-subtask` `new-plan` `new-stage` `new-agent-log` `new-round` | the tracker: read, write, scaffold |
+| `issue` | `list` `show` `subtasks` `agent-logs` `review-queue` `set-state` `add-comment` `new-subtask` `new-plan` `new-stage` `new-agent-log` `new-round` | the tracker: read, write, scaffold |
 | `check` | `issues` `section` `blog` `config` `link-form` `links` `legacy-tags` `skill-links` | validators; exit 1 on a problem |
 | `doc` | `list` `show` `search` | docs pages |
 | `blog` | `list` `show` `search` | blog posts |

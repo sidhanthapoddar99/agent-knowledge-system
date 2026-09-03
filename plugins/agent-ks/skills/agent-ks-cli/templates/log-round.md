@@ -4,21 +4,12 @@ status: open
 agent: claude
 ---
 
-Why this exists: a feature, a bug, an upgrade. What it broke and the impact.
+Why this round exists.
 
-# 01 To Do
-- [ ] item
-    - [ ] sub-item
+## Result
+What came back, with evidence. Under forty lines; long output goes in a report file.
 
-# 02 Status and Result
-Partial results are fine. Say what is done and what is not.
+## Caveats
+What the next round must know.
 
-# 03 References
-Links: agent logs, notes, subtasks, docs, external sources, industry practice.
-
-# 04 Decisions
-- Decided (author, YYYY-MM-DD): ...
-
-# 05 Notes & Analysis
-## 01 First point
-## 02 Second point
+## Links

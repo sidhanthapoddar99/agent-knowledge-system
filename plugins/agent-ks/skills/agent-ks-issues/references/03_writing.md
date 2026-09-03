@@ -4,15 +4,15 @@ Markdown mechanics have one home: the docs skill's [writing.md](../../agent-ks-d
 
 ## The one body template
 
-Every work file uses one body shape. The problem statement comes first, with no heading. Five `#` sections follow, numbered: `01 To Do`, `02 Status and Result`, `03 References`, `04 Decisions`, `05 Notes & Analysis`. Each file kind has a standard set of `##` sub-heads. Drop a sub-head you do not need. Never add a `#` section. What each section holds, and a filled example, sits in the file kind's own reference. The skeletons live in the cli skill's `templates/` folder. The scaffolders write them.
+Every work file except an agent-log file uses one body shape. The problem statement comes first, with no heading. Five `#` sections follow, numbered: `01 To Do`, `02 Status and Result`, `03 References`, `04 Decisions`, `05 Notes & Analysis`. Each file kind has a standard set of `##` sub-heads. Drop a sub-head you do not need. Never add a `#` section. What each section holds, and a filled example, sits in the file kind's own reference. The skeletons live in the cli skill's `templates/` folder. The scaffolders write them.
 
 | File | Sections | Frontmatter | Skeleton |
 |---|---|---|---|
 | subtask | all five. Example: [subtasks](06_subtasks.md) | `title`, `status` | [subtask.md](../../agent-ks-cli/templates/subtask.md) |
 | plan `overview.md` | all five | `title`. Status lives in the plan's `settings.json` | [plan-overview.md](../../agent-ks-cli/templates/plan-overview.md) |
 | plan stage | all five. Example: [plans](07_plans.md) | `title`, `status`, `outcome`, `notes`, `who`, `subtasks:` | [plan-stage.md](../../agent-ks-cli/templates/plan-stage.md) |
-| log `01_summary.md` | all five | `title`. Status lives in the log's `settings.json` | [log-summary.md](../../agent-ks-cli/templates/log-summary.md) |
-| log round | all five | `title`, `status`, `agent` | [log-round.md](../../agent-ks-cli/templates/log-round.md) |
+| log `00_index.md` | free: the goal, `## Files`, `## Handover`. Example: [agent logs](08_agent-logs.md) | `title`. Status lives in the log's `settings.json` | [log-index.md](../../agent-ks-cli/templates/log-index.md) |
+| any other log file | free: `## Result`, `## Caveats`, `## Links` | `title`, `status`, `agent`, all optional | [log-round.md](../../agent-ks-cli/templates/log-round.md) |
 | note | 03, 04, 05 | `title`, optional `color` | [note.md](../../agent-ks-cli/templates/note.md) |
 | `issue.md` | Goal, Context, Done when, Scope decisions | `title` | none |
 | comment | none: two lines and a pointer | `author`, `date` | [comment.md](../../agent-ks-cli/templates/comment.md) |
@@ -22,36 +22,19 @@ Frontmatter holds only the fields in this table, plus two optional ones. `color:
 
 ## Results at three levels
 
-A stage's `02` says what the stage produced. A subtask's `02` says what the item produced. A log's `02` says how the run went. Never copy a status across levels. The renderer pulls live subtask status into the stage.
+A stage's `02` says what the stage produced. A subtask's `02` says what the item produced. A log's `## Handover` says how the run went. Never copy a status across levels. The renderer pulls live subtask status into the stage.
 
 The flow runs brainstorm → notes → plan (goal, stages, subtasks) → log (execute). Results land in the subtask's `02` and the stage's `02`.
 
-## Frontmatter rules
+## Frontmatter and prefixes
 
-- `title` is required by convention on every markdown file. Nothing enforces it. A missing title ships the slug as the title.
-- Preserve `color:` when you edit. Check the issue's `glossary.md` before you interpret a colour.
-- The prefix owns the number. Never repeat it in frontmatter.
-- Write pure markdown. No MDX.
-
-## Ordering prefixes
-
-The shared grammar: 2–5 digits, sorted by numeric value, `_` canonical, gap-spaced. In the tracker both `NN_` and `NNN_` are conventional.
-
-| Where | Convention |
-|---|---|
-| `subtasks/` | `NN_` or `NNN_`, gap-spaced. The leading digit may mark a group |
-| `comments/` | `NNN_`, numbered by the CLI. Never hand-gapped |
-| `agent-log/` | `NNN_<code>_<name>/` per log. Rounds `NN_`, gap-spaced by ten. Reports `N1`–`N9` |
-| `plans/` | `NN_<name>/` per plan. Stages `NN_`, gap-spaced by ten |
-| `brainstorm/`, `notes/` | optional. Number only when reading order matters |
-| `agent-memory/` | none. Name by topic |
+The prefix owns the number. Never repeat it in frontmatter. The prefix grammar and each folder's convention: [anatomy](01_anatomy.md). `title` and the no-MDX rule: [writing.md](../../agent-ks-docs/references/writing.md).
 
 ## Links — the tracker deltas
 
-- Reference by link, never by number. Write `Blocked by [the version bump](../050_version-bump.md)`, not "Blocked by `050`". A number is not a name, and a quoted number freezes the numbering.
-- A tracker URL keeps its ordering prefixes. `subtasks/020_impl/010_backend.md` is served at `…/subtasks/020_impl/010_backend`. Docs and blog strip prefixes, so a link that leaves the tracker is the one case that needs care. Write the source path; the renderer resolves it.
+The link rule, the ordering label and the backtick exception live in [writing.md](../../agent-ks-docs/references/writing.md). Two forms are tracker-only:
+
 - A `Related:` line at the end of a body holds soft references: duplicate-check hits, sibling subtasks, superseded issues.
-- A graduation marker is `> **Resolved →** <target>` at the top of a brainstorm.
 - A decision line is `- Decided (author, YYYY-MM-DD): ...` in `04 Decisions`.
 
 ## Diagrams and artifacts as sub-docs

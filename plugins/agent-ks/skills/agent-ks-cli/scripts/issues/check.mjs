@@ -12,14 +12,14 @@
  *   • Subtasks have a valid `status` (the fixed eight)
  *   • Sub-folders are the known anatomy: subtasks / notes / brainstorm /
  *     plans / agent-log / agent-memory / comments (unknown dirs → warning)
- *   • Agent-log grammar: NNN_<code>_<name>/ run folders holding settings.json,
- *     01_summary.md and flat NN_<round>.md files (10, 20, 30; reports 21–29).
- *     An old-shape folder is reported once and otherwise skipped
+ *   • Agent-log values: a run folder's settings.json status and a file's
+ *     frontmatter status must be run statuses. The folder shape (00_index.md,
+ *     rounds, reports) is guidance in the issues skill, not checked here
  *   • Plans: plan folders only, the reserved overview.md, stage numbering, and
  *     — the errors here — every `subtasks:` entry being exactly one plain
  *     markdown link that resolves to a subtask
- *   • --template: the five `#` headings of templates/*.md on subtasks, stages,
- *     plan overviews, log summaries and rounds
+ *   • --template: the five `#` headings of templates/*.md on subtasks, stages
+ *     and plan overviews
  *   • Agent-memory has a memory.md index
  *   • Comments / agent-logs follow naming conventions (warned, not errored)
  *   • Stray .md at folder root (other than issue.md) → warning
@@ -30,10 +30,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { readFrontmatter } from '../_frontmatter.mjs';
-import { resolveTracker, listIssueFolders, readVocabulary, parseArgs, printHelp, STATUSES, TERMINAL_STATUSES, normalizeStatus, LEGACY_STATUS_MAP, MAX_SUBFOLDER_DEPTH, AGENT_LOG_SUMMARY } from './_lib.mjs';
+import { resolveTracker, listIssueFolders, readVocabulary, parseArgs, printHelp, STATUSES, TERMINAL_STATUSES, normalizeStatus, LEGACY_STATUS_MAP, MAX_SUBFOLDER_DEPTH } from './_lib.mjs';
 import { readJsonChecked, reportAndExit } from '../_check-lib.mjs';
 import { eachLink, isIgnorableTarget, splitAnchor, orderingPathFor, parseOrderingLabel } from '../_links.mjs';
-import { isOldAgentLogShape, OLD_SHAPE_HINT } from './_agent-log-shape.mjs';
 import { parseOrderPrefixLoose } from '../_order-prefix.mjs';
 import { splitSections, templateHeadings, templateSectionBody } from '../_templates.mjs';
 
@@ -48,10 +47,10 @@ if (args.flags.help) {
     '  --quiet, --no-warnings   suppress warnings; only errors print',
     '  --verbose                for unknown-key warnings, also list the canonical keys',
     '  --strict                 promote unknown-key warnings to errors (exit 1 on schema drift)',
-    '  --template               check the five `#` headings of templates/*.md on subtasks, stages,',
-    '                           plan overviews, log summaries and rounds, and that a finished file',
-    '                           holds a result in `# 02 Status and Result`. Also on when the tracker',
-    '                           root settings.json sets `"template": true`.',
+    '  --template               check the five `#` headings of templates/*.md on subtasks, stages',
+    '                           and plan overviews, and that a finished file holds a result in',
+    '                           `# 02 Status and Result`. Also on when the tracker root settings.json',
+    '                           sets `"template": true`.',
   ]);
   process.exit(0);
 }
@@ -89,9 +88,8 @@ const NOTE_FM_KEYS = new Set([
 // agent-memory shares the notes surface exactly. `plans/` moved out to a
 // top-level section, so the plan-file lifecycle fields are gone from here.
 const AGENT_MEMORY_FM_KEYS = new Set([...NOTE_FM_KEYS]);
-// `iteration` is tolerated here so an old-shape log does not add a drift
-// warning to its shape warning. A round in the current shape that carries it
-// gets its own warning below: the filename prefix owns the number.
+// `iteration` is tolerated: the filename prefix owns the round number, and
+// the agent-log shape is guidance, not a check.
 const AGENT_LOG_FM_KEYS = new Set([
   'title', 'iteration', 'agent', 'status', 'date', 'sidebar_label', 'color',
 ]);
@@ -166,13 +164,14 @@ const validComponents = vocab?.fields?.component?.values || [];
 const validLabels = vocab?.fields?.labels?.values || [];
 
 // Template lint — opt-in per tracker (root settings.json `"template": true`)
-// or per run (--template). Every file type has one skeleton in templates/,
-// and the five `#` headings must be present. A file whose status says the
-// work is finished must hold a result in `# 02 Status and Result`. Warnings,
-// not errors: the loader renders a file in any shape.
+// or per run (--template). Subtasks, stages and plan overviews have one
+// skeleton each in templates/, and the five `#` headings must be present. A
+// file whose status says the work is finished must hold a result in
+// `# 02 Status and Result`. Warnings, not errors: the loader renders a file in
+// any shape. Agent-log files have no fixed sections and are not linted here.
 const TEMPLATE_LINT = !!args.flags.template || vocab?.template === true;
 const RESULT_SECTION = '02 Status and Result';
-const RESULT_DUE = { work: new Set(['review', 'done', 'superseded']), run: new Set(['done', 'dropped']) };
+const RESULT_DUE = new Set(['review', 'done', 'superseded']);
 // Index leaves: any 00_-prefixed leaf is a group's index and mirrors its
 // siblings' status. Same template as a work order.
 const INDEX_LEAF = /^00_[^/]+\.md$/i;
@@ -183,8 +182,7 @@ function lintTemplate(fileLabel, content, templateName, rawStatus) {
   if (missing.length) {
     warnings.push(`${fileLabel}: missing template section${missing.length > 1 ? 's' : ''} ${missing.map((s) => `\`# ${s}\``).join(', ')} — the shape is templates/${templateName}.md`);
   }
-  const due = templateName.startsWith('log-') ? RESULT_DUE.run : RESULT_DUE.work;
-  if (!due.has(normalizeStatus(rawStatus))) return;
+  if (!RESULT_DUE.has(normalizeStatus(rawStatus))) return;
   const section = doc.sections.find((s) => s.heading === RESULT_SECTION);
   if (section && (section.body === '' || section.body === templateSectionBody(templateName, RESULT_SECTION))) {
     warnings.push(`${fileLabel}: status \`${rawStatus}\` but \`# ${RESULT_SECTION}\` holds no result — write what was produced before hand-off`);
@@ -320,6 +318,9 @@ function lintOrderingLabels(id, issueDir) {
     for (const e of entries) {
       const abs = path.join(absDir, e.name);
       if (e.isDirectory()) {
+        // A log's internal labels describe its own free-form layout; only
+        // links from outside a log are held to the label rule.
+        if (depth === 0 && e.name === 'agent-log') continue;
         if (!e.name.startsWith('.') && depth < MAX_SUBFOLDER_DEPTH + 2) walk(abs, depth + 1);
         continue;
       }
@@ -444,7 +445,7 @@ function lintPlans(id, issueDir) {
       reportDrift(stageLabel, unknownKeys(fm, PLAN_STAGE_FM_KEYS), PLAN_STAGE_FM_KEYS);
 
       if (fm['agent-logs'] !== undefined) {
-        errors.push(`${stageLabel}: \`agent-logs:\` is retired — the frontmatter ref list is for SUBTASKS only. Link the run from the stage BODY like anything else, with an ordering label in the text: \`[010/01 the section loop](../../agent-log/010_lp_implement-sections/01_summary.md)\``);
+        errors.push(`${stageLabel}: \`agent-logs:\` is retired — the frontmatter ref list is for SUBTASKS only. Link the run from the stage BODY like anything else, with an ordering label in the text: \`[010 the section loop](../../agent-log/010_lp_implement-sections/00_index.md)\``);
       }
       if (!fm.title) warnings.push(`${stageLabel}: no \`title\` — the generated heading and its anchor both come from it, so a missing title makes the stage un-linkable by name`);
       if (fm.status !== undefined && !normalizeStatus(fm.status)) {
@@ -790,11 +791,11 @@ for (const entry of issueFolders) {
   lintPlans(id, folder);
   lintOrderingLabels(id, folder);
 
-  // agent-log grammar. A run is NNN_<code>_<name>/ — one run, one goal —
-  // holding settings.json, 01_summary.md and flat NN_<round>.md files. A round
-  // file's prefix ends in 0, gap-spaced by ten; a report written inside a
-  // round takes the next digit 1–9. Any other layout is the old shape: it is
-  // reported once and the current-shape rules are skipped for it.
+  // agent-log values. A run is NNN_<code>_<name>/ — one run, one goal. Its
+  // shape (00_index.md, round and report files, an assets/ folder) is guidance
+  // in the issues skill and is not checked: any file layout renders. Only
+  // values are checked here — a status in settings.json or in a file's
+  // frontmatter must be one a run can hold, and JSON and frontmatter must parse.
   const logDir = path.join(folder, 'agent-log');
 
   function lintAgentLogFolder(absDir, rel) {
@@ -804,12 +805,10 @@ for (const entry of issueFolders) {
 
     // Folder-level settings.json is optional. A status must be one a run can
     // hold: `blocked` and `review` describe a work item, not a run.
-    let logStatus;
     const logSettings = files.find((f) => f.isFile() && /^settings\.jsonc?$/.test(f.name));
     if (logSettings) {
       const settings = readJsonChecked(path.join(absDir, logSettings.name), `${rel}/${logSettings.name}`, errors);
       if (settings && settings.status !== undefined) {
-        logStatus = settings.status;
         const norm = normalizeStatus(settings.status);
         if (!norm) {
           errors.push(`${rel}/${logSettings.name}: invalid status \`${settings.status}\` (fixed vocabulary: ${STATUSES.join('|')})`);
@@ -819,84 +818,37 @@ for (const entry of issueFolders) {
       }
     }
 
-    if (isOldAgentLogShape(files.map((f) => ({ name: f.name, isFile: f.isFile() })))) {
-      warnings.push(`${rel}/: ${OLD_SHAPE_HINT}`);
-      return;
-    }
-
-    const summary = files.find((f) => f.isFile() && f.name === AGENT_LOG_SUMMARY);
-    if (!summary) {
-      warnings.push(`${rel}/: no \`${AGENT_LOG_SUMMARY}\` — the run's one conclusive file, and the brief an agent is pointed at`);
-    } else if (TEMPLATE_LINT) {
-      try {
-        lintTemplate(`${rel}/${AGENT_LOG_SUMMARY}`, readFrontmatter(fs.readFileSync(path.join(absDir, AGENT_LOG_SUMMARY), 'utf-8')).content || '', 'log-summary', logStatus);
-      } catch { /* malformed frontmatter is reported by the generic walk */ }
-    }
-
-    const byRound = new Map();
     for (const f of files) {
-      if (f.isDirectory()) {
-        warnings.push(`${rel}/${f.name}/: a run holds files only — a nested folder is not a round and is not read as one`);
-        continue;
-      }
-      if (!f.isFile() || !f.name.endsWith('.md') || f.name === AGENT_LOG_SUMMARY) continue;
-      const prefix = parseOrderPrefixLoose(f.name.replace(/\.md$/, '')).position;
-      if (prefix === null || prefix < 10) {
-        warnings.push(`${rel}/${f.name}: a round is \`NN_<name>.md\` with a prefix of 10 or more, gap-spaced by ten (10, 20, 30); a report inside round 20 is \`21_\`–\`29_\``);
-        continue;
-      }
-      const round = Math.floor(prefix / 10);
-      const list = byRound.get(round) || [];
-      list.push({ name: f.name, digit: prefix % 10 });
-      byRound.set(round, list);
-
+      if (!f.isFile() || !f.name.endsWith('.md')) continue;
       let parsed;
       try { parsed = readFrontmatter(fs.readFileSync(path.join(absDir, f.name), 'utf-8')); }
       catch { continue; } // malformed frontmatter is reported by the generic walk
       const fm = parsed.data || {};
-      if (fm.iteration !== undefined) {
-        warnings.push(`${rel}/${f.name}: carries \`iteration:\` — the filename prefix owns the round number; delete the field`);
-      }
       const roundStatus = normalizeStatus(fm.status);
       if (fm.status !== undefined && !roundStatus) {
-        errors.push(`${rel}/${f.name}: invalid status \`${fm.status}\` (fixed vocabulary: ${STATUSES.join('|')}). \`status\` says whether the round finished; what it found goes in \`# ${RESULT_SECTION}\``);
+        errors.push(`${rel}/${f.name}: invalid status \`${fm.status}\` (fixed vocabulary: ${STATUSES.join('|')}). \`status\` says whether the round finished; what it found goes under \`## Result\``);
       } else if (roundStatus && !AGENT_LOG_STATUSES.includes(roundStatus)) {
         errors.push(`${rel}/${f.name}: status \`${roundStatus}\` is not one a round can hold (${AGENT_LOG_STATUSES.join('|')}). \`blocked\` and \`review\` describe a work item — a round ran or it did not`);
-      }
-      if (TEMPLATE_LINT) lintTemplate(`${rel}/${f.name}`, parsed.content || '', 'log-round', fm.status);
-    }
-    for (const [round, list] of byRound) {
-      const own = list.filter((f) => f.digit === 0);
-      if (own.length === 0) {
-        const n = list.length;
-        warnings.push(`${rel}/: round ${round} has ${n} report file${n === 1 ? '' : 's'} but no round file (\`${round}0_<name>.md\`) — the round's own record is what ties its reports together`);
-      } else if (own.length > 1) {
-        warnings.push(`${rel}/: round ${round} has ${own.length} round files (${own.map((f) => f.name).join(', ')}) — one round file per round; a report's prefix ends 1–9`);
       }
     }
   }
 
   /**
-   * Walk `agent-log/`, linting every run and descending through grouping
-   * folders. A folder with no kind code is a grouping folder — `new-agent-log
-   * --group` creates them — so it holds runs rather than being one, and the
-   * runs inside it are checked like any other.
+   * Walk `agent-log/`, checking the values of every run and descending through
+   * grouping folders. A folder with no kind code is a grouping folder —
+   * `new-agent-log --group` creates them — so it holds runs rather than being
+   * one. Loose files and unprefixed folders are left alone: the layout is
+   * guidance.
    */
   function walkAgentLogDir(dir, relPrefix, groupDepth) {
     for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
-      if (e.isFile() && e.name.endsWith('.md')) {
-        warnings.push(`${relPrefix}/${e.name}: loose file where a run folder belongs — parses, but the convention is an NNN_<code>_<name>/ agent-log folder`);
-        continue;
-      }
       if (!e.isDirectory()) continue;
 
+      // Folder naming is guidance. The one value check: a kind code that the
+      // issue does not declare renders without a symbol.
       const m = e.name.match(/^(\d{2,5})_(.+)$/);
       const codeMatch = m ? m[2].match(/^([a-z]{2})_(.+)$/) : null;
-      if (!m) {
-        warnings.push(`${relPrefix}/${e.name}/: no numeric order prefix — sorts last; convention is NNN_<code>_<name>/`);
-      } else if (!codeMatch) {
-        warnings.push(`${relPrefix}/${e.name}/: no kind code after the prefix — renders without a symbol; convention is NNN_<code>_<name>/ (codes: ${[...effectiveKindCodes].sort().join('/')})`);
-      } else if (!effectiveKindCodes.has(codeMatch[1])) {
+      if (codeMatch && !effectiveKindCodes.has(codeMatch[1])) {
         warnings.push(`${relPrefix}/${e.name}/: kind code \`${codeMatch[1]}\` not in the effective set (${[...effectiveKindCodes].sort().join('/')}) — declare it in settings.json \`agentLogKinds\` or it renders without a symbol`);
       }
 

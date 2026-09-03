@@ -19,7 +19,6 @@ import { resolveProjectContext } from '../_env.mjs';
 import { parseOrderPrefixLoose } from '../_order-prefix.mjs';
 import { parseArgs, printHelp } from '../_cli.mjs';
 import { parseJsonc, preferJsonc } from '../_jsonc.mjs';
-import { isOldAgentLogShape } from './_agent-log-shape.mjs';
 
 // parseArgs/printHelp live in _cli.mjs; re-exported so issues/* import one file.
 export { parseArgs, printHelp };
@@ -292,45 +291,24 @@ function walkSubfolderTree(rootDir) {
   return out;
 }
 
-function makeAgentLog(abs, groupPath) {
-  const base = path.basename(abs).replace(/\.md$/, '');
-  const sequence = parseOrderPrefixLoose(base).position ?? 0;
-  let fm = {};
-  try { fm = frontmatterData(fs.readFileSync(abs, "utf-8")); } catch {}
-  return {
-    name: base,
-    sequence,
-    iteration: typeof fm.iteration === 'number' ? fm.iteration : null,
-    agent: fm.agent || null,
-    status: fm.status || null,
-    date: fm.date || null,
-    groupPath,
-    filePath: abs,
-  };
-}
-
-export function readIssueAgentLogs(trackerPath, issueId) {
-  const dir = path.join(trackerPath, issueId, 'agent-log');
-  return walkSubfolderTree(dir).map((e) => makeAgentLog(e.filePath, e.groupPath));
-}
-
 /** A run folder: `NNN_<kind>_<name>`. */
 export const AGENT_LOG_RUN_RE = /^(\d{2,5})_([a-z]{2})_(.+)$/;
 
-/** The summary's name inside a run folder. */
-export const AGENT_LOG_SUMMARY = '01_summary.md';
+/** The entry file of a run folder: the brief, the file index and the handover. */
+export const AGENT_LOG_INDEX = '00_index.md';
 
 /**
- * The round files of one run folder: every `.md` beside `01_summary.md`.
- * A round file's prefix ends in 0 (`10_`, `20_`); a report inside a round takes
- * the next digit (`21_`…`29_`). A file with no prefix, or one below 10, is
- * returned with `round: null` so the validator can name it.
+ * The files of one run folder: every `.md` beside `00_index.md`. File names are
+ * free. The loop convention numbers rounds with a prefix ending in 0 (`10_`,
+ * `20_`) and reports inside a round with the next digit (`21_`…`29_`);
+ * `new-round` follows it. A file outside that convention is returned with
+ * `round: null`.
  */
 export function readAgentLogRounds(runDir) {
   if (!fs.existsSync(runDir)) return [];
   const out = [];
   for (const e of fs.readdirSync(runDir, { withFileTypes: true })) {
-    if (!e.isFile() || !e.name.endsWith('.md') || e.name === AGENT_LOG_SUMMARY) continue;
+    if (!e.isFile() || !e.name.endsWith('.md') || e.name === AGENT_LOG_INDEX) continue;
     const abs = path.join(runDir, e.name);
     const base = e.name.replace(/\.md$/, '');
     const prefix = parseOrderPrefixLoose(base).position;
@@ -356,12 +334,12 @@ function makeAgentLogFolder(abs, name, groupPath, match) {
   let entries = [];
   try { entries = fs.readdirSync(abs, { withFileTypes: true }); } catch { /* unreadable — empty run */ }
   const settings = readJson(path.join(abs, 'settings.json'));
-  const summaryPath = path.join(abs, AGENT_LOG_SUMMARY);
-  let summary = null;
-  if (fs.existsSync(summaryPath)) {
-    let title = 'Summary';
-    try { title = String(frontmatterData(fs.readFileSync(summaryPath, 'utf-8')).title || title); } catch { /* keep default */ }
-    summary = { fileName: AGENT_LOG_SUMMARY, filePath: summaryPath, title };
+  const indexPath = path.join(abs, AGENT_LOG_INDEX);
+  let index = null;
+  if (fs.existsSync(indexPath)) {
+    let title = 'Index';
+    try { title = String(frontmatterData(fs.readFileSync(indexPath, 'utf-8')).title || title); } catch { /* keep default */ }
+    index = { fileName: AGENT_LOG_INDEX, filePath: indexPath, title };
   }
   return {
     name,
@@ -371,17 +349,15 @@ function makeAgentLogFolder(abs, name, groupPath, match) {
     kind: match[2],
     slug: match[3],
     status: settings && settings.status != null && settings.status !== '' ? String(settings.status) : null,
-    summary,
+    index,
     rounds: readAgentLogRounds(abs),
-    oldShape: isOldAgentLogShape(entries.map((e) => ({ name: e.name, isFile: e.isFile() }))),
   };
 }
 
 /**
  * Every run folder under `agent-log/`, in prefix order, descending through
  * grouping folders (a folder with no kind code). Each run carries its status
- * from `settings.json`, its summary, its rounds, and whether it is in the old
- * shape.
+ * from `settings.json`, its index and its files.
  */
 export function readIssueAgentLogFolders(trackerPath, issueId) {
   const root = path.join(trackerPath, issueId, 'agent-log');

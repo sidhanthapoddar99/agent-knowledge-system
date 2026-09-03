@@ -18,7 +18,7 @@ import { makeFenceTracker } from './_links.mjs';
 export const TEMPLATE_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'templates');
 
 /** Every template name, one per file type. */
-export const TEMPLATE_NAMES = ['subtask', 'plan-overview', 'plan-stage', 'log-summary', 'log-round', 'note', 'comment'];
+export const TEMPLATE_NAMES = ['subtask', 'plan-overview', 'plan-stage', 'log-index', 'log-round', 'note', 'comment'];
 
 const cache = new Map();
 

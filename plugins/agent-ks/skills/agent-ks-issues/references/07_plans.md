@@ -61,7 +61,7 @@ Why this stage exists. One or two lines.
 What the stage produced. Never a copied subtask status.
 
 # 03 References
-- [010/01 the section loop](../../agent-log/010_lp_implement-sections/01_summary.md), the log that ran it, with an ordering label.
+- [010 the section loop](../../agent-log/010_lp_implement-sections/00_index.md), the log that ran it, with an ordering label.
 
 # 04 Decisions
 - Decided (sid, 2026-09-03): a ruling taken in this stage.

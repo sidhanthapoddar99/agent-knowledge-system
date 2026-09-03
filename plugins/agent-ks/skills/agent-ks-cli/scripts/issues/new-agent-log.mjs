@@ -6,23 +6,24 @@
  * It starts with two files:
  *
  *   settings.json   { "status": "in-progress" } — the run's status
- *   01_summary.md   templates/log-summary.md — the run's one conclusive file
+ *   00_index.md        templates/log-index.md — the brief, the file index, the handover
  *
- * Rounds are added beside the summary with `agent-ks issue new-round`. The
- * folder holds files only: no working folder, no index, no child log.
+ * Files are added beside the index with `agent-ks issue new-round`, which also
+ * lists each one under `## Files`. The folder holds files only: no working
+ * folder, no child log.
  *
- * `01_summary.md` is the brief. Point an agent at it and spend the prompt on
- * the delta.
+ * `00_index.md` is the brief. Point an agent at it and spend the prompt on the
+ * delta. `--for` names the subtasks the run serves, as plain links.
  */
 
 import fs from 'node:fs';
 import path from 'node:path';
 import {
-  resolveTracker, isInsideAllowed, readIssueMeta, pad,
+  resolveTracker, isInsideAllowed, readIssueMeta, pad, csv,
   parseArgs, printHelp, relForLog, MAX_SUBFOLDER_DEPTH,
-  parseGroupSegments, sanitizeName,
+  parseGroupSegments, sanitizeName, resolveSubtaskSelector, AGENT_LOG_INDEX,
 } from './_lib.mjs';
-import { renderTemplate } from '../_templates.mjs';
+import { renderTemplate, readTemplate } from '../_templates.mjs';
 
 // Framework-default kinds (mirror of src/loaders/issues.ts). An issue may add
 // custom codes via settings.json → agentLogKinds; an unknown code renders
@@ -36,19 +37,21 @@ const rawName = args.flags.name && args.flags.name !== true ? String(args.flags.
 
 if (args.flags.help || !id || !kind || !rawName) {
   printHelp('issue new-agent-log', [
-    '<issue-id> --kind <code> --name <slug> [--group <a[/b]>] [--prefix <NNN>] [--goal <text>] [--json] [--tracker <path>]',
+    '<issue-id> --kind <code> --name <slug> [--group <a[/b]>] [--prefix <NNN>] [--goal <text>] [--for <a,b>] [--json] [--tracker <path>]',
     '',
     'Scaffold agent-log/[<group>/]NNN_<code>_<name>/ with settings.json',
-    '({"status": "in-progress"}) and 01_summary.md from templates/log-summary.md.',
-    'Add rounds beside the summary with `agent-ks issue new-round`.',
-    'If a run is already open for this work, append a round to it instead.',
+    '({"status": "in-progress"}) and 00_index.md from templates/log-index.md.',
+    'Add files beside the index with `agent-ks issue new-round`.',
+    'If a run is already open for this work, append a file to it instead.',
     '',
     `--kind    kind code (defaults: ${Object.keys(DEFAULT_KINDS).join('/')}; custom via settings.json agentLogKinds)`,
     '--name    kebab-case run name (sanitised to [a-z0-9-])',
-    '--group   nest under a grouping folder path (created if missing; `_` preserved;',
-    '          numbering is scoped to the group folder)',
+    '--group   nest under a folder path (created if missing; `_` preserved). Give a log folder',
+    '          to open a child log inside it; child logs number from 100, gap-spaced by ten',
     '--prefix  explicit number (2–5 digits, e.g. 013) instead of the next gap-spaced one',
-    '--goal    the lead paragraph of the summary: why this run exists',
+    '--goal    the lead line of 00_index.md: why this run exists',
+    '--for     comma-separated subtasks the run serves (number, slug or path); each',
+    '          becomes one plain link on the `Serves:` line, with the subtask title as text',
     '--json    print the created folder + files as JSON',
   ]);
   process.exit(id && kind && rawName ? 0 : 1);
@@ -93,8 +96,15 @@ if (prefixRaw && !/^\d{2,5}$/.test(prefixRaw)) {
 
 const baseDir = path.join(tracker, id, 'agent-log', ...groupSegments);
 
-/** Next run prefix: gap-spaced by ten over the run folders already there. */
+/**
+ * Next run prefix: gap-spaced by ten over the run folders already there.
+ * A log nested inside another log (the parent folder is itself
+ * `NNN_<kind>_<name>`) starts at 100: the engine reads a sub-folder as a
+ * child run only from prefix 100 up; below that it is a slot with no status.
+ */
+const LOG_FOLDER = /^\d{2,5}[_-][a-z]{2}[_-]/;
 function nextRunPrefix(dir) {
+  const nested = LOG_FOLDER.test(path.basename(dir));
   let max = 0;
   if (fs.existsSync(dir)) {
     for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -103,7 +113,8 @@ function nextRunPrefix(dir) {
       if (m) max = Math.max(max, parseInt(m[1], 10));
     }
   }
-  return max === 0 ? 10 : max + 10;
+  const floor = nested ? 100 : 10;
+  return max < floor ? floor : max + 10;
 }
 
 const prefix = prefixRaw || pad(nextRunPrefix(baseDir));
@@ -119,13 +130,42 @@ if (fs.existsSync(dir)) {
   process.exit(1);
 }
 
-const goal = args.flags.goal && args.flags.goal !== true ? String(args.flags.goal) : '';
-const summary = renderTemplate('log-summary', [['title', 'Summary']], { lead: goal });
+const goal = args.flags.goal && args.flags.goal !== true ? String(args.flags.goal).trim() : '';
+
+// Every `--for` selector must resolve to exactly one subtask. The link is
+// written relative to the log folder, with the subtask title as text.
+const serves = [];
+for (const sel of csv(args.flags.for)) {
+  const matches = resolveSubtaskSelector(tracker, id, sel, [dir]);
+  if (matches.length === 0) {
+    console.error(`--for "${sel}": no subtask in ${id} matches it (give a number, a slug, or a path). Nothing written.`);
+    process.exit(1);
+  }
+  if (matches.length > 1) {
+    const names = matches.map((m) => [...m.groupPath, m.fileName].join('/')).join(', ');
+    console.error(`--for "${sel}" matches more than one subtask: ${names}. Nothing written.`);
+    process.exit(1);
+  }
+  const rel = path.relative(dir, matches[0].filePath).split(path.sep).join('/');
+  const text = String(matches[0].title).replace(/[[\]]/g, '').trim() || matches[0].slug;
+  serves.push(`[${text}](${rel})`);
+}
+
+// The template's lead holds three placeholder lines: the goal, `Serves:` and
+// `Out of scope:`. Seed the first two; the third stays for the author.
+const t = readTemplate('log-index');
+const leadLines = t.lead.split('\n');
+if (goal) leadLines[0] = goal;
+if (serves.length) {
+  const i = leadLines.findIndex((l) => l.startsWith('Serves:'));
+  if (i >= 0) leadLines[i] = `Serves: ${serves.join(', ')}`;
+}
+const index = renderTemplate('log-index', [['title', 'Index']], { lead: leadLines.join('\n') });
 
 fs.mkdirSync(dir, { recursive: true });
 fs.writeFileSync(path.join(dir, 'settings.json'), `{\n  "status": "in-progress"\n}\n`);
-fs.writeFileSync(path.join(dir, '01_summary.md'), summary);
-const written = ['settings.json', '01_summary.md'];
+fs.writeFileSync(path.join(dir, AGENT_LOG_INDEX), index);
+const written = ['settings.json', AGENT_LOG_INDEX];
 
 if (args.flags.json) {
   console.log(JSON.stringify({
@@ -137,5 +177,5 @@ if (args.flags.json) {
   }, null, 2));
 } else {
   console.log(`Created ${relForLog(dir)}/ — ${written.join(' ')}`);
-  console.log(`  next: agent-ks issue new-round ${id} --log ${[...groupSegments, folderName].join('/')} --name <round>`);
+  console.log(`  next: fill 00_index.md, then agent-ks issue new-round ${id} --log ${[...groupSegments, folderName].join('/')} --name <round>`);
 }

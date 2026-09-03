@@ -50,6 +50,8 @@ Decisions taken for this build are in spec section 15. The main ones:
 - `new-round` replaces `new-iteration`; the old name stays as an alias.
 - The link rule and the markdown mechanics live in the docs skill's `writing.md`.
 
+Decided (claude, 2026-09-03): the subtask template gains standard `##` sub-heads, agent logs move to the `index.md` shape and become opt-in, `add-agent-log` is retired. Reasoning and the full list: spec section 16.
+
 Out of scope, listed in spec section 14: the framework loader, `guide.ts`, migrations,
 the engine version bump, the release note, the swap of `plugins/agent-ks` for the new
 tree.

@@ -4,7 +4,7 @@ The CLI is `agent-ks <group> <verb>`. Tracker work uses the `issue` group plus `
 
 | Fact | Detail |
 |---|---|
-| every command takes `--help`, `--json` and `--tracker <path>` | the tracker is a flag, never a positional argument |
+| every `issue` command takes `--tracker <path>` | the tracker is a flag, never a positional argument. Which commands take `--json`: the cli-toolkit |
 | scaffolders take the issue id first | `agent-ks issue new-plan <issue-id> --name <slug>` |
 | an unrecognised flag is ignored in silence | check spelling with `agent-ks help <command>` when a filter does nothing |
 | every wrapper needs `bun` | the dispatcher refuses with an install hint otherwise |
@@ -28,17 +28,9 @@ agent-ks issue review-queue
 agent-ks find "<regex>" --type docs,blog,issues,config
 ```
 
-### Scope flags
+### Pick the scope
 
-| Flag | Matches |
-|---|---|
-| `--search <regex>` | content across the issue's files. `--search-fields` narrows to body, settings, comments, subtasks, notes, agent-log |
-| `--path <regex>` | file and folder path text only. The fast way to find an issue by slug. Pair with `--status all` |
-| `--meta <regex>` | frontmatter and JSON only. A field value, not prose |
-| `--count` | match counts and titles only. Gauge breadth before you drill in |
-| `--paths-only` | the unique match paths, for a pipe into another tool |
-
-`agent-ks find <regex>` takes the same scope flags plus `--type`.
+`--path` is the fast way to find an issue by slug; pair it with `--status all`. `--meta` matches a field value, not prose. `--count` gauges breadth before you drill in. `--paths-only` feeds a pipe. Every flag: [the `list` flags](../../agent-ks-cli/references/cli-toolkit.md).
 
 ### Delegate bulk reads
 
@@ -105,14 +97,7 @@ agent-ks check issues                      # the default tracker
 agent-ks check issues --tracker <path>     # another tracker
 ```
 
-Run it after any non-trivial write. Not `agent-ks check section`: that validates a docs section and passes a broken tracker.
-
-| Flag | Effect |
-|---|---|
-| `--quiet` or `--no-warnings` | errors only |
-| `--verbose` | list the canonical keys with each unknown-key warning |
-| `--strict` | unknown-key warnings become errors. Use in CI and after a migration |
-| `--template` | check the five `#` headings on subtasks, stages, plan overviews, log summaries and rounds |
+Run it after any non-trivial write. Not `agent-ks check section`: that validates a docs section and passes a broken tracker. Use `--strict` in CI and after a migration. Every flag: [cli-toolkit.md](../../agent-ks-cli/references/cli-toolkit.md).
 
 ## Do not edit
 
@@ -126,7 +111,6 @@ Run it after any non-trivial write. Not `agent-ks check section`: that validates
 A plain `mv` breaks every relative link in silence. Use `agent-ks move`. It repoints inbound links. It recomputes outbound links from the new directory. It keeps `#anchor` fragments. It uses `git mv`, so history follows the file.
 
 ```bash
-agent-ks move <from> <to> [--dry-run] [--no-git] [--root <dir>]
 agent-ks move <issue>/subtasks/05_styles.md <issue>/subtasks/020_polish/010_styles.md
 ```
 

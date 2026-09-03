@@ -18,7 +18,7 @@ A tracker is a folder of issues. The default tracker is `data/todo/`. A project 
 | run | one goal, one start, one outcome, recorded in one agent log |
 | round | one file in an agent log that records one pass of work |
 | report | one file in an agent log that holds one agent's output inside a round |
-| summary | `01_summary.md`, the first file of an agent log. It is the brief for the run |
+| log index | `00_index.md`, the entry file of an agent log: the goal, the list of files, the handover |
 | note | one file under `notes/` that holds a settled conclusion |
 | brainstorm | one file or one folder under `brainstorm/` that holds deliberation |
 | comment | one file under `comments/` that records an event |
@@ -51,9 +51,9 @@ A tracker is a folder of issues. The default tracker is `data/todo/`. A project 
     │       └── NN_<slug>.md
     ├── agent-log/NNN_<kind>_<name>/
     │   ├── settings.json              { "status": "in-progress" }
-    │   ├── 01_summary.md              the brief and the result
-    │   ├── 10_<round>.md              a round, gap-spaced by ten
-    │   └── 11_<report>.md             a report inside round 10
+    │   ├── 00_index.md                   the entry file: goal, files, handover
+    │   ├── <file>.md                  free names; a loop uses 10_<round>.md, 11_<report>.md
+    │   └── 1NN_<kind>_<name>/         a child log for work done inside the run
     └── agent-memory/
         ├── memory.md                  the index; read it first
         ├── knowledge/<topic>.md       optional: what is true
@@ -71,7 +71,7 @@ An issue folder name matches `^\d{4}-\d{2}-\d{2}-[a-z0-9-]+$`. The only root fil
 | `notes/` | optional | 5 levels is the cap; 3 is the convention | number only when reading order matters |
 | `plans/` | `NN_` per plan and per stage | plan folders only | no loose files; `overview.md` is reserved |
 | `subtasks/` | `NN_` or `NNN_`, gap-spaced | 1 level is the convention; 5 is the cap | a group is a label with no body file |
-| `agent-log/` | `NNN_` per log, `NN_` per round | flat inside a log | no child logs |
+| `agent-log/` | `NNN_` per log; a child log `1NN_` from 100; files inside are free | two levels is the shape to aim for | `00_index.md` is the entry file. Guidance, not checked |
 | `agent-memory/` | none | `knowledge/` and `history/` | name files by topic |
 
 The loader reads 5 folder levels below a section. Deeper content gets one console warning and no page. Files and folders mix at every level except the deepest. Any folder may hold an `assets/` folder for embedded files. It never appears in the sidebar. In the sidebar a subtask group shows done/total. Other sections show the descendant count.
@@ -84,14 +84,14 @@ The loader reads 5 folder levels below a section. Deeper content gets one consol
 | `description` | string | no | 1–3 sentences; detail goes in `issue.md` |
 | `status` | enum | yes | one of the eight statuses in [lifecycle](02_lifecycle.md) |
 | `priority` | enum | yes | a value from `fields.priority.values` |
-| `component` | string[] | yes | values from `fields.component.values`; one per issue |
+| `component` | string[] | yes | values from `fields.component.values`. One per issue: the layer that holds most of the work. The validator warns on more. The one exception is `issue-dump` |
 | `labels` | string[] | yes | values from `fields.labels.values`; often `[]` |
 | `author` | string | yes | a name from the root `authors` list |
 | `assignees` | string[] | yes | names from `authors`; often `[]` |
 | `agentLogKinds` | object | no | custom kind codes: `{ "ex": { "name": "experiment", "icon": "flask" } }` or `"hf": "hotfix"` |
 | `draft` | boolean | no | `true` hides the issue from the site |
 
-Dates are derived. `created` comes from the folder name. `updated` comes from the last git commit under the folder. Do not write `updated` into the file. A missing `labels` or `assignees` reads as `[]`. A missing `component` is a validation finding. `assignees` says who holds the work. It is not a status. The filter has two tiers: `assigned` or `unassigned`, and names from `authors`.
+Dates are derived. `created` comes from the folder name. `updated` comes from the last git commit under the folder. Do not write `updated` into the file. The tracker orders issues by `priority` desc, then `updated` desc. A missing `labels` or `assignees` reads as `[]`. A missing `component` is a validation finding. `assignees` says who holds the work. It is not a status. The filter has two tiers: `assigned` or `unassigned`, and names from `authors`.
 
 ## Tracker vocabulary
 
@@ -119,7 +119,7 @@ The root file is `settings.json` or `settings.jsonc`. Prefer `.jsonc` and commen
 | status colours are theme CSS variables | override `--status-<name>` in the theme's `color.css`. Light and dark may differ |
 | add no scheduling, release-bucket or single-type field | execution state is a status. Order is a plan |
 
-`component` is a layer of the stack. Tag the layer that holds most of the work, one value per issue. The one exception is `issue-dump`. Descriptions render in the tracker's Guide modal. Keep them accurate. To backfill descriptions or remove a status block, run the migration chain in the docs skill's [doc-migration.md](../../agent-ks-docs/references/doc-migration.md).
+Descriptions render in the tracker's Guide modal. Keep them accurate. To backfill descriptions or remove a status block, run the migration chain in the docs skill's [doc-migration.md](../../agent-ks-docs/references/doc-migration.md).
 
 ## URL shapes
 

@@ -1,6 +1,6 @@
 # `agent-ks` command reference
 
-Every command is `agent-ks <group> <verb> [flags]` and takes `--help`. Every command takes `--json` except `move`, `img`, `set-state`, `add-comment` and `add-agent-log`. Every `issue` command takes `--tracker <path>` for another tracker. `--name <value>` takes a value; `--name` is a switch. The contract and the exit codes are in [SKILL.md](../SKILL.md).
+Every command is `agent-ks <group> <verb> [flags]` and takes `--help`. Every command takes `--json` except `move`, `img`, `set-state` and `add-comment`. Every `issue` command takes `--tracker <path>` for another tracker. `--name <value>` takes a value; `--name` is a switch. The contract and the exit codes are in [SKILL.md](../SKILL.md).
 
 ## General
 
@@ -33,23 +33,22 @@ Every command is `agent-ks <group> <verb> [flags]` and takes `--help`. Every com
 | `list` | Filter and search the tracker. Default scope: every status except `done`, `dropped`, `superseded` | the table below |
 | `show <id>` | One issue: metadata, subtasks, comments, agent logs | `--full` bodies |
 | `subtasks <id>` | Subtasks of one issue, or of every issue with `--all` | `--all` · `--status <vals>` (`--state` alias; `all` widens) · `--flat` · `--quiet-tips` |
-| `agent-logs <id>` | The last N agent logs: status, summary, rounds | `--last <N>` default 3 · `--full` |
+| `agent-logs <id>` | The last N agent logs: status, index, files | `--last <N>` default 3 · `--full` |
 | `review-queue` | Issues in `review` or `input-needed`, plus active issues with such a subtask | |
 | `set-state <id> <status>` | Set an issue status, or a subtask status with `--subtask` | `--subtask <num, slug or path>` |
 | `add-comment <id>` | Append a comment from `templates/comment.md` | `--author <name>` required · `--body <md>` required · `--date <YYYY-MM-DD>` · `--slug <slug>` |
-| `add-agent-log <id>` | Append a one-line log entry file | `--body <md>` required · `--status <state>` · `--iteration <N>` · `--agent <name>` · `--group <a/b>` · `--date <YYYY-MM-DD>` · `--slug <slug>` |
 | `new-subtask <id>` | Write `subtasks/NN_<name>.md` from `templates/subtask.md` | `--name <slug>` required unless `--index` · `--title <text>` · `--group <a/b>` · `--overview <text>` the lead paragraph · `--index` the group index leaf `00_` |
 | `new-plan <id>` | Open `plans/NN_<name>/` with `settings.json` and `overview.md` from `templates/plan-overview.md` | `--name <slug>` required · `--title <text>` · `--status <state>` · `--overview <text>` · `--prefix <NN>` |
 | `new-stage <id>` | Add `NN_<name>.md` to a plan from `templates/plan-stage.md`, gap-spaced by ten | `--plan <folder>` required · `--name <slug>` required · `--title <text>` · `--outcome <text>` · `--notes <text>` · `--who <name>` · `--status <state>` · `--after <NN>` midpoint of the gap · `--prefix <NN>` · `--subtask <a,b>` |
-| `new-agent-log <id>` | Scaffold `agent-log/NNN_<kind>_<name>/` with `settings.json` and `01_summary.md` from `templates/log-summary.md` | `--kind <code>` required · `--name <slug>` required · `--group <a/b>` · `--prefix <NNN>` · `--goal <text>` the lead paragraph |
-| `new-round <id>` | Add a round file flat in a log from `templates/log-round.md` | `--log <path>` required · `--name <slug>` required · `--title <text>` · `--report` · `--round <N>` · `--goal <text>` · `--inputs <a,b>` · `--agent <name>` |
+| `new-agent-log <id>` | Scaffold `agent-log/NNN_<kind>_<name>/` with `settings.json` and `00_index.md` from `templates/log-index.md` | `--kind <code>` required · `--name <slug>` required · `--group <a/b>` a folder, or a log folder for a child log (numbered from 100) · `--prefix <NNN>` · `--goal <text>` the lead line · `--for <a,b>` the subtasks it serves |
+| `new-round <id>` | Add a round file flat in a log from `templates/log-round.md`, and list it under `## Files` in `00_index.md` | `--log <path>` required · `--name <slug>` required · `--title <text>` · `--report` · `--round <N>` · `--goal <text>` · `--inputs <a,b>` · `--agent <name>` |
 | `new-iteration <id>` | Alias of `new-round`, same flags | |
 
-`--subtask` on `new-stage` takes a number, a slug, a clean name (`top-layer-tests`) or a path. Each one becomes one plain link whose text is the subtask title. A selector that matches nothing, or more than one subtask, is an error. Nothing is written.
+`--subtask` on `new-stage` and `--for` on `new-agent-log` take a number, a slug, a clean name (`top-layer-tests`) or a path. Each one becomes one plain link whose text is the subtask title. A selector that matches nothing, or more than one subtask, is an error. Nothing is written.
 
-`--inputs` on `new-round` takes paths relative to the log, the issue or the tracker. Each becomes a link in `# 03 References` with the file title as text. A missing path is an error.
+`--inputs` on `new-round` takes paths relative to the log, the issue or the tracker. Each becomes a link under `## Links` with the file title as text. A missing path is an error.
 
-A round file's prefix ends in 0 (`10_`, `20_`, `30_`). `--report` writes the next `N1`–`N9` file inside the current round. `new-round` refuses an old-shape log (defined under `check issues`).
+A round file's prefix ends in 0 (`10_`, `20_`, `30_`). `--report` writes the next `N1`–`N9` file inside the current round. When the log has no `00_index.md`, `new-round` still writes the file and says so.
 
 ### `list` flags
 
@@ -71,7 +70,7 @@ A round file's prefix ends in 0 (`10_`, `20_`, `30_`). `--report` writes the nex
 
 | Command | Checks | Flags |
 |---|---|---|
-| `issues` | The tracker: vocabulary, folder names, statuses, anatomy folders, plans, agent logs. A stage `subtasks:` entry that is not exactly one resolving link is an error. An old-shape agent log warns `old agent-log shape; migrate` | `--template` · `--quiet` or `--no-warnings` · `--verbose` · `--strict` · `--tracker <path>` |
+| `issues` | The tracker: vocabulary, folder names, statuses, anatomy folders, plans, agent logs. A stage `subtasks:` entry that is not exactly one resolving link is an error. In a log, only values are checked: a status must be a run status. The folder shape is guidance, not a check | `--template` · `--quiet` or `--no-warnings` · `--verbose` · `--strict` · `--tracker <path>` |
 | `section <folder>` | A docs section: `NN_` prefixes, `settings.json`, frontmatter `title`, prefix collisions | |
 | `blog` | `YYYY-MM-DD-<slug>.md` names, `title`, no nested folders | |
 | `config` | `site.yaml`, `navbar.yaml`, `footer.yaml`: required keys, pages, alias resolution | |
@@ -80,9 +79,7 @@ A round file's prefix ends in 0 (`10_`, `20_`, `30_`). `--report` writes the nex
 | `legacy-tags [root]` | Custom-tag markup the renderer does not parse (`:::callout`, `<callout>`, `<tabs>`, `<collapsible>`) and its native replacement | |
 | `skill-links [skill-dir]` | Relative links between skill `.md` files resolve. The banner names the tree it read | |
 
-The old agent-log shape has any of: a `02_working/` or `03_debrief/` folder, a `00_index.md`, a child log folder. Milestone files with no `01_summary.md` also mark it. The current shape is `settings.json`, `01_summary.md` and flat round files.
-
-`check issues --template` checks the five `#` headings of `templates/*.md` on subtasks, stages, plan overviews, log summaries and rounds. A file in a finished status must hold a result in `# 02 Status and Result`. Root settings `"template": true` turns the check on.
+`check issues --template` checks the five `#` headings of `templates/*.md` on subtasks, stages and plan overviews. A file in a finished status must hold a result in `# 02 Status and Result`. A subtask's `## Agent log` must be `none` or one link that resolves. Root settings `"template": true` turns the check on.
 
 ## Docs and blog: `agent-ks doc …`, `agent-ks blog …`
 

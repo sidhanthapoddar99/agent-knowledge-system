@@ -25,7 +25,7 @@ No `plans/`: three subtasks worked one at a time have no schedule. A plan opens 
 | 1. read the issue | `agent-ks issue show <id>`, then `issue.md`, then `agent-ks issue agent-logs <id>` |
 | 2. pick a subtask | the one the user named, or any `open` one. Not the lowest prefix |
 | 3. start | `agent-ks issue set-state <id> in-progress --subtask 010` |
-| 4. work and record | a one-pass change: result in the subtask's `02`. Otherwise open a log per the [work-type table](08_agent-logs.md) |
+| 4. work and record | the result goes in the subtask's `02`. A log only when the work must survive a handover: [when to open one](08_agent-logs.md) |
 | 5. hand off | `agent-ks issue set-state <id> review --subtask 010` |
 | 6. every subtask in review or done | `agent-ks issue set-state <id> review`. The user sets `done` |
 
@@ -46,7 +46,7 @@ The deliverable is a decision or a design, not a diff. The weight sits in `notes
 ├── subtasks/010_write-up-decision.md   one: land the recommendation
 └── agent-log/010_au_backend-survey/
     ├── settings.json                { "status": "done" }
-    ├── 01_summary.md                recommendation in 04
+    ├── 00_index.md                     goal, files, handover; the recommendation links to notes/
     ├── 10_survey.md                 the round
     └── 11_meilisearch-report.md     one report per agent
 ```
@@ -65,23 +65,21 @@ A long autonomous run, worked across many rounds. The execution record is the va
 └── agent-log/
     ├── 010_lp_first-sweep/
     │   ├── settings.json            { "status": "done" }
-    │   ├── 01_summary.md            03 lists the rounds; 05 holds the handover
+    │   ├── 00_index.md                 lists the rounds; holds the handover
     │   ├── 10_log-scan.md
     │   ├── 20_timeout-fixes.md      status: dropped, with the callout
-    │   └── 30_rerun.md
-    ├── 020_wf_shared-fixture/       a workflow with its own goal: a sibling log
-    └── 030_lp_second-sweep/
+    │   ├── 30_rerun.md
+    │   └── 100_wf_shared-fixture/   a workflow run inside the sweep: a child log
+    └── 020_lp_second-sweep/
 ```
 
 | Move | Rule |
 |---|---|
-| open the log first | `agent-ks issue new-agent-log <id> --kind lp --name first-sweep`. Fill the summary before the work |
+| ask, then open the log first | `agent-ks issue new-agent-log <id> --kind lp --name first-sweep --for 010`. Fill `00_index.md` before the work |
 | one round per pass | `agent-ks issue new-round <id> --log 010_lp_first-sweep --name log-scan` |
 | a failed round stays | `status: dropped` plus the callout is the signal the next round needs |
 | durable facts leave the log | `agent-memory/` |
-| a workflow gets a sibling log | the loop's `03` links to it |
-
-The subtask owns scope. The plan owns order. The log owns execution. Never let the log list its rounds as a schedule.
+| work inside the run nests | an audit or a workflow is a child log `1NN_`; the loop's `00_index.md` lists it |
 
 ## A phase issue
 
@@ -107,4 +105,4 @@ An issue that represents a whole phase. Its subtasks are thin pointers. Each is 
 | a subtask is a pointer | a title and a sentence of intent. Context arrives on promotion |
 | promotion is the lifecycle | create the new issue, move travelling notes with `agent-ks move`, leave the pointer at `review` |
 | the issue stays `open` | it closes when every step is promoted and resolved |
-| order lives in the plan | the subtask number is a sort key. Subtask `020` may promote to an issue slugged `-01-`; neither number is a schedule |
+| order lives in the plan | subtask `020` may promote to an issue slugged `-01-`; neither number is a schedule |

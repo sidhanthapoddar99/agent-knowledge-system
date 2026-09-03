@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
- * new-round.mjs — add a round file to an agent log, flat beside
- * `01_summary.md`, from `templates/log-round.md`.
+ * new-round.mjs — add a round file to an agent log, flat beside `00_index.md`,
+ * from `templates/log-round.md`, and list it under `## Files` in `00_index.md`.
  *
  * Numbering: a round file's prefix ends in 0 and rounds are gap-spaced by ten
  * (`10_`, `20_`, `30_`). `--report` writes a report produced inside the current
@@ -18,11 +18,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {
   resolveTracker, isInsideAllowed, readIssueMeta, readAgentLogRounds,
-  parseArgs, printHelp, relForLog, parseGroupSegments, sanitizeName, csv,
+  parseArgs, printHelp, relForLog, parseGroupSegments, sanitizeName, csv, AGENT_LOG_INDEX,
 } from './_lib.mjs';
 import { frontmatterData } from '../_frontmatter.mjs';
-import { renderTemplate } from '../_templates.mjs';
-import { isOldAgentLogShape, OLD_SHAPE_HINT } from './_agent-log-shape.mjs';
+import { renderTemplate, readTemplate } from '../_templates.mjs';
 
 const args = parseArgs(process.argv.slice(2));
 const id = args._[0];
@@ -34,18 +33,18 @@ if (args.flags.help || !id || !logRaw || !rawName) {
     '<issue-id> --log <path-under-agent-log> --name <slug> [--title <text>] [--report] [--round <N>]',
     '           [--goal <text>] [--inputs <a,b>] [--agent <name>] [--json] [--tracker <path>]',
     '',
-    'Write NN_<name>.md flat in the log folder from templates/log-round.md. A round',
-    'prefix ends in 0, gap-spaced by ten (10, 20, 30). --report writes the next',
-    'N1–N9 file inside the current round.',
+    'Write NN_<name>.md flat in the log folder from templates/log-round.md, and list',
+    'it under `## Files` in 00_index.md. A round prefix ends in 0, gap-spaced by ten',
+    '(10, 20, 30). --report writes the next N1–N9 file inside the current round.',
     '',
     '--log      path to the agent log, relative to agent-log/ (e.g. 030_lp_overnight)',
     '--name     kebab-case name for this file',
     '--title    frontmatter title (default: the name, de-kebabed and capitalised)',
     '--report   this file is one report produced inside the current round',
     '--round    force the round number instead of deriving it',
-    '--goal     the lead paragraph: why this round exists',
+    '--goal     the lead line: why this round exists. Also the note beside the index entry',
     '--inputs   comma-separated paths (relative to the log, the issue, or the tracker);',
-    '           each is written to `# 03 References` as a link with the file title as text',
+    '           each is written under `## Links` as a link with the file title as text',
     '--agent    frontmatter `agent:` — who wrote it (default claude; name the tool for an external job)',
     '--json     print the created file as JSON',
   ]);
@@ -67,11 +66,7 @@ if (!fs.existsSync(logDir)) {
   process.exit(1);
 }
 
-const listing = fs.readdirSync(logDir, { withFileTypes: true }).map((e) => ({ name: e.name, isFile: e.isFile() }));
-if (isOldAgentLogShape(listing)) {
-  console.error(`${relForLog(logDir)}: ${OLD_SHAPE_HINT}. A round is written flat beside 01_summary.md, and this log is not in that shape.`);
-  process.exit(1);
-}
+const indexPath = path.join(logDir, AGENT_LOG_INDEX);
 
 const name = sanitizeName(rawName);
 if (!name) {
@@ -167,13 +162,44 @@ for (const ref of csv(args.flags.inputs)) {
   inputLinks.push(`- [${titleOf(found).replace(/[[\]]/g, '')}](${rel.startsWith('.') ? rel : `./${rel}`})`);
 }
 
-const body = renderTemplate(
-  'log-round',
-  [['title', title], ['status', 'open'], ['agent', agent]],
-  { lead: goal, sections: inputLinks.length ? { '03 References': inputLinks.join('\n') } : {} },
-);
+// The template has no `#` sections, so the whole body is its lead. Seed the
+// first line with the goal and append the input links under `## Links`.
+const t = readTemplate('log-round');
+const leadLines = t.lead.split('\n');
+if (goal) leadLines[0] = goal;
+let lead = leadLines.join('\n');
+if (inputLinks.length) lead = `${lead.replace(/\s+$/, '')}\n${inputLinks.join('\n')}`;
+const body = renderTemplate('log-round', [['title', title], ['status', 'open'], ['agent', agent]], { lead });
 
 fs.writeFileSync(abs, body);
+
+// The index lists every file in the folder. Append this one under `## Files`,
+// creating the section at the end when the index has none. A log with no
+// 00_index.md gets the file anyway and a one-line notice; the shape is guidance.
+const entry = `- [${title.replace(/[[\]]/g, '')}](./${fileName})${goal ? ` — ${goal}` : ''}`;
+const hasIndex = fs.existsSync(indexPath);
+let indexText = hasIndex ? fs.readFileSync(indexPath, 'utf-8') : '';
+const lines = indexText.split(/\r?\n/);
+const head = lines.findIndex((l) => /^## Files\s*$/.test(l));
+if (!hasIndex) {
+  // nothing to update
+} else if (head < 0) {
+  indexText = `${indexText.replace(/\s+$/, '')}\n\n## Files\n${entry}\n`;
+} else {
+  // Drop the template's placeholder sentence the first time a real entry lands.
+  const placeholder = new Set(
+    (readTemplate('log-index').lead.split(/\n## Files\n/)[1] || '').split(/\n## /)[0].split('\n').map((l) => l.trim()).filter(Boolean),
+  );
+  let end = head + 1;
+  while (end < lines.length && !/^#{1,2} /.test(lines[end])) {
+    if (placeholder.has(lines[end].trim())) lines.splice(end, 1);
+    else end++;
+  }
+  while (end > head + 1 && lines[end - 1].trim() === '') end--;
+  lines.splice(end, 0, entry);
+  indexText = lines.join('\n');
+}
+if (hasIndex) fs.writeFileSync(indexPath, indexText);
 
 if (args.flags.json) {
   console.log(JSON.stringify({
@@ -187,5 +213,6 @@ if (args.flags.json) {
   }, null, 2));
 } else {
   console.log(`Created ${relForLog(abs)} — round ${round}${IS_REPORT ? `, report ${digit}` : ''}`);
-  console.log(`  next: when it lands, write its result in "# 02 Status and Result" and add one line for it to 01_summary.md "# 03 References"`);
+  if (hasIndex) console.log(`  next: when it lands, write its result under "## Result"; the 00_index.md line is already added`);
+  else console.log(`  00_index.md not found; add the file line by hand`);
 }

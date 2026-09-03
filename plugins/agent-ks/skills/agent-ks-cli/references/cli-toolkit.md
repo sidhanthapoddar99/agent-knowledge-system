@@ -79,7 +79,7 @@ A round file's prefix ends in 0 (`10_`, `20_`, `30_`). `--report` writes the nex
 | `legacy-tags [root]` | Custom-tag markup the renderer does not parse (`:::callout`, `<callout>`, `<tabs>`, `<collapsible>`) and its native replacement | |
 | `skill-links [skill-dir]` | Relative links between skill `.md` files resolve. The banner names the tree it read | |
 
-`check issues --template` checks the five `#` headings of `templates/*.md` on subtasks, stages and plan overviews. A file in a finished status must hold a result in `# 02 Status and Result`. A subtask's `## Agent log` must be `none` or one link that resolves. Root settings `"template": true` turns the check on.
+`check issues --template` checks the five `#` headings of `templates/*.md` on subtasks, stages and plan overviews. A file in a finished status must hold a result in `# 02 Status and Result`. A subtask's `## Agent log` must be `none` or one link that resolves; a `## Questions` entry needs status `input-needed`. Root settings `"template": true` turns the check on.
 
 ## Docs and blog: `agent-ks doc …`, `agent-ks blog …`
 

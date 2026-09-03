@@ -10,6 +10,9 @@ Why this exists: a feature, a bug, an upgrade. What it broke and the impact.
     - [ ] sub-item
         - [ ] deeper, as the work needs
 
+## Questions
+Only questions still unanswered. Delete the section when there are none.
+
 ## Done when
 - a plain test that says the job is complete
 
@@ -27,10 +30,7 @@ Links: notes, subtasks, docs, external sources. Artifacts, benchmarks and report
 
 # 04 Decisions
 ## 01 First decision
-- Decided (author, YYYY-MM-DD): what and why.
-
-## Q&A
-- Q: ... A: ...
+- Decided (author, YYYY-MM-DD): what and why. When it answers a question, say what was asked.
 
 # 05 Notes & Analysis
 ## Issues hit

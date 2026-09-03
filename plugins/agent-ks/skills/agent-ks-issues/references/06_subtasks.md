@@ -29,6 +29,21 @@ Grouping test: group by area, one level. Open a group for three or more leaves. 
 
 Frontmatter is `title` and `status`. The body is the full [template](03_writing.md): all five sections. Skeleton: [subtask.md](../../agent-ks-cli/templates/subtask.md).
 
+```
+subtasks/
+├── 010_loader-refactor.md         a leaf at the root: one job
+├── 020_sidebar-tree.md
+├── 030_validator/                 a group: an area of work, not a phase
+│   ├── settings.json              optional { "title": "Validator" }
+│   ├── 00_overview.md             optional index leaf, six or more leaves
+│   ├── 010_link-form.md
+│   ├── 020_template-lint.md
+│   └── 030_agent-log-line.md
+└── 040_docs/
+    ├── 010_user-guide.md
+    └── 020_release-note.md
+```
+
 | Rule | Detail |
 |---|---|
 | a group folder has no body file | an optional `settings.json` `{ "title": "..." }` sets the sidebar label |
@@ -70,6 +85,9 @@ Why this exists. What triggered it. Two or three lines, no heading.
         - [ ] Nest as deep as the work needs.
 - [ ] **Another item.**
 
+## Questions
+- A question only the user can answer. Present only while it is open; status is `input-needed`.
+
 ## Done when
 - A plain test that says the job is complete. A list, not a checklist.
 - Another test.
@@ -89,10 +107,7 @@ none
 
 # 04 Decisions
 ## 01 Keep the check in the plugin
-- Decided (sid, 2026-09-03): what and why.
-
-## Q&A
-- Q: the question asked. A: the answer given.
+- Decided (sid, 2026-09-03): what and why. Asked whether the check belongs in the engine; the answer was no, because a consumer has no build.
 
 # 05 Notes & Analysis
 ## Issues hit
@@ -109,7 +124,9 @@ A spec that lives only in a conversation is not a scope. Write it into `03` or `
 
 The five `#` sections are fixed. The `##` sub-heads are the standard set. Drop one you do not need. Never add a `#` section.
 
-`agent-ks check issues --template` warns on a missing section, on a Review or Closed subtask whose `02` still carries the placeholder, and on an `## Agent log` that is missing, is not `none`, is not exactly one link, or links to a path that does not exist.
+`## Questions` is transient. It holds only the questions still unanswered, and it sits right under the to-do list so the reader sees at once what is blocked. While it has an entry, the status is `input-needed`. When the user answers, the question is not kept: write the answer as a decision under `04`, and say in that line what was asked, so the reader knows the ruling was made for this case and why. Then delete the question. When nothing is open, delete the section. A stored question is a fact that goes stale the moment it is answered; a decision does not.
+
+`agent-ks check issues --template` warns on a missing section, on a Review or Closed subtask whose `02` still carries the placeholder, on an `## Agent log` that is missing, is not `none`, is not exactly one link, or links to a path that does not exist, and on a `## Questions` sub-head with an entry while the status is not `input-needed`.
 
 ## Create a subtask
 

@@ -218,6 +218,32 @@ function lintAgentLogLine(fileLabel, content, subtaskAbs) {
   if (!fs.existsSync(target)) warnings.push(`${fileLabel}: \`## Agent log\` link → ${m[2]} does not exist`);
 }
 
+// `## Questions` under `# 01 To Do` is transient: it holds only the questions
+// still unanswered, and while it holds one the subtask waits on the user, which
+// is the status `input-needed`. An answered question becomes a decision under
+// `# 04` and the question is deleted. The template's placeholder sentence does
+// not count as a question.
+const TODO_SECTION = '01 To Do';
+const QUESTIONS_HEAD = /^## Questions\s*$/;
+function lintQuestions(fileLabel, content, rawStatus) {
+  const section = splitSections(content).sections.find((s) => s.heading === TODO_SECTION);
+  if (!section) return;
+  const lines = section.body.split('\n');
+  const at = lines.findIndex((l) => QUESTIONS_HEAD.test(l));
+  if (at < 0) return;
+  const placeholder = templateSectionBody('subtask', TODO_SECTION).split('\n')
+    .map((l) => l.trim()).filter((l) => l && !/^##? /.test(l));
+  const body = [];
+  for (const l of lines.slice(at + 1)) {
+    if (/^##? /.test(l)) break;
+    if (l.trim() && !placeholder.includes(l.trim())) body.push(l.trim());
+  }
+  if (body.length === 0) return;
+  if (normalizeStatus(rawStatus) !== 'input-needed') {
+    warnings.push(`${fileLabel}: \`## Questions\` holds ${body.length} open question${body.length > 1 ? 's' : ''} but the status is \`${rawStatus}\` — set \`input-needed\`, or turn the answer into a decision under \`# 04\` and delete the question`);
+  }
+}
+
 // ---- plans/ ----------------------------------------------------------------
 // A plan is a SCHEDULE, and its whole design is that it stores no status of its
 // own about the work: stages REFERENCE subtasks and the renderer pulls their
@@ -704,6 +730,7 @@ for (const entry of issueFolders) {
             if (TEMPLATE_LINT) {
               lintTemplate(`${id}/subtasks/${rel}`, parsed.content || '', 'subtask', rawStatus);
               lintAgentLogLine(`${id}/subtasks/${rel}`, parsed.content || '', abs);
+              lintQuestions(`${id}/subtasks/${rel}`, parsed.content || '', rawStatus);
             }
             if (INDEX_LEAF.test(e.name)) indexLeaf = { rel, status: normalizeStatus(rawStatus) };
             else siblingStatuses.push(normalizeStatus(rawStatus));

@@ -2,10 +2,12 @@
 /**
  * check-link-form.mjs — every internal link is in the form our tooling can maintain.
  *
- * THE SIBLING GATE ASKS A DIFFERENT QUESTION. `check links` reads the BUILT site
- * and asks *does this link resolve?* — it needs a `dist/` and it is a statement
- * about the renderer. This one reads the MARKDOWN and asks *is this link
- * maintainable?* — it needs nothing built and runs instantly.
+ * THE SIBLING GATE ASKS A DIFFERENT QUESTION. The framework's own
+ * `scripts/checks/check-links.mjs` asks *does this link resolve in the
+ * renderer?* — it needs a running server, and it is a statement about the
+ * renderer, so it is development-stage and stays out of this plugin. This one
+ * reads the MARKDOWN and asks *is this link maintainable?* — it needs nothing
+ * built and runs instantly.
  *
  * A link can resolve perfectly and still be unmaintainable. That is not a corner
  * case: it is exactly what 341 converted links were, and why the resolution gate

@@ -1,35 +1,37 @@
 {
   "label": "Issues",
   "fields": {
-    "status": {
-      "values": ["open", "review", "closed", "cancelled"],
-      "colors": {
-        "open": "#888888",
-        "review": "#f0c674",
-        "closed": "#7ec699",
-        "cancelled": "#666666"
-      }
-    },
     "priority": {
       "values": ["low", "medium", "high", "urgent"],
-      "colors": {
-        "low": "#7aa2f7",
-        "medium": "#f0c674",
-        "high": "#e5a663",
-        "urgent": "#e06c75"
+      "descriptions": {
+        "low": "Nice to have; no urgency.",
+        "medium": "Normal priority; get to it in due course.",
+        "high": "Important; schedule soon.",
+        "urgent": "Drop everything; needs immediate attention."
       }
     },
     "component": {
-      "values": ["docs", "site", "infra"]
+      "values": ["docs", "site", "infra"],
+      "descriptions": {
+        "docs": "The written content: pages, sections, wording, structure.",
+        "site": "How the content is presented: config, theme, layout, navigation.",
+        "infra": "Everything under the site: build, deploy, tooling, dependencies."
+      }
     },
     "labels": {
-      "values": ["bug", "feature", "task", "docs", "discussion"]
+      "values": ["bug", "feature", "task", "docs", "discussion"],
+      "descriptions": {
+        "bug": "Behaves differently from intended.",
+        "feature": "Net-new capability.",
+        "task": "Concrete work that is neither a feature nor a bug.",
+        "docs": "Documentation or prose work; cross-cuts any component.",
+        "discussion": "Open design conversation; the decision is not settled."
+      }
     }
   },
   "authors": ["you"],
   "views": [
-    { "name": "Open", "filters": { "status": ["open"] } },
-    { "name": "In review", "filters": { "status": ["review"] } },
+    { "name": "High priority", "filters": { "priority": ["high", "urgent"] } },
     { "name": "By component", "group": "component" }
   ]
 }

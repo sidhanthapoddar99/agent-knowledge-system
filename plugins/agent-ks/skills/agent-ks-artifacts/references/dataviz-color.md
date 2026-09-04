@@ -41,12 +41,12 @@ Every categorical color, shipping or proposed, clears all six.
 ## Run the validator
 
 ```
-node ../scripts/validate_palette.js \
+node <skill>/scripts/validate_palette.js \
   "#2a78d6,#1baf7a,#eda100,#008300,#4a3aa7,#e34948,#e87ba4,#eb6834" \
   --mode light --surface "#f5f5f5"
 ```
 
-The path resolves relative to this file. `--surface` is the light chart surface from palette.md. To run inside the chart's page, load [validate_palette.js](../scripts/validate_palette.js) as `<script type="module">`. It reads `data-palette`, `data-mode` and `data-surface` from `<body>` and prints a `console.table`.
+Resolve `<skill>` against this skill's own folder, the parent of `references/`. Your working directory is the project root, not `references/`, so a path relative to this file fails. `--surface` is the light chart surface from palette.md. To run inside the chart's page, load [validate_palette.js](../scripts/validate_palette.js) as `<script type="module">`. It reads `data-palette`, `data-mode` and `data-surface` from `<body>` and prints a `console.table`.
 
 | Result | Meaning | Exit |
 |---|---|---|

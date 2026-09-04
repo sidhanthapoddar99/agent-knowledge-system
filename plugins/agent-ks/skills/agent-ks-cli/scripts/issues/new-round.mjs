@@ -211,6 +211,9 @@ if (args.flags.json) {
     round,
     report: digit,
     prefix,
+    // false means the log has no 00_index.md, so nothing listed the new file.
+    // The human path prints that notice; --json carries it here.
+    indexUpdated: hasIndex,
   }, null, 2));
 } else {
   console.log(`Created ${relForLog(abs)} — round ${round}${IS_REPORT ? `, report ${digit}` : ''}`);

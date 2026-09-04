@@ -10,7 +10,7 @@ Three sections hold thinking. Brainstorm holds what we are working out. Notes ho
 | reversals, dead ends, changes of mind | anything downstream work cites directly |
 | deliberation about what to do | the work itself, or its order |
 
-Brainstorm has no volume rule. Frontmatter is `title` only. The body is free.
+Brainstorm has no volume rule. Frontmatter is `title` and optional `color`, the same as a note. The body is free.
 
 ### Naming
 
@@ -62,7 +62,7 @@ Shape: sections `03 References`, `04 Decisions` and `05 Notes & Analysis` of the
 
 ### Artifacts and diagrams
 
-A note need not be markdown. A self-contained `.html` artifact in `notes/` or `brainstorm/` renders embedded in the issue view. The embed is an iframe on the `/artifacts/<path>` route. It has an open-full-page link and an expand control. The site theme applies inside it. A diagram file (`.excalidraw`, `.drawio`, `.mmd`, `.dot`) renders the same way.
+A note need not be markdown. A self-contained `.html` artifact in `notes/` or `brainstorm/` renders embedded in the issue view. The embed is an iframe on the `/artifacts/<path>` route. It has an open-full-page link and an expand control. The parent stamps `data-theme` on the embed in both theme modes. Whether the site theme's CSS applies inside the artifact is the sidecar's `artifact.theme`: [theme modes](../../agent-ks-artifacts/references/publishing.md#theme-modes). A diagram file (`.excalidraw`, `.drawio`, `.mmd`, `.dot`) renders the same way.
 
 | Rule | Detail |
 |---|---|
@@ -107,4 +107,4 @@ Maintain it during any work on the issue, not only inside a named run. The log r
 - A bucket beyond `knowledge/` and `history/` declares its staleness rule on its index line.
 - Memory is issue-scoped. It complements global memory. It stays when the issue closes.
 - Write a fact when you find it. Then add or refresh its index line.
-- `agent-ks check issues` warns when `memory.md` is missing.
+- `agent-ks check issues` warns when an `agent-memory/` folder exists without a `memory.md` index. It never asks an issue to open one.

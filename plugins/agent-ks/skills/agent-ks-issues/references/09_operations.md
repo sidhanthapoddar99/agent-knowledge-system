@@ -6,7 +6,7 @@ The CLI is `agent-ks <group> <verb>`. Tracker work uses the `issue` group plus `
 |---|---|
 | every `issue` command takes `--tracker <path>` | the tracker is a flag, never a positional argument. Which commands take `--json`: the cli-toolkit |
 | scaffolders take the issue id first | `agent-ks issue new-plan <issue-id> --name <slug>` |
-| an unrecognised flag is ignored in silence | check spelling with `agent-ks help <command>` when a filter does nothing |
+| an `issue` command rejects an unknown flag | it prints `unknown flag --x`, lists every valid flag, and exits 2. A filter that returns nothing is therefore not a typo: check the scope below instead |
 | every wrapper needs `bun` | the dispatcher refuses with an install hint otherwise |
 | inside a git worktree the `.env` search stops at the worktree root | write a worktree-local `.env`, or pass `--tracker` before any write |
 
@@ -34,15 +34,9 @@ agent-ks find "<regex>" --type docs,blog,issues,config
 
 ### Delegate bulk reads
 
-Push bulk reading onto a cheap subagent. It keeps the main context lean.
+Push a read of more than 10 tracker files onto a subagent, so the main context stays lean. Stage the exact `agent-ks` commands in the brief, name the files to read, and ask for a bounded answer: "Run these commands. Read the files they return. Answer <question> in 300 words. Read-only."
 
-| Pattern | When | Brief |
-|---|---|---|
-| A: bulk classification | the task reads more than 10 issue files | "Read every open issue under `data/todo/`. Per issue return id, title, priority, top blocker. Table, under 300 words" |
-| B: search, then synthesise | a search returns more than 10 matches | "Run `agent-ks issue list --search <x> --paths-only --quiet-tips`. Read each path. Group by issue. Answer <question> in 300 words" |
-| C: pre-staged commands | you can write the exact commands up front | "Do not load any skill. Run these commands. Read the files named. Synthesise. Read-only." One section per task with the exact command |
-
-Default to pattern C when the user wants a synthesised answer. Breakeven: more than 3 reads or more than 10 hits. Every path you stage must exist. Open-ended exploration and one-off lookups stay in the main context.
+Every path you stage must exist. Open-ended exploration and one-off lookups stay in the main context.
 
 ## Create
 
@@ -79,7 +73,7 @@ agent-ks issue subtasks <issue-id> --quiet-tips
 | partial match | create, and link the related items in a `Related:` line |
 | Closed match only | create. Mention the prior issue when it matters |
 
-Hand the commands to a pattern C subagent. Ask for a verdict in three parts: `STATUS`, `RELATED` (file, line, a quoted snippet) and `NOTES`.
+Hand these commands to a subagent. Ask for a verdict in three parts: `STATUS`, `RELATED` (file, line, a quoted snippet) and `NOTES`.
 
 ### A new issue
 

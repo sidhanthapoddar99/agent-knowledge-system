@@ -28,7 +28,7 @@ Ship a style without editing the framework. It lives in an extension folder, res
 2. In the framework's `.env` set `LAYOUT_EXT_DIR=../layouts`. The path is relative to the framework folder. Absolute paths work.
 3. Mirror `src/layouts/`: one folder per type, one per style, with the exact file names below.
 4. Reference it in `site.yaml`: `layout: "@docs/kanban"`.
-5. Restart `./start`. A new folder needs a restart; edits inside an existing folder hot-reload.
+5. Restart: `./start stop`, then `./start --detach`. A new folder needs a restart; edits inside an existing folder hot-reload.
 
 ```
 layouts/
@@ -51,7 +51,7 @@ Note the folder is `blogs`, with an `s`, while the alias is `@blog/…`. Unset `
 
 ### Override a built-in
 
-A folder named like a built-in, `layouts/docs/default/Layout.astro`, replaces it for every page that names `@docs/default`. Copy the built-in source from `astro-doc-code/src/layouts/docs/default/`, then change it. From then on the project owns that layout; framework updates do not flow into it. Do this only when the change cannot be CSS.
+A folder named like a built-in, `layouts/docs/default/Layout.astro`, replaces it for every page that names `@docs/default`. Copy the built-in source from `@root/astro-doc-code/src/layouts/docs/default/`, then change it. From then on the project owns that layout; framework updates do not flow into it. Do this only when the change cannot be CSS.
 
 ### Imports
 
@@ -74,11 +74,12 @@ Relative imports inside the same style folder work: `import Card from './parts/C
 | Blog index | `dataPath`, `baseUrl`. Call `loadContent(dataPath)` for the posts |
 | Blog post | `title`, `description?`, `content`, `date`, `author?`, `tags?`. Pre-rendered |
 | Issues index | `dataPath`, `baseUrl`. `loadIssues(dataPath)` gives issues and the vocabulary |
-| Issues detail | `dataPath`, `baseUrl`, `currentId` |
+| Issues detail | `issue`, `vocabulary`, `baseUrl`. The issue arrives loaded; there is no `dataPath` to load from |
+| Issues sub-doc | `issue`, `vocabulary`, `baseUrl`, `subDoc`. `subDoc.kind` names the section, and `subDoc[kind]` is its entry |
 | Custom | `dataPath`, `baseUrl`. `loadFile(dataPath)` gives the YAML; no schema enforcement |
 | Navbar, footer | The config and the items |
 
-The exact shapes are in the matching `src/layouts/<type>/default/*.astro`. Read that file before you write yours.
+The exact shapes are in the matching `@root/astro-doc-code/src/layouts/<type>/default/*.astro`. Read that file before you write yours.
 
 ### Conventions
 
@@ -100,6 +101,6 @@ Every visual value is a theme variable. No hex, `rgb()`, `hsl()`, raw `px` or `r
 | `transition: background 0.2s` | `transition: background var(--transition-fast)` |
 | `var(--color-accent, #7aa2f7)` | `var(--color-brand-primary)`. Never invent a name; propose it in the contract instead |
 
-Three exceptions. `@media` breakpoints take literal pixels, because variables do not resolve there; use the framework's set, `640`, `768`, `1024`, `1280`. `em` for sizing relative to the parent text is fine. Resets are plain CSS.
+Three exceptions. `@media` breakpoints take literal pixels, because a CSS variable does not resolve inside a media query; use the scale in `@root/astro-doc-code/src/styles/breakpoints.css`, which is `480`, `640`, `768`, `1024`, `1280`, `1536`, `1920` and `2560`. `640`, `768` and `1024` cover most rules. `em` for sizing relative to the parent text is fine. Resets are plain CSS.
 
 To check a layout: grep its CSS for `#[0-9a-f]{3,8}`, `rgba?\(`, `font-size:\s*[0-9]`; swap `theme:` in `site.yaml` and reload; toggle dark mode and walk every page type.

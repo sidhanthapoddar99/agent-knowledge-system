@@ -22,7 +22,7 @@ Consumer mode: the framework is a subfolder of the user's project.
 
 Dogfood mode: the framework repo is the project, content lives under `default-docs/`, and `.env` has `CONFIG_DIR=./default-docs/config`. Same code path; only `CONFIG_DIR` differs.
 
-`data/README.md` maps each top-level `data/` folder to its purpose and route. Read it first on a structure task. Create it if it is missing. Update it when you add or remove a top-level folder.
+`data/README.md` maps each top-level `data/` folder to its purpose and route. Read it first on a structure task. Update it when you add or remove a top-level folder. The starter template ships it, so a project that has none was not scaffolded from the template: write one with the same three columns, folder, purpose and route, one row per folder.
 
 ## `./start`
 
@@ -31,10 +31,12 @@ Run it inside the framework folder. It installs dependencies when they are missi
 | Command | Does |
 |---|---|
 | `./start` | The dev server at `http://localhost:4321`. Hot-reloads content, CSS and YAML values |
+| `./start --detach` | The same server, in the background. Use this one. A bare `./start` holds the terminal until `Ctrl-C`, so an agent that runs it stalls there |
 | `./start build` | A production build into `astro-doc-code/dist/`. Drafts are dropped |
 | `./start preview` | Serves the built site |
 | `./start doctor` | Update check, install, full build. Run it before you publish |
 | `./start stop`, `./start status` | Stop the running server; show what runs. Never `kill` it by hand |
+| `./start logs [--follow]` | Read a running server's output. Never tail its log file yourself |
 | `./start --help` | Every command |
 
 Every launching command checks `engine_version` first and stops with the migration chain when the content is outside the engine's range: [08_migrations.md](./08_migrations.md).
@@ -56,7 +58,7 @@ Never commit `.env`. The framework's `.gitignore` already excludes it. `.env.exa
 
 ```yaml
 site: { name: "My Docs", title: "My Documentation", description: "…" }
-engine_version: "0.3.9"                       # the engine version this content targets
+engine_version: "N.N.N"                       # the engine's version; read ENGINE_VERSION from engine-version.ts
 server: { allowedHosts: true }                # true, or a list of host patterns
 paths: { data: "../data", assets: "../assets", themes: "../themes" }   # each key becomes @key
 theme: "full-width"                           # the active theme name
@@ -69,7 +71,7 @@ pages: …                                      # the routes; next section
 | Field | Type | Meaning |
 |---|---|---|
 | `site.name`, `site.title`, `site.description` | string | Site identity. `name` is the navbar label, `title` the `<title>` tag |
-| `engine_version` | `"N.N.N"` | Missing counts as `0.0.0`. The engine stops on content outside its range: [08_migrations.md](./08_migrations.md) |
+| `engine_version` | `"N.N.N"` | The engine version this content targets. Missing counts as `0.0.0`. Read the current value from `ENGINE_VERSION` in `@root/astro-doc-code/src/loaders/engine-version.ts`. The engine stops on content outside its range: [08_migrations.md](./08_migrations.md) |
 | `server.allowedHosts` | `true` or `string[]` | Vite host allowlist for the dev server. Patterns such as `".ngrok.io"` |
 | `paths.<key>` | path | Relative to the config dir, absolute, or `@root/…`. Becomes `@<key>` |
 | `theme`, `theme_paths` | string, `string[]` | The active theme name; the folders to scan: [05_themes.md](./05_themes.md) |
@@ -97,13 +99,13 @@ pages:
 
 Two patterns. Register several `type: issues` pages for several trackers, each with its own vocabulary. Mount a subfolder as its own entry when it needs a different layout; one docs tree has one layout.
 
-A new entry needs a dev-server restart. The section folder itself: [02_add-section.md](./02_add-section.md).
+A new entry needs a dev-server restart: `./start stop`, then `./start --detach`. The section folder itself: [02_add-section.md](./02_add-section.md).
 
 ## Path aliases
 
 | Alias | Resolves to | Used in |
 |---|---|---|
-| `@docs/…`, `@blog/…`, `@issues/…`, `@custom/…`, `@navbar/…`, `@footer/…` | `astro-doc-code/src/layouts/<type>/<style>/`, or the same path under `LAYOUT_EXT_DIR` | `pages[].layout`, `navbar.yaml`, `footer.yaml` |
+| `@docs/…`, `@blog/…`, `@issues/…`, `@custom/…`, `@navbar/…`, `@footer/…` | `@root/astro-doc-code/src/layouts/<type>/<style>/`, or the same path under `LAYOUT_EXT_DIR` | `pages[].layout`, `navbar.yaml`, `footer.yaml` |
 | `@ext-layouts` | `LAYOUT_EXT_DIR` | custom layout styles |
 | `@theme/<name>` | a theme folder | `theme.yaml → extends:` |
 | `@root/<sub>` | the framework folder; not the consumer's project root | the bundled content, `@root/default-docs/…` |
@@ -126,5 +128,5 @@ A `paths:` value is relative to the config dir, absolute, or `@root/…`. `@root
 - `site.yaml` exists (error). A missing `navbar.yaml` or `footer.yaml` is a warning.
 - `site.yaml` has `site`, `paths`, `theme`, `pages`.
 - Every `pages:` entry has `base_url`, `type`, `layout`, `data`.
-- Every `data:` path resolves on disk after alias substitution.
+- Every `data:` path whose alias the checker resolves exists on disk. A path it cannot resolve is skipped in silence, so a clean run is not proof that every page has content.
 - Every `footer.yaml` `page:` names a registered page.

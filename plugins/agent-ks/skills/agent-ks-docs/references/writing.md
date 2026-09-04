@@ -8,18 +8,20 @@ Write plain markdown in `.md` files. Do not write MDX. Rich content comes from G
 
 | Field | Required | Content types | Effect |
 |---|---|---|---|
-| `title` | yes | all | Docs and blog builds fail without it. The tracker falls back to the slug, with no error |
-| `description` | no | all | Meta tag and sidebar tooltip |
-| `draft: true` | no | docs, blog, issues | Hides the page from the production build |
+| `title` | yes | all | A missing one warns and the page ships titled from its own filename, which looks deliberate. `agent-ks check section` is the check that errors on it. The tracker falls back to the slug, with no error |
+| `description` | no | docs, blog | The lede on a blog card and the subtitle on the post. A docs page does not render it. An issue's description is a `settings.json` field, not frontmatter; the loader ignores it in `issue.md` |
+| `draft: true` | no | docs, blog | Hides the page from the production build |
 | `sidebar_label`, `sidebar_position` | no | docs | Sidebar text and order |
 | `date`, `author`, `tags`, `image` | no | blog | See [the blog skill](../../agent-ks-blog/SKILL.md) |
+
+No content type writes a per-page `<meta name="description">`. Every page carries the site description instead. That is a renderer gap; report it and write the frontmatter anyway.
 
 Tracker metadata lives in `settings.json`. See the issues skill.
 
 ```yaml
 ---
 title: "Page title"
-description: "One or two sentences for meta tags and tooltips."
+description: "The lede on a blog card. A docs page does not show it."
 draft: false
 ---
 ```
@@ -47,7 +49,7 @@ The documents are filesystem-first. A relative link is the only form that is tru
 | A link, never a backticked path | `move` cannot rewrite it, a reader cannot click it, and an agent must search to resolve it. The text must name the thing; `[03](./03_thing.md)` is still a number |
 | The exception: a target that is not a document | Source code, config, a binary, a directory, or a path discussed as a value stays in backticks |
 | Convert a backticked document path when you find one | Take the text from the target's `title`. A requested sweep runs detect, check, convert, then `agent-ks check link-form` and `agent-ks check issues` |
-| A relative link that 404s on the site is a renderer bug | File it against `astro-doc-code/src/parsers/postprocessors/internal-links.ts`. Do not convert the link to `/` |
+| A relative link that 404s on the site is a renderer bug | File it against `@root/astro-doc-code/src/parsers/postprocessors/internal-links.ts`. Do not convert the link to `/` |
 
 ### The ordering label
 
@@ -63,7 +65,7 @@ The sidebar lists entries by number, so a link can carry that number. Open the l
 | Optional | A plain descriptive link is never wrong. The name must be present either way |
 | Derived, never invented | Walk up from the file and collect numeric prefixes. Stop at the first segment without one. A target with no prefix takes no label |
 | `agent-ks move` keeps it current | It recomputes the label when it rewrites the target |
-| `agent-ks check issues` warns on drift | A stale label still resolves, so nothing else shows the drift |
+| `agent-ks check issues` warns on drift | In the tracker only. Nothing checks the label inside a docs section, so re-read it yourself after a hand renumber |
 
 ## Rich content
 
@@ -87,7 +89,7 @@ Excalidraw and draw.io: image syntax embeds the file read-only. A plain link ope
 
 | Rule | Detail |
 |---|---|
-| Never inline scene JSON or mxGraph XML | The file is the single source. A missing file fails the build (`asset-missing`); a malformed one shows an error box |
+| Never inline scene JSON or mxGraph XML | The file is the single source. A missing file logs an `asset-missing` error to the dev toolbar. A malformed file fails in the browser and logs to the browser console. Both render an error box in place, and both let the build pass, so open the page and look |
 | Dark mode inverts Mermaid, Graphviz and Excalidraw | draw.io resolves its own dark palette, because `.drawio` files carry raster icons. Pick colours that keep their meaning on both |
 | Save `.drawio` uncompressed | *File → Properties → Compressed: off*. The file then diffs and greps |
 | draw.io stencil sets are not bundled | Use the built-in palette, or install stencils into `assets/drawio/stencils/` |
@@ -125,6 +127,8 @@ Run `agent-ks img` on every image before a commit, so figures stay near 60 to 10
 | issues | `assets/` next to the file | relative to the file |
 
 Inside a fenced block the path must start with `./` or `../`. The build skips a bare name there, so documentation examples do not expand. Escape with `\[[...]]` to show the brackets.
+
+A missing target leaves the literal `[[path]]` text in the page and logs an `asset-missing` error to the dev toolbar. The build still passes, so open the page and look.
 
 ## Related
 

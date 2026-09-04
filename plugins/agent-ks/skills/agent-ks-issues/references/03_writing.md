@@ -15,9 +15,13 @@ Every work file except an agent-log file uses one body shape. The problem statem
 | note | 03, 04, 05 | `title`, optional `color` | [note.md](../../agent-ks-cli/templates/note.md) |
 | `issue.md` | Goal, Context, Done when, Scope decisions | `title` | none |
 | comment | none: two lines and a pointer | `author`, `date` | [comment.md](../../agent-ks-cli/templates/comment.md) |
-| brainstorm | free | `title` | none |
+| brainstorm | free | `title`, optional `color` | none |
 
-Frontmatter holds only the fields in this table, plus two optional ones. `color:` tints the sidebar label; its meaning lives in the issue's `glossary.md`. `draft: true` hides the file from the production build.
+Frontmatter holds only the fields in this table. `agent-ks check issues` reports any key the file's schema does not name as drift. A subtask carries `title` and `status`, and nothing else.
+
+`color:` tints the sidebar label. The loader reads it on a note, a brainstorm file, an agent-memory file and an agent-log file only. On a subtask and on a stage it does nothing, so no tint appears; on a subtask it also earns a drift warning. Its meaning lives in the issue's `glossary.md`.
+
+There is no per-file draft. To hide a whole issue, set `"draft": true` in the issue's `settings.json` ([anatomy](01_anatomy.md)).
 
 ## Results at three levels
 

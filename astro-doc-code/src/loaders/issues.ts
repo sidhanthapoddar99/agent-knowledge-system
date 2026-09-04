@@ -1369,7 +1369,18 @@ function readAgentLogGroups(logsDir: string, dataPath: string): AgentLogGroupMet
   if (!fs.existsSync(logsDir)) return [];
   const out: AgentLogGroupMeta[] = [];
 
-  const walk = (absDir: string, groupPath: string[]): void => {
+  // A run folder is `NNN_<kind>_<name>/`. Whether a folder is a run or a slot
+  // depends on its NAME and on its PARENT, never on its depth:
+  //   - under a run, the slot rule applies (`02_working/`, an unprefixed
+  //     folder, any prefix below 100 is a slot; 100+ is a child run);
+  //   - under `agent-log/` itself or under a grouping folder, a folder is a
+  //     run when its name has the run shape, and a grouping folder otherwise
+  //     (`exploration/`, `phase-1/`), which is reserved — it carries no status.
+  // Keying on depth instead read a top-level `010_lp_…` as a slot (its status
+  // was never read) and `phase-1/010_lp_…` the same way.
+  const RUN_FOLDER = /^\d{2,5}_[a-z0-9]+_/;
+
+  const walk = (absDir: string, groupPath: string[], parentIsRun: boolean): void => {
     let entries: fs.Dirent[];
     try { entries = fs.readdirSync(absDir, { withFileTypes: true }); }
     catch { return; }
@@ -1378,7 +1389,8 @@ function readAgentLogGroups(logsDir: string, dataPath: string): AgentLogGroupMet
       if (groupPath.length >= MAX_SUBFOLDER_DEPTH) continue;   // loader cap; warned by readAgentLogs
       const childAbs = path.join(absDir, entry.name);
       const childPath = [...groupPath, entry.name];
-      const reserved = isAgentLogSlotFolder(entry.name);
+      const isRun = RUN_FOLDER.test(entry.name);
+      const reserved = parentIsRun ? isAgentLogSlotFolder(entry.name) : !isRun;
 
       let status: IssueStatus | null = null;
       if (!reserved) {
@@ -1390,11 +1402,11 @@ function readAgentLogGroups(logsDir: string, dataPath: string): AgentLogGroupMet
       }
 
       out.push({ groupPath: childPath, status, reserved });
-      walk(childAbs, childPath);
+      walk(childAbs, childPath, !reserved);
     }
   };
 
-  walk(logsDir, []);
+  walk(logsDir, [], false);
   return out;
 }
 

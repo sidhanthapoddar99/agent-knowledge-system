@@ -21,8 +21,11 @@ user-guide/
 
 | Prefix rule | Detail |
 |---|---|
-| Width is 2 to 5 digits, then `_` | The validator rejects 1 digit and 6 or more. The tracker also accepts `-` as the separator |
-| Order is by numeric value | `05_`, `010_` and `110_` sort as 5, 10, 110. Widths coexist, so one folder can widen alone |
+| Width is 2 to 5 digits, then `_` | The validator rejects 1 digit and 6 or more |
+| A folder sorts by the numeric value of its prefix | `05_`, `010_` and `110_` sort as 5, 10, 110. Two folders can carry different widths |
+| A file sorts by frontmatter `sidebar_position` | The engine never reads a file's own prefix as a number. The prefix sets the file's place in a directory listing, and the URL drops it |
+| A file with no `sidebar_position` sorts on the text of its path | One width for every file in a folder makes that text sort come out right. A wider prefix breaks it: `010_x.md` lands before `05_y.md` |
+| A file with no `sidebar_position` sorts after every subfolder | The folder takes its prefix value; the file falls back to 999. Give a page a `sidebar_position` when it must sit among the subfolders |
 | `NN_` is the convention | Use it almost always |
 | `NNN_` needs a special reason | A folder with many entries, or grouping by the leading digit: `110_`, `120_` in group 1; `210_` in group 2 |
 | `NNNN_` and `NNNNN_` are very rare | Only when the user demands it |
@@ -37,7 +40,7 @@ Do not number siblings 01, 02, 03. Leave room, so a new page slots between two n
 | 3 | `03_`, `06_`, `09_` | about 33 | many siblings |
 | 2 | `02_`, `04_`, `06_` | about 49 | a long flat list |
 
-A new page between `05_` and `10_` takes `06_` and needs no move. When two neighbours have no gap left, re-prefix with `agent-ks move`, never with `mv`. A page can also override its order with frontmatter `sidebar_position`. The prefix is the signal a reader sees, so prefer gap-spaced prefixes.
+A new page between `05_` and `10_` takes `06_` and needs no move. When two neighbours have no gap left, re-prefix with `agent-ks move`, never with `mv`. Gap numbering also holds every sibling file at one width, which is what the file sort needs. Set `sidebar_position` when a page must break that order, or must sit among subfolders.
 
 ## Folder settings
 
@@ -66,13 +69,7 @@ Deviate when a section is shallow or a group must stay open. This is a default, 
 
 ## Page frontmatter and routing
 
-| Field | Required | Meaning |
-|---|---|---|
-| `title` | yes | Page title |
-| `description` | no | Meta tag summary |
-| `sidebar_label` | no | Sidebar text; defaults to `title` |
-| `sidebar_position` | no | Overrides the prefix order |
-| `draft` | no | `true` hides the page from the production build |
+The fields and what each one does: [writing.md, Frontmatter](./writing.md#frontmatter). That table is the one home for them.
 
 The URL is the section base plus the nested path without prefixes. `data/user-guide/05_getting-started/02_installation.md` serves at `/user-guide/getting-started/installation`.
 
@@ -88,7 +85,7 @@ A prefixed `.mmd`, `.mermaid`, `.dot`, `.gv`, `.excalidraw` or `.drawio` file is
 |---|---|
 | The title comes from the filename | Prefix stripped, title-cased. Prefer a good filename over a sidecar |
 | A sidecar `NN_name.meta.json` adds metadata | Fields `title`, `description`, `sidebar_label`, `sidebar_position`, `draft`. All optional. `.jsonc` accepted |
-| A slug collision is a build error | `15_x.md` and `16_x.mmd` both map to `/x`. Rename one |
+| A slug collision keeps one page and drops the rest | `15_x.md` and `16_x.mmd` both map to `/x`. The first page's body becomes an error box, every other one leaves the site, and the build still passes. Rename one, then open the page |
 | No prefix means skipped, with a warning | Files under `assets/` are never scanned. Embed-only diagrams live there |
 | Embed or page | A figure inside prose embeds from `assets/`. A diagram that is the content is a prefixed page |
 | The viewer | The outline hides. A click opens the pan and zoom viewer. Excalidraw and draw.io pages link to the raw file |
@@ -103,8 +100,8 @@ A prefixed `.html` file is a first-class page: a self-contained report, dashboar
 |---|---|
 | The title comes from the filename | As for diagram pages. A sidecar `NN_name.meta.json` adds metadata and makes the artifact legible to an agent |
 | Sidecar fields | The diagram fields, plus `embed_height`: `"full"` (the default), a CSS length, or an aspect like `"16/9"` |
-| The `artifact:` block | An opaque block of declared values (`purpose`, `type`, `theme`, `palette`, `data`). The framework passes it through untouched |
-| The framework injects nothing into the `.html` | The artifact stays an independently openable document |
+| The `artifact:` block | A block of declared values (`purpose`, `type`, `theme`, `palette`, `data`). The loader passes it through untouched, except `artifact.theme`, which the route reads |
+| `artifact.theme` | `"self"`, the default, or `"site"`. It is the one field the route interprets, so it decides the served bytes. The rule and what it means for the CSS: [publishing.md, Theme modes](../../agent-ks-artifacts/references/publishing.md#theme-modes) |
 | Full-page route | Every artifact also opens at `/artifacts/<path-from-content-root>`, with its own `<head>`. The embed offers *Open full page* and *Expand*; `Esc` closes |
 | `artifacts` is a reserved section base URL | See [03_site-config.md, Pages](../../agent-ks-config/references/03_site-config.md#pages-routing) |
 | Collision, no prefix, `assets/`, opt-out | The diagram-page rules apply. Opt out with `allow_artifact_pages: false` |
@@ -121,9 +118,9 @@ Building the HTML is the job of the [artifacts skill](../../agent-ks-artifacts/S
 
 | Command | Checks | Run |
 |---|---|---|
-| `agent-ks check section <folder>` | An `NN_` prefix on every folder and `.md` file, except `assets/` and `README.md`. A `settings.json` in every folder. A frontmatter `title`. Prefix collisions by numeric value, so `02_` and `002_` clash. A stray non-page file warns | after a restructure, before a batch commit |
+| `agent-ks check section <folder>` | An `NN_` prefix on every folder and `.md` file, except `assets/` and `README.md`. A `settings.json` in every folder below the section root. A frontmatter `title`. Prefix collisions by numeric value, so `02_` and `002_` clash. A stray non-page file warns | after adding, renaming or restructuring a page, and before a batch commit. It is the only gate that errors on a missing `title`; the build only warns |
 | `agent-ks move <from> <to>` | Link-aware move of a file or a folder. Rewrites inbound links, outbound links inside the moved files, and link text that mirrors the path. Skips external, site-absolute and anchor-only links | every rename or move; `--dry-run` first |
 
-Exit code `0` is clean, `1` found errors. Flags: [cli-toolkit.md](../../agent-ks-cli/references/cli-toolkit.md).
+Exit code `0` means no errors and `1` means errors. A warning keeps exit `0`, so read the printed counts, not the exit code. Flags: [cli-toolkit.md](../../agent-ks-cli/references/cli-toolkit.md).
 
 A plain `mv` leaves every relative link pointing at the old place. Nothing warns, and the build passes. `<to>` must not exist; the tool creates missing parent folders. Inside a git tree `move` uses `git mv`, so history follows the file.

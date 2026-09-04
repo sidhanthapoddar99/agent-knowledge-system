@@ -1,46 +1,44 @@
 ---
 name: agent-ks-issues
-description: Use for any work in an agent-knowledge-system issue tracker (data/todo/ or any folder-per-issue tracker): issues, subtasks, comments, brainstorms, notes, plans, agent logs, agent memory, glossaries, the tracker vocabulary, review queues and the issue dump. Also use for audit, refactor, loop, autonomous run or discuss on a tracked issue, and to record agent progress or issue-scoped memory. Trigger on issues, tickets, subtasks, tracker, backlog, priority, component, label, status, or any file under a tracker folder. Outside the tracker (docs, blog, site config, themes, images) use agent-ks-docs.
+description: Use for any work in an agent-knowledge-system issue tracker (data/todo/, or any folder-per-issue tracker) — issues, subtasks, plans and stages, comments, brainstorms, notes, agent memory, glossaries, the tracker vocabulary, the review queue and the issue dump. Also use for a discussion on a tracked issue, and whenever you must remember something for the next session on an issue. Trigger on issue, ticket, subtask, tracker, backlog, priority, component, label, status, plan, stage, or any file under a tracker folder, and on "where do I record this", "pick this back up", "what did we decide". Agent logs have their own skill, agent-ks-issue-logs. Outside the tracker, route it — docs pages to agent-ks-docs, a blog post to agent-ks-blog, site config or themes to agent-ks-config.
 ---
 
 # agent-ks-issues — the issue tracker
 
-Default tracker: `data/todo/`. Every tracker has one shape. Terms: [anatomy](references/01_anatomy.md).
+Default tracker: `data/todo/`. Terms: [anatomy](references/01_anatomy.md).
 
-Source of truth: when the framework folder is present, its bundled user guide at `<framework>/default-docs/data/user-guide/19_issues/` wins over this skill. When the two disagree, follow the guide, update this skill, and tell the user.
+Source of truth: the engine and the CLI own everything they implement — statuses, agent-log kinds, templates, commands, flags, and what renders. Verify a claim with `agent-ks help` or `agent-ks check issues`. The bundled user guide at `@root/default-docs/data/user-guide/19_issues/` wins only on convention the code does not enforce. When code and skill disagree, follow the code, correct the skill, and tell the user.
 
-## The one rule
+## Pick up an issue
 
-No file stores a fact another file owns. Write each fact in the section that owns it. Link to it from everywhere else.
+Read these in order before you continue work. Skip a step whose folder is absent.
 
-The routing test, for any sentence you are about to write: which one section owns it? One answer: that section is its home. Two answers: you are about to write it twice. Split it.
+1. `agent-ks issue show <id>` — metadata, subtasks, logs.
+2. `issue.md` — the goal and the scope.
+3. `agent-memory/memory.md` — what you must not rediscover.
+4. Every non-Closed log's `00_index.md`, newest first — where each run stands and its handover.
+5. The [active plan](references/07_plans.md#the-active-plan) under `plans/` — its `overview.md` and its stages say what is next.
+
+Check an index against its folder with `/agent-ks-index-check <path>`.
 
 ## Sections and duties
 
-| Section | Owns | Never holds |
-|---|---|---|
-| `issue.md`, `settings.json` | the problem, its context, its metadata | design detail |
-| `brainstorm/` | scratch: research, options, dead ends | a conclusion others cite |
-| `notes/` | formal conclusions, things to refer back to | work orders |
-| plan overview | the goal, what goes where, stage order, plan-level decisions and result | subtask detail |
-| plan stage | its subtasks, its result, its decisions, a link to the log that ran it | a copied status |
-| subtask | one work item, full template | when it runs |
-| agent log | the working folder of a long run: the path, reports, caveats, the handover | the outcome. That is the subtask's |
-| agent memory | agent working state: index plus topic files | decisions, the plan |
-| comments | two lines and a pointer | debate |
+Each reference states what its section never holds.
 
-## The four boundaries
-
-| Boundary | The line |
+| Section | Owns |
 |---|---|
-| subtask ↔ agent log | The subtask holds the outcome. The log holds the path. A decision goes in the subtask; the options tried go in the log |
-| plan ↔ subtask | The plan owns order and blocking. The subtask owns what the work is |
-| notes ↔ subtask | A note states the conclusion. The subtask states what to do about it |
-| brainstorm ↔ notes | Deliberation stays in brainstorm. Only the conclusion moves to notes |
+| `issue.md`, `settings.json` | the problem, its context, its metadata |
+| `brainstorm/` | scratch: research, options, dead ends |
+| `notes/` | settled conclusions |
+| `plans/` | stage order, blocking, each stage's outcome, result and decisions |
+| `subtasks/` | one work item, in full |
+| `agent-log/` | one run: the path, the reports, the handover |
+| `agent-memory/` | working state: an index plus topic files |
+| `comments/` | two lines and a pointer |
 
 ## Status
 
-Eight values, four categories, fixed in framework code. Full rule: [lifecycle](references/02_lifecycle.md).
+Fixed in framework code. Full rule: [lifecycle](references/02_lifecycle.md).
 
 | Category | Statuses |
 |---|---|
@@ -49,24 +47,18 @@ Eight values, four categories, fixed in framework code. Full rule: [lifecycle](r
 | Review | `input-needed` · `review` |
 | Closed | `done` · `dropped` · `superseded` |
 
-A run uses five: `open`, `in-progress`, `input-needed`, `done`, `dropped`.
-
 ## Never
 
 | Never | Do instead |
 |---|---|
 | Write anything in frontmatter the schema does not name | Body text, or nothing |
-| Put a mark, an emoji, or a status before or after a `subtasks:` link | One plain link per entry |
 | Set `done` or `dropped` on an issue or a subtask | `review`, `input-needed`, or `superseded` with its `→` line |
-| Restate a subtask or a plan inside a log | Link to it |
 | Keep old wording next to new wording | Correct in place |
-| Search the tracker with `Grep` | `agent-ks issue list` or `agent-ks find` |
-| Rename or move with `mv` | `agent-ks move` |
+| Search the tracker with `Grep` | `agent-ks issue list` or `agent-ks find`. `list` reads the schema and hides Closed by default |
+| Rename or move with `mv` | `agent-ks move`. `mv` breaks every relative link in silence |
 | Write a document path in backticks | A relative markdown link with a name |
 | Save a discussion nobody asked to save | Offer once |
-| Open a `lp`, `wf` or `it` log without asking | Ask once, wait for yes. `au` and `rf` need no ask |
-| Open a log for a one-pass change | The result goes in the subtask's `## Result` |
-| Open a second log for work that belongs to an open one | Append a file there |
+| Open a `lp`, `it` or `wf` log without asking | Ask once, wait for yes. `lp` and `wf` commit days the user scopes. An unasked `it` is clutter the user must read. Kinds that need no ask: [agent-ks-issue-logs](../agent-ks-issue-logs/SKILL.md) |
 | Start a long run on a subtask with no why, no guardrails or no `Done when` | Scope it first: [agent-ks-qna](../agent-ks-qna/SKILL.md) |
 
 ## Triage
@@ -79,12 +71,12 @@ A run uses five: `open`, `in-progress`, `input-needed`, `done`, `dropped`.
 | issue body, comments, glossary | [04_issue-comments-glossary.md](references/04_issue-comments-glossary.md) |
 | brainstorm, notes, memory, artifacts | [05_brainstorm-notes-memory.md](references/05_brainstorm-notes-memory.md) |
 | subtasks | [06_subtasks.md](references/06_subtasks.md) |
-| scope a subtask or a stage from a conversation: the why, guardrails, done-when, decisions with reasons | [agent-ks-qna](../agent-ks-qna/SKILL.md), its own skill |
+| scope a subtask or stage before a long run | [agent-ks-qna](../agent-ks-qna/SKILL.md) |
 | plans and stages | [07_plans.md](references/07_plans.md) |
-| agent logs | [agent-ks-issue-logs](../agent-ks-issue-logs/SKILL.md), its own skill |
+| agent logs | [agent-ks-issue-logs](../agent-ks-issue-logs/SKILL.md) |
 | search, create, validate, move | [09_operations.md](references/09_operations.md) |
 | examples | [10_examples.md](references/10_examples.md) |
 
 ## Links
 
-Markdown mechanics and the link rule: [writing.md](../agent-ks-docs/references/writing.md). Every command and flag: [cli-toolkit.md](../agent-ks-cli/references/cli-toolkit.md). HTML artifacts: [agent-ks-artifacts](../agent-ks-artifacts/SKILL.md).
+Markdown and the link rule: [writing.md](../agent-ks-docs/references/writing.md). Commands and flags: [cli-toolkit.md](../agent-ks-cli/references/cli-toolkit.md). HTML artifacts: [agent-ks-artifacts](../agent-ks-artifacts/SKILL.md).

@@ -6,13 +6,13 @@ Anthropic-authored and this repo is public). The one deliberate verbatim excepti
 [`../scripts/validate_palette.js`](../scripts/validate_palette.js), carried as-is
 because it is a functional tool (code), with its own provenance header.
 
-The four sources (captured 2026-07-07 into the repo-root `tmp_skills/` snapshot):
+The four sources, captured 2026-07-07:
 
 | Source | Class | What it fed into this skill |
 |---|---|---|
-| `artifact-design` | Claude Code v2.1.202 built-in | The spine — calibration (`SKILL.md` §0), honor-the-host (§1), the fundamentals, anti-generic rules, typography, process, and the UI-vs-document router in `design-fundamentals.md` |
-| `dataviz` | Claude Code v2.1.202 built-in | The whole chart procedure → `dataviz/`; `validate_palette.js` bundled; `palette.md` re-derived from this framework's theme |
-| `design-sync` | Claude Code v2.1.202 built-in | Doctrine only (pipeline stripped) — the design-system anatomy, conventions-authoring rules, and the Styled/Complete/Plausible rubric in `design-systems.md` |
+| `artifact-design` | Claude Code v2.1.202 built-in | The spine — `SKILL.md`'s "Calibrate the treatment", "Theme mode" and "The inline variable contract" sections, plus the fundamentals, anti-generic rules, typography, process, and the UI-vs-document router in `design-fundamentals.md` |
+| `dataviz` | Claude Code v2.1.202 built-in | The whole chart procedure → `dataviz.md` and `dataviz-color.md`; `validate_palette.js` bundled; `palette.md` re-derived from this framework's theme |
+| `design-sync` | Claude Code v2.1.202 built-in | Doctrine only (pipeline stripped) — the design-system anatomy and the conventions-authoring rules in `design-systems.md`, and the Styled/Complete/Plausible rubric in `publishing.md`'s verify gate |
 | `frontend-design` | Anthropic plugin (`license: Complete terms in LICENSE.txt`; mirrored on the public `anthropics/skills` repo) | Salvaged into the anti-generic merge — the tone menu, "vary across generations," and the texture/background ideas (editorial branch only) |
 
 **The full source map, capture methods, integrity/licensing posture, and the

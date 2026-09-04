@@ -6,7 +6,7 @@ Every parameter the dataviz method asks for, filled in for this framework. The m
 
 | Rule | Detail |
 |---|---|
-| Surfaces and ink come from the theme contract | The chart surface, the page plane, the three inks, borders and the status roles are the framework's own `--color-*` tokens. The source is `astro-doc-code/src/styles/theme.yaml` and `color.css`. Never re-declare them as fresh hex. A `site` artifact consumes the token. A `self` artifact derives its values from the same tokens, so it cannot drift from the docs theme. |
+| Surfaces and ink come from the theme contract | The chart surface, the page plane, the three inks, borders and the status roles are the framework's own `--color-*` tokens. For the values, run `agent-ks theme tokens --json`; the declaring files are `@root/astro-doc-code/src/styles/theme.yaml` and `color.css`. Never re-declare them as fresh hex. A `site` artifact consumes the token. A `self` artifact derives its values from the same tokens, so it cannot drift from the docs theme. |
 | Only the categorical, sequential and diverging slots are own values | The contract carries no chart-series palette, so this file supplies a validated one. Every value below was checked on light `#f5f5f5` and dark `#171717` with the bundled validator. |
 
 To retarget another theme, swap the values in this file and re-run [validate_palette.js](../scripts/validate_palette.js) against that theme's surfaces.

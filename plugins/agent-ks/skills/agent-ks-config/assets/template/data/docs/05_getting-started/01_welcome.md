@@ -5,8 +5,8 @@ description: Your first page in the documentation
 
 # Welcome
 
-This is the starting point for **your** documentation. The framework copied this
-file in when you ran `init`; replace it with whatever you want.
+This is the starting point for **your** documentation. The `/agent-ks-config`
+command copied this file in; replace it with whatever you want.
 
 ## What's already wired up
 

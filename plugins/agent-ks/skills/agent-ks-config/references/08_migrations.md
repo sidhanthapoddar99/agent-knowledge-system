@@ -13,13 +13,13 @@ How the on-disk content format moves to a new version without hand edits. Migrat
 
 If none applies, author content in the current format from the other references.
 
-The contract: `site.yaml → engine_version` names the version the content targets; a missing value counts as `0.0.0`. The engine accepts the range `[MIN_CONTENT_VERSION, ENGINE_VERSION]` from `astro-doc-code/src/loaders/engine-version.ts`.
+The contract: `site.yaml → engine_version` names the version the content targets; a missing value counts as `0.0.0`. The engine accepts the range `[MIN_CONTENT_VERSION, ENGINE_VERSION]` from `@root/astro-doc-code/src/loaders/engine-version.ts`.
 
 **Confirm before you apply.** A migration rewrites content in place. Run the detect pass, show the count and the files, and wait for an explicit go-ahead. The one exception: the user asked you to run that migration.
 
 ## Where migrations live
 
-`<framework-repo>/migration/<to-version>_<statement>.py`. The code is part of the framework repo. This skill holds only the operating manual.
+`@root/migration/<to-version>_<statement>.py`. The code is part of the framework folder. This skill holds only the operating manual.
 
 | Fact | Detail |
 |---|---|
@@ -28,7 +28,7 @@ The contract: `site.yaml → engine_version` names the version the content targe
 | Python, stdlib only | One-off runs, outside the live CLI |
 | Self-documenting | The module docstring carries purpose, behaviour and usage. Read it before you run the script |
 
-The convention lives in `migration/README.md` in the framework repo.
+The convention lives in `@root/migration/README.md`.
 
 ## The upgrade flow
 
@@ -36,7 +36,7 @@ The gate exists to detect format drift here, loudly. A bare bump of `engine_vers
 
 | Step | Action |
 |---|---|
-| 1 | List every script in `migration/` with a version in `(X, Y]`. All of them, not only the newest |
+| 1 | List every script in `@root/migration/` with a version in `(X, Y]`. All of them, not only the newest |
 | 2 | For each script, ascending, run `detect`. Zero hits is a passed check, not a skipped script |
 | 3 | Where detect finds hits: run `migrate --dry-run`, show the user, get the go-ahead, run `migrate`. Then run `detect` again and confirm zero |
 | 4 | Verify the tree: `agent-ks check issues`, `agent-ks check section …`, and a build |
@@ -44,7 +44,7 @@ The gate exists to detect format drift here, loudly. A bare bump of `engine_vers
 
 ## Script structure
 
-Every script has one shape.
+Most scripts carry these four subcommands, and a script may add one of its own. Run `python <script> --help` first, so you use the set that script really has.
 
 | Subcommand | Does |
 |---|---|

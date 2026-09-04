@@ -23,6 +23,7 @@ sections: **Home**, **Docs**, **Issues**, **Blog**, and **User Guide**.
 │   ├── navbar.yaml
 │   └── footer.yaml
 ├── data/
+│   ├── README.md        # the folder map: one row per top-level data/ folder
 │   ├── docs/            # the user's "Docs" section (NN_-prefixed)
 │   ├── blog/            # YYYY-MM-DD-slug.md
 │   ├── issues/          # folder-per-issue tracker (vocabulary in root settings.json)

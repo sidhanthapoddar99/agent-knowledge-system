@@ -15,10 +15,6 @@ The answers go into the subtask's own sections, in the shape the template alread
 | Do not save the conversation. The subtask is the record; a run's path goes in the log | A transcript is not a scope. What was extracted is |
 | Paths in the to-do, links in the references. Never a bare description of a file | A path stops the agent guessing the surface; a link survives `agent-ks move` |
 
-## The playback
-
-Show the sections in template order, exactly as they will be written. Mark each line the user did not say with `(inferred)`, so they see what to correct. Keep the marks out of the file.
-
 ## A plan stage
 
 A stage takes four of the seven, at the stage level. The stage's work lives in its subtasks; scope each of those on its own. Shape: [07_plans.md](../../agent-ks-issues/references/07_plans.md).

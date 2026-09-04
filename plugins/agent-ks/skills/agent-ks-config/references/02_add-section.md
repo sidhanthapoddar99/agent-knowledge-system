@@ -69,6 +69,7 @@ Default: yes.
 Will create:
   <data_root>/<name>/settings.json     { "label": "<Title>", "sidebar": { ... } }
   <data_root>/<name>/01_overview.md    (frontmatter + starter content)
+Will add one row for <name> to <data_root>/README.md, the folder map (step 7).
 
 Will append to <project_root>/config/site.yaml under pages::
   <name>:
@@ -135,15 +136,13 @@ The `site.yaml` entry: read the file, find the `pages:` block, and append the en
 | `agent-ks check section <data_root>/<name>` | exit `0` |
 | `agent-ks check config <project_root>/config`, only when you edited `site.yaml` | exit `0` |
 
-If either fails, show the user the finding and offer to fix it. Otherwise add a row for the folder to `data/README.md`, and end with:
+If either fails, show the user the finding and offer to fix it. Otherwise add a row to `data/README.md`. The starter template ships that file with one row per folder — folder, purpose, route — so copy the shape of the rows already there. Then end with:
 
 ```
-Created section <name> at <data_root>/<name>/.
-
-Next steps:
+Created section <name> at <data_root>/<name>/. Next steps:
   - Edit data/<name>/01_overview.md to write the section's intro.
   - Add more pages: 05_*.md, 10_*.md, and so on. The NN_ prefix controls the sidebar order.
-  - Restart the dev server with ./start to pick up the new route at /<name>.
+  - Restart the dev server to pick up the new route at /<name>: ./start stop, then ./start --detach.
   - Optionally add a navbar link in config/navbar.yaml.
 ```
 

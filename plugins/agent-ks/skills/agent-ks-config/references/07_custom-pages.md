@@ -97,7 +97,7 @@ const message = page.message || 'World';
 | Use display tokens for poster text, UI tokens for chrome, content tokens for prose | The full rule set: [06_layouts.md](./06_layouts.md#rules-for-layout-css) |
 | Pass data to client script through a `data-*` attribute or a JSON `<script>` tag | `define:vars` breaks when the script imports a module. The countdown layout shows the pattern |
 
-`loadFile` returns `{ data, absolutePath, mtime }`. Use `data`. A fetch of remote data goes in the frontmatter and runs at build time; data that changes after load needs client script.
+`loadFile` returns a `LoadedContent`. Use `data` for the YAML and `filePath` for the source path. A fetch of remote data goes in the frontmatter and runs at build time; data that changes after load needs client script.
 
 ### Where it lives
 

@@ -1,5 +1,8 @@
 {
   "label": "Docs",
-  "isCollapsible": true,
-  "collapsed": false
+  "sidebar": {
+    "collapsed": false,
+    "collapsible": true,
+    "sort": "position"
+  }
 }

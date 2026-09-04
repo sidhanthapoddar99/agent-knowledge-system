@@ -1,11 +1,11 @@
 ---
 name: agent-ks-cli
-description: The `agent-ks` command line for an agent-knowledge-system project. One entrypoint, `agent-ks <group> <verb> [flags]`, for every read, write, scaffold and check. Load it before you run any `agent-ks` command, when a command fails, or when you need a flag. It holds the contract, the exit codes, the command groups, the worktree note, and links to the command reference, the author contract and the templates.
+description: Run any `agent-ks` command in an agent-knowledge-system project. One entrypoint, `agent-ks <group> <verb> [flags]`, for listing and searching issues, moving or renaming a page so every link follows, optimising images before a commit, scaffolding subtasks, plans, agent logs and rounds, committing one content path, reading theme tokens, and running the validators. Load it before you run any `agent-ks` command, when one fails or exits 2, when you would otherwise invent a flag, and when you are adding a new command to the toolkit. It holds the contract, the exit codes and the git-worktree note.
 ---
 
 # The `agent-ks` CLI
 
-One command on PATH: `agent-ks <group> <verb> [flags]`. It needs `bun` and nothing else.
+One command on PATH: `agent-ks <group> <verb> [flags]`. It needs `bun`. Only `img` needs more: the ImageMagick CLI.
 
 ## The contract
 
@@ -13,7 +13,7 @@ One command on PATH: `agent-ks <group> <verb> [flags]`. It needs `bun` and nothi
 |---|---|
 | `--help` or `-h` | Usage to stdout, exit 0, on every command and on bare `agent-ks` |
 | `--json` | One JSON document on stdout and nothing else, on every command that returns data |
-| Unknown flag | Exit 2 with the valid flags listed. A misspelled filter never widens a result |
+| Unknown flag | Exit 2 with the valid flags listed, so a misspelled filter never widens a result. The six `check` verbs other than `issues` ignore it and carry on, so read their output rather than their exit code. `move` and `img` reject it and exit 1 instead of 2 |
 | stdout | Data and human output |
 | stderr | Errors, warnings, tips |
 
@@ -22,8 +22,8 @@ Exit codes:
 | Code | Meaning |
 |---|---|
 | 0 | Success. For a query: found. For a validator: clean |
-| 1 | No result, or a handled runtime error. For a validator: problems found |
-| 2 | Usage error: a missing argument or an unknown flag |
+| 1 | No result, or a handled runtime error. For a validator: problems found. Also a missing argument in the `issue` verbs, `check section` and `move` |
+| 2 | Usage error: an unknown flag, or a missing argument in `doc`, `blog`, `git` and `find` |
 | 127 | The command's interpreter is not on PATH |
 
 ## Discover, do not memorise
@@ -41,7 +41,7 @@ Exit codes:
 |---|---|---|
 | (none) | `help` `resolve-context` `find` `move` `img` | search all content, link-aware move, image optimisation |
 | `issue` | `list` `show` `subtasks` `agent-logs` `review-queue` `set-state` `add-comment` `new-subtask` `new-plan` `new-stage` `new-agent-log` `new-round` | the tracker: read, write, scaffold |
-| `check` | `issues` `section` `blog` `config` `link-form` `links` `legacy-tags` `skill-links` | validators; exit 1 on a problem |
+| `check` | `issues` `section` `blog` `config` `link-form` `legacy-tags` `skill-links` | every validator splits its findings: errors exit 1, warnings exit 0. Read the counts, not the exit code |
 | `doc` | `list` `show` `search` | docs pages |
 | `blog` | `list` `show` `search` | blog posts |
 | `git` | `updated` `changed` `log` `commit` | git-derived content metadata |
@@ -57,11 +57,10 @@ Every command and flag: [cli-toolkit.md](./references/cli-toolkit.md).
 
 | Never | Do instead |
 |---|---|
-| Search the tracker with `Grep` | `agent-ks issue list` or `agent-ks find` |
+| Search the tracker with `Grep` | `agent-ks issue list` or `agent-ks find`; `Grep` reads text, so it cannot see status, vocabulary or subtask counts, which live in `settings.json` |
 | Rename or move with `mv` | `agent-ks move`; it rewrites every link |
 | Invent a flag | `agent-ks help <group> <verb>` |
 | Write a subtask, stage, plan, log or round by hand | the scaffolder; it writes the template |
-| Quote a `check skill-links` pass without the tree name | read the `[repo source tree]` or `[installed plugin]` banner first |
 
 ## Where the content is
 

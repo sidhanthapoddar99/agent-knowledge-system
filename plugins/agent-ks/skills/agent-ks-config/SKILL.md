@@ -1,6 +1,6 @@
 ---
 name: agent-ks-config
-description: Set up and configure an agent-knowledge-system project. Use it for a new project from the starter template, a new top-level section, and every file under config/ (site.yaml, navbar.yaml, footer.yaml), the framework .env, path aliases, themes and theme.yaml, layout styles and custom layouts, custom pages and their YAML, and format migrations after a version-gate error. Trigger it for any setup or configuration question, even a one-line change. Content inside a section belongs to agent-ks-docs, agent-ks-blog or agent-ks-issues.
+description: Set up and configure an agent-knowledge-system project. Use it for a new project from the starter template, a new top-level section, and every file under config/ (site.yaml, navbar.yaml, footer.yaml), the framework .env and its port, path aliases and routes, themes and theme.yaml — colours, fonts, dark mode, the logo and favicon — layout styles and custom layouts, custom pages (home, about, countdown) and their YAML, and format migrations when the site refuses to start with an engine-version error. Trigger it for any setup or configuration question, even a one-line change, and whenever the site will not start. Content inside a section belongs to agent-ks-docs, agent-ks-blog or agent-ks-issues.
 argument-hint: [new | section <name> | a topic]
 allowed-tools: Read, Write, Edit, Bash
 ---
@@ -9,7 +9,7 @@ allowed-tools: Read, Write, Edit, Bash
 
 Setup happens once, or once in a long while. So this skill is a set of complete references, one per topic. Read the one the task names; two when it crosses topics.
 
-**Source of truth.** The bundled user guide at `@root/default-docs/data/user-guide/` wins over this skill; `@root` is the framework folder. When the two disagree, follow the guide, fix the skill, and say so.
+**Source of truth.** The engine and the CLI decide anything they implement: the config keys, the layouts, the theme contract, the commands and the flags. Check a claim against them first, because they are what runs. The bundled user guide at `@root/default-docs/data/user-guide/` wins only on convention the code does not enforce; `@root` is the framework folder.
 
 ## Triage
 
@@ -28,26 +28,21 @@ Setup happens once, or once in a long while. So this skill is a set of complete 
 | A blog post | [the blog skill](../agent-ks-blog/SKILL.md) |
 | The issue tracker | [the issues skill](../agent-ks-issues/SKILL.md) |
 
-## Two modes, one code path
+## Two modes
 
-Consumer mode: the framework is a subfolder of the user's project, and its `.env` says `CONFIG_DIR=../config`. Dogfood mode: the framework repo is the project, content lives under `default-docs/`, and `CONFIG_DIR=./default-docs/config`. The references write paths as `config/`, `data/`, `themes/`. Read them through the active mode.
+The references write paths as `config/`, `data/` and `themes/`. Read them through the active mode, consumer or dogfood: [03_site-config.md](./references/03_site-config.md).
 
 ## Never
 
 | Never | Do instead |
 |---|---|
-| Scaffold, or append to `site.yaml`, without showing the plan and getting a yes | The confirm step in [01](./references/01_new-project.md) and [02](./references/02_add-section.md) |
-| Overwrite an existing `settings.json`, `site.yaml` block or `CLAUDE.md` | `Edit` in place, or stop and ask |
-| Clone the framework for the user | Print the command. The fork is their choice |
-| Hardcode a colour, font, size or spacing in theme or layout CSS | A variable from the contract: [05_themes.md](./references/05_themes.md#the-contract) |
-| Invent a CSS variable name with a fallback value | A contract variable, or propose one in `theme.yaml → required_variables` |
-| Write a site-absolute path in a `paths:` value, or name another alias in it | Relative to the config dir, absolute, or `@root/…` |
-| Bump `engine_version` past the gate | The migration chain: [08_migrations.md](./references/08_migrations.md) |
-| Name a theme folder `default` | Any other name. `@theme/default` is the built-in |
-| Rewrite a YAML file with `Write`, or reorder its keys | `Edit` the block that changes |
+| Scaffold, or append to `site.yaml`, without showing the plan and getting a yes | The confirm step in [01](./references/01_new-project.md) and [02](./references/02_add-section.md). You are writing into a folder the user owns |
+| Overwrite an existing `settings.json`, `site.yaml` block or `CLAUDE.md` | `Edit` in place, or stop and ask. Each of these files already holds the user's own work |
+| Clone the framework for the user | Print the command. Cloning reaches the network, and the fork is the user's choice |
+| Rewrite a YAML file with `Write`, or reorder its keys | `Edit` the block that changes. The comments and the key order are the file's documentation, and a rewrite destroys both |
 
 ## After every change
 
-Run `agent-ks check config`. Exit `0` is clean. A new `pages:` entry or a new layout folder needs a dev-server restart with `./start`. A CSS or YAML value edit hot-reloads.
+Run `agent-ks check config`. Exit `0` is clean. A CSS or YAML value edit hot-reloads. A new `pages:` entry or a new layout folder needs a restart: run `./start stop`, then `./start --detach`. Never launch with a bare `./start`; it holds the terminal until `Ctrl-C` and the task stalls there.
 
-If this skill is wrong, fix it and tell the user; do not work around it. Keep the user guide's skill catalogue page (`05_getting-started/05_claude-skills.md`) in step.
+If this skill is wrong, fix it and tell the user; do not work around it. The fix belongs in the framework repo, not in the installed plugin copy.

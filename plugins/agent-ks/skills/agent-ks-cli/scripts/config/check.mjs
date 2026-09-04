@@ -35,12 +35,17 @@ const JSON_OUT = process.argv.includes('--json');
 const POSITIONAL = process.argv.slice(2).find((a) => !a.startsWith('-'));
 
 let ROOT;
+// What `@root` means: the framework folder holding .env and default-docs/.
+// Null when no .env is discoverable — then an @root path is unverifiable and skipped.
+let FRAMEWORK_ROOT = null;
 if (POSITIONAL) {
   ROOT = POSITIONAL;
+  try { FRAMEWORK_ROOT = resolveProjectContext(SCRIPT_DIR).envDir; } catch { /* unknown */ }
 } else {
   // Derive from .env — config dir is exactly CONFIG_DIR
   const ctx = resolveProjectContext(SCRIPT_DIR);
   ROOT = ctx.configDir;
+  FRAMEWORK_ROOT = ctx.envDir;
 }
 
 const SITE = path.join(ROOT, 'site.yaml');
@@ -163,10 +168,15 @@ function extractPages(yaml) {
 }
 
 function resolveAlias(p, aliases, configDir) {
-  const m = p.match(/^@(\w+)\/?(.*)$/);
+  const m = p.match(/^@([\w-]+)\/?(.*)$/);
   if (!m) return path.isAbsolute(p) ? p : path.resolve(configDir, p);
   const [, alias, rest] = m;
+  if (alias === 'root') return FRAMEWORK_ROOT ? path.resolve(FRAMEWORK_ROOT, rest) : null;
   const aliasValue = aliases.get(alias);
   if (!aliasValue) return null;
+  // `@root` is the only alias the engine allows inside a `paths:` value, so an
+  // alias value needs one expansion and never a recursive walk.
+  const viaRoot = aliasValue.match(/^@root\/?(.*)$/);
+  if (viaRoot) return FRAMEWORK_ROOT ? path.resolve(FRAMEWORK_ROOT, viaRoot[1], rest) : null;
   return path.resolve(configDir, aliasValue, rest);
 }

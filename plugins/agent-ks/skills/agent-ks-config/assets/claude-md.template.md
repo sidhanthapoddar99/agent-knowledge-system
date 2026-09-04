@@ -35,7 +35,7 @@ The framework reads `.env` from `agent-knowledge-system/.env`. Consumer mode set
 
 | Part | What it gives |
 |---|---|
-| Skills | `agent-ks-config` (setup, site config, themes, layouts), `agent-ks-docs` (docs pages), `agent-ks-blog` (blog posts), `agent-ks-issues` (the issue tracker), `agent-ks-issue-logs` (agent logs), `agent-ks-artifacts` (HTML artifacts), `agent-ks-cli` (the CLI contract). Each triggers on its domain |
+| Skills | Ten, and each triggers on its own domain: `agent-ks-config` (setup, site config, themes, layouts), `agent-ks-docs` (docs pages), `agent-ks-blog` (blog posts), `agent-ks-issues` (the issue tracker), `agent-ks-issue-logs` (agent logs), `agent-ks-qna` (scoping a subtask or a stage by question and answer before a long run), `agent-ks-artifacts` (HTML artifacts), `agent-ks-cli` (the CLI contract), `agent-ks-quick-idea-note` and `agent-ks-index-check` (the last two run as the commands below) |
 | CLI on PATH | one `agent-ks` entrypoint; every operation is `agent-ks <group> <verb>`. Discover with `agent-ks help` |
 | Commands | `/agent-ks-config`, `/agent-ks-quick-idea-note`, `/agent-ks-index-check` |
 

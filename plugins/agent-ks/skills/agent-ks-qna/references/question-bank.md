@@ -2,6 +2,10 @@
 
 The questions, grouped by the home their answer goes to. Each carries the reason it matters for a long run. Say the reason when you ask; the user answers better when they know what the answer unblocks. Pick the ones the story left open. Never read the whole list out.
 
+## How a round runs
+
+Ask three to five questions at a time, grouped by home. Start with 1 and 2, because a why and a done-when settle most of what follows. Never re-ask what an earlier round answered; re-asking tells the user you did not listen. Stop when the seven hold, or at three rounds. Three rounds is the point where the user is scoping by interrogation instead of talking.
+
 ## 1 Why: the lead paragraph
 
 | Ask | Because |
@@ -70,38 +74,42 @@ Sort by what the sentence does, not by where it came in the story.
 | says "you decide", "ask me before", "up to you" | 6, freedom |
 | says "not sure", "maybe", "we'll see", "what do you think" | 7, `Questions`, or ask now |
 
+A sentence that is both a limit and a ruling splits in two. The limit goes to 4, `## Guardrails`. The reason goes to 5, `# 04 Decisions`, which points back at the guardrail. Never write the limit twice, because two copies drift and the next agent cannot tell which one binds.
+
+A sentence that is both the work and its test also splits in two. The change goes to 3, `# 01 To Do`. The observable goes to 2, `## Done when`, phrased as what a stranger would run, open or read. "Collapsed by default with the done/total count on the row, click expands" is one such sentence: the to-do is the collapse and the count, the test is what the row shows before and after a click. Split it, because a to-do that doubles as its own test is never checked, and the run has nothing to stop on.
+
 ## A worked example
 
 The user says, by voice, in one breath:
 
-> The link checker is in the engine and that is wrong, a consumer has no build so they can never run it, so move it into the plugin. It should read files only, no server. Don't touch the engine's own route parity check, that stays. I want `agent-ks check link-form` to pass on the user guide when you are done, and the engine tree should have no link-checking code left. Use the shared link walker, don't write a second regex, we had four copies once and they all disagreed. If the CI question comes up, not sure, ask me. Anything else about how you structure the script, your call.
+> The tracker check prints every warning in the tracker, so I write one subtask and get four hundred lines back and I cannot find my own file. Give `check issues` a scope flag, the same shape `issue list --scope` already has. It should filter the findings, not walk a smaller tree. Don't change what counts as a warning, that stays. I want `agent-ks check issues --scope <path>` to print only the findings under that path when you are done, and the unscoped run to print exactly what it prints today. Use the path matcher `issue list` already has, don't write a second one, private copies of one matcher drift and then nothing tells you which one binds. Whether it should apply to `--json` too, not sure, ask me. Anything else about how you structure the flag, your call.
 
 Extracted, then played back:
 
 ````markdown
-The link checker lives in the engine, so a consumer, who has no build, can never run it.
-It belongs in the plugin, which needs only files on disk.
+`check issues` reports the whole tracker, so a writer who just wrote one subtask cannot
+find their own file in the output. The findings need a scope filter.
 
 # 01 To Do
-- [ ] Move the checker into the plugin under `scripts/check-link-form.mjs`, reading files only.
-- [ ] Remove the link-checking code from the engine tree.
+- [ ] Add `--scope <subpath>` to `check issues`, filtering the findings it prints.
+- [ ] Reuse the path matcher `issue list --scope` uses.
 
 ## Guardrails
-- Do not touch the engine's route-parity check. It stays.
-- Use the shared link walker in `_links.mjs`. Never a second regex.
+- Do not change what counts as a warning. That stays.
+- Use the existing path matcher. Never a second copy.
 
 ## Questions
-- Should the check also run in CI?
+- Should `--scope` apply to `--json` output as well?
 
 ## Done when
-- `agent-ks check link-form` passes on the user guide.
-- The engine tree has no link-checking code left.
+- `agent-ks check issues --scope <path>` prints only the findings under that path.
+- The unscoped run prints what it prints today.
 
 # 04 Decisions
-## 01 One link walker
-- Decided (sid, 2026-09-04): reuse the shared walker, because four private copies once
-  gave four different answers.
-## 02 Script structure is the agent's call
+## 01 One path matcher
+- Decided (sid, 2026-09-04): the matcher guardrail above stands, because private copies
+  of one matcher drift, and then nothing tells you which one binds.
+## 02 Flag structure is the agent's call
 - Decided (sid, 2026-09-04): the agent decides the internal structure alone and records it.
 ````
 

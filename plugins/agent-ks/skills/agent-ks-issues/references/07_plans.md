@@ -131,3 +131,5 @@ agent-ks issue new-stage <id> --plan 01_decoder-and-retention --name journal-com
 ```
 
 Every flag: [cli-toolkit.md](../../agent-ks-cli/references/cli-toolkit.md).
+
+To check an index against its folder: `/agent-ks-index-check <path>`. Run it on a plan when you doubt that its stages still match the subtasks and logs they name.

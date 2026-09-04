@@ -2,7 +2,7 @@
 
 A design system is a set of artifact pages plus commentary pages that state the explicit values. The artifact pages are swatches, a type specimen and a component gallery. An agent authors it and maintains it. This file covers the parts of a design system, its two homes, its conventions document, and its verification.
 
-A design-system artifact is always `theme: "self"`; the [mode rule](../SKILL.md#theme-mode) decides that by subject. Read `theme.yaml`, `color.css` and `font.css` to start from the contract's values, never to inherit them by injection.
+A design-system artifact is always `theme: "self"`; the [mode rule](../SKILL.md#theme-mode) decides that by subject. Read the contract's values with `agent-ks theme tokens --json`, and the declaring files under `@root/astro-doc-code/src/styles/`. Start from those values; never inherit them by injection.
 
 ## What a design system is
 
@@ -15,7 +15,7 @@ Treat a design system as a contract that an agent or a builder consumes, not a m
 | Inventory | The real components and patterns (button, card, table, badge, field) with their variants and states |
 | Usage contract | How each part is composed, with examples |
 | Conventions document | The prose that teaches the system's idiom; see below |
-| Where-truth-lives pointers | The source files to open before styling: `astro-doc-code/src/styles/theme.yaml`, `color.css`, `font.css` |
+| Where-truth-lives pointers | The source files to open before styling: `@root/astro-doc-code/src/styles/theme.yaml`, `color.css`, `font.css` |
 
 A Home B section is complete when it holds all six. The verify gate decides when it is done.
 
@@ -75,7 +75,7 @@ The conventions document is a commentary page in Home B, or the deliberation pro
 |---|---|
 | Zero guesswork | Hold every sentence to one test: the reader can act on it with no guess. "Follow the design system's conventions" fails; spell the convention out. Name the token, or the agent invents one. |
 | Teach this system's idiom | A token system gets the `var(--*)` pattern with the real names: `--color-*`, `--ui-text-*`, `--content-*`, `--spacing-*`. A utility-class system gets a compact family table with real class names. A prop or theme system gets prop-based styling through its real props. Do not graft a foreign idiom. |
-| Name where the truth lives | Point at the real source files to read before styling: `theme.yaml`, `color.css`, `font.css`, any per-component page. |
+| Name where the truth lives | Point at the real source files of the system you are documenting: its token file, its color and font files, any per-component page. Give each one a path the reader can open. |
 | One idiomatic snippet | Include one short, real example that composes the system correctly. Adapt one you have already rendered. |
 | Validate every named thing | Every token you list exists in `theme.yaml` or the CSS. Every component you name exists as an artifact or a documented part. A name that resolves to nothing does more damage than no file: the reader builds with it and ships unstyled with no error. Fix the name or cut it. |
 

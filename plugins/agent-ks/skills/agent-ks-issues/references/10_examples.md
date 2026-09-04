@@ -22,10 +22,10 @@ No `plans/`: three subtasks worked one at a time have no schedule. A plan opens 
 
 | Step | Command or action |
 |---|---|
-| 1. read the issue | `agent-ks issue show <id>`, then `issue.md`, then `agent-ks issue agent-logs <id>` |
+| 1. read the issue | the four pickup steps in [SKILL.md](../SKILL.md) |
 | 2. pick a subtask | the one the user named, or any `open` one. Not the lowest prefix |
 | 3. start | `agent-ks issue set-state <id> in-progress --subtask 010` |
-| 4. work and record | the result goes in the subtask's `02`. A log only when the work must survive a handover: [when to open one](08_agent-logs.md) |
+| 4. work and record | the result goes in the subtask's `02`. A log only when the work must survive a handover: [when to open one](../../agent-ks-issue-logs/SKILL.md) |
 | 5. hand off | `agent-ks issue set-state <id> review --subtask 010` |
 | 6. every subtask in review or done | `agent-ks issue set-state <id> review`. The user sets `done` |
 
@@ -69,7 +69,7 @@ A long autonomous run, worked across many rounds. The execution record is the va
     │   ├── 10_log-scan.md
     │   ├── 20_timeout-fixes.md      status: dropped, with the callout
     │   ├── 30_rerun.md
-    │   └── 100_wf_shared-fixture/   a workflow run inside the sweep: a child log
+    │   └── 120_wf_shared-fixture/   a workflow run inside the sweep: a child log
     └── 020_lp_second-sweep/
 ```
 
@@ -79,7 +79,7 @@ A long autonomous run, worked across many rounds. The execution record is the va
 | one round per pass | `agent-ks issue new-round <id> --log 010_lp_first-sweep --name log-scan` |
 | a failed round stays | `status: dropped` plus the callout is the signal the next round needs |
 | durable facts leave the log | `agent-memory/` |
-| work inside the run nests | an audit or a workflow is a child log `1NN_`; the loop's `00_index.md` lists it |
+| work inside the run nests | an audit or a workflow is a child log; the loop's `00_index.md` lists it. Numbering: [agent-ks-issue-logs](../../agent-ks-issue-logs/SKILL.md) |
 
 ## A phase issue
 

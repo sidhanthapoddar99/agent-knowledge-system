@@ -55,7 +55,7 @@ Codex, OpenCode, Hermes and a skills-only install without a marketplace: the plu
 | `agent-ks-quick-idea-note` | Capture an idea into the issue dump | `/agent-ks-quick-idea-note [idea]` |
 | `agent-ks-index-check` | Check an index against the files it names; reports only | `/agent-ks-index-check [path]` |
 
-Every skill states its source of truth: the user guide you are reading wins over the skill. When they disagree, the agent follows the guide, fixes the skill, and says so.
+Every skill states its source of truth. The engine and the CLI win for anything they implement: statuses, kinds, templates, commands, flags, what renders. This user guide wins on convention the code does not enforce. When a skill disagrees with either, the agent follows the source, fixes the skill, and says so.
 
 ## Slash commands
 
@@ -84,7 +84,7 @@ Claude Code adds the plugin's `bin/` to `PATH` at session start. Other agents ad
 | Group | Verbs |
 |---|---|
 | `issue` | `list`, `show`, `subtasks`, `agent-logs`, `set-state`, `add-comment`, `new-subtask`, `new-plan`, `new-stage`, `new-agent-log`, `new-round`, `review-queue` |
-| `check` | `config`, `section <folder>`, `blog`, `issues`, `link-form`, `content-links`, `legacy-tags`, `skill-links` |
+| `check` | `config`, `section <folder>`, `blog`, `issues`, `link-form`, `legacy-tags`, `skill-links` |
 | `doc`, `blog` | `list`, `show`, `search` |
 | `git` | `updated`, `changed --since`, `log`, `commit --scope` (guarded, never pushes) |
 | `theme` | `tokens` |
@@ -117,8 +117,8 @@ Plugin files are cached once at user level, whatever scope enables them:
     ├── agent-ks-docs/         SKILL.md · references/writing, docs-layout, images
     ├── agent-ks-blog/         SKILL.md
     ├── agent-ks-issues/       SKILL.md · references/01 … 10
-    ├── agent-ks-issue-logs/   SKILL.md
-    ├── agent-ks-qna/          SKILL.md · references/question-bank
+    ├── agent-ks-issue-logs/   SKILL.md · references/kinds
+    ├── agent-ks-qna/          SKILL.md · references/question-bank, writing-rules
     ├── agent-ks-artifacts/    SKILL.md · references · scripts
     ├── agent-ks-cli/          SKILL.md · references · scripts (the CLI) · templates
     ├── agent-ks-quick-idea-note/

@@ -2,7 +2,7 @@
 
 ## `issue.md`
 
-Read it first when you pick up an issue. It holds the durable framing: what the issue is, for a reviewer.
+It holds the durable framing: what the issue is, for a reviewer. The order to read an issue in: [SKILL.md](../SKILL.md).
 
 ```markdown
 ---
@@ -95,4 +95,4 @@ An optional file at the issue root. The Glossary panel renders it as written. It
 
 ## The Guide panel
 
-Every issue renders a Guide panel: an anatomy legend with one generated island, the issue's effective kind codes. The framework builds it from `astro-doc-code/src/layouts/issues/default/guide.ts`. You do not write it. It is present even when the plugin is not installed. The skill is the full manual; the Guide is the map. A framework maintainer keeps `guide.ts` in step with this skill.
+Every issue renders a Guide panel: an anatomy legend with one generated island, the issue's effective kind codes. The framework builds it from `@root/astro-doc-code/src/layouts/issues/default/guide.ts`. You do not write it. It is present even when the plugin is not installed. The skill is the full manual; the Guide is the map. A framework maintainer keeps `guide.ts` in step with this skill.

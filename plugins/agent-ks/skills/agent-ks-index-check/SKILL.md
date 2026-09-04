@@ -1,21 +1,32 @@
 ---
 name: agent-ks-index-check
-description: Check whether an index in an agent-knowledge-system tracker still agrees with the files it points at. Works on a plan, an agent log, a subtask group, one index file, or a whole issue folder. Reports only. Never edits. Invoke it with the path as the argument.
+description: Check whether an index in an agent-knowledge-system tracker has gone stale — whether a plan, an agent log, a subtask group, issue.md or a whole issue folder still says what is true on disk. Use it whenever someone asks if a plan is out of date, whether an issue folder can still be trusted, what a folder claims against what is there, or asks for an index sweep before a wrap-up or at the start of a session that inherited someone else's work. Reports only, never edits, so it is safe to run on anything. Invoke it with the path as the argument.
 argument-hint: "[path to an index file, an issue folder, a plan folder, or an agent-log folder]"
-allowed-tools: Agent, Task, Read, Grep, Glob
+allowed-tools: Agent, Task, Read, Grep, Glob, Bash
 ---
 
 # agent-ks-index-check
 
 An index is a claim about files that live somewhere else. It goes stale with no error. This skill finds where the claim and the files disagree. It reports. It never edits.
 
+## Run the CLI first
+
+Two verbs answer the mechanical half. Run them first: a script resolves every link in a second and never miscounts.
+
+| Command | Answers |
+|---|---|
+| `agent-ks check link-form <path>` | every `ORPHAN` under the path, with file and line |
+| `agent-ks check issues` | a subtask group leaf whose `status` says open while every member is closed. It reads the whole tracker: quote only the lines under your path |
+
+Spend the agent on `MISSING`, `STALE` and `INFERENCE` only. No script reads through a reference into another file's state.
+
 ## Run it
 
 | Situation | Do |
 |---|---|
 | `$ARGUMENTS` is empty | Ask which index: a file, an issue folder, a plan folder, or an agent-log folder |
-| The path is relative | Resolve it against the current directory |
-| You have the `Agent` tool (`Task` in some harnesses) | Dispatch `agent-ks:agent-ks-index-checker` (bare name `agent-ks-index-checker` as the fallback), in the foreground. The prompt: the path, the user's scope, the absolute path of this file. Do not restate the procedure. Relay the report |
+| The path is relative | Resolve it to an absolute path. A subagent need not share your working directory |
+| You have the `Agent` tool (`Task` in some harnesses) | Dispatch `agent-ks:agent-ks-index-checker` (bare `agent-ks-index-checker` as the fallback). The prompt: the absolute path, the user's scope, the CLI findings, the absolute path of this file. Do not restate the procedure. Wait for the report before you reply, then relay it |
 | You have no `Agent` tool (Codex) | Run the procedure yourself |
 
 Do not read the index before a dispatch; that spends the context the dispatch saves, and primes the report. Use at most one `Glob` or `Read`, to confirm the path exists.
@@ -54,4 +65,4 @@ Relay the four labels; do not flatten them. Put `MISSING` first, with its number
 |---|---|
 | Fix a finding, or offer to | Report it. The caller decides |
 | Set a status because of a finding | Leave it. `done` and `dropped` are the user's |
-| Run this skill from a hook, a gate or a CI job | Run it by hand |
+| Run this skill from a hook, a gate or a CI job | Run it by hand. `INFERENCE` is a human judgement, so a gate has no pass or fail to read |

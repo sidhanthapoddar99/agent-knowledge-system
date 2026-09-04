@@ -108,8 +108,8 @@ export const MANIFEST = [
     summary: 'List subtasks for one issue, or across all (--all)',
     flags: [
       { name: 'all', desc: 'across all issues' },
-      { name: 'state', value: 'vals', desc: 'filter by subtask state' },
-      { name: 'status', value: 'vals', desc: 'alias of --state' },
+      { name: 'status', value: 'vals', desc: 'filter by subtask status' },
+      { name: 'state', value: 'vals', desc: 'alias of --status' },
       { name: 'flat', desc: 'flat TSV instead of grouped tree' },
       { name: 'json', desc: 'structured JSON output' },
       { name: 'quiet-tips', desc: 'suppress the trailing usage tips' },
@@ -149,7 +149,7 @@ export const MANIFEST = [
     bin: 'docs-new-agent-log', group: 'issue', verb: 'new-agent-log', category: 3, script: 'issues/new-agent-log.mjs', runtime: 'mjs',
     summary: 'Scaffold an agent log — settings.json and 00_index.md from templates/log-index-<kind>.md (log-index.md for a custom kind)',
     flags: [
-      { name: 'kind', value: 'code', desc: 'agent-log kind code (lp/au/rf/it/wf or a custom agentLogKinds code) — required' },
+      { name: 'kind', value: 'code', desc: 'agent-log kind code (lp/au/rf/re/it/wf or a custom agentLogKinds code) — required' },
       { name: 'name', value: 'slug', desc: 'kebab-case run name, sanitised to [a-z0-9-] — required' },
       { name: 'group', value: 'a[/b]', desc: 'nest under a grouping folder path, or a log folder for a child log (numbered from 120; numbering scoped to the folder)' },
       { name: 'prefix', value: 'NNN', desc: 'explicit number (2–5 digits) instead of the next gap-spaced one' },
@@ -245,8 +245,8 @@ export const MANIFEST = [
       { name: 'json', desc: 'structured findings' },
       { name: 'quiet', desc: 'suppress warnings' },
       { name: 'no-warnings', desc: 'same as --quiet' },
-      { name: 'verbose', desc: 'per-file detail while walking' },
-      { name: 'strict', desc: 'treat warnings as errors' },
+      { name: 'verbose', desc: 'for unknown-key warnings, also list the canonical keys' },
+      { name: 'strict', desc: 'promote unknown-key warnings to errors (exit 1 on schema drift)' },
       { name: 'template', desc: 'check the five template headings on subtasks, stages and plan overviews (also on via root settings `template: true`)' },
       { name: 'tracker', value: 'path', desc: 'non-default tracker' },
     ],
@@ -265,16 +265,6 @@ export const MANIFEST = [
     bin: 'docs-check-link-form', group: 'check', verb: 'link-form', category: 2, script: 'check-link-form.mjs', runtime: 'mjs',
     summary: 'Every internal link is relative — the form agent-ks move can maintain (source-only, no build needed)',
     flags: [{ name: 'json', desc: 'structured findings' }],
-  },
-  {
-    bin: 'docs-check-links', group: 'check', verb: 'links', category: 2, script: 'check-content-links.mjs', runtime: 'mjs',
-    summary: 'Verify links between content pages resolve (run ./start build first)',
-    flags: [
-      { name: 'section', value: 'name', desc: 'check one page from site.yaml instead of all' },
-      { name: 'all', desc: 'include trackers (type: issues) — excluded by default' },
-      { name: 'dist', value: 'path', desc: 'built site to check against, if not auto-found' },
-      { name: 'json', desc: 'structured findings' },
-    ],
   },
 
   // ---- docs content (group: doc) -------------------------------------------

@@ -1,22 +1,25 @@
 ---
 name: agent-ks-artifacts
-description: Build a self-contained HTML artifact (report page, dashboard, chart, data viz, design-system page, variation set of design options, brand guideline) as an `NN_`-prefixed `.html` page with an optional `.meta.json` sidecar in an agent-knowledge-system project. Trigger on build, design or generate. Not claude.ai Artifacts. Markdown docs: agent-ks-docs. Tracker structure: agent-ks-issues.
+description: Build a self-contained HTML artifact in an agent-knowledge-system project — a report page, a dashboard, a chart or data visualization, a design-system or brand-guideline page, or a variation set of design options to choose between. It ships as one `.html` page in a docs section, or in an issue's `notes/` or `brainstorm/`. Trigger whenever the user asks to build, design, generate, visualize, mock up or prototype a page, dashboard, chart, UI or set of options, even when they never say artifact. Not claude.ai Artifacts. Markdown pages and diagram pages belong to agent-ks-docs. Tracker structure belongs to agent-ks-issues.
 license: Complete terms in the agent-ks plugin LICENSE file.
 ---
 
 # agent-ks-artifacts
 
-An artifact is one `.html` file in this repo, served at `/artifacts/<path>` and embedded in docs pages. It is not a claude.ai Artifact; where a claude.ai habit conflicts, this skill wins. Provenance: [PROVENANCE.md](references/PROVENANCE.md).
+An artifact is one `.html` file in this repo, served at `/artifacts/<path>` and embedded in docs pages. It is not a claude.ai Artifact; where a claude.ai habit conflicts, this skill wins.
 
 ## Triage
 
+Work in this order: pick the home, plan, build, run the gate.
+
 | Task | Read |
 |---|---|
-| Treatment, craft, type, copy, the plan | [design-fundamentals.md](references/design-fundamentals.md) |
 | Location, sidecar, route, embed, theme mechanics, self-containment, the verify gate | [publishing.md](references/publishing.md) |
+| Treatment, craft, type, copy, the plan | [design-fundamentals.md](references/design-fundamentals.md) |
 | Any plotted data | [dataviz.md](references/dataviz.md), then [dataviz-color.md](references/dataviz-color.md) |
 | This framework's chart palette | [palette.md](references/palette.md) |
 | A design system, a brand guideline, a variation set | [design-systems.md](references/design-systems.md) |
+| An upstream sync, or a licensing question | [PROVENANCE.md](references/PROVENANCE.md) |
 
 ## Calibrate the treatment
 
@@ -45,19 +48,21 @@ Consume these names. `agent-ks theme tokens --json` prints the values ([cli-tool
 - **Shadow, motion** `--shadow-sm`, `-md`, `-lg`, `-xl`; `--transition-fast`, `-normal`
 - **Layout** `--sidebar-width`, `--navbar-height`, `--outline-width`, `--max-width-primary`, `--max-width-secondary`
 
-This list mirrors `astro-doc-code/src/styles/theme.yaml` → `required_variables`; change both in one edit, source and installed cache. In `self` mode reuse these names. Add an own name only for a role beyond the contract.
+This list mirrors `@root/astro-doc-code/src/styles/theme.yaml` → `required_variables`, minus the primitive `--font-size-*` scale, which no layout or artifact consumes. In `self` mode reuse these names. Add an own name only for a role beyond the contract.
 
 ## Never
 
 | Never | Do instead |
 |---|---|
 | Write a `<body>` fragment | The complete document: doctype, head, style, script, body |
-| Load a script, stylesheet or font from a CDN | Inline it, or reference a repo asset |
+| Load a script, stylesheet or font from a CDN | Inline it, or use a [site URL form](references/publishing.md#the-url-forms) |
 | Invent a token name, or give one a hex fallback | A contract name; the only fallback is the `site` neutral layer |
 | Ship one theme | Light and dark; one theme only as a deliberate `self` choice |
 | Let the page body scroll sideways | Wide content in its own `overflow-x: auto` box |
-| Judge colorblind safety by eye | Run `scripts/validate_palette.js` |
+| Judge colorblind safety by eye | Run [validate_palette.js](scripts/validate_palette.js) |
 | Write series or category names with `innerHTML` | `textContent` or `createTextNode` |
 | Edit the HTML and leave the sidecar | Read it first; update it in the same change |
 | Paste untrusted third-party HTML | Write it yourself |
 | Call an artifact done before the gate | Run the [verify gate](references/publishing.md#verify-before-you-publish) |
+
+An artifact runs unsandboxed on the site origin. So anything it loads, or writes as markup, runs with the site's privileges. Extend these rows to any new case by that reason.

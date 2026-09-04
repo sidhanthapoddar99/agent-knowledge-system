@@ -28,6 +28,8 @@ One name is on PATH: `agent-ks`. A prefixed name cannot collide with another too
 
 A flag absent from the manifest entry is an error: the command exits 2 and lists the valid flags. Do not invent flags.
 
+Enforcement comes from `parseArgs()` in `scripts/_cli.mjs`. A command that parses its own arguments does not get it. Today the six `check` verbs other than `issues` ignore an unknown flag and carry on. `move` and `img` reject it and exit 1 instead of 2. Route a new command through `parseArgs()`, so the manifest's flag list is the one that decides.
+
 ## 3. Help
 
 `cli.mjs` intercepts `--help` and `-h` for every command. It prints the manifest-generated detail to stdout with exit 0. A command does not implement its own help. The one exception is `agent-ks help`, which renders the full listing itself. Help never reaches the script, so it is identical in every language.
@@ -52,6 +54,8 @@ Write a large payload synchronously before you exit. On a pipe stdout is asynchr
 | `2` | Usage error: a missing or invalid argument, an unknown flag |
 | `127` | The dispatcher found no interpreter for the command's `runtime` |
 
+A new command follows this table. The shipped commands do not all reach it yet: the `issue` verbs, `check section` and `move` exit 1 on a missing argument, where the table asks for 2. Read the message, not the code, when you branch on one of those.
+
 ## 6. Project context
 
 A command must not re-implement `.env` discovery. Call `agent-ks resolve-context` and read `CONTENT_ROOT`, `DATA_DIR` and `CONFIG_DIR` from it. `--json` returns `{ contentRoot, configDir, dataDir, envPath, envDir }`. This is the one source for where content lives, in consumer mode and in dogfood mode.
@@ -60,7 +64,7 @@ A command must not re-implement `.env` discovery. Call `agent-ks resolve-context
 
 1. Add one entry to `MANIFEST` in `scripts/_manifest.mjs`. Set `runtime`.
 2. Put the script at `scripts/<entry.script>`.
-3. Run `bun scripts/_selftest.mjs`. It reads the manifest. It checks the new command's `--help`, `-h`, exit codes and `--json` with no change of its own.
+3. Run `bun scripts/_selftest.mjs`. It reads the manifest. It checks the new command's `--help`, `-h` and `--json` with no change of its own. It does not check the exit codes of §5, so test those by hand.
 4. Add the command and its flags to [cli-toolkit.md](./cli-toolkit.md).
 
 No shim is needed. The dispatcher resolves the new `<group> <verb>` from the manifest.

@@ -9,7 +9,7 @@ pages:
   launch:  { base_url: "/launch",  type: custom, layout: "@custom/countdown", data: "@data/pages/launch.yaml" }
 ```
 
-Three layouts ship. Each has its own schema; they are not styles of one layout. The framework does not validate the YAML, so the layout is the schema: a key it does not read renders nothing.
+Three layouts ship. Each has its own schema. They are not styles of one layout. The framework does not validate the YAML. So the layout is the schema, and a key the layout does not read renders nothing.
 
 ## `@custom/home`
 
@@ -27,7 +27,7 @@ features:                                # optional; omit for a hero-only page
   - { title: "Themed", description: "Light and dark from one theme.", icon: "🎨" }
 ```
 
-`icon` is any string: an emoji, a unicode glyph, inline SVG. The grid is three columns on desktop, so three or six features look right; four wrap awkwardly. The `href` values are URLs, as in the navbar.
+`icon` is any string: an emoji, a unicode glyph, inline SVG. The grid is three columns on desktop, so three or six features look right. Four wrap, and the second row looks uneven. The `href` values are URLs, as in the navbar.
 
 ## `@custom/info`
 
@@ -38,7 +38,7 @@ title: "About"                                                   # optional; def
 description: "Learn more about this documentation framework."    # optional
 ```
 
-It renders nothing else. An About page that grows sections becomes a docs section instead. A page that needs prose, a form or a diagram needs its own layout; see below.
+It renders nothing else. An About page that grows sections becomes a docs section instead. A page that needs prose, a form or a diagram needs its own layout. See below.
 
 ## `@custom/countdown`
 
@@ -52,7 +52,7 @@ amount: "50% off"                        # optional; the highlight line above th
 note: "For the first 100 signups only."  # optional; italic, muted, below the timer
 ```
 
-A bare timestamp counts in the visitor's local time. Add `Z` or an offset for one moment worldwide. After the target every unit shows `0`; switch the page to another layout then.
+A bare timestamp counts in the visitor's local time. Add `Z` or an offset for one moment worldwide. After the target date every unit shows `0`. Switch the page to another layout then.
 
 ## Write a custom layout
 
@@ -97,11 +97,11 @@ const message = page.message || 'World';
 | Use display tokens for poster text, UI tokens for chrome, content tokens for prose | The full rule set: [06_layouts.md](./06_layouts.md#rules-for-layout-css) |
 | Pass data to client script through a `data-*` attribute or a JSON `<script>` tag | `define:vars` breaks when the script imports a module. The countdown layout shows the pattern |
 
-`loadFile` returns a `LoadedContent`. Use `data` for the YAML and `filePath` for the source path. A fetch of remote data goes in the frontmatter and runs at build time; data that changes after load needs client script.
+`loadFile` returns a `LoadedContent`. Use `data` for the YAML and `filePath` for the source path. A fetch of remote data goes in the frontmatter and runs at build time. Data that changes after load needs client script.
 
 ### Where it lives
 
-Put it under `LAYOUT_EXT_DIR`, at `layouts/custom/<style>/Layout.astro`, and reference it as `@custom/<style>`. Setup, import aliases and the restart rule: [06_layouts.md](./06_layouts.md#custom-layout-styles). Inside `src/layouts/custom/` is for layouts that ship with the framework only.
+Put it under `LAYOUT_EXT_DIR`, at `layouts/custom/<style>/Layout.astro`. Reference it as `@custom/<style>`. Setup, import aliases and the restart rule: [06_layouts.md](./06_layouts.md#custom-layout-styles). The folder `src/layouts/custom/` is for layouts that ship with the framework only.
 
 A layout that grows splits into parts:
 
@@ -115,8 +115,8 @@ layouts/custom/dashboard/
 
 ### Before you ship it
 
-- Renders with every field, with only the required ones, and with none.
-- Survives a malformed YAML file.
-- Looks right in light and dark mode, and under a second theme.
-- Its CSS greps clean for hex colours and raw sizes.
+- It renders with every field, with only the required ones, and with none.
+- It survives a malformed YAML file.
+- It looks right in light and dark mode, and under a second theme.
+- A grep of its CSS finds no hex colour and no raw size.
 - A README and an example YAML sit in the folder when it is shared. The consumer needs the folder, a YAML file in `data/pages/` and a `pages:` entry.

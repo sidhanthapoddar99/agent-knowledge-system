@@ -1,8 +1,8 @@
 # Navbar, footer and logo
 
-The site chrome above and below every page. The user guide pages are `@root/default-docs/data/user-guide/10_configuration/04_navbar.md`, `05_footer.md` and `03_site/07_logo.md`.
+This file covers the site chrome: the navbar above and the footer below every page. The user guide pages are `@root/default-docs/data/user-guide/10_configuration/04_navbar.md`, `05_footer.md` and `03_site/07_logo.md`.
 
-One navbar and one footer apply to every page. There is no per-page override. Both files are optional: a missing `navbar.yaml` or `footer.yaml` loads the `default` style with no items, and `agent-ks check config` warns.
+One navbar and one footer apply to every page. There is no per-page override. Both files are optional. When `navbar.yaml` or `footer.yaml` is missing, the site loads the `default` style with no items, and `agent-ks check config` warns.
 
 ## `navbar.yaml`
 
@@ -74,7 +74,7 @@ logo:
 | `theme.dark`, `theme.light` | Optional. The navbar swaps them with the theme toggle. Give both or neither |
 | `favicon` | Optional. PNG, SVG or ICO |
 
-The files sit in the project's `assets/` folder, which `paths.assets` maps and the site serves at `/assets/`. That folder is the framework's chrome. A document never links into it; a document's images sit beside the document.
+The files sit in the project's `assets/` folder. `paths.assets` maps that folder, and the site serves it at `/assets/`. That folder holds the site chrome only. A document never links into it. A document's images sit beside the document.
 
 ## Change the style only
 
@@ -89,4 +89,4 @@ A custom navbar or footer style is a folder `navbar/<style>/index.astro` or `foo
 
 ## Validate
 
-`agent-ks check config` warns on a missing file and errors on a `footer.yaml` `page:` that names no `pages:` entry. It does not check `href` targets. Open the dev server and click each item once after a change.
+`agent-ks check config` warns on a missing file. It errors on a `footer.yaml` `page:` that names no `pages:` entry. It does not check `href` targets. Open the dev server and click each item once after a change.

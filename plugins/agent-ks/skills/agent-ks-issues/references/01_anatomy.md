@@ -25,7 +25,7 @@ A tracker is a folder of issues. The default tracker is `data/todo/`. A project 
 | agent memory | `agent-memory/`, the agent's working state for the issue |
 | dump issue | an issue with component `issue-dump`. Each subtask in it is an unhomed idea |
 | kind code | the two-letter code in an agent log folder name: `lp`, `au`, `rf`, `re`, `it`, `wf`, or a custom code |
-| ordering prefix | the leading digits of a file or folder name. It sets the sort position. 2 to 5 digits, sorted by numeric value, so `01_` and `010_` coexist and `5_` does not parse. `_` is canonical; the loader tolerates `-` |
+| ordering prefix | the leading digits of a file or folder name. It sets the sort position. 2 to 5 digits, sorted by numeric value. So `01_` and `010_` can coexist, and `5_` does not parse. `_` is the standard separator. The loader also accepts `-` |
 | template | the one body shape every work file uses. See [writing](03_writing.md) |
 | Closed | the status category that holds `done`, `dropped` and `superseded` |
 
@@ -60,7 +60,7 @@ A tracker is a folder of issues. The default tracker is `data/todo/`. A project 
         └── history/<subject>.md       optional: how we got here
 ```
 
-An issue folder name matches `^\d{4}-\d{2}-\d{2}-[a-z0-9-]+$`. The only root files are `issue.md`, `settings.json` and `glossary.md`. The validator warns on any other root `.md` file. It does not check other file types, so a stray `.txt` or `.json` at the root passes in silence. Report a stray file to the user.
+An issue folder name matches `^\d{4}-\d{2}-\d{2}-[a-z0-9-]+$`. The only root files are `issue.md`, `settings.json` and `glossary.md`. `agent-ks check issues`, the validator, warns on any other root `.md` file. It does not check other file types, so a stray `.txt` or `.json` at the root passes without a warning. Report a stray file to the user.
 
 ## Folder rules
 
@@ -71,7 +71,7 @@ An issue folder name matches `^\d{4}-\d{2}-\d{2}-[a-z0-9-]+$`. The only root fil
 | `notes/` | optional | 5 levels is the cap; 3 is the convention | number only when reading order matters |
 | `plans/` | `NN_` per plan and per stage | plan folders only | no loose files; `overview.md` is reserved |
 | `subtasks/` | `NN_` or `NNN_`, gap-spaced | 1 level is the convention, because a group is an area and not a phase ([subtasks](06_subtasks.md)); 5 is the cap | a group is a label with no body file |
-| `agent-log/` | `NNN_` per log; files inside are free. Child-log numbering: [agent-ks-issue-logs](../../agent-ks-issue-logs/SKILL.md) | two levels is the shape to aim for | `00_index.md` is the entry file. Guidance, not checked |
+| `agent-log/` | `NNN_` per log; files inside are free. Child-log numbering: [agent-ks-issue-logs](../../agent-ks-issue-logs/SKILL.md) | two levels is the shape to aim for | `00_index.md` is the entry file. This is guidance. Nothing checks it |
 | `agent-memory/` | none | `knowledge/` and `history/` | name files by topic |
 
 The loader reads 5 folder levels below a section. Deeper content gets one console warning and no page. Files and folders mix at every level except the deepest. Any folder may hold an `assets/` folder for embedded files. It never appears in the sidebar. In the sidebar a subtask group shows done/total. Other sections show the descendant count.
@@ -84,16 +84,16 @@ The loader reads 5 folder levels below a section. Deeper content gets one consol
 | `description` | string | optional | 1–3 sentences; detail goes in `issue.md` |
 | `status` | enum | error | one of the eight statuses in [lifecycle](02_lifecycle.md) |
 | `priority` | enum | convention | a value from `fields.priority.values` |
-| `component` | string[] | warning | values from `fields.component.values`. Exactly one per issue: the layer that holds most of the work. The validator warns on an empty list and on more than one. A dump issue is no exception: `issue-dump` names a holding pen rather than a layer, and it still takes exactly one component |
+| `component` | string[] | warning | values from `fields.component.values`. Exactly one per issue: the layer that holds most of the work. The validator warns on an empty list and on more than one. A dump issue is no exception. `issue-dump` names a holding place rather than a layer, and the issue still takes exactly one component |
 | `labels` | string[] | convention | values from `fields.labels.values`; often `[]` |
 | `author` | string | convention | a name from the root `authors` list |
 | `assignees` | string[] | convention | names from `authors`; often `[]` |
 | `agentLogKinds` | object | optional | custom kind codes: `{ "ex": { "name": "experiment", "icon": "flask" } }` or `"hf": "hotfix"` |
 | `draft` | boolean | optional | `true` hides the issue from the site |
 
-Level says what happens when the field is missing. `error`: the load or `agent-ks check issues` fails. `warning`: the check reports a finding. `convention`: nothing checks it, and every issue still carries it. `optional`: leave it out. Report the right level when you audit a tracker, so a convention does not read as a defect.
+The Level column says what happens when the field is missing. `error` means the load or `agent-ks check issues` fails. `warning` means the check reports a finding. `convention` means nothing checks it, and every issue still carries it. `optional` means you may leave it out. Report the right level when you audit a tracker, so that a convention does not read as a defect.
 
-Dates are derived. `created` comes from the folder name. `updated` comes from the last git commit under the folder. Do not write `updated` into the file. The tracker orders issues by `priority` desc, then `updated` desc. A missing `labels` or `assignees` reads as `[]`. `assignees` says who holds the work. It is not a status. The filter has two tiers: `assigned` or `unassigned`, and names from `authors`.
+The engine derives the dates. `created` comes from the folder name. `updated` comes from the last git commit under the folder. Do not write `updated` into the file. The tracker orders issues by `priority`, highest first, then by `updated`, newest first. A missing `labels` or `assignees` reads as `[]`. `assignees` says who holds the work. It is not a status. The filter has two tiers: `assigned` or `unassigned`, and names from `authors`.
 
 ## Tracker vocabulary
 
@@ -123,7 +123,7 @@ The root file is `settings.json` or `settings.jsonc`. Prefer `.jsonc` and commen
 | `"template": true` | runs the five-section lint on every `agent-ks check issues`, with no `--template` flag |
 | `"draft": true` | hides the whole tracker from the production build |
 
-Descriptions render in the tracker's Guide modal. Keep them accurate. To backfill descriptions or remove a status block, run the migration chain in the config skill's [08_migrations.md](../../agent-ks-config/references/08_migrations.md).
+The descriptions render in the tracker's Guide panel. Keep them accurate. To fill in missing descriptions or remove a status block, run the migration chain in the config skill's [08_migrations.md](../../agent-ks-config/references/08_migrations.md).
 
 ## URL shapes
 

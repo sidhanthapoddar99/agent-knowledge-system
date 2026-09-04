@@ -4,7 +4,7 @@ Markdown mechanics have one home: the docs skill's [writing.md](../../agent-ks-d
 
 ## The one body template
 
-Every work file except an agent-log file uses one body shape. The problem statement comes first, with no heading. Five `#` sections follow, numbered: `01 To Do`, `02 Status and Result`, `03 References`, `04 Decisions`, `05 Notes & Analysis`. Each file kind has a standard set of `##` sub-heads. Drop a sub-head you do not need. Never add a `#` section. What each section holds, and a filled example, sits in the file kind's own reference. The skeletons live in the cli skill's `templates/` folder. The scaffolders write them.
+Every work file except an agent-log file uses one body shape. The problem statement comes first, with no heading. Five `#` sections follow, numbered: `01 To Do`, `02 Status and Result`, `03 References`, `04 Decisions`, `05 Notes & Analysis`. Each file kind has a standard set of `##` sub-heads. Drop a sub-head you do not need. Never add a `#` section. What each section holds, and a filled example, sits in the file kind's own reference. The skeletons live in the cli skill's `templates/` folder. The scaffold commands write them.
 
 | File | Sections | Frontmatter | Skeleton |
 |---|---|---|---|
@@ -17,9 +17,9 @@ Every work file except an agent-log file uses one body shape. The problem statem
 | comment | none: two lines and a pointer | `author`, `date` | [comment.md](../../agent-ks-cli/templates/comment.md) |
 | brainstorm | free | `title`, optional `color` | none |
 
-Frontmatter holds only the fields in this table. `agent-ks check issues` reports any key the file's schema does not name as drift. A subtask carries `title` and `status`, and nothing else.
+Frontmatter holds only the fields in this table. `agent-ks check issues` reports any key that the file's schema does not name. It calls that finding drift. A subtask carries `title` and `status`, and nothing else.
 
-`color:` tints the sidebar label. The loader reads it on a note, a brainstorm file, an agent-memory file and an agent-log file only. On a subtask and on a stage it does nothing, so no tint appears; on a subtask it also earns a drift warning. Its meaning lives in the issue's `glossary.md`.
+`color:` tints the sidebar label. The loader reads it on a note, a brainstorm file, an agent-memory file and an agent-log file only. On a subtask and on a stage it does nothing, so no tint appears. On a subtask it also gets a drift warning. What each colour means is written in the issue's `glossary.md`.
 
 There is no per-file draft. To hide a whole issue, set `"draft": true` in the issue's `settings.json` ([anatomy](01_anatomy.md)).
 
@@ -27,11 +27,11 @@ There is no per-file draft. To hide a whole issue, set `"draft": true` in the is
 
 A stage's `02` says what the stage produced. A subtask's `02` says what the item produced. A log's `## Handover` says how the run went. Never copy a status across levels. The renderer pulls live subtask status into the stage.
 
-The flow runs brainstorm → notes → plan (goal, stages, subtasks) → log (execute). Results land in the subtask's `02` and the stage's `02`.
+The work flows from brainstorm to notes, then to a plan. The plan holds the goal, the stages and the subtasks. Then the work moves to a log, where it is executed. Results land in the subtask's `02` and the stage's `02`.
 
 ## Frontmatter and prefixes
 
-The prefix owns the number. Never repeat it in frontmatter. The prefix grammar and each folder's convention: [anatomy](01_anatomy.md). `title` and the no-MDX rule: [writing.md](../../agent-ks-docs/references/writing.md).
+The prefix owns the number. Never repeat it in frontmatter. The prefix grammar and each folder's convention are in [anatomy](01_anatomy.md). `title` and the no-MDX rule are in [writing.md](../../agent-ks-docs/references/writing.md).
 
 ## Links — the tracker deltas
 
@@ -52,4 +52,4 @@ The link rule, the ordering label and the backtick exception live in [writing.md
 
 ## Write for cold pickup
 
-The next reader has none of your context. Say what and why in the opening. Write checkboxes with a bold lead, then the explanation with concrete paths. Use `##` groups when a flat list grows. Link instead of shorthand. Record a finding as one line plus a link, never the write-up in place.
+The next reader has none of your context. Say what and why in the opening. Write each checkbox with a bold lead, then the explanation with concrete paths. Use `##` groups when a flat list grows long. Write a link instead of a shorthand name. Record a finding as one line plus a link. Never write the full write-up in place.

@@ -7,7 +7,7 @@ description: Use for any work in an agent-knowledge-system issue tracker (data/t
 
 Default tracker: `data/todo/`. Terms: [anatomy](references/01_anatomy.md).
 
-Source of truth: the engine and the CLI own everything they implement — statuses, agent-log kinds, templates, commands, flags, and what renders. Verify a claim with `agent-ks help` or `agent-ks check issues`. The bundled user guide at `@root/default-docs/data/user-guide/19_issues/` wins only on convention the code does not enforce. When code and skill disagree, follow the code, correct the skill, and tell the user.
+The engine and the CLI are the source of truth for everything they implement: statuses, agent-log kinds, templates, commands, flags, and what renders. Verify a claim with `agent-ks help` or `agent-ks check issues`. The bundled user guide at `@root/default-docs/data/user-guide/19_issues/` wins only on a convention that the code does not enforce. When the code and this skill disagree, follow the code. Then correct the skill, and tell the user.
 
 ## Pick up an issue
 
@@ -15,7 +15,7 @@ Read these in order before you continue work. Skip a step whose folder is absent
 
 1. `agent-ks issue show <id>` — metadata, subtasks, logs.
 2. `issue.md` — the goal and the scope.
-3. `agent-memory/memory.md` — what you must not rediscover.
+3. `agent-memory/memory.md` — the facts you must not rediscover.
 4. Every non-Closed log's `00_index.md`, newest first — where each run stands and its handover.
 5. The [active plan](references/07_plans.md#the-active-plan) under `plans/` — its `overview.md` and its stages say what is next.
 
@@ -38,7 +38,7 @@ Each reference states what its section never holds.
 
 ## Status
 
-Fixed in framework code. Full rule: [lifecycle](references/02_lifecycle.md).
+The statuses are fixed in framework code. The full rule is in [lifecycle](references/02_lifecycle.md).
 
 | Category | Statuses |
 |---|---|
@@ -55,10 +55,10 @@ Fixed in framework code. Full rule: [lifecycle](references/02_lifecycle.md).
 | Set `done` or `dropped` on an issue or a subtask | `review`, `input-needed`, or `superseded` with its `→` line |
 | Keep old wording next to new wording | Correct in place |
 | Search the tracker with `Grep` | `agent-ks issue list` or `agent-ks find`. `list` reads the schema and hides Closed by default |
-| Rename or move with `mv` | `agent-ks move`. `mv` breaks every relative link in silence |
+| Rename or move with `mv` | `agent-ks move`. `mv` breaks every relative link and reports nothing |
 | Write a document path in backticks | A relative markdown link with a name |
 | Save a discussion nobody asked to save | Offer once |
-| Open a `lp`, `it` or `wf` log without asking | Ask once, wait for yes. `lp` and `wf` commit days the user scopes. An unasked `it` is clutter the user must read. Kinds that need no ask: [agent-ks-issue-logs](../agent-ks-issue-logs/SKILL.md) |
+| Open a `lp`, `it` or `wf` log without asking | Ask once. Wait for yes. `lp` and `wf` commit days of work that the user scopes. An `it` log nobody asked for is clutter the user must read. The kinds that need no ask are listed in [agent-ks-issue-logs](../agent-ks-issue-logs/SKILL.md) |
 | Start a long run on a subtask with no why, no guardrails or no `Done when` | Scope it first: [agent-ks-qna](../agent-ks-qna/SKILL.md) |
 
 ## Triage

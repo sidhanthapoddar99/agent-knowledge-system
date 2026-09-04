@@ -1,6 +1,6 @@
 # Site configuration
 
-The project structure, the framework `.env`, `site.yaml`, the routes and the path aliases. The user guide sections are `@root/default-docs/data/user-guide/05_getting-started/` and `10_configuration/`.
+This file covers the project structure, the framework `.env`, `site.yaml`, the routes and the path aliases. The user guide sections are `@root/default-docs/data/user-guide/05_getting-started/` and `10_configuration/`.
 
 ## Project structure
 
@@ -20,9 +20,9 @@ Consumer mode: the framework is a subfolder of the user's project.
     └── default-docs/           bundled docs, themes, template
 ```
 
-Dogfood mode: the framework repo is the project, content lives under `default-docs/`, and `.env` has `CONFIG_DIR=./default-docs/config`. Same code path; only `CONFIG_DIR` differs.
+Dogfood mode is the mode the framework's own maintainers use. The framework repo is the project. Content lives under `default-docs/`, and `.env` has `CONFIG_DIR=./default-docs/config`. Both modes run the same code. Only `CONFIG_DIR` differs.
 
-`data/README.md` maps each top-level `data/` folder to its purpose and route. Read it first on a structure task. Update it when you add or remove a top-level folder. The starter template ships it, so a project that has none was not scaffolded from the template: write one with the same three columns, folder, purpose and route, one row per folder.
+`data/README.md` maps each top-level `data/` folder to its purpose and route. Read it first on a structure task. Update it when you add or remove a top-level folder. The starter template ships it. So a project that has none was not built from the template. Write one for that project, with the same three columns: folder, purpose and route. One row per folder.
 
 ## `./start`
 
@@ -39,7 +39,7 @@ Run it inside the framework folder. It installs dependencies when they are missi
 | `./start logs [--follow]` | Read a running server's output. Never tail its log file yourself |
 | `./start --help` | Every command |
 
-Every launching command checks `engine_version` first and stops with the migration chain when the content is outside the engine's range: [08_migrations.md](./08_migrations.md).
+Every launching command checks `engine_version` first. When the content is outside the engine's range, the command stops and prints the migration chain: [08_migrations.md](./08_migrations.md).
 
 ## `.env`
 
@@ -97,7 +97,7 @@ pages:
 | `layout` | `@<type>/<style>` | One field per page, for every type. The styles that ship: [06_layouts.md](./06_layouts.md#what-ships) |
 | `data` | a folder, or a YAML file for `custom` | An issues folder holds a root `settings.json` with the vocabulary |
 
-Two patterns. Register several `type: issues` pages for several trackers, each with its own vocabulary. Mount a subfolder as its own entry when it needs a different layout; one docs tree has one layout.
+Two patterns are common. Register several `type: issues` pages for several trackers, each with its own vocabulary. Mount a subfolder as its own entry when it needs a different layout, because one docs tree has one layout.
 
 A new entry needs a dev-server restart: `./start stop`, then `./start --detach`. The section folder itself: [02_add-section.md](./02_add-section.md).
 
@@ -111,7 +111,7 @@ A new entry needs a dev-server restart: `./start stop`, then `./start --detach`.
 | `@root/<sub>` | the framework folder; not the consumer's project root | the bundled content, `@root/default-docs/…` |
 | `@<key>` from `paths:` | the declared path | anywhere the YAML takes a path |
 
-A `paths:` value is relative to the config dir, absolute, or `@root/…`. `@root` is the only alias allowed inside a value. The loader rejects a value that names another user alias, such as `derived: "@data/sub"`, and rejects traversal such as `@root/../x`. Reserved keys: `docs`, `blog`, `issues`, `custom`, `navbar`, `footer`, `theme`, `config`, `root`.
+A `paths:` value is relative to the config dir, absolute, or `@root/…`. `@root` is the only alias allowed inside a value. The loader rejects a value that names another user alias, such as `derived: "@data/sub"`. It also rejects a path that climbs out of its folder, such as `@root/../x`. Reserved keys: `docs`, `blog`, `issues`, `custom`, `navbar`, `footer`, `theme`, `config`, `root`.
 
 ## Dev and production
 
@@ -123,10 +123,10 @@ A `paths:` value is relative to the config dir, absolute, or `@root/…`. `@root
 
 ## Validate
 
-`agent-ks check config [dir]` reads the config dir from `.env` or from the argument. Exit `0` is clean, `1` found errors. It uses regex over the YAML text, so run the dev server for deeper errors. The checks:
+`agent-ks check config [dir]` reads the config dir from `.env` or from the argument. Exit `0` is clean. Exit `1` means it found errors. It matches patterns over the YAML text, so run the dev server for deeper errors. The checks:
 
 - `site.yaml` exists (error). A missing `navbar.yaml` or `footer.yaml` is a warning.
 - `site.yaml` has `site`, `paths`, `theme`, `pages`.
 - Every `pages:` entry has `base_url`, `type`, `layout`, `data`.
-- Every `data:` path whose alias the checker resolves exists on disk. A path it cannot resolve is skipped in silence, so a clean run is not proof that every page has content.
+- Every `data:` path whose alias the checker resolves exists on disk. A path it cannot resolve is skipped in silence. So a clean run is not proof that every page has content.
 - Every `footer.yaml` `page:` names a registered page.

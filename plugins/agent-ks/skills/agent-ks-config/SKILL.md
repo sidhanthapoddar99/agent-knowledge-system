@@ -7,9 +7,9 @@ allowed-tools: Read, Write, Edit, Bash
 
 # agent-ks-config
 
-Setup happens once, or once in a long while. So this skill is a set of complete references, one per topic. Read the one the task names; two when it crosses topics.
+Setup happens once, or once in a long while. So this skill is a set of complete references, one per topic. Read the one the task names. Read two when the task crosses topics.
 
-**Source of truth.** The engine and the CLI decide anything they implement: the config keys, the layouts, the theme contract, the commands and the flags. Check a claim against them first, because they are what runs. The bundled user guide at `@root/default-docs/data/user-guide/` wins only on convention the code does not enforce; `@root` is the framework folder.
+**Source of truth.** The engine and the CLI decide anything they implement: the config keys, the layouts, the theme contract, the commands and the flags. Check a claim against them first, because they are what runs. The bundled user guide at `@root/default-docs/data/user-guide/` wins only on a convention the code does not enforce. `@root` is the framework folder.
 
 ## Triage
 
@@ -43,6 +43,6 @@ The references write paths as `config/`, `data/` and `themes/`. Read them throug
 
 ## After every change
 
-Run `agent-ks check config`. Exit `0` is clean. A CSS or YAML value edit hot-reloads. A new `pages:` entry or a new layout folder needs a restart: run `./start stop`, then `./start --detach`. Never launch with a bare `./start`; it holds the terminal until `Ctrl-C` and the task stalls there.
+Run `agent-ks check config`. Exit `0` is clean. A CSS or YAML value edit hot-reloads. A new `pages:` entry or a new layout folder needs a restart: run `./start stop`, then `./start --detach`. Never launch with a bare `./start`. It holds the terminal until `Ctrl-C`, so the task stalls there.
 
-If this skill is wrong, fix it and tell the user; do not work around it. The fix belongs in the framework repo, not in the installed plugin copy.
+If this skill is wrong, fix it and tell the user. Do not work around it. The fix belongs in the framework repo, not in the installed plugin copy.

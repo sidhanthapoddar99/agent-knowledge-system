@@ -1,10 +1,10 @@
 # The question bank
 
-The questions, grouped by the home their answer goes to. Each carries the reason it matters for a long run. Say the reason when you ask; the user answers better when they know what the answer unblocks. Pick the ones the story left open. Never read the whole list out.
+This file lists the questions, grouped by the home their answer goes to. Each question carries the reason it matters for a long run. Say the reason when you ask, because the user answers better when they know what the answer unblocks. Pick only the questions the story left open. Never read the whole list out.
 
 ## How a round runs
 
-Ask three to five questions at a time, grouped by home. Start with 1 and 2, because a why and a done-when settle most of what follows. Never re-ask what an earlier round answered; re-asking tells the user you did not listen. Stop when the seven hold, or at three rounds. Three rounds is the point where the user is scoping by interrogation instead of talking.
+Ask three to five questions at a time, grouped by home. Start with homes 1 and 2, because a why and a done-when settle most of what follows. Never ask again what an earlier round answered, because that tells the user you did not listen. Stop when all seven have an answer, or after three rounds. After three rounds the user is answering an interrogation instead of talking.
 
 ## 1 Why: the lead paragraph
 
@@ -12,7 +12,7 @@ Ask three to five questions at a time, grouped by home. Start with 1 and 2, beca
 |---|---|
 | What is wrong today, in one concrete case? | An agent that knows the failing case can test its own work against it |
 | What changes for whom when this is done? | Tells the agent what to protect when two fixes conflict |
-| What is the thesis, the belief that makes this the right job? | The reason behind every later decision; it settles cases the user never listed |
+| What is the thesis, the belief that makes this the right job? | This is the reason behind every later decision. It settles cases the user never listed |
 | What triggered it now: a bug, a feature, an upgrade, a review? | Sets the size of the change the user expects |
 
 ## 2 Done when
@@ -21,7 +21,7 @@ Ask three to five questions at a time, grouped by home. Start with 1 and 2, beca
 |---|---|
 | What would you run, open or read to accept this? | Turns "done" into a test the agent can run itself |
 | What must still be true afterwards that is true now? | The regression line, so the agent checks it |
-| Is there a number: a size, a time, a count? | A number ends a loop; "better" does not |
+| Is there a number: a size, a time, a count? | A number ends a loop. The word "better" does not |
 
 ## 3 To Do: the work and what it touches
 
@@ -29,23 +29,23 @@ Ask three to five questions at a time, grouped by home. Start with 1 and 2, beca
 |---|---|
 | Which files, folders or components does this touch? | Paths in the to-do stop the agent from guessing the surface |
 | What is in scope that a reader might think is out, and the reverse? | The edge of the job is where a run drifts |
-| Is there an order that matters, or none? | Order belongs to a plan; if it matters here, it becomes a nested item |
-| What has been tried already, and what did it show? | Saves a repeat, and the dead end goes to `05` or a brainstorm |
+| Is there an order that matters, or none? | Order belongs to a plan. When it matters here, it becomes a nested item |
+| What has been tried already, and what did it show? | This saves a repeat. The dead end goes to `05` or a brainstorm |
 
 ## 4 Guardrails
 
 | Ask | Because |
 |---|---|
-| What must I not touch, even if it looks like the fix? | The one limit that, unstated, ends a run in a revert |
+| What must I not touch, even if it looks like the fix? | An unstated limit of this kind ends a run in a revert |
 | Which gate must pass after every step, not only at the end? | A gate named here runs each round instead of once |
-| Is there a shared branch, a live system, a deadline, a cost ceiling? | Outward-facing limits are yours to set, never mine to assume |
+| Is there a shared branch, a live system, a deadline, a cost ceiling? | These limits reach outside the repo. They are yours to set. I never assume one |
 
 ## 5 Decisions with reasons
 
 | Ask | Because |
 |---|---|
-| Between the two obvious approaches, which one, and why not the other? | The rejected option is the reason; without it the next agent reopens the choice |
-| Which of your earlier rulings apply here? | A ruling from a note or another subtask gets linked, not rewritten |
+| Between the two obvious approaches, which one, and why not the other? | The rejected option is the reason. Without it, the next agent reopens the choice |
+| Which of your earlier rulings apply here? | I link a ruling from a note or another subtask instead of rewriting it |
 | What do you want kept simple, even at a cost? | Names the trade the agent must not undo for a local gain |
 
 ## 6 Freedom
@@ -58,7 +58,7 @@ Ask three to five questions at a time, grouped by home. Start with 1 and 2, beca
 
 ## 7 Open questions
 
-Anything the user answers with "not sure" or "we will see" goes here, and the status becomes `input-needed`. Ask one more time whether a default would do; a default with a reason is a decision, and the question disappears.
+Every answer of "not sure" or "we will see" goes here, and the status becomes `input-needed`. Ask one more time whether a default would do. A default with a reason is a decision, and then the question disappears.
 
 ## Story mode: extraction cues
 
@@ -74,9 +74,9 @@ Sort by what the sentence does, not by where it came in the story.
 | says "you decide", "ask me before", "up to you" | 6, freedom |
 | says "not sure", "maybe", "we'll see", "what do you think" | 7, `Questions`, or ask now |
 
-A sentence that is both a limit and a ruling splits in two. The limit goes to 4, `## Guardrails`. The reason goes to 5, `# 04 Decisions`, which points back at the guardrail. Never write the limit twice, because two copies drift and the next agent cannot tell which one binds.
+Split a sentence that is both a limit and a ruling in two. The limit goes to 4, `## Guardrails`. The reason goes to 5, `# 04 Decisions`, which points back at the guardrail. Never write the limit twice. Two copies drift, and then the next agent cannot tell which one binds.
 
-A sentence that is both the work and its test also splits in two. The change goes to 3, `# 01 To Do`. The observable goes to 2, `## Done when`, phrased as what a stranger would run, open or read. "Collapsed by default with the done/total count on the row, click expands" is one such sentence: the to-do is the collapse and the count, the test is what the row shows before and after a click. Split it, because a to-do that doubles as its own test is never checked, and the run has nothing to stop on.
+Split a sentence that is both the work and its test in two as well. The change goes to 3, `# 01 To Do`. The thing a person can observe goes to 2, `## Done when`. Phrase it as what a stranger would run, open or read. One such sentence is "Collapsed by default with the done/total count on the row, click expands". The to-do is the collapse and the count. The test is what the row shows before and after a click. Split it, because a to-do that serves as its own test is never checked. Then the run has nothing to stop on.
 
 ## A worked example
 
@@ -113,4 +113,4 @@ find their own file in the output. The findings need a scope filter.
 - Decided (sid, 2026-09-04): the agent decides the internal structure alone and records it.
 ````
 
-Status: `input-needed`, because one question stands. Everything else the run needs is on the page.
+The status is `input-needed`, because one question is still open. Everything else the run needs is on the page.

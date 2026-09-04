@@ -1,19 +1,19 @@
 # Documentation Project — starter template
 
-This is the scaffold the `agent-ks-config` skill copies into a user's project on
-`/agent-ks-config`. It boots a working documentation site with five top-level
-sections: **Home**, **Docs**, **Issues**, **Blog**, and **User Guide**.
+The `agent-ks-config` skill copies this folder into a user's project when the
+user runs `/agent-ks-config`. The copy is a working documentation site with five
+top-level sections: **Home**, **Docs**, **Issues**, **Blog**, and **User Guide**.
 
 ## What the skill does with this template
 
 1. Copies the contents of `template/` into the user's chosen target directory.
-2. Substitutes placeholder values (site name, description, repo URL) into
-   `config/site.yaml` based on prompts.
-3. Leaves the rest as-is for the user to customise.
+2. Asks the user for the site name, the description and the repo URL. Writes
+   those answers over the placeholder values in `config/site.yaml`.
+3. Leaves every other file as it is. The user changes them later.
 
 ## Layout once copied
 
-`/agent-ks-config` rsyncs everything in this template to the user's chosen root **except the template's own README.md** (this file — it's documentation about the template itself, not part of the scaffold).
+`/agent-ks-config` copies every file in this template to the root the user chose, with `rsync`. It skips one file: **this README**. This file describes the template. It is not part of the site.
 
 ```
 <user-project>/
@@ -33,7 +33,7 @@ sections: **Home**, **Docs**, **Issues**, **Blog**, and **User Guide**.
                           # via @root/default-docs/themes — see site.yaml theme_paths)
 ```
 
-**`.env` is NOT written by the skill** — it lives inside the framework folder (`<user-project>/agent-knowledge-system/.env`) which doesn't exist yet at this point. The printed next-step instructions tell the user to clone the framework next, then `echo "CONFIG_DIR=../config" > agent-knowledge-system/.env`. That's why `.env.example` in this template is for reference only — the post-clone step writes the *real* `.env` directly, with the consumer-mode value (`CONFIG_DIR=../config`).
+**The skill does not write `.env`.** That file lives inside the framework folder, at `<user-project>/agent-knowledge-system/.env`. That folder does not exist yet when the skill runs. The next-step instructions the skill prints tell the user to clone the framework, then run `echo "CONFIG_DIR=../config" > agent-knowledge-system/.env`. So `.env.example` in this template is a reference copy only. The step after the clone writes the real `.env`, with the consumer-mode value `CONFIG_DIR=../config`.
 
 ## Sections explained
 
@@ -45,17 +45,17 @@ sections: **Home**, **Docs**, **Issues**, **Blog**, and **User Guide**.
 | Blog        | `/blog`            | `data/blog/**`                            |
 | User Guide  | `/user-guide`      | `@root/default-docs/data/user-guide/**`   |
 
-The **User Guide** section points at the framework's bundled docs (shipped under
-`default-docs/`), so users see the framework's own user-guide alongside their
-content with zero setup.
+The **User Guide** section points at the docs bundled with the framework, under
+`default-docs/`. So the user sees the framework's own user guide beside their
+content, with no setup.
 
 ## Customising
 
-- **Site name / description / repo URL** — edit `config/site.yaml`.
-- **Branding (logo, favicon)** — drop replacements into `assets/`, then update
-  paths in `site.yaml → logo:`.
-- **Add a section** — see the User Guide page on adding sections (or run
-  `/agent-ks-config section <name>`).
-- **Custom theme** — create a folder under `themes/<name>/` with a `theme.yaml`
-  (typically `extends: "@theme/default"`) and any CSS overrides; switch via
-  `theme: "<name>"` in `site.yaml`.
+- **Site name, description, repo URL.** Edit `config/site.yaml`.
+- **Logo and favicon.** Put your own files into `assets/`. Then update the paths
+  under `logo:` in `site.yaml`.
+- **Add a section.** Run `/agent-ks-config section <name>`. The User Guide also
+  has a page on adding sections.
+- **Custom theme.** Create a folder `themes/<name>/`. Put a `theme.yaml` in it.
+  Most themes set `extends: "@theme/default"`. Add the CSS files that change.
+  Then set `theme: "<name>"` in `site.yaml` to switch to it.

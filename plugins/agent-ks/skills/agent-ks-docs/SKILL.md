@@ -5,13 +5,13 @@ description: Use this skill for pages inside a docs section of an agent-knowledg
 
 # Documentation skill
 
-**Source of truth.** The engine and the CLI decide anything they implement: commands, flags, field names, what renders. The bundled user guide at `@root/default-docs/data/user-guide/` wins only on convention the code does not enforce. `@root` is the framework folder. When this skill disagrees with either, follow them, update the skill, and tell the user.
+**Source of truth.** The engine and the CLI decide anything they implement: commands, flags, field names, what renders. The bundled user guide at `@root/default-docs/data/user-guide/` is the source for a convention only. A convention is a rule the code does not enforce. `@root` is the framework folder. When this skill disagrees with the engine or the CLI, follow the code. Then update the skill and tell the user.
 
-**Finding `data/`.** The CLI resolves the real `data/` path from `CONFIG_DIR` in `.env`, so never assume the folder sits at the current directory. `data/README.md` maps each top-level folder to its purpose and route; read it on a structure task, such as moving a page between sections. The tree and the config: [the config skill](../agent-ks-config/SKILL.md).
+**Finding `data/`.** The CLI resolves the real `data/` path from `CONFIG_DIR` in `.env`, so never assume the folder sits at the current directory. `data/README.md` maps each top-level folder to its purpose and route. Read it on a structure task, such as moving a page between sections. The folder tree and the config live in [the config skill](../agent-ks-config/SKILL.md).
 
 ## Triage
 
-Read only the file the task needs. A cross-cutting task reads more than one.
+Read only the file the task needs. A task that spans two rows reads both files.
 
 | Task | Read |
 |---|---|
@@ -31,26 +31,26 @@ Read only the file the task needs. A cross-cutting task reads more than one.
 | Write a site-absolute link (`/x`) or a backticked document path | A relative markdown link with a name: [writing.md](./references/writing.md#linking) |
 | Skip the `NN_` prefix, a folder's `settings.json`, or a page's `title` | [docs-layout.md](./references/docs-layout.md#folder-structure) |
 | Number siblings 01, 02, 03 | Gap-spaced prefixes, so an insert needs no renumber: [docs-layout.md](./references/docs-layout.md#gap-numbering) |
-| Search content with `Grep` | `agent-ks find <regex>`. It knows the content root and every content type, so it needs no path. `Grep` stays right for framework source |
+| Search content with `Grep` | `agent-ks find <regex>`. It knows the content root and every content type, so it needs no path. Use `Grep` for framework source code only |
 | Rename or move with `mv` | `agent-ks move <from> <to>`. It rewrites every link |
-| Commit a raw screenshot | `agent-ks img` first: [images.md](./references/images.md) |
-| Put a page's image in the site `assets/` folder | An `assets/` folder beside the page. The image then moves with the page and stays true on disk |
-| Write MDX | Plain markdown with GFM extensions. The renderer is `marked`, so a component ships as literal text |
-| Rewrite an existing file with `Write`, or reorder JSON keys | `Edit` in place. `Write` drops every line you did not read back |
-| Edit `site.yaml` to add a section | Route it to [the config skill](../agent-ks-config/SKILL.md) |
+| Commit a raw screenshot | Run `agent-ks img` first: [images.md](./references/images.md) |
+| Put a page's image in the site `assets/` folder | An `assets/` folder beside the page. The image then moves with the page, and the link to it is correct on disk |
+| Write MDX | Plain markdown with GFM extensions. The renderer is `marked`. It does not run components, so a component appears in the page as literal text |
+| Rewrite an existing file with `Write`, or reorder JSON keys | `Edit` in place. `Write` replaces the whole file, so it drops every line you did not read back |
+| Edit `site.yaml` to add a section | Hand the task to [the config skill](../agent-ks-config/SKILL.md) |
 
 ## The CLI
 
-One entrypoint on `PATH`: `agent-ks <group> <verb> [flags]`. `agent-ks help` lists every command; `agent-ks help <group> <verb>` shows one command's flags. Do not guess a flag.
+One entrypoint on `PATH`: `agent-ks <group> <verb> [flags]`. `agent-ks help` lists every command. `agent-ks help <group> <verb>` shows one command's flags. Do not guess a flag. Run the help command instead.
 
 After adding or renaming a page, run `agent-ks check section <folder>`. It is the only gate that errors on a missing `title`.
 
-Read a docs section with `agent-ks doc list [section]`, one page with `agent-ks doc show <path>`, and its text with `agent-ks doc search <regex> [section]`. Use `agent-ks find <regex>` to search every content type at once. The contract, exit codes and the git-worktree note: [the cli skill](../agent-ks-cli/SKILL.md).
+Read a docs section with `agent-ks doc list [section]`. Read one page with `agent-ks doc show <path>`. Search a section's text with `agent-ks doc search <regex> [section]`. Use `agent-ks find <regex>` to search every content type at once. The contract, the exit codes and the git-worktree note live in [the cli skill](../agent-ks-cli/SKILL.md).
 
 ## Subagents
 
-For a bulk read of ten or more files, hand a Haiku subagent the list and the question. The brief shape and the report size: [09_operations.md](../agent-ks-issues/references/09_operations.md#delegate-bulk-reads).
+For a bulk read of ten or more files, hand a Haiku subagent the list and the question. The brief shape and the report size are in [09_operations.md](../agent-ks-issues/references/09_operations.md#delegate-bulk-reads).
 
 ## Keep the skill current
 
-If this skill is wrong, update it and tell the user; do not work around it. Keep the user guide's skill catalogue page (`05_getting-started/05_claude-skills.md`) in step.
+If this skill is wrong, update it and tell the user. Do not work around it. Update the user guide's skill catalogue page (`05_getting-started/05_claude-skills.md`) to match.

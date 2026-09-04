@@ -1,20 +1,20 @@
 # Operations — search, create, validate, move
 
-The CLI is `agent-ks <group> <verb>`. Tracker work uses the `issue` group plus `agent-ks check issues`, `agent-ks find` and `agent-ks move`. Every command and flag: [cli-toolkit.md](../../agent-ks-cli/references/cli-toolkit.md). Discover with `agent-ks help`.
+The CLI is `agent-ks <group> <verb>`. Tracker work uses the `issue` group plus `agent-ks check issues`, `agent-ks find` and `agent-ks move`. Every command and flag is in [cli-toolkit.md](../../agent-ks-cli/references/cli-toolkit.md). Discover the verbs with `agent-ks help`.
 
 | Fact | Detail |
 |---|---|
-| every `issue` command takes `--tracker <path>` | the tracker is a flag, never a positional argument. Which commands take `--json`: the cli-toolkit |
-| scaffolders take the issue id first | `agent-ks issue new-plan <issue-id> --name <slug>` |
-| an `issue` command rejects an unknown flag | it prints `unknown flag --x`, lists every valid flag, and exits 2. A filter that returns nothing is therefore not a typo: check the scope below instead |
-| every wrapper needs `bun` | the dispatcher refuses with an install hint otherwise |
+| every `issue` command takes `--tracker <path>` | the tracker is a flag, never a positional argument. The cli-toolkit says which commands take `--json` |
+| scaffold commands take the issue id first | `agent-ks issue new-plan <issue-id> --name <slug>` |
+| an `issue` command rejects an unknown flag | it prints `unknown flag --x`, lists every valid flag, and exits 2. So a filter that returns nothing is not a typo. Check the scope below instead |
+| every wrapper needs `bun` | without `bun`, the dispatcher stops and prints an install hint |
 | inside a git worktree the `.env` search stops at the worktree root | write a worktree-local `.env`, or pass `--tracker` before any write |
 
 ## Search
 
 Search the tracker with `agent-ks issue list`, never with `Grep` or `find`. The CLI reads the schema. It combines structural filters with a regex in one call. It returns paths, line numbers and excerpts. Use `Grep` only outside the tracker.
 
-The default scope hides the Closed category. A query can return nothing while a match sits in `done`, `dropped` or `superseded`. "Not found" is not "does not exist". When hidden matches exist, the CLI prints a tip to stderr with the count. Re-run with `--status all` or `--include-closed` when the answer depends on whether an issue exists at all. `agent-ks find` ignores status and hides nothing. `--quiet-tips` suppresses the tip.
+The default scope hides the Closed category. A query can return nothing while a match sits in `done`, `dropped` or `superseded`. "Not found" does not mean "does not exist". When hidden matches exist, the CLI prints a tip to stderr with the count. Re-run with `--status all` or `--include-closed` when the answer depends on whether an issue exists at all. `agent-ks find` ignores status and hides nothing. `--quiet-tips` hides the tip.
 
 ```bash
 agent-ks issue list --priority high,urgent
@@ -30,19 +30,19 @@ agent-ks find "<regex>" --type docs,blog,issues,config
 
 ### Pick the scope
 
-`--path` is the fast way to find an issue by slug; pair it with `--status all`. `--meta` matches a field value, not prose. `--count` gauges breadth before you drill in. `--paths-only` feeds a pipe. Every flag: [the `list` flags](../../agent-ks-cli/references/cli-toolkit.md).
+`--path` is the fast way to find an issue by slug. Pair it with `--status all`. `--meta` matches a field value, not prose. `--count` measures how wide a match is before you look closer. `--paths-only` prints paths only, for use in a pipe. Every flag is in [the `list` flags](../../agent-ks-cli/references/cli-toolkit.md).
 
 ### Delegate bulk reads
 
-Push a read of more than 10 tracker files onto a subagent, so the main context stays lean. Stage the exact `agent-ks` commands in the brief, name the files to read, and ask for a bounded answer: "Run these commands. Read the files they return. Answer <question> in 300 words. Read-only."
+Give a read of more than 10 tracker files to a subagent, so the main context stays small. Write the exact `agent-ks` commands in the brief. Name the files to read. Ask for an answer with a size limit: "Run these commands. Read the files they return. Answer <question> in 300 words. Read-only."
 
-Every path you stage must exist. Open-ended exploration and one-off lookups stay in the main context.
+Every path you write in the brief must exist. Open-ended exploration and one-off lookups stay in the main context.
 
 ## Create
 
 ### The creation threshold
 
-Test: you can name the component and the first subtask at once. Both named: it may be an issue. Otherwise route it.
+The test: you can name the component and the first subtask at once. When both are named, it may be an issue. Otherwise route it by the table below.
 
 | Thought | Home |
 |---|---|
@@ -50,15 +50,15 @@ Test: you can name the component and the first subtask at once. Both named: it m
 | informs a decision in an existing issue | a brainstorm entry there |
 | has no home yet | a dump entry |
 
-The existing issue that holds most of the work wins over a new issue. No record for small work: a one-line change earns neither a subtask nor a log. An issue that shipped work stays an issue. An issue that is pure deliberation folds into the winner's `brainstorm/` and is deleted ([brainstorm](05_brainstorm-notes-memory.md)).
+The existing issue that holds most of the work wins over a new issue. Small work gets no record. A one-line change earns neither a subtask nor a log. An issue that shipped work stays an issue. An issue that is pure deliberation folds into the `brainstorm/` of the issue that holds the work. Then it is deleted ([brainstorm](05_brainstorm-notes-memory.md)).
 
 ### The dump
 
-A dump issue has component `issue-dump`. Each entry is a subtask. A tracker keeps a few dump issues, one per kind. Create a kind only when entries exist. A dump entry that passes the threshold is promoted to an issue and deleted from the dump. A one-liner with an obvious home skips the dump. Capture one with [agent-ks-quick-idea-note](../../agent-ks-quick-idea-note/SKILL.md).
+A dump issue has component `issue-dump`. Each entry is a subtask. A tracker keeps a few dump issues, one per kind. Create a kind only when entries exist. When a dump entry passes the threshold, promote it to an issue and delete it from the dump. A one-line idea with an obvious home skips the dump. Capture an entry with [agent-ks-quick-idea-note](../../agent-ks-quick-idea-note/SKILL.md).
 
 ### The duplicate check
 
-Skip it when your context on the area is warm. Run it when the conversation is fresh, the component is unfamiliar, or the topic was plausibly touched before. When unsure, run it.
+Skip it when you already know the area well from this session. Run it when the conversation is new, the component is unfamiliar, or the topic may have been touched before. When unsure, run it.
 
 ```bash
 agent-ks issue list --search "index|indexer|indexing" --quiet-tips
@@ -69,7 +69,7 @@ agent-ks issue subtasks <issue-id> --quiet-tips
 | Result | Action |
 |---|---|
 | no hit | create |
-| strong match: same scope, open or review | do not create. Offer: extend with a subtask, add a comment, or create anyway. Wait |
+| strong match: same scope, open or review | do not create. Offer three options: extend with a subtask, add a comment, or create anyway. Wait for the answer |
 | partial match | create, and link the related items in a `Related:` line |
 | Closed match only | create. Mention the prior issue when it matters |
 
@@ -91,7 +91,7 @@ agent-ks check issues                      # the default tracker
 agent-ks check issues --tracker <path>     # another tracker
 ```
 
-Run it after any non-trivial write. Not `agent-ks check section`: that validates a docs section and passes a broken tracker. Use `--strict` in CI and after a migration. Every flag: [cli-toolkit.md](../../agent-ks-cli/references/cli-toolkit.md).
+Run it after any write larger than a one-line fix. Do not use `agent-ks check section` for this. That command validates a docs section, and it passes a broken tracker. Use `--strict` in CI and after a migration. Every flag is in [cli-toolkit.md](../../agent-ks-cli/references/cli-toolkit.md).
 
 ## Do not edit
 
@@ -102,7 +102,7 @@ Run it after any non-trivial write. Not `agent-ks check section`: that validates
 
 ## Move and restructure
 
-A plain `mv` breaks every relative link in silence. Use `agent-ks move`. It repoints inbound links. It recomputes outbound links from the new directory. It keeps `#anchor` fragments. It uses `git mv`, so history follows the file.
+A plain `mv` breaks every relative link and reports nothing. Use `agent-ks move`. It rewrites the links that point at the file. It recomputes the links inside the file from the new directory. It keeps `#anchor` fragments. It uses `git mv`, so history follows the file.
 
 ```bash
 agent-ks move <issue>/subtasks/05_styles.md <issue>/subtasks/020_polish/010_styles.md
@@ -114,5 +114,5 @@ agent-ks move <issue>/subtasks/05_styles.md <issue>/subtasks/020_polish/010_styl
 |---|---|
 | promote a subtask to an issue | create the issue. Carry the subtask's framing into `issue.md`. Leave the subtask as the pointer: "Promoted to <id>", status `review`. Move any travelling notes with `agent-ks move` |
 | split an issue | create the second issue. Move the relevant `notes/` and `subtasks/`. Add a comment in each that points at the other. Delete nothing |
-| merge two issues | pick the canonical one. Move the other's `notes/` and `subtasks/` into it. Comment the merge in both. The empty one gets a comment; the user sets `dropped` |
+| merge two issues | pick the one that stays. Move the other's `notes/` and `subtasks/` into it. Comment the merge in both. The empty one gets a comment; the user sets `dropped` |
 | regroup subtasks | move each leaf into or out of the `NN_<group>/` folder. Add a folder `settings.json` title when the slug does not read as a label |

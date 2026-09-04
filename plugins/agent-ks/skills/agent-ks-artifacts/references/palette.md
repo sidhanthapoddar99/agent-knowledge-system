@@ -1,6 +1,6 @@
 # Reference palette: the agent-knowledge-system instance
 
-Every parameter the dataviz method asks for, filled in for this framework. The method is in [dataviz.md](dataviz.md); the color rules are in [dataviz-color.md](dataviz-color.md).
+Every parameter the dataviz method asks for, filled in for this framework. The method is in [dataviz.md](dataviz.md). The color rules are in [dataviz-color.md](dataviz-color.md).
 
 ## Two rules
 
@@ -13,7 +13,7 @@ To retarget another theme, swap the values in this file and re-run [validate_pal
 
 ## Consume the values
 
-Declare the slots the chart uses as CSS variables in the chart's own `<style>` block. Let the chart body reference roles, never raw hex, so a light/dark swap happens in one place. In `self` mode spell the surface and ink out as below. In `site` mode skip the copies: the route injects the tokens, so `var(--color-bg-secondary)` resolves live, and `agent-ks theme tokens --json` prints the values to validate against.
+Declare the slots the chart uses as CSS variables in the chart's own `<style>` block. Let the chart body reference roles, never raw hex, so a light/dark swap happens in one place. In `self` mode spell the surface and ink out as below. In `site` mode skip the copies. The route injects the tokens, so `var(--color-bg-secondary)` resolves live, and `agent-ks theme tokens --json` prints the values to validate against.
 
 ```css
 .viz-root {
@@ -30,7 +30,7 @@ Declare the slots the chart uses as CSS variables in the chart's own `<style>` b
 
 ## Categorical palette
 
-Both columns are deliberate. The dark column re-steps the same eight hues for the dark surface; it is not a second palette.
+Both columns are deliberate. The dark column re-steps the same eight hues for the dark surface. It is not a second palette.
 
 | Slot | Hue | Light | Dark |
 |---|---|---|---|
@@ -50,7 +50,7 @@ Results on this framework's surfaces:
 | Light, `#f5f5f5` | 24.2, past the ≥ 12 target | Four slots under 3:1: aqua 2.58, yellow 1.99, magenta 2.47, orange 2.94 | Those series carry visible direct labels or the table view |
 | Dark, `#171717` | 10.3, inside the 8–12 floor band | All eight clear 3:1 | At four or more series, add direct labels or texture |
 
-The slot order is the CVD-safety device, not a styling preference. It came from scoring every candidate ordering and keeping the one whose smallest adjacent ΔE is largest. Another theme's hues need that search again; see [dataviz-color.md](dataviz-color.md#slot-order).
+The slot order is what keeps the palette safe for colour vision deficiency (CVD). It is not a styling preference. It came from scoring every candidate ordering and keeping the one whose smallest adjacent ΔE is largest. Another theme's hues need that search again. See [dataviz-color.md](dataviz-color.md#slot-order).
 
 ## Sequential ramp
 
@@ -64,7 +64,7 @@ Magnitude uses one blue ramp, light to dark. A second sequential context on the 
 | 250 | `#86b6ef` | 450 | `#2a78d6` | 650 | `#104281` |
 | | | | | 700 | `#0d366b` |
 
-Sequential encoding (continuous magnitude in a heatmap or a choropleth) uses the whole 100–700 span. The palest step means "almost nothing" and may melt into the surface. An ordinal ramp (discrete ordered marks, checked with `--ordinal`) is stricter: its surface-nearest step still owes 2:1 contrast.
+Sequential encoding (continuous magnitude in a heatmap or a choropleth) uses the whole 100–700 span. The palest step means "almost nothing" and may blend into the surface. An ordinal ramp (discrete ordered marks, checked with `--ordinal`) is stricter. Its step nearest the surface must still reach 2:1 contrast.
 
 | Mode | Floor | Reason |
 |---|---|---|
@@ -75,11 +75,11 @@ Adjacent 50-steps sit about 0.05 apart in OKLCH lightness, under the `--ordinal`
 
 ## Diverging pair
 
-Blue ↔ red: one cool pole, one warm pole. The midpoint is the theme's `--color-bg-tertiary` (light `#eeeeee`, dark `#262626`). It sits close to the surface on purpose, because the center of a diverging scale reads as absence. Give both arms the same number of steps. Blue ↔ aqua fails: with two cool poles the middle stops reading as neutral.
+Blue ↔ red: one cool pole, one warm pole. The midpoint is the theme's `--color-bg-tertiary` (light `#eeeeee`, dark `#262626`). It sits close to the surface on purpose, because the center of a diverging scale reads as absence. Give both arms the same number of steps. Blue ↔ aqua fails. With two cool poles the middle stops reading as neutral.
 
 ## Status palette
 
-The four semantic tokens are the fixed status scale. Map them onto good → warning → serious → critical. Each always appears with an icon and a label.
+The four semantic tokens are the fixed status scale. Map them onto the four levels: good, warning, serious, critical. Each always appears with an icon and a label.
 
 | Role | Token | Light | Dark | Light contrast | Dark contrast |
 |---|---|---|---|---|---|
@@ -88,7 +88,7 @@ The four semantic tokens are the fixed status scale. Map them onto good → warn
 | critical | `--color-error` | `#dc2626` | `#ef4444` | 4.43 | 4.76 |
 | info | `--color-info` | `#0891b2` | `#06b6d4` | 3.38 | 7.38 |
 
-Warning falls under 3:1 on the light surface by design; the mandatory icon and label carry the meaning. No token maps to a "serious" tier between warning and critical. When a chart needs four severity levels, derive that step between `--color-warning` and `--color-error`. Check it with the exported `contrast()` helper.
+Warning falls under 3:1 on the light surface by design. The mandatory icon and label carry the meaning. No token maps to a "serious" tier between warning and critical. When a chart needs four severity levels, derive that step between `--color-warning` and `--color-error`. Check it with the exported `contrast()` helper.
 
 ## Chart chrome and ink
 

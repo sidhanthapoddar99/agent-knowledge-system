@@ -51,20 +51,20 @@ Every command and flag: [cli-toolkit.md](./references/cli-toolkit.md).
 
 ## Templates
 
-[templates/](./templates/) holds one skeleton per file type. The scaffolders write from them. `check issues --template` reads the same files. Each scaffolder names its template in [cli-toolkit.md](./references/cli-toolkit.md). `note.md` has no scaffolder; copy it by hand.
+[templates/](./templates/) holds one skeleton per file type. The scaffolders write from them. A scaffolder is an `agent-ks` verb that writes a new file from a template. `check issues --template` reads the same files. Each scaffolder names its template in [cli-toolkit.md](./references/cli-toolkit.md). `note.md` has no scaffolder. Copy it by hand.
 
 ## Rules
 
 | Never | Do instead |
 |---|---|
-| Search the tracker with `Grep` | `agent-ks issue list` or `agent-ks find`; `Grep` reads text, so it cannot see status, vocabulary or subtask counts, which live in `settings.json` |
-| Rename or move with `mv` | `agent-ks move`; it rewrites every link |
+| Search the tracker with `Grep` | `agent-ks issue list` or `agent-ks find`. `Grep` reads text only, so it cannot see status, vocabulary or subtask counts, which live in `settings.json` |
+| Rename or move with `mv` | `agent-ks move`. It rewrites every link |
 | Invent a flag | `agent-ks help <group> <verb>` |
-| Write a subtask, stage, plan, log or round by hand | the scaffolder; it writes the template |
+| Write a subtask, stage, plan, log or round by hand | the scaffolder. It writes the template |
 
 ## Where the content is
 
-The commands read `.env` (`CONFIG_DIR`) to find the content root. `agent-ks resolve-context` prints what they found. Inside a git worktree the `.env` search stops at the worktree root. Write a worktree-local `.env`, or pass `--tracker` or a path, before any command that writes.
+The commands read `CONFIG_DIR` from `.env` to find the content root. `agent-ks resolve-context` prints what they found. Inside a git worktree, the `.env` search stops at the worktree root. So before any command that writes, write a `.env` in the worktree, or pass `--tracker` or a path.
 
 ## For authors
 

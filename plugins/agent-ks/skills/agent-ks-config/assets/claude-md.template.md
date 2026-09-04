@@ -14,7 +14,7 @@ This project uses the agent-knowledge-system framework. The docs site lives at `
 | Config | `<chosen_root>/config/{site,navbar,footer}.yaml` | site identity, routes, navbar, footer |
 | Assets | `<chosen_root>/assets/` | served at `/assets/` |
 | Themes | `<chosen_root>/themes/` | custom themes; framework themes come from `@root/default-docs/themes` |
-| Framework | `<chosen_root>/agent-knowledge-system/` | cloned separately. Do not edit it. Treat it as a vendored dependency |
+| Framework | `<chosen_root>/agent-knowledge-system/` | cloned separately. Do not edit it. Treat it as a library you installed, not as your own code |
 
 ### Build commands
 

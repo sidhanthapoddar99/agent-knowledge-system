@@ -18,7 +18,7 @@ These apply to every skill. Each fix agent applies them inside its own skill.
 - **F. Descriptions.** Take the reviewer's proposed description unless the verdict says otherwise.
 - **G. `check links` is removed** from the CLI. `check link-form` is the plugin's link tool. The renderer question belongs to `scripts/checks/check-links.mjs`.
 - **H. Reasons on Never rows.** A Never row gets its reason in the "Do instead" cell when the pair does not imply it.
-- **I. Word caps.** SKILL.md body under 600 words, frontmatter excluded. A single-file skill with no references is exempt. A reference under 150 lines.
+- **I. Word caps.** SKILL.md body under 1000 words, frontmatter excluded. A single-file skill with no references is exempt. A reference under 150 lines. (Sid moved the body cap from 600 to 1000 after the plain-language pass, because split sentences add words and the text must not be cut to fit.)
 
 ## Deferred, with a home
 

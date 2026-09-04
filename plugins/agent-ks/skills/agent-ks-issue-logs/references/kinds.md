@@ -2,10 +2,10 @@
 
 Open the section for the kind you are about to create, and only that one. Each
 section gives the tree, who opens the log, and the slots. A slot is a suggested
-file name; `new-agent-log` writes the kind's slots into `00_index.md` for you.
-Add a file when the slots do not fit. Do not add one to record what already
+file name. `new-agent-log` writes the kind's slots into `00_index.md` for you.
+Add a file when the slots do not fit. Do not add a file to record what already
 lives in the subtask. Every tree below also carries `settings.json`, which holds
-the run's status; `new-agent-log` writes that file too.
+the run's status. `new-agent-log` writes that file too.
 
 ## Scaffolding
 
@@ -20,26 +20,30 @@ agent-ks issue new-round <id> --log 010_lp_ship-search/120_au_loader --name code
 
 `new-round` adds the next numbered file and lists it in the index. A round
 file's prefix ends in `0`: `10_`, `20_`, `30_`. A second file in the same round
-is a report; `--report` takes the next free digit, `11_` to `19_` in round 1. A
-file the numbering cannot reach — a plain name, or a prefix below `10` — is
-written by hand; add its line to `## Files` yourself.
+is a report. `--report` takes the next free digit, `11_` to `19_` in round 1.
+Some files the numbering cannot reach: a file with a plain name, or one with a
+prefix below `10`. Write such a file by hand. Then add its line to `## Files`
+yourself.
 
-Keep files short: an index under 60 lines, any other under 40, one finding per
-line with a link. A file that outgrows the hint is two files.
+Keep files short. An index stays under 60 lines. Any other file stays under 40
+lines. Write one finding per line, with a link. A file that outgrows the hint
+becomes two files.
 
-Every flag: [cli-toolkit.md](../../agent-ks-cli/references/cli-toolkit.md). List
-an issue's logs with `agent-ks issue agent-logs <id>`. Search them with
+Every flag is in [cli-toolkit.md](../../agent-ks-cli/references/cli-toolkit.md).
+List an issue's logs with `agent-ks issue agent-logs <id>`. Search them with
 `agent-ks issue list --search 'loader|loaders' --search-fields agent-log`, or
-with `agent-ks find`. Never `Grep`: the verbs know the tracker's shape and scope
-by status, while a grep returns lines with no issue, run or status attached.
+with `agent-ks find`. Never use `Grep` for this. The verbs know the tracker's
+shape, and they scope by status. A grep returns lines with no issue, run or
+status attached.
 
 ## `lp` — a loop
 
-A long-horizon run: days of work, tied to a plan or several subtasks, tracked
-across sessions. The loop is the parent of everything done inside it. Its stages
-are not files here; their results live in the subtasks and the plan. What the
-loop keeps is what had no home: findings, guidelines, and the child logs. Only
-on the user's ask, because a loop commits days that the user scopes.
+A loop is a long run: days of work, tied to a plan or to several subtasks, and
+tracked across sessions. The loop is the parent of everything done inside it.
+Its stages are not files here. Their results live in the subtasks and the plan.
+The loop keeps what had no other home: findings, guidelines, and the child logs.
+Open a loop only when the user asks, because a loop commits days of work that
+the user scopes.
 
 ```
 agent-log/010_lp_ship-search/
@@ -53,14 +57,14 @@ agent-log/010_lp_ship-search/
 └── 140_it_query-slice/  a slice that earned its own folder
 ```
 
-`05_guidelines.md` sits below `10_`, so write it by hand — see § Scaffolding.
+`05_guidelines.md` sits below `10_`, so write it by hand. See § Scaffolding.
 
 ## `rf` — a refactor
 
-One refactor with a stated goal, ad hoc or inside a loop. Small by design: the
-outcome goes to the subtask. What stays here is the map a later reader needs
-when names moved. The agent opens one when the map is worth keeping, and says
-so in the reply.
+A refactor log records one refactor with a stated goal. It can stand alone or
+sit inside a loop. It is small by design, because the outcome goes to the
+subtask. What stays here is the map a later reader needs when names moved. The
+agent opens one when the map is worth keeping, and says so in the reply.
 
 ```
 agent-log/020_rf_loader-split/
@@ -71,11 +75,12 @@ agent-log/020_rf_loader-split/
 
 ## `au` — an audit
 
-Several reviewers on one target: adversarial reviews, independent reviews,
-models from different providers. One file per reviewer, so a hundred findings
-have a place and nothing is merged away by accident. The index carries the
-verdict after the merge: a union of the reviewers, not a vote. The agent opens
-one when the reports are worth keeping, and says so in the reply.
+An audit log records several reviewers on one target: adversarial reviews,
+independent reviews, or models from different providers. Each reviewer gets one
+file. Then a hundred findings have a place, and no finding is lost in the merge.
+After the merge, the index carries the verdict. The verdict is the union of all
+reviewers' findings, not a vote. The agent opens one when the reports are worth
+keeping, and says so in the reply.
 
 ```
 agent-log/030_au_loader/
@@ -92,21 +97,21 @@ agent-ks issue new-round <id> --log 030_au_loader --name codex --agent codex
 agent-ks issue new-round <id> --log 030_au_loader --name opus --report --agent opus
 ```
 
-Name the tool in `--agent` on every call: it defaults to `claude`, so a file
-written without it claims a reviewer that did not write it. A finding belongs to
-the tool that produced it, and one that lives only in a job record dies with the
-run.
+Name the tool in `--agent` on every call. The flag defaults to `claude`, so a
+file written without it names a reviewer that did not write it. A finding
+belongs to the tool that produced it. A job record is deleted when the run
+ends, so a finding written only there is lost.
 
-An audit that comes before any work sits at the root of `agent-log/`. One done
-inside a loop nests in it.
+An audit that comes before any work sits at the root of `agent-log/`. An audit
+done inside a loop nests in that loop.
 
 ## `re` — research
 
-Many agents over many segments: products, approaches, standards. The bulk stays
-here so that it can be read again. The summary and the crucial parts go to
-`notes/` or `brainstorm/`; the index links to them. One level of folders inside
-is enough. The agent opens one when the segments are worth keeping, and says so
-in the reply.
+A research log records many agents over many segments: products, approaches,
+or standards. The bulk stays here so that it can be read again. The summary and
+the crucial parts go to `notes/` or `brainstorm/`. The index links to them. One
+level of folders inside is enough. The agent opens one when the segments are
+worth keeping, and says so in the reply.
 
 ```
 agent-log/040_re_search-backends/
@@ -120,11 +125,11 @@ agent-log/040_re_search-backends/
 
 ## `it` — an iteration
 
-A miscellaneous folder, on the user's ask. Two uses. The user asks for a
-back-and-forth to be written down as pointers, with a goal and the subtask it
-serves. Or, inside a loop, one slice of a stage turns out to deserve its own
-place: benchmarks, scratch files, a record too big for the subtask. No child
-logs.
+An iteration log is a folder for odds and ends. Open one only when the user
+asks. It has two uses. In the first, the user asks you to write a back-and-forth
+down as pointers, with a goal and the subtask it serves. In the second, inside a
+loop, one slice of a stage deserves its own place: benchmarks, scratch files, or
+a record too big for the subtask. An iteration log has no child logs.
 
 ```
 agent-log/050_it_query-slice/
@@ -135,11 +140,11 @@ agent-log/050_it_query-slice/
 
 ## `wf` — a workflow
 
-Only for a very large run: many agents, several stages, each stage handing data
-to the next. The folder is where that data changes hands, so an agent late in
-the chain reads its input from a file and not from a prompt. Rare. A workflow
-that does research is a `re`. No child logs. Only inside a loop, or on the
-user's ask.
+A workflow log is only for a very large run: many agents, several stages, and
+each stage hands data to the next. The folder is where that data changes hands.
+So an agent late in the chain reads its input from a file, not from a prompt.
+This kind is rare. A workflow that does research is a `re`. A workflow log has
+no child logs. Open one only inside a loop, or when the user asks.
 
 ```
 agent-log/060_wf_batch-migrate/

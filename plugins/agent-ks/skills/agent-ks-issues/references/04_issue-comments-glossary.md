@@ -2,7 +2,7 @@
 
 ## `issue.md`
 
-It holds the durable framing: what the issue is, for a reviewer. The order to read an issue in: [SKILL.md](../SKILL.md).
+`issue.md` holds the lasting frame of the issue: what the issue is, written for a reviewer. The order in which to read an issue is in [SKILL.md](../SKILL.md).
 
 ```markdown
 ---
@@ -27,7 +27,7 @@ What is in and what is out.
 | the goal, the scope, the success criteria, the headline decisions | research, alternatives weighed, design rationale. Those are notes |
 | links to related issues | a design exploration or a comparison table |
 
-The display title comes from `settings.json`. Keep the file between 50 and 300 lines. Past 300 lines, or when deep-dives accumulate, move that material to `notes/` and leave a one-line link.
+The display title comes from `settings.json`. Keep the file between 50 and 300 lines. Past 300 lines, or when detailed studies pile up, move that material to `notes/` and leave a one-line link.
 
 ## Comments
 
@@ -41,11 +41,11 @@ The display title comes from `settings.json`. Keep the file between 50 and 300 l
 |---|---|
 | append only | never rewrite a prior comment. Never change `author` or `date` on another author's comment |
 | flat | no subfolders, no threads. The `NNN_` prefix is the comment id, set by the CLI |
-| a second paragraph is the wrong section | debate goes to `brainstorm/`; specification goes to `notes/`. Link from the comment |
+| a second paragraph is the wrong section | debate goes to `brainstorm/`. Specification goes to `notes/`. Link from the comment |
 | `dropped` needs a comment first | rule 6 in [lifecycle](02_lifecycle.md) |
 | working dialogue is not a comment | it is saved only on request, as a `discuss` brainstorm ([brainstorm](05_brainstorm-notes-memory.md)) |
 
-Test: a reviewer six weeks later needs this line to follow the issue. Then it is a comment.
+The test: a reviewer six weeks later needs this line to follow the issue. If so, it is a comment.
 
 ```yaml
 ---
@@ -56,7 +56,7 @@ date: 2026-04-24
 Two lines and a pointer.
 ```
 
-Name the file `NNN_<slug>.md` or `NNN_<YYYY-MM-DD>_<author>.md`. Match what the issue uses. Skeleton: [comment.md](../../agent-ks-cli/templates/comment.md).
+Name the file `NNN_<slug>.md` or `NNN_<YYYY-MM-DD>_<author>.md`. Match what the issue uses. The skeleton is [comment.md](../../agent-ks-cli/templates/comment.md).
 
 ```bash
 agent-ks issue add-comment <issue-id> --author claude --body "..."
@@ -66,7 +66,7 @@ The CLI picks the next prefix and writes the frontmatter. Without the CLI: list 
 
 ## `glossary.md`
 
-An optional file at the issue root. The Glossary panel renders it as written. It holds the terms, colour meanings and conventions of this issue. Sections and tables beat paragraphs.
+`glossary.md` is an optional file at the issue root. The Glossary panel renders it as written. It holds the terms, colour meanings and conventions of this issue. Use sections and tables rather than paragraphs.
 
 ```markdown
 # Glossary
@@ -95,4 +95,4 @@ An optional file at the issue root. The Glossary panel renders it as written. It
 
 ## The Guide panel
 
-Every issue renders a Guide panel: an anatomy legend with one generated island, the issue's effective kind codes. The framework builds it from `@root/astro-doc-code/src/layouts/issues/default/guide.ts`. You do not write it. It is present even when the plugin is not installed. The skill is the full manual; the Guide is the map. A framework maintainer keeps `guide.ts` in step with this skill.
+Every issue renders a Guide panel. The panel is a legend of the issue anatomy, plus one generated part: the issue's effective kind codes. The framework builds it from `@root/astro-doc-code/src/layouts/issues/default/guide.ts`. You do not write it. It is present even when the plugin is not installed. This skill is the full manual. The Guide is the map. A framework maintainer keeps `guide.ts` in step with this skill.

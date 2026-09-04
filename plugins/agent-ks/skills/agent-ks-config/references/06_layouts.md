@@ -16,11 +16,11 @@ Before you write a layout, check that a theme change does not do the job. Colour
 | `@navbar/default`, `@navbar/minimal` | Full navbar with dropdowns; logo and toggle only |
 | `@footer/default`, `@footer/minimal` | Column grid with a bottom bar; one line |
 
-Switch by editing the `layout` value and saving; the dev server hot-reloads. One docs tree has one layout. To give a subfolder another style, mount it as its own `pages:` entry with its own `data:` path. In dev, the toolbar's layout switcher previews a style without writing config.
+Switch by editing the `layout` value and saving. The dev server hot-reloads. One docs tree has one layout. To give a subfolder another style, mount it as its own `pages:` entry with its own `data:` path. In dev, the toolbar's layout switcher previews a style without writing config.
 
 ## Custom layout styles
 
-Ship a style without editing the framework. It lives in an extension folder, resolves at the same `@<type>/<style>` alias, and overrides a built-in of the same name.
+You can ship a style without editing the framework. It lives in an extension folder. It resolves at the same `@<type>/<style>` alias. It overrides a built-in style of the same name.
 
 ### Setup
 
@@ -28,7 +28,7 @@ Ship a style without editing the framework. It lives in an extension folder, res
 2. In the framework's `.env` set `LAYOUT_EXT_DIR=../layouts`. The path is relative to the framework folder. Absolute paths work.
 3. Mirror `src/layouts/`: one folder per type, one per style, with the exact file names below.
 4. Reference it in `site.yaml`: `layout: "@docs/kanban"`.
-5. Restart: `./start stop`, then `./start --detach`. A new folder needs a restart; edits inside an existing folder hot-reload.
+5. Restart: `./start stop`, then `./start --detach`. A new folder needs a restart. Edits inside an existing folder hot-reload.
 
 ```
 layouts/
@@ -47,11 +47,11 @@ layouts/
 | `issues` | `IndexLayout.astro`, `DetailLayout.astro`, `SubDocLayout.astro` |
 | `navbar`, `footer` | `index.astro` |
 
-Note the folder is `blogs`, with an `s`, while the alias is `@blog/…`. Unset `LAYOUT_EXT_DIR` means built-in styles only, at no cost.
+Note that the folder is `blogs`, with an `s`, while the alias is `@blog/…`. When `LAYOUT_EXT_DIR` is unset, only the built-in styles load, at no cost.
 
 ### Override a built-in
 
-A folder named like a built-in, `layouts/docs/default/Layout.astro`, replaces it for every page that names `@docs/default`. Copy the built-in source from `@root/astro-doc-code/src/layouts/docs/default/`, then change it. From then on the project owns that layout; framework updates do not flow into it. Do this only when the change cannot be CSS.
+A folder named like a built-in, `layouts/docs/default/Layout.astro`, replaces it for every page that names `@docs/default`. Copy the built-in source from `@root/astro-doc-code/src/layouts/docs/default/`, then change it. From then on the project owns that layout. Framework updates do not reach it. Do this only when the change cannot be done in CSS.
 
 ### Imports
 
@@ -84,13 +84,13 @@ The exact shapes are in the matching `@root/astro-doc-code/src/layouts/<type>/de
 ### Conventions
 
 - Keep any `.astro` or `.ts` file under about 400 lines. Split into `parts/` and one `client.ts`.
-- Pass server data to client script through a `<script type="application/json">` tag or a `data-*` attribute, never `define:vars`. It breaks when the script imports a module.
+- Pass server data to client script through a `<script type="application/json">` tag or a `data-*` attribute, never through `define:vars`. `define:vars` breaks when the script imports a module.
 - Elements created at runtime with `innerHTML` miss Astro's scoped attribute. Wrap their styles in `:global(.class)`.
-- `BaseLayout.astro` cannot be replaced. It injects the theme CSS; an extension layout renders inside it.
+- `BaseLayout.astro` cannot be replaced. It injects the theme CSS. An extension layout renders inside it.
 
 ## Rules for layout CSS
 
-Every visual value is a theme variable. No hex, `rgb()`, `hsl()`, raw `px` or `rem` in font size, padding, margin, gap, radius, shadow, width, height, or `ms` in a transition. Break the rule and the value freezes across theme switches and dark mode, while the page still renders.
+Every visual value is a theme variable. Use no hex, `rgb()`, `hsl()`, raw `px` or `rem` in font size, padding, margin, gap, radius, shadow, width, height, and no `ms` in a transition. If you break the rule, the value stays fixed across theme switches and dark mode, while the page still renders.
 
 | Instead of | Write |
 |---|---|
@@ -101,6 +101,6 @@ Every visual value is a theme variable. No hex, `rgb()`, `hsl()`, raw `px` or `r
 | `transition: background 0.2s` | `transition: background var(--transition-fast)` |
 | `var(--color-accent, #7aa2f7)` | `var(--color-brand-primary)`. Never invent a name; propose it in the contract instead |
 
-Three exceptions. `@media` breakpoints take literal pixels, because a CSS variable does not resolve inside a media query; use the scale in `@root/astro-doc-code/src/styles/breakpoints.css`, which is `480`, `640`, `768`, `1024`, `1280`, `1536`, `1920` and `2560`. `640`, `768` and `1024` cover most rules. `em` for sizing relative to the parent text is fine. Resets are plain CSS.
+There are three exceptions. `@media` breakpoints take literal pixels, because a CSS variable does not resolve inside a media query. Use the scale in `@root/astro-doc-code/src/styles/breakpoints.css`. The scale is `480`, `640`, `768`, `1024`, `1280`, `1536`, `1920` and `2560`. `640`, `768` and `1024` cover most rules. `em` is fine for a size relative to the parent text. Resets are plain CSS.
 
-To check a layout: grep its CSS for `#[0-9a-f]{3,8}`, `rgba?\(`, `font-size:\s*[0-9]`; swap `theme:` in `site.yaml` and reload; toggle dark mode and walk every page type.
+To check a layout, do three things. Grep its CSS for `#[0-9a-f]{3,8}`, `rgba?\(` and `font-size:\s*[0-9]`. Swap `theme:` in `site.yaml` and reload. Toggle dark mode and walk every page type.

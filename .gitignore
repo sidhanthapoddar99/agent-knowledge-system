@@ -35,3 +35,6 @@ verification/*/node_modules/
 verification/*/package*.json
 verification/skill-compare/
 
+
+# one-run scratch: traces, measurement scripts
+scratch/

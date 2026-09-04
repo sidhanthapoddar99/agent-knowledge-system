@@ -11,25 +11,25 @@ An index is a claim about files that live somewhere else. It goes stale with no 
 
 ## Run the CLI first
 
-Two verbs answer the mechanical half. Run them first: a script resolves every link in a second and never miscounts.
+Two verbs answer the mechanical half of the check. Run them first, because a script resolves every link in a second and never miscounts.
 
 | Command | Answers |
 |---|---|
 | `agent-ks check link-form <path>` | every `ORPHAN` under the path, with file and line |
-| `agent-ks check issues` | a subtask group leaf whose `status` says open while every member is closed. It reads the whole tracker: quote only the lines under your path |
+| `agent-ks check issues` | a subtask group leaf whose `status` says open while every member is closed. It reads the whole tracker. Quote only the lines under your path |
 
-Spend the agent on `MISSING`, `STALE` and `INFERENCE` only. No script reads through a reference into another file's state.
+Use the agent for `MISSING`, `STALE` and `INFERENCE` only. No script can follow a link and compare the target's state with the claim.
 
 ## Run it
 
 | Situation | Do |
 |---|---|
 | `$ARGUMENTS` is empty | Ask which index: a file, an issue folder, a plan folder, or an agent-log folder |
-| The path is relative | Resolve it to an absolute path. A subagent need not share your working directory |
-| You have the `Agent` tool (`Task` in some harnesses) | Dispatch `agent-ks:agent-ks-index-checker` (bare `agent-ks-index-checker` as the fallback). The prompt: the absolute path, the user's scope, the CLI findings, the absolute path of this file. Do not restate the procedure. Wait for the report before you reply, then relay it |
+| The path is relative | Resolve it to an absolute path. A subagent may run in a different working directory |
+| You have the `Agent` tool (`Task` in some harnesses) | Dispatch `agent-ks:agent-ks-index-checker` (bare `agent-ks-index-checker` as the fallback). Give the prompt four things: the absolute path, the user's scope, the CLI findings, and the absolute path of this file. Do not restate the procedure. Wait for the report before you reply. Then relay it |
 | You have no `Agent` tool (Codex) | Run the procedure yourself |
 
-Do not read the index before a dispatch; that spends the context the dispatch saves, and primes the report. Use at most one `Glob` or `Read`, to confirm the path exists.
+Do not read the index before you dispatch. Reading it spends the context the dispatch saves, and it shapes how you read the report. Use at most one `Glob` or `Read`, to confirm the path exists.
 
 ## The two directions
 
@@ -40,7 +40,7 @@ The filesystem is the truth. The index is the claim under test. Run the check tw
 | A: index to files | Is this claim still true? | `STALE`, `ORPHAN` |
 | B: files to index | Is everything here listed? | `MISSING` |
 
-Only direction B finds a file the index never names; links cannot lead there. So list the directory before you read the index. A run that did not list has not run direction B, and must say so.
+Only direction B finds a file the index never names, because no link leads to such a file. So list the directory before you read the index. A run that did not list has not run direction B, and must say so.
 
 ## The four labels
 
@@ -57,7 +57,7 @@ Only direction B finds a file the index never names; links cannot lead there. So
 
 ## Relay
 
-Relay the four labels; do not flatten them. Put `MISSING` first, with its numbers, even at zero: "11 entries on disk, all 11 named". A clean result is an answer: say so, and say what was checked.
+Relay the four labels. Do not merge them into one list. Put `MISSING` first, with its numbers, even at zero: "11 entries on disk, all 11 named". A clean result is an answer. Say so, and say what was checked.
 
 ## Never
 

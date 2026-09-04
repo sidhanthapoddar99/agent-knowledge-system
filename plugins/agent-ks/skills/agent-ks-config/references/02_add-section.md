@@ -17,7 +17,7 @@ pages:
     data: "@data/handbook"
 ```
 
-The section folder is plain kebab-case, with no `NN_` prefix. The prefix orders the files and subfolders inside the section. Explain this when the user asks.
+The section folder is plain kebab-case, lowercase words joined by hyphens, with no `NN_` prefix. The prefix orders the files and subfolders inside the section. Explain this when the user asks.
 
 ## 1 Resolve the project root
 
@@ -46,7 +46,7 @@ Validate the name before you ask anything else. Stop early on a collision.
 | Form | matches `^[a-z][a-z0-9-]*$` |
 | Collision | no folder of that name under the data root. Run `ls <data_root>` |
 | Reserved | not `artifacts`, `assets`, `content-assets`, `api` or `editor`; the config loader rejects those as a `base_url` |
-| Near miss (uppercase, spaces, underscores) | normalise to kebab-case and confirm. Never transform in silence |
+| Near miss (uppercase, spaces, underscores) | change it to kebab-case and confirm. Never change it in silence |
 
 If the name is invalid, explain why and ask again.
 
@@ -84,7 +84,7 @@ Proceed?
 Omit the `site.yaml` block when the user said no. Wait for confirmation, then write from the templates below.
 
 ## 6 Templates
-Never overwrite an existing `settings.json` or an existing `site.yaml` block. If you would, stop and ask.
+Never overwrite an existing `settings.json` or an existing `site.yaml` block. If a write would do that, stop and ask.
 
 `settings.json`:
 
@@ -119,7 +119,7 @@ Create files in this folder with the `NN_` prefix to control the sidebar order:
 Every markdown file needs `title:` in its frontmatter. Every folder needs a `settings.json`.
 ```
 
-The `site.yaml` entry: read the file, find the `pages:` block, and append the entry with the indentation of the existing entries, two spaces for the name and four for its fields. Do not overwrite or reformat the rest of the file.
+For the `site.yaml` entry: read the file and find the `pages:` block. Append the entry with the indentation of the existing entries: two spaces for the name and four for its fields. Do not overwrite or reformat the rest of the file.
 
 ```yaml
   <name>:
@@ -136,7 +136,7 @@ The `site.yaml` entry: read the file, find the `pages:` block, and append the en
 | `agent-ks check section <data_root>/<name>` | exit `0` |
 | `agent-ks check config <project_root>/config`, only when you edited `site.yaml` | exit `0` |
 
-If either fails, show the user the finding and offer to fix it. Otherwise add a row to `data/README.md`. The starter template ships that file with one row per folder — folder, purpose, route — so copy the shape of the rows already there. Then end with:
+If either fails, show the user the finding and offer to fix it. Otherwise add a row to `data/README.md`. The starter template ships that file with one row per folder. Each row has the folder, its purpose and its route. Copy the shape of the rows already there. Then end with:
 
 ```
 Created section <name> at <data_root>/<name>/. Next steps:

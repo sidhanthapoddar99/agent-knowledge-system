@@ -1,6 +1,6 @@
 # Format migrations
 
-How the on-disk content format moves to a new version without hand edits. Migrations are rare. They are not part of normal authoring.
+This file says how the on-disk content format moves to a new version without hand edits. A migration is a script that rewrites content into the new format. Migrations are rare. They are not part of normal authoring.
 
 ## When to use this file
 
@@ -13,18 +13,18 @@ How the on-disk content format moves to a new version without hand edits. Migrat
 
 If none applies, author content in the current format from the other references.
 
-The contract: `site.yaml → engine_version` names the version the content targets; a missing value counts as `0.0.0`. The engine accepts the range `[MIN_CONTENT_VERSION, ENGINE_VERSION]` from `@root/astro-doc-code/src/loaders/engine-version.ts`.
+The contract is this. `site.yaml → engine_version` names the version the content targets. A missing value counts as `0.0.0`. The engine accepts the range `[MIN_CONTENT_VERSION, ENGINE_VERSION]` from `@root/astro-doc-code/src/loaders/engine-version.ts`.
 
-**Confirm before you apply.** A migration rewrites content in place. Run the detect pass, show the count and the files, and wait for an explicit go-ahead. The one exception: the user asked you to run that migration.
+**Confirm before you apply.** A migration rewrites content in place. Run the detect pass, show the count and the files, and wait for an explicit go-ahead. The one exception is when the user asked you to run that migration.
 
 ## Where migrations live
 
-`@root/migration/<to-version>_<statement>.py`. The code is part of the framework folder. This skill holds only the operating manual.
+Migrations live at `@root/migration/<to-version>_<statement>.py`. The code is part of the framework folder. This skill holds only the operating manual.
 
 | Fact | Detail |
 |---|---|
 | One file per migration | Named by the engine version it brings content to, `N.N.N`, then a short statement |
-| Version order is execution order | Authoring dates live inside docstrings, as provenance only |
+| Version order is execution order | Authoring dates live inside docstrings, as a record only |
 | Python, stdlib only | One-off runs, outside the live CLI |
 | Self-documenting | The module docstring carries purpose, behaviour and usage. Read it before you run the script |
 
@@ -32,7 +32,7 @@ The convention lives in `@root/migration/README.md`.
 
 ## The upgrade flow
 
-The gate exists to detect format drift here, loudly. A bare bump of `engine_version` moves the breakage downstream, where it shows as silent misrendering. So the only exit from a gate error is the chain. If the user asks to "just change the version", explain this and run the detect passes. They are read-only and take seconds.
+The gate exists to catch a format change here, with a clear error. A bare bump of `engine_version` moves the breakage to the rendered pages. There it shows as wrong output with no error. So the only exit from a gate error is the chain of scripts. If the user asks to "just change the version", explain this and run the detect passes. They are read-only and take seconds.
 
 | Step | Action |
 |---|---|
@@ -44,21 +44,21 @@ The gate exists to detect format drift here, loudly. A bare bump of `engine_vers
 
 ## Script structure
 
-Most scripts carry these four subcommands, and a script may add one of its own. Run `python <script> --help` first, so you use the set that script really has.
+Most scripts carry these four subcommands. A script may add one of its own. Run `python <script> --help` first, so you use the set that the script really has.
 
 | Subcommand | Does |
 |---|---|
 | `detect` | Summary counts. Does the tree need this migration, and how much |
 | `locate` | Every instance, with file and line |
 | `migrate [--dry-run]` | Apply, or preview without writing |
-| `verify` | Assert the tree is clean; exits non-zero when legacy content remains. Some scripts exit-code `detect` instead |
+| `verify` | Confirm the tree is clean. It exits non-zero when legacy content remains. Some scripts put that exit code on `detect` instead |
 
-Inside, read-only detect functions sit apart from writing fix functions. `verify` reuses the detection core, so `migrate` then `verify` with exit `0` proves the tree is clean.
+Inside a script, the read-only detect functions sit apart from the fix functions that write. `verify` reuses the detect code. So `migrate`, then `verify` with exit `0`, proves the tree is clean.
 
 The docstring also lists the manual steps the script cannot automate. A clean `verify` proves the automated part only.
 
-`agent-ks check legacy-tags [root]` finds custom-tag syntax the renderer does not support (`:::callout`, `<callout>`, `<tabs>`, `<collapsible>`). It names the native replacement for each hit and skips fenced examples.
+`agent-ks check legacy-tags [root]` finds custom-tag syntax the renderer does not support (`:::callout`, `<callout>`, `<tabs>`, `<collapsible>`). It names the native replacement for each hit. It skips examples inside fenced code blocks.
 
 ## Writing a new migration
 
-That is framework maintenance, not this skill. The authoring contract and the shipping checklist: `@root/default-docs/data/dev-docs/30_versioning/05_authoring-migrations.md`.
+That is framework maintenance, not this skill's work. The authoring contract and the shipping checklist are in `@root/default-docs/data/dev-docs/30_versioning/05_authoring-migrations.md`.

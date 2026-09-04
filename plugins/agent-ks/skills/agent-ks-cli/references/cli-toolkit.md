@@ -1,6 +1,6 @@
 # `agent-ks` command reference
 
-Every command is `agent-ks <group> <verb> [flags]`, or a top-level `agent-ks <verb>` for the five in General. Every command takes `--help`. Every command takes `--json` except `move`, `img`, `set-state` and `add-comment`. Every `issue` command takes `--tracker <path>` for another tracker. `--name <value>` takes a value; `--name` is a switch. The contract and the exit codes are in [SKILL.md](../SKILL.md).
+Every command is `agent-ks <group> <verb> [flags]`, or a top-level `agent-ks <verb>` for the five in General. Every command takes `--help`. Every command takes `--json` except `move`, `img`, `set-state` and `add-comment`. Every `issue` command takes `--tracker <path>` for another tracker. `--name <value>` takes a value. `--name` alone is a switch. The contract and the exit codes are in [SKILL.md](../SKILL.md).
 
 ## General
 
@@ -9,8 +9,8 @@ Every command is `agent-ks <group> <verb> [flags]`, or a top-level `agent-ks <ve
 | `help [command]` | List every command, or show one command's flags. `--json` dumps the manifest | |
 | `resolve-context` | Print the `.env`-derived content root, config dir and data dir | |
 | `find <regex>` | Search docs, blog, issues and config for a string | `--meta` structured layer only · `--path` match the path text · `--type <docs,blog,issues,config>` · `--count` · `--paths-only` · `--case-sensitive` |
-| `move <from> <to>` | Move or rename a file or folder; rewrite every link to it and inside it. The scan scope is the `.env` content root. Both `<from>` and `<to>` must sit inside that scope, or the command exits 1 | `--dry-run` · `--no-git` · `--root <dir>` widens or replaces the scope; both paths must then sit inside `<dir>` |
-| `img <path…>` | Optimise images before commit. It needs the ImageMagick CLI (`magick` or `convert`) — the only command with an outside dependency | the table below |
+| `move <from> <to>` | Move or rename a file or folder. It rewrites every link to it and inside it. The scan scope is the `.env` content root. Both `<from>` and `<to>` must sit inside that scope, or the command exits 1 | `--dry-run` · `--no-git` · `--root <dir>` widens or replaces the scope. Both paths must then sit inside `<dir>` |
+| `img <path…>` | Optimise images before a commit. It needs the ImageMagick CLI, `magick` or `convert`. It is the only command with an outside dependency | the table below |
 
 ### `img` flags
 
@@ -44,11 +44,11 @@ Every command is `agent-ks <group> <verb> [flags]`, or a top-level `agent-ks <ve
 | `new-round <id>` | Add a round file flat in a log from `templates/log-round.md`, and list it under `## Files` in `00_index.md` | `--log <path>` required, relative to `agent-log/` · `--name <slug>` required · `--title <text>` · `--report` · `--round <N>` · `--goal <text>` · `--inputs <a,b>` · `--agent <name>` |
 | `new-iteration <id>` | Alias of `new-round`, same flags | |
 
-`--subtask` on `new-stage` and `--for` on `new-agent-log` take a number, a slug, a clean name (`top-layer-tests`) or a path. Each one becomes one plain link whose text is the subtask title. A selector that matches nothing, or more than one subtask, is an error. Nothing is written.
+`--subtask` on `new-stage` and `--for` on `new-agent-log` take a number, a slug, a clean name such as `top-layer-tests`, or a path. Each value becomes one plain link. The link text is the subtask title. A value that matches no subtask, or more than one, is an error. Then nothing is written.
 
 `--inputs` on `new-round` takes paths relative to the log, the issue or the tracker. Each becomes a link under `## Links` with the file title as text. A missing path is an error.
 
-A round file's prefix ends in 0 (`10_`, `20_`, `30_`). `--report` writes the next `N1`–`N9` file inside the current round. Two preconditions, and both are errors: the round file must exist first, so open the round without `--report`; a round holds at most nine reports, so open the next round after that. When the log has no `00_index.md`, `new-round` still writes the file. The human path prints a notice; `--json` carries `indexUpdated: false` instead. Add the file line to the index by hand.
+A round file's prefix ends in 0: `10_`, `20_`, `30_`. `--report` writes the next `N1` to `N9` file inside the current round. Two conditions must hold, and each failure is an error. The round file must exist first, so open the round without `--report`. A round holds at most nine reports, so after nine open the next round. When the log has no `00_index.md`, `new-round` still writes the file. The human output prints a notice. `--json` carries `indexUpdated: false` instead. Then add the file line to the index by hand.
 
 One worked line per scaffolder:
 
@@ -61,7 +61,7 @@ agent-ks issue new-agent-log 2026-04-19-docs-phase-2 --kind au --name skill-revi
 agent-ks issue new-round 2026-04-19-docs-phase-2 --log 040_au_skill-review --name kickoff --goal "brief the reviewers"
 ```
 
-These lines are six independent examples, not one sequence. The `--log` value is the folder `new-agent-log` printed, not a fixed number: it takes the next gap-spaced prefix in that issue.
+These lines are six independent examples, not one sequence. The `--log` value is the folder that `new-agent-log` printed, not a fixed number. `new-agent-log` takes the next gap-spaced prefix in that issue.
 
 ### `list` flags
 
@@ -81,19 +81,19 @@ These lines are six independent examples, not one sequence. The `--log` value is
 
 ## Validators: `agent-ks check …`
 
-Every validator splits its findings in two. An error exits 1. A warning exits 0. So read the counts and not the exit code: a run can print hundreds of warnings and still exit 0.
+Every validator splits its findings in two. An error exits 1. A warning exits 0. So read the counts, not the exit code. A run can print hundreds of warnings and still exit 0.
 
 | Command | Checks | Flags |
 |---|---|---|
-| `issues` | The tracker: vocabulary, folder names, statuses, anatomy folders, plans, agent logs. A stage `subtasks:` entry that is not exactly one resolving link is an error. In a log, only values are checked: a status must be a run status. The folder shape is guidance, not a check | `--template` · `--quiet` or `--no-warnings` hide the warnings · `--verbose` also list the canonical keys behind an unknown-key warning · `--strict` promote the unknown-key warnings to errors · `--tracker <path>` |
+| `issues` | The tracker: vocabulary, folder names, statuses, anatomy folders, plans, agent logs. A stage `subtasks:` entry that is not exactly one resolving link is an error. In a log, only values are checked. A status must be a run status. The folder shape is guidance, not a check | `--template` · `--quiet` or `--no-warnings` hide the warnings · `--verbose` also list the canonical keys behind an unknown-key warning · `--strict` promote the unknown-key warnings to errors · `--tracker <path>` |
 | `section <folder>` | A docs section: `NN_` prefixes, `settings.json`, frontmatter `title`, prefix collisions | |
 | `blog` | `YYYY-MM-DD-<slug>.md` names, `title`, no nested folders | |
 | `config` | `site.yaml`, `navbar.yaml`, `footer.yaml`: required keys, pages, alias resolution | |
-| `link-form [root]` | Every internal link is relative and names a file on disk. Needs no build. `[root]` defaults to the content root's `data/`. Give `[root]` a folder that holds links: a link-free folder fails with "the link matcher is not working", because the guard exists to catch a broken matcher on a whole-tree run | |
+| `link-form [root]` | Every internal link is relative and names a file on disk. It needs no build. `[root]` defaults to the content root's `data/`. Give `[root]` a folder that holds links. A folder with no links fails with "the link matcher is not working". That guard exists to catch a broken matcher on a whole-tree run | |
 | `legacy-tags [root]` | Custom-tag markup the renderer does not parse (`:::callout`, `<callout>`, `<tabs>`, `<collapsible>`) and its native replacement. `[root]` defaults to the content root's `data/` | |
-| `skill-links [skill-dir]` | Maintainer tool. Relative links between skill `.md` files resolve. Never quote a pass without the tree name: read the `[repo source tree]` or `[installed plugin]` banner first, because the two trees hold different files | |
+| `skill-links [skill-dir]` | A maintainer tool. It checks that relative links between skill `.md` files resolve. Never quote a pass without the tree name. Read the `[repo source tree]` or `[installed plugin]` banner first, because the two trees hold different files | |
 
-`check issues --template` checks the five `#` headings of `templates/*.md` on subtasks, stages and plan overviews. A file in a finished status must hold a result in `# 02 Status and Result`. A subtask's `## Agent log` must be `none` or one link that resolves; a `## Questions` entry needs status `input-needed`. Root settings `"template": true` turns the check on.
+`check issues --template` checks the five `#` headings of `templates/*.md` on subtasks, stages and plan overviews. A file in a finished status must hold a result in `# 02 Status and Result`. A subtask's `## Agent log` must be `none` or one link that resolves. A `## Questions` entry needs status `input-needed`. Root settings `"template": true` turns the check on.
 
 ## Docs and blog: `agent-ks doc …`, `agent-ks blog …`
 
@@ -117,4 +117,4 @@ Every validator splits its findings in two. An error exits 1. A warning exits 0.
 
 ## Theme: `agent-ks theme tokens [name]`
 
-The active theme's CSS variables, or a named theme's, for light and dark. `--json` gives `{ theme, light, dark }`.
+It prints the active theme's CSS variables, or a named theme's, for light and dark. `--json` gives `{ theme, light, dark }`.

@@ -18,11 +18,11 @@ A feature or fix, split into a few subtasks, worked one at a time.
 └── agent-log/                       empty until a run earns a log
 ```
 
-No `plans/`: three subtasks worked one at a time have no schedule. A plan opens when order becomes a question.
+There is no `plans/` folder, because three subtasks worked one at a time have no schedule. Open a plan when order becomes a question.
 
 | Step | Command or action |
 |---|---|
-| 1. read the issue | the four pickup steps in [SKILL.md](../SKILL.md) |
+| 1. read the issue | the five pickup steps in [SKILL.md](../SKILL.md) |
 | 2. pick a subtask | the one the user named, or any `open` one. Not the lowest prefix |
 | 3. start | `agent-ks issue set-state <id> in-progress --subtask 010` |
 | 4. work and record | the result goes in the subtask's `02`. A log only when the work must survive a handover: [when to open one](../../agent-ks-issue-logs/SKILL.md) |
@@ -31,7 +31,7 @@ No `plans/`: three subtasks worked one at a time have no schedule. A plan opens 
 
 ## A research issue
 
-The deliverable is a decision or a design, not a diff. The weight sits in `notes/`, numbered because reading order matters.
+The result is a decision or a design, not a diff. Most of the content sits in `notes/`, numbered because reading order matters.
 
 ```
 2026-05-02-search-backend-eval/
@@ -51,11 +51,11 @@ The deliverable is a decision or a design, not a diff. The weight sits in `notes
     └── 11_meilisearch-report.md     one report per agent
 ```
 
-`issue.md` poses the question. The brainstorm graduates into `notes/` when the recommendation cites it. A comment records that the decision landed. `review` means the recommendation is written and defensible. The user accepts (`done`) or pushes back in a comment.
+`issue.md` poses the question. The brainstorm graduates into `notes/` when the recommendation cites it. A comment records that the decision landed. `review` means the recommendation is written and can be defended. The user accepts it with `done`, or pushes back in a comment.
 
 ## A loop issue
 
-A long autonomous run, worked across many rounds. The execution record is the value.
+A long autonomous run, worked across many rounds. The record of the run is the value.
 
 ```
 2026-05-10-flaky-test-sweep/
@@ -79,7 +79,7 @@ A long autonomous run, worked across many rounds. The execution record is the va
 | one round per pass | `agent-ks issue new-round <id> --log 010_lp_first-sweep --name log-scan` |
 | a failed round stays | `status: dropped` plus the callout is the signal the next round needs |
 | durable facts leave the log | `agent-memory/` |
-| work inside the run nests | an audit or a workflow is a child log; the loop's `00_index.md` lists it. Numbering: [agent-ks-issue-logs](../../agent-ks-issue-logs/SKILL.md) |
+| work inside the run nests | an audit or a workflow is a child log. The loop's `00_index.md` lists it. The numbering is in [agent-ks-issue-logs](../../agent-ks-issue-logs/SKILL.md) |
 
 ## A phase issue
 
@@ -105,4 +105,4 @@ An issue that represents a whole phase. Its subtasks are thin pointers. Each is 
 | a subtask is a pointer | a title and a sentence of intent. Context arrives on promotion |
 | promotion is the lifecycle | create the new issue, move travelling notes with `agent-ks move`, leave the pointer at `review` |
 | the issue stays `open` | it closes when every step is promoted and resolved |
-| order lives in the plan | subtask `020` may promote to an issue slugged `-01-`; neither number is a schedule |
+| order lives in the plan | subtask `020` may promote to an issue slugged `-01-`. Neither number is a schedule |

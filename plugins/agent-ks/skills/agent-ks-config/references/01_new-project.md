@@ -4,7 +4,7 @@ Copy the starter template into the folder the user picks. Substitute the site na
 
 ## The result
 
-The confirm block at step 5 names every file this writes. Two things sit outside that list. The user clones the framework into `<chosen_root>/agent-knowledge-system/`, beside `config/` and `data/`; that is consumer mode, and [03_site-config.md](./03_site-config.md) draws the full tree. A patched `CLAUDE.md` at `<chosen_root>/CLAUDE.md` tells later sessions the layout, the skills and the build commands.
+The confirm block at step 5 names every file this writes. Two things are outside that list. The user clones the framework into `<chosen_root>/agent-knowledge-system/`, beside `config/` and `data/`. That is consumer mode. [03_site-config.md](./03_site-config.md) draws the full tree. A patched `CLAUDE.md` at `<chosen_root>/CLAUDE.md` tells later sessions the layout, the skills and the build commands.
 
 ## 1 Pre-flight
 
@@ -18,7 +18,7 @@ This loop guards the repo, so it runs on `./`. If a blocker prints, stop with:
 
 ## 2 Locate the template
 
-The template is `assets/template/` beside this skill's `SKILL.md`. Claude Code sets `CLAUDE_PLUGIN_ROOT`; any other host derives the path from the `agent-ks` shim.
+The template is `assets/template/` beside this skill's `SKILL.md`. Claude Code sets `CLAUDE_PLUGIN_ROOT`. Any other host finds the path by following the `agent-ks` shim. The shim is the small script on PATH that starts the CLI.
 
 ```bash
 TEMPLATE_DIR="${CLAUDE_PLUGIN_ROOT}/skills/agent-ks-config/assets/template"
@@ -33,9 +33,9 @@ If the test fails, the install is broken. In Claude Code: run `/plugin update ag
 
 ## 3 Scope
 
-Ask: whole repo, or a subfolder? A subfolder (default `docs`) is right when the repo already holds source code. Whole repo: `chosen_root="."`. Subfolder: ask the name, create the folder if missing, `chosen_root="./<name>"`. Print `realpath "$chosen_root"` and confirm it before you write.
+Ask: whole repo, or a subfolder? A subfolder is right when the repo already holds source code. The default subfolder name is `docs`. For the whole repo, set `chosen_root="."`. For a subfolder, ask the name, create the folder if it is missing, and set `chosen_root="./<name>"`. Print `realpath "$chosen_root"` and confirm it before you write.
 
-Then list the collisions. Step 6 writes into `$chosen_root`, so the test belongs here, where that root is known. A file and a folder get different messages, because `rsync --ignore-existing` skips an existing file and still adds new files inside an existing folder. A collision is not a blocker. Copy every line this prints into the confirm block at step 5, so the user reads it before anything is written.
+Then list the collisions. A collision is a file or folder in `$chosen_root` that the template also carries. Step 6 writes into `$chosen_root`, so the test belongs here, where that root is known. A file and a folder get different messages. `rsync --ignore-existing` skips an existing file, but it still adds new files inside an existing folder. A collision is not a blocker. Copy every line this prints into the confirm block at step 5. Then the user reads it before anything is written.
 
 ```bash
 for p in config data assets themes .gitignore .env.example; do
@@ -55,7 +55,7 @@ Ask all four in one message.
 | Description | one-sentence tagline | `Documentation built with agent-knowledge-system` |
 | Repo URL, or `org/repo` | footer and social links | the placeholder `your-org/your-repo`; the user edits `config/footer.yaml` later |
 
-Keep them in `SITE_NAME`, `SITE_TITLE`, `DESCRIPTION` and `REPO_URL` (a full URL). When the user picks a non-default answer, restate it, so they can correct a typo. Each answer lands inside a double-quoted YAML scalar, so ask for another when one carries a `"` or a `\`.
+Keep them in `SITE_NAME`, `SITE_TITLE`, `DESCRIPTION` and `REPO_URL`. `REPO_URL` is a full URL. When the user gives a non-default answer, repeat it back, so they can correct a typo. Each answer goes inside a double-quoted YAML value. So when an answer carries a `"` or a `\`, ask for another one.
 
 ## 5 Confirm the plan
 
@@ -107,7 +107,7 @@ rm -f config/site.yaml.bak config/footer.yaml.bak data/pages/home.yaml.bak && cd
 
 ## 7 Patch CLAUDE.md
 
-The template is `assets/claude-md.template.md`, beside `assets/template/`. Substitute `<SITE_NAME>`, `<DESCRIPTION>` and `<chosen_root>` (`.` for the root itself). Without it, later sessions do not know the layout, the skills or the build commands. This is the one step that edits a file the user already owns, so it has three named cases and never rewrites the rest.
+The template is `assets/claude-md.template.md`, beside `assets/template/`. Substitute `<SITE_NAME>`, `<DESCRIPTION>` and `<chosen_root>`. For the repo root itself, `<chosen_root>` is `.`. Without this patch, later sessions do not know the layout, the skills or the build commands. This is the one step that edits a file the user already owns. So it has three named cases, and it never rewrites the rest of the file.
 
 | `<chosen_root>/CLAUDE.md` | Do |
 |---|---|
@@ -115,7 +115,7 @@ The template is `assets/claude-md.template.md`, beside `assets/template/`. Subst
 | Present, with no `## Documentation` heading | Append the template from its `## Documentation` heading to the end of the file. Change no existing line |
 | Present, with a `## Documentation` heading | Merge, as below |
 
-Merge means: keep the user's heading and every line they wrote, then add the template lines that section does not already carry, at the end of that section. Nothing above or below the section moves.
+Merge means this. Keep the user's heading and every line they wrote. Then add the template lines that the section does not already carry, at the end of that section. Nothing above or below the section moves.
 
 ```diff
  ## Documentation
@@ -127,9 +127,9 @@ Merge means: keep the user's heading and every line they wrote, then add the tem
 
 ## 8 Validate and hand off
 
-Run `agent-ks check config "<chosen_root>/config"` with the explicit path; `.env` does not exist yet. It must exit `0`. Otherwise fix it or report it. One entry is outside this check's reach: the `user-guide` page reads `@default-docs/user-guide`, which lives in the framework folder, so it is verified only after the clone.
+Run `agent-ks check config "<chosen_root>/config"` with the explicit path, because `.env` does not exist yet. It must exit `0`. Otherwise fix it or report it. One entry is outside this check's reach. The `user-guide` page reads `@default-docs/user-guide`. That path lives in the framework folder, so the check can verify it only after the clone.
 
-The block below carries one step you cannot run yourself. The template's `engine_version` is the version current when the plugin shipped, the clone can be newer, and content outside the engine's range refuses to start. So the user sets it after the clone and before the first launch. End with:
+The block below carries one step you cannot run yourself. The template's `engine_version` is the version that was current when the plugin shipped. The clone can be newer. Content outside the engine's range refuses to start. So the user sets `engine_version` after the clone and before the first launch. End with:
 
 ```
 Created the docs scaffold at <absolute-chosen-root>. Next step: clone the framework beside your content.

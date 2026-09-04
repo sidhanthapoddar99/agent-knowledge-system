@@ -7,7 +7,7 @@ description: The skills, the CLI and the slash commands that teach an AI agent t
 
 The framework ships a plugin, `agent-ks`. It teaches an AI agent the project's conventions, so you do not explain them every session. Claude Code and Codex both read it. It bundles:
 
-- **Nine skills.** Each triggers on its own domain. Three of them are also slash commands.
+- **Ten skills.** Each triggers on its own domain. Three of them are also slash commands.
 - **One CLI on `PATH`**, `agent-ks`. Every operation is `agent-ks <group> <verb>`. `agent-ks help` lists them all.
 - **One agent**, `agent-ks-index-checker`, Claude-only. It checks an index against the files it names and reports without editing.
 
@@ -49,6 +49,7 @@ Codex, OpenCode, Hermes and a skills-only install without a marketplace: the plu
 | `agent-ks-blog` | Blog posts: the dated filename, frontmatter, a post's assets, the index | any file under `data/blog/` |
 | `agent-ks-issues` | The issue tracker: anatomy, the creation rules, the lifecycle, subtasks, plans, agent memory, searching | the tracker under `data/todo/`; audit, refactor, loop, discuss against an issue |
 | `agent-ks-issue-logs` | Agent logs: when a run earns one and who decides, the six kinds, the file set of each | opening, continuing or reviewing a log |
+| `agent-ks-qna` | Scoping by question and answer: the seven things a work order must answer, story mode for a dictated brief, interview mode in rounds, playback before writing. Fills the subtask's own sections with the reason behind each decision | defining a subtask or a plan stage; "let me explain", "scope this", a long story |
 | `agent-ks-artifacts` | Self-contained HTML artifacts: reports, dashboards, data visualizations, design systems, served at `/artifacts` | build or design an artifact, chart or dashboard |
 | `agent-ks-cli` | The CLI contract, every command and flag, exit codes, the file templates | whenever a command is needed |
 | `agent-ks-quick-idea-note` | Capture an idea into the issue dump | `/agent-ks-quick-idea-note [idea]` |
@@ -117,6 +118,7 @@ Plugin files are cached once at user level, whatever scope enables them:
     ├── agent-ks-blog/         SKILL.md
     ├── agent-ks-issues/       SKILL.md · references/01 … 10
     ├── agent-ks-issue-logs/   SKILL.md
+    ├── agent-ks-qna/          SKILL.md · references/question-bank
     ├── agent-ks-artifacts/    SKILL.md · references · scripts
     ├── agent-ks-cli/          SKILL.md · references · scripts (the CLI) · templates
     ├── agent-ks-quick-idea-note/
@@ -131,9 +133,9 @@ Each scope's `settings.json` holds one boolean:
 
 The cache versus per-scope registration: [plugin storage and scope](../../dev-docs/25_plugins/02_storage-and-scope.md).
 
-## Why nine skills
+## Why ten skills
 
-One skill per domain, and a domain is a set of tasks that share conventions and a trigger vocabulary. Docs pages, blog posts, the tracker and site configuration each have their own. Configuration is split out because it is rare, one-time work that deserves full references rather than a lean page. Agent logs are split from the tracker because they have their own decision, when a run earns one, and their own shapes. The CLI is its own skill so every other skill can point at one contract instead of repeating it.
+One skill per domain, and a domain is a set of tasks that share conventions and a trigger vocabulary. Scoping by Q&A is its own skill because it runs before the tracker work, in conversation, and both the subtask and the plan reference it. Docs pages, blog posts, the tracker and site configuration each have their own. Configuration is split out because it is rare, one-time work that deserves full references rather than a lean page. Agent logs are split from the tracker because they have their own decision, when a run earns one, and their own shapes. The CLI is its own skill so every other skill can point at one contract instead of repeating it.
 
 ## See also
 

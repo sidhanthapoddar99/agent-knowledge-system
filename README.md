@@ -81,7 +81,7 @@ The fastest path is via the Claude Code plugin distributed through [`sids-plugin
 
 | Surface | Use it for |
 |---|---|
-| **Skills (9)** — `agent-ks-config`, `agent-ks-docs`, `agent-ks-blog`, `agent-ks-issues`, `agent-ks-issue-logs`, `agent-ks-artifacts`, `agent-ks-cli`, and two command skills | Trigger automatically on setup and config work, docs pages, blog posts, the issue tracker, agent logs, and HTML-artifact building. Each carries its own reference files. |
+| **Skills (10)** — `agent-ks-config`, `agent-ks-docs`, `agent-ks-blog`, `agent-ks-issues`, `agent-ks-issue-logs`, `agent-ks-qna`, `agent-ks-artifacts`, `agent-ks-cli`, and two command skills | Trigger automatically on setup and config work, docs pages, blog posts, the issue tracker, agent logs, scoping a subtask by Q&A, and HTML-artifact building. Each carries its own reference files. |
 | **Slash commands** — `/agent-ks-config`, `/agent-ks-config section <name>`, `/agent-ks-quick-idea-note`, `/agent-ks-index-check` | Bootstrap a new project; add a top-level section; capture a half-formed idea into the issue dump; check an index against its files. All interactive. |
 | **CLI** — one `agent-ks` entrypoint on `PATH` | `agent-ks <group> <verb>` — issue tracker (`agent-ks issue …`), validators (`agent-ks check …`), docs/blog content, git metadata, theme tokens, cross-content search. Run `agent-ks help` for the live list. Requires `bun`. |
 

@@ -76,7 +76,7 @@ A question only the user can answer, in full.
 
 `outcome` says what "done" means here. `notes` says why it sits here, what it waits on, what would surprise a reader. Both are one line. Both render as inline markdown: a link, `code`, emphasis. Point with a link, never a number. "Blocked on 14" is unreadable once 14 is renumbered.
 
-Keep it short, but not thin. A stage with three unexplained checkboxes leaves its reasoning unrecorded.
+Keep it short, but not thin. A stage with three unexplained checkboxes leaves its reasoning unrecorded. To get the why, the outcome and the open questions out of the user before the stage runs: [the qna skill](../../agent-ks-qna/SKILL.md).
 
 ## The `subtasks:` list
 

@@ -1,7 +1,7 @@
 {
   "name": "agent-ks",
-  "version": "0.10.0",
-  "description": "Teaches an AI agent to operate an agent-knowledge-system project: docs and blog posts, the folder-per-issue tracker (plans, subtasks, agent logs, agent memory), and self-contained HTML artifacts. Nine skills, three of them commands (config, quick-idea-note, index-check), and the agent-ks CLI. Requires bun.",
+  "version": "0.10.1",
+  "description": "Teaches an AI agent to operate an agent-knowledge-system project: docs and blog posts, the folder-per-issue tracker (plans, subtasks, agent logs, agent memory), and self-contained HTML artifacts. Ten skills, three of them commands (config, quick-idea-note, index-check), and the agent-ks CLI. Requires bun.",
   "skills": "./skills/",
   "interface": {
     "displayName": "Agent KS",

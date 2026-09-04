@@ -95,6 +95,7 @@ Install [bun](https://bun.sh) if it is missing. The CLI requires bun and refuses
 | [agent-ks-blog](./skills/agent-ks-blog/SKILL.md) | blog posts: names, frontmatter, assets, the index | triggers on blog work |
 | [agent-ks-issues](./skills/agent-ks-issues/SKILL.md) | the issue tracker: issues, subtasks, plans, agent memory | triggers on tracker work |
 | [agent-ks-issue-logs](./skills/agent-ks-issue-logs/SKILL.md) | agent logs: when a run earns one, the six kinds, the shape of each | triggers on agent-log work |
+| [agent-ks-qna](./skills/agent-ks-qna/SKILL.md) | scope a subtask or a stage by question and answer: the why, done-when, guardrails, decisions with reasons, so a long run never stops to ask | triggers when a subtask or plan is being defined, or a story is told |
 | [agent-ks-artifacts](./skills/agent-ks-artifacts/SKILL.md) | self-contained HTML artifacts: reports, dashboards, data visualizations, design systems | triggers on artifact work |
 | [agent-ks-quick-idea-note](./skills/agent-ks-quick-idea-note/SKILL.md) | capture an idea into the issue dump | `/agent-ks-quick-idea-note [idea]` |
 | [agent-ks-index-check](./skills/agent-ks-index-check/SKILL.md) | check an index against the files it names; reports only | `/agent-ks-index-check [path]` |

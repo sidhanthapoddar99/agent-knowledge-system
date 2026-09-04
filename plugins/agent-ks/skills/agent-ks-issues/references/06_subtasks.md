@@ -58,7 +58,7 @@ Its status is derived from its siblings: `open` while every sibling is `open`; `
 
 ## Write a work order
 
-Test: a competent person with none of your context can build the right thing from the file. If they would ask "but what exactly", it is not written.
+Test: a competent person with none of your context can build the right thing from the file. If they would ask "but what exactly", it is not written. When the scope is still in the user's head, get it out by question and answer first: [the qna skill](../../agent-ks-qna/SKILL.md) lists the seven things a work order must answer and where each goes.
 
 ````markdown
 ---
@@ -134,7 +134,7 @@ The five `#` sections are fixed. The `##` sub-heads are the standard set. Drop o
 1. When your context on the area is thin, run the [duplicate check](09_operations.md). If it finds an existing subtask, tell the user instead of creating one.
 2. Pick the area, not the phase.
 3. Run `agent-ks issue new-subtask <id> --name <slug> [--group <g>] [--title <t>]`. It takes the next gap-spaced prefix and writes the template.
-4. Fill the sections. Link any related item the duplicate check returned.
+4. Fill the sections. Link any related item the duplicate check returned. A thin scope goes through [the qna skill](../../agent-ks-qna/SKILL.md) before the run starts.
 
 ## Update a status
 

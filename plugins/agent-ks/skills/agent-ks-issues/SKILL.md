@@ -67,6 +67,7 @@ A run uses five: `open`, `in-progress`, `input-needed`, `done`, `dropped`.
 | Open a `lp`, `wf` or `it` log without asking | Ask once, wait for yes. `au` and `rf` need no ask |
 | Open a log for a one-pass change | The result goes in the subtask's `## Result` |
 | Open a second log for work that belongs to an open one | Append a file there |
+| Start a long run on a subtask with no why, no guardrails or no `Done when` | Scope it first: [agent-ks-qna](../agent-ks-qna/SKILL.md) |
 
 ## Triage
 
@@ -78,6 +79,7 @@ A run uses five: `open`, `in-progress`, `input-needed`, `done`, `dropped`.
 | issue body, comments, glossary | [04_issue-comments-glossary.md](references/04_issue-comments-glossary.md) |
 | brainstorm, notes, memory, artifacts | [05_brainstorm-notes-memory.md](references/05_brainstorm-notes-memory.md) |
 | subtasks | [06_subtasks.md](references/06_subtasks.md) |
+| scope a subtask or a stage from a conversation: the why, guardrails, done-when, decisions with reasons | [agent-ks-qna](../agent-ks-qna/SKILL.md), its own skill |
 | plans and stages | [07_plans.md](references/07_plans.md) |
 | agent logs | [agent-ks-issue-logs](../agent-ks-issue-logs/SKILL.md), its own skill |
 | search, create, validate, move | [09_operations.md](references/09_operations.md) |

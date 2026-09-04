@@ -1,10 +1,10 @@
 # Documentation Project — starter template
 
-This is the scaffold copied into a user's project by `init`. It boots a working
-documentation site with five top-level sections: **Home**, **Docs**, **Issues**,
-**Blog**, and **User Guide**.
+This is the scaffold the `agent-ks-config` skill copies into a user's project on
+`/agent-ks-config`. It boots a working documentation site with five top-level
+sections: **Home**, **Docs**, **Issues**, **Blog**, and **User Guide**.
 
-## What `init` does with this template
+## What the skill does with this template
 
 1. Copies the contents of `template/` into the user's chosen target directory.
 2. Substitutes placeholder values (site name, description, repo URL) into
@@ -13,7 +13,7 @@ documentation site with five top-level sections: **Home**, **Docs**, **Issues**,
 
 ## Layout once copied
 
-`/agent-ks-init` rsyncs everything in this template to the user's chosen root **except the template's own README.md** (this file — it's documentation about the template itself, not part of the scaffold).
+`/agent-ks-config` rsyncs everything in this template to the user's chosen root **except the template's own README.md** (this file — it's documentation about the template itself, not part of the scaffold).
 
 ```
 <user-project>/
@@ -32,7 +32,7 @@ documentation site with five top-level sections: **Home**, **Docs**, **Issues**,
                           # via @root/default-docs/themes — see site.yaml theme_paths)
 ```
 
-**`.env` is NOT written by init** — it lives inside the framework folder (`<user-project>/agent-knowledge-system/.env`) which doesn't exist yet at this point. The init flow's printed next-step instructions tell the user to clone the framework next, then `echo "CONFIG_DIR=../config" > agent-knowledge-system/.env`. That's why `.env.example` in this template is for reference only — the post-clone step writes the *real* `.env` directly, with the consumer-mode value (`CONFIG_DIR=../config`).
+**`.env` is NOT written by the skill** — it lives inside the framework folder (`<user-project>/agent-knowledge-system/.env`) which doesn't exist yet at this point. The printed next-step instructions tell the user to clone the framework next, then `echo "CONFIG_DIR=../config" > agent-knowledge-system/.env`. That's why `.env.example` in this template is for reference only — the post-clone step writes the *real* `.env` directly, with the consumer-mode value (`CONFIG_DIR=../config`).
 
 ## Sections explained
 
@@ -54,7 +54,7 @@ content with zero setup.
 - **Branding (logo, favicon)** — drop replacements into `assets/`, then update
   paths in `site.yaml → logo:`.
 - **Add a section** — see the User Guide page on adding sections (or run
-  `/agent-ks-add-section`).
+  `/agent-ks-config section <name>`).
 - **Custom theme** — create a folder under `themes/<name>/` with a `theme.yaml`
   (typically `extends: "@theme/default"`) and any CSS overrides; switch via
   `theme: "<name>"` in `site.yaml`.

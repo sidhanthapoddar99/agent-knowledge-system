@@ -119,7 +119,7 @@ The root file is `settings.json` or `settings.jsonc`. Prefer `.jsonc` and commen
 | status colours are theme CSS variables | override `--status-<name>` in the theme's `color.css`. Light and dark may differ |
 | add no scheduling, release-bucket or single-type field | execution state is a status. Order is a plan |
 
-Descriptions render in the tracker's Guide modal. Keep them accurate. To backfill descriptions or remove a status block, run the migration chain in the docs skill's [doc-migration.md](../../agent-ks-docs/references/doc-migration.md).
+Descriptions render in the tracker's Guide modal. Keep them accurate. To backfill descriptions or remove a status block, run the migration chain in the config skill's [08_migrations.md](../../agent-ks-config/references/08_migrations.md).
 
 ## URL shapes
 

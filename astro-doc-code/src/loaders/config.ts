@@ -221,7 +221,7 @@ export function loadSiteConfig(): SiteConfig {
   // Same precedent as the version gate below and the missing-theme throw: a
   // `site.yaml` declaration naming something the engine cannot honour stops
   // startup. The cost is that a section cannot be registered before its folder
-  // exists; `/agent-ks-add-section` creates the folder first, so that ordering
+  // exists; `/agent-ks-config section <name>` creates the folder first, so that ordering
   // is already the normal one.
   if (config.pages) {
     const missing: string[] = [];

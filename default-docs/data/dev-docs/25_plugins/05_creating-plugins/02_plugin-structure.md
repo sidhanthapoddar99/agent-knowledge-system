@@ -80,7 +80,7 @@ A plugin can ship multiple skills — each lives in its own subfolder.
 
 ### `commands/<name>.md`
 
-Each markdown file is one slash command. The filename (minus `.md`) becomes the command name, e.g. `commands/agent-ks-init.md` → `/agent-ks-init`.
+Each markdown file is one slash command. The filename (minus `.md`) becomes the command name, e.g. `commands/agent-ks-config.md` → `/agent-ks-config`.
 
 ### `agents/<name>.md`
 

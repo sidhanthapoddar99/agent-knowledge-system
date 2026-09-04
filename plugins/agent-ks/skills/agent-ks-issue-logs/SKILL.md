@@ -1,9 +1,9 @@
 ---
-name: agent-ks-logs
+name: agent-ks-issue-logs
 description: Use for any agent log in an agent-knowledge-system issue tracker (an issue's agent-log/ folder). Covers when a run earns a log and when it does not, the six kinds (lp loop, rf refactor, au audit, re research, it iteration, wf workflow), the file shape of each, what a log never holds, and the commands that scaffold one. Trigger on agent log, loop, long-horizon run, audit folder, research folder, refactor log, iteration, workflow, handover, or any file under agent-log/. For subtasks, plans, notes and the rest of the tracker use agent-ks-issues.
 ---
 
-# agent-ks-logs — the agent's working folders
+# agent-ks-issue-logs — the agent's working folders
 
 ## What a log is for
 

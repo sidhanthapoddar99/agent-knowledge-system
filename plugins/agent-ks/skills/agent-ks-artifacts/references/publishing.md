@@ -12,7 +12,7 @@ This file teaches the authoring side of publishing, theming and delivery. The lo
 - The title derives from the prefix-stripped, title-cased filename. Add a sidecar only when that is not enough.
 - A slug collision (`05_foo.md` beside `05_foo.html`) renders an error at that slug; rename one.
 - A section opts out with `"allow_artifact_pages": false` in its root `settings.json`.
-- A section `base_url` must not be `artifacts`; the config loader rejects it. The reserved set is in [settings-layout.md](../../agent-ks-docs/references/settings-layout.md).
+- A section `base_url` must not be `artifacts`; the config loader rejects it. The reserved set is in [03_site-config.md](../../agent-ks-config/references/03_site-config.md#pages-routing).
 - Update = edit the file and rebuild; history lives in git.
 
 ## A complete document

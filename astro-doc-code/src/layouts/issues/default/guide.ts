@@ -269,7 +269,7 @@ ${runStatusTable(statusColors)}
 
 > **Corrected text is replaced, not kept.** No struck-through lines, no "this used to say".
 >
-> The full manual: the **agent-ks-issues** skill. Agent logs: the **agent-ks-logs** skill.
+> The full manual: the **agent-ks-issues** skill. Agent logs: the **agent-ks-issue-logs** skill.
 `;
 }
 

@@ -11,7 +11,7 @@ Every work file except an agent-log file uses one body shape. The problem statem
 | subtask | all five. Example: [subtasks](06_subtasks.md) | `title`, `status` | [subtask.md](../../agent-ks-cli/templates/subtask.md) |
 | plan `overview.md` | all five | `title`. Status lives in the plan's `settings.json` | [plan-overview.md](../../agent-ks-cli/templates/plan-overview.md) |
 | plan stage | all five. Example: [plans](07_plans.md) | `title`, `status`, `outcome`, `notes`, `who`, `subtasks:` | [plan-stage.md](../../agent-ks-cli/templates/plan-stage.md) |
-| agent log files | guided per kind: [agent-ks-logs](../../agent-ks-logs/SKILL.md) | `title`. Status lives in the log's `settings.json` | one `log-index-<kind>.md` per kind in the cli skill's `templates/` |
+| agent log files | guided per kind: [agent-ks-issue-logs](../../agent-ks-issue-logs/SKILL.md) | `title`. Status lives in the log's `settings.json` | one `log-index-<kind>.md` per kind in the cli skill's `templates/` |
 | note | 03, 04, 05 | `title`, optional `color` | [note.md](../../agent-ks-cli/templates/note.md) |
 | `issue.md` | Goal, Context, Done when, Scope decisions | `title` | none |
 | comment | none: two lines and a pointer | `author`, `date` | [comment.md](../../agent-ks-cli/templates/comment.md) |

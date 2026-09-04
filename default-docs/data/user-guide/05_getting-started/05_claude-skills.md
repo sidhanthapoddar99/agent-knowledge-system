@@ -1,22 +1,21 @@
 ---
-title: Claude Code Plugin
-description: AI-powered skills, CLI toolkit, and slash commands for working with agent-knowledge-system via Claude Code.
+title: The agent-ks Plugin
+description: The skills, the CLI and the slash commands that teach an AI agent to work in an agent-knowledge-system project. Install, update, and where it lives on disk.
 ---
 
-# Claude Code Plugin
+# The agent-ks Plugin
 
-This template ships its own **Claude Code plugin** — `agent-ks` — that teaches Claude how to work inside this project without you having to explain the conventions every time. It bundles:
+The framework ships a plugin, `agent-ks`. It teaches an AI agent the project's conventions, so you do not explain them every session. Claude Code and Codex both read it. It bundles:
 
-- **3 skills** — `agent-ks-docs` (triages every docs/blog/config/writing task to a domain-specific reference), `agent-ks-issues` (the complete, self-contained issue-tracker skill — anatomy, rules, agent-logs, agent-memory, and the execution verbs), and `agent-ks-artifacts` (building self-contained HTML artifacts — reports, dashboards, data viz, design systems — served at `/artifacts`)
-- **28 CLI commands** auto-added to `$PATH` — issue tracker, validators, docs/blog content, git metadata, and cross-content search (one `agent-ks` entrypoint; every operation is a `agent-ks <group> <verb>` subcommand)
-- **4 slash commands** (`/agent-ks-init`, `/agent-ks-add-section`, `/agent-ks-quick-idea-note`, `/agent-ks-fast-index-check`)
-- **1 agent** — `agent-ks-index-checker`, a fast read-only subagent that checks whether an index still agrees with the files it points at, and reports without editing
+- **Nine skills.** Each triggers on its own domain. Three of them are also slash commands.
+- **One CLI on `PATH`**, `agent-ks`. Every operation is `agent-ks <group> <verb>`. `agent-ks help` lists them all.
+- **One agent**, `agent-ks-index-checker`, Claude-only. It checks an index against the files it names and reports without editing.
 
-You install it from a marketplace once and Claude Code picks it up across every project on your machine. The plugin is distributed via [`sids-plugin-marketplace`](https://github.com/sidhanthapoddar99/sids-plugin-marketplace).
+The plugin is distributed through [`sids-plugin-marketplace`](https://github.com/sidhanthapoddar99/sids-plugin-marketplace).
 
 ## Install
 
-Three commands. The first two are one-time per marketplace and per project; the third refreshes the cache.
+Three commands in Claude Code. The first two are one-time; the third refreshes the cache.
 
 ```
 /plugin marketplace add sidhanthapoddar99/sids-plugin-marketplace
@@ -25,207 +24,119 @@ Three commands. The first two are one-time per marketplace and per project; the 
 ```
 
 > [!note] Local install while developing
-> If you're iterating on the plugin itself (or testing changes before pushing), point the marketplace at a local clone of `sids-plugin-marketplace` (with your in-progress edits to its `marketplace.json`) instead of the GitHub shorthand:
+> When you iterate on the plugin itself, point the marketplace at a local clone of `sids-plugin-marketplace`:
 > ```
 > /plugin marketplace add /absolute/path/to/sids-plugin-marketplace
 > ```
-> Plain absolute or relative path — `file://` URLs are rejected.
+> A plain path. `file://` URLs are rejected.
 
-After install, verify by running one of the wrappers:
+Verify with one command. It should list issues from your tracker:
 
 ```
 agent-ks issue list --priority high
 ```
 
-You should see issues from your tracker. If the command isn't found, run `/reload-plugins` and check `which agent-ks`.
+If the command is not found, run `/reload-plugins` and check `which agent-ks`.
 
-## Skill — `agent-ks-docs`
+Codex, OpenCode, Hermes and a skills-only install without a marketplace: the plugin's [README](../../../../plugins/agent-ks/README.md) covers each.
 
-The skill triages every non-tracker docs task to one of five domain references. The model loads only the reference it needs, so the skill stays cheap regardless of how detailed the references get.
+## The skills
 
-| Reference | Covers |
-|---|---|
-| `references/writing.md` | Markdown basics, frontmatter, callouts, asset embedding |
-| `references/layouts/docs-layout.md` | Docs folder structure, `NN_` prefixes, per-folder `settings.json`, sidebar generation |
-| `references/layouts/blog-layout.md` | Blog file naming (`YYYY-MM-DD-<slug>.md`), tags, index behaviour |
-| `references/settings-layout.md` | `site.yaml`, `navbar.yaml`, `footer.yaml`, `.env`, path aliases, themes |
-| `references/images.md` | Image optimization before committing |
+| Skill | Owns | Triggers on |
+|---|---|---|
+| `agent-ks-config` | Setup and configuration: a new project from the starter template, a new top-level section, `site.yaml`, `navbar.yaml`, `footer.yaml`, `.env`, path aliases, themes, layout styles and custom layouts, custom pages, format migrations. One full reference per topic, because this work is rare | any setup or config question; `/agent-ks-config` |
+| `agent-ks-docs` | Pages inside a docs section: `NN_` prefixes, folder `settings.json`, frontmatter, links, callouts, diagrams, diagram and artifact pages, images, moving pages | any file under a docs section of `data/` |
+| `agent-ks-blog` | Blog posts: the dated filename, frontmatter, a post's assets, the index | any file under `data/blog/` |
+| `agent-ks-issues` | The issue tracker: anatomy, the creation rules, the lifecycle, subtasks, plans, agent memory, searching | the tracker under `data/todo/`; audit, refactor, loop, discuss against an issue |
+| `agent-ks-issue-logs` | Agent logs: when a run earns one and who decides, the six kinds, the file set of each | opening, continuing or reviewing a log |
+| `agent-ks-artifacts` | Self-contained HTML artifacts: reports, dashboards, data visualizations, design systems, served at `/artifacts` | build or design an artifact, chart or dashboard |
+| `agent-ks-cli` | The CLI contract, every command and flag, exit codes, the file templates | whenever a command is needed |
+| `agent-ks-quick-idea-note` | Capture an idea into the issue dump | `/agent-ks-quick-idea-note [idea]` |
+| `agent-ks-index-check` | Check an index against the files it names; reports only | `/agent-ks-index-check [path]` |
 
-The skill triggers automatically whenever you work on docs in a project that uses this framework (i.e. one where the `agent-knowledge-system/` folder is present, or you're inside it). You don't have to invoke it explicitly. For the issue tracker it hands off to `agent-ks-issues`; for building HTML artifacts, to `agent-ks-artifacts`.
-
-## Skill — `agent-ks-issues`
-
-The **self-contained issue-tracker skill** — everything about working a tracker lives here, so tracker tasks never bounce between skills. It owns the full anatomy (`brainstorm/`, `notes/`, `subtasks/`, `agent-log/` activity folders, `agent-memory/`, flat `comments/`, `glossary.md`), the **creation threshold rules** (when a thought earns a full issue vs a subtask vs a brainstorm entry vs a dump entry), the lifecycle + AI rules, schema-aware searching, and its own tracker-flavoured writing reference (~20 focused reference files; the model loads only what the task needs).
-
-It has a **dual trigger surface**: the tracker nouns (issue, subtask, comment, backlog, vocabulary…) *and* the execution verbs — **audit this**, **refactor this**, run a **loop** / ultracode / autonomous iteration, or **"let's discuss this point"** against a tracked issue. On the execution side it records activity folders in `agent-log/`, keeps issue-scoped **agent-memory** always-on, and saves discussion **only when you explicitly ask** (it may offer when a discussion turns dense, but never auto-saves).
-
-## Skill — `agent-ks-artifacts`
-
-The **artifact skill** — building self-contained HTML artifacts (reports, dashboards, data visualizations, design systems / brand guidelines, variation sets comparing design options) as `NN_`-prefixed `.html` pages served at `/artifacts`, with an optional `.meta.json` sidecar. It covers treatment calibration, the two theme modes (`site` injection vs `self` dual-theme), the dataviz procedure with a bundled palette validator, and the pre-publish verify gate. It triggers whenever you ask Claude to build or design an artifact, a chart, a dashboard, or a design system for the project.
+Every skill states its source of truth: the user guide you are reading wins over the skill. When they disagree, the agent follows the guide, fixes the skill, and says so.
 
 ## Slash commands
 
-Two commands ship inside the plugin for project-level scaffolding:
-
 | Command | Use it for |
 |---|---|
-| `/agent-ks-init` | **Bootstrap a new docs project from zero.** Walks you through scope (whole repo vs subfolder), site name/title/description, and the first section name. Writes `config/`, `data/`, the starter page, and patches `CLAUDE.md` at the repo root. Prints the framework-clone command at the end. |
-| `/agent-ks-add-section [name]` | **Add a new top-level section** to an existing docs project. Validates the name, creates `data/<name>/settings.json` + `01_overview.md`, and (optionally) appends a `pages:` entry to `config/site.yaml`. |
+| `/agent-ks-config` | **Bootstrap a new docs project from zero.** Asks the scope (whole repo or a subfolder), the site name, title, description and repo URL. Copies the starter template, patches `CLAUDE.md`, and prints the framework-clone command. Details: [Setup and the Starter Template](./06_init-and-template.md) |
+| `/agent-ks-config section <name>` | **Add a top-level section.** Validates the name, creates `data/<name>/settings.json` and `01_overview.md`, and appends the `pages:` entry to `site.yaml` when you agree |
+| `/agent-ks-quick-idea-note [idea]` | Write a half-formed idea into the issue dump, with no folder ceremony |
+| `/agent-ks-index-check [path]` | Report where an index and the files it points at disagree |
 
-Typical first-time flow in a fresh directory:
+First-time flow in a fresh directory:
 
 ```
 /plugin marketplace add sidhanthapoddar99/sids-plugin-marketplace
 /plugin install agent-ks@sids-plugin-marketplace
 /reload-plugins
-/agent-ks-init
+/agent-ks-config
 ```
 
-Then follow the printed instructions to clone the framework engine and run `./start` from the repo root.
+Then follow the printed instructions: clone the framework, write `.env`, run `./start`.
 
-## CLI commands — one `agent-ks` entrypoint
+## The CLI
 
-Claude Code adds the plugin's `bin/` folder to your `$PATH` automatically. There's a single command — **`agent-ks`** — and every operation is a subcommand: **`agent-ks <group> <verb> [flags]`** (e.g. `agent-ks issue list`, `agent-ks find <regex>`). The name is prefix-namespaced so it never collides with other tools on `PATH`.
+Claude Code adds the plugin's `bin/` to `PATH` at session start. Other agents add it to the shell profile; the plugin README shows the line. The command is `agent-ks`, and every operation is `agent-ks <group> <verb> [flags]`.
 
-**Discover with `agent-ks help`.** Rather than memorising names: `agent-ks help` lists everything grouped, `agent-ks help <command>` shows one command's flags, `agent-ks help --json` dumps the manifest. The contract is uniform — every command supports `--help`/`-h` (→ stdout, exit 0) and `--json` wherever it returns data; exit codes are `0` ok / `1` no-result-or-handled-error / `2` usage.
-
-### General / cross-content (5)
-
-| Command | What it does |
+| Group | Verbs |
 |---|---|
-| `agent-ks help` | List commands, show flags, or dump the manifest (`--json`) |
-| `agent-ks find` | Schema-agnostic regex search across **all** content at once (docs+blog+issues+config); `--meta` / `--path` / `--type` / `--count` |
-| `agent-ks move` | Link-aware move / rename of doc pages or folders |
-| `agent-ks img` | Optimize images / screenshots so git stays small |
-| `agent-ks resolve-context` | Emit the `.env`-derived content/config/data dirs (for non-JS scripts) |
+| `issue` | `list`, `show`, `subtasks`, `agent-logs`, `set-state`, `add-comment`, `new-subtask`, `new-plan`, `new-stage`, `new-agent-log`, `new-round`, `review-queue` |
+| `check` | `config`, `section <folder>`, `blog`, `issues`, `link-form`, `content-links`, `legacy-tags`, `skill-links` |
+| `doc`, `blog` | `list`, `show`, `search` |
+| `git` | `updated`, `changed --since`, `log`, `commit --scope` (guarded, never pushes) |
+| `theme` | `tokens` |
+| standalone | `find <regex>`, `move <from> <to>`, `img <files>`, `resolve-context`, `help` |
 
-### Issue tracker (8) — `agent-ks issue …`
-
-| Command | What it does |
-|---|---|
-| `agent-ks issue list` | Multi-field filter + free-text regex search over the tracker — drop-in replacement for `grep`/`find` on `data/todo/`. Scope with `--path` / `--meta` / `--count` |
-| `agent-ks issue show <issue-id>` | One issue's metadata + subtask summary + comment & agent-log heads |
-| `agent-ks issue subtasks <issue-id>` | List subtasks for one issue (or `--all` for cross-issue) |
-| `agent-ks issue agent-logs <issue-id>` | Last N agent-log entries for an issue |
-| `agent-ks issue set-state` | Update issue or subtask state |
-| `agent-ks issue add-comment` | Append a comment with auto-incremented prefix |
-| `agent-ks issue add-agent-log` | Append an agent-log entry with auto-incremented iteration |
-| `agent-ks issue review-queue` | Items awaiting review (status=review issues + open issues with review subtasks) |
-
-### Validators (5) — `agent-ks check …`
-
-Exit `0` clean / `1` on errors found — handy in pre-commit / CI. All support `--json`.
-
-| Command | What it does |
-|---|---|
-| `agent-ks check blog` | Validate the blog folder — `YYYY-MM-DD-<slug>.md` naming, frontmatter `title:`, no nested folders |
-| `agent-ks check config` | Validate `site.yaml` / `navbar.yaml` / `footer.yaml` — required keys, page structure, alias resolution |
-| `agent-ks check section <folder>` | Validate any docs section — `NN_` prefix discipline, `settings.json` presence, frontmatter `title:`, prefix collisions |
-| `agent-ks check issues` | Validate the issue tracker — schema, vocabulary, subtask states (use this on `data/todo/`, not `agent-ks check section`) |
-| `agent-ks check skill-links` | Maintainer tool: verify relative links between the skill's `.md` files resolve |
-
-### Docs + blog content (6) — `agent-ks doc …` / `agent-ks blog …`
-
-| Command | What it does |
-|---|---|
-| `agent-ks doc list` / `agent-ks doc show` / `agent-ks doc search` | List / inspect / regex-search sidebar doc pages (optional `[section]`) |
-| `agent-ks blog list` / `agent-ks blog show` / `agent-ks blog search` | List / inspect / regex-search blog posts (newest first) |
-
-### Git-derived content metadata (4) — `agent-ks git …`
-
-| Command | What it does |
-|---|---|
-| `agent-ks git updated <path>` | Last-commit date/author/subject for any issue/doc/post |
-| `agent-ks git changed --since <ref>` | Content changed under `data/` since a ref (review sweeps) |
-| `agent-ks git log <path>` | Commit history of one content folder/file |
-| `agent-ks git commit --scope <path> --message <msg>` | **Guarded** stage + commit of only that path; never pushes (`--dry-run` previews) |
-
-Pass `--help` to any command for the full flag list, or run `agent-ks help`.
-
-## When to reach for what
-
-You almost always describe the task in natural language and let the skill route it. The wrappers and slash commands are for explicit, verifiable operations — searches, validations, scaffolding, state updates.
-
-| Task | Tool |
-|---|---|
-| Write a new doc page | Skill triggers automatically; just edit |
-| Add / change frontmatter | Skill triggers automatically |
-| Bootstrap a new docs project | `/agent-ks-init` |
-| Add a new top-level section | `/agent-ks-add-section` |
-| Discover what commands/flags exist | `agent-ks help` (`agent-ks help <cmd>`, `agent-ks help --json`) |
-| Find issues by priority / status / search | `agent-ks issue list` |
-| Find a string across **all** content types | `agent-ks find` |
-| Inspect one issue | `agent-ks issue show` |
-| Update an issue or subtask state | `agent-ks issue set-state` |
-| Add a comment to an issue | `agent-ks issue add-comment` |
-| Validate site config before commit | `agent-ks check config` |
-| Validate a docs section before commit | `agent-ks check section <folder>` |
-| Validate the issue tracker before commit | `agent-ks check issues` |
-| When was this issue/doc last touched | `agent-ks git updated <path>` |
+`agent-ks help` lists everything. `agent-ks help <group> <verb>` shows one command's flags. `--help` and `--json` work everywhere. Exit codes: `0` ok, `1` no result or a handled error, `2` usage. The contract lives in the `agent-ks-cli` skill; do not guess a flag.
 
 ## Updates
-
-Pull the latest plugin version from the marketplace:
 
 ```
 /plugin update agent-ks@sids-plugin-marketplace
 /reload-plugins
 ```
 
-Or update everything you've installed:
-
-```
-/plugin update
-/reload-plugins
-```
-
-`/plugin update` re-fetches the marketplace and downloads the new version into `~/.claude/plugins/cache/<marketplace>/<plugin>/<new-version>/`. Older versions remain in the cache until cleaned up.
+`/plugin update` alone updates everything installed. The new version lands in `~/.claude/plugins/cache/<marketplace>/<plugin>/<version>/`; older versions stay until cleaned up.
 
 ## Where the plugin lives on disk
 
-Plugin files are cached **once** at user level, regardless of which scope (user / project / local) enables them:
+Plugin files are cached once at user level, whatever scope enables them:
 
 ```
 ~/.claude/plugins/cache/sids-plugin-marketplace/agent-ks/<version>/
 ├── .claude-plugin/plugin.json
+├── .codex-plugin/plugin.json
 ├── README.md
-├── bin/                  ← auto-added to $PATH at session start
-├── commands/             ← /agent-ks-init, /agent-ks-add-section
+├── bin/                       ← agent-ks, on PATH at session start
+├── agents/                    ← agent-ks-index-checker (Claude-only)
 └── skills/
-    ├── agent-ks-docs/
-    │   ├── SKILL.md
-    │   ├── references/   ← 5 domain reference files
-    │   └── scripts/      ← bundled .mjs implementations (the agent-ks CLI)
-    ├── agent-ks-issues/
-    │   ├── SKILL.md
-    │   └── references/   ← ~20 issue-tracker reference files
-    └── agent-ks-artifacts/
-        ├── SKILL.md
-        ├── references/   ← authoring + dataviz reference files
-        └── scripts/      ← bundled palette validator
+    ├── agent-ks-config/       SKILL.md · references/01_new-project … 08_migrations · assets/template
+    ├── agent-ks-docs/         SKILL.md · references/writing, docs-layout, images
+    ├── agent-ks-blog/         SKILL.md
+    ├── agent-ks-issues/       SKILL.md · references/01 … 10
+    ├── agent-ks-issue-logs/   SKILL.md
+    ├── agent-ks-artifacts/    SKILL.md · references · scripts
+    ├── agent-ks-cli/          SKILL.md · references · scripts (the CLI) · templates
+    ├── agent-ks-quick-idea-note/
+    └── agent-ks-index-check/
 ```
 
-What differs across scopes is just a boolean entry in each scope's `settings.json`:
+Each scope's `settings.json` holds one boolean:
 
 ```json
-{
-  "enabledPlugins": {
-    "agent-ks@sids-plugin-marketplace": true
-  }
-}
+{ "enabledPlugins": { "agent-ks@sids-plugin-marketplace": true } }
 ```
 
-For a deep dive on the cache vs. the per-scope registration, see the dev-docs page on [plugin storage and scope](../../dev-docs/25_plugins/02_storage-and-scope.md).
+The cache versus per-scope registration: [plugin storage and scope](../../dev-docs/25_plugins/02_storage-and-scope.md).
 
-## Why three skills, not one or five?
+## Why nine skills
 
-Splitting by domain only pays when the domain is genuinely self-contained. Validation testing across 22 agent runs showed an umbrella skill is **30% faster** in real-world multi-task usage with **100% correctness**, because docs / blog / settings / writing tasks compose constantly and share the same conventions — splitting them duplicates the preamble and bloats the always-in-context description budget. So `agent-ks-docs` stays one umbrella.
-
-Two domains earned extraction. The **issue tracker** is the highest-frequency, most nuanced, most self-contained surface — a complete structure of its own — and it needs a *second trigger surface* (the execution verbs: audit / refactor / loop / discuss) that a docs-flavoured description can't carry. `agent-ks-issues` owns both surfaces and is deliberately self-contained, including its own writing reference (skills load one at a time; a little duplication beats mid-task skill-hopping, guarded by sync notes). **Artifact authoring** is genuinely orthogonal craft — HTML/design/dataviz discipline rather than markdown conventions — with its own trigger vocabulary (build, design, chart, dashboard); `agent-ks-artifacts` carries it.
-
-If a future release adds something else genuinely orthogonal (custom themes, custom Astro components), it may ship as its own skill — the catalogue above is kept in sync with whatever is actually installed.
+One skill per domain, and a domain is a set of tasks that share conventions and a trigger vocabulary. Docs pages, blog posts, the tracker and site configuration each have their own. Configuration is split out because it is rare, one-time work that deserves full references rather than a lean page. Agent logs are split from the tracker because they have their own decision, when a run earns one, and their own shapes. The CLI is its own skill so every other skill can point at one contract instead of repeating it.
 
 ## See also
 
-- [Installation](./02_installation.md) — full project install (clone + dependencies + run dev)
-- Dev-docs section on [plugins](../../dev-docs/25_plugins/01_overview.md) — for the architecture of plugins themselves (how they work, how to author one)
+- [Installation](./02_installation.md) — the full project install
+- [Setup and the Starter Template](./06_init-and-template.md) — what `/agent-ks-config` copies and substitutes
+- Dev-docs on [plugins](../../dev-docs/25_plugins/01_overview.md) — how plugins are built

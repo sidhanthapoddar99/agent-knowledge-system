@@ -1,7 +1,7 @@
 {
   "name": "agent-ks",
-  "description": "Teaches an AI agent to operate an agent-knowledge-system project. It covers docs and blog posts, the folder-per-issue tracker (plans, subtasks, agent logs, agent memory), and self-contained HTML artifacts. Every command is a skill folder, so Claude Code and Codex both read it. Ships nine skills, four of them commands (init, add-section, quick-idea-note, index-check), a read-only index-checking agent, and the `agent-ks` CLI on your PATH. Requires bun.",
-  "version": "0.9.1",
+  "description": "Teaches an AI agent to operate an agent-knowledge-system project. It covers docs and blog posts, the folder-per-issue tracker (plans, subtasks, agent logs, agent memory), and self-contained HTML artifacts. Every command is a skill folder, so Claude Code and Codex both read it. Ships nine skills, three of them commands (config, quick-idea-note, index-check), a read-only index-checking agent, and the `agent-ks` CLI on your PATH. Requires bun.",
+  "version": "0.10.0",
   "author": {
     "name": "Sidhantha"
   },

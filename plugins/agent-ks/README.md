@@ -1,6 +1,6 @@
 # agent-ks
 
-The plugin for the [agent-knowledge-system](https://github.com/sidhanthapoddar99/agent-knowledge-system) framework. It teaches an AI agent to write docs and blog posts, and to run the folder-per-issue tracker. It also covers HTML artifacts and the `agent-ks` CLI. Every command is a skill folder under `skills/`. Claude Code and Codex both read skill folders. The CLI runs on bun.
+The plugin for the [agent-knowledge-system](https://github.com/sidhanthapoddar99/agent-knowledge-system) framework. It teaches an AI agent to set up and configure a project, write docs and blog posts, and run the folder-per-issue tracker. It also covers HTML artifacts and the `agent-ks` CLI. Every command is a skill folder under `skills/`. Claude Code and Codex both read skill folders. The CLI runs on bun.
 
 ## Install for Claude Code
 
@@ -90,12 +90,12 @@ Install [bun](https://bun.sh) if it is missing. The CLI requires bun and refuses
 | Skill | Use | Invoke |
 |---|---|---|
 | [agent-ks-cli](./skills/agent-ks-cli/SKILL.md) | the CLI contract, every command and flag, the file templates | loads when a command is needed |
-| [agent-ks-docs](./skills/agent-ks-docs/SKILL.md) | docs pages, blog posts, site config, themes, images | triggers on docs work |
+| [agent-ks-config](./skills/agent-ks-config/SKILL.md) | setup and configuration: a new project from the starter template, a new section, `site.yaml`, navbar and footer, themes, layouts, custom pages, migrations | triggers on config work; `/agent-ks-config`, `/agent-ks-config section <name>` |
+| [agent-ks-docs](./skills/agent-ks-docs/SKILL.md) | pages inside a docs section: prefixes, folder settings, frontmatter, links, diagrams, images | triggers on docs work |
+| [agent-ks-blog](./skills/agent-ks-blog/SKILL.md) | blog posts: names, frontmatter, assets, the index | triggers on blog work |
 | [agent-ks-issues](./skills/agent-ks-issues/SKILL.md) | the issue tracker: issues, subtasks, plans, agent memory | triggers on tracker work |
-| [agent-ks-logs](./skills/agent-ks-logs/SKILL.md) | agent logs: when a run earns one, the six kinds, the shape of each | triggers on agent-log work |
+| [agent-ks-issue-logs](./skills/agent-ks-issue-logs/SKILL.md) | agent logs: when a run earns one, the six kinds, the shape of each | triggers on agent-log work |
 | [agent-ks-artifacts](./skills/agent-ks-artifacts/SKILL.md) | self-contained HTML artifacts: reports, dashboards, data visualizations, design systems | triggers on artifact work |
-| [agent-ks-init](./skills/agent-ks-init/SKILL.md) | set up a new project from the starter template | `/agent-ks-init` |
-| [agent-ks-add-section](./skills/agent-ks-add-section/SKILL.md) | add a top-level docs section | `/agent-ks-add-section [name]` |
 | [agent-ks-quick-idea-note](./skills/agent-ks-quick-idea-note/SKILL.md) | capture an idea into the issue dump | `/agent-ks-quick-idea-note [idea]` |
 | [agent-ks-index-check](./skills/agent-ks-index-check/SKILL.md) | check an index against the files it names; reports only | `/agent-ks-index-check [path]` |
 

@@ -39,4 +39,4 @@ Every top-level folder is registered as a route in `default-docs/config/site.yam
 - `default-docs/config/site.yaml` — route definitions for each folder above
 - `user-guide/05_getting-started/04_data-structure.md` — end-user explanation of this layout
 - `plugins/agent-ks/skills/agent-ks-docs/SKILL.md` — the agent skill that reads this README for orientation
-- `plugins/agent-ks/skills/agent-ks-docs/references/` — per-content-type detail (writing, docs-layout, blog-layout, settings-layout, images)
+- `plugins/agent-ks/skills/agent-ks-docs/references/` — docs detail (writing, docs-layout, images); the blog skill is `agent-ks-blog/SKILL.md`; site config, themes and layouts are `agent-ks-config/references/`

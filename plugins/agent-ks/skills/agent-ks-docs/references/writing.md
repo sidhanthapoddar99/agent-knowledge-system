@@ -12,7 +12,7 @@ Write plain markdown in `.md` files. Do not write MDX. Rich content comes from G
 | `description` | no | all | Meta tag and sidebar tooltip |
 | `draft: true` | no | docs, blog, issues | Hides the page from the production build |
 | `sidebar_label`, `sidebar_position` | no | docs | Sidebar text and order |
-| `date`, `author`, `tags`, `image` | no | blog | See [docs-layout.md, Blog](./docs-layout.md#blog) |
+| `date`, `author`, `tags`, `image` | no | blog | See [the blog skill](../../agent-ks-blog/SKILL.md) |
 
 Tracker metadata lives in `settings.json`. See the issues skill.
 
@@ -128,6 +128,7 @@ Inside a fenced block the path must start with `./` or `../`. The build skips a 
 
 ## Related
 
-- [docs-layout.md](./docs-layout.md): docs structure, folder settings and the blog
+- [docs-layout.md](./docs-layout.md): docs structure and folder settings
+- [the blog skill](../../agent-ks-blog/SKILL.md): post names, frontmatter and assets
 - [images.md](./images.md): image optimization
 - [cli-toolkit.md](../../agent-ks-cli/references/cli-toolkit.md): `move`, `find`, `img`, `check link-form`

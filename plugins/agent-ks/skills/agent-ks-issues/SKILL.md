@@ -79,7 +79,7 @@ A run uses five: `open`, `in-progress`, `input-needed`, `done`, `dropped`.
 | brainstorm, notes, memory, artifacts | [05_brainstorm-notes-memory.md](references/05_brainstorm-notes-memory.md) |
 | subtasks | [06_subtasks.md](references/06_subtasks.md) |
 | plans and stages | [07_plans.md](references/07_plans.md) |
-| agent logs | [agent-ks-logs](../agent-ks-logs/SKILL.md), its own skill |
+| agent logs | [agent-ks-issue-logs](../agent-ks-issue-logs/SKILL.md), its own skill |
 | search, create, validate, move | [09_operations.md](references/09_operations.md) |
 | examples | [10_examples.md](references/10_examples.md) |
 

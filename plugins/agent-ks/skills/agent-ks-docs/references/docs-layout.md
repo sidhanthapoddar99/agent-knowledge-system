@@ -1,6 +1,6 @@
 # Docs layout
 
-How to add, order and configure pages in a docs section such as `user-guide/` or `dev-docs/`. The blog is the last section of this file. The user guide sections are `@root/default-docs/data/user-guide/17_docs/` and `18_blogs/`.
+How to add, order and configure pages in a docs section such as `user-guide/` or `dev-docs/`. The user guide section is `@root/default-docs/data/user-guide/17_docs/`. The section's route in `site.yaml` belongs to [the config skill](../../agent-ks-config/references/03_site-config.md#pages-routing).
 
 ## Folder structure
 
@@ -106,7 +106,7 @@ A prefixed `.html` file is a first-class page: a self-contained report, dashboar
 | The `artifact:` block | An opaque block of declared values (`purpose`, `type`, `theme`, `palette`, `data`). The framework passes it through untouched |
 | The framework injects nothing into the `.html` | The artifact stays an independently openable document |
 | Full-page route | Every artifact also opens at `/artifacts/<path-from-content-root>`, with its own `<head>`. The embed offers *Open full page* and *Expand*; `Esc` closes |
-| `artifacts` is a reserved section base URL | See [settings-layout.md, Pages](./settings-layout.md#pages-routing) |
+| `artifacts` is a reserved section base URL | See [03_site-config.md, Pages](../../agent-ks-config/references/03_site-config.md#pages-routing) |
 | Collision, no prefix, `assets/`, opt-out | The diagram-page rules apply. Opt out with `allow_artifact_pages: false` |
 | Trust | An artifact runs unsandboxed as first-party content. Never paste untrusted third-party HTML |
 
@@ -117,26 +117,11 @@ A prefixed `.html` file is a first-class page: a self-contained report, dashboar
 
 Building the HTML is the job of the [artifacts skill](../../agent-ks-artifacts/SKILL.md). This file says only where the file lives.
 
-## Blog
-
-Blog posts are flat files under `data/blog/`: no folders, no `NN_` prefix. The name is `YYYY-MM-DD-<kebab-case-slug>.md`. The date sorts posts, newest first, and is the post date. `data/blog/2026-04-19-introducing-issues.md` serves at `/blog/introducing-issues`.
-
-| Field | Required | Meaning |
-|---|---|---|
-| `title` | yes | Post title |
-| `description` | no | The lede on the index card |
-| `date` | no | `YYYY-MM-DD`; overrides the filename date |
-| `author`, `tags`, `image` | no | Shown on the card and the post |
-| `draft` | no | `true` hides the post from the production build |
-
-The framework generates the index at `/blog/`. A post's assets live in `assets/<post-slug>/` beside the flat files: [writing.md, Asset embedding](./writing.md#asset-embedding).
-
 ## Validate and move
 
 | Command | Checks | Run |
 |---|---|---|
 | `agent-ks check section <folder>` | An `NN_` prefix on every folder and `.md` file, except `assets/` and `README.md`. A `settings.json` in every folder. A frontmatter `title`. Prefix collisions by numeric value, so `02_` and `002_` clash. A stray non-page file warns | after a restructure, before a batch commit |
-| `agent-ks check blog [folder]` | the filename pattern; frontmatter `title`; no subfolder except `assets/` | after a new post |
 | `agent-ks move <from> <to>` | Link-aware move of a file or a folder. Rewrites inbound links, outbound links inside the moved files, and link text that mirrors the path. Skips external, site-absolute and anchor-only links | every rename or move; `--dry-run` first |
 
 Exit code `0` is clean, `1` found errors. Flags: [cli-toolkit.md](../../agent-ks-cli/references/cli-toolkit.md).

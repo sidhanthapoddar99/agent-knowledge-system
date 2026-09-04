@@ -27,7 +27,7 @@ Migrations ship **with the engine** — same clone, same pull. A consumer who
 updates the framework automatically has exactly the migrations that engine
 needs; there is no separate tool or plugin whose version could skew against the
 engine's. (They lived inside the Claude Code plugin historically; the plugin
-now carries only the operating manual, `references/doc-migration.md`.)
+now carries only the operating manual, the config skill's `references/08_migrations.md`.)
 
 ## Naming — version-based, not date-based
 
@@ -100,5 +100,5 @@ Then the tree-wide verification (`agent-ks check issues`,
 |---|---|
 | Repo root `migration/` | The scripts + `README.md` convention |
 | Engine (`engine-version.ts`) | The gate + both version anchors |
-| Skill (`doc-migration.md`) | The operating protocol for AI assistants (detect → confirm → migrate, the never-bump rule) |
+| Skill (`agent-ks-config/references/08_migrations.md`) | The operating protocol for AI assistants (detect → confirm → migrate, the never-bump rule) |
 | Docs (this section + user-guide) | The contract, for humans |

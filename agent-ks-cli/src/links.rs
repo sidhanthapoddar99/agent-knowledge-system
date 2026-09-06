@@ -161,13 +161,21 @@ pub fn ordering(path: &Path) -> String {
     labels.join("/")
 }
 fn mapped(p: &Path, moves: &[(PathBuf, PathBuf)]) -> PathBuf {
+    let physical_path = physical(p).ok();
     for (from, to) in moves {
         if let Ok(rest) = p.strip_prefix(from) {
             return to.join(rest);
         }
+        if physical_path
+            .as_ref()
+            .is_some_and(|p| physical(from).is_ok_and(|from| *p == from))
+        {
+            return physical(to).unwrap_or_else(|_| to.to_owned());
+        }
     }
     p.to_owned()
 }
+
 pub fn rewritten(
     raw: &str,
     old_file: &Path,
@@ -314,4 +322,27 @@ pub fn move_path(a: &Args) -> Result<i32> {
         return Err(e);
     }
     result(a, output)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn mapped_matches_equivalent_physical_paths() {
+        let dir = tempfile::tempdir().unwrap();
+        let assets = dir.path().join("manual/assets");
+        fs::create_dir_all(&assets).unwrap();
+        let source = assets.join("screen.png");
+        let destination = assets.join("screen.webp");
+        fs::write(&source, b"png").unwrap();
+        fs::write(&destination, b"webp").unwrap();
+        let lexical_source = assets.join("../assets/screen.png");
+
+        assert!(source.strip_prefix(&lexical_source).is_err());
+        assert_eq!(
+            mapped(&source, &[(lexical_source, destination.clone())]),
+            physical(&destination).unwrap()
+        );
+    }
 }

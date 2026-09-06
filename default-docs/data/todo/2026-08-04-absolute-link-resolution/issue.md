@@ -98,7 +98,7 @@ hand-typed trailing-slash URL on a static host.
 - **The design:** [30 the path map](./notes/30_the-path-map.md)
 - **The prefix feature:** [40 the hosting path prefix](./notes/40_the-hosting-path-prefix.md)
 - The code that emits the relative href today:
-  `astro-doc-code/src/parsers/postprocessors/internal-links.ts` (docs) and
+  `agent-ks-engine/src/parsers/postprocessors/internal-links.ts` (docs) and
   `issue-body-links.ts` (the tracker's root `issue.md` only)
 - The live rendering gate that measures all of this:
   repo-root `scripts/checks/check-links.mjs`

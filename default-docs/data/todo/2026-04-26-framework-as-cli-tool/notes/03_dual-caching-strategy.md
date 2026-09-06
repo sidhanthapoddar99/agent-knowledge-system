@@ -4,7 +4,7 @@ title: "Dual caching — shared deps cache + per-project content cache"
 
 # Dual caching strategy for CLI mode
 
-When the framework starts behaving like a tool (one install, many docs projects pointing at it via `.env`), the current "everything inside `astro-doc-code/`" cache layout breaks: the second project clobbers the first's `.astro/` cache, and `node_modules/.vite/` is rebuilt per project even though the deps haven't changed.
+When the framework starts behaving like a tool (one install, many docs projects pointing at it via `.env`), the current "everything inside `agent-ks-engine/`" cache layout breaks: the second project clobbers the first's `.astro/` cache, and `node_modules/.vite/` is rebuilt per project even though the deps haven't changed.
 
 The fix is to split caches by **whose data they're a function of**.
 

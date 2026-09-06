@@ -196,7 +196,7 @@ export function unknownStatusMessage(rawValue: string, fileHint: string): string
     `Allowed values: ${STATUSES.join(' | ')}.`,
     `Legacy values are auto-mapped (closed→done, cancelled→dropped) — if you see`,
     `this for a legacy value, run the state→status migration script`,
-    `(migration/0.1.1_state-to-status.py).`,
+    `(agent-ks-engine/migration/0.1.1_state-to-status.py).`,
   ].join('\n');
 }
 
@@ -214,7 +214,7 @@ export function statusFieldForbiddenMessage(fileHint: string): string {
     `here either — they are theme CSS variables (\`--status-<name>\`) in color.css.`,
     `Valid statuses: ${STATUSES.join(' | ')}.`,
     `See the migration script`,
-    `(migration/0.1.2_root-settings-schema.py)`,
+    `(agent-ks-engine/migration/0.1.2_root-settings-schema.py)`,
     `for the exact rewrite.`,
   ].join('\n');
 }
@@ -237,6 +237,6 @@ export function statusColorsForbiddenMessage(fileHint: string): string {
     `[data-theme="dark"] { --status-dropped: #ef4444; }`,
     `One per status: ${STATUSES.map((s) => `--status-${s}`).join(' | ')}.`,
     `CSS also lets light and dark differ, which the JSON map could not express.`,
-    `See migration/0.1.3_status-colors-to-css.py for the exact rewrite.`,
+    `See agent-ks-engine/migration/0.1.3_status-colors-to-css.py for the exact rewrite.`,
   ].join('\n');
 }

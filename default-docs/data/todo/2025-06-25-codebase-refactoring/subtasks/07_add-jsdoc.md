@@ -3,7 +3,7 @@ title: "Add JSDoc comments to public APIs"
 status: done
 ---
 
-**What it meant.** Every exported symbol in the loaders (`astro-doc-code/src/loaders/`) should carry a `/** … */` doc block describing its contract.
+**What it meant.** Every exported symbol in the loaders (`agent-ks-engine/src/loaders/`) should carry a `/** … */` doc block describing its contract.
 
 **What JSDoc actually is** (for anyone unclear). JSDoc is **the JavaScript/TypeScript equivalent of a Python docstring** — a description of what a function/type does, written right next to it. The only real difference is placement: Python docstrings go *inside* the function (first line of the body); JSDoc goes *directly above* the symbol, in a comment that starts with `/**` (two stars):
 

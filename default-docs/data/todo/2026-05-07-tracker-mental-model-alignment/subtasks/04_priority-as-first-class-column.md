@@ -19,8 +19,8 @@ Once `milestone` is dropped, the index loses its primary "what to work on next" 
 
 ## Files likely touched
 
-- `astro-doc-code/src/layouts/issues/default/parts/index/IssuesTable.astro`
-- `astro-doc-code/src/layouts/issues/default/parts/index/IssuesCards.astro`
-- `astro-doc-code/src/layouts/issues/default/parts/index/FilterBar.astro`
-- `astro-doc-code/src/layouts/issues/default/scripts/index/{filters,types,client}.ts`
-- `astro-doc-code/src/layouts/issues/default/styles/` — small CSS additions for the new column.
+- `agent-ks-engine/src/layouts/issues/default/parts/index/IssuesTable.astro`
+- `agent-ks-engine/src/layouts/issues/default/parts/index/IssuesCards.astro`
+- `agent-ks-engine/src/layouts/issues/default/parts/index/FilterBar.astro`
+- `agent-ks-engine/src/layouts/issues/default/scripts/index/{filters,types,client}.ts`
+- `agent-ks-engine/src/layouts/issues/default/styles/` — small CSS additions for the new column.

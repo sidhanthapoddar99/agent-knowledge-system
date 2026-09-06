@@ -95,7 +95,7 @@ iteration (context may reset between loop wake-ups).
 ## Key file map (for the prose subtasks)
 
 - Framework constant (cite as the code source of truth):
-  `astro-doc-code/src/loaders/issue-status.ts` — 7 statuses, 4 categories, colors.
+  `agent-ks-engine/src/loaders/issue-status.ts` — 7 statuses, 4 categories, colors.
 - CLI vocabulary mirror: `plugins/documentation-guide/skills/documentation-guide/
   scripts/issues/_lib.mjs` (STATUSES/CATEGORIES). **Every CLI edit must be mirrored
   to the installed cache** `~/.claude/plugins/cache/sids-plugin-marketplace/

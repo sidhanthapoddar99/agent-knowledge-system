@@ -30,7 +30,7 @@ strength of that number.
   hard blocker rather than a precondition-in-principle. Independently reproduced here
 - [020 diff-and-copy](./020_diff-and-copy-into-dist.md) — runs first regardless;
   it solves the disk-churn half and neither approach here does
-- `astro-doc-code/src/pages/lib/cache-key.ts` — the keys, and the dependency map
+- `agent-ks-engine/src/pages/lib/cache-key.ts` — the keys, and the dependency map
   they encode
 - `scripts/checks/check-incremental-staleness.mjs` — the only thing that catches a wrong key
 
@@ -165,7 +165,7 @@ arrives later as a migration nobody planned. Opt-in keeps it out of the contract
   is 1, so this is fine today — but the two optimisations are mutually exclusive,
   and concurrency was already
   [measured as worthless here](#what-was-ruled-out-on-the-way-here-with-numbers).
-- **The cache lives in `astro-doc-code/node_modules/.astro/`, not `.astro/`**, and
+- **The cache lives in `agent-ks-engine/node_modules/.astro/`, not `.astro/`**, and
   it is **91 MB** — a full copy of the previous `dist/`. `./start clean` did not
   wipe it, which meant the documented escape hatch for "something is stale" left
   behind the one cache most likely to be causing it. **Fixed** — `clean` now
@@ -208,11 +208,11 @@ edit.
 
 Off by default; opt in with `INCREMENTAL_BUILD=1`.
 
-- `astro-doc-code/src/pages/lib/cache-key.ts` — new. Its header carries the
+- `agent-ks-engine/src/pages/lib/cache-key.ts` — new. Its header carries the
   dependency map: what each surface actually reads, which is not what its props
   contain
-- `astro-doc-code/src/pages/lib/static-paths.ts` — a `cacheKey` per entry
-- `astro-doc-code/astro.config.mjs` — `incrementalBuild: INCREMENTAL_BUILD === '1'`
+- `agent-ks-engine/src/pages/lib/static-paths.ts` — a `cacheKey` per entry
+- `agent-ks-engine/astro.config.mjs` — `incrementalBuild: INCREMENTAL_BUILD === '1'`
 - `scripts/checks/check-incremental-staleness.mjs` — the gate. Strict by default;
   `--ignore-clock` is a diagnostic, and [010](./010_make-the-build-deterministic.md)
   is explicit that ignoring `<time>` is not an acceptable permanent answer

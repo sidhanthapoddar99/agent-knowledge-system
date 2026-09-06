@@ -35,8 +35,8 @@ the same way.
 ## Releases — standing rule, set 2026-08-03
 
 Sid's: **every version release is tagged `v<engine-version>` and ships a detailed
-release note**, written like a GitHub release body, at `releases/<version>.md`.
-Convention and template: [`releases/README.md`](../../../../../../releases/README.md);
+release note**, written like a GitHub release body, at `agent-ks-engine/releases/<version>.md`.
+Convention and template: [`agent-ks-engine/releases/README.md`](../../../../../../agent-ks-engine/releases/README.md);
 the rule itself lives in the repo's `CLAUDE.md`.
 
 **Writing the note is mine; tagging and publishing are not.** The tag lands on

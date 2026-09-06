@@ -10,5 +10,5 @@ title: "Plumb derived `updated` + `created` through `loaders/issues.ts`"
 
 ## Files likely touched
 
-- `astro-doc-code/src/loaders/issues.ts` — call `getIssueDate()`, parse slug for `created`, drop the `settings.json` read for `updated`.
+- `agent-ks-engine/src/loaders/issues.ts` — call `getIssueDate()`, parse slug for `created`, drop the `settings.json` read for `updated`.
 - Wherever the `Issue` type / interface is declared (search for `interface Issue` under `src/`).

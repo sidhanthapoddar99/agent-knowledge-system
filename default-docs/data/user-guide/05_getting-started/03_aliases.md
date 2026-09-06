@@ -64,7 +64,7 @@ Aliases fall into two camps: **system reserved** (fixed by the framework) and **
 
 ### Layout Aliases (system, reserved)
 
-Each content type has its own layout alias, pointing at a folder under `src/layouts/<type>/<style>/` inside the framework root (`astro-doc-code/`). From the repo root, the full disk path is e.g. `astro-doc-code/src/layouts/docs/default/`.
+Each content type has its own layout alias, pointing at a folder under `src/layouts/<type>/<style>/` inside the engine root (`agent-ks-engine/`). From the framework root, the full disk path is e.g. `agent-ks-engine/src/layouts/docs/default/`.
 
 | Alias | Resolves To | Usage |
 |-------|-------------|-------|
@@ -78,7 +78,7 @@ Each content type has its own layout alias, pointing at a folder under `src/layo
 
 ### Framework Root Alias (system, reserved)
 
-`@root` resolves to **the framework folder** — specifically, the parent of `astro-doc-code/`, which is also where `.env` and `default-docs/` live. In consumer mode that's `agent-knowledge-system/` (a subfolder of your project); in dogfood mode it happens to be your project root because the framework repo *is* the project. Either way, `@root` always points at the framework folder, never at the consumer's outer project.
+`@root` resolves to **the framework folder** — specifically, the parent of `agent-ks-engine/`, which is also where `.env` and `default-docs/` live. In consumer mode that's `agent-knowledge-system/` (a subfolder of your project); in dogfood mode it happens to be your project root because the framework repo *is* the project. Either way, `@root` always points at the framework folder, never at the consumer's outer project.
 
 This is what you want when reaching the framework's bundled content — themes, the user-guide, the init template, etc. all live under `@root/default-docs/...`.
 

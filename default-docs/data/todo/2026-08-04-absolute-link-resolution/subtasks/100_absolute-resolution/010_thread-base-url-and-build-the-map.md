@@ -53,7 +53,7 @@ routes the build actually emits, not against a re-derivation of the slug rules.
 - The design and why a map rather than arithmetic:
   [the path map](../../notes/30_the-path-map.md)
 - The slug rule this must agree with: `DocsParser.generateSlug`, and its mirror
-  in `astro-doc-code/src/parsers/postprocessors/internal-links.ts`
+  in `agent-ks-engine/src/parsers/postprocessors/internal-links.ts`
   (`isIndexPage`, which exists only to track that one `.replace(/\/index$/, '')`)
 - The consumer that cannot start without this:
   [the shared resolver](./020_the-shared-resolver.md)

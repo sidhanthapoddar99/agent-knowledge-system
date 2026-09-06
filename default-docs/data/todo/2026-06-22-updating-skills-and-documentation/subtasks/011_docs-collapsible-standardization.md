@@ -24,4 +24,4 @@ get a consistent, tidy sidebar without per-folder guesswork.
 - Updated the minimal `settings.json` example to model a level-1 group.
 
 Docs-only change (`references/layouts/docs-layout.md`); field names verified against
-`astro-doc-code/src/hooks/useSidebar.ts`.
+`agent-ks-engine/src/hooks/useSidebar.ts`.

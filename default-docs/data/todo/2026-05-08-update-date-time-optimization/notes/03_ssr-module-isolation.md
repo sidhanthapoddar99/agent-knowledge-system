@@ -115,7 +115,7 @@ The dual-invalidation pattern is the pragmatic response. It's slightly redundant
 
 When the symptom is "UI shows stale value, fresh process shows correct value":
 
-1. Open `astro-doc-code/src/dev-tools/integration.ts` and check that the watcher handler invalidates via **both** local imports AND `server.ssrLoadModule`.
+1. Open `agent-ks-engine/src/dev-tools/integration.ts` and check that the watcher handler invalidates via **both** local imports AND `server.ssrLoadModule`.
 2. If only local: you're hitting Vite SSR isolation. Add the `ssrLoadModule` block.
 3. If both: the watcher might not be firing at all — check `[HMR] Watching git ref:` log lines on dev-server start, and confirm the file actually changes on commit (`stat -c '%y' .git/refs/heads/<branch>`).
 

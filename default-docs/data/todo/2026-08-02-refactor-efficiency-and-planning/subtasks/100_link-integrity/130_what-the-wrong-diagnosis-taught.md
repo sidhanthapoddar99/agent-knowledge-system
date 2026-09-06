@@ -30,7 +30,7 @@ against what was written about it.
 | 6 | `10_writing.md` | *"ordering prefixes are stripped from URL slugs"* | 🟢 **Corrected.** It now states that a tracker URL keeps its prefixes, that docs and blog strip them, and that a link *leaving* the tracker is the one case needing care |
 | 7 | The two asset kinds | `move` advised rewriting `/assets/logo.png`; `check link-form` fails it | 🟢 **Closed** on [`090`](./090_tools-must-say-what-they-skip.md); the rule is in the project `CLAUDE.md` and the stale exemption instruction was deleted |
 | 8 | 129 content links converted absolute → relative | `73ea791` | 🟢 **Correct and worth keeping.** Independent of the diagnosis: it moved links back into `move`'s maintenance |
-| 9 | `releases/0.2.1.md` | carried three dated corrections | 🟢 **Fourth added 2026-08-04** — the third one's *reasoning* was dev-only, though its retraction stood |
+| 9 | `agent-ks-engine/releases/0.2.1.md` | carried three dated corrections | 🟢 **Fourth added 2026-08-04** — the third one's *reasoning* was dev-only, though its retraction stood |
 
 ## Row 2 — closed 2026-08-04 by deleting the exclusion, and it cost something
 

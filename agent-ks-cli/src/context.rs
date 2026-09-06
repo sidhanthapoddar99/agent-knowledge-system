@@ -70,12 +70,12 @@ impl Context {
         Ok(normalize(&self.config_dir.join(s)))
     }
     pub fn framework_root(&self) -> PathBuf {
-        if self.content_root.join("astro-doc-code").is_dir() {
+        if self.content_root.join("agent-ks-engine").is_dir() {
             self.content_root.clone()
         } else if self
             .content_root
             .parent()
-            .is_some_and(|p| p.join("astro-doc-code").is_dir())
+            .is_some_and(|p| p.join("agent-ks-engine").is_dir())
         {
             self.content_root.parent().unwrap().to_owned()
         } else {

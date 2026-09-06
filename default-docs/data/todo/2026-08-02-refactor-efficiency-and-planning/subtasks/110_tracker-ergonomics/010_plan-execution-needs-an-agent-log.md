@@ -28,7 +28,7 @@ bundled guide, and the missing log for that run exists.
 - The plan it executed:
   [`01_fix-the-tools-then-the-links`](../../plans/01_fix-the-tools-then-the-links/overview.md)
 - The rule: `plugins/agent-ks/skills/agent-ks-issues/references/20_sections/24_agent-logs.md`
-- Its bundled twin: `astro-doc-code/src/layouts/issues/default/guide.ts`
+- Its bundled twin: `agent-ks-engine/src/layouts/issues/default/guide.ts`
 
 # Todo list
 

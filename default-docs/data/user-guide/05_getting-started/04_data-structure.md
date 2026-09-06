@@ -5,7 +5,7 @@ description: How your content, configuration, and assets are organised at your p
 
 # Data Structure
 
-This page covers **your project's content folders** — `config/`, `data/`, `assets/`, `themes/`. These live at the root of *your* docs project (the parent of the framework folder), and they're the only files you actually author or edit. Everything inside the framework folder (`astro-doc-code/`, `default-docs/`, `plugins/`) is shipped by the framework and shouldn't be touched.
+This page covers **your project's content folders** — `config/`, `data/`, `assets/`, `themes/`. These live at the root of *your* docs project (the parent of the framework folder), and they're the only files you actually author or edit. Everything inside the framework folder (`agent-ks-engine/`, `default-docs/`, `plugins/`) is shipped by the framework and shouldn't be touched.
 
 For the framework's internal code layout, see the [dev-docs](../../dev-docs/01_overview/01_code-structure.md). For what `default-docs/` is and why it ships inside the framework, see the [Overview](./01_overview.md).
 
@@ -50,7 +50,7 @@ your-docs-folder/                # YOUR project root
 └── agent-knowledge-system/      # the framework — added as a clone or git submodule
     ├── .env                     #   CONFIG_DIR=../config (reaches up to YOUR config/)
     ├── start                    #   ./start dev | build | preview
-    ├── astro-doc-code/          #   framework source — don't touch
+    ├── agent-ks-engine/          #   framework source — don't touch
     ├── default-docs/            #   framework's bundled content (user-guide, dev-docs, themes,
     │                            #     placeholder branding, the init template) — don't touch
     └── plugins/                 #   framework's bundled plugin source — don't touch
@@ -71,7 +71,7 @@ If you're working *on the framework itself* (not consuming it), the layout colla
 agent-knowledge-system/          # the framework repo (you cloned this)
 ├── .env                         #   CONFIG_DIR=./default-docs/config
 ├── start
-├── astro-doc-code/
+├── agent-ks-engine/
 ├── default-docs/                # ← YOU EDIT — when changing the bundled docs/themes/template
 │   ├── config/
 │   ├── data/

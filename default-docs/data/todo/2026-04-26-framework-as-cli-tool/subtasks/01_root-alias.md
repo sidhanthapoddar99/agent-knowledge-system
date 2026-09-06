@@ -8,7 +8,7 @@ Land the `@root` system alias along with the surrounding scaffolding it depends 
 ## Checklist
 
 - [x] **Rename `dynamic_data/` → `default-docs/`** — done. Build is path-name-agnostic via `CONFIG_DIR`; only inert comments + the early fallback in `paths.ts` referenced the old name (all updated). Plugin CLI tools still hardcode `dynamic_data/` and break until the sweep below lands.
-- [x] **Add `@root` system alias.** Done in `astro-doc-code/src/loaders/alias.ts:35` (`@root → paths.root`) and `paths.ts:127` (`'root'` reserved). Path-traversal guard in `alias.ts:115` throws on escapes. Also extended `initPaths()` (`paths.ts:208`) to allow `@root/...` in user `paths:` values (with the same traversal guard). Sensitive-file deny-list intentionally skipped per design discussion.
+- [x] **Add `@root` system alias.** Done in `agent-ks-engine/src/loaders/alias.ts:35` (`@root → paths.root`) and `paths.ts:127` (`'root'` reserved). Path-traversal guard in `alias.ts:115` throws on escapes. Also extended `initPaths()` (`paths.ts:208`) to allow `@root/...` in user `paths:` values (with the same traversal guard). Sensitive-file deny-list intentionally skipped per design discussion.
 - [x] **Create a starter template** at `astro-doc-code/template/`. Contains:
   - 5 navbar items (Home / Docs / Issues / Blog / User Guide) wired in `template/config/{site,navbar,footer}.yaml`
   - Pre-configured `site.yaml` with Astro placeholder branding (`assets/astro-{dark,light}.svg`, `astro.png` copied in)

@@ -18,7 +18,7 @@ byte-identical pages.
 
 - [the partial-rebuild brainstorm](../../2026-08-07-astro-7-and-load-time-refactor/brainstorm/01_partial-rebuilds.md)
   — where the 98.7% figure and the diff below come from
-- `astro-doc-code/src/layouts/issues/default/server/helpers.ts` —
+- `agent-ks-engine/src/layouts/issues/default/server/helpers.ts` —
   `formatRelativeTime`, the whole cause
 - The four files emitting `<time datetime=…>`: `blogs/default/PostBody.astro`,
   `issues/default/parts/index/IssuesTable.astro`,
@@ -45,7 +45,7 @@ date, the browser swaps it to a relative form.
 
 ## What changed
 
-- **`astro-doc-code/src/modules/relative-time.ts`** — new, and deliberately pure
+- **`agent-ks-engine/src/modules/relative-time.ts`** — new, and deliberately pure
   (no Node imports) so the same file is bundled into the client. It holds
   `fullLabel()`, `relativeLabel(iso, now)` and `hydrateRelativeTimes()`. One tier
   table, two callers — the boundaries cannot drift apart, which they would have

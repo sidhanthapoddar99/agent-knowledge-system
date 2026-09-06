@@ -29,7 +29,7 @@ What closed here is the question this subtask actually asked: *which of A, B, C*
 
 # The regression, and why it is gone
 
-**The depth shift in `astro-doc-code/src/parsers/postprocessors/internal-links.ts`
+**The depth shift in `agent-ks-engine/src/parsers/postprocessors/internal-links.ts`
 broke docs links on the dev server.** Measured 2026-08-03, removed 2026-08-04:
 
 | URL | Title served |
@@ -130,7 +130,7 @@ removing `NN_<name>` … blogs and docs also accepts both types of url slugs."*
 ### C — force the two environments to agree
 
 Set `trailingSlash` / `build.format` explicitly in
-`astro-doc-code/astro.config.mjs` so dev and build serve the same URL shape.
+`agent-ks-engine/astro.config.mjs` so dev and build serve the same URL shape.
 
 - Removes the cause of the regression rather than compensating for it, and it is
   a two-line change.
@@ -144,7 +144,7 @@ Set `trailingSlash` / `build.format` explicitly in
 - The evidence: [`110`](./110_live-check.md) — fifteen links, clicked
 - The finding this replaces: [`010`](./010_renderer-drops-a-url-level.md)
 - The shift itself:
-  `astro-doc-code/src/parsers/postprocessors/internal-links.ts`
+  `agent-ks-engine/src/parsers/postprocessors/internal-links.ts`
 - The rule that survives either way:
   [`020`](./020_relative-links-are-the-contract.md)
 - The gate that cannot see any of this yet:

@@ -67,7 +67,7 @@ There is no exception — see the closing section.*
       of which the original scoping covered:
       - both skills' reference files — anywhere a link example appears, not only
         the two lines named above
-      - `astro-doc-code/src/layouts/issues/default/guide.ts`, the bundled
+      - `agent-ks-engine/src/layouts/issues/default/guide.ts`, the bundled
         plugin-independent twin of the issues skill
       - `default-docs/data/user-guide/` — the pages that teach authors to write links
       - `default-docs/data/dev-docs/` — same, from the implementation side

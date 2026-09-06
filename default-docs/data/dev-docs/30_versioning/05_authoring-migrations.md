@@ -75,16 +75,16 @@ Authored: YYYY-MM-DD. Brings content to the engine version in this filename.
 <Why the format changed, what exactly is rewritten, edge cases.>
 
 Usage:
-    python3 migration/0.2.0_example.py detect  <content-root>            # how big is it?
-    python3 migration/0.2.0_example.py locate  <content-root>            # file:line list
-    python3 migration/0.2.0_example.py migrate <content-root> [--dry-run]
-    python3 migration/0.2.0_example.py verify  <content-root>            # exit 1 if legacy remains
+    python3 agent-ks-engine/migration/0.2.0_example.py detect  <content-root>            # how big is it?
+    python3 agent-ks-engine/migration/0.2.0_example.py locate  <content-root>            # file:line list
+    python3 agent-ks-engine/migration/0.2.0_example.py migrate <content-root> [--dry-run]
+    python3 agent-ks-engine/migration/0.2.0_example.py verify  <content-root>            # exit 1 if legacy remains
 """
 ```
 
 ## Shipping checklist
 
-1. **Name it** `<new-engine-version>_<statement>.py` in repo-root `migration/`.
+1. **Name it** `<new-engine-version>_<statement>.py` in `agent-ks-engine/migration/`.
 2. **Test the trio** against a fixture tree: detect finds the planted
    instances; `--dry-run` matches expectations; migrate → re-detect reports
    zero; a second migrate is a no-op.

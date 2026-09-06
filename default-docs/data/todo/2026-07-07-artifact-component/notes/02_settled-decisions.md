@@ -45,7 +45,7 @@ The reasoning is structural, not aesthetic:
 Consequence for implementers: build `20_route` as real infrastructure, not as a
 convenience wrapper. The embed in `10_component` sets its iframe `src` to this
 route (with a `?v=<mtime>` cache-buster, per the diagram precedent at
-`astro-doc-code/src/loaders/diagram-pages.ts:65-66`).
+`agent-ks-engine/src/loaders/diagram-pages.ts:65-66`).
 
 ## Decided — embed affordances: open-full-page primary, expand secondary
 
@@ -104,7 +104,7 @@ is rejected at **config load time** with an actionable, hard error — and the
 limitation is documented in the skills and the user-guide/dev-docs.
 
 **Enforcement point:** inside `loadSiteConfig()`
-(`astro-doc-code/src/loaders/config.ts`), at/beside the pages-resolution loop
+(`agent-ks-engine/src/loaders/config.ts`), at/beside the pages-resolution loop
 (`config.ts:209-216`). This runs once, precedes all routing, and is cached
 against `site.yaml`. A reserved-base-URL clash is a *config-level* error, so it
 follows the established **hard-throw** pattern (the same style as the missing-
@@ -126,7 +126,7 @@ is detailed in the brainstorm's Thread G, along with a draft error message.
 own origin via the `/artifacts/` route and run **unsandboxed as first-party
 content** — authored in the repo, reviewed in git, trusted like any layout or
 page. `text/html` is scoped to the dedicated route and is deliberately **not**
-added to the shared MIME map (`astro-doc-code/src/pages/lib/mime.ts`), so that
+added to the shared MIME map (`agent-ks-engine/src/pages/lib/mime.ts`), so that
 colocated `.html` files elsewhere in content (including inside the issue tracker)
 do not silently become executable first-party HTML. The authoring skill and docs
 must state that an artifact runs with site-origin privileges, so authors never

@@ -2,7 +2,7 @@
 title: "Build the issue-date cache loader (git walk + invalidation logic)"
 ---
 
-- [ ] Create `astro-doc-code/src/loaders/issue-dates.ts` exporting `getIssueDate(trackerRoot, issueSlug)` and `getAllIssueDates(trackerRoot)`. Internally owns the per-tracker in-memory cache.
+- [ ] Create `agent-ks-engine/src/loaders/issue-dates.ts` exporting `getIssueDate(trackerRoot, issueSlug)` and `getAllIssueDates(trackerRoot)`. Internally owns the per-tracker in-memory cache.
 - [ ] **Cold-start build**: run `git log --no-merges --name-only --pretty=format:'§%aI' -- <trackerRoot>` once per tracker. Stream stdout, parse line-by-line, take the first date seen per path (git log is reverse-chronological → first hit = most recent commit). Aggregate per-issue as `max()` over the issue folder's files.
 - [ ] **Incremental refresh**: store `syncedAt = <HEAD SHA>` alongside the per-tracker map. On invalidation:
   - `git merge-base --is-ancestor <syncedAt> HEAD` → exit 0 → incremental walk: `git log <syncedAt>..HEAD --name-only --pretty=format:'§%aI' -- <trackerRoot>`, patch affected entries (recompute `max()` for each touched issue).
@@ -23,6 +23,6 @@ title: "Build the issue-date cache loader (git walk + invalidation logic)"
 
 ## Files likely touched (created)
 
-- `astro-doc-code/src/loaders/issue-dates.ts` (new)
-- `astro-doc-code/src/loaders/cache-manager.ts` — register the new watch paths.
-- `astro-doc-code/src/loaders/index.ts` — re-export.
+- `agent-ks-engine/src/loaders/issue-dates.ts` (new)
+- `agent-ks-engine/src/loaders/cache-manager.ts` — register the new watch paths.
+- `agent-ks-engine/src/loaders/index.ts` — re-export.

@@ -5,7 +5,7 @@
 
 ## Goal
 
-Scale the derived-`updated` cache loader (`astro-doc-code/src/loaders/issue-dates.ts`) so it stays imperceptible at 3 K+ issues / 10 K+ tracker-touching commits, and across server restarts and branch switches. Today's lazy in-memory cache works fine at this repo's scale (~11 ms full walks), but the cost is paid on the **request path** — at projected scale (~500 ms / ~2.5 s walks) the lag becomes user-visible.
+Scale the derived-`updated` cache loader (`agent-ks-engine/src/loaders/issue-dates.ts`) so it stays imperceptible at 3 K+ issues / 10 K+ tracker-touching commits, and across server restarts and branch switches. Today's lazy in-memory cache works fine at this repo's scale (~11 ms full walks), but the cost is paid on the **request path** — at projected scale (~500 ms / ~2.5 s walks) the lag becomes user-visible.
 
 The frontend rendering side of this work (relative-time formatting in the layouts) already landed as [subtask 11 of `2026-05-07-tracker-mental-model-alignment`](../2026-05-07-tracker-mental-model-alignment/subtasks/11_relative-time-rendering.md). This issue is purely the backend cache-scaling story.
 

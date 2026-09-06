@@ -21,7 +21,7 @@ required."*
 
 - [the version-bump subtask](../../../subtasks/050_version-bump.md) — the plan,
   including the open question this round answers
-- [`migration/README.md`](../../../../../../../migration/README.md) — the naming
+- [`migration/README.md`](../../../../../../../agent-ks-engine/migration/README.md) — the naming
   and chain convention
 - [the audit's deferred item](./140_audit-brief.md) — *"`agent-ks` on PATH is a
   stale 0.6.7"*, whose fix is this release
@@ -80,7 +80,7 @@ release shipped what, which is the only question that listing answers.
 defined order between them. Checked before renaming rather than assumed — all
 three discover their own work by walking the tree (`rglob`), none consumes a
 file list another produced, so they are order-independent by construction.
-[`migration/README.md`](../../../../../../../migration/README.md) now states
+[`migration/README.md`](../../../../../../../agent-ks-engine/migration/README.md) now states
 that as a rule for future authors: *if a change depends on an earlier one having
 run, it is not a sibling — it is the next version.*
 
@@ -196,7 +196,7 @@ a probe re-run over an untouched surface is a green tick that means nothing.
 **Sid's rule, set this session:** every version release is **tagged
 `v<engine-version>`** and ships a **detailed release note** written like a GitHub
 release body. The convention, the template and the rules live in
-[`releases/README.md`](../../../../../../../releases/README.md); the rule itself
+[`releases/README.md`](../../../../../../../agent-ks-engine/releases/README.md); the rule itself
 is in the repo's `CLAUDE.md`. The load-bearing part of the template is that
 **every breaking change names the symptom a consumer sees if they skip it** —
 "status vocabulary changed" is not actionable, "your status chips render empty

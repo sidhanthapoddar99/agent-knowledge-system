@@ -26,9 +26,9 @@ byte count rather than an inspection.
   — where this was found, and the chunk trace that found it
 - the project `CLAUDE.md` → "Three stages, and they decide which tree a tool
   belongs in" — the rule this breaks
-- `astro-doc-code/src/dev-tools/integration.ts` — the Astro integration that wires
+- `agent-ks-engine/src/dev-tools/integration.ts` — the Astro integration that wires
   the dev tools, and now the one place dev routes are declared
-- `astro-doc-code/src/dev-tools/routes/` — where those routes live now, precisely
+- `agent-ks-engine/src/dev-tools/routes/` — where those routes live now, precisely
   because it is **not** `src/pages/`
 
 # Todo list

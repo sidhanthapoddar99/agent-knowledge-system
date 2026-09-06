@@ -9,7 +9,7 @@ allowed-tools: Read, Write, Edit, Bash
 
 Setup happens once, or once in a long while. So this skill is a set of complete references, one per topic. Read the one the task names. Read two when the task crosses topics.
 
-**Source of truth.** The engine and the CLI decide anything they implement: the config keys, the layouts, the theme contract, the commands and the flags. Check a claim against them first, because they are what runs. The bundled user guide at `@root/default-docs/data/user-guide/` wins only on a convention the code does not enforce. `@root` is the framework folder.
+**Source of truth.** The engine and the CLI decide anything they implement: the config keys, the layouts, the theme contract, the commands and the flags. Check a claim against them first, because they are what runs. The bundled user guide at `@root/default-docs/data/user-guide/` wins only on a convention the code does not enforce. `@root` is the framework root: the `agent-knowledge-system/` repository root, one level above `agent-ks-engine/`.
 
 ## Triage
 

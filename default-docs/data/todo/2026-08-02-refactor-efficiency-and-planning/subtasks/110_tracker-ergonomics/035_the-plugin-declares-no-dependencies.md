@@ -11,7 +11,7 @@ scripts imported `gray-matter` anyway.** Used by `issues/_lib.mjs` and
 broken command — it was most of the toolchain.
 
 **Why it worked, and it is not the reason anyone assumes.** `node` could not
-resolve it at all: `node_modules` exists only under `astro-doc-code/`, which is
+resolve it at all: `node_modules` exists only under `agent-ks-engine/`, which is
 not an ancestor of the plugin's scripts, so the directory walk never reached it.
 Every command worked because `bin/agent-ks` execs **`bun`**, and bun fetches a
 missing package on demand.

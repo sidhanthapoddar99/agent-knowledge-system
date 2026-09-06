@@ -53,7 +53,7 @@ without one, or embedded at a different URL depth.
 - The four combinations this deletes:
   [the trailing-slash matrix](../../notes/10_the-trailing-slash-matrix.html)
 - The code being replaced:
-  `astro-doc-code/src/parsers/postprocessors/internal-links.ts`
+  `agent-ks-engine/src/parsers/postprocessors/internal-links.ts`
 - The first consumer of the seam this creates:
   [the hosting path prefix](../200_path-prefix/010_prefix-path-env.md)
 

@@ -19,7 +19,7 @@ compatibility gate** — a patch bump never changes content format by definition
 | Anchor | Lives in | Meaning |
 |---|---|---|
 | Content version | `site.yaml → engine_version: "0.1.2"` (top-level, sibling of `theme`) | The engine version this content tree targets — bumped by running migrations |
-| Engine version | `astro-doc-code/src/loaders/engine-version.ts → ENGINE_VERSION` | What the engine currently is (`0.1.2` — re-anchored from the informal "v0.7 lifecycle" naming on 2026-07-03, sidhantha; `package.json`'s `1.0.0` is a dead placeholder) |
+| Engine version | `agent-ks-engine/src/loaders/engine-version.ts → ENGINE_VERSION` | What the engine currently is (`0.1.2` — re-anchored from the informal "v0.7 lifecycle" naming on 2026-07-03, sidhantha; `package.json`'s `1.0.0` is a dead placeholder) |
 | Compatibility floor | same file → `MIN_CONTENT_VERSION` | Oldest content version this engine still parses. Starts equal to `ENGINE_VERSION`; raised only when a release actually breaks format |
 
 > **Re-anchor (2026-07-03, sidhantha):** the contract launched anchored at

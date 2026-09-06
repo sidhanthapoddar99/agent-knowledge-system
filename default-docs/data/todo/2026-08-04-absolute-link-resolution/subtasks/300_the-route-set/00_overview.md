@@ -53,7 +53,7 @@ them.
 `src/pages/lib/` holds five plain TypeScript modules — helpers, not pages:
 
 ```
-astro-doc-code/src/pages/lib/
+agent-ks-engine/src/pages/lib/
 ├── cache-key.ts
 ├── layout-registry.ts
 ├── mime.ts
@@ -66,7 +66,7 @@ The build emits five files under `dist/lib/`, 9 KB each, 64 KB total, **every on
 of them serving the 404 page**:
 
 ```
-$ grep -o "<title>[^<]*</title>" astro-doc-code/dist/lib/cache-key
+$ grep -o "<title>[^<]*</title>" agent-ks-engine/dist/lib/cache-key
 <title>Page not found | Agent KS</title>
 
 $ curl -o /dev/null -w '%{http_code}' http://localhost:3088/lib/cache-key

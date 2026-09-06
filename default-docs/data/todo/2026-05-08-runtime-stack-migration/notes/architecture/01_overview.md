@@ -44,7 +44,7 @@ The migration's defining structural choice is the three-layer split between **ru
 
 ## What this lets us delete
 
-- The whole `astro-doc-code/` tree (Astro + Vite SSR + integration plumbing)
+- The whole `agent-ks-engine/` tree (Astro + Vite SSR + integration plumbing)
 - `node_modules/` for the runtime (~150 MB)
 - `bun.lock` runtime dependency
 - Astro dev-toolbar plumbing

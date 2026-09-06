@@ -4,7 +4,7 @@ status: done
 ---
 
 With the native-markdown-only decision
-(`brainstorm/01_discuss_native-markdown-only.md`), `astro-doc-code/src/custom-tags/`
+(`brainstorm/01_discuss_native-markdown-only.md`), `agent-ks-engine/src/custom-tags/`
 (callout, tabs, collapsible transformers + `createCustomTagsRegistry()`) has no
 future consumer — dormant code that misleads readers into thinking tags are a
 feature. This superseded the wire-up plan of the now-dropped

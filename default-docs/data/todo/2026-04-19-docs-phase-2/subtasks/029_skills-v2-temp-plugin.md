@@ -22,7 +22,7 @@ effort, then review the output."
 - The spec: [the skills-v2 spec](../notes/skills-v2-spec.md). Goal, tree, rules, template, duties, log shape, never-table, per-builder specs, review criteria.
 - The run: [030/01 the skills-v2 log summary](../agent-log/030_wf_skills-v2-temp/01_summary.md). Builder, reviewer, fix and integration reports sit in its `02_working/`.
 - The first compaction pass, same design line: [019 skills compaction](./019_skills-compaction.md).
-- Status vocabulary in code: `astro-doc-code/src/loaders/issue-status.ts`.
+- Status vocabulary in code: `agent-ks-engine/src/loaders/issue-status.ts`.
 
 # Todo list
 

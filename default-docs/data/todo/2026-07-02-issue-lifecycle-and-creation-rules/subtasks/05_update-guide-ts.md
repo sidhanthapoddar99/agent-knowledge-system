@@ -3,7 +3,7 @@ title: Update the bundled guide.ts issue-anatomy panel
 status: done
 ---
 
-`astro-doc-code/src/layouts/issues/default/guide.ts` is the plugin-independent
+`agent-ks-engine/src/layouts/issues/default/guide.ts` is the plugin-independent
 legend rendered on every issue's Guide panel — it must describe the same lifecycle
 as the docs and skill, per `notes/01_lifecycle-vocabulary.md`.
 

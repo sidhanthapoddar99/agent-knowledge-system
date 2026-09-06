@@ -144,7 +144,7 @@ and they do not depend on the 300 in any way.
 | 22 genuinely broken links, by hand | 322 → 300 |
 | 300 slug-form links, by parser | 300 → **0** |
 | `check link-form` tightened from warning to error | red on the next one, in **any** consumer tree |
-| `migration/0.2.3_slug-form-links.py` | the same fix, shipped to consumers |
+| `agent-ks-engine/migration/0.2.3_slug-form-links.py` | the same fix, shipped to consumers |
 
 **The acceptance test the class needed, because there is no visible symptom:**
 build before, build after, diff every emitted `href`.
@@ -233,7 +233,7 @@ links parked on [`060`](./060_does-the-tracker-share-it.md).
 
 ## The migration script, and the control that makes it trustworthy
 
-`migration/0.2.3_slug-form-links.py` — `detect` · `locate` · `migrate --dry-run`
+`agent-ks-engine/migration/0.2.3_slug-form-links.py` — `detect` · `locate` · `migrate --dry-run`
 · `verify`. A consumer upgrading into the stricter gate meets a wall of errors on
 content that has never changed; this is what answers that, and its docstring
 leads with the symptom rather than the rule.
@@ -263,7 +263,7 @@ rather than only on stderr, so `0 link(s)` plus exit 1 cannot read as a bug.
 
 - **The version bump and the release are Sid's.** `ENGINE_VERSION` is still
   `0.2.2` and the script is named `0.2.3` — the naming rule in
-  `migration/README.md` covers exactly this case, and a release that lands on a
+  `agent-ks-engine/migration/README.md` covers exactly this case, and a release that lands on a
   different number renames it. The floor does **not** move: slug-form links
   render correctly, so old content still works unmigrated. This is a
   good-to-have migration, not a breaking one
@@ -286,7 +286,7 @@ rather than only on stderr, so `0 link(s)` plus exit 1 cannot read as a bug.
 - [x] Verify the conversion changed no rendered URL — **86,452 hrefs across
       1,216 pages, byte-identical** before and after
 - [x] Re-run the `move` demonstration: **8 of 8** rewritten, against 2 before
-- [x] Ship it to consumers — `migration/0.2.3_slug-form-links.py`, an
+- [x] Ship it to consumers — `agent-ks-engine/migration/0.2.3_slug-form-links.py`, an
       independent Python implementation, control-tested against the JS one on
       the same tree
 

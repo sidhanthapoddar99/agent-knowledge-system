@@ -151,7 +151,7 @@ From the repo root, use the `./start` wrapper:
 ```bash
 ./start          # dev server with hot reload — the default
 ./start dev      # same thing, spelled out
-./start build    # production build → astro-doc-code/dist/
+./start build    # production build → agent-ks-engine/dist/
 ./start preview  # preview production build locally
 ./start doctor   # update + install + full build: the pre-publish check
 ./start update   # check upstream now and offer to pull — starts nothing
@@ -161,7 +161,7 @@ From the repo root, use the `./start` wrapper:
 
 On native Windows, replace `./start` with `.\start.cmd` in all of the above.
 
-Inside `astro-doc-code/`, the usual `bun run dev` / `bun run build` / `bun run preview` still work directly.
+Inside `agent-ks-engine/`, the usual `bun run dev` / `bun run build` / `bun run preview` still work directly.
 
 ## What's inside the repo
 
@@ -172,8 +172,10 @@ agent-knowledge-system/                 ← THIS repo (= framework folder)
 ├── agent-ks-cli/                      ← standalone Rust toolkit, installer, tests and release notes
 ├── plugins/
 │   └── agent-ks/                       ← plugin source (skills + bundled templates) — distributed via sids-plugin-marketplace
-├── astro-doc-code/                     ← framework code — don't edit unless you're hacking on it
+├── agent-ks-engine/                     ← engine code — don't edit unless you're hacking on it
 │   ├── src/                            ← Astro layouts, loaders, parsers
+│   ├── migration/                      ← content-format migrations shipped with the engine
+│   ├── releases/                       ← engine release notes used by the v* workflow
 │   ├── astro.config.mjs
 │   ├── package.json
 │   └── tsconfig.json
@@ -193,7 +195,7 @@ The plugin in `plugins/agent-ks/` is distributed via [`sids-plugin-marketplace`]
 - **End-user docs** — `default-docs/data/user-guide/` (rendered at `/user-guide` in the live site). Setup, configuration, content authoring, themes, layouts, the issue tracker.
 - **Developer docs** — `default-docs/data/dev-docs/` (rendered at `/dev-docs`). Architecture, layouts internals, loader pipeline, scripts, and the **Plugins** section explaining how Claude Code plugins work and how to author one.
 - **CLAUDE.md** at the repo root — orientation for Claude Code sessions working in this repo.
-- **[CHANGELOG.md](./CHANGELOG.md)** — every release, with the full notes in [`releases/`](./releases/) and on the [GitHub releases page](https://github.com/sidhanthapoddar99/agent-knowledge-system/releases).
+- **[CHANGELOG.md](./CHANGELOG.md)** — every release, with the full notes in [`agent-ks-engine/releases/`](./agent-ks-engine/releases/) and on the [GitHub releases page](https://github.com/sidhanthapoddar99/agent-knowledge-system/releases).
 
 Both doc sets are written *in* the framework and rendered *by* it — the user-guide below is this repo's own `default-docs/data/user-guide/`:
 

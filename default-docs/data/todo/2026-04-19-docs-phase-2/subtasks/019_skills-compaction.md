@@ -13,7 +13,7 @@ Trigger: Sid asked for an analysis of both skills on 2026-09-02, then chose the 
 
 - The two skills: `plugins/agent-ks/skills/agent-ks-docs/` and `plugins/agent-ks/skills/agent-ks-issues/`.
 - The rule that skills are history-free: repo `CLAUDE.md`, section "Skills are lean and history-free".
-- Status vocabulary in code: `astro-doc-code/src/loaders/issue-status.ts`. Eight statuses. Plans and stages accept all eight. Runs accept five.
+- Status vocabulary in code: `agent-ks-engine/src/loaders/issue-status.ts`. Eight statuses. Plans and stages accept all eight. Runs accept five.
 
 # Todo list
 

@@ -52,7 +52,7 @@ import { fileURLToPath } from 'node:url';
 import { resolveServerBase, NO_SERVER_HELP } from './_astro-server.mjs';
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
-const FRAMEWORK = path.join(REPO, 'astro-doc-code');
+const FRAMEWORK = path.join(REPO, 'agent-ks-engine');
 
 // Dependencies live in the framework's node_modules — this script has no
 // package.json of its own and should not grow one.

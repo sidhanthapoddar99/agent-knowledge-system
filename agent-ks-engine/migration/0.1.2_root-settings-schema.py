@@ -10,7 +10,7 @@ together, and are both manual (see "why no `migrate`" below):
 
   A. STATUS COLOURS ARE COLOURS-ONLY (subtask 12).
      The seven statuses and four categories are FIXED IN FRAMEWORK CODE
-     (astro-doc-code/src/loaders/issue-status.ts). A tracker may no longer declare
+     (agent-ks-engine/src/loaders/issue-status.ts). A tracker may no longer declare
      a `fields.status` block; the only status customisation is COLOURS, which move
      to a top-level `statusColors` map (sibling of `fields`). Keys must be a subset
      of the seven statuses — a colour for a status that doesn't exist is a typo,
@@ -70,7 +70,7 @@ import json
 import sys
 from pathlib import Path
 
-# Mirror of astro-doc-code/src/loaders/issue-status.ts (kept in sync by hand —
+# Mirror of agent-ks-engine/src/loaders/issue-status.ts (kept in sync by hand —
 # this is a one-shot script, not wired to the constant).
 STATUSES = ["open", "blocked", "in-progress", "input-needed", "review", "done", "dropped"]
 DEFAULT_STATUS_COLORS = {
@@ -88,7 +88,7 @@ OPTIONAL_DESC_FIELDS = ("priority",)
 
 def strip_jsonc(text: str) -> str:
     """Strip // and /* */ comments and trailing commas. String-aware — mirrors
-    astro-doc-code/src/loaders/settings-file.ts so both sides agree."""
+    agent-ks-engine/src/loaders/settings-file.ts so both sides agree."""
     out = []
     in_string = in_line = in_block = escaped = False
     i, n = 0, len(text)

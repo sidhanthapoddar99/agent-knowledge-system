@@ -8,7 +8,7 @@ writing, and validating of the `done` frontmatter field.
 
 ## Touch points (confirmed)
 
-- **`astro-doc-code/src/loaders/issues.ts`**
+- **`agent-ks-engine/src/loaders/issues.ts`**
   - `SubtaskMeta` interface — the `done: boolean` field (~line 125) and the comment "Reads
     `state` first, falls back to `done`".
   - the parse fallback `else if (fm.done === true) { state = 'closed' }` (~559–565) — drop
@@ -36,6 +36,6 @@ writing, and validating of the `done` frontmatter field.
 
 ## Verify
 
-- `grep -rn "done" astro-doc-code/src` returns only unrelated natural-language hits.
+- `grep -rn "done" agent-ks-engine/src` returns only unrelated natural-language hits.
 - `bun run build` green; run each validator (`docs`/`blog`/`config`/`issues` check) — clean.
 - `docs-set-state <issue>/subtasks/NN_x.md closed` writes only `state:` (no `done:`).

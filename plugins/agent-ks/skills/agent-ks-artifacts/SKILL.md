@@ -48,7 +48,7 @@ Use these names. `agent-ks theme tokens --json` prints the values ([cli-toolkit.
 - **Shadow, motion** `--shadow-sm`, `-md`, `-lg`, `-xl`; `--transition-fast`, `-normal`
 - **Layout** `--sidebar-width`, `--navbar-height`, `--outline-width`, `--max-width-primary`, `--max-width-secondary`
 
-This list mirrors the `required_variables` list in `@root/astro-doc-code/src/styles/theme.yaml`, minus the primitive `--font-size-*` scale, which no layout or artifact uses. In `self` mode reuse these names. Add a name of your own only for a role the contract does not cover.
+This list mirrors the `required_variables` list in `@root/agent-ks-engine/src/styles/theme.yaml`, minus the primitive `--font-size-*` scale, which no layout or artifact uses. In `self` mode reuse these names. Add a name of your own only for a role the contract does not cover.
 
 ## Never
 

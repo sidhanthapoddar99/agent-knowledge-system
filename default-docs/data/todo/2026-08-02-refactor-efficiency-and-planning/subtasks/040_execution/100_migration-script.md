@@ -5,7 +5,7 @@ status: done
 
 # Overview
 
-Ship `migration/0.2.0_agent-log-status-vocabulary.py`, which rewrites every
+Ship `agent-ks-engine/migration/0.2.0_agent-log-status-vocabulary.py`, which rewrites every
 agent-log file's `status:` onto the canonical seven and drops the now-dead
 `iteration:` field.
 
@@ -18,9 +18,9 @@ shows the exact rewrites, migrate is idempotent (a second run finds zero), and
 
 # References
 
-- Contract every migration script follows: `migration/README.md`
+- Contract every migration script follows: `agent-ks-engine/migration/README.md`
 - Closest prior art, same shape of change:
-  `migration/0.1.1_state-to-status.py` (a field rename **plus** a value remap)
+  `agent-ks-engine/migration/0.1.1_state-to-status.py` (a field rename **plus** a value remap)
 - Why the vocabulary changed:
   [The agent-log structure](../../notes/20_agent-log-structure.md) → *status
   means "did the agent finish"*
@@ -54,7 +54,7 @@ shows the exact rewrites, migrate is idempotent (a second run finds zero), and
 
 # Outcomes and Next Steps
 
-`migration/0.2.0_agent-log-status-vocabulary.py` ships, and has been **run against
+`agent-ks-engine/migration/0.2.0_agent-log-status-vocabulary.py` ships, and has been **run against
 this repo's own `default-docs/`** with the result committed in the same change.
 
 ## What the measurement changed — and it overturned this subtask's premise

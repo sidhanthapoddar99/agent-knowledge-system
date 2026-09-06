@@ -8,7 +8,7 @@ status: open
 **Status of the audit.** Not yet enumerated — unlike the other subtasks, I didn't verify this one by inspection. It needs a static pass to produce the actual list before any deletion:
 
 ```bash
-cd astro-doc-code
+cd agent-ks-engine
 bunx tsc --noEmit --noUnusedLocals --noUnusedParameters   # unused locals/imports
 # + a knip / ts-prune run for unreferenced *exports* across modules
 ```

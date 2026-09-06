@@ -122,7 +122,7 @@ Author-maintained future date, never enforced. Audit on 2026-05-07: 9 of 10 issu
 
 ### Manually-maintained `updated` — dropped 2026-05-07
 
-Same rot pattern as `due`. Every issue's `updated` field was stuck at its creation date even after multiple subtasks had shipped. Replaced with a value derived from git history — the most recent commit author-date touching any file under the issue folder. Honest signal beats a stale promise. The cache loader (`astro-doc-code/src/loaders/issue-dates.ts`) walks `git log` once on cold start and incrementally on `.git/HEAD` change. Issues never committed yet (or in a non-git checkout) fall back to the folder's `created` date.
+Same rot pattern as `due`. Every issue's `updated` field was stuck at its creation date even after multiple subtasks had shipped. Replaced with a value derived from git history — the most recent commit author-date touching any file under the issue folder. Honest signal beats a stale promise. The cache loader (`agent-ks-engine/src/loaders/issue-dates.ts`) walks `git log` once on cold start and incrementally on `.git/HEAD` change. Issues never committed yet (or in a non-git checkout) fall back to the folder's `created` date.
 
 ### Why we keep this section
 

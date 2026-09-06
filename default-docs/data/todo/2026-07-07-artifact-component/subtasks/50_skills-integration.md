@@ -28,7 +28,7 @@ repo-local plugin source and the installed cache.
   `60_examples/`). Artifacts can live inside a tracker `brainstorm/`/`notes/`
   folder (design systems authored in an issue), so this skill must mention them.
 - **Bundled issue guide** —
-  `astro-doc-code/src/layouts/issues/default/guide.ts` (the plugin-independent
+  `agent-ks-engine/src/layouts/issues/default/guide.ts` (the plugin-independent
   thin "issue anatomy" legend rendered on every issue's **Guide** panel). Update
   only if artifacts change what a tracker folder can contain (a light mention that
   supporting files can be `.html` artifacts).
@@ -77,7 +77,7 @@ repo-local plugin source and the installed cache.
 
 - [x] **Update `guide.ts` if warranted.** If artifacts change what a tracker
       folder legitimately contains, add a one-line mention to the relevant section
-      of `astro-doc-code/src/layouts/issues/default/guide.ts` (keeping it the thin
+      of `agent-ks-engine/src/layouts/issues/default/guide.ts` (keeping it the thin
       legend it is — the full manual stays in the skill). If nothing about the
       folder anatomy changes, record explicitly that no `guide.ts` edit was
       needed. Done when the bundled guide and the `agent-ks-issues` skill agree.
@@ -145,7 +145,7 @@ and diverge from how diagrams are (not) treated there. The file-type detail live
 in the `agent-ks-issues` skill's writing reference; map and skill agree. No change.
 
 **Accuracy note / handoff to `10_component` review.** The tracker loader
-(`astro-doc-code/src/loaders/issues.ts`) wires `diagramContainerHtml` for
+(`agent-ks-engine/src/loaders/issues.ts`) wires `diagramContainerHtml` for
 first-class **diagram** files in `notes/`/`brainstorm/`/`agent-log/` but has **no
 `.html`/artifact handling** — `issues.ts` is unmodified in the working tree.
 Artifacts render as first-class *embedded* pages only in **docs sections**
@@ -180,5 +180,5 @@ embedded rendering. Flagged, not fabricated.
 - History-free: no "newly added / previously unsupported" phrasing; all edits
   describe the current system.
 - No Astro build was run — these are plugin skill-markdown + `plugin.json` edits,
-  outside the `astro-doc-code/` / `default-docs/` build surface; the skill-links
+  outside the `agent-ks-engine/` / `default-docs/` build surface; the skill-links
   validator is the relevant check.

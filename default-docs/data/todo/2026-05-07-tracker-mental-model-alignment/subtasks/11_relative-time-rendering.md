@@ -19,7 +19,7 @@ Singulars handled gracefully — `1 hour ago`, `1 day ago` (no "1 hours ago"). S
 
 ## Implementation
 
-- [x] **Add a shared helper** `formatRelativeTime(iso: string): { rel: string, full: string }` in `astro-doc-code/src/layouts/issues/default/server/helpers.ts`. Returns `{ rel: "3 hours ago", full: "May 7, 2026 22:00" }` so the call site can put the full timestamp in a `title=` attribute for tooltip.
+- [x] **Add a shared helper** `formatRelativeTime(iso: string): { rel: string, full: string }` in `agent-ks-engine/src/layouts/issues/default/server/helpers.ts`. Returns `{ rel: "3 hours ago", full: "May 7, 2026 22:00" }` so the call site can put the full timestamp in a `title=` attribute for tooltip.
 - [x] **Update `IssuesTable.astro`** — replace `{formatDate(issue.updated)}` at line ~140 with `<time datetime={issue.updated} title={full}>{rel}</time>`. Keep the `data-updated={issue.updated}` data-attribute (the client uses it for sort).
 - [x] **Update `IssueCard.astro`** — replace `issue.updated.slice(0, 10)` at line ~29.
 - [x] **Update `MetaPanel.astro`** — replace `formatDate(issue.updated)` at line ~55 (Updated cell). Keep `formatDate(issue.created)` since `created` is a date-only slug.
@@ -37,10 +37,10 @@ Three reasons:
 
 ## Files likely touched
 
-- `astro-doc-code/src/layouts/issues/default/server/helpers.ts` — add helper.
-- `astro-doc-code/src/layouts/issues/default/parts/index/IssuesTable.astro` — table view.
-- `astro-doc-code/src/layouts/issues/default/parts/shared/IssueCard.astro` — card view.
-- `astro-doc-code/src/layouts/issues/default/parts/shared/MetaPanel.astro` — detail meta.
+- `agent-ks-engine/src/layouts/issues/default/server/helpers.ts` — add helper.
+- `agent-ks-engine/src/layouts/issues/default/parts/index/IssuesTable.astro` — table view.
+- `agent-ks-engine/src/layouts/issues/default/parts/shared/IssueCard.astro` — card view.
+- `agent-ks-engine/src/layouts/issues/default/parts/shared/MetaPanel.astro` — detail meta.
 
 ## Out of scope
 
@@ -48,4 +48,4 @@ Three reasons:
 - Client-side live ticking. Follow-up if needed.
 - Locale-aware pluralisation / i18n. Plain English strings for now.
 
-**Landed.** `formatRelativeTime(iso)` helper added to `astro-doc-code/src/layouts/issues/default/server/helpers.ts` returning `{ rel, full }`. Wired into `IssuesTable.astro` (line 140), `IssueCard.astro` (line 30), `MetaPanel.astro` (line 57). All three sites now render `<time datetime={iso} title={full}>{rel}</time>`. Singulars handled (`1 hour ago`, `1 day ago`); negative-delta clock-skew clamps to `0 sec ago`; ≥7 days falls through to `MMM D, YYYY HH:mm`. Build passes (387 pages); validator clean.
+**Landed.** `formatRelativeTime(iso)` helper added to `agent-ks-engine/src/layouts/issues/default/server/helpers.ts` returning `{ rel, full }`. Wired into `IssuesTable.astro` (line 140), `IssueCard.astro` (line 30), `MetaPanel.astro` (line 57). All three sites now render `<time datetime={iso} title={full}>{rel}</time>`. Singulars handled (`1 hour ago`, `1 day ago`); negative-delta clock-skew clamps to `0 sec ago`; ≥7 days falls through to `MMM D, YYYY HH:mm`. Build passes (387 pages); validator clean.

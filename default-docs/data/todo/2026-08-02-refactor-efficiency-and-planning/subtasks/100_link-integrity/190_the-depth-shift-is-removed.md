@@ -46,7 +46,7 @@ finding, and it is why this subtask does not propose a different number.
 # References
 
 - The code, with the reasoning kept in place:
-  `astro-doc-code/src/parsers/postprocessors/internal-links.ts`
+  `agent-ks-engine/src/parsers/postprocessors/internal-links.ts`
 - Added in `951e520` (2026-08-03), removed 2026-08-04
 - The subtask that added it: [`010`](./010_renderer-drops-a-url-level.md)
 - **The permanent fix, decided 2026-06-09:**

@@ -36,7 +36,7 @@ CONFIG_DIR=./default-docs/config
 
 All other content directory paths (`data`, `assets`, `themes`) are defined in `site.yaml`'s `paths:` section.
 
-> **Path relativity rule:** `CONFIG_DIR` in `.env` is relative to the **framework folder** (where `.env` lives — `agent-knowledge-system/`, **not** `astro-doc-code/` where `astro.config.mjs` sits). Paths in `site.yaml`'s `paths:` section are relative to the **config directory** (where `site.yaml` lives). Absolute paths work in both places. Internally the framework calls the parent of `astro-doc-code/` the *project root* — that's `agent-knowledge-system/` itself, NOT the consumer's outer project. The `@root` alias resolves to that project root, so `@root/default-docs/...` always reaches the framework's bundled content.
+> **Path relativity rule:** `CONFIG_DIR` in `.env` is relative to the **framework root** (where `.env` lives — `agent-knowledge-system/`, **not** the `agent-ks-engine/` engine root where `astro.config.mjs` sits). Paths in `site.yaml`'s `paths:` section are relative to the **config directory** (where `site.yaml` lives). Absolute paths work in both places. Internally the framework calls the parent of `agent-ks-engine/` the *framework root* — that's `agent-knowledge-system/` itself, NOT the consumer's outer project. The `@root` alias resolves there, so `@root/default-docs/...` always reaches the framework's bundled content.
 
 ### External Layouts
 
@@ -128,7 +128,7 @@ When `HOST=true`, the server binds to `0.0.0.0` allowing access from:
 # Bootstrap: relative to .env (the framework folder); ../config reaches your project root
 CONFIG_DIR=../config
 
-# Optional: External layout directory (mirrors astro-doc-code/src/layouts/ structure)
+# Optional: External layout directory (mirrors agent-ks-engine/src/layouts/ structure)
 # LAYOUT_EXT_DIR=../layouts
 
 # ============================================

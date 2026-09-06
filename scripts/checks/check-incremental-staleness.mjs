@@ -48,7 +48,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
-const APP = path.join(REPO, 'astro-doc-code');
+const APP = path.join(REPO, 'agent-ks-engine');
 const DIST = path.join(APP, 'dist');
 const CACHE = path.join(APP, 'node_modules', '.astro');
 

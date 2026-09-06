@@ -51,7 +51,7 @@ linearly with the tracker. On a larger repo it already reaches 10 s.
 The baseline must come from a cold server. A warm request is 32 ms and tells you nothing.
 
 ```bash
-cd astro-doc-code
+cd agent-ks-engine
 (timeout 90 bun run dev --port 3921 > /tmp/cold.log 2>&1 &)
 until grep -q "ready in" /tmp/cold.log; do :; done
 curl -s -o /dev/null -w '%{time_total}s\n' http://localhost:3921/todo

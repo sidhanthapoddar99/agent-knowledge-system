@@ -569,7 +569,7 @@ shortens it:
 
 # Limits the loader already imposes — measured 2026-08-02
 
-Checked against `astro-doc-code/src/loaders/issues.ts`, because a nesting rule
+Checked against `agent-ks-engine/src/loaders/issues.ts`, because a nesting rule
 that the renderer silently drops is worse than no rule.
 
 **Depth is capped at 5 folder levels below `agent-log/`, and overflow is
@@ -671,7 +671,7 @@ Counted 2026-08-02. Every place the current shape is encoded.
 |---|---|---|
 | **Skill** — `plugins/agent-ks/skills/agent-ks-issues/` | `SKILL.md`, `references/20_sections/24_agent-logs.md` (primary), `00_anatomy/00_overview.md`, `00_anatomy/01_folder-layout.md`, `00_anatomy/03_overall-issue-tracker-vocabulary.md`, `10_writing/10_writing.md`, `60_examples/63_agent-loops.md`, `20_sections/26_agent-memory.md` | The six slots, the milestone rhythm and frontmatter, **the word *activity* → *agent log***, **`notes/` → `debrief/`**, the iteration-file head, the worked example |
 | **CLI** — `plugins/agent-ks/skills/agent-ks-docs/scripts/` | `issues/new-agent-log.mjs` (**seeds the six slots**), `issues/check.mjs`, `_manifest.mjs` | Scaffold `01_summary.md` + `02_working/` + `03_debrief/` + `settings.json`; emit the iteration-file head; validate the new shape and the `≥ 100` child-log rule |
-| **Framework** | `astro-doc-code/src/layouts/issues/default/guide.ts` (lines ~133–175) | The anatomy tree, **the six-slot list — a fourth home of the "kept present even when blank" floor**, the whole milestone block, the `#N` badge tinting, the milestone frontmatter table. Line-by-line in [the framework spec](./40_agent-log-settings-framework-spec.md) |
+| **Framework** | `agent-ks-engine/src/layouts/issues/default/guide.ts` (lines ~133–175) | The anatomy tree, **the six-slot list — a fourth home of the "kept present even when blank" floor**, the whole milestone block, the `#N` badge tinting, the milestone frontmatter table. Line-by-line in [the framework spec](./40_agent-log-settings-framework-spec.md) |
 | **User-guide prose** | `19_issues/05_sub-docs/05_agent-log.md` (primary), `19_issues/03_folder-structure.md`, `19_issues/01_overview.md`, `19_issues/07_ui/02_detail-view.md` | Same content for humans, same vocabulary change |
 | **`~/.claude/CLAUDE.md`** | line ~78 *"an activity folder holding one run's goal, task list and **milestones**"*; line ~298 *"Instructions as files, prompts as pointers"* | Milestones no longer exist; the word *activity* goes; the brief rule becomes "`01_summary.md` is the brief" |
 | **Consumer — `neurasutra-docs`** | `memory/standing-rules.md:16,32–33,35`, `memory/orchestration.md:34,60,73`, `memory/codex-sol.md:75,101` | *"Keep all six present even when blank"* (the six-file floor), `<activity>/audit/<scope>.md`, *"keep the rephrased brief in `03_working/`"*, milestone references, the vocabulary |

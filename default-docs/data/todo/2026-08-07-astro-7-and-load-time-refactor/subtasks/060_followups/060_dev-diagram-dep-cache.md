@@ -25,7 +25,7 @@ nothing about the symptom suggests it.
   suspect for the trigger, and the thing that would prevent a recurrence
 - [060/030 the dropped memory test](./030_dev-server-memory-controlled-test.md) —
   where the orphaned dev server was found
-- `astro-doc-code/src/scripts/diagrams.ts` — the three dynamic imports
+- `agent-ks-engine/src/scripts/diagrams.ts` — the three dynamic imports
 - `start` line 146 — what `clean` wipes
 
 # Todo list

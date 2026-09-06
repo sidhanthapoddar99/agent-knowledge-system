@@ -39,11 +39,11 @@ marketplace listing match reality, and a consumer on the old content format is
 - The migration script this pairs with:
   [`100`](./040_execution/100_migration-script.md) — must ship together
 - Everything under [Execution](./040_execution/00_overview.md) must land first
-- Engine gate: `astro-doc-code/src/loaders/engine-version.ts`
+- Engine gate: `agent-ks-engine/src/loaders/engine-version.ts`
 - Plugin version: `plugins/agent-ks/.claude-plugin/plugin.json`
 - Marketplace listing (separate repo):
   `sids-plugin-marketplace/.claude-plugin/marketplace.json`
-- Convention: `migration/README.md`
+- Convention: `agent-ks-engine/migration/README.md`
 
 # Todo list
 
@@ -69,7 +69,7 @@ marketplace listing match reality, and a consumer on the old content format is
 - [x] Verify the CLI verb count in the description against `agent-ks help` —
       it was wrong (29 vs 35); the count was **removed** rather than corrected
 - [x] Write the release note and set the tag convention (new this round —
-      [`releases/`](../../../../../releases/README.md))
+      [`agent-ks-engine/releases/`](../../../../../agent-ks-engine/releases/README.md))
 
 # Outcomes and Next Steps
 
@@ -104,7 +104,7 @@ pushed (37 commits), and **all four releases are published** — `v0.1.0`,
 correctly the only one marked Latest.
 
 `v0.2.0` went through the workflow end to end — its first real run, green, body
-byte-identical to `releases/0.2.0.md`. The three retro ones were published with
+byte-identical to `agent-ks-engine/releases/0.2.0.md`. The three retro ones were published with
 `gh release create --latest=false`, because **a workflow triggered by a tag runs
 the workflow file as it exists at the tagged commit** — and June/July commits
 have no `.github/workflows/`, so pushing those tags fires nothing. Worth knowing

@@ -24,12 +24,12 @@ days apart, and only the first one has ever seen the file system.
 One file, one function, and it is a **text edit on a string** — not a resolution:
 
 ```
-astro-doc-code/src/parsers/postprocessors/internal-links.ts
+agent-ks-engine/src/parsers/postprocessors/internal-links.ts
    └─ rewriteHref(href, addLevel)
 ```
 
 It sits fifth in a seven-stage pipeline, and its position tells you what it can
-see. `DocsParser`, `astro-doc-code/src/parsers/content-types/docs.ts`:
+see. `DocsParser`, `agent-ks-engine/src/parsers/content-types/docs.ts`:
 
 ```
   MARKDOWN FILE

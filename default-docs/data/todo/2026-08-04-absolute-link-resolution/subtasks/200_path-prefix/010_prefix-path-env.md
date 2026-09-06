@@ -73,7 +73,7 @@ question. Confirm this first; it changes the whole design.
 - The prerequisite:
   [the shared resolver](../100_absolute-resolution/020_the-shared-resolver.md)
 - The gate: repo-root `scripts/checks/check-links.mjs`
-- The `.env` and config surface: `astro-doc-code/astro.config.mjs`, which already
+- The `.env` and config surface: `agent-ks-engine/astro.config.mjs`, which already
   reads `.env` from the repo root rather than `process.cwd()`
 
 # Details

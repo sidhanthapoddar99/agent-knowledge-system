@@ -27,13 +27,13 @@ content file had to change to make it true.
 # References
 
 - The defective transform:
-  `astro-doc-code/src/parsers/postprocessors/internal-links.ts` — `rewriteHref()`
+  `agent-ks-engine/src/parsers/postprocessors/internal-links.ts` — `rewriteHref()`
 - The slug rule that creates the extra level:
-  `astro-doc-code/src/parsers/content-types/docs.ts` → `DocsParser.generateSlug`
+  `agent-ks-engine/src/parsers/content-types/docs.ts` → `DocsParser.generateSlug`
   (line 86, `.replace(/\/index$/, '')`)
 - The tracker's own re-rooting pass, which solves a *different* off-by-one and is
   the nearest prior art:
-  `astro-doc-code/src/parsers/postprocessors/issue-body-links.ts`
+  `agent-ks-engine/src/parsers/postprocessors/issue-body-links.ts`
 - Why the source form may not be changed to work around this:
   [`170`](./020_relative-links-are-the-contract.md)
 - Open question on whether the tracker pipeline shares the defect:

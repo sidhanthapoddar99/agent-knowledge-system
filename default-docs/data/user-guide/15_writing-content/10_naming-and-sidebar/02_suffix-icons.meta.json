@@ -48,9 +48,9 @@
       ]
     },
     "sources": [
-      "astro-doc-code/src/layouts/file-type-icons.ts",
-      "astro-doc-code/src/layouts/docs/default/Sidebar.astro",
-      "astro-doc-code/src/layouts/issues/default/parts/detail/SubdocTree.astro"
+      "agent-ks-engine/src/layouts/file-type-icons.ts",
+      "agent-ks-engine/src/layouts/docs/default/Sidebar.astro",
+      "agent-ks-engine/src/layouts/issues/default/parts/detail/SubdocTree.astro"
     ]
   }
 }

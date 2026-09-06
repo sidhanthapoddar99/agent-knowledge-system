@@ -10,7 +10,7 @@ title: "Consume `updated` in issue layouts (index + detail)"
 
 ## Files likely touched
 
-- `astro-doc-code/src/layouts/issues/default/parts/index/IssuesTable.astro`
-- `astro-doc-code/src/layouts/issues/default/parts/index/IssuesCards.astro`
-- `astro-doc-code/src/layouts/issues/default/DetailLayout.astro` (or wherever the issue header lives)
+- `agent-ks-engine/src/layouts/issues/default/parts/index/IssuesTable.astro`
+- `agent-ks-engine/src/layouts/issues/default/parts/index/IssuesCards.astro`
+- `agent-ks-engine/src/layouts/issues/default/DetailLayout.astro` (or wherever the issue header lives)
 - Possibly a small date-format helper if one doesn't already exist (e.g. `formatDate(iso, 'relative' | 'short')`).

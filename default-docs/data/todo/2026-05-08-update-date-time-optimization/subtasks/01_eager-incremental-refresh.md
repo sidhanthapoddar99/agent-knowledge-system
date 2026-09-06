@@ -33,5 +33,5 @@ Those land in subtasks 02 and 03.
 
 ## Files likely touched
 
-- `astro-doc-code/src/loaders/issue-dates.ts` — stale flag, `isAncestor`, sinceSha-aware walkLog, exported `refreshIssueDateCache()`.
-- `astro-doc-code/src/dev-tools/integration.ts` — watcher handler calls `refreshIssueDateCache()` instead of `invalidateIssueDateCache()`.
+- `agent-ks-engine/src/loaders/issue-dates.ts` — stale flag, `isAncestor`, sinceSha-aware walkLog, exported `refreshIssueDateCache()`.
+- `agent-ks-engine/src/dev-tools/integration.ts` — watcher handler calls `refreshIssueDateCache()` instead of `invalidateIssueDateCache()`.

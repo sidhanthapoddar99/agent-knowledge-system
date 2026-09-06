@@ -1,16 +1,16 @@
 ---
 title: Migrations
-description: The migration/ system — naming, the chain rule, and the upgrade flow
+description: The engine-owned migration system — naming, the chain rule, and the upgrade flow
 sidebar_position: 4
 ---
 
 # Migrations
 
 Migration scripts bring a content tree from an older format to the current
-engine's format. They live at the **repo root**:
+engine's format. They live with the engine:
 
 ```
-<repo-root>/migration/
+<framework-root>/agent-ks-engine/migration/
 ├── README.md                    # the convention, one screen
 ├── 0.1.0_done-to-state.py
 ├── 0.1.1_state-to-status.py
@@ -21,7 +21,7 @@ engine's format. They live at the **repo root**:
 └── 0.2.0_status-colors-to-css.py
 ```
 
-## Why the repo root
+## Why the engine owns them
 
 Migrations ship **with the engine** — same clone, same pull. A consumer who
 updates the framework automatically has exactly the migrations that engine
@@ -98,7 +98,7 @@ Then the tree-wide verification (`agent-ks check issues`,
 
 | Owner | Carries |
 |---|---|
-| Repo root `migration/` | The scripts + `README.md` convention |
+| `agent-ks-engine/migration/` | The scripts + `README.md` convention |
 | Engine (`engine-version.ts`) | The gate + both version anchors |
 | Skill (`agent-ks-config/references/08_migrations.md`) | The operating protocol for AI assistants (detect → confirm → migrate, the never-bump rule) |
 | Docs (this section + user-guide) | The contract, for humans |

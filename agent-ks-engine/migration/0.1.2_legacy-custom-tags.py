@@ -24,9 +24,9 @@ frontmatter. Idempotent: the rewritten output contains none of the legacy
 patterns, so a re-run finds zero instances and is a no-op.
 
 Usage:
-    python3 migration/0.1.2_legacy-custom-tags.py detect  <content-root>
-    python3 migration/0.1.2_legacy-custom-tags.py locate  <content-root>
-    python3 migration/0.1.2_legacy-custom-tags.py migrate <content-root> [--dry-run]
+    python3 agent-ks-engine/migration/0.1.2_legacy-custom-tags.py detect  <content-root>
+    python3 agent-ks-engine/migration/0.1.2_legacy-custom-tags.py locate  <content-root>
+    python3 agent-ks-engine/migration/0.1.2_legacy-custom-tags.py migrate <content-root> [--dry-run]
 
 Exit codes: detect/locate -> 0 clean, 1 instances found; migrate -> 0 on success.
 """

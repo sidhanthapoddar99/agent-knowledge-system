@@ -696,7 +696,7 @@ function missingDescriptionsMessage(
     `Fix: add a \`descriptions\` map alongside \`values\` under \`fields.${field}\`, e.g.`,
     `  "${field}": { "values": [...], "descriptions": { "${missing[0]}": "what it means" } }`,
     `See the migration script`,
-    `(migration/0.1.2_root-settings-schema.py).`,
+    `(agent-ks-engine/migration/0.1.2_root-settings-schema.py).`,
   ].join('\n');
 }
 

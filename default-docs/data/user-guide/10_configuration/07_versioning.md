@@ -37,7 +37,7 @@ engine_version: "0.2.0"
 
 On every dev / build / preview start, the engine compares your declaration
 against its own version and its backward-compatibility floor (both declared in
-`astro-doc-code/src/loaders/engine-version.ts`). Two failure directions, both
+`agent-ks-engine/src/loaders/engine-version.ts`). Two failure directions, both
 hard stops:
 
 **Content too old:**
@@ -45,7 +45,7 @@ hard stops:
 ```
 This content targets engine 0.0.5, but this engine is 0.2.0 and supports content
 0.2.0 or newer. The content must be migrated from 0.0.5 to 0.2.0 — ask your AI to
-do it: the migration scripts live in migration/ at the repo root, named by the
+do it: the migration scripts live in `agent-ks-engine/migration/`, named by the
 version they bring content to. Run each script between 0.0.5 and 0.2.0 in version
 order (detect pass, then --dry-run, then migrate), verify with agent-ks check,
 then set engine_version: "0.2.0" in site.yaml.
@@ -64,7 +64,7 @@ everything it needs to perform the migration.
 
 ## Migrating
 
-Migration scripts live at the **repo root** under `migration/`, shipped with the
+Migration scripts live under `agent-ks-engine/migration/`, shipped with the
 engine itself — updating the framework always brings exactly the migrations that
 engine needs. Naming is `<to-version>_<statement>.py` (e.g.
 `0.1.1_state-to-status.py`); version order is execution order.
@@ -72,7 +72,7 @@ engine needs. Naming is `<to-version>_<statement>.py` (e.g.
 The flow:
 
 1. The gate reports *content targets X, engine is Y*.
-2. Run **every** `migration/` script with a version in `(X, Y]`, ascending —
+2. Run **every** `agent-ks-engine/migration/` script with a version in `(X, Y]`, ascending —
    going 0.5 → 0.7 means checking all scripts above 0.5 up to and including
    0.7. Each is self-documenting (read its docstring) and ships detect +
    `--dry-run` + idempotent migrate. A detect pass with zero hits is a passed
@@ -87,7 +87,7 @@ The flow:
 > a bare version bump doesn't make your content compatible, it just moves the
 > breakage somewhere the engine can no longer point at it.
 
-See `migration/README.md` for the script convention, and the dev-docs
+See `agent-ks-engine/migration/README.md` for the script convention, and the dev-docs
 [Versioning section](../../dev-docs/30_versioning/01_overview.md) for the full engineering
 detail (gate mechanics, floor discipline, authoring migrations).
 
@@ -95,7 +95,7 @@ detail (gate mechanics, floor discipline, authoring migrations).
 
 The contract has a development side, and it is not optional. Any release that
 changes the content format ships with `ENGINE_VERSION` bumped and a
-`migration/<new-version>_<statement>.py` covering the change. What happens to
+`agent-ks-engine/migration/<new-version>_<statement>.py` covering the change. What happens to
 `MIN_CONTENT_VERSION` depends on the **class of change**:
 
 - **Good-to-have migration** — old content still loads and renders correctly on

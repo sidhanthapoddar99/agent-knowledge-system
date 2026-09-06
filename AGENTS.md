@@ -12,9 +12,9 @@ The plugin's skills carry the full operating manual, including the `agent-ks` CL
 
 **Native toolkit.** `agent-ks-cli/` owns the Rust binary, its tests, installer and independent releases. `agent-ks` means the installed release. `agent-ks-dev` is the mise shell alias for the working-tree binary. The different names let maintainers compare them without one shadowing the other. Build with `mise run cli-build`. Run `agent-ks-dev` in an activated shell. Use `mise run agent-ks-dev -- <args>` in a noninteractive shell. Mise supplies the bundled config for both names in this repo. The CLI skill owns invocation and config-selection rules. Consumer tooling ships as the standalone binary; the plugin holds the skills and templates compiled into it.
 
-**Skills are lean and history-free.** A skill (and any published doc) describes the *current* system only — never past formats, removed features, renamed fields, or "content written before X may…" notes. History lives in git and the issue tracker; format transitions live in `migration/` scripts (surfaced through the config skill's `08_migrations.md` protocol, which is the one legitimate place that talks about legacy formats). When editing a skill and you find a historical aside, delete it rather than preserving it — same rule as removed designs in the tracker: negative/removed things are deleted, not narrated.
+**Skills are lean and history-free.** A skill (and any published doc) describes the *current* system only — never past formats, removed features, renamed fields, or "content written before X may…" notes. History lives in git and the issue tracker; format transitions live in `agent-ks-engine/migration/` scripts (surfaced through the config skill's `08_migrations.md` protocol, which is the one legitimate place that talks about legacy formats). When editing a skill and you find a historical aside, delete it rather than preserving it — same rule as removed designs in the tracker: negative/removed things are deleted, not narrated.
 
-**Bundled issue guide.** `astro-doc-code/src/layouts/issues/default/guide.ts` is a TypeScript module holding a static *issue-anatomy* guide (a thin legend of what each section is), rendered on every issue's **Guide** panel. It's the framework-bundled, plugin-independent twin of the `agent-ks-issues` skill's manual — present at every build/deploy even when the plugin isn't installed. Keep the two in sync: the skill carries the full manual, `guide.ts` carries the map.
+**Bundled issue guide.** `agent-ks-engine/src/layouts/issues/default/guide.ts` is a TypeScript module holding a static *issue-anatomy* guide (a thin legend of what each section is), rendered on every issue's **Guide** panel. It's the framework-bundled, plugin-independent twin of the `agent-ks-issues` skill's manual — present at every build/deploy even when the plugin isn't installed. Keep the two in sync: the skill carries the full manual, `guide.ts` carries the map.
 
 **Tracker mental model.** This tracker is comprehensive memory of thought-work for AI-augmented development. Each issue is a folder capturing one coherent unit of *thinking + execution* — deliberate (`brainstorm/`) → write down (`notes/`) → plan (`subtasks/`) → execute (`agent-log/`), with flat `comments/` as the evolution log and `agent-memory/` as AI working state. Ordering is `priority desc, updated desc`; `updated` is derived from git history (most recent commit touching anything under the folder). `created` comes from the folder slug. Best-practices: exactly one `component` per issue — tag by center of gravity even for cross-cutting work (hint-warned by validator when >1); AI-handoff-bound issues should declare ≥1 subtask; a thought earns a full issue only if you can name its component and first subtask in one breath (otherwise: subtask, brainstorm entry, or dump — see the `agent-ks-issues` skill). **Don't add scheduling, release-bucket, or single-type fields without an explicit policy reversal** — they rot under continuous AI-driven shipping. Full framing: `default-docs/data/user-guide/19_issues/01_overview.md` and `02_design-philosophy.md`.
 
@@ -95,10 +95,12 @@ own route and the framework's own business.
 ```
 <repo-root>/
 ├── start, start.cmd         # Entrypoint shims → scripts/start.mjs
-├── astro-doc-code/          # Framework code (src/, package.json, astro.config.mjs, tsconfig.json, bun.lock)
+├── agent-ks-engine/         # Engine source plus engine-owned migrations and release notes
+│   ├── src/, package.json, astro.config.mjs, tsconfig.json, bun.lock
+│   ├── migration/           # Content-format migrations, version-named `<to-version>_<statement>.py`
+│   └── releases/            # Engine release notes consumed by the v* workflow
 ├── default-docs/            # User content (data, config, themes, assets)
 ├── scripts/                 # Development-stage tooling: start.mjs, lib/, bin/, checks/
-├── migration/               # Content-format migrations, version-named `<to-version>_<statement>.py`
 ├── plugins/                 # Repo-local skills and templates
 ├── agent-ks-cli/             # Native Rust toolkit; independent binary releases
 ├── .claude/, .claude-plugin/, .mcp.json
@@ -106,11 +108,11 @@ own route and the framework's own business.
 └── CLAUDE.md, README.md
 ```
 
-The framework lives entirely in `astro-doc-code/`. The repo root holds user content, config, and the `start` wrapper. `paths.ts` distinguishes `frameworkRoot` (`astro-doc-code/`, where `src/` lives) from `projectRoot` (the repo root, where `default-docs/` and `.env` live). `astro.config.mjs` reads `.env` from `repoRoot`, not `process.cwd()` — so it works regardless of which directory you launch from.
+The engine lives in `agent-ks-engine/`. The framework root remains the repository root, which holds the engine, user content, config, plugin, CLI, and `start` wrapper. `paths.ts` distinguishes `engineRoot` (`agent-ks-engine/`, where `src/` lives) from `frameworkRoot` (the repo root, where `default-docs/` and `.env` live). `astro.config.mjs` reads `.env` from `repoRoot`, not `process.cwd()` — so it works regardless of which directory you launch from.
 
 ## Source Code Structure
 
-All paths below are relative to `astro-doc-code/`.
+All paths below are relative to `agent-ks-engine/`.
 
 ```
 src/
@@ -190,11 +192,11 @@ default-docs/
 
 ## Key Architecture Concepts
 
-**Path resolution**: `site.yaml` `paths:` section defines `@key` aliases (`@data`, `@assets`, `@themes`). User aliases are resolved to absolute paths at config load time. System aliases (`@docs`, `@blog`, `@issues`, `@custom`, `@navbar`, `@footer`) remain as layout references resolved at render time. **`@root`** is reserved and resolves to **the framework folder** (parent of `astro-doc-code/`, where `.env` and `default-docs/` live) — NOT the consumer's outer project. Usable both as a direct reference (`@root/default-docs/themes/foo.css`) and inside `paths:` values to compose user aliases against the framework folder (e.g. `default-docs: "@root/default-docs/data"`). Path-traversal escapes are rejected; only `@root` is allowed inside `paths:` values (other aliases are layout/theme concepts and user-to-user references are rejected to avoid ordering ambiguity).
+**Path resolution**: `site.yaml` `paths:` section defines `@key` aliases (`@data`, `@assets`, `@themes`). User aliases are resolved to absolute paths at config load time. System aliases (`@docs`, `@blog`, `@issues`, `@custom`, `@navbar`, `@footer`) remain as layout references resolved at render time. **`@root`** is reserved and resolves to **the framework root** (the repository root, parent of `agent-ks-engine/`, where `.env` and `default-docs/` live) — NOT the consumer's outer project. Usable both as a direct reference (`@root/default-docs/themes/foo.css`) and inside `paths:` values to compose user aliases against the framework root (e.g. `default-docs: "@root/default-docs/data"`). Path-traversal escapes are rejected; only `@root` is allowed inside `paths:` values (other aliases are layout/theme concepts and user-to-user references are rejected to avoid ordering ambiguity).
 
 **Two operating modes**: *Consumer mode* — framework folder is a subfolder of the user's project (`<user-project>/agent-knowledge-system/`), `.env` lives inside it with `CONFIG_DIR=../config` reaching up to the user's content. *Dogfood / framework-dev mode* — framework repo IS the project (this repo), `CONFIG_DIR=./default-docs/config` points at the bundled config. Same code path either way; only `CONFIG_DIR` and the active content location differ. The consumer never edits `default-docs/` — that's the framework's own bundle (its docs, testbed, and source of defaults).
 
-**Version contract**: content declares the engine version it targets in `site.yaml → engine_version: "N.N.N"` (missing → `0.0.0`); the engine carries `ENGINE_VERSION` + `MIN_CONTENT_VERSION` in `src/loaders/engine-version.ts`, and `loadSiteConfig()` hard-stops on content outside `[floor, engine]` — it never starts. Migrations live at repo-root `migration/` (`<to-version>_<statement>.py`, version order = execution order) and cover **every class of format change — frontmatter/field renames, settings-schema reshapes, AND content-syntax changes** (retired/replaced markup in page bodies, e.g. `0.1.2_legacy-custom-tags.py`); syntax migrations are the easiest to forget because old markup doesn't error, it silently misrenders — a release that retires a syntax owes its script. Two non-negotiables: **never bump `engine_version` past the gate** — run the full migration chain first (every script in the range, detect → dry-run → migrate → re-detect; a zero-hit detect is a passed check, not a skipped script) — and **the floor moves only on breaking changes** (`MIN_CONTENT_VERSION` means "oldest content that still works unmigrated", not "newest migration available"). The full discipline — gate mechanics, the breaking vs good-to-have floor decision, the standardized script structure (detect/locate/migrate/verify subcommands over split test-vs-fix function families), authoring + shipping checklist — is documented in **dev-docs `30_versioning/`** (consumer view: user-guide `10_configuration/07_versioning.md`); the config skill's `08_migrations.md` carries the AI operating protocol. Read those rather than re-deriving here.
+**Version contract**: content declares the engine version it targets in `site.yaml → engine_version: "N.N.N"` (missing → `0.0.0`); the engine carries `ENGINE_VERSION` + `MIN_CONTENT_VERSION` in `src/loaders/engine-version.ts`, and `loadSiteConfig()` hard-stops on content outside `[floor, engine]` — it never starts. Migrations live in `agent-ks-engine/migration/` (`<to-version>_<statement>.py`, version order = execution order) and cover **every class of format change — frontmatter/field renames, settings-schema reshapes, AND content-syntax changes** (retired/replaced markup in page bodies, e.g. `0.1.2_legacy-custom-tags.py`); syntax migrations are the easiest to forget because old markup doesn't error, it silently misrenders — a release that retires a syntax owes its script. Two non-negotiables: **never bump `engine_version` past the gate** — run the full migration chain first (every script in the range, detect → dry-run → migrate → re-detect; a zero-hit detect is a passed check, not a skipped script) — and **the floor moves only on breaking changes** (`MIN_CONTENT_VERSION` means "oldest content version that still works unmigrated", not "newest migration available"). The full discipline — gate mechanics, the breaking vs good-to-have floor decision, the standardized script structure (detect/locate/migrate/verify subcommands over split test-vs-fix function families), authoring + shipping checklist — is documented in **dev-docs `30_versioning/`** (consumer view: user-guide `10_configuration/07_versioning.md`); the config skill's `08_migrations.md` carries the AI operating protocol. Read those rather than re-deriving here.
 
 **Theme resolution**: `site.yaml` `theme: "name"` specifies the active theme by name. `theme_paths: ["@themes"]` lists directories to scan for user themes. `resolveThemeName()` scans those directories during `loadSiteConfig()` and resolves to an absolute path. Theme inheritance (`extends` in `theme.yaml`) uses `@theme/` aliases resolved at theme load time.
 
@@ -315,7 +317,7 @@ for one is wrong in another.
 
 | Stage | Who | What is being worked on | Where its tooling lives |
 |---|---|---|---|
-| **Development** | a maintainer of this repo | the engine, the skills, the plugin, the layouts | repo-root `scripts/` and `astro-doc-code/` — **never ships** |
+| **Development** | a maintainer of this repo | the engine, the skills, the plugin, the layouts | repo-root `scripts/` and `agent-ks-engine/` — **never ships** |
 | **Writing & usage** | an AI or a human authoring content | documents and tracker entries in an existing project | `agent-ks-cli/` binary and `plugins/agent-ks/` skills — **ship to consumers** |
 | **Host** | nobody, at run time | a built static site being served | no tooling; it is the artefact |
 
@@ -386,14 +388,14 @@ Consequences worth knowing:
 
 **Windows (native cmd / PowerShell):** use `.\start.cmd` with the same arguments (`.\start.cmd dev`, `.\start.cmd stop`, `.\start.cmd clean build`, …). It execs the same `scripts/start.mjs` every other platform runs — there is no separate Windows port to keep in step any more. Note the leading `.\` — bare `start` is a cmd built-in, which is also why `mise` only puts the bare `start` name on PATH for Unix. Git Bash and WSL use `./start` as on Linux.
 
-If you're inside `astro-doc-code/`, `bun run dev` / `bun run build` / `bun run preview` work directly.
+If you're inside `agent-ks-engine/`, `bun run dev` / `bun run build` / `bun run preview` work directly.
 
 ## Releases — every version is tagged, and written up
 
 Two artefacts per release, **both required**:
 
 1. **An annotated git tag** — `v<engine-version>`, on the commit that moves `ENGINE_VERSION`. It lands on `main` after the work merges; never on a working branch.
-2. **A release note** — `releases/<version>.md`. **Pushing the tag publishes it**: `.github/workflows/release.yml` reads the note, uses its H1 as the release title, and creates the GitHub release — and **fails the tag if the note is missing**, so the rule is checked rather than remembered. `CHANGELOG.md` at the root is a one-row-per-release index that restates nothing.
+2. **A release note** — `agent-ks-engine/releases/<version>.md`. **Pushing the tag publishes it**: `.github/workflows/release.yml` reads the note, uses its H1 as the release title, and creates the GitHub release — and **fails the tag if the note is missing**, so the rule is checked rather than remembered. `CHANGELOG.md` at the root is a one-row-per-release index that restates nothing.
 
 **The note is an upgrade instruction, not a changelog.** Its reader is someone whose build just stopped with a version error, or an AI acting for them; a list of commit subjects helps neither. Every breaking change names **the symptom a consumer sees if they skip it** ("your agent-log status chips render empty and `check issues` errors on every one"), the script that fixes it, and the chain to run — ending with the `site.yaml` bump as the last step.
 
@@ -401,7 +403,7 @@ Two artefacts per release, **both required**:
 
 The standalone CLI has an independent `agent-ks-v<version>` tag series. Its version lives in `agent-ks-cli/Cargo.toml`, notes in `agent-ks-cli/release-notes/`, and build/install/release instructions in `agent-ks-cli/README.md`. `.github/workflows/agent-ks-cli.yml` publishes its binary archives and checksums without changing the engine's latest release. Local build artifacts stay in the ignored `agent-ks-cli/releases/`.
 
-Writing the note is **part of the release, same as the migration script** — a format change that ships without one leaves consumers holding the gate's error message and nothing else. The convention, the template and the rules: [`releases/README.md`](./releases/README.md). Tagging and publishing are the orchestrator's / Sid's; agents write the note and never run a git write command.
+Writing the note is **part of the release, same as the migration script** — a format change that ships without one leaves consumers holding the gate's error message and nothing else. The convention, the template and the rules: [`agent-ks-engine/releases/README.md`](./agent-ks-engine/releases/README.md). Tagging and publishing are the orchestrator's / Sid's; agents write the note and never run a git write command.
 
 ## Key Rules
 
@@ -414,4 +416,4 @@ Writing the note is **part of the release, same as the migration script** — a 
 7. **Split large layout files** at ~400 lines into `parts/` subcomponents; client JS in a single `client.ts`
 8. **Issues** use folder-per-item (`YYYY-MM-DD-<slug>/`) with `settings.json` for metadata; vocabulary in the tracker's root `settings.json`
 9. **`engine_version` in `site.yaml`** — content outside the engine's supported range is a hard startup error (see "Version contract" above); after any migration, bump it to the engine's version
-10. **Every release is tagged `v<engine-version>` and written up** in `releases/<version>.md` — see "Releases" above; the note ships with the release, not after it
+10. **Every release is tagged `v<engine-version>` and written up** in `agent-ks-engine/releases/<version>.md` — see "Releases" above; the note ships with the release, not after it

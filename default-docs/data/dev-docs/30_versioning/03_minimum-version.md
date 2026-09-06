@@ -49,7 +49,7 @@ For any release touching the content format:
 
 1. Bump `ENGINE_VERSION` — which place moves is a judgement about the size of
    the change, stated by position in [Versioning Overview](./01_overview.md).
-2. Ship `migration/<new-version>_<statement>.py` — the change does not exist
+2. Ship `agent-ks-engine/migration/<new-version>_<statement>.py` — the change does not exist
    until its script does.
 3. Decide the class honestly: does *unmigrated* old content still render
    correctly on the new engine? If yes → floor stays. If no → raise

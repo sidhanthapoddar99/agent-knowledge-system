@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * `start` — the entry point for the astro-doc-code framework.
+ * `start` — the entry point for the agent-ks-engine framework.
  *
  * ONE IMPLEMENTATION. This replaces a 447-line bash script and its 397-line
  * PowerShell twin. The twin was the actual problem: every feature had to be
@@ -73,8 +73,8 @@ NOTES
   first request (after 'ready'), and in preview is never.
 
   Caches live in two places with confusingly similar names:
-    astro-doc-code/.astro/               dev + preview LOCK FILES
-    astro-doc-code/node_modules/.astro/  Astro's cacheDir (build cache)
+    agent-ks-engine/.astro/               dev + preview LOCK FILES
+    agent-ks-engine/node_modules/.astro/  Astro's cacheDir (build cache)
   'start clean' wipes both, and stops any running server first, because
   removing a lock file out from under a live server orphans it.
 `.trimStart();

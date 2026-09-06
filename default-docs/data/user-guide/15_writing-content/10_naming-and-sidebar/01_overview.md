@@ -19,7 +19,7 @@ This overview is the **shared reference**: the prefix grammar, the required-vs-o
 
 ## The ordering prefix — one grammar
 
-Most content is ordered with a leading numeric **`NN_` prefix**. The grammar is defined once, in `astro-doc-code/src/parsers/core/order-prefix.ts`, and every loader, parser, and validator defers to it:
+Most content is ordered with a leading numeric **`NN_` prefix**. The grammar is defined once, in `agent-ks-engine/src/parsers/core/order-prefix.ts`, and every loader, parser, and validator defers to it:
 
 | Rule | Detail |
 |------|--------|

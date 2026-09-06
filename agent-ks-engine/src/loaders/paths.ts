@@ -15,18 +15,18 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 // ============================================
-// Project root resolution
+// Engine and framework root resolution
 // ============================================
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 /**
- * The framework root — the directory that owns `src/`, i.e. `astro-doc-code/`.
+ * The engine root — the directory that owns `src/`, i.e. `agent-ks-engine/`.
  *
  * Found by walking UP from this module looking for the marker, rather than by
  * counting directory levels. This module runs from two very different places:
- * from source at `astro-doc-code/src/loaders/`, and from whatever path the
+ * from source at `agent-ks-engine/src/loaders/`, and from whatever path the
  * bundler emits during a build. Counting levels ties a source-tree fact to a
  * bundler layout detail, and that tie has already broken once — Astro 5 emitted
  * chunks at `dist/chunks/`, where `../..` happened to land on the framework
@@ -35,10 +35,10 @@ const __dirname = path.dirname(__filename);
  * for `dist/src/styles`.
  *
  * `src/styles/theme.yaml` is the marker because it is the one file the
- * framework root must contain for anything here to work at all — it is the
+ * engine root must contain for anything here to work at all — it is the
  * theme variable contract every layout is checked against.
  */
-function findFrameworkRoot(startDir: string): string {
+function findEngineRoot(startDir: string): string {
   let dir = startDir;
   for (let i = 0; i < 12; i++) {
     if (fs.existsSync(path.join(dir, 'src', 'styles', 'theme.yaml'))) return dir;
@@ -52,10 +52,10 @@ function findFrameworkRoot(startDir: string): string {
   return path.resolve(startDir, '../..');
 }
 
-const frameworkRoot = findFrameworkRoot(__dirname);
-//   frameworkRoot = <repo>/astro-doc-code (where src/ lives)
-//   projectRoot   = <repo>/               (where default-docs/, .env live)
-const projectRoot = path.resolve(frameworkRoot, '..');
+const engineRoot = findEngineRoot(__dirname);
+//   engineRoot    = <repo>/agent-ks-engine (where src/ lives)
+//   frameworkRoot = <repo>/                 (where default-docs/, .env live)
+const frameworkRoot = path.resolve(engineRoot, '..');
 
 // ============================================
 // Env helper
@@ -94,13 +94,13 @@ interface UserPathEntry {
 const CONFIG_DIR_EARLY = getEnv('CONFIG_DIR', '');
 
 /**
- * Resolve a path relative to project root
+ * Resolve a path relative to the framework root.
  */
 export function resolvePath(relativePath: string): string {
   if (path.isAbsolute(relativePath)) {
     return relativePath;
   }
-  return path.resolve(projectRoot, relativePath);
+  return path.resolve(frameworkRoot, relativePath);
 }
 
 /**
@@ -139,17 +139,17 @@ export const paths: {
   styles: string;
   srcAssets: string;
 } = {
-  root: projectRoot,
+  root: frameworkRoot,
   config: earlyConfigDir,
-  src: path.resolve(frameworkRoot, 'src'),
-  layouts: path.resolve(frameworkRoot, 'src/layouts'),
-  loaders: path.resolve(frameworkRoot, 'src/loaders'),
-  hooks: path.resolve(frameworkRoot, 'src/hooks'),
-  modules: path.resolve(frameworkRoot, 'src/modules'),
+  src: path.resolve(engineRoot, 'src'),
+  layouts: path.resolve(engineRoot, 'src/layouts'),
+  loaders: path.resolve(engineRoot, 'src/loaders'),
+  hooks: path.resolve(engineRoot, 'src/hooks'),
+  modules: path.resolve(engineRoot, 'src/modules'),
 
-  pages: path.resolve(frameworkRoot, 'src/pages'),
-  styles: path.resolve(frameworkRoot, 'src/styles'),
-  srcAssets: path.resolve(frameworkRoot, 'src/assets'),
+  pages: path.resolve(engineRoot, 'src/pages'),
+  styles: path.resolve(engineRoot, 'src/styles'),
+  srcAssets: path.resolve(engineRoot, 'src/assets'),
 };
 
 // ============================================
@@ -246,9 +246,9 @@ export function initPaths(siteConfig: { paths?: Record<string, string>; configDi
       // are layout concepts, and allowing user-to-user references creates
       // declaration-ordering ambiguity.
       const subpath = value === '@root' ? '' : value.slice('@root/'.length);
-      const joined = subpath ? path.join(projectRoot, subpath) : projectRoot;
+      const joined = subpath ? path.join(frameworkRoot, subpath) : frameworkRoot;
       absolutePath = path.normalize(joined);
-      const normalisedRoot = path.normalize(projectRoot);
+      const normalisedRoot = path.normalize(frameworkRoot);
       const inside =
         absolutePath === normalisedRoot ||
         absolutePath.startsWith(normalisedRoot + path.sep);

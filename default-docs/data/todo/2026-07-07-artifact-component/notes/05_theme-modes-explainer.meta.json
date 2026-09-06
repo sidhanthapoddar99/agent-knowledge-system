@@ -8,9 +8,9 @@
     "theme": "site",
     "interactions": "none — static explanatory diagram; re-themes live only via the site's own light/dark toggle (no artifact-local JS)",
     "sources": [
-      "astro-doc-code/src/loaders/artifact-pages.ts",
-      "astro-doc-code/src/pages/artifacts/[...path].ts",
-      "astro-doc-code/src/scripts/artifacts.ts"
+      "agent-ks-engine/src/loaders/artifact-pages.ts",
+      "agent-ks-engine/src/pages/artifacts/[...path].ts",
+      "agent-ks-engine/src/scripts/artifacts.ts"
     ],
     "consumed_tokens": [
       "--color-bg-primary",

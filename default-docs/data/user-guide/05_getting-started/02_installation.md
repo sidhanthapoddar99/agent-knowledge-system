@@ -33,7 +33,7 @@ your-docs-folder/
 └── agent-knowledge-system/       # the framework, just cloned
     ├── .env.example
     ├── start
-    ├── astro-doc-code/
+    ├── agent-ks-engine/
     ├── default-docs/             # framework-bundled docs/themes/template
     └── plugins/
 ```
@@ -57,10 +57,10 @@ It also looks upstream for updates and offers a fast-forward pull (`Y/n`) — at
 
 **To check right now, run `./start update`.** It ignores the 6-hour interval and `START_SKIP_UPDATE_CHECK`, offers the same pull, and tells you why if it cannot — no upstream branch, uncommitted changes, a diverged branch, or no network. It starts no server and runs no build.
 
-If you'd rather drive `bun`/`npm` directly, `cd astro-doc-code/` first:
+If you'd rather drive `bun`/`npm` directly, `cd agent-ks-engine/` first:
 
 ```bash
-cd astro-doc-code
+cd agent-ks-engine
 bun install     # or: npm install
 ```
 
@@ -147,7 +147,7 @@ Add `--detach` to `dev` or `preview` to background the server instead of holding
 the terminal. Without it, `Ctrl-C` stops the server.
 | `./start logs` | Read a running server's output (`--follow` to stream) |
 
-The dev server, build output, and preview all run inside `astro-doc-code/`. If you're already `cd`'d into that folder, the equivalent `bun run dev` / `bun run build` / `bun run preview` work as well.
+The dev server, build output, and preview all run inside `agent-ks-engine/`. If you're already `cd`'d into that folder, the equivalent `bun run dev` / `bun run build` / `bun run preview` work as well.
 
 ### The three server verbs, and why they exist
 
@@ -172,7 +172,7 @@ If something *other than Astro* owns the port, change `PORT` in `.env`.
 
 ```bash
 # From inside agent-knowledge-system/
-rm -rf astro-doc-code/node_modules astro-doc-code/bun.lockb
+rm -rf agent-ks-engine/node_modules agent-ks-engine/bun.lockb
 ./start          # reinstalls dependencies, then dev
 ```
 

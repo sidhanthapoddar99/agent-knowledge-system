@@ -48,7 +48,7 @@ correctness gate proves no page went stale.
 - [cache-manager dependency tracking](../../2026-08-07-astro-7-and-load-time-refactor/subtasks/030_correctness/020_cache-manager-dependency-tracking.md)
   — ~120 lines of dependency tracking with zero call sites. **Built for this.**
   That subtask asks "implement or delete"; this is the case for implement
-- `astro-doc-code/src/loaders/issues.ts` — `computeFolderSignature`, a per-folder
+- `agent-ks-engine/src/loaders/issues.ts` — `computeFolderSignature`, a per-folder
   mtime signature that already exists and is already used
 
 # Todo list

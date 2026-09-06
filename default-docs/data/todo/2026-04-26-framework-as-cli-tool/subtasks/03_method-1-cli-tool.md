@@ -81,7 +81,7 @@ The `services:` block is forward-compatible. Today there's one service; tomorrow
 > **HRM behaviour differs between Method 1 and Method 2 — important to set expectations correctly in the user-guide.**
 >
 > - **Method 1 (CLI, this subtask):** The framework code is fetched into `~/.cache/<name>/versions/<ver>/` and treated as an immutable build artifact. **Content HRM works** — edits to markdown, `site.yaml`, themes, and anything under the user's docs folder hot-reload as expected. **Framework-code HRM does not apply** — you're not expected to edit files inside the cache; the CLI doesn't watch them, and changes there would be wiped on the next `astro-doc upgrade` or version switch.
-> - **Method 2 (from-source, subtask 02):** You have the full framework source in the repo you cloned. **Both content AND framework-code HRM work** — edit a layout, a parser, `astro.config.mjs`, anything under `astro-doc-code/src/`, and Astro's normal HMR picks it up. This is the contributor / framework-hacker path.
+> - **Method 2 (from-source, subtask 02):** You have the full framework source in the repo you cloned. **Both content AND framework-code HRM work** — edit a layout, a parser, `astro.config.mjs`, anything under `agent-ks-engine/src/`, and Astro's normal HMR picks it up. This is the contributor / framework-hacker path.
 >
 > If a Method 1 user wants to hack on framework code, the supported route is to switch to `framework.source: ./local-fork/` (point at a local checkout) — at that point they're effectively in Method 2's editing model with Method 1's CLI ergonomics.
 

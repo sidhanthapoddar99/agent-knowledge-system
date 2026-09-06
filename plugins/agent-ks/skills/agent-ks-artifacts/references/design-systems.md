@@ -2,7 +2,7 @@
 
 A design system is a set of artifact pages plus commentary pages that state the explicit values. The artifact pages are swatches, a type specimen and a component gallery. An agent authors it and maintains it. This file covers the parts of a design system, its two homes, its conventions document, and its verification.
 
-A design-system artifact is always `theme: "self"`. The [mode rule](../SKILL.md#theme-mode) decides that by subject. Read the contract's values with `agent-ks theme tokens --json`, and the declaring files under `@root/astro-doc-code/src/styles/`. Start from those values. Never rely on the route to inject them.
+A design-system artifact is always `theme: "self"`. The [mode rule](../SKILL.md#theme-mode) decides that by subject. Read the contract's values with `agent-ks theme tokens --json`, and the declaring files under `@root/agent-ks-engine/src/styles/`. Start from those values. Never rely on the route to inject them.
 
 ## What a design system is
 
@@ -15,7 +15,7 @@ Treat a design system as a contract that an agent or a builder uses, not a mood 
 | Inventory | The real components and patterns (button, card, table, badge, field) with their variants and states |
 | Usage contract | How each part is composed, with examples |
 | Conventions document | The prose that teaches the system's idiom, the way it is meant to be used. See below |
-| Where-truth-lives pointers | The source files to open before styling: `@root/astro-doc-code/src/styles/theme.yaml`, `color.css`, `font.css` |
+| Where-truth-lives pointers | The source files to open before styling: `@root/agent-ks-engine/src/styles/theme.yaml`, `color.css`, `font.css` |
 
 A published design-system section (Home B, below) is complete when it holds all six. The verify gate decides when it is done.
 

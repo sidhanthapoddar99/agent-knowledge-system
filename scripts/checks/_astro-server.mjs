@@ -13,7 +13,7 @@
  * nothing", and that is a bad half hour.
  *
  * WHERE THE ANSWER LIVES. Astro writes a lock file per project and per command
- * — `astro-doc-code/.astro/dev.json`, `astro-doc-code/.astro/preview.json` —
+ * — `agent-ks-engine/.astro/dev.json`, `agent-ks-engine/.astro/preview.json` —
  * holding the pid, the port and the resolved URLs. It is the same file
  * `astro dev status` reads, so this is the server's own account of itself
  * rather than a guess assembled from `.env`.
@@ -29,7 +29,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
-const ASTRO_DIR = path.join(REPO, 'astro-doc-code', '.astro');
+const ASTRO_DIR = path.join(REPO, 'agent-ks-engine', '.astro');
 
 /** Is this pid still ours to talk to? A lock file outlives a crashed server. */
 function isAlive(pid) {
@@ -78,7 +78,7 @@ export function resolveServerBase(explicit = null, kinds = ['dev', 'preview']) {
 
 /** The line every gate prints when it cannot find a server. One wording, one place. */
 export const NO_SERVER_HELP = [
-  'No running Astro server found (no live lock file in astro-doc-code/.astro/).',
+  'No running Astro server found (no live lock file in agent-ks-engine/.astro/).',
   '',
   '  Start one, then re-run:   ./start dev       (holds the terminal; Ctrl-C stops it)',
   '  Check what is running:    ./start status',

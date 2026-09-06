@@ -19,14 +19,14 @@
       "radius": ["--border-radius-sm", "--border-radius-md", "--border-radius-lg", "--border-radius-full"]
     },
     "sources": [
-      "astro-doc-code/src/layouts/issues/default/parts/detail/SubdocTree.astro",
-      "astro-doc-code/src/layouts/issues/default/parts/detail/SubtaskTree.astro",
-      "astro-doc-code/src/layouts/issues/default/server/state-icon.ts",
-      "astro-doc-code/src/layouts/issues/default/server/agent-log-icons.ts",
-      "astro-doc-code/src/layouts/issues/default/server/helpers.ts",
-      "astro-doc-code/src/layouts/file-type-icons.ts",
-      "astro-doc-code/src/loaders/issues.ts",
-      "astro-doc-code/src/parsers/core/order-prefix.ts",
+      "agent-ks-engine/src/layouts/issues/default/parts/detail/SubdocTree.astro",
+      "agent-ks-engine/src/layouts/issues/default/parts/detail/SubtaskTree.astro",
+      "agent-ks-engine/src/layouts/issues/default/server/state-icon.ts",
+      "agent-ks-engine/src/layouts/issues/default/server/agent-log-icons.ts",
+      "agent-ks-engine/src/layouts/issues/default/server/helpers.ts",
+      "agent-ks-engine/src/layouts/file-type-icons.ts",
+      "agent-ks-engine/src/loaders/issues.ts",
+      "agent-ks-engine/src/parsers/core/order-prefix.ts",
       "default-docs/data/todo/2026-07-01-demo-issue-anatomy-showcase/"
     ]
   }

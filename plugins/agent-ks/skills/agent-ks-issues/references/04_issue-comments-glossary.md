@@ -95,4 +95,4 @@ The CLI picks the next prefix and writes the frontmatter. Without the CLI: list 
 
 ## The Guide panel
 
-Every issue renders a Guide panel. The panel is a legend of the issue anatomy, plus one generated part: the issue's effective kind codes. The framework builds it from `@root/astro-doc-code/src/layouts/issues/default/guide.ts`. You do not write it. It is present even when the plugin is not installed. This skill is the full manual. The Guide is the map. A framework maintainer keeps `guide.ts` in step with this skill.
+Every issue renders a Guide panel. The panel is a legend of the issue anatomy, plus one generated part: the issue's effective kind codes. The framework builds it from `@root/agent-ks-engine/src/layouts/issues/default/guide.ts`. You do not write it. It is present even when the plugin is not installed. This skill is the full manual. The Guide is the map. A framework maintainer keeps `guide.ts` in step with this skill.

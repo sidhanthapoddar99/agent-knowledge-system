@@ -19,8 +19,8 @@ issues-sidebar-collapse:<tracker>:<issue-id>:<folder-path>
 
 ## Files likely touched
 
-- `astro-doc-code/src/layouts/issues/default/parts/detail/SubdocTree.astro`
-- `astro-doc-code/src/layouts/issues/default/scripts/detail/panels.ts` (or a new sibling — e.g. `sidebar-cache.ts`).
+- `agent-ks-engine/src/layouts/issues/default/parts/detail/SubdocTree.astro`
+- `agent-ks-engine/src/layouts/issues/default/scripts/detail/panels.ts` (or a new sibling — e.g. `sidebar-cache.ts`).
 - Reuse the same `read` / `write` / `pruneExpired` helper as subtask 03 if its shape is generic enough; otherwise duplicate the small helper. Decide during implementation — don't over-engineer a shared module if shapes differ.
 
 ## Cross-project caveat

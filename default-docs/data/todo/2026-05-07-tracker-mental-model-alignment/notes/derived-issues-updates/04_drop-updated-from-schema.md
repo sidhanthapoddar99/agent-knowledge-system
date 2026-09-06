@@ -12,4 +12,4 @@ title: "Drop `updated` from issue settings.json schema and validators"
 
 - `plugins/documentation-guide/scripts/issues/check.mjs`, `_lib.mjs`, any `add-*.mjs` that templates a new `settings.json`.
 - All `default-docs/data/todo/*/settings.json` (mass strip — small change per file, scriptable).
-- Any TypeScript / JSON-schema definition of the issue settings shape under `astro-doc-code/src/`.
+- Any TypeScript / JSON-schema definition of the issue settings shape under `agent-ks-engine/src/`.

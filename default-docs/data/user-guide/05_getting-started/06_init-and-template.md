@@ -70,7 +70,7 @@ Then it:
 
 - **Doesn't clone the framework.** Cloning is a network operation with a fork/license decision the user owns. The skill prints the exact clone command at the end.
 - **Doesn't write `.env`.** `.env` lives inside the framework folder which doesn't exist yet. The post-clone step creates it (`echo "CONFIG_DIR=../config" > .env`).
-- **Doesn't write any framework files** (`astro-doc-code/`, `default-docs/`, `start`, etc.). Those arrive with the framework clone.
+- **Doesn't write any framework files** (`agent-ks-engine/`, `default-docs/`, `start`, etc.). Those arrive with the framework clone.
 - **Doesn't replace your existing files.** Pre-flight aborts if `./config/site.yaml` or `./agent-knowledge-system/` already exists.
 
 ## The complete first-time flow

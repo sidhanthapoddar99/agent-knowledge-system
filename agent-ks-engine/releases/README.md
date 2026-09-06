@@ -1,15 +1,15 @@
-# releases/ — one written-up release per version
+# agent-ks-engine/releases/ — one written-up release per version
 
 Every version of this engine gets **two artefacts, and both are required**:
 
 1. **An annotated git tag** — `v<engine-version>`, on the commit that moves
-   `ENGINE_VERSION` in `astro-doc-code/src/loaders/engine-version.ts`. The tag
+   `ENGINE_VERSION` in `agent-ks-engine/src/loaders/engine-version.ts`. The tag
    lands on `main` after the work merges, never on a working branch.
-2. **A release note** — `releases/<version>.md`, this folder. It becomes the
+2. **A release note** — `agent-ks-engine/releases/<version>.md`, this folder. It becomes the
    GitHub release body.
 
-**Pushing the tag publishes the note.** [`.github/workflows/release.yml`](../.github/workflows/release.yml)
-fires on any `v*` tag, reads `releases/<version>.md`, and creates the release
+**Pushing the tag publishes the note.** [`.github/workflows/release.yml`](../../.github/workflows/release.yml)
+fires on any `v*` tag, reads `agent-ks-engine/releases/<version>.md`, and creates the release
 using the note's **H1 as the release title** and **everything below it as the
 body** — so line 1 must be `# <version> — <one line>`. Re-running on an existing
 release updates it rather than erroring, so a corrected note can be re-published.
@@ -17,7 +17,7 @@ release updates it rather than erroring, so a corrected note can be re-published
 **The H1 is stripped from the body on purpose.** GitHub renders the release
 title above the body already, so publishing the file verbatim shows the same
 sentence twice. The file keeps its heading regardless: it is the title's single
-source, and the note has to read as a standalone document here in `releases/`.
+source, and the note has to read as a standalone document here in `agent-ks-engine/releases/`.
 Write the note for the file; the workflow adapts it for the release page.
 
 **And it fails the tag when the note is missing.** That is the point: a release
@@ -28,10 +28,10 @@ a maintainer remembers.
 By hand, if ever needed:
 
 ```bash
-gh release create v0.2.0 --title "0.2.0 — <one line>" --notes-file releases/0.2.0.md
+gh release create v0.2.0 --title "0.2.0 — <one line>" --notes-file agent-ks-engine/releases/0.2.0.md
 ```
 
-**[`CHANGELOG.md`](../CHANGELOG.md) at the repo root is the index** — one row per
+**[`CHANGELOG.md`](../../CHANGELOG.md) at the repo root is the index** — one row per
 release, linking here. Add the row in the same change as the note; it restates
 nothing, so there is nothing to drift.
 

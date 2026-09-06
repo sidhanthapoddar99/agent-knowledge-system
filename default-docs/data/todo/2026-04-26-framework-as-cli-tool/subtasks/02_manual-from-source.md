@@ -18,7 +18,7 @@ Method 1 (CLI) introduces `docs.conf` as a clean, named config file. Method 3 (D
 
 - Use the existing `.env` convention (set `CONFIG_DIR`, `PORT`, `HOST`, `LAYOUT_EXT_DIR` there)
 - Pass env vars on the command line (`PORT=5000 ./start dev`)
-- Edit `astro-doc-code/astro.config.mjs` directly to hardcode anything
+- Edit `agent-ks-engine/astro.config.mjs` directly to hardcode anything
 - Skip `.env` entirely — the framework's defaults work for the in-repo case
 
 `.env` stays as **convention** for Method 2, not a requirement. Setting it via env vars or editing the source is fully supported. This is the point of from-source mode: the framework doesn't impose a config-file abstraction on someone who already has the code in hand.

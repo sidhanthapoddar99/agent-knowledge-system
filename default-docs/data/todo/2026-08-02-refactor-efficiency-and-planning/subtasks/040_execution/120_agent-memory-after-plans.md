@@ -28,7 +28,7 @@ memory, and nothing has grown a replacement "current state" store.
   the section exists, or the docs describe a section nobody can use
 - The four homes: `plugins/agent-ks/skills/agent-ks-issues/references/20_sections/26_agent-memory.md`
   · `default-docs/data/user-guide/19_issues/05_sub-docs/07_agent-memory.md`
-  · `astro-doc-code/src/layouts/issues/default/guide.ts`
+  · `agent-ks-engine/src/layouts/issues/default/guide.ts`
   · `plugins/agent-ks/skills/agent-ks-docs/scripts/issues/new-memory-plan.mjs`
 
 # Todo list

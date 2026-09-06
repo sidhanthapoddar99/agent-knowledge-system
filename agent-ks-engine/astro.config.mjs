@@ -9,7 +9,7 @@ import { devToolbarIntegration } from './src/dev-tools/integration.ts';
 import { initPaths } from './src/loaders/paths.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-// Repo root is one level above astro-doc-code/. .env, default-docs/, and any
+// Repo root is one level above agent-ks-engine/. .env, default-docs/, and any
 // relative paths in .env are interpreted from this root, regardless of cwd.
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -132,7 +132,7 @@ export default defineConfig({
       allowedHosts: siteConfig?.server?.allowedHosts ?? true,
       fs: {
         // Allow the whole repo root so vite can serve files from default-docs/
-        // (which lives outside astro-doc-code/).
+        // (which lives outside agent-ks-engine/).
         allow: [
           repoRoot,
           ...(LAYOUT_EXT_DIR ? [extLayoutsDir] : []),

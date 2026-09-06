@@ -102,7 +102,7 @@ if (!BASE && !STATIC_DIR) {
   console.error(`${NO_SERVER_HELP}\n`);
   console.error('  The environment that SHIPS is a static host, and neither astro dev nor');
   console.error('  astro preview reproduces it. Check that one without any server at all:');
-  console.error('    ./scripts/checks/check-links.mjs --static astro-doc-code/dist --body-only\n');
+  console.error('    ./scripts/checks/check-links.mjs --static agent-ks-engine/dist --body-only\n');
   console.error('  Two servers at once? --compare <url> reports only the links they DISAGREE on,');
   console.error('  which is the dev-vs-built trailing-slash question this script exists for.');
   process.exit(2);

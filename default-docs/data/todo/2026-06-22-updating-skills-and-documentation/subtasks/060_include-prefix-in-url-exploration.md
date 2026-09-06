@@ -14,8 +14,8 @@ explores the inverse: **what if the URL included the prefix** (e.g.
 
 Technically straightforward — the strip is centralized:
 
-- `astro-doc-code/src/parsers/content-types/docs.ts` — slug generation.
-- `astro-doc-code/src/parsers/postprocessors/internal-links.ts` — `stripOrderPrefix` on
+- `agent-ks-engine/src/parsers/content-types/docs.ts` — slug generation.
+- `agent-ks-engine/src/parsers/postprocessors/internal-links.ts` — `stripOrderPrefix` on
   relative links.
 - (Both now go through the shared `parsers/core/order-prefix.ts`.)
 

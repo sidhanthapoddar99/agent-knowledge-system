@@ -20,7 +20,7 @@ The framework behaves differently depending on how it's invoked. This page cover
 | `./start build` | **Production build** | Output static `dist/` for deployment |
 | `./start preview` | **Production preview** | Serves the production build locally for smoke-testing |
 
-Run from the repo root. If you've already `cd`'d into `astro-doc-code/`, the equivalent `bun run dev` / `bun run build` / `bun run preview` work as well.
+Run from the repo root. If you've already `cd`'d into `agent-ks-engine/`, the equivalent `bun run dev` / `bun run build` / `bun run preview` work as well.
 
 The active mode is exposed as `import.meta.env.PROD` — `true` for build / preview, `false` for dev.
 

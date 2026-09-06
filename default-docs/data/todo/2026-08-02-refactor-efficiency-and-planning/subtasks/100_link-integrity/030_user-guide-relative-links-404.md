@@ -35,9 +35,9 @@ the true size, which is why it was counted rather than taken.
 
 - The round that found and measured it:
   [0.2.1](../../agent-log/020_wf_ship-the-split/02_working/180_release-0-2-1.md)
-- Slug generation: `astro-doc-code/src/parsers/content-types/docs.ts` →
+- Slug generation: `agent-ks-engine/src/parsers/content-types/docs.ts` →
   `DocsParser.generateSlug`
-- Exact matching with no fallback: `astro-doc-code/src/pages/lib/route-match.ts`
+- Exact matching with no fallback: `agent-ks-engine/src/pages/lib/route-match.ts`
 
 # Todo list
 

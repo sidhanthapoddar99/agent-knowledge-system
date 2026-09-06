@@ -58,8 +58,8 @@ then, and **8 MB** now. The time is the larger gain: about 2 minutes each day.
 
 **The four cache folders** are `.astro/`, `dist/`, `node_modules/.vite/` and
 `node_modules/.astro/`. Two of those names look the same and are not the same folder:
-`astro-doc-code/.astro/` holds the **lock files** of the servers;
-`astro-doc-code/node_modules/.astro/` holds Astro's **build cache**.
+`agent-ks-engine/.astro/` holds the **lock files** of the servers;
+`agent-ks-engine/node_modules/.astro/` holds Astro's **build cache**.
 
 `build` and `clean` stop a running server first. The lock file is inside `.astro/`. If you
 remove that folder below a live server, the server continues to run, and no command can
@@ -130,7 +130,7 @@ run, in order:
 [start] error: this content cannot run on this engine.
 [start] content targets engine 0.1.2; engine 0.3.0 needs 0.2.0 or newer.
 [start] Migrate the content. Run these 4 script(s), in this order:
-[start]     migration/0.2.0_agent-log-slot-numbering.py
+[start]     agent-ks-engine/migration/0.2.0_agent-log-slot-numbering.py
 [start]     ...
 ```
 

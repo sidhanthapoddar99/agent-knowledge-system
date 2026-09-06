@@ -18,15 +18,15 @@ module. Only their location says otherwise.
 ## References
 
 - [the group overview](./00_overview.md) — why nothing caught this
-- `astro-doc-code/src/pages/lib/` — the five modules
-- `astro-doc-code/src/pages/[...slug].astro` — the real route, and their only consumer
+- `agent-ks-engine/src/pages/lib/` — the five modules
+- `agent-ks-engine/src/pages/[...slug].astro` — the real route, and their only consumer
 - `scripts/checks/check-route-parity.mjs` — imports `static-paths.ts` as a module, by path
 
 ## Todo list
 
-- [ ] Record the current emitted set first: `ls astro-doc-code/dist/lib/` after a build,
+- [ ] Record the current emitted set first: `ls agent-ks-engine/dist/lib/` after a build,
       so "gone" is checkable rather than assumed.
-- [ ] Move the five modules to `astro-doc-code/src/lib/` (peer of `pages/`, not inside
+- [ ] Move the five modules to `agent-ks-engine/src/lib/` (peer of `pages/`, not inside
       it). `mime.ts` and `layout-registry.ts` are pure helpers; `route-match.ts` and
       `static-paths.ts` are the routing pair; `cache-key.ts` belongs with them.
 - [ ] Update importers. Known: `src/pages/[...slug].astro`, the asset routes under
@@ -41,7 +41,7 @@ module. Only their location says otherwise.
 
 ## Done when
 
-- `astro-doc-code/dist/lib/` does not exist after a clean `./start build`.
+- `agent-ks-engine/dist/lib/` does not exist after a clean `./start build`.
 - `./start doctor` passes.
 - `check-route-parity.mjs` runs and reports the same divergence count as before the move
   (the baseline recorded in step 1 of the todo list).

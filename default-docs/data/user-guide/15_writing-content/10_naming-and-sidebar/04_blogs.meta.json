@@ -17,12 +17,12 @@
       "space": ["--spacing-xs", "--spacing-sm", "--spacing-md", "--spacing-lg", "--spacing-xl", "--spacing-2xl", "--border-radius-sm", "--border-radius-md", "--border-radius-lg", "--border-radius-full"]
     },
     "sources": [
-      "astro-doc-code/src/parsers/content-types/blog.ts",
-      "astro-doc-code/src/parsers/core/base-parser.ts",
-      "astro-doc-code/src/loaders/data.ts",
-      "astro-doc-code/src/layouts/blogs/default/IndexBody.astro",
-      "astro-doc-code/src/layouts/blogs/default/PostCard.astro",
-      "astro-doc-code/src/layouts/blogs/default/index.ts"
+      "agent-ks-engine/src/parsers/content-types/blog.ts",
+      "agent-ks-engine/src/parsers/core/base-parser.ts",
+      "agent-ks-engine/src/loaders/data.ts",
+      "agent-ks-engine/src/layouts/blogs/default/IndexBody.astro",
+      "agent-ks-engine/src/layouts/blogs/default/PostCard.astro",
+      "agent-ks-engine/src/layouts/blogs/default/index.ts"
     ]
   }
 }

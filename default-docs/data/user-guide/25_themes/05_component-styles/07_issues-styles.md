@@ -141,7 +141,7 @@ palette wholesale gets told which it missed.
 **A tracker cannot override these, and trying is a hard error.** Status colours used to be
 a `statusColors` map in `settings.json`; a leftover one now fails the build and names the
 CSS variable to use instead. Converting an old tracker: run
-`migration/0.1.3_status-colors-to-css.py`, which reports each non-default colour it
+`agent-ks-engine/migration/0.1.3_status-colors-to-css.py`, which reports each non-default colour it
 removes so you can paste it here.
 
 The layout reads the resolved values at render time and applies them inline-style or as CSS custom properties:

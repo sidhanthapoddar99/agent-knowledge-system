@@ -51,7 +51,7 @@ does not reach the others. Concretely, this has already cost:
 
 - The design: [the path map](../../notes/30_the-path-map.md)
 - The prerequisite: [the shared resolver](./020_the-shared-resolver.md)
-- The code: `astro-doc-code/src/parsers/postprocessors/internal-links.ts`
+- The code: `agent-ks-engine/src/parsers/postprocessors/internal-links.ts`
   (the `contentType !== 'docs'` early return) and `issue-body-links.ts`
 - The measurement that showed the tracker's answer was dev-only:
   [dev and build disagree on the base](../../../2026-08-02-refactor-efficiency-and-planning/subtasks/100_link-integrity/120_dev-and-build-disagree-on-the-base.md)

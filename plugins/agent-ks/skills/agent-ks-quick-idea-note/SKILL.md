@@ -84,7 +84,7 @@ title: "Remember the expanded sidebar section"
 status: open
 ---
 
-The sidebar forgets which section was expanded when you come back to a page. Sid raised it while reading the docs. The tree is built in `@root/astro-doc-code/src/layouts/docs/default/Sidebar.astro`.
+The sidebar forgets which section was expanded when you come back to a page. Sid raised it while reading the docs. The tree is built in `@root/agent-ks-engine/src/layouts/docs/default/Sidebar.astro`.
 
 # 01 To Do
 - [ ] Promote to a real issue when it can name its component and its first subtask. Then delete this entry.

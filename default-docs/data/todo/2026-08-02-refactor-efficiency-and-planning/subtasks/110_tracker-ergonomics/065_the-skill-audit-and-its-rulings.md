@@ -179,7 +179,7 @@ Validated findings only. Severity order.
 | **F2** | `agent-ks-docs/SKILL.md` | *"the one leading-`/` exception is `/assets/…`"* | Reversed in this repo. The tracker skill, `guide.ts`, `CLAUDE.md` and the gate all disagree — `check-link-form.mjs` has no assets branch at all. **Third surviving instance** |
 | **F3** | `SKILL.md` | nesting is *"recursive"*, and *"that is the only nesting rule"* | Capped at **5**; past it the loader drops the content — no page, no error, one `console.warn` in a build of hundreds of lines |
 | **F4** | `SKILL.md` | the prefix is *"optional for issue subdocs"* | Required in four sections, and the validator warns on it |
-| **F5** | `03_overall-issue-tracker-vocabulary.md` | run `migration/0.1.3_status-colors-to-css.py` | The file is `0.2.0_status-colors-to-css.py`. No `0.1.3_` script exists |
+| **F5** | `03_overall-issue-tracker-vocabulary.md` | run `agent-ks-engine/migration/0.1.3_status-colors-to-css.py` | The file is `0.2.0_status-colors-to-css.py`. No `0.1.3_` script exists |
 
 **F3 is the one that loses work rather than erroring.** The cap is
 `MAX_SUBFOLDER_DEPTH = 5`, in `order-prefix.ts` and mirrored in the validator:

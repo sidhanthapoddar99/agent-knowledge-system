@@ -13,13 +13,13 @@ This file says how the on-disk content format moves to a new version without han
 
 If none applies, author content in the current format from the other references.
 
-The contract is this. `site.yaml → engine_version` names the version the content targets. A missing value counts as `0.0.0`. The engine accepts the range `[MIN_CONTENT_VERSION, ENGINE_VERSION]` from `@root/astro-doc-code/src/loaders/engine-version.ts`.
+The contract is this. `site.yaml → engine_version` names the version the content targets. A missing value counts as `0.0.0`. The engine accepts the range `[MIN_CONTENT_VERSION, ENGINE_VERSION]` from `@root/agent-ks-engine/src/loaders/engine-version.ts`.
 
 **Confirm before you apply.** A migration rewrites content in place. Run the detect pass, show the count and the files, and wait for an explicit go-ahead. The one exception is when the user asked you to run that migration.
 
 ## Where migrations live
 
-Migrations live at `@root/migration/<to-version>_<statement>.py`. The code is part of the framework folder. This skill holds only the operating manual.
+Migrations live at `@root/agent-ks-engine/migration/<to-version>_<statement>.py`. The scripts are owned by the engine inside the framework root. This skill holds only the operating manual.
 
 | Fact | Detail |
 |---|---|
@@ -28,7 +28,7 @@ Migrations live at `@root/migration/<to-version>_<statement>.py`. The code is pa
 | Python, stdlib only | One-off runs, outside the live CLI |
 | Self-documenting | The module docstring carries purpose, behaviour and usage. Read it before you run the script |
 
-The convention lives in `@root/migration/README.md`.
+The convention lives in `@root/agent-ks-engine/migration/README.md`.
 
 ## The upgrade flow
 
@@ -36,7 +36,7 @@ The gate exists to catch a format change here, with a clear error. A bare bump o
 
 | Step | Action |
 |---|---|
-| 1 | List every script in `@root/migration/` with a version in `(X, Y]`. All of them, not only the newest |
+| 1 | List every script in `@root/agent-ks-engine/migration/` with a version in `(X, Y]`. All of them, not only the newest |
 | 2 | For each script, ascending, run `detect`. Zero hits is a passed check, not a skipped script |
 | 3 | Where detect finds hits: run `migrate --dry-run`, show the user, get the go-ahead, run `migrate`. Then run `detect` again and confirm zero |
 | 4 | Verify the tree: `agent-ks check issues`, `agent-ks check section …`, and a build |

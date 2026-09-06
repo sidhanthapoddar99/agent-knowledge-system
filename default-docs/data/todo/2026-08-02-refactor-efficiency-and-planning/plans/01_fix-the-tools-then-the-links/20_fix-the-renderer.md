@@ -10,7 +10,7 @@ subtasks:
 ## Todo
 
 - [x] Land the fix in
-      `astro-doc-code/src/parsers/postprocessors/internal-links.ts`, with index
+      `agent-ks-engine/src/parsers/postprocessors/internal-links.ts`, with index
       pages exempted
 - [x] **Control-test both directions over real HTTP** — 418 broken with the shift
       disabled, 55 with it enabled, same tree and same 15,589 links. The page

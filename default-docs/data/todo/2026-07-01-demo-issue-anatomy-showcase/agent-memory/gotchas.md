@@ -8,7 +8,7 @@ A **root-level topic file** — tier 1, which is where most issues stop. These m
 into `knowledge/` only when there are enough that the listing stops being
 readable.
 
-- **The build output is `astro-doc-code/dist/`, not `dist/`.** Looking at the
+- **The build output is `agent-ks-engine/dist/`, not `dist/`.** Looking at the
   root reports "no such directory" over a successful build, which reads as a
   failure.
 - **`astro check` is not installed.** `./start build` is the gate; adding the

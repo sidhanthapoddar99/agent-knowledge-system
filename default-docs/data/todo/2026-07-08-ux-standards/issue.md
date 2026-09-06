@@ -10,7 +10,7 @@ Take the quality-of-life patterns that shipped organically inside the issues lay
 
 The originals shipped un-tracked as part of the issue-anatomy layout work; this issue is their provenance anchor:
 
-- **Truncation-aware tooltip system** — `astro-doc-code/src/scripts/tooltip.ts` (site-wide singleton, loaded from `BaseLayout.astro`). Any element with `data-tip` shows a cursor-anchored tooltip **only when its text is actually cropped** (`scrollWidth > clientWidth`); `data-tip-always` opts non-text triggers (icons) in unconditionally. CSS in `src/styles/element.css` (`.ui-tooltip`).
+- **Truncation-aware tooltip system** — `agent-ks-engine/src/scripts/tooltip.ts` (site-wide singleton, loaded from `BaseLayout.astro`). Any element with `data-tip` shows a cursor-anchored tooltip **only when its text is actually cropped** (`scrollWidth > clientWidth`); `data-tip-always` opts non-text triggers (icons) in unconditionally. CSS in `src/styles/element.css` (`.ui-tooltip`).
 - **Agent-log kind icons with explainer hover** — `src/layouts/issues/default/parts/detail/SubdocTree.astro` resolves the two-letter activity code (`lp`/`au`/`rf`/`it`/`wf`) via `kindMap` and renders a glyph from `server/agent-log-icons.ts` with `data-tip` + `data-tip-always`, so hovering the icon says what the activity kind means.
 - **File-type glyph for non-markdown sub-docs** — `SubdocTree.astro` renders a trailing `.issue-sidebar__doctype` glyph for first-class `.html` artifact sub-docs; markdown is the default and stays unmarked.
 - **Status-tinted counts and badges** — done/total on subtask folders, the "N awaiting review" dot, milestone badges tinted through the theme status vars (`detail.css`, `color-mix` over `--color-success` / `--color-info`).

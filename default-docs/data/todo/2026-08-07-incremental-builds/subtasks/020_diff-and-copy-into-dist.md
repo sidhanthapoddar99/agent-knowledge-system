@@ -37,7 +37,7 @@ edit writes only the pages that actually changed.
 - [make the build deterministic](./010_make-the-build-deterministic.md) — **hard
   prerequisite.** Without it, ~17 pages report as changed on every build forever
 - [the partial-rebuild brainstorm](../../2026-08-07-astro-7-and-load-time-refactor/brainstorm/01_partial-rebuilds.md)
-- `astro-doc-code/astro.config.mjs` — `outDir`, and where a scratch target would go
+- `agent-ks-engine/astro.config.mjs` — `outDir`, and where a scratch target would go
 
 # Todo list
 

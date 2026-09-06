@@ -8,7 +8,7 @@ sidebar_position: 10
 
 **Everything in this page is a contract, not a suggestion.** Layouts that violate these rules break theme switching, dark mode, and user customisation in silent and confusing ways.
 
-The audience for this page is: anyone writing CSS in `astro-doc-code/src/layouts/*` or any custom layout under `layouts/` (when `LAYOUT_EXT_DIR` is set). The discipline described here is why the current codebase has **zero** hardcoded colours / font sizes / spacing values across 457 `var(--…)` uses. Today's state is clean. Your job is to keep it that way.
+The audience for this page is: anyone writing CSS in `agent-ks-engine/src/layouts/*` or any custom layout under `layouts/` (when `LAYOUT_EXT_DIR` is set). The discipline described here is why the current codebase has **zero** hardcoded colours / font sizes / spacing values across 457 `var(--…)` uses. Today's state is clean. Your job is to keep it that way.
 
 ## The core rule
 
@@ -124,7 +124,7 @@ If you genuinely cannot express the intent with an existing token:
 
 1. **First**: re-examine the intent. Is it really different from the closest existing token?
 2. **Second**: consider whether the design can use weight/color/position to carry the meaning instead of a new token.
-3. **Third**: if you still need a new variable, **propose adding it to the contract** (edit `astro-doc-code/src/styles/theme.yaml → required_variables`). The validator will then enforce it across every theme.
+3. **Third**: if you still need a new variable, **propose adding it to the contract** (edit `agent-ks-engine/src/styles/theme.yaml → required_variables`). The validator will then enforce it across every theme.
 
 **Never ship a layout with an invented variable name and a hardcoded fallback.** That path always ends in "feature works in our theme but breaks in a user theme."
 
@@ -182,7 +182,7 @@ See [Dark Mode](./08_dark-mode.md) for the full gotcha list.
 Browsers evaluate `@media` queries at parse time, before CSS variables resolve. So breakpoint pixel values are hardcoded by necessity. Document them consistently:
 
 ```css
-/* Breakpoints — see astro-doc-code/src/styles/breakpoints.css
+/* Breakpoints — see agent-ks-engine/src/styles/breakpoints.css
  * sm: 640px+   md: 768px+   lg: 1024px+   xl: 1280px+
  */
 
@@ -198,17 +198,17 @@ Don't invent per-file breakpoint pixel values. Use the framework's convention.
 ### Grep your own CSS
 
 ```bash
-# Hex colours (run from the repo root — framework source lives in astro-doc-code/)
-grep -rE '#[0-9a-fA-F]{3,8}' astro-doc-code/src/layouts/
+# Hex colours (run from the repo root — framework source lives in agent-ks-engine/)
+grep -rE '#[0-9a-fA-F]{3,8}' agent-ks-engine/src/layouts/
 # Should return empty (or only in comments)
 
 # Literal rgba/rgb/hsl
-grep -rE 'rgba?\([0-9]' astro-doc-code/src/layouts/
-grep -rE 'hsla?\([0-9]' astro-doc-code/src/layouts/
+grep -rE 'rgba?\([0-9]' agent-ks-engine/src/layouts/
+grep -rE 'hsla?\([0-9]' agent-ks-engine/src/layouts/
 
 # Raw pixel values in specific properties
-grep -rE 'font-size:\s*[0-9]' astro-doc-code/src/layouts/
-grep -rE 'padding:\s*[0-9]' astro-doc-code/src/layouts/ | grep -v 'var\(' | grep -v '0\s*;'
+grep -rE 'font-size:\s*[0-9]' agent-ks-engine/src/layouts/
+grep -rE 'padding:\s*[0-9]' agent-ks-engine/src/layouts/ | grep -v 'var\(' | grep -v '0\s*;'
 ```
 
 Any match is a potential contract violation. Investigate each.

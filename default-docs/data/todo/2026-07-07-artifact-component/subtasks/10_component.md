@@ -35,7 +35,7 @@ recorded in the settled-decisions note under `../notes/`.
 
 ## Precedent to copy (verified file:line)
 
-- **Loader**: `astro-doc-code/src/loaders/diagram-pages.ts` (216 lines) — the
+- **Loader**: `agent-ks-engine/src/loaders/diagram-pages.ts` (216 lines) — the
   whole scan/register/sidecar/collision machinery. `DIAGRAM_KINDS` map and
   `DIAGRAM_PAGE_GLOB` at `:36-44`; `assets/` exclusion via `glob(..., { ignore:
   '**/assets/**' })` at `:131-135`; prefix parsing via `parseOrderPrefix`
@@ -46,7 +46,7 @@ recorded in the settled-decisions note under `../notes/`.
   `:170-186`; the by-reference `data-src` container (the excalidraw form, our
   model) built by `diagramContainerHtml` at `:56-71`; slug-collision handling at
   `:189-210`.
-- **Integration hook**: `astro-doc-code/src/loaders/data.ts:269-274` — after
+- **Integration hook**: `agent-ks-engine/src/loaders/data.ts:269-274` — after
   markdown parsing, docs sections only:
   ```ts
   if (contentType === 'docs') {
@@ -55,16 +55,16 @@ recorded in the settled-decisions note under `../notes/`.
     dependencyFiles = diagramPages.dependencyFiles;
   }
   ```
-- **Type union**: `astro-doc-code/src/parsers/types.ts:10` —
+- **Type union**: `agent-ks-engine/src/parsers/types.ts:10` —
   `export type FileType = 'mdx' | 'md' | 'yaml' | 'json' | 'diagram';`
-- **Layout render path**: `astro-doc-code/src/layouts/docs/default/Layout.astro`
+- **Layout render path**: `agent-ks-engine/src/layouts/docs/default/Layout.astro`
   composes `Body.astro` (`<Fragment set:html={content} />` inside
   `.docs-body.markdown-content`) and renders `<Outline>` **only when**
   `outlineHeadings.length > 0` (~`:65`) — so `headings: []` auto-hides the TOC
   column while the sidebar stays.
-- **Client + CSS**: `astro-doc-code/src/scripts/diagrams.ts` (registered from
+- **Client + CSS**: `agent-ks-engine/src/scripts/diagrams.ts` (registered from
   `BaseLayout.astro:139`) is the peer to clone; container chrome lives in
-  `astro-doc-code/src/styles/markdown.css:360-470` (which is already global, so
+  `agent-ks-engine/src/styles/markdown.css:360-470` (which is already global, so
   it styles runtime-created nodes — see CLAUDE.md layout rule 5).
 
 ## Tasks
@@ -174,16 +174,16 @@ recorded in the settled-decisions note under `../notes/`.
 ## Implementation record (status → review)
 
 **Files created (framework):**
-- `astro-doc-code/src/loaders/artifact-pages.ts` — the artifact scanner (clone of
+- `agent-ks-engine/src/loaders/artifact-pages.ts` — the artifact scanner (clone of
   `diagram-pages.ts`): `**/*.html` glob with `assets/` ignore, `NN_` prefix
   (missing → warning, not throw), `allow_artifact_pages: false` opt-out,
   `.meta.json`/`.meta.jsonc` sidecar, `artifactContainerHtml()`, `embed_height`
   override, opaque `artifact:` passthrough onto `entry.data`.
-- `astro-doc-code/src/loaders/first-class-page.ts` — shared `resolveSlugCollisions()`
+- `agent-ks-engine/src/loaders/first-class-page.ts` — shared `resolveSlugCollisions()`
   (Thread A recommendation): one collision pool / one implementation for both the
   diagram and artifact scanners. `diagram-pages.ts` refactored to call it (its own
   error styling preserved via a factory arg).
-- `astro-doc-code/src/scripts/artifacts.ts` — client renderer: builds the same-origin
+- `agent-ks-engine/src/scripts/artifacts.ts` — client renderer: builds the same-origin
   iframe, open-full-page (primary, clean route URL) + in-place expand (secondary),
   `data-theme` propagation into the iframe on load + re-sync via a `data-theme`
   MutationObserver (no invert filter). Registered in `BaseLayout.astro`.

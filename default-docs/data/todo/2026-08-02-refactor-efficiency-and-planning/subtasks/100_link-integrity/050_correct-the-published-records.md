@@ -22,7 +22,7 @@ content links to absolute form.
 - Why the recommended form was the wrong one:
   [`020`](./020_relative-links-are-the-contract.md)
 - The revert: `ee404bb` on `fix/relative-link-rendering`
-- The published note: `releases/0.2.1.md` — tag `v0.2.1`
+- The published note: `agent-ks-engine/releases/0.2.1.md` — tag `v0.2.1`
 
 # Todo list
 
@@ -30,7 +30,7 @@ content links to absolute form.
 with the original wording deliberately left visible, `030`'s and `040`'s
 prescriptions are gone, and `CHANGELOG.md` never carried the claim.
 
-- [x] `releases/0.2.1.md:79` — "All 101 are now root-relative. The section reads
+- [x] `agent-ks-engine/releases/0.2.1.md:79` — "All 101 are now root-relative. The section reads
       210 links checked, 0 broken." **This describes work that has been
       reverted.** Correct it, and say plainly that the diagnosis was wrong
 - [x] Decide **how** to correct a published note: amend in place with a dated
@@ -51,7 +51,7 @@ prescriptions are gone, and `CHANGELOG.md` never carried the claim.
 
 **Corrected 2026-08-03.**
 
-`releases/0.2.1.md` carries a dated `[!CAUTION]` correction block rather than a
+`agent-ks-engine/releases/0.2.1.md` carries a dated `[!CAUTION]` correction block rather than a
 quiet rewrite — the tag is pushed, and two versions of one release note with no
 indication that either changed is the same class of silent wrongness this whole
 group is about. It states what was claimed, what turned out to be true, that the
@@ -79,8 +79,8 @@ because it is the one a stranger reads.
 
 | Record | Claim | Truth |
 |---|---|---|
-| `releases/0.2.1.md:79` | "All 101 are now root-relative" | Reverted. They are relative again |
-| `releases/0.2.1.md:72` | "Every relative link in the issues user-guide was a 404 — all 85" | **True**, and still true — the renderer is unfixed |
+| `agent-ks-engine/releases/0.2.1.md:79` | "All 101 are now root-relative" | Reverted. They are relative again |
+| `agent-ks-engine/releases/0.2.1.md:72` | "Every relative link in the issues user-guide was a 404 — all 85" | **True**, and still true — the renderer is unfixed |
 | [`030`](./030_user-guide-relative-links-404.md) | Root-relative is right because writers cannot count `../` | Wrong. Writers counted correctly; the renderer dropped a level |
 | [`040`](./040_site-wide-link-rot.md) | Fix the other 313 by the same rewrite | Wrong, and dangerous — it would spread the defect |
 
@@ -156,7 +156,7 @@ Keep it, and annotate it with what it actually meant.
 
 # Closed 2026-08-04
 
-**The original job was done on 2026-08-03** — `releases/0.2.1.md` carries a dated
+**The original job was done on 2026-08-03** — `agent-ks-engine/releases/0.2.1.md` carries a dated
 correction block rather than a quiet rewrite, which is the whole point: the tag
 is pushed, and two versions of one release note with no sign either changed is
 the same silent wrongness this group exists to correct. That note now carries

@@ -24,7 +24,7 @@ open-full-page affordance to the existing route, theme propagation, first-party
 trust). Differences to respect: the tracker has no `NN_` requirement for
 sub-docs (numbering is convention for subtasks only), `assets/` stays
 embed-only/excluded as in docs, and the issues layout has its own parts
-(`astro-doc-code/src/layouts/issues/default/` + `parts/`) and its own loader
+(`agent-ks-engine/src/layouts/issues/default/` + `parts/`) and its own loader
 (`loaders/issues.ts`).
 
 ## Tasks

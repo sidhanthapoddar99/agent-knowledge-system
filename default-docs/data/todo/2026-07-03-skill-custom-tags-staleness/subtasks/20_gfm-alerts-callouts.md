@@ -11,7 +11,7 @@ gracefully as a plain blockquote anywhere it isn't styled. This replaces the ret
 subtasks 30/40 document it (never document what doesn't render).
 
 - [ ] Add renderer support in the marked pipeline
-      (`astro-doc-code/src/parsers/renderers/marked.ts`) — evaluate the
+      (`agent-ks-engine/src/parsers/renderers/marked.ts`) — evaluate the
       `marked-alert` extension first; hand-roll a small extension only if it
       doesn't fit the pipeline.
 - [ ] Theme CSS for the five alert types in the built-in default theme

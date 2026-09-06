@@ -22,7 +22,7 @@ Run them from `<chosen_root>/`:
 
 ```bash
 agent-ks start            # dev server at http://localhost:4321; installs dependencies when missing
-agent-ks start build      # production build into astro-doc-code/dist/
+agent-ks start build      # production build into agent-ks-engine/dist/
 agent-ks start preview    # serve the built site
 agent-ks start doctor     # update check, install, full build; run it before you publish
 agent-ks start stop       # stop a running server; `agent-ks start status` shows what runs

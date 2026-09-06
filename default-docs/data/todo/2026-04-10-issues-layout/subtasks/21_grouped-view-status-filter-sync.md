@@ -10,9 +10,9 @@ Docs and plugin-skill updates were dropped on review: this is a UI-behaviour fix
 
 ## Landed in
 
-- `astro-doc-code/src/layouts/issues/default/scripts/index/types.ts` — drop `tab` from `GroupSubState`, leaving only `page`.
-- `astro-doc-code/src/layouts/issues/default/scripts/index/groups.ts` — `buildGroupSection()` now reads `state.state` instead of `sub.tab`; cloned tab strips reflect the same global value.
-- `astro-doc-code/src/layouts/issues/default/scripts/index/client.ts` — single click handler for state tabs (global strip and group clones share one path); also resets every group's page cursor when status changes.
+- `agent-ks-engine/src/layouts/issues/default/scripts/index/types.ts` — drop `tab` from `GroupSubState`, leaving only `page`.
+- `agent-ks-engine/src/layouts/issues/default/scripts/index/groups.ts` — `buildGroupSection()` now reads `state.state` instead of `sub.tab`; cloned tab strips reflect the same global value.
+- `agent-ks-engine/src/layouts/issues/default/scripts/index/client.ts` — single click handler for state tabs (global strip and group clones share one path); also resets every group's page cursor when status changes.
 
 Tested in browser at `/todo`: flat-view status persists across refresh, grouped-view status syncs across all sections, status survives switching grouping dimension, and survives grouped → flat → grouped transitions.
 
@@ -29,7 +29,7 @@ Both symptoms come from the same architectural choice and disappear if we unify 
 
 ## Root cause
 
-`buildGroupSection()` in `astro-doc-code/src/layouts/issues/default/scripts/index/groups.ts` clones the global state-tab strip for each group and tracks each group's selection in a `groupSubs` in-memory `Map` (`sub.tab`). Two consequences:
+`buildGroupSection()` in `agent-ks-engine/src/layouts/issues/default/scripts/index/groups.ts` clones the global state-tab strip for each group and tracks each group's selection in a `groupSubs` in-memory `Map` (`sub.tab`). Two consequences:
 
 - `groupSubs` is **not persisted** — it lives in module-scope memory, never written to `localStorage`. The serializer in `client.ts` (`FILTER_CACHE_KEY`) only writes `state.state` and the other `FilterState` fields. A refresh wipes `groupSubs` to empty, so every group falls back to its default tab.
 - `groupSubs` is **per-group** by construction — the map is keyed by group value, so each group section is a fully independent mini-board. There is no shared status across groups even within a single session.
@@ -47,5 +47,5 @@ After the change:
 
 ## Files likely touched
 
-- `astro-doc-code/src/layouts/issues/default/scripts/index/groups.ts` — drop `tab` from `groupSubs`; have `buildGroupSection()` consume `state.state`; route per-group tab clicks to the same dispatcher the global tabs use.
-- `astro-doc-code/src/layouts/issues/default/scripts/index/client.ts` — confirm the global tab handler is reused (no parallel dispatch path); no schema change to the persisted cache.
+- `agent-ks-engine/src/layouts/issues/default/scripts/index/groups.ts` — drop `tab` from `groupSubs`; have `buildGroupSection()` consume `state.state`; route per-group tab clicks to the same dispatcher the global tabs use.
+- `agent-ks-engine/src/layouts/issues/default/scripts/index/client.ts` — confirm the global tab handler is reused (no parallel dispatch path); no schema change to the persisted cache.

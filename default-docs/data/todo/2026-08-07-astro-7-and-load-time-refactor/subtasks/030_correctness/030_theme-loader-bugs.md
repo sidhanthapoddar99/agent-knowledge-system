@@ -37,7 +37,7 @@ Both defects fixed and proven end to end. Commit `36c0497`.
 ## The cycle now throws — proven against a real build, not read off the code
 
 The detector was extracted into `findExtendsCycle` in
-`astro-doc-code/src/loaders/theme.ts`, called unconditionally from
+`agent-ks-engine/src/loaders/theme.ts`, called unconditionally from
 `loadThemeConfig` **outside** the `import.meta.env.DEV` gate. `validateTheme` calls
 the same function, so what gets reported and what gets enforced cannot drift.
 

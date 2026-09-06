@@ -13,7 +13,7 @@ home. `done:`→`state:` is the first migration that exercises it.
 `state:` is the canonical subtask field (`open → review → closed | cancelled`). `done:` is a
 pre-4-state holdover:
 
-- The loader (`astro-doc-code/src/loaders/issues.ts`) reads `state:` first and only falls
+- The loader (`agent-ks-engine/src/loaders/issues.ts`) reads `state:` first and only falls
   back to `done` when `state` is missing/invalid; the completion boolean it exposes is then
   **re-derived from `state`**, so the frontmatter `done:` value is never trusted when `state`
   is present.

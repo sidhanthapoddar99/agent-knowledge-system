@@ -137,7 +137,7 @@ Configuration supports path aliases for cleaner references:
 | `@assets/file` | `paths.assets/file` → `/assets/file` | Static assets |
 | `@themes/name` | `paths.themes/name` | Custom themes |
 
-> Layout-alias paths above are relative to the framework root (`astro-doc-code/`). From the repo root, the full path is e.g. `astro-doc-code/src/layouts/docs/default/`.
+> Layout-alias paths above are relative to the engine root (`agent-ks-engine/`). From the framework root, the full path is e.g. `agent-ks-engine/src/layouts/docs/default/`.
 
 See [Path Aliases](../05_getting-started/03_aliases.md) for the full reference.
 

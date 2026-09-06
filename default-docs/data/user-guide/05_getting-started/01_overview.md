@@ -30,7 +30,7 @@ your-docs-folder/                  # YOUR project root
 └── agent-knowledge-system/        # the framework — clone or git submodule, self-contained
     ├── .env                       #   CONFIG_DIR=../config (reaches UP to YOUR config/)
     ├── start                      #   ./start dev | build | preview
-    ├── astro-doc-code/            #   framework source — don't touch
+    ├── agent-ks-engine/            #   framework source — don't touch
     ├── default-docs/              #   framework's bundled content — don't touch
     │   ├── config/                #     bundled site config (used in dogfood mode only)
     │   ├── data/                  #     bundled content — including the user-guide

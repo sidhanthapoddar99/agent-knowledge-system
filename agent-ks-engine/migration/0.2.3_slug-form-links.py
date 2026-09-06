@@ -60,10 +60,10 @@ refuses rather than guesses.
 Idempotent: a rewritten target resolves on disk, so a re-run finds nothing.
 
 Usage:
-    python3 migration/0.2.3_slug-form-links.py detect  <content-root>
-    python3 migration/0.2.3_slug-form-links.py locate  <content-root>
-    python3 migration/0.2.3_slug-form-links.py migrate <content-root> [--dry-run]
-    python3 migration/0.2.3_slug-form-links.py verify  <content-root>
+    python3 agent-ks-engine/migration/0.2.3_slug-form-links.py detect  <content-root>
+    python3 agent-ks-engine/migration/0.2.3_slug-form-links.py locate  <content-root>
+    python3 agent-ks-engine/migration/0.2.3_slug-form-links.py migrate <content-root> [--dry-run]
+    python3 agent-ks-engine/migration/0.2.3_slug-form-links.py verify  <content-root>
 
 `<content-root>` is your data directory — the one holding your docs sections and
 tracker (`default-docs/data` in the framework repo).

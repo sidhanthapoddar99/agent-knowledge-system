@@ -137,7 +137,7 @@ them — so fixing the consumer first would create exactly the stale-copy proble
 the precedence rule exists to prevent.
 
 **`guide.ts` moves with the skill.** The bundled anatomy guide
-(`astro-doc-code/src/layouts/issues/default/guide.ts`) is the plugin-independent
+(`agent-ks-engine/src/layouts/issues/default/guide.ts`) is the plugin-independent
 twin of the `agent-ks-issues` skill. It is rendered on every issue's Guide panel
 whether or not the plugin is installed, so a skill change that leaves it stale
 ships a contradiction to every consumer. `050` covers it; do not let it slip.

@@ -170,7 +170,7 @@ They used to live here as a `statusColors` map, and that had two problems CSS do
 **A leftover `statusColors` map now fails the build rather than being ignored.** An
 override that silently stops applying surfaces weeks later as *"the colours look wrong
 somehow"*, with nothing pointing at the cause. Run
-`migration/0.2.0_status-colors-to-css.py` — it reports every non-default colour it removes
+`agent-ks-engine/migration/0.2.0_status-colors-to-css.py` — it reports every non-default colour it removes
 so you can re-declare it in CSS, and tells you to check the comments left behind.
 
 The eight statuses group into four categories — **Not Started** (`open`, `blocked`) ·
@@ -185,7 +185,7 @@ build/dev startup (and fails `agent-ks check issues`): a stray `values` list the
 read as authoritative and silently redefine the vocabulary, so the loader rejects it loudly
 rather than ignoring it. An unknown status *value* on an issue is likewise a hard error, not
 a silent default. Migrating an old `fields.status` block? Run
-`migration/2026-07-03_root-settings-schema.py` — it detects the block and guides the rewrite.
+`agent-ks-engine/migration/2026-07-03_root-settings-schema.py` — it detects the block and guides the rewrite.
 
 #### Why status is fixed, and everything else isn't
 
@@ -211,7 +211,7 @@ lifecycle vocabulary rather than letting each project drift.
 
 #### The single source of truth (for framework maintainers)
 
-There is exactly one place the vocabulary lives: `astro-doc-code/src/loaders/issue-status.ts`
+There is exactly one place the vocabulary lives: `agent-ks-engine/src/loaders/issue-status.ts`
 (statuses, categories, default colors, helpers). The loader, layouts, `guide.ts` panel,
 and — mirrored on the JS side — the `agent-ks` CLI all consume it. A framework
 maintainer changing the lifecycle edits that one constant (and its CLI mirror in
@@ -232,7 +232,7 @@ that's a framework-level decision, not a per-tracker config change.
 }
 ```
 
-Why required: these glosses are the controlled definition every issue author and AI agent reads when deciding where a new issue belongs, and they render verbatim in the tracker's **Guide** modal (the **Guide** button beside the table/card toggle on the [list view](../07_ui/01_list-view.md)). Keeping them mandatory stops `component` from silently drifting into a junk drawer. To backfill descriptions on an older tracker, run `migration/2026-07-03_root-settings-schema.py`.
+Why required: these glosses are the controlled definition every issue author and AI agent reads when deciding where a new issue belongs, and they render verbatim in the tracker's **Guide** modal (the **Guide** button beside the table/card toggle on the [list view](../07_ui/01_list-view.md)). Keeping them mandatory stops `component` from silently drifting into a junk drawer. To backfill descriptions on an older tracker, run `agent-ks-engine/migration/2026-07-03_root-settings-schema.py`.
 
 ### Colors
 

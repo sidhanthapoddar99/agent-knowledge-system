@@ -21,10 +21,10 @@ scoped or the question is closed as "the tracker is fine".
 - The docs-side defect this may or may not mirror:
   [`010`](./010_renderer-drops-a-url-level.md)
 - The tracker's own link pass, which claims sub-docs are already correct:
-  `astro-doc-code/src/parsers/postprocessors/issue-body-links.ts` — see the
+  `agent-ks-engine/src/parsers/postprocessors/issue-body-links.ts` — see the
   header comment, lines 11–13
 - The shared pass that runs for every content type:
-  `astro-doc-code/src/parsers/postprocessors/internal-links.ts`
+  `agent-ks-engine/src/parsers/postprocessors/internal-links.ts`
 - The measurement that first counted tracker breakage:
   [`040`](./040_site-wide-link-rot.md) — 3,978 of 43,580
 

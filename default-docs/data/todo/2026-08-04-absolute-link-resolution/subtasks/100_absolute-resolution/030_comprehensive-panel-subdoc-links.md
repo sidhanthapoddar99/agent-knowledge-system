@@ -65,9 +65,9 @@ by hand or scripted.
 - The design: [the path map](../../notes/30_the-path-map.md)
 - The mechanism this shares a root cause with:
   [the trailing-slash matrix](../../notes/10_the-trailing-slash-matrix.html)
-- The panel: `astro-doc-code/src/layouts/issues/default/parts/` (`panels.ts`)
+- The panel: `agent-ks-engine/src/layouts/issues/default/parts/` (`panels.ts`)
 - The interim postprocessor this deletes:
-  `astro-doc-code/src/parsers/postprocessors/issue-body-links.ts`
+  `agent-ks-engine/src/parsers/postprocessors/issue-body-links.ts`
 - Recorded as an architectural rule for the Go rewrite in
   [the structure note](../../../2026-05-08-runtime-stack-migration/notes/architecture-update/01_the-structure.md)
   — per-structure URL rules own the file-path → URL mapping, and the renderer

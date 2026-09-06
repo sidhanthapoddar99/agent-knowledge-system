@@ -16,6 +16,6 @@ Don't write to the cache from the sync logic — sync is a render-time view conc
 
 ## Files likely touched
 
-- `astro-doc-code/src/layouts/docs/default/Sidebar.astro` (and any `parts/`).
-- `astro-doc-code/src/layouts/docs/compact/` if it has a sidebar variant.
+- `agent-ks-engine/src/layouts/docs/default/Sidebar.astro` (and any `parts/`).
+- `agent-ks-engine/src/layouts/docs/compact/` if it has a sidebar variant.
 - A small client-side script that runs on `DOMContentLoaded` and on `astro:page-load`.

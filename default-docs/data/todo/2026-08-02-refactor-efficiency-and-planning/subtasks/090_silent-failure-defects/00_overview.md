@@ -42,7 +42,7 @@ the defect is reintroduced — not merely a note describing it.
   [`070` — audit follow-ups](../070_audit-followups/)
 - The fourth instance of the same shape, which became its own group:
   [`100` — link integrity](../100_link-integrity/)
-- The release that shipped the fixes for `020` and `030`: `releases/0.2.1.md`
+- The release that shipped the fixes for `020` and `030`: `agent-ks-engine/releases/0.2.1.md`
 
 # Todo list
 

@@ -8,7 +8,7 @@ Dark mode is not a second theme. It is a switch inside one theme. The navbar tog
 
 | What | Where |
 |---|---|
-| The built-in default theme | `@root/astro-doc-code/src/styles/`; read-only. Referenced as `@theme/default` |
+| The built-in default theme | `@root/agent-ks-engine/src/styles/`; read-only. Referenced as `@theme/default` |
 | The bundled themes `full-width` and `minimal` | `@root/default-docs/themes/<name>/`; scan with `theme_paths: ["@root/default-docs/themes"]` |
 | User themes | the project's `themes/<name>/`; scan with `theme_paths: ["@themes"]` |
 | The active theme | `site.yaml → theme: "<name>"`. Themes are site-wide; a `pages:` entry cannot set one |
@@ -83,7 +83,7 @@ Three things break dark mode without an error. A hardcoded hex or `rgba()` value
 
 ## The contract
 
-Every theme must define, or inherit, every variable in `@root/astro-doc-code/src/styles/theme.yaml → required_variables`. A variable is on the list only when a shipped layout reads it. The list does not fill in a scale for neatness. So `--font-weight-normal` is required and `--font-weight-bold` is not. `agent-ks theme tokens --json` prints the live values for light and dark. The groups:
+Every theme must define, or inherit, every variable in `@root/agent-ks-engine/src/styles/theme.yaml → required_variables`. A variable is on the list only when a shipped layout reads it. The list does not fill in a scale for neatness. So `--font-weight-normal` is required and `--font-weight-bold` is not. `agent-ks theme tokens --json` prints the live values for light and dark. The groups:
 
 | Group | Variables |
 |---|---|

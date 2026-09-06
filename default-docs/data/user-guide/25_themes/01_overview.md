@@ -88,7 +88,7 @@ No runtime switching — the active theme is baked in at build/dev-start time. S
 
 | Kind | Where | How to activate |
 |---|---|---|
-| **Built-in default** | `astro-doc-code/src/styles/` (inside the framework) | `theme: "default"` |
+| **Built-in default** | `agent-ks-engine/src/styles/` (inside the framework) | `theme: "default"` |
 | **Framework-bundled** | `default-docs/themes/<name>/` (e.g. `full-width`, `minimal`) | `theme: "<name>"` with `theme_paths: ["@root/default-docs/themes"]` |
 | **Your custom** | `themes/<name>/` (your project root) | `theme: "<name>"` with `theme_paths: ["@themes"]` |
 

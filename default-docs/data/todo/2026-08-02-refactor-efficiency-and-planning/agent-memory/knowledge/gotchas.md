@@ -44,7 +44,7 @@ Run the repo copy explicitly:
 bun plugins/agent-ks/skills/agent-ks-docs/scripts/issues/check.mjs --tracker default-docs/data/todo
 ```
 
-## The framework build output is `astro-doc-code/dist/`, not `dist/`
+## The framework build output is `agent-ks-engine/dist/`, not `dist/`
 
 `./start build` runs from the repo root but Astro's `outDir` is inside the
 engine folder. Looking for `dist/` at the root reports "no such directory" over

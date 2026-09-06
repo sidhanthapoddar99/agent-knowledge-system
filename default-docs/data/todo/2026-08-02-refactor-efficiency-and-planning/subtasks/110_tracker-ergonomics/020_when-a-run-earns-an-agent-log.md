@@ -380,7 +380,7 @@ in the one home, because instances are what make a rule applicable.
 | Surface | Carries |
 |---|---|
 | `references/20_sections/24_agent-logs.md` | the full rule — question, triggers, floor, limits with both prohibitions, verify-vs-audit, the Ask cap, the routing table |
-| `agent-ks-issues/SKILL.md` · `astro-doc-code/src/layouts/issues/default/guide.ts` | the short form, twice, so it holds with or without the plugin |
+| `agent-ks-issues/SKILL.md` · `agent-ks-engine/src/layouts/issues/default/guide.ts` | the short form, twice, so it holds with or without the plugin |
 | `scripts/issues/new-agent-log.mjs` `--help` | the rule at the point of use, above the flags |
 
 **The acceptance test passed: 14 of 14 verdicts unchanged.** The case worth

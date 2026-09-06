@@ -45,8 +45,8 @@ const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '.
 
 // Dependencies live in the framework's node_modules, not the repo root — this
 // script has no package.json of its own and should not grow one.
-const yaml = createRequire(path.join(REPO, 'astro-doc-code', 'package.json'))('js-yaml');
-const SRC = path.join(REPO, 'astro-doc-code', 'src');
+const yaml = createRequire(path.join(REPO, 'agent-ks-engine', 'package.json'))('js-yaml');
+const SRC = path.join(REPO, 'agent-ks-engine', 'src');
 const STYLES = path.join(SRC, 'styles');
 const JSON_OUT = process.argv.includes('--json');
 

@@ -16,7 +16,7 @@ The six layers of this project, and they are never interchangeable:
 |---|---|
 | **agent-ks skill text** | `plugins/agent-ks/skills/**/*.md` — what an agent reads and obeys |
 | **agent-ks skill tool-code** | `plugins/agent-ks/skills/**/scripts/**` — the CLI and the gates |
-| **engine code** | `astro-doc-code/src/**` — the renderer, loaders, layouts |
+| **engine code** | `agent-ks-engine/src/**` — the renderer, loaders, layouts |
 | **docs / issues / blog content** | `default-docs/data/**` — the documents themselves |
 | **comments in code** | headers and rationale inside either code tree |
 | **this issue's records** | `subtasks/`, `agent-log/`, `notes/`, this folder |

@@ -28,5 +28,5 @@ Don't pre-empt it here — write the keys flat for now.
 
 ## Files likely touched
 
-- `astro-doc-code/src/layouts/docs/default/Sidebar.astro` and any `parts/`.
-- A client-side helper module — e.g. `astro-doc-code/src/layouts/docs/default/scripts/sidebar-cache.ts` (mirroring the issues layout's `scripts/index/` pattern) — that exports `read()`, `write()`, `pruneExpired()`.
+- `agent-ks-engine/src/layouts/docs/default/Sidebar.astro` and any `parts/`.
+- A client-side helper module — e.g. `agent-ks-engine/src/layouts/docs/default/scripts/sidebar-cache.ts` (mirroring the issues layout's `scripts/index/` pattern) — that exports `read()`, `write()`, `pruneExpired()`.

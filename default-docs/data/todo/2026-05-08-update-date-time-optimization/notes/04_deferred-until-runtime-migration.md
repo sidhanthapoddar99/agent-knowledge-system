@@ -36,8 +36,8 @@ The "implementation surface" target changes:
 
 | Today's target | Post-migration target |
 |---|---|
-| `astro-doc-code/src/loaders/issue-dates.ts` (TypeScript) | `internal/tracker/derived_dates.go` (Go) |
-| `astro-doc-code/src/dev-tools/integration.ts` (watcher wiring) | `internal/watcher/watcher.go` + tracker package |
+| `agent-ks-engine/src/loaders/issue-dates.ts` (TypeScript) | `internal/tracker/derived_dates.go` (Go) |
+| `agent-ks-engine/src/dev-tools/integration.ts` (watcher wiring) | `internal/watcher/watcher.go` + tracker package |
 | `cache.delete()` + `moduleGraph.invalidateModule` | A single `sync.Map.Delete` call. No SSR isolation; no dual-invalidation needed. |
 | `chokidar` + custom `.git/HEAD` watching | `fsnotify` + same logic |
 | Per-branch JSON under `.cache/<repo>/<branch>.json` | Same path, same shape. Still valid. |

@@ -16,7 +16,7 @@ first-class diagram pages that already work keep working.
 
 - [the issue](../issue.md) — what was measured, why each loader misses it, and
   the shape of the fix.
-- `astro-doc-code/src/loaders/diagram-pages.ts` — the `dependencyFiles`
+- `agent-ks-engine/src/loaders/diagram-pages.ts` — the `dependencyFiles`
   contract this mirrors. It is the existing right answer for "a page depends
   on a file that is not the page".
 

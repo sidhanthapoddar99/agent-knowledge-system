@@ -155,7 +155,7 @@ For comparison, today's lazy model: T=8s the user hits /todo, T=8.5s render fini
 
 ## Scenario 5 — You commit something OUTSIDE the tracker (no-op for us)
 
-You changed `astro-doc-code/src/loaders/issues.ts` and committed. Nothing about the tracker changed.
+You changed `agent-ks-engine/src/loaders/issues.ts` and committed. Nothing about the tracker changed.
 
 ```
 T=0ms      `git commit` lands. .git/refs/heads/<branch> rewrites.

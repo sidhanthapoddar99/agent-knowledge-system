@@ -94,7 +94,7 @@ prescribed converting content to site-absolute form. That was carried out on
 
 - The revert commit: `ee404bb` on branch `fix/relative-link-rendering`
 - The defective transform:
-  `astro-doc-code/src/parsers/postprocessors/internal-links.ts`
+  `agent-ks-engine/src/parsers/postprocessors/internal-links.ts`
 - The tool the wrong form would have blinded:
   `plugins/agent-ks/skills/agent-ks-docs/scripts/_links.mjs` → `isIgnorableTarget`
 - The same class of silent-success defect, three more instances:

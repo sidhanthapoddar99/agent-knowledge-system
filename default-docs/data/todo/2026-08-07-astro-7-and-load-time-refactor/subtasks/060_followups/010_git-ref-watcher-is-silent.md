@@ -23,11 +23,11 @@ and fixed, and the finding is written down either way.
   — where this was found, and where it currently blocks another question
 - [stage 30](../../plans/01_implementation/30_de-risk-the-upgrade.md) — the cache
   work that removed the reason the `moduleGraph` reach-in exists
-- `astro-doc-code/src/dev-tools/server/git-ref-watcher.ts` — the watcher, and the
+- `agent-ks-engine/src/dev-tools/server/git-ref-watcher.ts` — the watcher, and the
   two reasons it exists separately from Vite's
-- `astro-doc-code/src/dev-tools/integration.ts` — where it is wired, and the
+- `agent-ks-engine/src/dev-tools/integration.ts` — where it is wired, and the
   `moduleGraph` reach-in inside its handler
-- `astro-doc-code/src/loaders/issue-dates.ts` — what the invalidation clears
+- `agent-ks-engine/src/loaders/issue-dates.ts` — what the invalidation clears
 
 # Todo list
 
@@ -73,7 +73,7 @@ correct and the diagnosis "possible Astro 7 regression" was wrong.
 
 ## The fix — a watcher of our own, on directories
 
-`astro-doc-code/src/dev-tools/server/git-ref-watcher.ts`. Two decisions in it, both
+`agent-ks-engine/src/dev-tools/server/git-ref-watcher.ts`. Two decisions in it, both
 non-obvious enough to be written into the file:
 
 **It does not use Vite's watcher at all.** The alternative was to un-ignore `.git`

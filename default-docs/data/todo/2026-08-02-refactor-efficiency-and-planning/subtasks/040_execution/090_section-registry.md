@@ -32,7 +32,7 @@ a test and deleting it again.
 
 # Outcomes and Next Steps
 
-`astro-doc-code/src/loaders/issue-sections.ts` is now the single declaration of
+`agent-ks-engine/src/loaders/issue-sections.ts` is now the single declaration of
 what sections exist. A section entry states its **identity** — folder, URL
 segment, the field it lands on, panel-key prefix, sidebar label and icon, empty
 label, which reader shape it uses, whether the loader walks subfolders, whether
@@ -100,7 +100,7 @@ is what let the title and layout ladders collapse.
   `aria-current="page"` on its own sidebar entry, and the panel key
   `scratch-01_throwaway` — so panel routing picked it up from the prefix map
   with no client-side edit.
-- After removal: no `scratch` reference anywhere under `astro-doc-code/src/`, no
+- After removal: no `scratch` reference anywhere under `agent-ks-engine/src/`, no
   orphan directory in `dist/`, `git status` shows only the intended files.
 - `agent-ks check issues` — 0 errors, 2 pre-existing warnings unrelated to this.
 

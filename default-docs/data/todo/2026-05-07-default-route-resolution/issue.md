@@ -18,9 +18,9 @@ Actual: lands on a `to_be_written` stub page deep in the tree.
 
 The default-route resolver isn't sorting by `XX_` prefix correctly across all depths, or it's preferring a deeper match when a shallower one exists, or it's matching alphabetically rather than by numeric prefix. Worth checking:
 
-- `astro-doc-code/src/loaders/data.ts` — how it orders entries.
-- `astro-doc-code/src/pages/[...slug].astro` — how it picks the default redirect target for a section root.
-- `astro-doc-code/src/pages/lib/route-match.ts` and `static-paths.ts`.
+- `agent-ks-engine/src/loaders/data.ts` — how it orders entries.
+- `agent-ks-engine/src/pages/[...slug].astro` — how it picks the default redirect target for a section root.
+- `agent-ks-engine/src/pages/lib/route-match.ts` and `static-paths.ts`.
 
 ## Why this matters
 

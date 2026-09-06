@@ -14,7 +14,7 @@ compacted, and what does a consumer install actually cost?
 |---|---|---|
 | Git history, packed | **~6 MB** (471 commits; the 22 MB local `.git` is un-gc'd loose objects) | yes, on clone |
 | Tracked working tree | ~10 MB (`default-docs/` 7 MB, `src/` 1.8 MB, `plugins/` 1 MB) | yes |
-| `astro-doc-code/dist/` | 115 MB | no — gitignored build output |
+| `agent-ks-engine/dist/` | 115 MB | no — gitignored build output |
 | `node_modules/` | 419 MB (apparent; see hardlink finding below) | no — installed locally |
 
 A fresh full clone is **~16 MB**. The largest blobs in history are lockfile

@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 
 /** Repo root — two levels up from scripts/lib/. */
 export const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
-export const FRAMEWORK = path.join(REPO, 'astro-doc-code');
+export const FRAMEWORK = path.join(REPO, 'agent-ks-engine');
 
 /**
  * Parse the repo-root `.env` and apply an explicit process CONFIG_DIR override.

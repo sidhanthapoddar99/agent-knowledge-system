@@ -108,7 +108,7 @@ The canonical shape for Topologies A/B/C (build + serve in one image):
 # Stage 1 — build
 FROM oven/bun:latest AS builder
 WORKDIR /app
-# Install the CLI (or use Method 2 from-source by copying astro-doc-code/)
+# Install the CLI (or use Method 2 from-source by copying agent-ks-engine/)
 RUN curl -fsSL https://<install-domain>/install.sh | sh
 COPY docs.yaml ./
 COPY config/ ./config/

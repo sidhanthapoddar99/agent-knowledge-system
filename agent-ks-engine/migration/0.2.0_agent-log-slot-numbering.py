@@ -12,7 +12,7 @@ activities. The three used to be identified by NAME:
         summary.md
         working/
         debrief/
-        100_wf_codec-migration/     <- a child activity
+        100_wf_codec-agent-ks-engine/migration/     <- a child activity
 
 They are now identified by PREFIX:
 
@@ -20,7 +20,7 @@ They are now identified by PREFIX:
         01_summary.md
         02_working/
         03_debrief/
-        100_wf_codec-migration/     <- still a child activity
+        100_wf_codec-agent-ks-engine/migration/     <- still a child activity
 
 and the read-time rule became arithmetic: **a folder inside an activity whose
 numeric prefix is below 100 is one of that run's own slots; 100 or above is a
@@ -80,10 +80,10 @@ names each one with the command to fix it.
 
 USAGE
 -----
-    python3 migration/0.2.0_agent-log-slot-numbering.py detect  [--root .]
-    python3 migration/0.2.0_agent-log-slot-numbering.py migrate [--root .] [--dry-run]
-    python3 migration/0.2.0_agent-log-slot-numbering.py relink  [--root .] [--dry-run]
-    python3 migration/0.2.0_agent-log-slot-numbering.py verify  [--root .]
+    python3 agent-ks-engine/migration/0.2.0_agent-log-slot-numbering.py detect  [--root .]
+    python3 agent-ks-engine/migration/0.2.0_agent-log-slot-numbering.py migrate [--root .] [--dry-run]
+    python3 agent-ks-engine/migration/0.2.0_agent-log-slot-numbering.py relink  [--root .] [--dry-run]
+    python3 agent-ks-engine/migration/0.2.0_agent-log-slot-numbering.py verify  [--root .]
 
 `detect` changes nothing.
 

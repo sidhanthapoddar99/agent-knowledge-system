@@ -32,7 +32,7 @@ It compares environments rather than trusting one, because there are **three** a
 ./start dev                        # another terminal; Ctrl-C stops it
 scripts/checks/check-links.mjs            # no --base: crawls whatever server is running
 scripts/checks/check-links.mjs --base http://localhost:3088 --compare http://localhost:4322
-scripts/checks/check-links.mjs --static astro-doc-code/dist --body-only   # no server at all
+scripts/checks/check-links.mjs --static agent-ks-engine/dist --body-only   # no server at all
 ```
 
 ## `check-theme-contract.mjs`
@@ -99,7 +99,7 @@ scripts/checks/check-route-parity.mjs --json --limit 200
 
 Both server-backed scripts used to default to `http://localhost:4321`. That is *Astro's* default, not this project's — `.env` sets `PORT`, and a consumer sets whatever they like. Pointed at a dead port neither hangs, but each fails in its own vocabulary: "no HTML pages reachable", or every URL reported as divergent. Both read as a site defect when the real answer is that nothing was listening.
 
-So with no `--base` they ask **Astro's own lock file** — `astro-doc-code/.astro/dev.json`, the same file `./start status` reads — which server is running, and print the port and pid they found. The shared reader is `scripts/checks/_astro-server.mjs`; the leading underscore marks it as imported rather than run.
+So with no `--base` they ask **Astro's own lock file** — `agent-ks-engine/.astro/dev.json`, the same file `./start status` reads — which server is running, and print the port and pid they found. The shared reader is `scripts/checks/_astro-server.mjs`; the leading underscore marks it as imported rather than run.
 
 The one rule that governs anything waiting on a dev server here: **never grep the startup banner.** In Astro 7 that banner is a JSON object, so a check for the old `astro v5.x ready in NNN ms` text does not fail — it waits forever for a line that never comes. Poll the port, or read the lock file.
 

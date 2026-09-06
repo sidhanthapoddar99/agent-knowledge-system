@@ -37,7 +37,7 @@ config load, naming both values.
 - The structural fix, already decided:
   [`2026-06-09-issue-link-resolution/subtasks/03_comprehensive-panel-subdoc-links.md`](./030_comprehensive-panel-subdoc-links.md)
 - The transform that emits the relative href unchanged:
-  `astro-doc-code/src/parsers/postprocessors/internal-links.ts`
+  `agent-ks-engine/src/parsers/postprocessors/internal-links.ts`
 
 # Todo list
 

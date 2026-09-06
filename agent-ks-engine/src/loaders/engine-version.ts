@@ -5,7 +5,8 @@
  * (missing → "0.0.0"). The engine carries its current version and a
  * backward-compatibility floor here. `loadSiteConfig()` enforces the gate: content
  * below the floor (or above the engine) is a hard startup error whose message
- * walks the user's AI through the migration chain in `<repo-root>/migration/`.
+ * walks the user's AI through the migration chain in
+ * `<framework-root>/agent-ks-engine/migration/`.
  *
  * VERSION SCHEME — stated by position, never by name. "minor" and "patch" mean
  * different places to different readers, and that ambiguity has already caused
@@ -17,7 +18,7 @@
  *     └────────── reserved: beta (0) vs production
  *
  * Bump discipline — any format change: bump ENGINE_VERSION and ship a
- * `migration/<new-version>_<statement>.py`. Which place moves is a judgement
+ * `agent-ks-engine/migration/<new-version>_<statement>.py`. Which place moves is a judgement
  * about the size of the change; 0.1.0 through 0.1.2 each moved Z, and 0.2.0 is
  * the first release to move Y — a new section reader (plans), one status
  * vocabulary shared by every file kind, status colours out of tracker settings
@@ -114,7 +115,7 @@ export function assertContentVersionSupported(contentVersion: string | undefined
       `This content targets engine ${declared}${contentVersion ? '' : ' (no engine_version declared in site.yaml)'}, ` +
       `but this engine is ${ENGINE_VERSION} and supports content ${MIN_CONTENT_VERSION} or newer. ` +
       `The content must be migrated from ${declared} to ${ENGINE_VERSION} — ask your AI to do it: ` +
-      `the migration scripts live in migration/ at the repo root, named by the version they bring ` +
+      `the migration scripts live in agent-ks-engine/migration/, named by the version they bring ` +
       `content to. Run each script between ${declared} and ${ENGINE_VERSION} in version order ` +
       `(detect pass, then --dry-run, then migrate), verify with agent-ks check, ` +
       `then set engine_version: "${ENGINE_VERSION}" in site.yaml.`,

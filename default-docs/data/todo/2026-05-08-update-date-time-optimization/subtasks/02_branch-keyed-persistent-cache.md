@@ -72,6 +72,6 @@ The running server keeps **only the active branch's cache** in RAM; switching br
 
 ## Files likely touched
 
-- `astro-doc-code/src/loaders/issue-dates.ts` — disk-IO helpers, schema version constant, branch-keyed cache lookup.
-- `astro-doc-code/src/dev-tools/integration.ts` — `astro:server:setup` load hook, branch-switch detection in the change handler.
+- `agent-ks-engine/src/loaders/issue-dates.ts` — disk-IO helpers, schema version constant, branch-keyed cache lookup.
+- `agent-ks-engine/src/dev-tools/integration.ts` — `astro:server:setup` load hook, branch-switch detection in the change handler.
 - `.gitignore` — add `.cache/` if not already covered.

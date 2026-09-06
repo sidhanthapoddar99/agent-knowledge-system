@@ -8,55 +8,55 @@ use std::{
 const BUILTIN: &[(&str, &str)] = &[
     (
         "blogs.css",
-        include_str!("../../astro-doc-code/src/styles/blogs.css"),
+        include_str!("../../agent-ks-engine/src/styles/blogs.css"),
     ),
     (
         "breakpoints.css",
-        include_str!("../../astro-doc-code/src/styles/breakpoints.css"),
+        include_str!("../../agent-ks-engine/src/styles/breakpoints.css"),
     ),
     (
         "color.css",
-        include_str!("../../astro-doc-code/src/styles/color.css"),
+        include_str!("../../agent-ks-engine/src/styles/color.css"),
     ),
     (
         "docs.css",
-        include_str!("../../astro-doc-code/src/styles/docs.css"),
+        include_str!("../../agent-ks-engine/src/styles/docs.css"),
     ),
     (
         "element.css",
-        include_str!("../../astro-doc-code/src/styles/element.css"),
+        include_str!("../../agent-ks-engine/src/styles/element.css"),
     ),
     (
         "font.css",
-        include_str!("../../astro-doc-code/src/styles/font.css"),
+        include_str!("../../agent-ks-engine/src/styles/font.css"),
     ),
     (
         "footer.css",
-        include_str!("../../astro-doc-code/src/styles/footer.css"),
+        include_str!("../../agent-ks-engine/src/styles/footer.css"),
     ),
     (
         "globals.css",
-        include_str!("../../astro-doc-code/src/styles/globals.css"),
+        include_str!("../../agent-ks-engine/src/styles/globals.css"),
     ),
     (
         "index.css",
-        include_str!("../../astro-doc-code/src/styles/index.css"),
+        include_str!("../../agent-ks-engine/src/styles/index.css"),
     ),
     (
         "markdown.css",
-        include_str!("../../astro-doc-code/src/styles/markdown.css"),
+        include_str!("../../agent-ks-engine/src/styles/markdown.css"),
     ),
     (
         "navbar.css",
-        include_str!("../../astro-doc-code/src/styles/navbar.css"),
+        include_str!("../../agent-ks-engine/src/styles/navbar.css"),
     ),
     (
         "reset.css",
-        include_str!("../../astro-doc-code/src/styles/reset.css"),
+        include_str!("../../agent-ks-engine/src/styles/reset.css"),
     ),
     (
         "theme.yaml",
-        include_str!("../../astro-doc-code/src/styles/theme.yaml"),
+        include_str!("../../agent-ks-engine/src/styles/theme.yaml"),
     ),
 ];
 fn theme_path(c: &Context, name: &str) -> Result<PathBuf> {

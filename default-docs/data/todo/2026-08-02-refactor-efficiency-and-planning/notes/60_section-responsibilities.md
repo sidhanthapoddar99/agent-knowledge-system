@@ -235,7 +235,7 @@ them is the source.
 
 | Where | What changes |
 |---|---|
-| `astro-doc-code/src/layouts/issues/default/guide.ts` | The section one-liners (~L96–103), the routing line (~L114), the `## Subtasks` opener (~L183) which states the overturned rule, the `## Agent log` block, and the anatomy tree |
+| `agent-ks-engine/src/layouts/issues/default/guide.ts` | The section one-liners (~L96–103), the routing line (~L114), the `## Subtasks` opener (~L183) which states the overturned rule, the `## Agent log` block, and the anatomy tree |
 | `plugins/agent-ks/skills/agent-ks-issues/` | `SKILL.md`'s section table and routing box; `references/20_sections/2N_*.md`, one per section |
 | `default-docs/data/user-guide/19_issues/` | The anatomy overview and the per-section pages |
 | The scaffolders — `new-agent-log.mjs`, `new-subtask.mjs` | The emitted headings, which is where the split gets enforced rather than remembered |

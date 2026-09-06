@@ -3,7 +3,7 @@ title: "Split oversized loader files into focused modules"
 status: open
 ---
 
-**What it means.** Several files in `astro-doc-code/src/loaders/` are well over the project's ~400-line module guideline (CLAUDE.md rule 7: split large files into `parts/` / smaller modules). Break each along its natural seams into smaller, single-responsibility modules — same public API, just decomposed internals.
+**What it means.** Several files in `agent-ks-engine/src/loaders/` are well over the project's ~400-line module guideline (CLAUDE.md rule 7: split large files into `parts/` / smaller modules). Break each along its natural seams into smaller, single-responsibility modules — same public API, just decomposed internals.
 
 **Current state (line counts):**
 

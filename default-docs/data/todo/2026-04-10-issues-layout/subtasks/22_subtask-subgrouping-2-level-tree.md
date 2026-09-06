@@ -46,10 +46,10 @@ Numbering stays visible at every level. The group folder owns one number; its le
 
 ## Files likely touched
 
-- `astro-doc-code/src/loaders/issues.ts` — recursive folder scan in the subtasks loader (cap at 2 levels).
-- `astro-doc-code/src/pages/lib/route-match.ts`, `static-paths.ts` — URL extension.
-- `astro-doc-code/src/layouts/issues/default/parts/detail/SubdocTree.astro` — grouped rendering of subtasks.
-- `astro-doc-code/src/layouts/issues/default/parts/detail/DetailSidebar.astro` — possibly minor wiring.
+- `agent-ks-engine/src/loaders/issues.ts` — recursive folder scan in the subtasks loader (cap at 2 levels).
+- `agent-ks-engine/src/pages/lib/route-match.ts`, `static-paths.ts` — URL extension.
+- `agent-ks-engine/src/layouts/issues/default/parts/detail/SubdocTree.astro` — grouped rendering of subtasks.
+- `agent-ks-engine/src/layouts/issues/default/parts/detail/DetailSidebar.astro` — possibly minor wiring.
 - `plugins/documentation-guide/scripts/issues/subtasks.mjs`, `_lib.mjs`, `check.mjs`, `set-state.mjs` — handle nested paths; add `--flat`; warn on >2 levels.
 - `default-docs/data/user-guide/19_issues/03_folder-structure.md` and any subtask-related page.
 - `plugins/documentation-guide/skills/documentation-guide/references/issue-layout.md`.

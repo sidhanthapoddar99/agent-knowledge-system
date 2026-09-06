@@ -42,8 +42,8 @@ If a constrained color scheme is wanted later, it can be added on top — `color
 
 ## Files likely touched
 
-- `astro-doc-code/src/loaders/issues.ts` — extend the sub-doc frontmatter schema (add optional `color: string`).
-- `astro-doc-code/src/layouts/issues/default/parts/detail/SubdocTree.astro` — read `entry.color`, apply inline style to the icon.
+- `agent-ks-engine/src/loaders/issues.ts` — extend the sub-doc frontmatter schema (add optional `color: string`).
+- `agent-ks-engine/src/layouts/issues/default/parts/detail/SubdocTree.astro` — read `entry.color`, apply inline style to the icon.
 - `default-docs/data/user-guide/19_issues/05_sub-docs/04_notes.md` and `05_agent-log.md` — document the new field.
 - `plugins/documentation-guide/skills/documentation-guide/references/issue-layout.md` — one-line mention.
 

@@ -14,6 +14,6 @@ Sync wins over the collapse cache (subtask 04) for ancestors of the active entry
 
 ## Files likely touched
 
-- `astro-doc-code/src/layouts/issues/default/parts/detail/SubdocTree.astro`
-- `astro-doc-code/src/layouts/issues/default/parts/detail/DetailSidebar.astro`
-- `astro-doc-code/src/layouts/issues/default/scripts/detail/panels.ts` (or sibling client script)
+- `agent-ks-engine/src/layouts/issues/default/parts/detail/SubdocTree.astro`
+- `agent-ks-engine/src/layouts/issues/default/parts/detail/DetailSidebar.astro`
+- `agent-ks-engine/src/layouts/issues/default/scripts/detail/panels.ts` (or sibling client script)

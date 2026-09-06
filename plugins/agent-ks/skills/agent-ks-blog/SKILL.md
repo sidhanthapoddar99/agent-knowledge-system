@@ -7,7 +7,7 @@ description: Use this skill for blog posts in an agent-knowledge-system project 
 
 The blog is one flat folder of dated markdown files. The framework builds the index. This file is the whole manual.
 
-**Source of truth.** The engine and the CLI decide everything they implement: the filename rule, the frontmatter fields, the commands, and what the index renders. The bundled user guide at `@root/default-docs/data/user-guide/18_blogs/` wins only on a convention the code does not enforce. `@root` is the framework folder.
+**Source of truth.** The engine and the CLI decide everything they implement: the filename rule, the frontmatter fields, the commands, and what the index renders. The bundled user guide at `@root/default-docs/data/user-guide/18_blogs/` wins only on a convention the code does not enforce. `@root` is the framework root: the `agent-knowledge-system/` repository root, one level above `agent-ks-engine/`.
 
 **Where the posts live.** Run `agent-ks overview --json` to find the configured blog section and its path. The CLI uses `--config-dir`, then `AGENTKS_CONFIG_FOLDER`, then `./config` from the current directory. See [project selection](../agent-ks-cli/references/installation.md). The section may have a name other than `blog`.
 

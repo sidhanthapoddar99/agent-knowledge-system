@@ -29,7 +29,7 @@ title: "Verified pipeline facts (code audit 2026-07-03)"
   `cache: 'no-cache'`. Demo scenes: all three diagram types live on
   `user-guide/15_writing-content/07_diagram-showcase.md`.
 
-All paths relative to `astro-doc-code/`.
+All paths relative to `agent-ks-engine/`.
 
 - **Fence → div:** `src/parsers/renderers/marked.ts:75` converts
   ` ```mermaid|dot|graphviz ` fences to `<div class="diagram diagram-*">`.

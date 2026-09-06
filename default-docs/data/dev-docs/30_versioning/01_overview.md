@@ -7,7 +7,7 @@ sidebar_position: 1
 # Versioning Overview
 
 The framework runs two things that evolve at different speeds: the **engine**
-(`astro-doc-code/`) and the **content** it renders (`data/`, `config/`,
+(`agent-ks-engine/`) and the **content** it renders (`data/`, `config/`,
 `themes/`). The version contract keeps them honest with each other: content
 declares which engine version it targets, the engine declares what it supports,
 and a startup gate refuses to run any combination outside that range.
@@ -55,7 +55,7 @@ procedure (see [The Version Gate](./02_version-gate.md)).
 |---|---|
 | [The Version Gate](./02_version-gate.md) | Where the gate runs, both failure directions, exact messages |
 | [Minimum Version](./03_minimum-version.md) | The floor — breaking vs good-to-have changes, release discipline |
-| [Migrations](./04_migrations.md) | The `migration/` system — naming, the chain, the upgrade flow |
+| [Migrations](./04_migrations.md) | The `agent-ks-engine/migration/` system — naming, the chain, the upgrade flow |
 | [Authoring Migrations](./05_authoring-migrations.md) | Writing a new migration script, testing it, shipping it |
 
 Consumer-facing summary: the user-guide's

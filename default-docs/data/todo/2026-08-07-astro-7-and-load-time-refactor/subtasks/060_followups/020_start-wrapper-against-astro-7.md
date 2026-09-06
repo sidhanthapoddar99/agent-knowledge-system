@@ -148,7 +148,7 @@ What a Windows run still has to confirm, in this order:
 - **`./start dev --ignore-lock` errors**, because the wrapper always asks for
   background mode and Astro rejects that combination. Astro's own message
   explains it clearly, so the wrapper does not intercept it. Anyone who genuinely
-  needs two servers can run `astro dev --ignore-lock` from `astro-doc-code/`.
+  needs two servers can run `astro dev --ignore-lock` from `agent-ks-engine/`.
 - **Log output loses colour.** A daemon writes to a file, not a TTY, so
   `logs --follow` replays plain text (JSON lines under an agent, since Astro
   forces `--json` there). Accepted as the price of one code path.

@@ -19,7 +19,7 @@ mass-produce errors.
 Opened 2026-07-03 after a consumer-project incident: both skills' writing references
 documented a `:::callout{…}` / `:::collapsible` / `:::tabs` directive syntax, 24
 migration agents followed it in good faith across **45 files** — and the framework
-has no `:::` parser at all. The real transformers (`astro-doc-code/src/custom-tags/`,
+has no `:::` parser at all. The real transformers (`agent-ks-engine/src/custom-tags/`,
 HTML-tag form) exist but were never wired into any parser pipeline, a gap the
 framework's own user-guide had already caught in April
 ([docs-phase-2 comment 004](../2026-04-19-docs-phase-2/comments/004_custom-tags-removed.md))

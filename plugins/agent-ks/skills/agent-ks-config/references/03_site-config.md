@@ -16,7 +16,7 @@ Consumer mode: the framework is a subfolder of the user's project.
 └── agent-knowledge-system/     the framework folder; do not edit
     ├── .env                    CONFIG_DIR=../config
     ├── start                   the run wrapper
-    ├── astro-doc-code/         framework code
+    ├── agent-ks-engine/         framework code
     └── default-docs/           bundled docs, themes, template
 ```
 
@@ -32,7 +32,7 @@ Run it inside the framework folder. It installs dependencies when they are missi
 |---|---|
 | `./start` | The dev server at `http://localhost:4321`. Hot-reloads content, CSS and YAML values |
 | `./start --detach` | The same server, in the background. Use this one. A bare `./start` holds the terminal until `Ctrl-C`, so an agent that runs it stalls there |
-| `./start build` | A production build into `astro-doc-code/dist/`. Drafts are dropped |
+| `./start build` | A production build into `agent-ks-engine/dist/`. Drafts are dropped |
 | `./start preview` | Serves the built site |
 | `./start doctor` | Update check, install, full build. Run it before you publish |
 | `./start stop`, `./start status` | Stop the running server; show what runs. Never `kill` it by hand |
@@ -45,7 +45,7 @@ Every launching command checks `engine_version` first. When the content is outsi
 
 These settings apply when launching the framework directly with `./start`. The native `agent-ks start` selects `--config-dir` > `AGENTKS_CONFIG_FOLDER` > `./config` from the current directory and supplies the resolved absolute `CONFIG_DIR` to the viewer process. It requires no `.env` edit. For bundled docs, run it from `default-docs/`.
 
-`.env` lives inside the framework folder, not inside `astro-doc-code/`. Relative paths are relative to the framework folder. Absolute paths work.
+`.env` lives inside the framework folder, not inside `agent-ks-engine/`. Relative paths are relative to the framework folder. Absolute paths work.
 
 | Variable | Required | Value | Meaning |
 |---|---|---|---|
@@ -73,7 +73,7 @@ pages: …                                      # the routes; next section
 | Field | Type | Meaning |
 |---|---|---|
 | `site.name`, `site.title`, `site.description` | string | Site identity. `name` is the navbar label, `title` the `<title>` tag |
-| `engine_version` | `"N.N.N"` | The engine version this content targets. Missing counts as `0.0.0`. Read the current value from `ENGINE_VERSION` in `@root/astro-doc-code/src/loaders/engine-version.ts`. The engine stops on content outside its range: [08_migrations.md](./08_migrations.md) |
+| `engine_version` | `"N.N.N"` | The engine version this content targets. Missing counts as `0.0.0`. Read the current value from `ENGINE_VERSION` in `@root/agent-ks-engine/src/loaders/engine-version.ts`. The engine stops on content outside its range: [08_migrations.md](./08_migrations.md) |
 | `server.allowedHosts` | `true` or `string[]` | Vite host allowlist for the dev server. Patterns such as `".ngrok.io"` |
 | `paths.<key>` | path | Relative to the config dir, absolute, or `@root/…`. Becomes `@<key>` |
 | `theme`, `theme_paths` | string, `string[]` | The active theme name; the folders to scan: [05_themes.md](./05_themes.md) |
@@ -107,10 +107,10 @@ A new entry needs a dev-server restart: `./start stop`, then `./start --detach`.
 
 | Alias | Resolves to | Used in |
 |---|---|---|
-| `@docs/…`, `@blog/…`, `@issues/…`, `@custom/…`, `@navbar/…`, `@footer/…` | `@root/astro-doc-code/src/layouts/<type>/<style>/`, or the same path under `LAYOUT_EXT_DIR` | `pages[].layout`, `navbar.yaml`, `footer.yaml` |
+| `@docs/…`, `@blog/…`, `@issues/…`, `@custom/…`, `@navbar/…`, `@footer/…` | `@root/agent-ks-engine/src/layouts/<type>/<style>/`, or the same path under `LAYOUT_EXT_DIR` | `pages[].layout`, `navbar.yaml`, `footer.yaml` |
 | `@ext-layouts` | `LAYOUT_EXT_DIR` | custom layout styles |
 | `@theme/<name>` | a theme folder | `theme.yaml → extends:` |
-| `@root/<sub>` | the framework folder; not the consumer's project root | the bundled content, `@root/default-docs/…` |
+| `@root/<sub>` | the framework root (the `agent-knowledge-system/` repository root); not the consumer's project root | the bundled content, `@root/default-docs/…` |
 | `@<key>` from `paths:` | the declared path | anywhere the YAML takes a path |
 
 A `paths:` value is relative to the config dir, absolute, or `@root/…`. `@root` is the only alias allowed inside a value. The loader rejects a value that names another user alias, such as `derived: "@data/sub"`. It also rejects a path that climbs out of its folder, such as `@root/../x`. Reserved keys: `docs`, `blog`, `issues`, `custom`, `navbar`, `footer`, `theme`, `config`, `root`.

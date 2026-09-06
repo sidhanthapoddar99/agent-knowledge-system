@@ -28,7 +28,7 @@ caused by that work.**
 # References
 
 - `default-docs/config/site.yaml` — the `issues-test` entry in the `pages:` block
-- `astro-doc-code/src/loaders/config.ts` — where page entries resolve, and where
+- `agent-ks-engine/src/loaders/config.ts` — where page entries resolve, and where
   the version gate already hard-stops on a bad declaration
 - [the release iteration file](../../agent-log/020_wf_ship-the-split/02_working/150_version-bump.md)
   — where this was found, with the commands above

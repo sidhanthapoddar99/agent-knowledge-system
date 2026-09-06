@@ -13,7 +13,7 @@ webapp, as `src/main/webapp/js/viewer-static.min.js`. That is the whole
 reason this format looks different from the other three, which are one
 `bun add` each.
 
-The file is committed at `astro-doc-code/src/vendor/drawio/` — Apache-2.0,
+The file is committed at `agent-ks-engine/src/vendor/drawio/` — Apache-2.0,
 **3.0 MiB raw / 0.81 MiB gzipped**, with its `LICENSE` and a `README.md`
 carrying the upstream tag (v31.1.5), the SHA-256, and the upgrade procedure.
 
@@ -56,7 +56,7 @@ One of the six is fetched eagerly — `Editor.initMath()` runs at load and
 appends `${DRAW_MATH_URL}/startup.js` unconditionally. Pointed anywhere that
 does not exist, that is a guaranteed 404 on every page carrying a diagram.
 It now points at a framework-owned no-op in
-`astro-doc-code/public/vendor/drawio/math/startup.js`. MathJax itself is not
+`agent-ks-engine/public/vendor/drawio/math/startup.js`. MathJax itself is not
 bundled: it is large, and it only affects diagrams saved with `math="1"`,
 which queue and never typeset — drawio's own graceful path when
 `window.MathJax` is undefined.

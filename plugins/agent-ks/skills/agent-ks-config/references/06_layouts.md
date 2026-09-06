@@ -51,7 +51,7 @@ Note that the folder is `blogs`, with an `s`, while the alias is `@blog/…`. Wh
 
 ### Override a built-in
 
-A folder named like a built-in, `layouts/docs/default/Layout.astro`, replaces it for every page that names `@docs/default`. Copy the built-in source from `@root/astro-doc-code/src/layouts/docs/default/`, then change it. From then on the project owns that layout. Framework updates do not reach it. Do this only when the change cannot be done in CSS.
+A folder named like a built-in, `layouts/docs/default/Layout.astro`, replaces it for every page that names `@docs/default`. Copy the built-in source from `@root/agent-ks-engine/src/layouts/docs/default/`, then change it. From then on the project owns that layout. Framework updates do not reach it. Do this only when the change cannot be done in CSS.
 
 ### Imports
 
@@ -79,7 +79,7 @@ Relative imports inside the same style folder work: `import Card from './parts/C
 | Custom | `dataPath`, `baseUrl`. `loadFile(dataPath)` gives the YAML; no schema enforcement |
 | Navbar, footer | The config and the items |
 
-The exact shapes are in the matching `@root/astro-doc-code/src/layouts/<type>/default/*.astro`. Read that file before you write yours.
+The exact shapes are in the matching `@root/agent-ks-engine/src/layouts/<type>/default/*.astro`. Read that file before you write yours.
 
 ### Conventions
 
@@ -101,6 +101,6 @@ Every visual value is a theme variable. Use no hex, `rgb()`, `hsl()`, raw `px` o
 | `transition: background 0.2s` | `transition: background var(--transition-fast)` |
 | `var(--color-accent, #7aa2f7)` | `var(--color-brand-primary)`. Never invent a name; propose it in the contract instead |
 
-There are three exceptions. `@media` breakpoints take literal pixels, because a CSS variable does not resolve inside a media query. Use the scale in `@root/astro-doc-code/src/styles/breakpoints.css`. The scale is `480`, `640`, `768`, `1024`, `1280`, `1536`, `1920` and `2560`. `640`, `768` and `1024` cover most rules. `em` is fine for a size relative to the parent text. Resets are plain CSS.
+There are three exceptions. `@media` breakpoints take literal pixels, because a CSS variable does not resolve inside a media query. Use the scale in `@root/agent-ks-engine/src/styles/breakpoints.css`. The scale is `480`, `640`, `768`, `1024`, `1280`, `1536`, `1920` and `2560`. `640`, `768` and `1024` cover most rules. `em` is fine for a size relative to the parent text. Resets are plain CSS.
 
 To check a layout, do three things. Grep its CSS for `#[0-9a-f]{3,8}`, `rgba?\(` and `font-size:\s*[0-9]`. Swap `theme:` in `site.yaml` and reload. Toggle dark mode and walk every page type.

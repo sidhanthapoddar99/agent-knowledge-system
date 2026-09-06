@@ -27,7 +27,7 @@ green, and no page makes a third-party request to render one.
   — the other half, landed in the same pass.
 - [subtasks/10_embeds/30 excalidraw embeds](./30_excalidraw.md) — the
   reference-based embed pattern this follows.
-- `astro-doc-code/src/vendor/drawio/README.md` — provenance, SHA-256 and the
+- `agent-ks-engine/src/vendor/drawio/README.md` — provenance, SHA-256 and the
   upgrade procedure for the vendored bundle.
 
 # Todo list

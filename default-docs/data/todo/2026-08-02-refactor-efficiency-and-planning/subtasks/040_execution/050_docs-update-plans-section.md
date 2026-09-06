@@ -29,7 +29,7 @@ overturned.
 - Plans shape: [the plans section](../../notes/50_plans-section-spec.md)
 - Skill twin that must not contradict this:
   [Skill — teach the plans section](./030_skill-plans-section.md)
-- Targets: `astro-doc-code/src/layouts/issues/default/guide.ts`,
+- Targets: `agent-ks-engine/src/layouts/issues/default/guide.ts`,
   `default-docs/data/user-guide/19_issues/`
 
 # Todo list

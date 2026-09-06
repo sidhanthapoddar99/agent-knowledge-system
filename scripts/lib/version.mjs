@@ -92,13 +92,13 @@ export function contentVersion() {
 /** Migration scripts that bring content from `after` up to `upto`, in run order. */
 export function migrationsBetween(after, upto) {
   let names;
-  try { names = fs.readdirSync(path.join(REPO, 'migration')); } catch { return []; }
+  try { names = fs.readdirSync(path.join(FRAMEWORK, 'migration')); } catch { return []; }
   return names
     .filter((n) => n.endsWith('.py'))
     .map((n) => ({ name: n, v: (/^(\d+\.\d+\.\d+)_/.exec(n) || [])[1] }))
     .filter((e) => e.v && compare(e.v, after) > 0 && compare(e.v, upto) <= 0)
     .sort((a, b) => compare(a.v, b.v) || a.name.localeCompare(b.name))
-    .map((e) => `migration/${e.name}`);
+    .map((e) => `agent-ks-engine/migration/${e.name}`);
 }
 
 function refuse(lines) {
@@ -149,7 +149,7 @@ export function versionPrecheck() {
       '',
       scripts.length
         ? `Migrate the content. Run these ${scripts.length} script(s), in this order:`
-        : 'Migrate the content. No migration script matches that range — check migration/ by hand.',
+        : 'Migrate the content. No migration script matches that range — check agent-ks-engine/migration/ by hand.',
       ...scripts.map((s) => `    ${s}`),
       '',
       'For each script: detect pass, then --dry-run, then migrate, then detect again',

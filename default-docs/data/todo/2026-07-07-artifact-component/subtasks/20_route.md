@@ -22,7 +22,7 @@ which depends on this route existing.
 ## The serving precedent (verified)
 
 The framework already serves colocated files from content dirs via
-`astro-doc-code/src/pages/content-assets/[...path].ts`. Its `isServable`
+`agent-ks-engine/src/pages/content-assets/[...path].ts`. Its `isServable`
 (`:24-29`) blocks only dotfiles, `.md`/`.mdx`, and `settings.json(c)` — **`.html`
 is already servable today**. `getStaticPaths` enumerates every servable file at
 build (`:52-65`); `GET` does symlink-proof containment (`:74-87`) and ETag/304
@@ -32,7 +32,7 @@ with dev `no-cache` / prod `public, max-age=31536000` (no `immutable` directive)
 `content-assets/[...path].ts:12-15` documents this, plus the caveat that the
 segment name can't be `_`-prefixed (Astro excludes `_`-dirs from routing).
 
-**The one real gap:** `astro-doc-code/src/pages/lib/mime.ts` has **no `.html`
+**The one real gap:** `agent-ks-engine/src/pages/lib/mime.ts` has **no `.html`
 entry** (verified — the map ends at `.eot`), so the shared serving routes would
 send an artifact as `application/octet-stream`, which browsers download and
 iframes refuse to render. Adding `'.html': 'text/html'` to the shared `mimeTypes`

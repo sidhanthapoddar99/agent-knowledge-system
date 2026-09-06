@@ -184,7 +184,7 @@ For framework releases — `vite build` + `go build`:
 | Docker image build (`FROM scratch` + binary) | 10–20 s |
 | Goreleaser full release (build + checksums + GH release + Homebrew tap update) | 1–2 min |
 
-Compare to today's release process for `astro-doc-code/` + plugin (no actual release process exists yet — but a hypothetical "package the framework" pipeline today would involve `bun install` + `astro build` + tarball, taking ~3–5 min).
+Compare to today's release process for `agent-ks-engine/` + plugin (no actual release process exists yet — but a hypothetical "package the framework" pipeline today would involve `bun install` + `astro build` + tarball, taking ~3–5 min).
 
 Faster release cycle → more frequent releases → tighter feedback loop.
 
@@ -192,7 +192,7 @@ Faster release cycle → more frequent releases → tighter feedback loop.
 
 | What | Today | Proposed |
 |---|---|---|
-| Framework code on disk | `astro-doc-code/` ~3 MB + `node_modules/` ~150 MB + Vite cache ~50 MB | Single binary ~30 MB |
+| Framework code on disk | `agent-ks-engine/` ~3 MB + `node_modules/` ~150 MB + Vite cache ~50 MB | Single binary ~30 MB |
 | User project additional cost | `node_modules/.vite/` per project ~100 MB | nothing — binary is shared |
 | 10 user projects on one machine | `~1 GB` of duplicated `node_modules/.vite/` | `30 MB` of binary |
 

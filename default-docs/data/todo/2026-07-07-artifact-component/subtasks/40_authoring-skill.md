@@ -96,7 +96,7 @@ contents and §4's merge decisions.)*
       a **conventions section per design-sync's rules**: enumerate the actual
       token vocabulary (real `--color-*`, `--spacing-*`, the two-tier
       `--ui-text-*` / `--content-*` / `--display-*` model from CLAUDE.md Theming),
-      name where the truth lives (`astro-doc-code/src/styles/theme.yaml`,
+      name where the truth lives (`agent-ks-engine/src/styles/theme.yaml`,
       `color.css`, `font.css`), give one idiomatic snippet, and apply the
       validate-every-named-token rule (every token the skill names must exist in
       the shipped theme). State the precedence chain (user's words > host system >
@@ -229,7 +229,7 @@ contents and §4's merge decisions.)*
       Run `agent-ks check skill-links` (the `check-skill-links.mjs` validator)
       against the new skill so every relative reference resolves. Spot-check that
       every theme token the skill names actually exists in
-      `astro-doc-code/src/styles/theme.yaml` (the design-sync
+      `agent-ks-engine/src/styles/theme.yaml` (the design-sync
       validate-names-against-reality rule applied to our own skill). Confirm the
       installed-cache mirror is byte-identical to the repo-local source.
 

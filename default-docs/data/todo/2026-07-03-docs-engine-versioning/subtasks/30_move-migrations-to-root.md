@@ -10,7 +10,7 @@ The repo root owns the code; the skill owns the protocol
       `plugins/documentation-guide/skills/documentation-guide/migration/` to
       `<repo-root>/migration/`, renamed version-based: `0.5.0_done-to-state.py`,
       `0.6.0_state-to-status.py`, `0.7.0_root-settings-schema.py`; original
-      dates into each docstring; add `migration/README.md` (convention, one
+      dates into each docstring; add `agent-ks-engine/migration/README.md` (convention, one
       screen).
 - [x] Rewrite the skill's `references/doc-migration.md`: root location,
       version-based naming, the gate, the upgrade flow (error → run chain →

@@ -47,5 +47,5 @@ If none of those apply, subtask 03 stays open and that's fine.
 
 ## Files likely touched
 
-- `astro-doc-code/src/dev-tools/integration.ts` — debounce wrapper, single-flight, detached-HEAD transitions, orphan logging.
-- `astro-doc-code/src/loaders/issue-dates.ts` — minor: helper to detect detached state cleanly.
+- `agent-ks-engine/src/dev-tools/integration.ts` — debounce wrapper, single-flight, detached-HEAD transitions, orphan logging.
+- `agent-ks-engine/src/loaders/issue-dates.ts` — minor: helper to detect detached state cleanly.

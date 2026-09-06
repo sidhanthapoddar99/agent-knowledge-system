@@ -30,6 +30,6 @@ The user's stated UX target is "the file-system file-name hover" — that *is* n
 
 ## Files likely touched
 
-- `astro-doc-code/src/layouts/issues/default/parts/detail/SubdocTree.astro` — add `title={entry.title}` to whichever element the user's pointer lands on (the row anchor or the truncated label span).
+- `agent-ks-engine/src/layouts/issues/default/parts/detail/SubdocTree.astro` — add `title={entry.title}` to whichever element the user's pointer lands on (the row anchor or the truncated label span).
 
 Landed: title attribute added to row anchor + subgroup summary in SubdocTree.astro.

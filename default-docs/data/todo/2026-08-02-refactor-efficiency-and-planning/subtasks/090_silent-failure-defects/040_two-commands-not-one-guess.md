@@ -42,7 +42,7 @@ frozen reference pinned at a real release, which makes before-and-after a comman
 rather than a git dance.
 
 **Done when** `agent-ks` never scans a source tree, `agent-ks-dev` never scans an
-install, the banner still names which tree it read, and `releases/0.2.1.md` no
+install, the banner still names which tree it read, and `agent-ks-engine/releases/0.2.1.md` no
 longer describes behaviour that has changed.
 
 # References
@@ -50,7 +50,7 @@ longer describes behaviour that has changed.
 - The subtask this corrects: [`030`](./030_skill-links-checks-the-wrong-tree.md)
 - The script: `plugins/agent-ks/skills/agent-ks-docs/scripts/check-skill-links.mjs`
 - The repo's own dispatcher: `plugins/agent-ks/bin/agent-ks`
-- The published record to correct: `releases/0.2.1.md`
+- The published record to correct: `agent-ks-engine/releases/0.2.1.md`
 - Consumer mode, which is what breaks under the walk-up: this repo's `CLAUDE.md`,
   *"Two operating modes"*
 
@@ -67,7 +67,7 @@ longer describes behaviour that has changed.
 - [x] **Audit the sibling scripts** — clean, see below
 - [x] **One line in this project's `CLAUDE.md`**, plus the row in
       `cli-toolkit.md` that describes the command's scope
-- [x] **Correct `releases/0.2.1.md`** — dated correction block, not a rewrite
+- [x] **Correct `agent-ks-engine/releases/0.2.1.md`** — dated correction block, not a rewrite
 - [x] **Control-test both directions**
 
 # Outcomes and Next Steps

@@ -13,7 +13,7 @@ subtasks:
 
 ## Todo
 
-- [x] Correct the published record — `releases/0.2.1.md` carries a dated
+- [x] Correct the published record — `agent-ks-engine/releases/0.2.1.md` carries a dated
       `[!CAUTION]` block, and the *"not one of 101 links got it right"* line is
       kept and annotated rather than deleted
 - [ ] **Triage the tracker — NOT DONE.** Measured instead: 1,372 broken with

@@ -49,7 +49,7 @@ The documents live on disk first, and the site reads them from there. A relative
 | A link, never a backticked path | `move` cannot rewrite a backticked path. A reader cannot click it. An agent must search to resolve it. The link text must name the target. `[03](./03_thing.md)` is still a number, not a name |
 | The exception: a target that is not a document | Source code, config, a binary, a directory, or a path discussed as a value stays in backticks |
 | Convert a backticked document path when you find one | Take the link text from the target's `title`. A requested sweep runs detect, check, convert, then `agent-ks check link-form` and `agent-ks check issues` |
-| A relative link that 404s on the site is a renderer bug | File it against `@root/astro-doc-code/src/parsers/postprocessors/internal-links.ts`. Do not convert the link to `/` |
+| A relative link that 404s on the site is a renderer bug | File it against `@root/agent-ks-engine/src/parsers/postprocessors/internal-links.ts`. Do not convert the link to `/` |
 
 ### The ordering label
 

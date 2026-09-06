@@ -5,7 +5,7 @@ description: Use this skill for pages inside a docs section of an agent-knowledg
 
 # Documentation skill
 
-**Source of truth.** The engine and the CLI decide anything they implement: commands, flags, field names, what renders. The bundled user guide at `@root/default-docs/data/user-guide/` is the source for a convention only. A convention is a rule the code does not enforce. `@root` is the framework folder. When this skill disagrees with the engine or the CLI, follow the code. Then update the skill and tell the user.
+**Source of truth.** The engine and the CLI decide anything they implement: commands, flags, field names, what renders. The bundled user guide at `@root/default-docs/data/user-guide/` is the source for a convention only. A convention is a rule the code does not enforce. `@root` is the framework root: the `agent-knowledge-system/` repository root, one level above `agent-ks-engine/`. When this skill disagrees with the engine or the CLI, follow the code. Then update the skill and tell the user.
 
 **Finding `data/`.** Run `agent-ks resolve-context` to resolve the configured `data/` path. Config selection is `--config-dir` > `AGENTKS_CONFIG_FOLDER` > `./config` from the current directory; a missing directory errors. See [installation and project selection](../agent-ks-cli/references/installation.md). Never assume `data/` sits at the current directory. `data/README.md` maps each top-level folder to its purpose and route. Read it on a structure task, such as moving a page between sections. The folder tree and the config live in [the config skill](../agent-ks-config/SKILL.md).
 

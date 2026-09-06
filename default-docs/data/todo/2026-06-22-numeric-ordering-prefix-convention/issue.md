@@ -21,10 +21,10 @@ Full reasoning — the case **for**, the case **against**, and the design — li
 
 The fixed-2-digit assumption is hard-coded in ~5 framework spots (all must move to the shared helper / `\d{2,5}`):
 
-- `astro-doc-code/src/parsers/content-types/docs.ts` — prefix extraction + `generateSlug`
-- `astro-doc-code/src/parsers/core/base-parser.ts` — "has a prefix?" detector
-- `astro-doc-code/src/parsers/postprocessors/internal-links.ts` — URL prefix strip
-- `astro-doc-code/src/loaders/data.ts` — sidebar sort key (already numeric; only the regex width is the blocker)
+- `agent-ks-engine/src/parsers/content-types/docs.ts` — prefix extraction + `generateSlug`
+- `agent-ks-engine/src/parsers/core/base-parser.ts` — "has a prefix?" detector
+- `agent-ks-engine/src/parsers/postprocessors/internal-links.ts` — URL prefix strip
+- `agent-ks-engine/src/loaders/data.ts` — sidebar sort key (already numeric; only the regex width is the blocker)
 - `plugins/documentation-guide/skills/documentation-guide/scripts/docs/check.mjs` — validator (also switch the collision key to the **numeric value**, so `02_` and `002_` are caught as colliding)
 
 Out of scope: renaming any existing files (numeric sort means widths coexist).

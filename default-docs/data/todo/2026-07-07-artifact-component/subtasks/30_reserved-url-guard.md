@@ -21,7 +21,7 @@ serving routes either. Whatever reserved-segment list we introduce for
 ## Where the guard belongs (verified)
 
 - Base URLs come from `site.yaml → pages.<name>.base_url`
-  (`PageConfig`, `astro-doc-code/src/loaders/config.ts:37-42`), consumed by the
+  (`PageConfig`, `agent-ks-engine/src/loaders/config.ts:37-42`), consumed by the
   router at `route-match.ts:62` and `static-paths.ts:23`.
 - Put the check inside **`loadSiteConfig()`** (`config.ts:138-222`), next to the
   pages-resolution loop at `:209-216`. That function runs once, is cached with

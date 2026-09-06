@@ -26,6 +26,8 @@ npm-debug.log*
 
 # Cache
 .cache/
+__pycache__/
+*.py[cod]
 
 # Bun
 bun.lockb

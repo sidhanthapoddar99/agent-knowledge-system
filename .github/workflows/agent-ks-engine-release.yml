@@ -8,6 +8,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: agent-ks-engine-release
+  cancel-in-progress: false
+
 jobs:
   publish:
     if: startsWith(github.ref, 'refs/tags/agent-ks-engine-v')
@@ -28,6 +32,10 @@ jobs:
           import pathlib
           import re
           import subprocess
+          import sys
+
+          sys.path.insert(0, str(pathlib.Path('scripts/release').resolve()))
+          from release_control import release_title
 
           tag = os.environ['RELEASE_TAG']
           match = re.fullmatch(r'agent-ks-engine-v(\d+\.\d+\.\d+)', tag)
@@ -68,7 +76,7 @@ jobs:
           with open(os.environ['GITHUB_ENV'], 'a') as env:
               env.write(f'RELEASE_NOTE={note}\n')
               env.write(f'RELEASE_BODY={body_path}\n')
-              env.write(f'RELEASE_TITLE={lines[0][2:]}\n')
+              env.write(f'RELEASE_TITLE={release_title("engine", version, lines[0])}\n')
               env.write(f'COMMIT_SHA={commit}\n')
               env.write(f'TREE_ID={tree}\n')
           PY
@@ -90,3 +98,12 @@ jobs:
               --latest=true \
               --verify-tag
           fi
+
+      - name: Advance engine latest alias
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 scripts/release/release_control.py update-latest
+          --product engine
+          --release-tag "$GITHUB_REF_NAME"
+          --repository "$GITHUB_REPOSITORY"

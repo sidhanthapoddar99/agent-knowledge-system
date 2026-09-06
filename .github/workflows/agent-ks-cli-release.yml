@@ -8,6 +8,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: agent-ks-cli-release
+  cancel-in-progress: false
+
 jobs:
   verify:
     if: startsWith(github.ref, 'refs/tags/agent-ks-cli-v')
@@ -22,13 +26,18 @@ jobs:
           import os
           import pathlib
           import re
+          import sys
           import tomllib
+
+          sys.path.insert(0, str(pathlib.Path('scripts/release').resolve()))
+          from release_control import release_title
 
           version = tomllib.loads(pathlib.Path('agent-ks-cli/Cargo.toml').read_text())['package']['version']
           assert re.fullmatch(r'\d+\.\d+\.\d+', version), 'Stable CLI version required'
           assert os.environ['RELEASE_TAG'] == 'agent-ks-cli-v' + version, 'Tag must match Cargo.toml'
           note = pathlib.Path('agent-ks-cli/release-notes') / f'{version}.md'
           assert note.is_file() and len(note.read_text().splitlines()) > 2, 'Release note required'
+          release_title('cli', version, note.read_text().splitlines()[0])
           PY
 
   build:
@@ -108,15 +117,20 @@ jobs:
           import os
           import pathlib
           import re
+          import sys
           import tomllib
+
+          sys.path.insert(0, str(pathlib.Path('scripts/release').resolve()))
+          from release_control import release_title
 
           version = tomllib.loads(pathlib.Path('agent-ks-cli/Cargo.toml').read_text())['package']['version']
           assert re.fullmatch(r'\d+\.\d+\.\d+', version), 'Stable CLI version required'
           assert os.environ['RELEASE_TAG'] == 'agent-ks-cli-v' + version, 'Tag must match Cargo.toml'
           note = pathlib.Path('agent-ks-cli/release-notes') / f'{version}.md'
           assert note.is_file() and len(note.read_text().splitlines()) > 2, 'Release note required'
+          title = release_title('cli', version, note.read_text().splitlines()[0])
           with open(os.environ['GITHUB_ENV'], 'a') as env:
-              env.write(f'CLI_VERSION={version}\nCLI_NOTE={note}\n')
+              env.write(f'CLI_VERSION={version}\nCLI_NOTE={note}\nCLI_TITLE={title}\n')
           PY
       - name: Checksums
         run: |
@@ -129,9 +143,18 @@ jobs:
         run: |
           set -euo pipefail
           if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
-            gh release edit "$RELEASE_TAG" --title "agent-ks $CLI_VERSION" --notes-file "$CLI_NOTE" --latest=false
+            gh release edit "$RELEASE_TAG" --title "$CLI_TITLE" --notes-file "$CLI_NOTE" --latest=false
             gh release upload "$RELEASE_TAG" assets/* --clobber
           else
             gh release create "$RELEASE_TAG" assets/* --verify-tag --latest=false \
-              --title "agent-ks $CLI_VERSION" --notes-file "$CLI_NOTE"
+              --title "$CLI_TITLE" --notes-file "$CLI_NOTE"
           fi
+
+      - name: Advance CLI latest alias
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 scripts/release/release_control.py update-latest
+          --product cli
+          --release-tag "$GITHUB_REF_NAME"
+          --repository "$GITHUB_REPOSITORY"

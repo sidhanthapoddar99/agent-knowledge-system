@@ -6,6 +6,7 @@ on:
     paths:
       - '.github/workflows/**'
       - 'scripts/checks/check-release-contracts.mjs'
+      - 'scripts/release/**'
       - 'agent-ks-engine/release-notes/**'
       - 'agent-ks-engine/CHANGELOG.md'
       - 'agent-ks-engine/src/loaders/engine-version.ts'
@@ -27,6 +28,7 @@ on:
     paths:
       - '.github/workflows/**'
       - 'scripts/checks/check-release-contracts.mjs'
+      - 'scripts/release/**'
       - 'agent-ks-engine/release-notes/**'
       - 'agent-ks-engine/CHANGELOG.md'
       - 'agent-ks-engine/src/loaders/engine-version.ts'

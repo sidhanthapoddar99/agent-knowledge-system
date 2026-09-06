@@ -21,6 +21,8 @@ const parse = (relative) => yaml.load(read(relative));
 const LEGACY_CLI_PREFIX = ['agent-ks', 'v'].join('-');
 const LEGACY_ENGINE_NOTES = ['agent-ks-engine', 'releases'].join('/');
 const LEGACY_PLUGIN_NOTES = ['plugins/agent-ks', 'releases'].join('/');
+const RELEASE_CONTROL = 'scripts/release/release_control.py';
+const RELEASE_CONTROL_TEST = 'scripts/release/test_release_control.py';
 const failures = [];
 
 function check(condition, message) {
@@ -38,6 +40,26 @@ function exactReleaseTrigger(workflow, expectedTag, file) {
     JSON.stringify(trigger?.push?.tags) === JSON.stringify([expectedTag]),
     `${file}: expected only tag ${expectedTag}`
   );
+}
+
+function movingAliasContract(workflow, file, product, alias, publishStepName) {
+  const triggerPrefix = workflow?.on?.push?.tags?.[0]?.replace(/\*$/, '') ?? '';
+  check(!alias.startsWith(triggerPrefix), `${file}: ${alias} must not match the release trigger`);
+  check(workflow?.concurrency?.group === `agent-ks-${product}-release`, `${file}: product release concurrency is required`);
+  check(workflow?.concurrency?.['cancel-in-progress'] === false, `${file}: release runs must queue instead of cancelling`);
+
+  const steps = workflow?.jobs?.publish?.steps ?? [];
+  const publishIndex = steps.findIndex((step) => step.name === publishStepName);
+  const aliasIndex = steps.findIndex((step) => step.name?.toLowerCase().includes('latest alias'));
+  check(publishIndex >= 0, `${file}: publication step is missing`);
+  check(aliasIndex > publishIndex, `${file}: latest alias must advance only after publication succeeds`);
+  const aliasStep = steps[aliasIndex] ?? {};
+  const aliasRun = String(aliasStep.run ?? '');
+  check(aliasRun.includes(`${RELEASE_CONTROL} update-latest`), `${file}: shared release control must update the alias`);
+  check(aliasRun.includes(`--product ${product}`), `${file}: alias update must be product-scoped`);
+  check(aliasRun.includes('--release-tag "$GITHUB_REF_NAME"'), `${file}: alias update must validate the triggering tag`);
+  check(aliasRun.includes('--repository "$GITHUB_REPOSITORY"'), `${file}: alias update must inspect repository releases`);
+  check(aliasStep?.env?.GH_TOKEN === '${{ github.token }}', `${file}: alias update needs the workflow token`);
 }
 
 function stableNote(relative, version, product, heading = version) {
@@ -88,6 +110,44 @@ check(cliCi?.permissions?.contents === 'read', `${files.cliCi}: branch CI needs 
 const engineText = read(files.engine);
 const pluginText = read(files.plugin);
 const cliReleaseText = read(files.cliRelease);
+const releaseControlText = read(RELEASE_CONTROL);
+
+movingAliasContract(engine, files.engine, 'engine', 'engine-latest', 'Create or update the release');
+movingAliasContract(plugin, files.plugin, 'plugin', 'plugin-latest', 'Create or update the release');
+movingAliasContract(cliRelease, files.cliRelease, 'cli', 'cli-latest', 'Publish versioned CLI release');
+
+for (const [file, text, product] of [
+  [files.engine, engineText, 'engine'],
+  [files.plugin, pluginText, 'plugin'],
+  [files.cliRelease, cliReleaseText, 'cli'],
+]) {
+  check(new RegExp(`release_title\\(['"]${product}['"]`).test(text), `${file}: product-first release title generation is required`);
+}
+
+for (const required of [
+  'engine-latest',
+  'plugin-latest',
+  'cli-latest',
+  '--force-with-lease=',
+  'FETCH_HEAD^{commit}',
+  'published_at',
+  'prerelease',
+  'draft',
+  'version_at_alias',
+]) {
+  check(releaseControlText.includes(required), `${RELEASE_CONTROL}: missing ${required}`);
+}
+
+try {
+  childProcess.execFileSync('python3', [RELEASE_CONTROL_TEST], {
+    cwd: REPO,
+    encoding: 'utf8',
+    stdio: 'pipe',
+  });
+} catch (error) {
+  const detail = `${error.stdout ?? ''}${error.stderr ?? ''}`.trim();
+  failures.push(`${RELEASE_CONTROL_TEST}: failed${detail ? `\n${detail}` : ''}`);
+}
 for (const [file, text, productPath] of [
   [files.engine, engineText, 'agent-ks-engine'],
   [files.plugin, pluginText, 'plugins/agent-ks'],

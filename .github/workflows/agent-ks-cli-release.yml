@@ -150,11 +150,10 @@ jobs:
               --title "$CLI_TITLE" --notes-file "$CLI_NOTE"
           fi
 
-      - name: Advance CLI latest alias
+      - name: Select official Latest CLI release
         env:
           GH_TOKEN: ${{ github.token }}
         run: >-
-          python3 scripts/release/release_control.py update-latest
-          --product cli
+          python3 scripts/release/release_control.py official-latest
           --release-tag "$GITHUB_REF_NAME"
           --repository "$GITHUB_REPOSITORY"

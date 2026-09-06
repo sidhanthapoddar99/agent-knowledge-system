@@ -54,5 +54,5 @@ chain; [`agent-ks-engine/migration/README.md`](./migration/README.md) has the co
 See [`release-notes/README.md`](./release-notes/README.md). Two artefacts, both required:
 the tag `agent-ks-engine-v<version>` and the note. Pushing the tag runs
 [the workflow](../.github/workflows/agent-ks-engine-release.yml), which validates both
-artefacts and advances `engine-latest`. It fails when the note is missing, so the rule is
+artefacts. It fails when the note is missing, so the rule is
 enforced rather than remembered. Add the row here in the same change.

@@ -17,7 +17,7 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/agent-ks-plugin-v')
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
     steps:
       - uses: actions/checkout@v4
         with:
@@ -66,10 +66,3 @@ jobs:
 
           print(f'Validated Plugin {version}: tag={tag} commit={commit} tree={tree}')
           PY
-
-      - name: Advance plugin latest alias
-        run: >-
-          python3 scripts/release/release_control.py update-latest
-          --product plugin
-          --release-tag "$GITHUB_REF_NAME"
-          --repository "$GITHUB_REPOSITORY"

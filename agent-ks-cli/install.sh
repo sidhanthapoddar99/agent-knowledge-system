@@ -10,7 +10,7 @@ usage() {
   cat <<'HELP'
 Install agent-ks from GitHub Releases.
 Usage: sh install.sh [--version X.Y.Z] [--install-dir PATH] [--no-shell-setup]
-Default: cli-latest, validated against its numbered stable release, installed into ~/.local/bin.
+Default: official Latest numbered stable CLI release, installed into ~/.local/bin.
 Environment: AGENTKS_VERSION and AGENTKS_INSTALL_DIR set the same defaults.
 Adds PATH and a silent five-hour auto-update hook to your shell startup file.
 --version pins the installation and pauses automatic updates.
@@ -47,48 +47,24 @@ installed_version=
 if [ -x "$install_dir/agent-ks" ]; then
   installed_version=$("$install_dir/agent-ks" --version 2>/dev/null | sed -n 's/^agent-ks \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)$/\1/p' || true)
 fi
-alias_version() {
-  fetch "https://api.github.com/repos/$repo/git/ref/tags/cli-latest" "$tmp/alias-ref.json" || return 1
-  grep -Eq '"ref":[[:space:]]*"refs/tags/cli-latest"' "$tmp/alias-ref.json" || return 1
-  alias_type=$(sed -n 's/^[[:space:]]*"type":[[:space:]]*"\([^"]*\)".*/\1/p' "$tmp/alias-ref.json" | head -n 1)
-  alias_commit=$(sed -n 's/^[[:space:]]*"sha":[[:space:]]*"\([0-9a-fA-F]*\)".*/\1/p' "$tmp/alias-ref.json" | head -n 1)
-  [ "$alias_type" = commit ] && [ "${#alias_commit}" -eq 40 ] || return 1
-  case "$alias_commit" in *[!0-9a-fA-F]*) return 1 ;; esac
-
-  fetch "https://raw.githubusercontent.com/$repo/$alias_commit/agent-ks-cli/Cargo.toml" "$tmp/Cargo.toml" || return 1
-  alias_release=$(sed -n 's/^version[[:space:]]*=[[:space:]]*"\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)"[[:space:]]*$/\1/p' "$tmp/Cargo.toml" | head -n 1)
-  [ -n "$alias_release" ] || return 1
-  numbered="agent-ks-cli-v$alias_release"
-
-  fetch "https://api.github.com/repos/$repo/releases/tags/$numbered" "$tmp/numbered-release.json" || return 1
-  grep -Eq '"tag_name":[[:space:]]*"'"$numbered"'"' "$tmp/numbered-release.json" || return 1
+official_version() {
+  fetch "https://api.github.com/repos/$repo/releases/latest" "$tmp/numbered-release.json" || return 1
   grep -Eq '"draft":[[:space:]]*false' "$tmp/numbered-release.json" || return 1
   grep -Eq '"prerelease":[[:space:]]*false' "$tmp/numbered-release.json" || return 1
   grep -Eq '"published_at":[[:space:]]*"[^"]+"' "$tmp/numbered-release.json" || return 1
+  official_release=$(sed -n 's/^[[:space:]]*"tag_name":[[:space:]]*"agent-ks-cli-v\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)".*/\1/p' "$tmp/numbered-release.json")
+  [ -n "$official_release" ] || return 1
   [ "$(grep -c '"name":[[:space:]]*"'"$asset"'"' "$tmp/numbered-release.json" || true)" -eq 1 ] || return 1
   [ "$(grep -c '"name":[[:space:]]*"SHA256SUMS"' "$tmp/numbered-release.json" || true)" -eq 1 ] || return 1
-
-  fetch "https://api.github.com/repos/$repo/git/ref/tags/$numbered" "$tmp/numbered-ref.json" || return 1
-  ref_type=$(sed -n 's/^[[:space:]]*"type":[[:space:]]*"\([^"]*\)".*/\1/p' "$tmp/numbered-ref.json" | head -n 1)
-  ref_sha=$(sed -n 's/^[[:space:]]*"sha":[[:space:]]*"\([0-9a-fA-F]*\)".*/\1/p' "$tmp/numbered-ref.json" | head -n 1)
-  depth=0
-  while [ "$ref_type" = tag ] && [ "$depth" -lt 5 ]; do
-    [ "${#ref_sha}" -eq 40 ] || return 1
-    fetch "https://api.github.com/repos/$repo/git/tags/$ref_sha" "$tmp/tag-object.json" || return 1
-    ref_type=$(sed -n 's/^[[:space:]]*"type":[[:space:]]*"\([^"]*\)".*/\1/p' "$tmp/tag-object.json" | head -n 1)
-    ref_sha=$(sed -n 's/^[[:space:]]*"sha":[[:space:]]*"\([0-9a-fA-F]*\)".*/\1/p' "$tmp/tag-object.json" | head -n 1)
-    depth=$((depth + 1))
-  done
-  [ "$ref_type" = commit ] && [ "$ref_sha" = "$alias_commit" ] || return 1
-  printf '%s\n' "$alias_release"
+  printf '%s\n' "$official_release"
 }
 if [ -z "$version" ]; then
   use_history=0
-  if alias_candidate=$(alias_version 2>/dev/null); then
-    if [ -n "$installed_version" ] && version_greater "$installed_version" "$alias_candidate"; then
+  if official_candidate=$(official_version 2>/dev/null); then
+    if [ -n "$installed_version" ] && version_greater "$installed_version" "$official_candidate"; then
       use_history=1
     else
-      version=$alias_candidate
+      version=$official_candidate
     fi
   else use_history=1
   fi

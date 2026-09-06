@@ -87,7 +87,7 @@ The whole loop can be 30 seconds. Compare to traditional package release (publis
 
 The `agent-ks` plugin declares the same version in its Claude and Codex manifests. A release requires `plugins/agent-ks/release-notes/<version>.md`, then the repository owner tags the reviewed `main` commit as `agent-ks-plugin-v<version>`.
 
-The [plugin tag workflow](../../../../../.github/workflows/agent-ks-plugin-release.yml) verifies both manifests, the note, the full commit SHA, and the exact `plugins/agent-ks/` Git tree ID. It advances `plugin-latest` but creates no GitHub release page or archive because the marketplace remains the distribution channel. The engine and Rust CLI have separate `agent-ks-engine-vX.Y.Z` and `agent-ks-cli-vX.Y.Z` streams.
+The [plugin tag workflow](../../../../../.github/workflows/agent-ks-plugin-release.yml) verifies both manifests, the note, the full commit SHA, and the exact `plugins/agent-ks/` Git tree ID. It creates no GitHub release page or archive because the marketplace remains the distribution channel. The engine and Rust CLI have separate `agent-ks-engine-vX.Y.Z` and `agent-ks-cli-vX.Y.Z` streams.
 
 ## Multiple plugins in one marketplace
 

@@ -42,30 +42,6 @@ function exactReleaseTrigger(workflow, expectedTag, file) {
   );
 }
 
-function movingAliasContract(workflow, file, product, alias, predecessorStepName) {
-  const triggerPrefix = workflow?.on?.push?.tags?.[0]?.replace(/\*$/, '') ?? '';
-  check(!alias.startsWith(triggerPrefix), `${file}: ${alias} must not match the release trigger`);
-  check(workflow?.concurrency?.group === `agent-ks-${product}-release`, `${file}: product release concurrency is required`);
-  check(workflow?.concurrency?.['cancel-in-progress'] === false, `${file}: release runs must queue instead of cancelling`);
-
-  const steps = workflow?.jobs?.publish?.steps ?? [];
-  const predecessorIndex = steps.findIndex((step) => step.name === predecessorStepName);
-  const aliasIndex = steps.findIndex((step) => step.name?.toLowerCase().includes('latest alias'));
-  check(predecessorIndex >= 0, `${file}: alias predecessor step is missing`);
-  check(aliasIndex > predecessorIndex, `${file}: latest alias must advance only after validation or publication succeeds`);
-  const aliasStep = steps[aliasIndex] ?? {};
-  const aliasRun = String(aliasStep.run ?? '');
-  check(aliasRun.includes(`${RELEASE_CONTROL} update-latest`), `${file}: shared release control must update the alias`);
-  check(aliasRun.includes(`--product ${product}`), `${file}: alias update must be product-scoped`);
-  check(aliasRun.includes('--release-tag "$GITHUB_REF_NAME"'), `${file}: alias update must validate the triggering tag`);
-  check(aliasRun.includes('--repository "$GITHUB_REPOSITORY"'), `${file}: alias update needs repository context`);
-  if (product === 'cli') {
-    check(aliasStep?.env?.GH_TOKEN === '${{ github.token }}', `${file}: CLI alias and official Latest update needs the workflow token`);
-  } else {
-    check(!aliasStep?.env?.GH_TOKEN, `${file}: tag-only alias update must not expose GH_TOKEN`);
-  }
-}
-
 function stableNote(relative, version, product, heading = version) {
   const file = path.join(relative, `${version}.md`);
   const absolute = path.join(REPO, file);
@@ -96,50 +72,31 @@ const files = {
   engine: '.github/workflows/agent-ks-engine-release.yml',
   plugin: '.github/workflows/agent-ks-plugin-release.yml',
   cliRelease: '.github/workflows/agent-ks-cli-release.yml',
-  cliCi: '.github/workflows/agent-ks-cli.yml',
 };
 const engine = parse(files.engine);
 const plugin = parse(files.plugin);
 const cliRelease = parse(files.cliRelease);
-const cliCi = parse(files.cliCi);
 
 exactReleaseTrigger(engine, 'agent-ks-engine-v*', files.engine);
 exactReleaseTrigger(plugin, 'agent-ks-plugin-v*', files.plugin);
 exactReleaseTrigger(cliRelease, 'agent-ks-cli-v*', files.cliRelease);
-
-check(!cliCi?.on?.push?.tags, `${files.cliCi}: branch CI must not trigger on tags`);
-check(!cliCi?.jobs?.publish, `${files.cliCi}: branch CI must not contain a publish job`);
-check(cliCi?.permissions?.contents === 'read', `${files.cliCi}: branch CI needs read-only contents permission`);
 
 const engineText = read(files.engine);
 const pluginText = read(files.plugin);
 const cliReleaseText = read(files.cliRelease);
 const releaseControlText = read(RELEASE_CONTROL);
 
-movingAliasContract(engine, files.engine, 'engine', 'engine-latest', 'Verify tag, engine version, note, and source identity');
-movingAliasContract(plugin, files.plugin, 'plugin', 'plugin-latest', 'Verify tag, plugin manifests, note, and source identity');
-movingAliasContract(cliRelease, files.cliRelease, 'cli', 'cli-latest', 'Publish versioned CLI release');
-
-check(/release_title\(['"]cli['"]/.test(cliReleaseText), `${files.cliRelease}: product-first CLI release title generation is required`);
-
-for (const required of [
-  'engine-latest',
-  'plugin-latest',
-  'cli-latest',
-  '--force-with-lease=',
-  'FETCH_HEAD^{commit}',
-  'published_at',
-  'prerelease',
-  'draft',
-  'version_at_alias',
-  'sync_cli_official_latest',
-  'releases/latest',
-  '--latest=true',
-]) {
-  check(releaseControlText.includes(required), `${RELEASE_CONTROL}: missing ${required}`);
+check(cliRelease.concurrency?.group === 'agent-ks-cli-release' && cliRelease.concurrency?.['cancel-in-progress'] === false, 'CLI publication and Latest changes must be serialized');
+check(cliRelease.jobs.build.needs === 'verify' && cliRelease.jobs.publish.needs === 'build', 'CLI publication must require validation and successful builds');
+const targets = cliRelease.jobs.build.strategy.matrix.include.map(row => row.target).sort();
+check(JSON.stringify(targets) === JSON.stringify(['aarch64-apple-darwin','aarch64-unknown-linux-musl','x86_64-apple-darwin','x86_64-pc-windows-msvc','x86_64-unknown-linux-musl'].sort()), 'CLI release must retain all five platforms');
+for (const command of ['cargo fmt --check','cargo clippy --locked --all-targets -- -D warnings','cargo test --locked','cargo build --locked --release','python3 tests/install.py']) {
+  check(cliReleaseText.includes(command), 'CLI release missing check: ' + command);
 }
-check(!releaseControlText.includes('convenience release'), `${RELEASE_CONTROL}: moving aliases must not create release pages`);
-
+check(!fs.existsSync(path.join(REPO, '.github/workflows/agent-ks-cli.yml')), 'CLI builds belong only in the tag release workflow');
+check(cliReleaseText.includes('release_control.py official-latest'), 'CLI must select official Latest after publication');
+check(releaseControlText.includes('--latest=true'), 'Official Latest designation is required');
+check(!releaseControlText.includes('git", "push'), 'Release helper must not mutate Git tags');
 try {
   childProcess.execFileSync('python3', [RELEASE_CONTROL_TEST], {
     cwd: REPO,
@@ -161,8 +118,6 @@ for (const [file, text, productPath] of [
   }
 }
 
-check(releaseControlText.includes('if product_name == "cli"'), `${RELEASE_CONTROL}: CLI must use published-release selection`);
-check(releaseControlText.includes('target_tag = triggering_tag'), `${RELEASE_CONTROL}: engine/plugin must use the validated triggering tag`);
 
 check(engineText.includes('agent-ks-engine/src/loaders/engine-version.ts'), `${files.engine}: ENGINE_VERSION must be authoritative`);
 check(engineText.includes("pathlib.Path('agent-ks-engine/release-notes')"), `${files.engine}: engine note path is wrong`);

@@ -110,11 +110,11 @@ The [release architecture](./RELEASING.md) keeps the monorepo's three products i
 
 | Product | Tag | Committed notes | Published payload |
 |---|---|---|---|
-| Engine | `agent-ks-engine-vX.Y.Z` | [`agent-ks-engine/release-notes/`](./agent-ks-engine/release-notes/) | Validated numbered tag plus `engine-latest` |
-| Plugin / skills | `agent-ks-plugin-vX.Y.Z` | [`plugins/agent-ks/release-notes/`](./plugins/agent-ks/release-notes/) | Validated numbered tag plus `plugin-latest` |
+| Engine | `agent-ks-engine-vX.Y.Z` | [`agent-ks-engine/release-notes/`](./agent-ks-engine/release-notes/) | Validated immutable numbered tag |
+| Plugin / skills | `agent-ks-plugin-vX.Y.Z` | [`plugins/agent-ks/release-notes/`](./plugins/agent-ks/release-notes/) | Validated immutable numbered tag |
 | Rust CLI | `agent-ks-cli-vX.Y.Z` | [`agent-ks-cli/release-notes/`](./agent-ks-cli/release-notes/) | Platform archives and `SHA256SUMS` |
 
-Engine and plugin versions are tag-only and have no GitHub release pages. Run `mise run release-check` to apply the [release-contract gate](./scripts/checks/check-release-contracts.mjs), which checks the namespaces, version declarations, notes, source identity, moving aliases, and CLI asset boundary without publishing anything.
+Engine and plugin versions are tag-only and have no GitHub release pages. Run `mise run release-check` to apply the [release-contract gate](./scripts/checks/check-release-contracts.mjs), which checks the namespaces, version declarations, notes, source identity, and CLI asset boundary without publishing anything.
 
 ## Manual setup (without `/agent-ks-config`)
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Pure regression tests for release titles and latest-alias selection."""
+"""Regression tests for release titles and official Latest selection."""
 
 from __future__ import annotations
 
@@ -7,9 +7,8 @@ import unittest
 
 from release_control import (
     ReleaseControlError,
-    alias_update_decision,
     release_title,
-    select_alias_target,
+    select_latest_release,
     version_from_tag,
 )
 
@@ -57,7 +56,7 @@ class ReleaseControlTests(unittest.TestCase):
             release("agent-ks-engine-v9.0.0"),
             release("agent-ks-plugin-v9.0.0"),
         ]
-        selected = select_alias_target(releases, "cli", "agent-ks-cli-v0.3.10")
+        selected = select_latest_release(releases, "cli", "agent-ks-cli-v0.3.10")
         self.assertIsNotNone(selected)
         self.assertEqual(selected["tag_name"], "agent-ks-cli-v0.3.10")
 
@@ -65,10 +64,10 @@ class ReleaseControlTests(unittest.TestCase):
         stable = release("agent-ks-cli-v0.1.0")
         prerelease = release("agent-ks-cli-v0.1.1", prerelease=True)
         self.assertIsNone(
-            select_alias_target([stable], "cli", "agent-ks-cli-v0.1.1")
+            select_latest_release([stable], "cli", "agent-ks-cli-v0.1.1")
         )
         self.assertIsNone(
-            select_alias_target([stable, prerelease], "cli", "agent-ks-cli-v0.1.1")
+            select_latest_release([stable, prerelease], "cli", "agent-ks-cli-v0.1.1")
         )
 
     def test_older_rerun_selects_newest_release_and_never_regresses(self) -> None:
@@ -76,11 +75,9 @@ class ReleaseControlTests(unittest.TestCase):
             release("agent-ks-cli-v0.1.1"),
             release("agent-ks-cli-v0.1.2"),
         ]
-        selected = select_alias_target(releases, "cli", "agent-ks-cli-v0.1.1")
+        selected = select_latest_release(releases, "cli", "agent-ks-cli-v0.1.1")
         self.assertIsNotNone(selected)
         self.assertEqual(selected["tag_name"], "agent-ks-cli-v0.1.2")
-        self.assertEqual(alias_update_decision((0, 12, 0), (0, 11, 0)), "keep-newer")
-        self.assertEqual(alias_update_decision((0, 11, 0), (0, 12, 0)), "advance")
 
     def test_only_strict_stable_numeric_tags_are_accepted(self) -> None:
         for tag in (

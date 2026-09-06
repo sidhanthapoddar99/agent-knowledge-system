@@ -9,7 +9,7 @@ Every version of this engine gets **two artefacts, and both are required**:
    standalone upgrade record for that tag.
 
 **Pushing the tag validates the version and note.** [The engine tag workflow](../../.github/workflows/agent-ks-engine-release.yml)
-fires only on `agent-ks-engine-v*`, reads `agent-ks-engine/release-notes/<version>.md`, validates the tag against `ENGINE_VERSION`, verifies the full commit and exact `agent-ks-engine/` tree, and advances `engine-latest` without numeric regression. It creates no GitHub release page. Line 1 remains `# <version> — <one line>` because the note must read as a standalone document.
+fires only on `agent-ks-engine-v*`, reads `agent-ks-engine/release-notes/<version>.md`, validates the tag against `ENGINE_VERSION`, verifies the full commit and exact `agent-ks-engine/` tree. It creates no GitHub release page. Line 1 remains `# <version> — <one line>` because the note must read as a standalone document.
 
 **It fails the tag when the note is missing.** That is the point: a release
 note is the artefact most easily skipped, because nothing downstream breaks

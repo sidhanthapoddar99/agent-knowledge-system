@@ -17,7 +17,7 @@ export PATH="$HOME/.local/bin:$PATH"
 agent-ks --version
 ```
 
-The installer resolves `cli-latest`, validates its commit against the corresponding stable `agent-ks-cli-vX.Y.Z` release, and downloads the archive and checksum only from that immutable numbered release. Unsafe alias discovery falls back to the bounded stable release history. It configures your shell for silent automatic updates, with a five-hour cooldown. Use `agent-ks update` to update immediately. Use `sh -s -- --version 0.1.2` at the end of the pipeline to pin a release. A published CLI release is required; source builds are described in the [toolkit README](../../../../agent-ks-cli/README.md).
+The installer queries GitHub’s official Latest release, validates its stable numbered CLI tag and required assets, then downloads that numbered release.Y.Z` release, and downloads the archive and checksum only from that immutable numbered release. Invalid Latest metadata falls back to the bounded stable release history. It configures your shell for silent automatic updates, with a five-hour cooldown. Use `agent-ks update` to update immediately. Use `sh -s -- --version 0.1.2` at the end of the pipeline to pin a release. A published CLI release is required; source builds are described in the [toolkit README](../../../../agent-ks-cli/README.md).
 
 For native Windows, download the Windows ZIP and `SHA256SUMS` from the matching CLI release, verify the checksum, extract `agent-ks.exe`, and add its directory to PATH.
 

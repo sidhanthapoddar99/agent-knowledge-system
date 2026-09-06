@@ -19,8 +19,6 @@ const REPO: &str = "sidhanthapoddar99/agent-knowledge-system";
 const COOLDOWN: u64 = 5 * 60 * 60;
 const MAX_BINARY: u64 = 64 * 1024 * 1024;
 const MAX_API: u64 = 8 * 1024 * 1024;
-const MAX_REF: u64 = 64 * 1024;
-const MAX_MANIFEST: u64 = 1024 * 1024;
 const CURRENT: &str = env!("CARGO_PKG_VERSION");
 #[derive(Serialize, Deserialize)]
 #[serde(default)]
@@ -150,54 +148,6 @@ fn fetch(url: &str, max: u64) -> Result<Vec<u8>> {
         .with_context(|| format!("Could not download {url}"))?;
     bounded(response.body_mut().as_reader(), max)
 }
-fn ref_object(v: &Value, expected_ref: Option<&str>) -> Result<(String, String)> {
-    if let Some(expected) = expected_ref
-        && v["ref"].as_str() != Some(expected)
-    {
-        bail!("Git ref response did not match {expected}");
-    }
-    let object = v["object"]
-        .as_object()
-        .context("Git ref response needs an object")?;
-    let kind = object
-        .get("type")
-        .and_then(Value::as_str)
-        .context("Git ref object needs a type")?;
-    let sha = object
-        .get("sha")
-        .and_then(Value::as_str)
-        .context("Git ref object needs a SHA")?;
-    if sha.len() != 40 || !sha.bytes().all(|byte| byte.is_ascii_hexdigit()) {
-        bail!("Git ref object needs a full commit SHA");
-    }
-    Ok((kind.to_owned(), sha.to_ascii_lowercase()))
-}
-fn manifest_version(data: &[u8]) -> Result<String> {
-    let text = std::str::from_utf8(data).context("CLI manifest must be UTF-8")?;
-    let mut package = false;
-    for line in text.lines() {
-        let line = line.trim();
-        if line.starts_with('[') {
-            package = line == "[package]";
-            continue;
-        }
-        if package
-            && let Some((key, value)) = line.split_once('=')
-            && key.trim() == "version"
-        {
-            let value = value.trim();
-            let value = value
-                .strip_prefix('"')
-                .and_then(|value| value.strip_suffix('"'))
-                .context("CLI package version must be a quoted string")?;
-            if version(value).is_none() {
-                bail!("CLI package version must be stable X.Y.Z");
-            }
-            return Ok(value.to_owned());
-        }
-    }
-    bail!("CLI manifest has no package version")
-}
 fn validate_release(v: &Value, tag: &str, platform_asset: &str) -> Result<()> {
     if v["tag_name"].as_str() != Some(tag)
         || v["draft"] == true
@@ -225,42 +175,20 @@ fn validate_release(v: &Value, tag: &str, platform_asset: &str) -> Result<()> {
     }
     Ok(())
 }
-fn tag_commit(tag: &str, get: &impl Fn(&str, u64) -> Result<Vec<u8>>) -> Result<String> {
-    let url = format!("https://api.github.com/repos/{REPO}/git/ref/tags/{tag}");
-    let value: Value = serde_json::from_slice(&get(&url, MAX_REF)?)?;
-    let (mut kind, mut sha) = ref_object(&value, Some(&format!("refs/tags/{tag}")))?;
-    for _ in 0..5 {
-        match kind.as_str() {
-            "commit" => return Ok(sha),
-            "tag" => {
-                let url = format!("https://api.github.com/repos/{REPO}/git/tags/{sha}");
-                let value: Value = serde_json::from_slice(&get(&url, MAX_REF)?)?;
-                (kind, sha) = ref_object(&value, None)?;
-            }
-            _ => bail!("Numbered CLI tag must resolve to a commit"),
-        }
+fn latest_from_official(get: &impl Fn(&str, u64) -> Result<Vec<u8>>) -> Result<String> {
+    let url = format!("https://api.github.com/repos/{REPO}/releases/latest");
+    let data: Value = serde_json::from_slice(&get(&url, MAX_API)?)?;
+    let tag = data["tag_name"]
+        .as_str()
+        .context("Latest release needs a numbered tag")?;
+    let release = tag
+        .strip_prefix("agent-ks-cli-v")
+        .context("Latest release is not CLI")?;
+    if version(release).is_none() {
+        bail!("Latest CLI version must be stable X.Y.Z");
     }
-    bail!("Numbered CLI tag dereference exceeds five objects")
-}
-fn latest_from_alias(get: &impl Fn(&str, u64) -> Result<Vec<u8>>) -> Result<String> {
-    let alias_url = format!("https://api.github.com/repos/{REPO}/git/ref/tags/cli-latest");
-    let alias: Value = serde_json::from_slice(&get(&alias_url, MAX_REF)?)?;
-    let (kind, commit) = ref_object(&alias, Some("refs/tags/cli-latest"))?;
-    if kind != "commit" {
-        bail!("cli-latest must be a lightweight commit tag");
-    }
-
-    let manifest_url =
-        format!("https://raw.githubusercontent.com/{REPO}/{commit}/agent-ks-cli/Cargo.toml");
-    let release = manifest_version(&get(&manifest_url, MAX_MANIFEST)?)?;
-    let tag = format!("agent-ks-cli-v{release}");
-    let release_url = format!("https://api.github.com/repos/{REPO}/releases/tags/{tag}");
-    let release_data: Value = serde_json::from_slice(&get(&release_url, MAX_API)?)?;
-    validate_release(&release_data, &tag, &asset()?)?;
-    if tag_commit(&tag, get)? != commit {
-        bail!("cli-latest and its numbered stable release target different commits");
-    }
-    Ok(release)
+    validate_release(&data, tag, &asset()?)?;
+    Ok(release.to_owned())
 }
 fn latest_from_history(get: &impl Fn(&str, u64) -> Result<Vec<u8>>) -> Result<String> {
     let mut found: Option<String> = None;
@@ -281,9 +209,9 @@ fn latest_from_history(get: &impl Fn(&str, u64) -> Result<Vec<u8>>) -> Result<St
     bail!("Release history exceeds 1,000 entries; cannot reliably select the latest CLI release")
 }
 fn latest(get: &impl Fn(&str, u64) -> Result<Vec<u8>>) -> Result<String> {
-    let alias = latest_from_alias(get).and_then(|candidate| {
+    let alias = latest_from_official(get).and_then(|candidate| {
         if version(&candidate) < version(CURRENT) {
-            bail!("cli-latest points to {candidate}, older than installed {CURRENT}");
+            bail!("Official Latest points to {candidate}, older than installed {CURRENT}");
         }
         Ok(candidate)
     });
@@ -291,7 +219,7 @@ fn latest(get: &impl Fn(&str, u64) -> Result<Vec<u8>>) -> Result<String> {
         Ok(candidate) => Ok(candidate),
         Err(alias_error) => latest_from_history(get).map_err(|history_error| {
             anyhow!(
-                "cli-latest lookup failed: {alias_error:#}; release-history fallback failed: {history_error:#}"
+                "Official Latest lookup failed: {alias_error:#}; release-history fallback failed: {history_error:#}"
             )
         }),
     }
@@ -701,39 +629,19 @@ mod tests {
     fn sums(data: &[u8], name: &str) -> Vec<u8> {
         format!("{:x}  {name}\n", Sha256::digest(data)).into_bytes()
     }
-    fn alias_response(
-        url: &str,
-        release: &str,
-        commit: &str,
-        tag_object: &str,
-        platform_asset: &str,
-    ) -> Option<Vec<u8>> {
-        let tag = format!("agent-ks-cli-v{release}");
-        let value = if url.ends_with("/git/ref/tags/cli-latest") {
-            json!({"ref":"refs/tags/cli-latest","object":{"type":"commit","sha":commit}})
-        } else if url.contains("raw.githubusercontent.com") {
-            return Some(
-                format!("[package]\nname = \"agent-ks\"\nversion = \"{release}\"\n").into_bytes(),
-            );
-        } else if url.ends_with(&format!("/releases/tags/{tag}")) {
-            json!({
-                "tag_name": tag,
-                "draft": false,
-                "prerelease": false,
-                "published_at": "2026-09-06T00:00:00Z",
-                "assets": [
-                    {"name":platform_asset,"state":"uploaded","size":1},
-                    {"name":"SHA256SUMS","state":"uploaded","size":1}
-                ]
-            })
-        } else if url.ends_with(&format!("/git/ref/tags/{tag}")) {
-            json!({"ref":format!("refs/tags/{tag}"),"object":{"type":"tag","sha":tag_object}})
-        } else if url.ends_with(&format!("/git/tags/{tag_object}")) {
-            json!({"object":{"type":"commit","sha":commit}})
-        } else {
+    fn official_response(url: &str, release: &str, platform_asset: &str) -> Option<Vec<u8>> {
+        if !url.ends_with("/releases/latest") {
             return None;
-        };
-        Some(serde_json::to_vec(&value).unwrap())
+        }
+        Some(
+            serde_json::to_vec(&json!({
+                "tag_name":format!("agent-ks-cli-v{release}"), "draft":false, "prerelease":false,
+                "published_at":"2026-09-06T00:00:00Z",
+                "assets":[{"name":platform_asset,"state":"uploaded","size":1},
+                          {"name":"SHA256SUMS","state":"uploaded","size":1}]
+            }))
+            .unwrap(),
+        )
     }
     #[test]
     fn release_selection_skips_other_streams_drafts_prereleases_and_uses_numeric_versions() {
@@ -757,15 +665,11 @@ mod tests {
         assert!(latest(&|_, _| Ok(b"[]".to_vec())).is_err());
     }
     #[test]
-    fn alias_fast_path_resolves_version_and_validates_numbered_release() {
-        let commit = "a".repeat(40);
-        let tag_object = "b".repeat(40);
+    fn official_fast_path_validates_numbered_release() {
         let platform_asset = asset().unwrap();
         let history_calls = Cell::new(0);
         let get = |url: &str, _| {
-            if let Some(response) =
-                alias_response(url, "99.0.0", &commit, &tag_object, &platform_asset)
-            {
+            if let Some(response) = official_response(url, "99.0.0", &platform_asset) {
                 return Ok(response);
             }
             if url.contains("/releases?per_page=") {
@@ -777,13 +681,13 @@ mod tests {
         assert_eq!(history_calls.get(), 0);
     }
     #[test]
-    fn malformed_or_unsafe_alias_falls_back_to_stable_history() {
+    fn malformed_or_unsafe_official_latest_falls_back_to_stable_history() {
         let releases = json!([
             {"tag_name":"agent-ks-cli-v2.10.0","published_at":"2026-09-06T00:00:00Z"}
         ]);
         let get = |url: &str, _| {
-            if url.ends_with("/git/ref/tags/cli-latest") {
-                Ok(br#"{"ref":"refs/tags/cli-latest","object":{"type":"branch","sha":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}}"#.to_vec())
+            if url.ends_with("/releases/latest") {
+                Ok(br#"{"ref":"refs/tags/Official Latest","object":{"type":"branch","sha":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}}"#.to_vec())
             } else if url.contains("/releases?per_page=") {
                 Ok(serde_json::to_vec(&releases).unwrap())
             } else {
@@ -793,17 +697,13 @@ mod tests {
         assert_eq!(latest(&get).unwrap(), "2.10.0");
     }
     #[test]
-    fn stale_alias_older_than_installed_falls_back_to_history() {
-        let commit = "a".repeat(40);
-        let tag_object = "b".repeat(40);
+    fn stale_official_latest_older_than_installed_falls_back_to_history() {
         let platform_asset = asset().unwrap();
         let releases = json!([
             {"tag_name":"agent-ks-cli-v0.1.2","published_at":"2026-09-06T00:00:00Z"}
         ]);
         let get = |url: &str, _| {
-            if let Some(response) =
-                alias_response(url, "0.1.1", &commit, &tag_object, &platform_asset)
-            {
+            if let Some(response) = official_response(url, "0.1.1", &platform_asset) {
                 Ok(response)
             } else if url.contains("/releases?per_page=") {
                 Ok(serde_json::to_vec(&releases).unwrap())
@@ -815,7 +715,7 @@ mod tests {
         assert_eq!(latest(&get).unwrap(), "0.1.2");
     }
     #[test]
-    fn alias_release_must_be_published_stable_with_required_assets() {
+    fn official_release_must_be_published_stable_with_required_assets() {
         let platform_asset = asset().unwrap();
         let invalid = json!({
             "tag_name":"agent-ks-cli-v1.2.3",
@@ -841,15 +741,11 @@ mod tests {
     }
     #[test]
     fn download_integrity_failure_does_not_fall_back_to_an_older_release() {
-        let commit = "a".repeat(40);
-        let tag_object = "b".repeat(40);
         let platform_asset = asset().unwrap();
         let history_calls = Cell::new(0);
         let archive = b"corrupt archive".to_vec();
         let get = |url: &str, _| {
-            if let Some(response) =
-                alias_response(url, "99.0.0", &commit, &tag_object, &platform_asset)
-            {
+            if let Some(response) = official_response(url, "99.0.0", &platform_asset) {
                 return Ok(response);
             }
             if url.contains("/releases?per_page=") {
@@ -948,7 +844,9 @@ mod tests {
         });
         assert_eq!(
             state.error.as_deref(),
-            Some("cli-latest lookup failed: offline; release-history fallback failed: offline")
+            Some(
+                "Official Latest lookup failed: offline; release-history fallback failed: offline"
+            )
         );
         assert!(!due(&state, now()));
         check_and_apply(

@@ -104,6 +104,8 @@ def select_alias_target(
 ) -> dict[str, Any] | None:
     """Select the newest stable product release after validating the triggering release."""
 
+    if product_name != "cli":
+        raise ReleaseControlError("Only CLI selects latest aliases from GitHub releases")
     version_from_tag(product_name, triggering_tag)
     release_list = list(releases)
     triggering_release = next(
@@ -216,6 +218,53 @@ def fetch_tag_commit(remote: str, tag: str, expected_object: str) -> None:
         )
 
 
+def sync_cli_official_latest(repository: str, remote: str, attempts: int = 5) -> None:
+    spec = product("cli")
+    for attempt in range(1, attempts + 1):
+        releases = github_releases(repository)
+        alias_object, numbered_tags = remote_tag_state(remote, "cli")
+        if alias_object is None:
+            raise ReleaseControlError(f"Remote alias is missing: {spec.latest_alias}")
+        candidates = [
+            release
+            for release in releases
+            if is_published_stable(release, "cli")
+            and numbered_tags.get(release["tag_name"]) == alias_object
+        ]
+        if not candidates:
+            raise ReleaseControlError(
+                f"{spec.latest_alias} does not target a published stable CLI release"
+            )
+        target = max(
+            candidates,
+            key=lambda release: version_from_tag("cli", release["tag_name"]),
+        )
+        numbered_tag = target["tag_name"]
+        run(
+            [
+                "gh",
+                "release",
+                "edit",
+                numbered_tag,
+                "--repo",
+                repository,
+                "--latest=true",
+            ]
+        )
+        official: dict[str, Any] = json.loads(
+            run(["gh", "api", f"repos/{repository}/releases/latest"]).stdout
+        )
+        observed, _ = remote_tag_state(remote, "cli")
+        if observed == alias_object and official.get("tag_name") == numbered_tag:
+            print(f"Marked {numbered_tag} as the official Latest release ({alias_object})")
+            return
+        if attempt < attempts:
+            time.sleep(0.5)
+    raise ReleaseControlError(
+        f"Could not synchronize the official CLI Latest release after {attempts} attempts"
+    )
+
+
 def update_latest_alias(
     product_name: str,
     triggering_tag: str,
@@ -225,17 +274,19 @@ def update_latest_alias(
 ) -> None:
     spec = product(product_name)
     for attempt in range(1, attempts + 1):
-        target = select_alias_target(
-            github_releases(repository), product_name, triggering_tag
-        )
-        if target is None:
-            print(
-                f"{triggering_tag} is not a successfully published stable release; "
-                f"{spec.latest_alias} is unchanged"
+        if product_name == "cli":
+            target = select_alias_target(
+                github_releases(repository), product_name, triggering_tag
             )
-            return
-
-        target_tag = target["tag_name"]
+            if target is None:
+                print(
+                    f"{triggering_tag} is not a successfully published stable release; "
+                    f"{spec.latest_alias} is unchanged"
+                )
+                return
+            target_tag = target["tag_name"]
+        else:
+            target_tag = triggering_tag
         desired_version = version_from_tag(product_name, target_tag)
         alias_object, numbered_tags = remote_tag_state(remote, product_name)
         desired_object = numbered_tags.get(target_tag)
@@ -246,6 +297,8 @@ def update_latest_alias(
         decision = alias_update_decision(current_version, desired_version)
         if alias_object == desired_object or decision == "current":
             print(f"{spec.latest_alias} already targets {target_tag} ({desired_object})")
+            if product_name == "cli":
+                sync_cli_official_latest(repository, remote, attempts)
             return
         if decision == "keep-newer":
             print(
@@ -253,6 +306,8 @@ def update_latest_alias(
                 f"{'.'.join(map(str, current_version or ()))}; refusing to regress to "
                 f"{'.'.join(map(str, desired_version))}"
             )
+            if product_name == "cli":
+                sync_cli_official_latest(repository, remote, attempts)
             return
 
         fetch_tag_commit(remote, target_tag, desired_object)
@@ -272,10 +327,14 @@ def update_latest_alias(
             observed, observed_tags = remote_tag_state(remote, product_name)
             if observed == desired_object:
                 print(f"Advanced {spec.latest_alias} to {target_tag} ({desired_object})")
+                if product_name == "cli":
+                    sync_cli_official_latest(repository, remote, attempts)
                 return
             observed_version = version_at_alias(observed, observed_tags, product_name)
             if observed_version and observed_version > desired_version:
                 print(f"A newer release won the race for {spec.latest_alias}")
+                if product_name == "cli":
+                    sync_cli_official_latest(repository, remote, attempts)
                 return
 
         if attempt < attempts:

@@ -11,12 +11,12 @@ curl -fsSL https://raw.githubusercontent.com/sidhanthapoddar99/agent-knowledge-s
 export PATH="$HOME/.local/bin:$PATH"
 ```
 
-The installer selects the newest published `agent-ks-cli-vX.Y.Z` release from GitHub, verifies its SHA-256 checksum and version, then installs it atomically. It needs curl, tar, and `sha256sum` or `shasum`. It adds PATH and a silent auto-update hook to your Bash, Zsh or Fish startup file. Use `--no-shell-setup` to manage your shell yourself. The first download requires a published CLI release.
+The installer resolves `cli-latest` first, validates its commit against the corresponding published stable `agent-ks-cli-vX.Y.Z` release, then downloads that numbered release and verifies its SHA-256 checksum and executable version before installing atomically. A missing or invalid alias falls back to the bounded stable release-history lookup. It needs curl, tar, and `sha256sum` or `shasum`. It adds PATH and a silent auto-update hook to your Bash, Zsh or Fish startup file. Use `--no-shell-setup` to manage your shell yourself. The first download requires a published CLI release.
 
 Pin a version or choose another destination:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/sidhanthapoddar99/agent-knowledge-system/main/agent-ks-cli/install.sh | sh -s -- --version 0.1.1 --install-dir "$HOME/.local/bin"
+curl -fsSL https://raw.githubusercontent.com/sidhanthapoddar99/agent-knowledge-system/main/agent-ks-cli/install.sh | sh -s -- --version 0.1.2 --install-dir "$HOME/.local/bin"
 ```
 
 On native Windows, download `agent-ks-x86_64-pc-windows-msvc.zip` and `SHA256SUMS` from the matching CLI release. Compare the archive's `Get-FileHash -Algorithm SHA256` output with its checksum entry, extract `agent-ks.exe`, and add its directory to PATH. WSL uses the Linux installer.
@@ -30,7 +30,7 @@ agent-ks update --check --json     # check now without installing
 agent-ks update --status --json    # cached status, no network
 agent-ks update --disable         # opt out of automatic updates
 agent-ks update --enable
-agent-ks update --pin 0.1.1        # pin manual updates; pause automatic updates
+agent-ks update --pin 0.1.2        # pin manual updates; pause automatic updates
 agent-ks update --unpin
 ```
 
@@ -42,7 +42,7 @@ The cooldown and an exclusive process lock prevent repeated checks across multip
 
 For a manual binary installation, run `agent-ks init bash`, `agent-ks init zsh`, `agent-ks init fish`, or `agent-ks init powershell`. Add the printed code to that shell's startup file once. The command prints code; it does not edit the file. On Windows, add the PowerShell output to `$PROFILE` after extracting the EXE. The shell hook runs once at shell initialization, not on each command or directory change.
 
-Engine/plugin releases do not attach another copy of an unchanged CLI. The installer and updater select only the `agent-ks-cli-vX.Y.Z` release stream; `agent-ks-engine-vX.Y.Z` and `agent-ks-plugin-vX.Y.Z` are independent metadata-only releases. The updater ignores drafts and prereleases and compares numeric versions to avoid accidental downgrades. A pin is an explicit exception.
+Engine and plugin versions use tag-only streams and do not attach another copy of the CLI. The installer and updater use `cli-latest` only to discover and verify the corresponding immutable `agent-ks-cli-vX.Y.Z` release; all binaries and checksums still come from that numbered release. They ignore drafts and prereleases, fall back to bounded release-history lookup when alias discovery is unsafe, and compare numeric versions to avoid accidental downgrades. A pin is an explicit exception.
 
 ## Choose a project
 
@@ -114,6 +114,6 @@ The command catalog is `src/manifest.json`; `src/args.rs` adds shared flags and 
 4. From the repository root, run `mise run release-check`.
 5. After the change is merged, a maintainer tags and pushes `agent-ks-cli-v<version>`.
 
-The [CLI release workflow](../.github/workflows/agent-ks-cli-release.yml) tests and builds Linux x86_64/ARM64 with musl, macOS Intel/Apple Silicon, and Windows x64. It uploads versioned archives plus `SHA256SUMS` to GitHub Releases. The tag must match Cargo's version. The separate [CLI CI workflow](../.github/workflows/agent-ks-cli.yml) builds pull requests and `main` changes but cannot publish. CLI releases use `latest=false`, preserving the engine's latest-release marker. Runner labels follow the [GitHub-hosted runner reference](https://docs.github.com/en/actions/reference/runners/github-hosted-runners).
+The [CLI release workflow](../.github/workflows/agent-ks-cli-release.yml) tests and builds Linux x86_64/ARM64 with musl, macOS Intel/Apple Silicon, and Windows x64. It uploads versioned archives plus `SHA256SUMS` to the numbered GitHub release, advances `cli-latest`, and marks that numbered release as GitHub's official Latest release. The numbered tag must match Cargo's version. The separate [CLI CI workflow](../.github/workflows/agent-ks-cli.yml) builds pull requests and `main` changes but cannot publish. Moving aliases have no release pages. Runner labels follow the [GitHub-hosted runner reference](https://docs.github.com/en/actions/reference/runners/github-hosted-runners).
 
 CI also builds pull requests. A local build does not publish a GitHub release.

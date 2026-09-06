@@ -5,22 +5,13 @@ Every version of this engine gets **two artefacts, and both are required**:
 1. **An annotated git tag** — `agent-ks-engine-v<engine-version>`, on the commit that moves
    `ENGINE_VERSION` in `agent-ks-engine/src/loaders/engine-version.ts`. The tag
    lands on `main` after the work merges, never on a working branch.
-2. **A release note** — `agent-ks-engine/release-notes/<version>.md`, this folder. It becomes the
-   GitHub release body.
+2. **A release note** — `agent-ks-engine/release-notes/<version>.md`, this folder. It remains the
+   standalone upgrade record for that tag.
 
-**Pushing the tag publishes the note.** [the engine release workflow](../../.github/workflows/agent-ks-engine-release.yml)
-fires only on `agent-ks-engine-v*`, reads `agent-ks-engine/release-notes/<version>.md`, validates the tag against `ENGINE_VERSION`, and creates the release
-using the note's **H1 as the release title** and **everything below it as the
-body** — so line 1 must be `# <version> — <one line>`. Re-running on an existing
-release updates it rather than erroring, so a corrected note can be re-published.
+**Pushing the tag validates the version and note.** [The engine tag workflow](../../.github/workflows/agent-ks-engine-release.yml)
+fires only on `agent-ks-engine-v*`, reads `agent-ks-engine/release-notes/<version>.md`, validates the tag against `ENGINE_VERSION`, verifies the full commit and exact `agent-ks-engine/` tree, and advances `engine-latest` without numeric regression. It creates no GitHub release page. Line 1 remains `# <version> — <one line>` because the note must read as a standalone document.
 
-**The H1 is stripped from the body on purpose.** GitHub renders the release
-title above the body already, so publishing the file verbatim shows the same
-sentence twice. The file keeps its heading regardless: it is the title's single
-source, and the note has to read as a standalone document here in `agent-ks-engine/release-notes/`.
-Write the note for the file; the workflow adapts it for the release page.
-
-**And it fails the tag when the note is missing.** That is the point: a release
+**It fails the tag when the note is missing.** That is the point: a release
 note is the artefact most easily skipped, because nothing downstream breaks
 without one. This makes the rule something the repo checks rather than something
 a maintainer remembers.
@@ -41,7 +32,7 @@ restates nothing, so there is nothing to drift.
 someone whose build just stopped with a version error, or an AI assistant acting
 for them. A list of commit subjects does not help either of them.
 
-The repository's [release architecture](../../RELEASING.md) defines the independent engine, plugin, and Rust CLI streams. The engine workflow publishes this note with immutable commit and `agent-ks-engine/` tree metadata and attaches no custom archive.
+The repository's [release architecture](../../RELEASING.md) defines the independent engine, plugin, and Rust CLI streams. The engine workflow is tag-only; this folder and the engine changelog retain the written release record.
 
 ## The shape
 

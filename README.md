@@ -1,11 +1,18 @@
 # agent-knowledge-system
 
-[![engine](https://img.shields.io/github/v/release/sidhanthapoddar99/agent-knowledge-system?label=engine&color=0b7285&labelColor=1f2328&logo=github&logoColor=white)](https://github.com/sidhanthapoddar99/agent-knowledge-system/releases/latest)
-[![plugin](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fsidhanthapoddar99%2Fagent-knowledge-system%2Fmain%2Fplugins%2Fagent-ks%2F.claude-plugin%2Fplugin.json&query=%24.version&label=plugin&prefix=v&color=5f3dc4&labelColor=1f2328&logo=claude&logoColor=white)](./plugins/agent-ks)
-[![changelog](https://img.shields.io/badge/changelog-releases-1971c2?labelColor=1f2328&logo=readme&logoColor=white)](./agent-ks-engine/CHANGELOG.md)
-[![runtime](https://img.shields.io/badge/runtime-bun-fbf0df?labelColor=1f2328&logo=bun&logoColor=fbf0df)](https://bun.sh)
+[![Engine 0.3.10](https://img.shields.io/badge/Engine-0.3.10-0b7285?labelColor=1f2328&logo=github&logoColor=white)](./agent-ks-engine/release-notes/0.3.10.md)
+[![Plugin 0.12.0](https://img.shields.io/badge/Plugin-0.12.0-5f3dc4?labelColor=1f2328&logo=claude&logoColor=white)](./plugins/agent-ks/release-notes/0.12.0.md)
+[![CLI 0.1.2](https://img.shields.io/badge/CLI-0.1.2-1971c2?labelColor=1f2328&logo=github&logoColor=white)](./agent-ks-cli/release-notes/0.1.2.md)
+[![Engine runtime: Bun](https://img.shields.io/badge/Engine_runtime-Bun-fbf0df?labelColor=1f2328&logo=bun&logoColor=fbf0df)](https://bun.sh)
+[![CLI implementation: Rust](https://img.shields.io/badge/CLI_implementation-Rust-ce422b?labelColor=1f2328&logo=rust&logoColor=white)](./agent-ks-cli/README.md)
 
-<sub>Both version badges read live values — the **engine** from the latest release tag, the **plugin** from `plugin.json` on `main`. Neither is a number typed into this file, so neither can drift.</sub>
+<sub>The release contract validates the three displayed versions against their source files. Bun runs the engine; Rust is the CLI's implementation language, not an installed runtime requirement.</sub>
+
+| Component | Version | Release notes |
+|---|---:|---|
+| Engine | `0.3.10` | [Engine 0.3.10](./agent-ks-engine/release-notes/0.3.10.md) |
+| Plugin / skills | `0.12.0` | [Plugin 0.12.0](./plugins/agent-ks/release-notes/0.12.0.md) |
+| Native CLI | `0.1.2` | [CLI 0.1.2](./agent-ks-cli/release-notes/0.1.2.md) · [Downloads](https://github.com/sidhanthapoddar99/agent-knowledge-system/releases/latest) |
 
 A **knowledge + task system designed for AI consumers**, with human-readable docs as a first-class output — modular Astro layouts, YAML configuration, a folder-per-issue tracker, and live editing via Yjs CRDT. Self-contained **HTML artifacts** and **Mermaid / Graphviz / Excalidraw / draw.io** diagrams are first-class pages, rendered natively with no external service. Ships its own Claude Code plugin (skills + the `agent-ks` CLI) so agents operate the whole system natively.
 
@@ -103,11 +110,11 @@ The [release architecture](./RELEASING.md) keeps the monorepo's three products i
 
 | Product | Tag | Committed notes | Published payload |
 |---|---|---|---|
-| Engine | `agent-ks-engine-vX.Y.Z` | [`agent-ks-engine/release-notes/`](./agent-ks-engine/release-notes/) | Note plus immutable commit and engine-tree metadata |
-| Plugin / skills | `agent-ks-plugin-vX.Y.Z` | [`plugins/agent-ks/release-notes/`](./plugins/agent-ks/release-notes/) | Note plus immutable commit and plugin-tree metadata |
+| Engine | `agent-ks-engine-vX.Y.Z` | [`agent-ks-engine/release-notes/`](./agent-ks-engine/release-notes/) | Validated numbered tag plus `engine-latest` |
+| Plugin / skills | `agent-ks-plugin-vX.Y.Z` | [`plugins/agent-ks/release-notes/`](./plugins/agent-ks/release-notes/) | Validated numbered tag plus `plugin-latest` |
 | Rust CLI | `agent-ks-cli-vX.Y.Z` | [`agent-ks-cli/release-notes/`](./agent-ks-cli/release-notes/) | Platform archives and `SHA256SUMS` |
 
-Engine and plugin releases attach no custom source packages. Run `mise run release-check` to apply the [release-contract gate](./scripts/checks/check-release-contracts.mjs), which checks the namespaces, version declarations, notes, source metadata, and asset boundary without publishing anything.
+Engine and plugin versions are tag-only and have no GitHub release pages. Run `mise run release-check` to apply the [release-contract gate](./scripts/checks/check-release-contracts.mjs), which checks the namespaces, version declarations, notes, source identity, moving aliases, and CLI asset boundary without publishing anything.
 
 ## Manual setup (without `/agent-ks-config`)
 
@@ -208,7 +215,7 @@ The plugin in `plugins/agent-ks/` is distributed via [`sids-plugin-marketplace`]
 - **End-user docs** — `default-docs/data/user-guide/` (rendered at `/user-guide` in the live site). Setup, configuration, content authoring, themes, layouts, the issue tracker.
 - **Developer docs** — `default-docs/data/dev-docs/` (rendered at `/dev-docs`). Architecture, layouts internals, loader pipeline, scripts, and the **Plugins** section explaining how Claude Code plugins work and how to author one.
 - **CLAUDE.md** at the repo root — orientation for Claude Code sessions working in this repo.
-- **[Engine changelog](./agent-ks-engine/CHANGELOG.md)** — every engine release, with the full notes in [`agent-ks-engine/release-notes/`](./agent-ks-engine/release-notes/) and on the [GitHub releases page](https://github.com/sidhanthapoddar99/agent-knowledge-system/releases).
+- **[Engine changelog](./agent-ks-engine/CHANGELOG.md)** — every engine version, with the full notes in [`agent-ks-engine/release-notes/`](./agent-ks-engine/release-notes/).
 
 Both doc sets are written *in* the framework and rendered *by* it — the user-guide below is this repo's own `default-docs/data/user-guide/`:
 

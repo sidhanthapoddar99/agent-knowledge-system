@@ -6,9 +6,9 @@ Every independently tagged `agent-ks` plugin version has two matching declaratio
 2. `plugins/agent-ks/release-notes/X.Y.Z.md` starts with `# X.Y.Z — <one line>` and remains readable as a standalone document.
 3. An owner tags the release commit as `agent-ks-plugin-vX.Y.Z` after it reaches `main`.
 
-Pushing the tag runs the [plugin release workflow](../../../.github/workflows/agent-ks-plugin-release.yml). The workflow refuses a tag that disagrees with either manifest or lacks its matching note. It publishes the note without attaching a custom archive. The release body adds the tag, full commit SHA, and exact `plugins/agent-ks/` Git tree ID so the source is immutable and verifiable.
+Pushing the tag runs the [plugin tag workflow](../../../.github/workflows/agent-ks-plugin-release.yml). The workflow refuses a tag that disagrees with either manifest or lacks its matching note. It validates the full commit SHA and exact `plugins/agent-ks/` Git tree ID, then advances `plugin-latest` without numeric regression.
 
-The GitHub release is metadata for the tagged plugin source. Consumers still install and update the plugin through its marketplace; the release workflow does not package or upload a second copy. The engine and Rust CLI use their own tag namespaces and release notes.
+Plugin tags do not create GitHub release pages or packages. Consumers install and update the plugin through its marketplace. The engine and Rust CLI use their own tag namespaces and release notes; only the CLI publishes GitHub release assets.
 
 ## Note shape
 

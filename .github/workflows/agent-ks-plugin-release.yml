@@ -1,4 +1,4 @@
-name: Agent KS Plugin Release
+name: Agent KS Plugin Tag
 
 on:
   push:
@@ -33,10 +33,6 @@ jobs:
           import pathlib
           import re
           import subprocess
-          import sys
-
-          sys.path.insert(0, str(pathlib.Path('scripts/release').resolve()))
-          from release_control import release_title
 
           tag = os.environ['RELEASE_TAG']
           match = re.fullmatch(r'agent-ks-plugin-v(\d+\.\d+\.\d+)', tag)
@@ -55,8 +51,7 @@ jobs:
           lines = note.read_text().splitlines()
           assert lines and re.fullmatch(rf'# {re.escape(version)} — .+', lines[0]), \
               'Release note line 1 must be # <version> — <one line>'
-          body = '\n'.join(lines[1:]).lstrip()
-          assert body, 'Release note needs a body below its H1'
+          assert '\n'.join(lines[1:]).lstrip(), 'Release note needs a body below its H1'
 
           commit = subprocess.check_output(
               ['git', 'rev-parse', f'{tag}^{{commit}}'], text=True
@@ -69,43 +64,10 @@ jobs:
           ).strip()
           assert re.fullmatch(r'[0-9a-f]{40}', tree), 'Plugin tree must be a full Git object ID'
 
-          body_path = pathlib.Path(os.environ['RUNNER_TEMP']) / 'agent-ks-plugin-release-body.md'
-          body_path.write_text(
-              body.rstrip()
-              + '\n\n## Immutable source\n\n'
-              + f'- Tag: `{tag}`\n'
-              + f'- Commit: `{commit}`\n'
-              + f'- `plugins/agent-ks/` tree: `{tree}`\n'
-          )
-          with open(os.environ['GITHUB_ENV'], 'a') as env:
-              env.write(f'RELEASE_NOTE={note}\n')
-              env.write(f'RELEASE_BODY={body_path}\n')
-              env.write(f'RELEASE_TITLE={release_title("plugin", version, lines[0])}\n')
-              env.write(f'COMMIT_SHA={commit}\n')
-              env.write(f'TREE_ID={tree}\n')
+          print(f'Validated Plugin {version}: tag={tag} commit={commit} tree={tree}')
           PY
 
-      - name: Create or update the release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
-            gh release edit "$GITHUB_REF_NAME" \
-              --title "$RELEASE_TITLE" \
-              --notes-file "$RELEASE_BODY" \
-              --latest=false
-          else
-            gh release create "$GITHUB_REF_NAME" \
-              --title "$RELEASE_TITLE" \
-              --notes-file "$RELEASE_BODY" \
-              --latest=false \
-              --verify-tag
-          fi
-
       - name: Advance plugin latest alias
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: >-
           python3 scripts/release/release_control.py update-latest
           --product plugin

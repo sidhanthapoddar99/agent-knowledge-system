@@ -5,7 +5,7 @@
  * GitHub validates workflow syntax only after a push. This local gate parses the
  * YAML and checks the repository-specific contract: exact tag namespaces,
  * independent version declarations and notes, immutable subtree identity for
- * metadata-only releases, and binary assets only for the Rust CLI.
+ * tag-only engine/plugin streams, and binary releases only for the Rust CLI.
  */
 
 import fs from 'node:fs';
@@ -42,24 +42,28 @@ function exactReleaseTrigger(workflow, expectedTag, file) {
   );
 }
 
-function movingAliasContract(workflow, file, product, alias, publishStepName) {
+function movingAliasContract(workflow, file, product, alias, predecessorStepName) {
   const triggerPrefix = workflow?.on?.push?.tags?.[0]?.replace(/\*$/, '') ?? '';
   check(!alias.startsWith(triggerPrefix), `${file}: ${alias} must not match the release trigger`);
   check(workflow?.concurrency?.group === `agent-ks-${product}-release`, `${file}: product release concurrency is required`);
   check(workflow?.concurrency?.['cancel-in-progress'] === false, `${file}: release runs must queue instead of cancelling`);
 
   const steps = workflow?.jobs?.publish?.steps ?? [];
-  const publishIndex = steps.findIndex((step) => step.name === publishStepName);
+  const predecessorIndex = steps.findIndex((step) => step.name === predecessorStepName);
   const aliasIndex = steps.findIndex((step) => step.name?.toLowerCase().includes('latest alias'));
-  check(publishIndex >= 0, `${file}: publication step is missing`);
-  check(aliasIndex > publishIndex, `${file}: latest alias must advance only after publication succeeds`);
+  check(predecessorIndex >= 0, `${file}: alias predecessor step is missing`);
+  check(aliasIndex > predecessorIndex, `${file}: latest alias must advance only after validation or publication succeeds`);
   const aliasStep = steps[aliasIndex] ?? {};
   const aliasRun = String(aliasStep.run ?? '');
   check(aliasRun.includes(`${RELEASE_CONTROL} update-latest`), `${file}: shared release control must update the alias`);
   check(aliasRun.includes(`--product ${product}`), `${file}: alias update must be product-scoped`);
   check(aliasRun.includes('--release-tag "$GITHUB_REF_NAME"'), `${file}: alias update must validate the triggering tag`);
-  check(aliasRun.includes('--repository "$GITHUB_REPOSITORY"'), `${file}: alias update must inspect repository releases`);
-  check(aliasStep?.env?.GH_TOKEN === '${{ github.token }}', `${file}: alias update needs the workflow token`);
+  check(aliasRun.includes('--repository "$GITHUB_REPOSITORY"'), `${file}: alias update needs repository context`);
+  if (product === 'cli') {
+    check(aliasStep?.env?.GH_TOKEN === '${{ github.token }}', `${file}: CLI alias and official Latest update needs the workflow token`);
+  } else {
+    check(!aliasStep?.env?.GH_TOKEN, `${file}: tag-only alias update must not expose GH_TOKEN`);
+  }
 }
 
 function stableNote(relative, version, product, heading = version) {
@@ -112,17 +116,11 @@ const pluginText = read(files.plugin);
 const cliReleaseText = read(files.cliRelease);
 const releaseControlText = read(RELEASE_CONTROL);
 
-movingAliasContract(engine, files.engine, 'engine', 'engine-latest', 'Create or update the release');
-movingAliasContract(plugin, files.plugin, 'plugin', 'plugin-latest', 'Create or update the release');
+movingAliasContract(engine, files.engine, 'engine', 'engine-latest', 'Verify tag, engine version, note, and source identity');
+movingAliasContract(plugin, files.plugin, 'plugin', 'plugin-latest', 'Verify tag, plugin manifests, note, and source identity');
 movingAliasContract(cliRelease, files.cliRelease, 'cli', 'cli-latest', 'Publish versioned CLI release');
 
-for (const [file, text, product] of [
-  [files.engine, engineText, 'engine'],
-  [files.plugin, pluginText, 'plugin'],
-  [files.cliRelease, cliReleaseText, 'cli'],
-]) {
-  check(new RegExp(`release_title\\(['"]${product}['"]`).test(text), `${file}: product-first release title generation is required`);
-}
+check(/release_title\(['"]cli['"]/.test(cliReleaseText), `${files.cliRelease}: product-first CLI release title generation is required`);
 
 for (const required of [
   'engine-latest',
@@ -134,9 +132,13 @@ for (const required of [
   'prerelease',
   'draft',
   'version_at_alias',
+  'sync_cli_official_latest',
+  'releases/latest',
+  '--latest=true',
 ]) {
   check(releaseControlText.includes(required), `${RELEASE_CONTROL}: missing ${required}`);
 }
+check(!releaseControlText.includes('convenience release'), `${RELEASE_CONTROL}: moving aliases must not create release pages`);
 
 try {
   childProcess.execFileSync('python3', [RELEASE_CONTROL_TEST], {
@@ -153,13 +155,14 @@ for (const [file, text, productPath] of [
   [files.plugin, pluginText, 'plugins/agent-ks'],
 ]) {
   check(text.includes(`git', 'rev-parse', f'{commit}:${productPath}'`), `${file}: exact product subtree must be resolved`);
-  check(text.includes('COMMIT_SHA='), `${file}: release metadata must expose the full commit SHA`);
-  check(text.includes('TREE_ID='), `${file}: release metadata must expose the subtree tree ID`);
-  check(text.includes('## Immutable source'), `${file}: release body must include immutable source metadata`);
-  for (const forbidden of ['actions/upload-artifact', 'gh release upload', 'SHA256SUMS', 'tar -czf', 'zipfile']) {
-    check(!text.includes(forbidden), `${file}: metadata-only release must not contain ${forbidden}`);
+  check(text.includes('Validated '), `${file}: validated tag identity must be reported`);
+  for (const forbidden of ['actions/upload-artifact', 'gh release', 'releases/tags', 'sync_alias_release_page', 'SHA256SUMS', 'tar -czf', 'zipfile']) {
+    check(!text.includes(forbidden), `${file}: tag-only workflow must not contain ${forbidden}`);
   }
 }
+
+check(releaseControlText.includes('if product_name == "cli"'), `${RELEASE_CONTROL}: CLI must use published-release selection`);
+check(releaseControlText.includes('target_tag = triggering_tag'), `${RELEASE_CONTROL}: engine/plugin must use the validated triggering tag`);
 
 check(engineText.includes('agent-ks-engine/src/loaders/engine-version.ts'), `${files.engine}: ENGINE_VERSION must be authoritative`);
 check(engineText.includes("pathlib.Path('agent-ks-engine/release-notes')"), `${files.engine}: engine note path is wrong`);
@@ -190,6 +193,19 @@ const cliVersionMatch = cargo.match(/^version\s*=\s*"([^"]+)"/m);
 check(cliVersionMatch, 'CLI: could not read Cargo package version');
 const cliVersion = cliVersionMatch?.[1] ?? 'unknown';
 if (cliVersionMatch) stableNote('agent-ks-cli/release-notes', cliVersion, 'CLI', `agent-ks ${cliVersion}`);
+
+const readme = read('README.md');
+for (const [product, version, note] of [
+  ['Engine', engineVersion, `./agent-ks-engine/release-notes/${engineVersion}.md`],
+  ['Plugin', claudeManifest.version, `./plugins/agent-ks/release-notes/${claudeManifest.version}.md`],
+  ['CLI', cliVersion, `./agent-ks-cli/release-notes/${cliVersion}.md`],
+]) {
+  check(readme.includes(`![${product} ${version}]`), `README.md: ${product} badge must match its version source`);
+  check(readme.includes(`[${product} ${version}](${note})`), `README.md: ${product} table note must match its version source`);
+}
+check(readme.includes('Engine_runtime-Bun'), 'README.md: Bun engine-runtime badge is required');
+check(readme.includes('CLI_implementation-Rust'), 'README.md: Rust CLI-implementation badge is required');
+check(readme.includes('releases/latest'), 'README.md: official CLI downloads link is required');
 
 const stalePrefixFiles = [
   'README.md',

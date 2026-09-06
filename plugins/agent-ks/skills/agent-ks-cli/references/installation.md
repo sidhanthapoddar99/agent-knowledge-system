@@ -9,12 +9,12 @@ agent-ks --version
 agent-ks --help
 ```
 
-The installer downloads the newest stable `agent-ks-cli-vX.Y.Z` GitHub release for Linux or macOS, verifies its SHA-256 checksum and binary version, and installs it into `~/.local/bin`. It installs PATH and a silent shell-startup updater for Bash, Zsh or Fish. Use `--no-shell-setup` to manage your shell yourself. It needs curl, tar, and `sha256sum` or `shasum`. A published CLI release must exist before downloading.
+The installer resolves `cli-latest`, validates its commit against the corresponding stable `agent-ks-cli-vX.Y.Z` release, and downloads only that numbered release. It falls back to the bounded stable release history when alias discovery is missing or unsafe. It verifies the SHA-256 checksum and binary version, then installs into `~/.local/bin`. It installs PATH and a silent shell-startup updater for Bash, Zsh or Fish. Use `--no-shell-setup` to manage your shell yourself. It needs curl, tar, and `sha256sum` or `shasum`. A published CLI release must exist before downloading.
 
 Pass `--version X.Y.Z` to pin a published version, or `--install-dir PATH` for another destination:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/sidhanthapoddar99/agent-knowledge-system/main/agent-ks-cli/install.sh | sh -s -- --version 0.1.1 --install-dir "$HOME/.local/bin"
+curl -fsSL https://raw.githubusercontent.com/sidhanthapoddar99/agent-knowledge-system/main/agent-ks-cli/install.sh | sh -s -- --version 0.1.2 --install-dir "$HOME/.local/bin"
 ```
 
 On native Windows, download `agent-ks-x86_64-pc-windows-msvc.zip` and `SHA256SUMS` from the same CLI release. Verify the archive with `Get-FileHash -Algorithm SHA256`, extract `agent-ks.exe`, and put its directory on PATH. WSL uses the Linux installer.
@@ -27,7 +27,7 @@ agent-ks update --check --json
 agent-ks update --status --json
 agent-ks update --disable
 agent-ks update --enable
-agent-ks update --pin 0.1.1
+agent-ks update --pin 0.1.2
 agent-ks update --unpin
 ```
 
@@ -39,7 +39,7 @@ An installer `--version` pins the chosen release. A pin pauses automatic updates
 
 A manually extracted binary needs shell setup: run `agent-ks init bash`, `init zsh`, `init fish` or `init powershell` and put its printed code in the corresponding startup file. On Windows use `$PROFILE`. No per-command or directory-change hook is needed.
 
-GitHub engine and plugin releases do not carry a duplicate unchanged CLI. CLI downloads come only from `agent-ks-cli-vX.Y.Z` releases. The native updater excludes drafts and prereleases, verifies SHA-256 and the executable's version, then replaces the binary. It requests no elevated permissions.
+GitHub engine and plugin releases do not carry a duplicate unchanged CLI. The `cli-latest` pointer is used only for discovery; CLI downloads come only from the validated `agent-ks-cli-vX.Y.Z` release. The native updater excludes drafts and prereleases, verifies SHA-256 and the executable's version, then replaces the binary. It requests no elevated permissions.
 
 ## Configuration selection
 

@@ -49,16 +49,17 @@ class ReleaseControlTests(unittest.TestCase):
 
     def test_newest_stable_release_uses_numeric_order_and_own_namespace(self) -> None:
         releases = [
-            release("agent-ks-engine-v0.3.9"),
-            release("agent-ks-engine-v0.3.10"),
-            release("agent-ks-engine-v0.4.0", prerelease=True),
-            release("agent-ks-engine-v0.5.0", draft=True),
-            release("agent-ks-engine-v0.6.0", published=False),
+            release("agent-ks-cli-v0.3.9"),
+            release("agent-ks-cli-v0.3.10"),
+            release("agent-ks-cli-v0.4.0", prerelease=True),
+            release("agent-ks-cli-v0.5.0", draft=True),
+            release("agent-ks-cli-v0.6.0", published=False),
+            release("agent-ks-engine-v9.0.0"),
             release("agent-ks-plugin-v9.0.0"),
         ]
-        selected = select_alias_target(releases, "engine", "agent-ks-engine-v0.3.10")
+        selected = select_alias_target(releases, "cli", "agent-ks-cli-v0.3.10")
         self.assertIsNotNone(selected)
-        self.assertEqual(selected["tag_name"], "agent-ks-engine-v0.3.10")
+        self.assertEqual(selected["tag_name"], "agent-ks-cli-v0.3.10")
 
     def test_failed_or_prerelease_trigger_does_not_advance_alias(self) -> None:
         stable = release("agent-ks-cli-v0.1.0")
@@ -72,12 +73,12 @@ class ReleaseControlTests(unittest.TestCase):
 
     def test_older_rerun_selects_newest_release_and_never_regresses(self) -> None:
         releases = [
-            release("agent-ks-plugin-v0.11.0"),
-            release("agent-ks-plugin-v0.12.0"),
+            release("agent-ks-cli-v0.1.1"),
+            release("agent-ks-cli-v0.1.2"),
         ]
-        selected = select_alias_target(releases, "plugin", "agent-ks-plugin-v0.11.0")
+        selected = select_alias_target(releases, "cli", "agent-ks-cli-v0.1.1")
         self.assertIsNotNone(selected)
-        self.assertEqual(selected["tag_name"], "agent-ks-plugin-v0.12.0")
+        self.assertEqual(selected["tag_name"], "agent-ks-cli-v0.1.2")
         self.assertEqual(alias_update_decision((0, 12, 0), (0, 11, 0)), "keep-newer")
         self.assertEqual(alias_update_decision((0, 11, 0), (0, 12, 0)), "advance")
 

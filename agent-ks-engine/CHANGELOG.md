@@ -52,7 +52,7 @@ chain; [`agent-ks-engine/migration/README.md`](./migration/README.md) has the co
 ## Adding a release
 
 See [`release-notes/README.md`](./release-notes/README.md). Two artefacts, both required:
-the tag `agent-ks-engine-v<version>` and the note. Pushing the tag publishes the note — and
-[the workflow](../.github/workflows/agent-ks-engine-release.yml) **fails the tag** if no note
-exists, so the rule is enforced rather than remembered. Add the row here in the
-same change.
+the tag `agent-ks-engine-v<version>` and the note. Pushing the tag runs
+[the workflow](../.github/workflows/agent-ks-engine-release.yml), which validates both
+artefacts and advances `engine-latest`. It fails when the note is missing, so the rule is
+enforced rather than remembered. Add the row here in the same change.

@@ -114,7 +114,7 @@ The native source lives in the framework repository's `agent-ks-cli/`. The plugi
 
 The plugin version is declared in both `.claude-plugin/plugin.json` and `.codex-plugin/plugin.json`; the two values must agree. Each version also has a standalone note under [`release-notes/`](./release-notes/). After those files are committed on `main`, the repository owner tags the commit as `agent-ks-plugin-vX.Y.Z`.
 
-The [plugin release workflow](../../.github/workflows/agent-ks-plugin-release.yml) validates the tag, both manifests, and the note. It publishes metadata only: the note plus the tag, full commit SHA, and exact `plugins/agent-ks/` Git tree ID. Plugin installation still happens through the marketplace; no duplicate ZIP or TAR package is attached.
+The [plugin tag workflow](../../.github/workflows/agent-ks-plugin-release.yml) validates the tag, both manifests, the note, the full commit SHA, and the exact `plugins/agent-ks/` Git tree ID. It then advances `plugin-latest` with numeric non-regression and race protection. It creates no GitHub release page or archive; plugin installation remains a marketplace operation.
 
 ## Requirements
 

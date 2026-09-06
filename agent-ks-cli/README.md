@@ -16,7 +16,7 @@ The installer selects the newest published `agent-ks-cli-vX.Y.Z` release from Gi
 Pin a version or choose another destination:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/sidhanthapoddar99/agent-knowledge-system/main/agent-ks-cli/install.sh | sh -s -- --version 0.1.0 --install-dir "$HOME/.local/bin"
+curl -fsSL https://raw.githubusercontent.com/sidhanthapoddar99/agent-knowledge-system/main/agent-ks-cli/install.sh | sh -s -- --version 0.1.1 --install-dir "$HOME/.local/bin"
 ```
 
 On native Windows, download `agent-ks-x86_64-pc-windows-msvc.zip` and `SHA256SUMS` from the matching CLI release. Compare the archive's `Get-FileHash -Algorithm SHA256` output with its checksum entry, extract `agent-ks.exe`, and add its directory to PATH. WSL uses the Linux installer.
@@ -30,7 +30,7 @@ agent-ks update --check --json     # check now without installing
 agent-ks update --status --json    # cached status, no network
 agent-ks update --disable         # opt out of automatic updates
 agent-ks update --enable
-agent-ks update --pin 0.1.0        # pin manual updates; pause automatic updates
+agent-ks update --pin 0.1.1        # pin manual updates; pause automatic updates
 agent-ks update --unpin
 ```
 

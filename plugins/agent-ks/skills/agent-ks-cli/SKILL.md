@@ -1,71 +1,64 @@
 ---
 name: agent-ks-cli
-description: Run any `agent-ks` command in an agent-knowledge-system project. One entrypoint, `agent-ks <group> <verb> [flags]`, for listing and searching issues, moving or renaming a page so every link follows, optimising images before a commit, scaffolding subtasks, plans, agent logs and rounds, committing one content path, reading theme tokens, and running the validators. Load it before you run any `agent-ks` command, when one fails or exits 2, when you would otherwise invent a flag, and when you are adding a new command to the toolkit. It holds the contract, the exit codes and the git-worktree note.
+description: Use the standalone agent-ks Rust CLI to navigate, search, validate and edit an agent-knowledge-system project. Covers toolkit installation, project context, issue briefs and file trees, issue/doc/blog queries, plans and log scaffolders, link-aware moves, image optimization, theme tokens, git metadata and starting the viewer. Load before running agent-ks, when a command fails, or when adding a command. The CLI has an independent GitHub release and requires no JavaScript runtime for content operations.
 ---
 
-# The `agent-ks` CLI
+# The agent-ks toolkit
 
-One command on PATH: `agent-ks <group> <verb> [flags]`. It needs `bun`. Only `img` needs more: the ImageMagick CLI.
+Run `agent-ks` from the folder containing `config/` to see the project overview. The folder can have any name. Installation and configuration selection are in [installation.md](./references/installation.md).
 
-## The contract
+## Find the right file before reading bodies
 
-| Rule | What it means |
+Use the smallest query that answers the question, because a tracker can hold thousands of files.
+
+```bash
+agent-ks                            # sections and issue counts
+agent-ks issue list --status all --search 'release' --json
+agent-ks issue context 2026-09-06-cli --last 2 --max-chars 2000 --json
+agent-ks issue tree 2026-09-06-cli --depth 3 --limit 80 --json
+agent-ks find 'CONFIG_DIR' --fixed-strings --context 2 --limit 20 --json
+```
+
+`issue context` supplies metadata, a bounded issue body, the active plan, active subtasks, recent logs and the memory index path. Check its truncation fields before treating the result as complete. `issue tree` supplies file paths, titles, statuses and sizes. Open the returned paths when you need full bodies.
+
+`issue list` defaults to active issues. Use `--status all` when searching for prior decisions or completed work, because closed issues remain useful history. Combine vocabulary filters with `--search`, `--meta`, or `--path` to narrow the result. `find` searches configured content sections and config, including JSONC and diagram/artifact source files. Search patterns use Rust regex syntax; use `--fixed-strings` for literal punctuation.
+
+## Discover commands
+
+| Command | Returns |
 |---|---|
-| `--help` or `-h` | Usage to stdout, exit 0, on every command and on bare `agent-ks` |
-| `--json` | One JSON document on stdout and nothing else, on every command that returns data |
-| Unknown flag | Exit 2 with the valid flags listed, so a misspelled filter never widens a result. The six `check` verbs other than `issues` ignore it and carry on, so read their output rather than their exit code. `move` and `img` reject it and exit 1 instead of 2 |
-| stdout | Data and human output |
-| stderr | Errors, warnings, tips |
+| `agent-ks --help` | The command catalog, config precedence, dependencies and exit codes |
+| `agent-ks issue --help` | Commands in one group |
+| `agent-ks issue new-stage --help` | Required arguments, every flag and an example |
+| `agent-ks help issue new-stage --json` | One command's machine-readable definition |
+| `agent-ks help --json` | The full catalog |
+| `agent-ks resolve-context --json` | The selected project, config and data paths |
+| `agent-ks --version` | The binary's independent version |
 
-Exit codes:
+Use command help for exact flags, because the binary's catalog describes the installed version. The [command reference](./references/cli-toolkit.md) gives workflows and file conventions.
 
-| Code | Meaning |
-|---|---|
-| 0 | Success. For a query: found. For a validator: clean |
-| 1 | No result, or a handled runtime error. For a validator: problems found. Also a missing argument in the `issue` verbs, `check section` and `move` |
-| 2 | Usage error: an unknown flag, or a missing argument in `doc`, `blog`, `git` and `find` |
-| 127 | The command's interpreter is not on PATH |
+## Write through the file-aware commands
 
-## Discover, do not memorise
+Use `issue new-subtask`, `new-plan`, `new-stage`, `new-agent-log`, `new-round`, and `add-comment` to create their file types. They embed the [templates](./templates/) and reject collisions, so numbering and structure stay consistent. Fill the resulting document with the task's details. `new-iteration` is an alias of `new-round`.
 
-| Command | Shows |
-|---|---|
-| `agent-ks help` | every command, grouped |
-| `agent-ks help <group> <verb>` | one command's flags. A verb that lives in one group resolves alone: `agent-ks help new-round` |
-| `agent-ks help --json` | the whole manifest, for machines |
-| `agent-ks --version` | the plugin version and the tree it ran from |
+Use `issue set-state` for issue or subtask status changes. It preserves surrounding formatting and JSONC comments. Use `move --dry-run` before a move to inspect the file and link edits; `move` carries page sidecars and rewrites relative Markdown references while preserving code examples. The command does not stage a Git index.
 
-## The groups
+Use `check issues --template` for tracker shape and template findings. Use `check config`, `check section <folder>`, and `check link-form` for other authored content. Validators report errors and warnings separately; warnings alone exit successfully.
 
-| Group | Verbs | Use |
-|---|---|---|
-| (none) | `help` `resolve-context` `find` `move` `img` | search all content, link-aware move, image optimisation |
-| `issue` | `list` `show` `subtasks` `agent-logs` `review-queue` `set-state` `add-comment` `new-subtask` `new-plan` `new-stage` `new-agent-log` `new-round` | the tracker: read, write, scaffold |
-| `check` | `issues` `section` `blog` `config` `link-form` `legacy-tags` `skill-links` | every validator splits its findings: errors exit 1, warnings exit 0. Read the counts, not the exit code |
-| `doc` | `list` `show` `search` | docs pages |
-| `blog` | `list` `show` `search` | blog posts |
-| `git` | `updated` `changed` `log` `commit` | git-derived content metadata |
-| `theme` | `tokens` | the active theme's variables |
+## Update the toolkit
 
-Every command and flag: [cli-toolkit.md](./references/cli-toolkit.md).
+Run `agent-ks update` for an immediate CLI update. `update --status --json` reads cached update state; `update --check --json` checks GitHub without installing. The installer adds silent shell-startup updates with a five-hour cooldown. Ordinary commands do not check for updates, so content operations keep their startup speed. Pinning, disabling and manual shell setup are in [installation.md](./references/installation.md#updating-the-toolkit).
 
-## Templates
+## Start the viewer
 
-[templates/](./templates/) holds one skeleton per file type. The scaffolders write from them. A scaffolder is an `agent-ks` verb that writes a new file from a template. `check issues --template` reads the same files. Each scaffolder names its template in [cli-toolkit.md](./references/cli-toolkit.md). `note.md` has no scaffolder. Copy it by hand.
+Run `agent-ks start --detach` when the task needs a running viewer, because a foreground server holds the terminal. `agent-ks start status` reports it; `agent-ks start stop` stops it. A missing framework checkout is cloned into the project by `start`. Node.js or Bun runs the viewer. Reading and editing content with the toolkit needs neither.
 
-## Rules
+## Output and decisions
 
-| Never | Do instead |
-|---|---|
-| Search the tracker with `Grep` | `agent-ks issue list` or `agent-ks find`. `Grep` reads text only, so it cannot see status, vocabulary or subtask counts, which live in `settings.json` |
-| Rename or move with `mv` | `agent-ks move`. It rewrites every link |
-| Invent a flag | `agent-ks help <group> <verb>` |
-| Write a subtask, stage, plan, log or round by hand | the scaffolder. It writes the template |
+Prefer `--json` when processing results, because it writes one JSON document on stdout. Diagnostics go to stderr. Exit codes are 0 for success, 1 for no results/runtime failure/validation errors, and 2 for invalid usage. Unknown flags fail instead of broadening a query.
 
-## Where the content is
+Choose filters, result limits and read-only navigation without asking. Record material validation failures and any truncated evidence in the task's findings, because later work depends on what was actually checked. Ask only when an unresolved project choice or an action outside the user's authorization prevents progress. An ambiguous subtask selector needs a more precise path before a writer can run.
 
-The commands read `CONFIG_DIR` from `.env` to find the content root. `agent-ks resolve-context` prints what they found. Inside a git worktree, the `.env` search stops at the worktree root. So before any command that writes, write a `.env` in the worktree, or pass `--tracker` or a path.
+## Develop the toolkit
 
-## For authors
-
-A new command must honour the contract, in any language: [contract.md](./references/contract.md).
+The Rust source lives in the framework repository's `agent-ks-cli/`. The plugin ships the skills and templates. The binary is installed independently from GitHub Releases. The contributor contract is [contract.md](./references/contract.md).

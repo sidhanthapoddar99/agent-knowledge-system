@@ -5,7 +5,7 @@ description: Set up your documentation site
 
 # Installation
 
-Get your documentation site running in under 5 minutes.
+For the shortest setup, install the [native toolkit](./10_native-toolkit.md), scaffold your project with `/agent-ks-config`, and run `agent-ks start` from the folder containing `config/`. It clones the viewer framework when needed. The steps below cover installing and launching the framework directly.
 
 ## Prerequisites
 
@@ -76,8 +76,8 @@ Install the `agent-ks` plugin (distributed via [`sids-plugin-marketplace`](https
 
 This installs:
 
-- Nine skills that trigger automatically on config, docs, blog, tracker, agent-log and artifact work
-- A single `agent-ks` CLI on `$PATH` — every operation is a `agent-ks <group> <verb>` subcommand (run `agent-ks help` to list them all)
+- Ten skills that trigger automatically on config, docs, blog, tracker, agent-log and artifact work
+- Instructions for the separately installed [native `agent-ks` toolkit](./10_native-toolkit.md), including help for every command
 - Slash commands — `/agent-ks-config` to bootstrap a new project from zero, `/agent-ks-config section <name>` to add a top-level section to an existing one
 
 For a fresh project that hasn't been scaffolded yet, the easiest entry point is to run `/agent-ks-config` after installing — it walks you through site name + first section and writes everything for you. Skip the rest of this Installation page if you go that route.

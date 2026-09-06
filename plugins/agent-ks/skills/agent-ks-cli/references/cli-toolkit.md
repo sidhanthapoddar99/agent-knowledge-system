@@ -1,16 +1,31 @@
 # `agent-ks` command reference
 
-Every command is `agent-ks <group> <verb> [flags]`, or a top-level `agent-ks <verb>` for the five in General. Every command takes `--help`. Every command takes `--json` except `move`, `img`, `set-state` and `add-comment`. Every `issue` command takes `--tracker <path>` for another tracker. `--name <value>` takes a value. `--name` alone is a switch. The contract and the exit codes are in [SKILL.md](../SKILL.md).
+Every command is `agent-ks <group> <verb> [flags]`, or a top-level `agent-ks <verb>` for General commands. Every command takes `--help`. Every command takes `--json`; live `start` uses it only with `--dry-run`. Every `issue` command takes `--tracker <path>` for another tracker. `--name <value>` takes a value. `--name` alone is a switch. The contract and the exit codes are in [SKILL.md](../SKILL.md).
+
+
+
+`agent-ks update` installs the latest CLI release. `update --help` documents manual checks, cached status, pins and disabling updates. `agent-ks init <bash|zsh|fish|powershell>` prints a shell-startup hook for silent automatic updates with a five-hour cooldown. The installer manages that hook on Unix; ordinary commands never check for updates. See [installation and updates](./installation.md#updating-the-toolkit).
+
+## Navigation and viewer
+
+| Command | Does | Flags |
+|---|---|---|
+| `overview` (or bare `agent-ks`) | Configured sections, content paths, file counts and issue status counts | `--json` |
+| `issue tree <id>` | File inventory with paths, titles, statuses and byte sizes | `--depth <N>` default 5 · `--limit <N>` default 200 · `--tracker <path>` |
+| `issue context <id>` | Bounded issue body, metadata, active plan, active subtasks, recent logs and memory pointer | `--max-chars <N>` default 4000 · `--last <N>` default 3 · `--limit <N>` default 200 · `--tracker <path>` |
+| `start [command]` | Clone the framework when missing and launch/manage the viewer | `--framework-dir <path>` · `--framework-ref <tag>` for a new clone · `--detach` · `--dry-run` · `--json` with dry-run |
+
+Every command accepts `--config-dir`; normal use omits it. Config selection and installer usage live in [installation.md](./installation.md). Explicit limits of zero return zero results. `issue tree` and `issue context` report truncation. Search uses Rust regex syntax; literal matching avoids regex interpretation.
 
 ## General
 
 | Command | Does | Flags |
 |---|---|---|
 | `help [command]` | List every command, or show one command's flags. `--json` dumps the manifest | |
-| `resolve-context` | Print the `.env`-derived content root, config dir and data dir | |
-| `find <regex>` | Search docs, blog, issues and config for a string | `--meta` structured layer only · `--path` match the path text · `--type <docs,blog,issues,config>` · `--count` · `--paths-only` · `--case-sensitive` |
-| `move <from> <to>` | Move or rename a file or folder. It rewrites every link to it and inside it. The scan scope is the `.env` content root. Both `<from>` and `<to>` must sit inside that scope, or the command exits 1 | `--dry-run` · `--no-git` · `--root <dir>` widens or replaces the scope. Both paths must then sit inside `<dir>` |
-| `img <path…>` | Optimise images before a commit. It needs the ImageMagick CLI, `magick` or `convert`. It is the only command with an outside dependency | the table below |
+| `resolve-context` | Print the selected project root, config dir and data dir | |
+| `find <regex>` | Search docs, blog, issues and config for a string | `--meta` structured layer only · `--path` match the path text · `--type <docs,blog,issues,config>` · `--count` · `--paths-only` · `--case-sensitive` · `--fixed-strings` · `--context <N>` · `--limit <N>` |
+| `move <from> <to>` | Move or rename a file or folder. It rewrites every link to it and inside it. The scan scope is the selected project root. Both `<from>` and `<to>` must sit inside that scope, or the command exits 1 | `--dry-run` · `--no-git` (accepted; moves use the filesystem) · `--root <dir>` widens or replaces the scope. Both paths must then sit inside `<dir>` |
+| `img <path…>` | Optimise images before a commit. It needs the ImageMagick CLI, `magick` or `convert`. It requires ImageMagick | the table below |
 
 ### `img` flags
 
@@ -75,7 +90,7 @@ These lines are six independent examples, not one sequence. The `--log` value is
 | `--has-open-subtasks` · `--has-review-subtasks` · `--has-closed-subtasks` · `--subtasks-min <N>` · `--subtasks-max <N>` | Subtask category and count filters |
 | `--search <regex>` · `--search-fields <list>` | Regex search over issue files; fields `body,settings,comments,subtasks,notes,agent-log`, default all |
 | `--scope <subpath>` · `--path <regex>` · `--meta <regex>` | Search one subfolder; match the path text; match frontmatter and JSON |
-| `--case-sensitive` · `--invert-match` | Regex options |
+| `--case-sensitive` · `--invert-match` · `--fixed-strings` · `--context <N>` | Regex options |
 | `--count` · `--limit <N>` · `--paths-only` | Output shape |
 | `--quiet-tips` | Silence the stderr tips |
 
@@ -91,7 +106,7 @@ Every validator splits its findings in two. An error exits 1. A warning exits 0.
 | `config` | `site.yaml`, `navbar.yaml`, `footer.yaml`: required keys, pages, alias resolution | |
 | `link-form [root]` | Every internal link is relative and names a file on disk. It needs no build. `[root]` defaults to the content root's `data/`. Give `[root]` a folder that holds links. A folder with no links fails with "the link matcher is not working". That guard exists to catch a broken matcher on a whole-tree run | |
 | `legacy-tags [root]` | Custom-tag markup the renderer does not parse (`:::callout`, `<callout>`, `<tabs>`, `<collapsible>`) and its native replacement. `[root]` defaults to the content root's `data/` | |
-| `skill-links [skill-dir]` | A maintainer tool. It checks that relative links between skill `.md` files resolve. Never quote a pass without the tree name. Read the `[repo source tree]` or `[installed plugin]` banner first, because the two trees hold different files | |
+| `skill-links <skill-dir>` | Check relative Markdown links in the explicit skill directory; the result names its root | |
 
 `check issues --template` checks the five `#` headings of `templates/*.md` on subtasks, stages and plan overviews. A file in a finished status must hold a result in `# 02 Status and Result`. A subtask's `## Agent log` must be `none` or one link that resolves. A `## Questions` entry needs status `input-needed`. Root settings `"template": true` turns the check on.
 
@@ -101,10 +116,10 @@ Every validator splits its findings in two. An error exits 1. A warning exits 0.
 |---|---|---|
 | `doc list [section]` | Sidebar doc pages: path, section, title | |
 | `doc show <name or path>` | One page's metadata and frontmatter | |
-| `doc search <regex> [section]` | Regex search over doc pages | `--count` · `--case-sensitive` |
+| `doc search <regex> [section]` | Regex search over doc pages | `--count` · `--case-sensitive` · `--fixed-strings` · `--context <N>` · `--limit <N>` · `--paths-only` |
 | `blog list` | Posts, newest first: date, slug, title | |
 | `blog show <slug or date>` | One post's metadata and frontmatter | |
-| `blog search <regex>` | Regex search over posts | `--count` · `--case-sensitive` |
+| `blog search <regex>` | Regex search over posts | `--count` · `--case-sensitive` · `--fixed-strings` · `--context <N>` · `--limit <N>` · `--paths-only` |
 
 ## Git metadata: `agent-ks git …`
 

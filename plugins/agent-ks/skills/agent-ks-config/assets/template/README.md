@@ -33,7 +33,7 @@ top-level sections: **Home**, **Docs**, **Issues**, **Blog**, and **User Guide**
                           # via @root/default-docs/themes — see site.yaml theme_paths)
 ```
 
-**The skill does not write `.env`.** That file lives inside the framework folder, at `<user-project>/agent-knowledge-system/.env`. That folder does not exist yet when the skill runs. The next-step instructions the skill prints tell the user to clone the framework, then run `echo "CONFIG_DIR=../config" > agent-knowledge-system/.env`. So `.env.example` in this template is a reference copy only. The step after the clone writes the real `.env`, with the consumer-mode value `CONFIG_DIR=../config`.
+Install the standalone toolkit using [the installation reference](../../../agent-ks-cli/references/installation.md), then run `agent-ks start` from the project root. It uses `./config`, clones the framework when missing, and passes the selected config to the viewer. The template’s `.env.example` remains a reference for users who launch the framework directly with `./start`.
 
 ## Sections explained
 

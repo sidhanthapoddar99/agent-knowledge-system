@@ -43,11 +43,13 @@ Every launching command checks `engine_version` first. When the content is outsi
 
 ## `.env`
 
+These settings apply when launching the framework directly with `./start`. The native `agent-ks start` selects `--config-dir` > `AGENTKS_CONFIG_FOLDER` > `./config` from the current directory and supplies the resolved absolute `CONFIG_DIR` to the viewer process. It requires no `.env` edit. For bundled docs, run it from `default-docs/`.
+
 `.env` lives inside the framework folder, not inside `astro-doc-code/`. Relative paths are relative to the framework folder. Absolute paths work.
 
 | Variable | Required | Value | Meaning |
 |---|---|---|---|
-| `CONFIG_DIR` | yes | `../config` (consumer) or `./default-docs/config` (dogfood) | The folder that holds `site.yaml`. The CLI derives the content root from it. No default; the framework throws without it |
+| `CONFIG_DIR` | yes | `../config` (consumer) or `./default-docs/config` (dogfood) | The folder that holds `site.yaml`. The direct framework launcher reads it. Native `agent-ks start` supplies it from its own config selection; content commands do not read `.env` |
 | `LAYOUT_EXT_DIR` | no | `../layouts` | Custom layout styles: [06_layouts.md](./06_layouts.md). Unset means built-in layouts only, at no cost |
 | `PORT` | no | `3088` | Dev server port; the default is `4321` |
 | `HOST` | no | `true` | Bind to all interfaces, for LAN, Docker or a tunnel. Pair it with `server.allowedHosts` |
@@ -123,7 +125,7 @@ A `paths:` value is relative to the config dir, absolute, or `@root/…`. `@root
 
 ## Validate
 
-`agent-ks check config [dir]` reads the config dir from `.env` or from the argument. Exit `0` is clean. Exit `1` means it found errors. It matches patterns over the YAML text, so run the dev server for deeper errors. The checks:
+`agent-ks check config [dir]` uses the argument when supplied, otherwise the normal CLI config selection. Exit `0` is clean. Exit `1` means it found errors. It parses YAML and checks required keys, page data paths and navbar/footer page references. Run the dev server to verify rendering. The checks:
 
 - `site.yaml` exists (error). A missing `navbar.yaml` or `footer.yaml` is a warning.
 - `site.yaml` has `site`, `paths`, `theme`, `pages`.

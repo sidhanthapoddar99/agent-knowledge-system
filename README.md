@@ -66,7 +66,17 @@ Written up in the user-guide: [Diagram Pages](https://github.com/sidhanthapoddar
 
 ## Quick start
 
-The fastest path is via the Claude Code plugin distributed through [`sids-plugin-marketplace`](https://github.com/sidhanthapoddar99/sids-plugin-marketplace) — three commands to install, one to scaffold:
+Install the standalone toolkit first (Linux/macOS):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/sidhanthapoddar99/agent-knowledge-system/main/agent-ks-cli/install.sh | sh
+export PATH="$HOME/.local/bin:$PATH"
+agent-ks --help
+```
+
+The installer downloads a versioned binary from GitHub Releases, verifies its checksum, and adds PATH plus silent shell-startup updates with a five-hour cooldown. Use `agent-ks update` for an immediate update; ordinary commands do not check for updates. It requires a published `agent-ks-vX.Y.Z` release. Windows assets, version pinning and source builds are described in the [CLI README](./agent-ks-cli/README.md).
+
+Install the Claude Code plugin through [`sids-plugin-marketplace`](https://github.com/sidhanthapoddar99/sids-plugin-marketplace) — three commands to install, one to scaffold:
 
 ```
 /plugin marketplace add sidhanthapoddar99/sids-plugin-marketplace
@@ -75,7 +85,7 @@ The fastest path is via the Claude Code plugin distributed through [`sids-plugin
 /agent-ks-config
 ```
 
-`/agent-ks-config` walks you through the scope and the site identity, copies the starter template, and patches `CLAUDE.md`. At the end it prints the framework-clone command tailored to your scope choice. Open `http://localhost:4321` and you have a docs site.
+`/agent-ks-config` walks you through the scope and the site identity, copies the starter template, and patches `CLAUDE.md`. From the created documentation root, run `agent-ks` for an overview and `agent-ks start --detach` for the viewer. The latter clones the framework when missing and reports the server URL.
 
 ## What's in the plugin
 
@@ -83,9 +93,9 @@ The fastest path is via the Claude Code plugin distributed through [`sids-plugin
 |---|---|
 | **Skills (10)** — `agent-ks-config`, `agent-ks-docs`, `agent-ks-blog`, `agent-ks-issues`, `agent-ks-issue-logs`, `agent-ks-qna`, `agent-ks-artifacts`, `agent-ks-cli`, and two command skills | Trigger automatically on setup and config work, docs pages, blog posts, the issue tracker, agent logs, scoping a subtask by Q&A, and HTML-artifact building. Each carries its own reference files. |
 | **Slash commands** — `/agent-ks-config`, `/agent-ks-config section <name>`, `/agent-ks-quick-idea-note`, `/agent-ks-index-check` | Bootstrap a new project; add a top-level section; capture a half-formed idea into the issue dump; check an index against its files. All interactive. |
-| **CLI** — one `agent-ks` entrypoint on `PATH` | `agent-ks <group> <verb>` — issue tracker (`agent-ks issue …`), validators (`agent-ks check …`), docs/blog content, git metadata, theme tokens, cross-content search. Run `agent-ks help` for the live list. Requires `bun`. |
+| **CLI** — one `agent-ks` entrypoint on `PATH` | `agent-ks <group> <verb>` — issue tracker (`agent-ks issue …`), validators (`agent-ks check …`), docs/blog content, git metadata, theme tokens, cross-content search. Run `agent-ks help` for the live list. The Rust binary runs without Bun for content operations. |
 
-The `agent-ks` entrypoint lands on your `$PATH` automatically after install — no path configuration. Pass `--help` to any command for the full flag list.
+The toolkit installs separately from the plugin. Pass `--help` to a group or command, or use `agent-ks help --json` for the machine-readable catalog.
 
 ## Manual setup (without `/agent-ks-config`)
 
@@ -93,19 +103,27 @@ The framework supports two operating modes — pick the one that matches your si
 
 ### Consumer mode (recommended for new projects)
 
-You have a project (a repo, a folder, anything) and you want docs alongside your code or content. Clone the framework as a **subfolder** named `agent-knowledge-system/`, write your own `config/`/`data/`/`assets/`/`themes/` next to it at the project root, and point `.env` (inside the framework folder) back up to your content.
+Keep `config/`, `data/`, `assets/` and `themes/` in your documentation root. Its name does not matter: `docs`, `documentation`, a custom folder name, or the repository root all work.
 
 ```bash
-cd <your-project>
-git clone --depth 1 https://github.com/sidhanthapoddar99/agent-knowledge-system.git
-# Author your config/, data/, assets/, themes/ at the project root
-# (or run /agent-ks-config to scaffold them from the bundled template).
-cd agent-knowledge-system
-echo "CONFIG_DIR=../config" > .env
-./start                            # http://localhost:4321
+cd <your-documentation-root>
+# Run /agent-ks-config to scaffold content, or author config/site.yaml yourself.
+agent-ks                           # overview using ./config
+agent-ks issue list
+agent-ks issue context <issue-id> --json
+agent-ks find 'release' --context 2 --limit 20 --json
+agent-ks start --detach             # clones the viewer if missing, installs its deps
 ```
 
-The framework folder is treated as a vendored dependency — you don't edit anything inside `agent-knowledge-system/`. Your content lives outside it.
+The config selection order is `--config-dir PATH`, then the session environment variable `AGENTKS_CONFIG_FOLDER`, then `./config`. A missing config directory is an error. Relative paths are resolved from the working directory. The config's parent is the project root; there is no upward search into another project. An explicit `--tracker` selects an issue tracker independently.
+
+```bash
+export AGENTKS_CONFIG_FOLDER="$PWD/site-settings"
+agent-ks resolve-context --json
+agent-ks --config-dir ../other-docs/config overview
+```
+
+The viewer lives under `<documentation-root>/agent-knowledge-system/` and remains a vendored dependency. `agent-ks start` passes config through the environment without rewriting `.env`. It requires Node.js or Bun; cloning requires Git. The native content toolkit requires neither runtime.
 
 ### Dogfood / framework-dev mode (working *on* the framework itself)
 
@@ -114,8 +132,10 @@ This is what running this repo directly does — you're hacking on the framework
 ```bash
 git clone https://github.com/sidhanthapoddar99/agent-knowledge-system.git
 cd agent-knowledge-system
-cp .env.example .env               # CONFIG_DIR=./default-docs/config (dogfood default)
-./start
+mise run cli-build                # or: cd agent-ks-cli && cargo build --release --locked
+cd default-docs
+agent-ks
+agent-ks start --detach
 ```
 
 `./start` is a thin shim at the framework folder root over `scripts/start.mjs`: it detects `bun` (falls back to `npm`), installs dependencies on first run, occasionally checks upstream for updates and offers a fast-forward pull, then starts the dev server. It does **not** build — run `./start doctor` for that, before you publish. Skip the automatic check with `START_SKIP_UPDATE_CHECK=1`; `./start update` checks on demand regardless, and says why when it cannot.
@@ -149,8 +169,9 @@ Inside `astro-doc-code/`, the usual `bun run dev` / `bun run build` / `bun run p
 agent-knowledge-system/                 ← THIS repo (= framework folder)
 ├── start                               ← entrypoint shim → scripts/start.mjs
 ├── .env, .env.example                  ← bootstrap (CONFIG_DIR points at the active config dir)
+├── agent-ks-cli/                      ← standalone Rust toolkit, installer, tests and release notes
 ├── plugins/
-│   └── agent-ks/                       ← plugin source (skill + wrappers + commands + bundled template) — distributed via sids-plugin-marketplace
+│   └── agent-ks/                       ← plugin source (skills + bundled templates) — distributed via sids-plugin-marketplace
 ├── astro-doc-code/                     ← framework code — don't edit unless you're hacking on it
 │   ├── src/                            ← Astro layouts, loaders, parsers
 │   ├── astro.config.mjs

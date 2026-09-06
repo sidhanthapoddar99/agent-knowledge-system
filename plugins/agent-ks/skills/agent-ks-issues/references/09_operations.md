@@ -7,8 +7,8 @@ The CLI is `agent-ks <group> <verb>`. Tracker work uses the `issue` group plus `
 | every `issue` command takes `--tracker <path>` | the tracker is a flag, never a positional argument. The cli-toolkit says which commands take `--json` |
 | scaffold commands take the issue id first | `agent-ks issue new-plan <issue-id> --name <slug>` |
 | an `issue` command rejects an unknown flag | it prints `unknown flag --x`, lists every valid flag, and exits 2. So a filter that returns nothing is not a typo. Check the scope below instead |
-| every wrapper needs `bun` | without `bun`, the dispatcher stops and prints an install hint |
-| inside a git worktree the `.env` search stops at the worktree root | write a worktree-local `.env`, or pass `--tracker` before any write |
+| the toolkit is a standalone Rust binary | install it separately from the plugin; content commands need no JavaScript runtime |
+| config is selected from the current directory | use `--config-dir`, then session `AGENTKS_CONFIG_FOLDER`, then `./config`; no ancestor or `.env` search. See [installation](../../agent-ks-cli/references/installation.md) |
 
 ## Search
 

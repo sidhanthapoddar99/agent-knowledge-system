@@ -7,7 +7,7 @@ description: Use this skill for pages inside a docs section of an agent-knowledg
 
 **Source of truth.** The engine and the CLI decide anything they implement: commands, flags, field names, what renders. The bundled user guide at `@root/default-docs/data/user-guide/` is the source for a convention only. A convention is a rule the code does not enforce. `@root` is the framework folder. When this skill disagrees with the engine or the CLI, follow the code. Then update the skill and tell the user.
 
-**Finding `data/`.** The CLI resolves the real `data/` path from `CONFIG_DIR` in `.env`, so never assume the folder sits at the current directory. `data/README.md` maps each top-level folder to its purpose and route. Read it on a structure task, such as moving a page between sections. The folder tree and the config live in [the config skill](../agent-ks-config/SKILL.md).
+**Finding `data/`.** Run `agent-ks resolve-context` to resolve the configured `data/` path. Config selection is `--config-dir` > `AGENTKS_CONFIG_FOLDER` > `./config` from the current directory; a missing directory errors. See [installation and project selection](../agent-ks-cli/references/installation.md). Never assume `data/` sits at the current directory. `data/README.md` maps each top-level folder to its purpose and route. Read it on a structure task, such as moving a page between sections. The folder tree and the config live in [the config skill](../agent-ks-config/SKILL.md).
 
 ## Triage
 
@@ -45,7 +45,7 @@ One entrypoint on `PATH`: `agent-ks <group> <verb> [flags]`. `agent-ks help` lis
 
 After adding or renaming a page, run `agent-ks check section <folder>`. It is the only gate that errors on a missing `title`.
 
-Read a docs section with `agent-ks doc list [section]`. Read one page with `agent-ks doc show <path>`. Search a section's text with `agent-ks doc search <regex> [section]`. Use `agent-ks find <regex>` to search every content type at once. The contract, the exit codes and the git-worktree note live in [the cli skill](../agent-ks-cli/SKILL.md).
+Read a docs section with `agent-ks doc list [section]`. Read one page with `agent-ks doc show <path>`. Search a section's text with `agent-ks doc search <regex> [section]`. Use `agent-ks find <regex>` to search every content type at once. The contract, the exit codes and the project-selection rules live in [the cli skill](../agent-ks-cli/SKILL.md).
 
 ## Subagents
 

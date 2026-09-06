@@ -210,8 +210,7 @@ scripts/
 │   ├── update.mjs        # The git update check and the shallow-clone offer.
 │   └── version.mjs       # The content/engine version precheck.
 ├── bin/
-│   ├── start             # The bare name `start`, for Unix. mise puts it on PATH.
-│   └── agent-ks-dev      # The plugin source in this repo, not the installed plugin.
+│   └── start             # The bare name `start`, for Unix. mise puts it on PATH.
 └── checks/
     ├── check-links.mjs                  # Do the rendered links resolve?
     ├── check-route-parity.mjs           # Do dev and the build agree on a URL?
@@ -224,7 +223,7 @@ scripts/
 `start.mjs` and `lib/`. You **ask the project questions** with `checks/`.
 
 `mise.toml` puts `scripts/bin/` on PATH. This works inside this repository only. So you can
-type `start` and `agent-ks-dev` from any folder here, and nowhere else.
+type `start` from any folder here, and nowhere else.
 
 ## Read next
 

@@ -11,8 +11,8 @@ export const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '
 export const FRAMEWORK = path.join(REPO, 'astro-doc-code');
 
 /**
- * Parse the repo-root `.env` into a plain object. Returns `{}` when there is no
- * `.env` — callers decide whether that is fatal.
+ * Parse the repo-root `.env` and apply an explicit process CONFIG_DIR override.
+ * Without either source, callers decide whether missing config is fatal.
  *
  * Last assignment wins, which is what dotenv does, which is what vite's
  * `loadEnv()` does, which is what `astro.config.mjs` reads. Any other rule here
@@ -20,8 +20,10 @@ export const FRAMEWORK = path.join(REPO, 'astro-doc-code');
  */
 export function readEnv() {
   const out = {};
+  // The native CLI selects config per invocation; keep the precheck and viewer aligned.
+  const selectedConfig = process.env.CONFIG_DIR;
   let text;
-  try { text = fs.readFileSync(path.join(REPO, '.env'), 'utf-8'); } catch { return out; }
+  try { text = fs.readFileSync(path.join(REPO, '.env'), 'utf-8'); } catch { return selectedConfig ? { CONFIG_DIR: selectedConfig } : out; }
   for (const line of text.split('\n')) {
     const m = /^\s*(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=(.*)$/.exec(line);
     if (!m) continue;
@@ -29,6 +31,7 @@ export function readEnv() {
     // inside a value survives.
     out[m[1]] = m[2].replace(/\s+#.*$/, '').trim().replace(/^["'](.*)["']$/, '$1');
   }
+  if (selectedConfig) out.CONFIG_DIR = selectedConfig;
   return out;
 }
 

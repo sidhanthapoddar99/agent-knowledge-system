@@ -8,7 +8,7 @@ description: The skills, the CLI and the slash commands that teach an AI agent t
 The framework ships a plugin, `agent-ks`. It teaches an AI agent the project's conventions, so you do not explain them every session. Claude Code and Codex both read it. It bundles:
 
 - **Ten skills.** Each triggers on its own domain. Three of them are also slash commands.
-- **One CLI on `PATH`**, `agent-ks`. Every operation is `agent-ks <group> <verb>`. `agent-ks help` lists them all.
+- **A CLI skill** for the separately installed Rust binary, `agent-ks`. Every operation has built-in help.
 - **One agent**, `agent-ks-index-checker`, Claude-only. It checks an index against the files it names and reports without editing.
 
 The plugin is distributed through [`sids-plugin-marketplace`](https://github.com/sidhanthapoddar99/sids-plugin-marketplace).
@@ -30,13 +30,13 @@ Three commands in Claude Code. The first two are one-time; the third refreshes t
 > ```
 > A plain path. `file://` URLs are rejected.
 
-Verify with one command. It should list issues from your tracker:
+Install the [native toolkit](./10_native-toolkit.md) separately, then run this from the folder containing `config/`:
 
 ```
 agent-ks issue list --priority high
 ```
 
-If the command is not found, run `/reload-plugins` and check `which agent-ks`.
+If the command is not found, check `command -v agent-ks` and ensure the toolkit install directory is on `PATH`. Reloading the plugin does not install the binary.
 
 Codex, OpenCode, Hermes and a skills-only install without a marketplace: the plugin's [README](../../../../plugins/agent-ks/README.md) covers each.
 
@@ -51,7 +51,7 @@ Codex, OpenCode, Hermes and a skills-only install without a marketplace: the plu
 | `agent-ks-issue-logs` | Agent logs: when a run earns one and who decides, the six kinds, the file set of each | opening, continuing or reviewing a log |
 | `agent-ks-qna` | Scoping by question and answer: the seven things a work order must answer, story mode for a dictated brief, interview mode in rounds, playback before writing. Fills the subtask's own sections with the reason behind each decision | defining a subtask or a plan stage; "let me explain", "scope this", a long story |
 | `agent-ks-artifacts` | Self-contained HTML artifacts: reports, dashboards, data visualizations, design systems, served at `/artifacts` | build or design an artifact, chart or dashboard |
-| `agent-ks-cli` | The CLI contract, every command and flag, exit codes, the file templates | whenever a command is needed |
+| `agent-ks-cli` | Toolkit installation, config selection, command discovery, bounded search and issue context, exit codes, the file templates | whenever a command is needed |
 | `agent-ks-quick-idea-note` | Capture an idea into the issue dump | `/agent-ks-quick-idea-note [idea]` |
 | `agent-ks-index-check` | Check an index against the files it names; reports only | `/agent-ks-index-check [path]` |
 
@@ -61,7 +61,7 @@ Every skill states its source of truth. The engine and the CLI win for anything 
 
 | Command | Use it for |
 |---|---|
-| `/agent-ks-config` | **Bootstrap a new docs project from zero.** Asks the scope (whole repo or a subfolder), the site name, title, description and repo URL. Copies the starter template, patches `CLAUDE.md`, and prints the framework-clone command. Details: [Setup and the Starter Template](./06_init-and-template.md) |
+| `/agent-ks-config` | **Bootstrap a new docs project from zero.** Asks the scope (whole repo or a subfolder), the site name, title, description and repo URL. Copies the starter template, patches `CLAUDE.md`, and explains how to launch with `agent-ks start`. Details: [Setup and the Starter Template](./06_init-and-template.md) |
 | `/agent-ks-config section <name>` | **Add a top-level section.** Validates the name, creates `data/<name>/settings.json` and `01_overview.md`, and appends the `pages:` entry to `site.yaml` when you agree |
 | `/agent-ks-quick-idea-note [idea]` | Write a half-formed idea into the issue dump, with no folder ceremony |
 | `/agent-ks-index-check [path]` | Report where an index and the files it points at disagree |
@@ -75,24 +75,26 @@ First-time flow in a fresh directory:
 /agent-ks-config
 ```
 
-Then follow the printed instructions: clone the framework, write `.env`, run `./start`.
+Then install the toolkit and run `agent-ks start` from the chosen project root. It clones the framework if needed.
 
 ## The CLI
 
-Claude Code adds the plugin's `bin/` to `PATH` at session start. Other agents add it to the shell profile; the plugin README shows the line. The command is `agent-ks`, and every operation is `agent-ks <group> <verb> [flags]`.
+The Rust binary is installed independently of the plugin. See [native toolkit installation](./10_native-toolkit.md). Run it from any project folder containing `config/`, or select a config with `--config-dir` or `AGENTKS_CONFIG_FOLDER`. Bare `agent-ks` prints an overview.
 
 | Group | Verbs |
 |---|---|
-| `issue` | `list`, `show`, `subtasks`, `agent-logs`, `set-state`, `add-comment`, `new-subtask`, `new-plan`, `new-stage`, `new-agent-log`, `new-round`, `review-queue` |
+| `issue` | `list`, `show`, `tree`, `context`, `subtasks`, `agent-logs`, `set-state`, `add-comment`, `new-subtask`, `new-plan`, `new-stage`, `new-agent-log`, `new-round`, `review-queue` |
 | `check` | `config`, `section <folder>`, `blog`, `issues`, `link-form`, `legacy-tags`, `skill-links` |
 | `doc`, `blog` | `list`, `show`, `search` |
 | `git` | `updated`, `changed --since`, `log`, `commit --scope` (guarded, never pushes) |
 | `theme` | `tokens` |
-| standalone | `find <regex>`, `move <from> <to>`, `img <files>`, `resolve-context`, `help` |
+| standalone | `find <regex>`, `move <from> <to>`, `img <files>`, `resolve-context`, `overview`, `start`, `update`, `init`, `help` |
 
-`agent-ks help` lists everything. `agent-ks help <group> <verb>` shows one command's flags. `--help` and `--json` work everywhere. Exit codes: `0` ok, `1` no result or a handled error, `2` usage. The contract lives in the `agent-ks-cli` skill; do not guess a flag.
+`agent-ks help` lists everything. `agent-ks help <group> <verb>` shows one command's flags. `--help` works on every command. Read commands support `--json`; use `start --dry-run --json` to inspect a launch. Exit codes: `0` ok, `1` no result or a handled error, `2` usage. The contract lives in the `agent-ks-cli` skill; do not guess a flag.
 
 ## Updates
+
+The toolkit has its own `agent-ks-vX.Y.Z` GitHub releases. Use `agent-ks update` to update immediately. The installed shell hook silently updates with a five-hour cooldown; pinned installations pause automatic updates. The following commands update the plugin’s skills only.
 
 ```
 /plugin update agent-ks@sids-plugin-marketplace
@@ -110,7 +112,6 @@ Plugin files are cached once at user level, whatever scope enables them:
 ├── .claude-plugin/plugin.json
 ├── .codex-plugin/plugin.json
 ├── README.md
-├── bin/                       ← agent-ks, on PATH at session start
 ├── agents/                    ← agent-ks-index-checker (Claude-only)
 └── skills/
     ├── agent-ks-config/       SKILL.md · references/01_new-project … 08_migrations · assets/template
@@ -120,7 +121,7 @@ Plugin files are cached once at user level, whatever scope enables them:
     ├── agent-ks-issue-logs/   SKILL.md · references/kinds
     ├── agent-ks-qna/          SKILL.md · references/question-bank, writing-rules
     ├── agent-ks-artifacts/    SKILL.md · references · scripts
-    ├── agent-ks-cli/          SKILL.md · references · scripts (the CLI) · templates
+    ├── agent-ks-cli/          SKILL.md · references · templates (embedded in the Rust build)
     ├── agent-ks-quick-idea-note/
     └── agent-ks-index-check/
 ```

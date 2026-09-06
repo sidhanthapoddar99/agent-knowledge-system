@@ -1,0 +1,110 @@
+name: Agent KS CLI
+on:
+  push:
+    branches: ['main']
+    tags: ['agent-ks-v*']
+    paths: ['agent-ks-cli/**', 'plugins/agent-ks/skills/agent-ks-cli/templates/**', 'astro-doc-code/src/styles/**', '.github/workflows/agent-ks-cli.yml']
+  pull_request:
+    paths: ['agent-ks-cli/**', 'plugins/agent-ks/skills/agent-ks-cli/templates/**', 'astro-doc-code/src/styles/**', '.github/workflows/agent-ks-cli.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { runner: ubuntu-24.04, target: x86_64-unknown-linux-musl }
+          - { runner: ubuntu-24.04-arm, target: aarch64-unknown-linux-musl }
+          - { runner: macos-15-intel, target: x86_64-apple-darwin }
+          - { runner: macos-15, target: aarch64-apple-darwin }
+          - { runner: windows-latest, target: x86_64-pc-windows-msvc }
+    runs-on: ${{ matrix.runner }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: agent-ks-cli
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust target
+        run: |
+          rustup toolchain install stable --profile minimal --component rustfmt --component clippy
+          rustup default stable
+          rustup target add '${{ matrix.target }}'
+      - name: Install musl linker
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y musl-tools
+      - name: Check, test, and build
+        env:
+          CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_LINKER: musl-gcc
+        run: |
+          set -euo pipefail
+          cargo fmt --check
+          cargo clippy --locked --all-targets -- -D warnings
+          cargo test --locked
+          cargo build --locked --release --target '${{ matrix.target }}'
+      - name: Test installer
+        if: runner.os == 'Linux'
+        run: python3 tests/install.py
+      - name: Package
+        env:
+          CLI_TARGET: ${{ matrix.target }}
+        run: |
+          set -euo pipefail
+          mkdir -p releases/assets releases/package
+          if [[ "$CLI_TARGET" == *windows* ]]; then
+            cp "releases/$CLI_TARGET/release/agent-ks.exe" releases/package/
+            python -c 'import zipfile; z=zipfile.ZipFile("releases/assets/agent-ks-${{ matrix.target }}.zip","w",zipfile.ZIP_DEFLATED); z.write("releases/package/agent-ks.exe","agent-ks.exe"); z.close()'
+          else
+            cp "releases/$CLI_TARGET/release/agent-ks" releases/package/
+            tar -czf "releases/assets/agent-ks-$CLI_TARGET.tar.gz" -C releases/package agent-ks
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: agent-ks-${{ matrix.target }}
+          path: agent-ks-cli/releases/assets/*
+  publish:
+    if: startsWith(github.ref, 'refs/tags/agent-ks-v')
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: agent-ks-*
+          path: assets
+          merge-multiple: true
+      - name: Verify tag and release note
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          python3 - <<'PY'
+          import os, pathlib, re, tomllib
+          version = tomllib.loads(pathlib.Path('agent-ks-cli/Cargo.toml').read_text())['package']['version']
+          assert re.fullmatch(r'\d+\.\d+\.\d+', version), 'Stable CLI version required'
+          assert os.environ['RELEASE_TAG'] == 'agent-ks-v' + version, 'Tag must match Cargo.toml'
+          note = pathlib.Path('agent-ks-cli/release-notes') / (version + '.md')
+          assert note.is_file() and len(note.read_text().splitlines()) > 2, 'Release note required'
+          with open(os.environ['GITHUB_ENV'], 'a') as env:
+              env.write(f'CLI_VERSION={version}\nCLI_NOTE={note}\n')
+          PY
+      - name: Checksums
+        run: |
+          cd assets
+          sha256sum agent-ks-* > SHA256SUMS
+      - name: Publish versioned CLI release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release edit "$RELEASE_TAG" --title "agent-ks $CLI_VERSION" --notes-file "$CLI_NOTE" --latest=false
+            gh release upload "$RELEASE_TAG" assets/* --clobber
+          else
+            gh release create "$RELEASE_TAG" assets/* --verify-tag --latest=false \
+              --title "agent-ks $CLI_VERSION" --notes-file "$CLI_NOTE"
+          fi

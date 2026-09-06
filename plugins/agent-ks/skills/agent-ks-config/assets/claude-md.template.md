@@ -18,18 +18,18 @@ This project uses the agent-knowledge-system framework. The docs site lives at `
 
 ### Build commands
 
-Run them from `<chosen_root>/agent-knowledge-system/`:
+Run them from `<chosen_root>/`:
 
 ```bash
-./start            # dev server at http://localhost:4321; installs dependencies when missing
-./start build      # production build into astro-doc-code/dist/
-./start preview    # serve the built site
-./start doctor     # update check, install, full build; run it before you publish
-./start stop       # stop a running server; `./start status` shows what runs
-./start --help     # every command
+agent-ks start            # dev server at http://localhost:4321; installs dependencies when missing
+agent-ks start build      # production build into astro-doc-code/dist/
+agent-ks start preview    # serve the built site
+agent-ks start doctor     # update check, install, full build; run it before you publish
+agent-ks start stop       # stop a running server; `agent-ks start status` shows what runs
+agent-ks start --help     # every command
 ```
 
-The framework reads `.env` from `agent-knowledge-system/.env`. Consumer mode sets `CONFIG_DIR=../config`, which points back to `<chosen_root>/config/`.
+The toolkit reads `./config` from the working directory. Use `--config-dir PATH` or `AGENTKS_CONFIG_FOLDER` for another config name. The config parent is the project root.
 
 ### Tooling: the agent-ks plugin
 
@@ -39,7 +39,7 @@ The framework reads `.env` from `agent-knowledge-system/.env`. Consumer mode set
 | CLI on PATH | one `agent-ks` entrypoint; every operation is `agent-ks <group> <verb>`. Discover with `agent-ks help` |
 | Commands | `/agent-ks-config`, `/agent-ks-quick-idea-note`, `/agent-ks-index-check` |
 
-Install once per workstation:
+Install the standalone toolkit using the `agent-ks-cli` skill’s installation reference. Install the skills once per workstation:
 
 ```
 /plugin marketplace add sidhanthapoddar99/sids-plugin-marketplace

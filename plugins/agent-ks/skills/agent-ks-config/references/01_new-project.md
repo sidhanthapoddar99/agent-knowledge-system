@@ -4,7 +4,7 @@ Copy the starter template into the folder the user picks. Substitute the site na
 
 ## The result
 
-The confirm block at step 5 names every file this writes. Two things are outside that list. The user clones the framework into `<chosen_root>/agent-knowledge-system/`, beside `config/` and `data/`. That is consumer mode. [03_site-config.md](./03_site-config.md) draws the full tree. A patched `CLAUDE.md` at `<chosen_root>/CLAUDE.md` tells later sessions the layout, the skills and the build commands.
+The confirm block at step 5 names every file this writes. Two things are outside that list. `agent-ks start` clones the framework into `<chosen_root>/agent-knowledge-system/`, beside `config/` and `data/`. That is consumer mode. [03_site-config.md](./03_site-config.md) draws the full tree. A patched `CLAUDE.md` at `<chosen_root>/CLAUDE.md` tells later sessions the layout, the skills and the build commands.
 
 ## 1 Pre-flight
 
@@ -18,18 +18,9 @@ This loop guards the repo, so it runs on `./`. If a blocker prints, stop with:
 
 ## 2 Locate the template
 
-The template is `assets/template/` beside this skill's `SKILL.md`. Claude Code sets `CLAUDE_PLUGIN_ROOT`. Any other host finds the path by following the `agent-ks` shim. The shim is the small script on PATH that starts the CLI.
+The template is `assets/template/` beside this skill's `SKILL.md`. Resolve it from the skill file you loaded. In Claude Code, `${CLAUDE_PLUGIN_ROOT}/skills/agent-ks-config/assets/template` names the same directory. The standalone binary's path does not locate plugin assets.
 
-```bash
-TEMPLATE_DIR="${CLAUDE_PLUGIN_ROOT}/skills/agent-ks-config/assets/template"
-# The fallback uses no `readlink -f`: BSD and macOS do not have it. Follow the shim by hand.
-p="$(command -v agent-ks)"
-while [ -L "$p" ]; do d="$(cd "$(dirname "$p")" && pwd -P)"; p="$(readlink "$p")"; case "$p" in /*) ;; *) p="$d/$p";; esac; done
-[ -d "$TEMPLATE_DIR" ] || TEMPLATE_DIR="$(cd "$(dirname "$p")/.." && pwd -P)/skills/agent-ks-config/assets/template"
-test -d "$TEMPLATE_DIR/config" && echo "Template: $TEMPLATE_DIR" || { echo "ERROR: bundled template not found"; exit 1; }
-```
-
-If the test fails, the install is broken. In Claude Code: run `/plugin update agent-ks@sids-plugin-marketplace`, then `/reload-plugins`. In Codex: copy the skill folder again.
+Install the toolkit using [the installation reference](../../agent-ks-cli/references/installation.md) before validation, because scaffold setup needs `agent-ks check config`. Confirm `agent-ks --version` succeeds.
 
 ## 3 Scope
 
@@ -69,13 +60,13 @@ Will copy the template (five sections: Home, Docs, Issues, Blog, User Guide) int
   data/pages/home.yaml     (sub: hero.title=<SITE_TITLE>)
   data/docs/ data/blog/ data/issues/   (a starter page, a welcome post, an empty tracker)
   assets/ themes/ .gitignore   (placeholder logos; no themes yet; .env, .astro/, node_modules/ and dist/ ignored)
-  .env.example                 (a reference copy of the keys; the real .env is written at step 8, in the framework folder)
+  .env.example                 (a reference copy of the keys; the native CLI supplies config per invocation)
 
 Already here (the step-3 lines, or "none"):
   <a file: yours is kept and the template's copy is skipped>
   <a folder: it stays, and the template's files are added inside it>
 
-Will patch CLAUDE.md at <chosen_root>/CLAUDE.md (created if absent), then print the clone and .env instructions.
+Will patch CLAUDE.md at <chosen_root>/CLAUDE.md (created if absent), then provide the `agent-ks start` command.
 
 Proceed?
 ```
@@ -122,28 +113,21 @@ Merge means this. Keep the user's heading and every line they wrote. Then add th
  Docs live in ./docs. Run the linter before you push.
 +
 +Content: `docs/data/`. Config: `docs/config/site.yaml`.
-+Run the site: `cd docs/agent-knowledge-system && ./start --detach`.
++Run the site: `cd docs && agent-ks start --detach`.
 ```
 
 ## 8 Validate and hand off
 
-Run `agent-ks check config "<chosen_root>/config"` with the explicit path, because `.env` does not exist yet. It must exit `0`. Otherwise fix it or report it. One entry is outside this check's reach. The `user-guide` page reads `@default-docs/user-guide`. That path lives in the framework folder, so the check can verify it only after the clone.
+Run `agent-ks --config-dir "<chosen_root>/config" check config --json` to validate the chosen directory. References to bundled user-guide content become available after the framework clone. Report those missing targets explicitly if the viewer has not been installed yet.
 
-The block below carries one step you cannot run yourself. The template's `engine_version` is the version that was current when the plugin shipped. The clone can be newer. Content outside the engine's range refuses to start. So the user sets `engine_version` after the clone and before the first launch. End with:
+When startup is requested, run `agent-ks --config-dir "<chosen_root>/config" start --detach`. It clones the framework into the project when missing and supplies config through the environment. It installs viewer dependencies through the framework launcher. Resolve an engine-version mismatch through [the migration protocol](./08_migrations.md); do not blindly bump the version field.
 
+End with the created root, validator result and the next command:
+
+```bash
+cd <chosen_root>
+agent-ks
+agent-ks start --detach
 ```
-Created the docs scaffold at <absolute-chosen-root>. Next step: clone the framework beside your content.
 
-  cd <chosen_root>
-  git clone --depth 1 https://github.com/sidhanthapoddar99/agent-knowledge-system.git
-  cd agent-knowledge-system
-  echo "CONFIG_DIR=../config" > .env
-  grep "^export const ENGINE_VERSION" astro-doc-code/src/loaders/engine-version.ts   # set engine_version in ../config/site.yaml to this value, or the next command stops on the version gate
-  ./start --detach   # installs deps when missing, then serves. Drop --detach to hold this terminal; ./start stop ends it either way.
-
-Open http://localhost:4321. Five sections: Home / Docs / Issues / Blog / User Guide.
-
-To customise: site identity in config/site.yaml; navbar, footer and the logo in config/ and assets/; a section with
-/agent-ks-config section <name>; a theme at themes/<name>/theme.yaml (extends: "@theme/default"). The User Guide section
-reads the framework's bundled docs; to drop it, delete its `user-guide:` block from site.yaml pages: and from navbar.yaml.
-```
+If the viewer was started, include the reported URL. The config, navbar, footer, assets and themes remain under the chosen root. The User Guide page reads the framework's bundled docs.

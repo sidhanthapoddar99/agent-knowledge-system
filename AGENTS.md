@@ -10,7 +10,7 @@ This project ships a Claude Code plugin (`agent-ks`) — source at `plugins/agen
 
 The plugin's skills carry the full operating manual, including the `agent-ks` CLI — defer to them for command usage rather than duplicating the toolkit here. They trigger automatically on docs/issue/blog/config work.
 
-**Two commands, and they mean different trees.** In this repo use **`agent-ks-dev`** — it runs the plugin source you are editing. Bare **`agent-ks`** is the *installed* plugin, which is what a consumer has and is frozen at the last release. Neither guesses: the command you type is what states which tree you mean, and every gate prints the tree it read (`[repo source tree]` / `[installed plugin]`) — **read that line before quoting a pass.** `agent-ks-dev` is a shim in `scripts/bin/`, put on PATH by `mise.toml`, so it exists here and nowhere else. Having both also makes before-and-after a command rather than a git dance: run each against the same input and diff.
+**Native toolkit.** `agent-ks-cli/` owns the Rust binary, its tests, installer and independent releases. `agent-ks` means the installed release. `agent-ks-dev` is the mise shell alias for the working-tree binary. The different names let maintainers compare them without one shadowing the other. Build with `mise run cli-build`. Run `agent-ks-dev` in an activated shell. Use `mise run agent-ks-dev -- <args>` in a noninteractive shell. Mise supplies the bundled config for both names in this repo. The CLI skill owns invocation and config-selection rules. Consumer tooling ships as the standalone binary; the plugin holds the skills and templates compiled into it.
 
 **Skills are lean and history-free.** A skill (and any published doc) describes the *current* system only — never past formats, removed features, renamed fields, or "content written before X may…" notes. History lives in git and the issue tracker; format transitions live in `migration/` scripts (surfaced through the config skill's `08_migrations.md` protocol, which is the one legitimate place that talks about legacy formats). When editing a skill and you find a historical aside, delete it rather than preserving it — same rule as removed designs in the tracker: negative/removed things are deleted, not narrated.
 
@@ -99,7 +99,8 @@ own route and the framework's own business.
 ├── default-docs/            # User content (data, config, themes, assets)
 ├── scripts/                 # Development-stage tooling: start.mjs, lib/, bin/, checks/
 ├── migration/               # Content-format migrations, version-named `<to-version>_<statement>.py`
-├── plugins/                 # Repo-local plugin sources (e.g. agent-ks)
+├── plugins/                 # Repo-local skills and templates
+├── agent-ks-cli/             # Native Rust toolkit; independent binary releases
 ├── .claude/, .claude-plugin/, .mcp.json
 ├── .env, .env.example
 └── CLAUDE.md, README.md
@@ -315,11 +316,11 @@ for one is wrong in another.
 | Stage | Who | What is being worked on | Where its tooling lives |
 |---|---|---|---|
 | **Development** | a maintainer of this repo | the engine, the skills, the plugin, the layouts | repo-root `scripts/` and `astro-doc-code/` — **never ships** |
-| **Writing & usage** | an AI or a human authoring content | documents and tracker entries in an existing project | `plugins/agent-ks/` — **ships to every consumer** |
+| **Writing & usage** | an AI or a human authoring content | documents and tracker entries in an existing project | `agent-ks-cli/` binary and `plugins/agent-ks/` skills — **ship to consumers** |
 | **Host** | nobody, at run time | a built static site being served | no tooling; it is the artefact |
 
 **The test for where a tool goes: what does it need in order to run?** Something
-that needs only the files on disk is usage-stage and belongs in the plugin —
+that needs only the files on disk is usage-stage and belongs in the native toolkit —
 every consumer has files. Something that needs a build, a running server, or the
 framework source is development-stage and belongs in `scripts/`; a consumer has
 none of those and should never be asked for them.
@@ -327,7 +328,7 @@ none of those and should never be asked for them.
 **Worked example — the two link checkers, which is where this rule came from.**
 `agent-ks check link-form` reads markdown and asks *is this link maintainable and
 does its target exist on disk*. That is a question about **files**, it needs no
-build, and it is the plugin's. Whether a link then **resolves in a browser** is a
+build, and it is the toolkit's. Whether a link then **resolves in a browser** is a
 question about the **renderer** — the answer can be no while every file is
 correct, which is exactly what happened here — so it is checked by a
 development-stage script against a running server, not by the plugin against
@@ -365,7 +366,7 @@ Use the `./start` wrapper at the repo root.
 --detach           # Background the server instead of holding the terminal
 ```
 
-**One implementation: `scripts/start.mjs`.** `./start` and `.\start.cmd` are three-line shims that exec it. It replaced a 447-line bash script *and* its 397-line PowerShell twin — the twin being the actual problem, since every feature had to be written twice, the two drifted, and the Windows half was only ever parse-verified. Supporting modules live in `scripts/lib/` (`runner`, `server`, `update`, `util`, `version`). `scripts/bin/` holds the bare-name shims (`agent-ks-dev`, `start`) that `mise.toml` puts on PATH inside this repo and nowhere else, and `scripts/checks/` holds the development-stage gates (`check-links`, `check-route-parity`, `check-theme-contract`, `check-incremental-staleness`) plus the `_astro-server` lock-file reader they share.
+**One implementation: `scripts/start.mjs`.** `./start` and `.\start.cmd` are three-line shims that exec it. It replaced a 447-line bash script *and* its 397-line PowerShell twin — the twin being the actual problem, since every feature had to be written twice, the two drifted, and the Windows half was only ever parse-verified. Supporting modules live in `scripts/lib/` (`runner`, `server`, `update`, `util`, `version`). `scripts/bin/` holds the bare-name `start` shim that `mise.toml` puts on PATH inside this repo and nowhere else, and `scripts/checks/` holds the development-stage gates (`check-links`, `check-route-parity`, `check-theme-contract`, `check-incremental-staleness`) plus the `_astro-server` lock-file reader they share.
 
 **Every launching or building command prechecks the version contract.** `dev`, `preview`, `build`, `doctor` and any forwarded script compare `site.yaml → engine_version` against the engine's `[MIN_CONTENT_VERSION, ENGINE_VERSION]` before anything starts, and stop with the migration chain to run when it falls outside. This does not replace the engine's gate — it fixes *when* that gate fires: in dev it fires at the first request, after the server has already said "ready", and in `preview` it never fires at all, so a `dist/` built from unmigrated content is served in silence. `scripts/lib/version.mjs` parses the two constants out of `engine-version.ts` rather than copying them, and downgrades to a warning whenever it cannot read a value — the engine stays the authority, and a precheck that guessed would become a new reason a working project fails to start.
 
@@ -396,7 +397,9 @@ Two artefacts per release, **both required**:
 
 **The note is an upgrade instruction, not a changelog.** Its reader is someone whose build just stopped with a version error, or an AI acting for them; a list of commit subjects helps neither. Every breaking change names **the symptom a consumer sees if they skip it** ("your agent-log status chips render empty and `check issues` errors on every one"), the script that fixes it, and the chain to run — ending with the `site.yaml` bump as the last step.
 
-**One tag, two version series.** The engine version is the repo's version and the thing tagged; the plugin version (`plugins/agent-ks/.claude-plugin/plugin.json`) rides inside the note, because nothing in the code checks it and a consumer updates both together.
+**Engine and plugin versions.** The engine version is the repo's version and the thing tagged; the plugin version (`plugins/agent-ks/.claude-plugin/plugin.json`) rides inside the note, because nothing in the code checks it and a consumer updates both together.
+
+The standalone CLI has an independent `agent-ks-v<version>` tag series. Its version lives in `agent-ks-cli/Cargo.toml`, notes in `agent-ks-cli/release-notes/`, and build/install/release instructions in `agent-ks-cli/README.md`. `.github/workflows/agent-ks-cli.yml` publishes its binary archives and checksums without changing the engine's latest release. Local build artifacts stay in the ignored `agent-ks-cli/releases/`.
 
 Writing the note is **part of the release, same as the migration script** — a format change that ships without one leaves consumers holding the gate's error message and nothing else. The convention, the template and the rules: [`releases/README.md`](./releases/README.md). Tagging and publishing are the orchestrator's / Sid's; agents write the note and never run a git write command.
 

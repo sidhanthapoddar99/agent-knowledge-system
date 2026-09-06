@@ -1,6 +1,6 @@
 # agent-ks
 
-The plugin for the [agent-knowledge-system](https://github.com/sidhanthapoddar99/agent-knowledge-system) framework. It teaches an AI agent to set up and configure a project, write docs and blog posts, and run the folder-per-issue tracker. It also covers HTML artifacts and the `agent-ks` CLI. Every command is a skill folder under `skills/`. Claude Code and Codex both read skill folders. The CLI runs on bun.
+The plugin for the [agent-knowledge-system](https://github.com/sidhanthapoddar99/agent-knowledge-system) framework. It teaches an AI agent to set up and configure a project, write docs and blog posts, and run the folder-per-issue tracker. It also covers HTML artifacts and the `agent-ks` CLI. Every command is a skill folder under `skills/`. Claude Code and Codex both read skill folders. The CLI is a separately installed Rust binary.
 
 ## Install for Claude Code
 
@@ -12,7 +12,7 @@ The plugin ships through [sids-plugin-marketplace](https://github.com/sidhanthap
 /reload-plugins
 ```
 
-Claude Code adds the plugin's `bin/` to `PATH` at session start. So `agent-ks` is on `PATH` at once. Try:
+Install the standalone toolkit as described below, then run these commands from the directory containing `config/`:
 
 ```
 agent-ks help
@@ -77,13 +77,15 @@ The `agents/` folder is Claude-only. Elsewhere, [the index-check skill](./skills
 
 ## The CLI on PATH
 
-Claude Code puts `bin/` on `PATH` by itself. Every other agent needs one line in the shell profile, pointing at a checkout of the framework repo:
+Install the standalone Rust binary once per workstation:
 
 ```bash
-export PATH="$PATH:/path/to/agent-knowledge-system/plugins/agent-ks/bin"
+curl -fsSL https://raw.githubusercontent.com/sidhanthapoddar99/agent-knowledge-system/main/agent-ks-cli/install.sh | sh
+export PATH="$HOME/.local/bin:$PATH"
+agent-ks --help
 ```
 
-Install [bun](https://bun.sh) if it is missing. The CLI requires bun and refuses to run on node. Check with `agent-ks help`.
+The installer selects a versioned GitHub CLI release and verifies its checksum. See [installation](./skills/agent-ks-cli/references/installation.md) for Windows, pinned versions, config selection and viewer dependencies. The plugin's installation directory is independent of the executable.
 
 ## The skills
 
@@ -104,12 +106,15 @@ The Claude-only agent `agent-ks-index-checker`, in [agents/](./agents/agent-ks-i
 
 ## The CLI
 
-One entrypoint, `agent-ks`. Every operation is `agent-ks <group> <verb>`. The groups: `issue` (tracker), `check` (validators), `doc` and `blog` (content), `git` (content history), `theme` (tokens). Three verbs stand alone: `find`, `move` and `img`. `agent-ks help` lists every command. `agent-ks help <command>` shows its flags. `--json` gives machine output. The code lives in `skills/agent-ks-cli/scripts/`. `bin/agent-ks` (bash) and `bin/agent-ks.cmd` (Windows) are shims that run it with bun. [The cli skill](./skills/agent-ks-cli/SKILL.md) holds the contract and the exit codes.
+One entrypoint, `agent-ks`. Bare invocation shows the project overview. `issue context` provides a bounded brief; `issue tree` lists files; `find` searches content and config. The existing issue, check, doc, blog, git and theme groups cover authoring and inspection. `start` manages the viewer. Use `agent-ks help --json` for the catalog or any command's `--help` for flags and examples.
+
+The native source lives in the framework repository's `agent-ks-cli/`. The plugin supplies the [CLI skill](./skills/agent-ks-cli/SKILL.md) and its templates, which the binary embeds at build time.
 
 ## Requirements
 
-- bun on `PATH`.
-- A project shaped for the framework: the `agent-knowledge-system/` framework folder, with `CONFIG_DIR` in its `.env` pointing at the project's `config/`.
+- Install the `agent-ks` binary on PATH.
+- Run from a directory containing `config/`, or select config through `--config-dir` or `AGENTKS_CONFIG_FOLDER`.
+- Git commands require Git. Image optimization requires ImageMagick. The viewer requires Node.js or Bun.
 
 ## License
 

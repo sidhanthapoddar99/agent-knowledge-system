@@ -9,7 +9,7 @@ The blog is one flat folder of dated markdown files. The framework builds the in
 
 **Source of truth.** The engine and the CLI decide everything they implement: the filename rule, the frontmatter fields, the commands, and what the index renders. The bundled user guide at `@root/default-docs/data/user-guide/18_blogs/` wins only on a convention the code does not enforce. `@root` is the framework folder.
 
-**Where the posts live.** The CLI resolves the real `data/` path from `CONFIG_DIR` in `.env`. Run `agent-ks resolve-context` to print it. Then work under that folder's `blog/`.
+**Where the posts live.** Run `agent-ks overview --json` to find the configured blog section and its path. The CLI uses `--config-dir`, then `AGENTKS_CONFIG_FOLDER`, then `./config` from the current directory. See [project selection](../agent-ks-cli/references/installation.md). The section may have a name other than `blog`.
 
 ## Structure
 

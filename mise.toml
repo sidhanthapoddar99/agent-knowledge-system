@@ -1,13 +1,24 @@
-# Puts `scripts/bin/` on PATH inside this repo, which is what makes
-# `agent-ks-dev` and `start` available as bare commands from any subdirectory —
-# and available NOWHERE else, so neither can be typed by accident in a consumer
-# project. A stale invocation outside this repo fails with "command not found"
-# rather than quietly checking something you did not mean.
-#
-# Anyone without mise still has ./scripts/bin/agent-ks-dev and ./start. mise
-# buys the bare name, not the capability.
-#
-# `start` is Unix-only here on purpose: it is a cmd builtin on Windows, where
-# the entry point is `.\start.cmd`.
+# The installed `agent-ks` remains on PATH. Mise names the local build
+# `agent-ks-dev`, so maintainers can compare released and working-tree behavior.
 [env]
 _.path = ["scripts/bin"]
+AGENTKS_CONFIG_FOLDER = "{{config_root}}/default-docs/config"
+
+[shell_alias]
+agent-ks-dev = "'{{config_root}}/agent-ks-cli/releases/release/agent-ks'"
+
+[tasks.agent-ks-dev]
+description = "Run the locally built agent-ks CLI"
+run = "{{config_root}}/agent-ks-cli/releases/release/agent-ks"
+raw = true
+quiet = true
+
+[tasks.cli-build]
+description = "Build the local agent-ks release binary"
+dir = "{{config_root}}/agent-ks-cli"
+run = "cargo build --release --locked"
+
+[tasks.cli-test]
+description = "Test the native toolkit"
+dir = "{{config_root}}/agent-ks-cli"
+run = "cargo test --locked"

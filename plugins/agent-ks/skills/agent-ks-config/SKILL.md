@@ -23,6 +23,7 @@ Setup happens once, or once in a long while. So this skill is a set of complete 
 | Pick a layout style, or ship a custom layout | [06_layouts.md](./references/06_layouts.md) |
 | A custom page: home, info, countdown, or a new layout for one | [07_custom-pages.md](./references/07_custom-pages.md) |
 | A version-gate error, a legacy-field warning, "does this need migrating" | [08_migrations.md](./references/08_migrations.md) |
+| Install or update the standalone toolkit | [installation.md](../agent-ks-cli/references/installation.md) |
 | Any `agent-ks` command or flag | [cli-toolkit.md](../agent-ks-cli/references/cli-toolkit.md) |
 | A page inside a docs section | [the docs skill](../agent-ks-docs/SKILL.md) |
 | A blog post | [the blog skill](../agent-ks-blog/SKILL.md) |
@@ -38,11 +39,11 @@ The references write paths as `config/`, `data/` and `themes/`. Read them throug
 |---|---|
 | Scaffold, or append to `site.yaml`, without showing the plan and getting a yes | The confirm step in [01](./references/01_new-project.md) and [02](./references/02_add-section.md). You are writing into a folder the user owns |
 | Overwrite an existing `settings.json`, `site.yaml` block or `CLAUDE.md` | `Edit` in place, or stop and ask. Each of these files already holds the user's own work |
-| Clone the framework for the user | Print the command. Cloning reaches the network, and the fork is the user's choice |
+| Start an unrequested viewer or choose a different framework fork | Use `agent-ks start` when startup is requested. Its default clone source is fixed; use `--framework-dir` for a user-selected checkout |
 | Rewrite a YAML file with `Write`, or reorder its keys | `Edit` the block that changes. The comments and the key order are the file's documentation, and a rewrite destroys both |
 
 ## After every change
 
-Run `agent-ks check config`. Exit `0` is clean. A CSS or YAML value edit hot-reloads. A new `pages:` entry or a new layout folder needs a restart: run `./start stop`, then `./start --detach`. Never launch with a bare `./start`. It holds the terminal until `Ctrl-C`, so the task stalls there.
+Run `agent-ks check config`. Exit `0` is clean. A CSS or YAML value edit hot-reloads. A new `pages:` entry or a new layout folder needs a restart: run `agent-ks start stop`, then `agent-ks start --detach`. Use `--detach` for agent-driven startup. It holds the terminal until `Ctrl-C`, so the task stalls there.
 
 If this skill is wrong, fix it and tell the user. Do not work around it. The fix belongs in the framework repo, not in the installed plugin copy.

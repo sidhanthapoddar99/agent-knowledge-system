@@ -196,7 +196,7 @@ a probe re-run over an untouched surface is a green tick that means nothing.
 **Sid's rule, set this session:** every version release is **tagged
 `v<engine-version>`** and ships a **detailed release note** written like a GitHub
 release body. The convention, the template and the rules live in
-[`releases/README.md`](../../../../../../../agent-ks-engine/releases/README.md); the rule itself
+[`release-notes/README.md`](../../../../../../../agent-ks-engine/release-notes/README.md); the rule itself
 is in the repo's `CLAUDE.md`. The load-bearing part of the template is that
 **every breaking change names the symptom a consumer sees if they skip it** —
 "status vocabulary changed" is not actionable, "your status chips render empty

@@ -10,7 +10,7 @@ usage() {
   cat <<'HELP'
 Install agent-ks from GitHub Releases.
 Usage: sh install.sh [--version X.Y.Z] [--install-dir PATH] [--no-shell-setup]
-Default: newest agent-ks-vX.Y.Z release, installed into ~/.local/bin.
+Default: newest agent-ks-cli-vX.Y.Z release, installed into ~/.local/bin.
 Environment: AGENTKS_VERSION and AGENTKS_INSTALL_DIR set the same defaults.
 Adds PATH and a silent five-hour auto-update hook to your shell startup file.
 --version pins the installation and pauses automatic updates.
@@ -45,8 +45,8 @@ if [ -z "$version" ]; then
   while [ "$page" -le 10 ]; do
     fetch "https://api.github.com/repos/$repo/releases?per_page=100&page=$page" "$tmp/releases.json"
     # Public GitHub release responses omit drafts. Match only numeric CLI tags;
-    # engine tags and suffix-tagged prereleases cannot enter the version list.
-    sed -n 's/^[[:space:]]*"tag_name":[[:space:]]*"agent-ks-v\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)",\{0,1\}[[:space:]]*$/\1/p' "$tmp/releases.json" >> "$tmp/versions"
+    # engine/plugin tags and suffix-tagged prereleases cannot enter the version list.
+    sed -n 's/^[[:space:]]*"tag_name":[[:space:]]*"agent-ks-cli-v\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)",\{0,1\}[[:space:]]*$/\1/p' "$tmp/releases.json" >> "$tmp/versions"
     count=$(grep -c '^[[:space:]]*"tag_name"[[:space:]]*:' "$tmp/releases.json" || true)
     [ "$count" -ge 100 ] || break
     page=$((page + 1))
@@ -55,11 +55,11 @@ if [ -z "$version" ]; then
   version=$(LC_ALL=C sort -t . -k1,1n -k2,2n -k3,3n "$tmp/versions" | tail -n 1)
 fi
 if ! printf '%s\n' "$version" | LC_ALL=C grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
-  echo 'No stable CLI release found. Publish agent-ks-vX.Y.Z first, or select an existing version with --version.' >&2
+  echo 'No stable CLI release found. Publish agent-ks-cli-vX.Y.Z first, or select an existing version with --version.' >&2
   exit 1
 fi
 asset="agent-ks-$arch-$os.tar.gz"
-base="https://github.com/$repo/releases/download/agent-ks-v$version"
+base="https://github.com/$repo/releases/download/agent-ks-cli-v$version"
 fetch "$base/$asset" "$tmp/$asset"
 fetch "$base/SHA256SUMS" "$tmp/SHA256SUMS"
 expected=$(awk -v name="$asset" '$2 == name { print $1 }' "$tmp/SHA256SUMS")

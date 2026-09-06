@@ -22,3 +22,7 @@ run = "cargo build --release --locked"
 description = "Test the native toolkit"
 dir = "{{config_root}}/agent-ks-cli"
 run = "cargo test --locked"
+
+[tasks.release-check]
+description = "Validate release workflow and version contracts without publishing"
+run = "bun scripts/checks/check-release-contracts.mjs"

@@ -1,15 +1,15 @@
-# agent-ks-engine/releases/ — one written-up release per version
+# agent-ks-engine/release-notes/ — one written-up release per version
 
 Every version of this engine gets **two artefacts, and both are required**:
 
-1. **An annotated git tag** — `v<engine-version>`, on the commit that moves
+1. **An annotated git tag** — `agent-ks-engine-v<engine-version>`, on the commit that moves
    `ENGINE_VERSION` in `agent-ks-engine/src/loaders/engine-version.ts`. The tag
    lands on `main` after the work merges, never on a working branch.
-2. **A release note** — `agent-ks-engine/releases/<version>.md`, this folder. It becomes the
+2. **A release note** — `agent-ks-engine/release-notes/<version>.md`, this folder. It becomes the
    GitHub release body.
 
-**Pushing the tag publishes the note.** [`.github/workflows/release.yml`](../../.github/workflows/release.yml)
-fires on any `v*` tag, reads `agent-ks-engine/releases/<version>.md`, and creates the release
+**Pushing the tag publishes the note.** [the engine release workflow](../../.github/workflows/agent-ks-engine-release.yml)
+fires only on `agent-ks-engine-v*`, reads `agent-ks-engine/release-notes/<version>.md`, validates the tag against `ENGINE_VERSION`, and creates the release
 using the note's **H1 as the release title** and **everything below it as the
 body** — so line 1 must be `# <version> — <one line>`. Re-running on an existing
 release updates it rather than erroring, so a corrected note can be re-published.
@@ -17,7 +17,7 @@ release updates it rather than erroring, so a corrected note can be re-published
 **The H1 is stripped from the body on purpose.** GitHub renders the release
 title above the body already, so publishing the file verbatim shows the same
 sentence twice. The file keeps its heading regardless: it is the title's single
-source, and the note has to read as a standalone document here in `agent-ks-engine/releases/`.
+source, and the note has to read as a standalone document here in `agent-ks-engine/release-notes/`.
 Write the note for the file; the workflow adapts it for the release page.
 
 **And it fails the tag when the note is missing.** That is the point: a release
@@ -25,29 +25,23 @@ note is the artefact most easily skipped, because nothing downstream breaks
 without one. This makes the rule something the repo checks rather than something
 a maintainer remembers.
 
-By hand, if ever needed:
+After the version change, note, and checks are committed on `main`, the repository owner runs:
 
 ```bash
-gh release create v0.2.0 --title "0.2.0 — <one line>" --notes-file agent-ks-engine/releases/0.2.0.md
+mise run release-check
+git tag -a agent-ks-engine-vX.Y.Z -m "agent-ks engine X.Y.Z"
+git push origin agent-ks-engine-vX.Y.Z
 ```
 
-**[`CHANGELOG.md`](../../CHANGELOG.md) at the repo root is the index** — one row per
-release, linking here. Add the row in the same change as the note; it restates
-nothing, so there is nothing to drift.
+**[`CHANGELOG.md`](../CHANGELOG.md) in the engine folder is the index** — one row per
+engine release, linking here. Add the row in the same change as the note; it
+restates nothing, so there is nothing to drift.
 
 **The note is an upgrade instruction, not a changelog line.** Its reader is
 someone whose build just stopped with a version error, or an AI assistant acting
 for them. A list of commit subjects does not help either of them.
 
-## Two version series, one tag
-
-| Series | Where | Tagged? |
-|---|---|---|
-| **Engine / content format** | `ENGINE_VERSION` + `MIN_CONTENT_VERSION` | **Yes** — this is the repo's version |
-| **Plugin** (`agent-ks` skills + CLI) | `plugins/agent-ks/.claude-plugin/plugin.json` | No — it rides in the note |
-
-The plugin version is stated in every note because a consumer updates both, and
-nothing in the code checks the plugin's number.
+The repository's [release architecture](../../RELEASING.md) defines the independent engine, plugin, and Rust CLI streams. The engine workflow publishes this note with immutable commit and `agent-ks-engine/` tree metadata and attaches no custom archive.
 
 ## The shape
 
@@ -57,7 +51,7 @@ nothing in the code checks the plugin's number.
 <Two or three sentences: what changed at the level of "what can I now do", and
 whether this release forces action.>
 
-**Engine `X.Y.Z` · floor `X.Y.Z` · plugin `A.B.C`** — released <date>, tag `vX.Y.Z`.
+**Engine `X.Y.Z` · floor `X.Y.Z`** — released <date>, tag `agent-ks-engine-vX.Y.Z`.
 
 ## Breaking changes            ← omit only if there genuinely are none
 

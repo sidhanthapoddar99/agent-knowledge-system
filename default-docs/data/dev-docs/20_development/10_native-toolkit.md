@@ -46,8 +46,8 @@ Tests exercise release selection, cooldown, locking, archive rejection, replacem
 
 ## Independent releases
 
-Update Cargo's package version and lockfile, add `agent-ks-cli/release-notes/<version>.md`, and pass the local checks. A maintainer can then push `agent-ks-v<version>` after merging the change.
+Update Cargo's package version and lockfile, add `agent-ks-cli/release-notes/<version>.md`, and pass the local checks. A maintainer can then push `agent-ks-cli-v<version>` after merging the change.
 
-The [CLI workflow](../../../../.github/workflows/agent-ks-cli.yml) builds Linux x86_64 and ARM64 with musl, macOS Intel and Apple Silicon, and Windows x64. It uploads archives and `SHA256SUMS` to the matching GitHub release. The Cargo version must equal the tag version. Engine releases keep their existing `v*` tags; CLI releases do not take over GitHub's latest engine release.
+The [CLI release workflow](../../../../.github/workflows/agent-ks-cli-release.yml) builds Linux x86_64 and ARM64 with musl, macOS Intel and Apple Silicon, and Windows x64. It uploads archives and `SHA256SUMS` to the matching GitHub release. The Cargo version must equal the tag version. The separate [CLI CI workflow](../../../../.github/workflows/agent-ks-cli.yml) runs branch and pull-request checks without publishing. Engine and plugin releases use `agent-ks-engine-vX.Y.Z` and `agent-ks-plugin-vX.Y.Z`; neither attaches CLI binaries.
 
 The [installer](../../../../agent-ks-cli/install.sh) selects stable CLI tags, verifies archive hashes and executable versions, and atomically replaces the installed binary. Failed verification preserves an existing installation. Building locally does not publish anything.

@@ -27,8 +27,10 @@ with tempfile.TemporaryDirectory() as td:
     digest = hashlib.sha256(archive.read_bytes()).hexdigest()
     (fixture / 'SHA256SUMS').write_text(f'{digest}  {asset}\n')
     (fixture / 'releases.json').write_text(json.dumps([
-        {'tag_name': 'v99.0.0'}, {'tag_name': 'agent-ks-v9.9.9-beta.1'},
-        {'tag_name': f'agent-ks-v{version}'},
+        {'tag_name': 'agent-ks-engine-v99.0.0'},
+        {'tag_name': 'agent-ks-plugin-v99.0.0'},
+        {'tag_name': 'agent-ks-cli-v9.9.9-beta.1'},
+        {'tag_name': f'agent-ks-cli-v{version}'},
     ], indent=2))
     mock = root / 'mock'
     mock.mkdir()
@@ -39,6 +41,8 @@ from pathlib import Path
 args=sys.argv[1:]
 url=next(a for a in args if a.startswith('https://'))
 name='releases.json' if 'api.github.com' in url else url.rsplit('/',1)[-1]
+if name != 'releases.json' and '/releases/download/agent-ks-cli-v' not in url:
+    raise SystemExit(f'unexpected release namespace: {url}')
 shutil.copyfile(Path(os.environ['INSTALL_FIXTURE'])/name,args[args.index('-o')+1])
 ''')
     curl.chmod(0o755)

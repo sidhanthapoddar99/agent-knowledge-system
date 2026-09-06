@@ -17,7 +17,7 @@ export PATH="$HOME/.local/bin:$PATH"
 agent-ks --version
 ```
 
-The installer downloads the newest stable `agent-ks-vX.Y.Z` GitHub release and verifies its checksum and executable version. It configures your shell for silent automatic updates, with a five-hour cooldown. Use `agent-ks update` to update immediately. Use `sh -s -- --version 0.1.0` at the end of the pipeline to pin a release. A published CLI release is required; source builds are described in the [toolkit README](../../../../agent-ks-cli/README.md).
+The installer downloads the newest stable `agent-ks-cli-vX.Y.Z` GitHub release and verifies its checksum and executable version. It configures your shell for silent automatic updates, with a five-hour cooldown. Use `agent-ks update` to update immediately. Use `sh -s -- --version 0.1.0` at the end of the pipeline to pin a release. A published CLI release is required; source builds are described in the [toolkit README](../../../../agent-ks-cli/README.md).
 
 For native Windows, download the Windows ZIP and `SHA256SUMS` from the matching CLI release, verify the checksum, extract `agent-ks.exe`, and add its directory to PATH.
 

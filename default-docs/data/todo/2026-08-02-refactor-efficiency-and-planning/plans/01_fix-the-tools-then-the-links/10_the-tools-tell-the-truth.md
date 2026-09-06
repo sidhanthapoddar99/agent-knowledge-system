@@ -10,7 +10,7 @@ subtasks:
 ## Todo
 
 - [x] Land the subtask in full — revert the walk-up, add the shim and `mise.toml`,
-      sweep the sibling scripts, correct `agent-ks-engine/releases/0.2.1.md`
+      sweep the sibling scripts, correct `agent-ks-engine/release-notes/0.2.1.md`
 - [x] **Gate:** the anchor no longer moves with the CWD — proven by running the
       new script from `/tmp` against a copy with no `.git` and getting
       `[installed plugin]`. **`agent-ks` on `PATH` still runs the old script until

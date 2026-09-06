@@ -1,0 +1,59 @@
+name: Release Contracts
+
+on:
+  push:
+    branches: ['main']
+    paths:
+      - '.github/workflows/**'
+      - 'scripts/checks/check-release-contracts.mjs'
+      - 'agent-ks-engine/release-notes/**'
+      - 'agent-ks-engine/CHANGELOG.md'
+      - 'agent-ks-engine/src/loaders/engine-version.ts'
+      - 'README.md'
+      - 'RELEASING.md'
+      - 'AGENTS.md'
+      - 'mise.toml'
+      - 'plugins/agent-ks/.claude-plugin/plugin.json'
+      - 'plugins/agent-ks/.codex-plugin/plugin.json'
+      - 'plugins/agent-ks/release-notes/**'
+      - 'plugins/agent-ks/README.md'
+      - 'plugins/agent-ks/skills/agent-ks-cli/references/**'
+      - 'agent-ks-cli/**'
+      - 'default-docs/data/dev-docs/20_development/10_native-toolkit.md'
+      - 'default-docs/data/dev-docs/25_plugins/05_creating-plugins/06_versioning-and-publishing.md'
+      - 'default-docs/data/user-guide/05_getting-started/05_claude-skills.md'
+      - 'default-docs/data/user-guide/05_getting-started/10_native-toolkit.md'
+  pull_request:
+    paths:
+      - '.github/workflows/**'
+      - 'scripts/checks/check-release-contracts.mjs'
+      - 'agent-ks-engine/release-notes/**'
+      - 'agent-ks-engine/CHANGELOG.md'
+      - 'agent-ks-engine/src/loaders/engine-version.ts'
+      - 'README.md'
+      - 'RELEASING.md'
+      - 'AGENTS.md'
+      - 'mise.toml'
+      - 'plugins/agent-ks/.claude-plugin/plugin.json'
+      - 'plugins/agent-ks/.codex-plugin/plugin.json'
+      - 'plugins/agent-ks/release-notes/**'
+      - 'plugins/agent-ks/README.md'
+      - 'plugins/agent-ks/skills/agent-ks-cli/references/**'
+      - 'agent-ks-cli/**'
+      - 'default-docs/data/dev-docs/20_development/10_native-toolkit.md'
+      - 'default-docs/data/dev-docs/25_plugins/05_creating-plugins/06_versioning-and-publishing.md'
+      - 'default-docs/data/user-guide/05_getting-started/05_claude-skills.md'
+      - 'default-docs/data/user-guide/05_getting-started/10_native-toolkit.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --cwd agent-ks-engine --frozen-lockfile
+      - run: bun scripts/checks/check-release-contracts.mjs

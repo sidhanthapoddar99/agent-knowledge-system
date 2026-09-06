@@ -116,7 +116,7 @@ fn select_release(v: &Value) -> Result<Option<String>> {
     Ok(releases
         .iter()
         .filter(|r| r["draft"] != true && r["prerelease"] != true)
-        .filter_map(|r| r["tag_name"].as_str()?.strip_prefix("agent-ks-v"))
+        .filter_map(|r| r["tag_name"].as_str()?.strip_prefix("agent-ks-cli-v"))
         .filter_map(|s| version(s).map(|v| (v, s)))
         .max_by_key(|(v, _)| *v)
         .map(|(_, s)| s.to_owned()))
@@ -226,7 +226,7 @@ fn candidate(release: &str, get: &impl Fn(&str, u64) -> Result<Vec<u8>>) -> Resu
         return usage("Expected a stable version X.Y.Z");
     }
     let asset = asset()?;
-    let base = format!("https://github.com/{REPO}/releases/download/agent-ks-v{release}");
+    let base = format!("https://github.com/{REPO}/releases/download/agent-ks-cli-v{release}");
     let sums = get(&format!("{base}/SHA256SUMS"), 64 * 1024)?;
     let archive = get(&format!("{base}/{asset}"), MAX_BINARY)?;
     checked_archive(&archive, &sums, &asset)
@@ -570,11 +570,12 @@ mod tests {
         format!("{:x}  {name}\n", Sha256::digest(data)).into_bytes()
     }
     #[test]
-    fn release_selection_skips_engine_drafts_prereleases_and_uses_numeric_versions() {
+    fn release_selection_skips_other_streams_drafts_prereleases_and_uses_numeric_versions() {
         let releases = json!([
-            {"tag_name":"v99.0.0"}, {"tag_name":"agent-ks-v999.0.0","draft":true},
-            {"tag_name":"agent-ks-v998.0.0","prerelease":true}, {"tag_name":"agent-ks-v997.0.0-beta.1"},
-            {"tag_name":"agent-ks-v2.9.0"}, {"tag_name":"agent-ks-v2.10.0"}, {"tag_name":"agent-ks-v1.0.0"}
+            {"tag_name":"agent-ks-engine-v99.0.0"}, {"tag_name":"agent-ks-cli-v999.0.0","draft":true},
+            {"tag_name":"agent-ks-cli-v998.0.0","prerelease":true}, {"tag_name":"agent-ks-cli-v997.0.0-beta.1"},
+            {"tag_name":"agent-ks-plugin-v99.0.0"}, {"tag_name":"agent-ks-cli-v2.9.0"},
+            {"tag_name":"agent-ks-cli-v2.10.0"}, {"tag_name":"agent-ks-cli-v1.0.0"}
         ]);
         assert_eq!(
             select_release(&releases).unwrap().as_deref(),
@@ -665,7 +666,7 @@ mod tests {
             false,
             &|url, _| {
                 assert!(url.contains("api.github.com"));
-                Ok(br#"[{"tag_name":"agent-ks-v99.0.0"}]"#.to_vec())
+                Ok(br#"[{"tag_name":"agent-ks-cli-v99.0.0"}]"#.to_vec())
             },
             |_| panic!("check-only must not install"),
         );
@@ -684,10 +685,12 @@ mod tests {
         let checksums = sums(&archive, &asset);
         let get = |url: &str, _| {
             if url.contains("api.github.com") {
-                Ok(br#"[{"tag_name":"agent-ks-v99.0.0"}]"#.to_vec())
+                Ok(br#"[{"tag_name":"agent-ks-cli-v99.0.0"}]"#.to_vec())
             } else if url.ends_with("SHA256SUMS") {
+                assert!(url.contains("/releases/download/agent-ks-cli-v99.0.0/"));
                 Ok(checksums.clone())
             } else {
+                assert!(url.contains("/releases/download/agent-ks-cli-v99.0.0/"));
                 Ok(archive.clone())
             }
         };

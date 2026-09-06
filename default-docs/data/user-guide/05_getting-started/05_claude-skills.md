@@ -94,7 +94,7 @@ The Rust binary is installed independently of the plugin. See [native toolkit in
 
 ## Updates
 
-The toolkit has its own `agent-ks-vX.Y.Z` GitHub releases. Use `agent-ks update` to update immediately. The installed shell hook silently updates with a five-hour cooldown; pinned installations pause automatic updates. The following commands update the plugin’s skills only.
+The toolkit has its own `agent-ks-cli-vX.Y.Z` GitHub releases. The plugin uses independent `agent-ks-plugin-vX.Y.Z` metadata releases and marketplace updates. Use `agent-ks update` to update the CLI immediately. The installed shell hook silently updates with a five-hour cooldown; pinned installations pause automatic updates. The following commands update the plugin’s skills only.
 
 ```
 /plugin update agent-ks@sids-plugin-marketplace

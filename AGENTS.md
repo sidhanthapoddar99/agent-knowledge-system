@@ -98,7 +98,7 @@ own route and the framework's own business.
 ├── agent-ks-engine/         # Engine source plus engine-owned migrations and release notes
 │   ├── src/, package.json, astro.config.mjs, tsconfig.json, bun.lock
 │   ├── migration/           # Content-format migrations, version-named `<to-version>_<statement>.py`
-│   └── releases/            # Engine release notes consumed by the v* workflow
+│   └── release-notes/       # Engine release notes consumed by the engine-tag workflow
 ├── default-docs/            # User content (data, config, themes, assets)
 ├── scripts/                 # Development-stage tooling: start.mjs, lib/, bin/, checks/
 ├── plugins/                 # Repo-local skills and templates
@@ -390,20 +390,11 @@ Consequences worth knowing:
 
 If you're inside `agent-ks-engine/`, `bun run dev` / `bun run build` / `bun run preview` work directly.
 
-## Releases — every version is tagged, and written up
+## Releases — three independent streams
 
-Two artefacts per release, **both required**:
+Follow [`RELEASING.md`](./RELEASING.md) for the engine, plugin, and Rust CLI version sources, namespaced tags, notes, payload boundaries, workflows, and local contract gate. Read the product-specific release-note guide it links before preparing a release, because each product has a different payload and audience.
 
-1. **An annotated git tag** — `v<engine-version>`, on the commit that moves `ENGINE_VERSION`. It lands on `main` after the work merges; never on a working branch.
-2. **A release note** — `agent-ks-engine/releases/<version>.md`. **Pushing the tag publishes it**: `.github/workflows/release.yml` reads the note, uses its H1 as the release title, and creates the GitHub release — and **fails the tag if the note is missing**, so the rule is checked rather than remembered. `CHANGELOG.md` at the root is a one-row-per-release index that restates nothing.
-
-**The note is an upgrade instruction, not a changelog.** Its reader is someone whose build just stopped with a version error, or an AI acting for them; a list of commit subjects helps neither. Every breaking change names **the symptom a consumer sees if they skip it** ("your agent-log status chips render empty and `check issues` errors on every one"), the script that fixes it, and the chain to run — ending with the `site.yaml` bump as the last step.
-
-**Engine and plugin versions.** The engine version is the repo's version and the thing tagged; the plugin version (`plugins/agent-ks/.claude-plugin/plugin.json`) rides inside the note, because nothing in the code checks it and a consumer updates both together.
-
-The standalone CLI has an independent `agent-ks-v<version>` tag series. Its version lives in `agent-ks-cli/Cargo.toml`, notes in `agent-ks-cli/release-notes/`, and build/install/release instructions in `agent-ks-cli/README.md`. `.github/workflows/agent-ks-cli.yml` publishes its binary archives and checksums without changing the engine's latest release. Local build artifacts stay in the ignored `agent-ks-cli/releases/`.
-
-Writing the note is **part of the release, same as the migration script** — a format change that ships without one leaves consumers holding the gate's error message and nothing else. The convention, the template and the rules: [`agent-ks-engine/releases/README.md`](./agent-ks-engine/releases/README.md). Tagging and publishing are the orchestrator's / Sid's; agents write the note and never run a git write command.
+Agents prepare version declarations and release notes but do not tag, push, or publish. Those outward actions belong to the repository owner after review.
 
 ## Key Rules
 
@@ -416,4 +407,4 @@ Writing the note is **part of the release, same as the migration script** — a 
 7. **Split large layout files** at ~400 lines into `parts/` subcomponents; client JS in a single `client.ts`
 8. **Issues** use folder-per-item (`YYYY-MM-DD-<slug>/`) with `settings.json` for metadata; vocabulary in the tracker's root `settings.json`
 9. **`engine_version` in `site.yaml`** — content outside the engine's supported range is a hard startup error (see "Version contract" above); after any migration, bump it to the engine's version
-10. **Every release is tagged `v<engine-version>` and written up** in `agent-ks-engine/releases/<version>.md` — see "Releases" above; the note ships with the release, not after it
+10. **Every product release uses its namespaced tag and matching note** — see "Releases" above; no product borrows another product's version or payload

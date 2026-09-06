@@ -5,7 +5,7 @@ title: "Extension — `superseded` added as the eighth status (engine 0.3.6)"
 The vocabulary decided here gained one value. **Closed now holds three statuses:
 `done` · `dropped` · `superseded`.** The issue stays `done`; this comment records
 the extension and the decisions taken with it. Full write-up:
-[`releases/0.3.6.md`](../../../../../agent-ks-engine/releases/0.3.6.md).
+[`release-notes/0.3.6.md`](../../../../../agent-ks-engine/release-notes/0.3.6.md).
 
 ## Why an eighth status
 

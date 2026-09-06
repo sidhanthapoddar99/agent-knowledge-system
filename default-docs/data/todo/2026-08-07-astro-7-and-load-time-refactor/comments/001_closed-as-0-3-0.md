@@ -12,7 +12,7 @@ release to move the middle place since `0.2.0`, and it moves because the
 file, `settings.json`, frontmatter field and link form is untouched. A consumer
 upgrading edits one line: `engine_version: "0.3.0"`.
 
-Full upgrade instruction: [releases/0.3.0.md](../../../../../agent-ks-engine/releases/0.3.0.md).
+Full upgrade instruction: [release-notes/0.3.0.md](../../../../../agent-ks-engine/release-notes/0.3.0.md).
 
 ## What the issue set out to do, and whether it did it
 

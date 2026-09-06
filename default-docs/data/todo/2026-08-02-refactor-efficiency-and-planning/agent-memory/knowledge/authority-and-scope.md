@@ -32,16 +32,15 @@ word.** They are not autonomous work and must not be swept into a loop:
 **The hold is spent, not lifted.** It covered this release; the next bump is held
 the same way.
 
-## Releases — standing rule, set 2026-08-03
+## Releases — standing rule
 
-Sid's: **every version release is tagged `v<engine-version>` and ships a detailed
-release note**, written like a GitHub release body, at `agent-ks-engine/releases/<version>.md`.
-Convention and template: [`agent-ks-engine/releases/README.md`](../../../../../../agent-ks-engine/releases/README.md);
-the rule itself lives in the repo's `CLAUDE.md`.
+The engine, plugin, and Rust CLI have independent versions, namespaced tags,
+release-note directories, and payloads. The current policy is
+[`RELEASING.md`](../../../../../../RELEASING.md); the engine note shape is in
+[`agent-ks-engine/release-notes/README.md`](../../../../../../agent-ks-engine/release-notes/README.md).
 
 **Writing the note is mine; tagging and publishing are not.** The tag lands on
-`main` after the merge, and pushing it is his call — nothing on this branch has
-been pushed.
+`main` after the merge, and pushing it is Sid's call.
 
 ## Sid's alone
 

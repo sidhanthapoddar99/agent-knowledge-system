@@ -45,4 +45,4 @@ cargo build --release --locked
 python3 tests/install.py
 ```
 
-Build artifacts stay under the ignored `agent-ks-cli/releases/`. Versioned notes live under `agent-ks-cli/release-notes/`. A maintainer publishes `agent-ks-v<version>` independently of engine tags. The framework repository's `agent-ks-cli/README.md` describes release packaging and installation.
+Build artifacts stay under the ignored `agent-ks-cli/releases/`. Versioned notes live under `agent-ks-cli/release-notes/`. A maintainer publishes `agent-ks-cli-v<version>` independently of engine and plugin tags. The framework repository's `agent-ks-cli/README.md` describes release packaging and installation.

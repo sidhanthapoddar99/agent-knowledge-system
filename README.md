@@ -2,7 +2,7 @@
 
 [![engine](https://img.shields.io/github/v/release/sidhanthapoddar99/agent-knowledge-system?label=engine&color=0b7285&labelColor=1f2328&logo=github&logoColor=white)](https://github.com/sidhanthapoddar99/agent-knowledge-system/releases/latest)
 [![plugin](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fsidhanthapoddar99%2Fagent-knowledge-system%2Fmain%2Fplugins%2Fagent-ks%2F.claude-plugin%2Fplugin.json&query=%24.version&label=plugin&prefix=v&color=5f3dc4&labelColor=1f2328&logo=claude&logoColor=white)](./plugins/agent-ks)
-[![changelog](https://img.shields.io/badge/changelog-releases-1971c2?labelColor=1f2328&logo=readme&logoColor=white)](./CHANGELOG.md)
+[![changelog](https://img.shields.io/badge/changelog-releases-1971c2?labelColor=1f2328&logo=readme&logoColor=white)](./agent-ks-engine/CHANGELOG.md)
 [![runtime](https://img.shields.io/badge/runtime-bun-fbf0df?labelColor=1f2328&logo=bun&logoColor=fbf0df)](https://bun.sh)
 
 <sub>Both version badges read live values — the **engine** from the latest release tag, the **plugin** from `plugin.json` on `main`. Neither is a number typed into this file, so neither can drift.</sub>
@@ -74,7 +74,7 @@ export PATH="$HOME/.local/bin:$PATH"
 agent-ks --help
 ```
 
-The installer downloads a versioned binary from GitHub Releases, verifies its checksum, and adds PATH plus silent shell-startup updates with a five-hour cooldown. Use `agent-ks update` for an immediate update; ordinary commands do not check for updates. It requires a published `agent-ks-vX.Y.Z` release. Windows assets, version pinning and source builds are described in the [CLI README](./agent-ks-cli/README.md).
+The installer downloads a versioned binary from GitHub Releases, verifies its checksum, and adds PATH plus silent shell-startup updates with a five-hour cooldown. Use `agent-ks update` for an immediate update; ordinary commands do not check for updates. It requires a published `agent-ks-cli-vX.Y.Z` release. Windows assets, version pinning and source builds are described in the [CLI README](./agent-ks-cli/README.md).
 
 Install the Claude Code plugin through [`sids-plugin-marketplace`](https://github.com/sidhanthapoddar99/sids-plugin-marketplace) — three commands to install, one to scaffold:
 
@@ -96,6 +96,18 @@ Install the Claude Code plugin through [`sids-plugin-marketplace`](https://githu
 | **CLI** — one `agent-ks` entrypoint on `PATH` | `agent-ks <group> <verb>` — issue tracker (`agent-ks issue …`), validators (`agent-ks check …`), docs/blog content, git metadata, theme tokens, cross-content search. Run `agent-ks help` for the live list. The Rust binary runs without Bun for content operations. |
 
 The toolkit installs separately from the plugin. Pass `--help` to a group or command, or use `agent-ks help --json` for the machine-readable catalog.
+
+## Release streams
+
+The [release architecture](./RELEASING.md) keeps the monorepo's three products independent:
+
+| Product | Tag | Committed notes | Published payload |
+|---|---|---|---|
+| Engine | `agent-ks-engine-vX.Y.Z` | [`agent-ks-engine/release-notes/`](./agent-ks-engine/release-notes/) | Note plus immutable commit and engine-tree metadata |
+| Plugin / skills | `agent-ks-plugin-vX.Y.Z` | [`plugins/agent-ks/release-notes/`](./plugins/agent-ks/release-notes/) | Note plus immutable commit and plugin-tree metadata |
+| Rust CLI | `agent-ks-cli-vX.Y.Z` | [`agent-ks-cli/release-notes/`](./agent-ks-cli/release-notes/) | Platform archives and `SHA256SUMS` |
+
+Engine and plugin releases attach no custom source packages. Run `mise run release-check` to apply the [release-contract gate](./scripts/checks/check-release-contracts.mjs), which checks the namespaces, version declarations, notes, source metadata, and asset boundary without publishing anything.
 
 ## Manual setup (without `/agent-ks-config`)
 
@@ -175,7 +187,8 @@ agent-knowledge-system/                 ← THIS repo (= framework folder)
 ├── agent-ks-engine/                     ← engine code — don't edit unless you're hacking on it
 │   ├── src/                            ← Astro layouts, loaders, parsers
 │   ├── migration/                      ← content-format migrations shipped with the engine
-│   ├── releases/                       ← engine release notes used by the v* workflow
+│   ├── CHANGELOG.md                    ← engine-only release index
+│   ├── release-notes/                  ← engine release notes used by the engine-tag workflow
 │   ├── astro.config.mjs
 │   ├── package.json
 │   └── tsconfig.json
@@ -195,7 +208,7 @@ The plugin in `plugins/agent-ks/` is distributed via [`sids-plugin-marketplace`]
 - **End-user docs** — `default-docs/data/user-guide/` (rendered at `/user-guide` in the live site). Setup, configuration, content authoring, themes, layouts, the issue tracker.
 - **Developer docs** — `default-docs/data/dev-docs/` (rendered at `/dev-docs`). Architecture, layouts internals, loader pipeline, scripts, and the **Plugins** section explaining how Claude Code plugins work and how to author one.
 - **CLAUDE.md** at the repo root — orientation for Claude Code sessions working in this repo.
-- **[CHANGELOG.md](./CHANGELOG.md)** — every release, with the full notes in [`agent-ks-engine/releases/`](./agent-ks-engine/releases/) and on the [GitHub releases page](https://github.com/sidhanthapoddar99/agent-knowledge-system/releases).
+- **[Engine changelog](./agent-ks-engine/CHANGELOG.md)** — every engine release, with the full notes in [`agent-ks-engine/release-notes/`](./agent-ks-engine/release-notes/) and on the [GitHub releases page](https://github.com/sidhanthapoddar99/agent-knowledge-system/releases).
 
 Both doc sets are written *in* the framework and rendered *by* it — the user-guide below is this repo's own `default-docs/data/user-guide/`:
 

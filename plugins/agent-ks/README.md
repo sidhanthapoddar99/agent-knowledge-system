@@ -110,6 +110,12 @@ One entrypoint, `agent-ks`. Bare invocation shows the project overview. `issue c
 
 The native source lives in the framework repository's `agent-ks-cli/`. The plugin supplies the [CLI skill](./skills/agent-ks-cli/SKILL.md) and its templates, which the binary embeds at build time.
 
+## Release independently
+
+The plugin version is declared in both `.claude-plugin/plugin.json` and `.codex-plugin/plugin.json`; the two values must agree. Each version also has a standalone note under [`release-notes/`](./release-notes/). After those files are committed on `main`, the repository owner tags the commit as `agent-ks-plugin-vX.Y.Z`.
+
+The [plugin release workflow](../../.github/workflows/agent-ks-plugin-release.yml) validates the tag, both manifests, and the note. It publishes metadata only: the note plus the tag, full commit SHA, and exact `plugins/agent-ks/` Git tree ID. Plugin installation still happens through the marketplace; no duplicate ZIP or TAR package is attached.
+
 ## Requirements
 
 - Install the `agent-ks` binary on PATH.

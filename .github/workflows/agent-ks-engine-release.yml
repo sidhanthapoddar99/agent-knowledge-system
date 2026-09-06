@@ -1,0 +1,92 @@
+name: Agent KS Engine Release
+
+on:
+  push:
+    tags:
+      - 'agent-ks-engine-v*'
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    if: startsWith(github.ref, 'refs/tags/agent-ks-engine-v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify tag, engine version, note, and source identity
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          python3 - <<'PY'
+          import os
+          import pathlib
+          import re
+          import subprocess
+
+          tag = os.environ['RELEASE_TAG']
+          match = re.fullmatch(r'agent-ks-engine-v(\d+\.\d+\.\d+)', tag)
+          assert match, 'Stable engine tag agent-ks-engine-vX.Y.Z required'
+          version = match.group(1)
+
+          source = pathlib.Path('agent-ks-engine/src/loaders/engine-version.ts').read_text()
+          declared = re.search(r"export const ENGINE_VERSION = '([^']+)'", source)
+          assert declared and declared.group(1) == version, 'Tag must match ENGINE_VERSION'
+
+          note = pathlib.Path('agent-ks-engine/release-notes') / f'{version}.md'
+          assert note.is_file(), f'Release note required at {note}'
+          lines = note.read_text().splitlines()
+          assert lines and re.fullmatch(rf'# {re.escape(version)} — .+', lines[0]), \
+              'Release note line 1 must be # <version> — <one line>'
+          body = '\n'.join(lines[1:]).lstrip()
+          assert body, 'Release note needs a body below its H1'
+
+          commit = subprocess.check_output(
+              ['git', 'rev-parse', f'{tag}^{{commit}}'], text=True
+          ).strip()
+          assert re.fullmatch(r'[0-9a-f]{40}', commit), 'Commit must be a full Git object ID'
+          head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+          assert commit == head, 'Checked-out commit must be the tagged commit'
+          tree = subprocess.check_output(
+              ['git', 'rev-parse', f'{commit}:agent-ks-engine'], text=True
+          ).strip()
+          assert re.fullmatch(r'[0-9a-f]{40}', tree), 'Engine tree must be a full Git object ID'
+
+          body_path = pathlib.Path(os.environ['RUNNER_TEMP']) / 'agent-ks-engine-release-body.md'
+          body_path.write_text(
+              body.rstrip()
+              + '\n\n## Immutable source\n\n'
+              + f'- Tag: `{tag}`\n'
+              + f'- Commit: `{commit}`\n'
+              + f'- `agent-ks-engine/` tree: `{tree}`\n'
+          )
+          with open(os.environ['GITHUB_ENV'], 'a') as env:
+              env.write(f'RELEASE_NOTE={note}\n')
+              env.write(f'RELEASE_BODY={body_path}\n')
+              env.write(f'RELEASE_TITLE={lines[0][2:]}\n')
+              env.write(f'COMMIT_SHA={commit}\n')
+              env.write(f'TREE_ID={tree}\n')
+          PY
+
+      - name: Create or update the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release edit "$GITHUB_REF_NAME" \
+              --title "$RELEASE_TITLE" \
+              --notes-file "$RELEASE_BODY" \
+              --latest=true
+          else
+            gh release create "$GITHUB_REF_NAME" \
+              --title "$RELEASE_TITLE" \
+              --notes-file "$RELEASE_BODY" \
+              --latest=true \
+              --verify-tag
+          fi

@@ -83,6 +83,12 @@ If the plugin lives in the same repo as the marketplace (and the marketplace is 
 
 The whole loop can be 30 seconds. Compare to traditional package release (publish to registry, wait for indexing, bump consumer's lockfile, install) — the plugin model trades discoverability of a centralised registry for the speed of a Git remote.
 
+### This repository's independent plugin release
+
+The `agent-ks` plugin declares the same version in its Claude and Codex manifests. A release requires `plugins/agent-ks/release-notes/<version>.md`, then the repository owner tags the reviewed `main` commit as `agent-ks-plugin-v<version>`.
+
+The [plugin release workflow](../../../../../.github/workflows/agent-ks-plugin-release.yml) verifies both manifests and the note. It publishes the note with the full commit SHA and exact `plugins/agent-ks/` Git tree ID. It attaches no custom archive because the marketplace remains the distribution channel. The engine and Rust CLI have separate `agent-ks-engine-vX.Y.Z` and `agent-ks-cli-vX.Y.Z` streams.
+
 ## Multiple plugins in one marketplace
 
 A marketplace can ship N plugins, each with its own `version`. Consumers update them independently:

@@ -9,7 +9,7 @@ agent-ks --version
 agent-ks --help
 ```
 
-The installer downloads the newest stable `agent-ks-vX.Y.Z` GitHub release for Linux or macOS, verifies its SHA-256 checksum and binary version, and installs it into `~/.local/bin`. It installs PATH and a silent shell-startup updater for Bash, Zsh or Fish. Use `--no-shell-setup` to manage your shell yourself. It needs curl, tar, and `sha256sum` or `shasum`. A published CLI release must exist before downloading.
+The installer downloads the newest stable `agent-ks-cli-vX.Y.Z` GitHub release for Linux or macOS, verifies its SHA-256 checksum and binary version, and installs it into `~/.local/bin`. It installs PATH and a silent shell-startup updater for Bash, Zsh or Fish. Use `--no-shell-setup` to manage your shell yourself. It needs curl, tar, and `sha256sum` or `shasum`. A published CLI release must exist before downloading.
 
 Pass `--version X.Y.Z` to pin a published version, or `--install-dir PATH` for another destination:
 
@@ -39,7 +39,7 @@ An installer `--version` pins the chosen release. A pin pauses automatic updates
 
 A manually extracted binary needs shell setup: run `agent-ks init bash`, `init zsh`, `init fish` or `init powershell` and put its printed code in the corresponding startup file. On Windows use `$PROFILE`. No per-command or directory-change hook is needed.
 
-GitHub engine releases do not carry a duplicate unchanged CLI. CLI downloads come from separate `agent-ks-vX.Y.Z` releases. The native updater excludes drafts and prereleases, verifies SHA-256 and the executable's version, then replaces the binary. It requests no elevated permissions.
+GitHub engine and plugin releases do not carry a duplicate unchanged CLI. CLI downloads come only from `agent-ks-cli-vX.Y.Z` releases. The native updater excludes drafts and prereleases, verifies SHA-256 and the executable's version, then replaces the binary. It requests no elevated permissions.
 
 ## Configuration selection
 

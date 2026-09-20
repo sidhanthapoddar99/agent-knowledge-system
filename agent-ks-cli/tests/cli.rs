@@ -516,19 +516,19 @@ fn viewer_dispatch_and_clone_preserve_config() {
     let d = project();
     let bins = d.path().join("fake-bin");
     let framework = d.path().join("custom-viewer");
-    put(d.path(), "custom-viewer/scripts/start.mjs", "// fixture");
+    put(d.path(), "custom-viewer/agent-ks-engine/package.json", "{}");
     put(d.path(), "custom-viewer/.env", "CONFIG_DIR=do-not-change\n");
     put(
         d.path(),
-        "fake-bin/node",
+        "fake-bin/bun",
         "#!/bin/sh\nif [ \"$1\" = --version ]; then echo v24.0.0; exit 0; fi\nprintf '%s\\n' \"$CONFIG_DIR\" \"$PWD\" \"$@\" > \"$TEST_LAUNCH\"\n",
     );
     put(
         d.path(),
         "fake-bin/git",
-        "#!/bin/sh\nfor last do :; done\nmkdir -p \"$last/scripts\"\nprintf '// cloned fixture\\n' > \"$last/scripts/start.mjs\"\n",
+        "#!/bin/sh\nfor last do :; done\nmkdir -p \"$last/agent-ks-engine\"\nprintf '{}\\n' > \"$last/agent-ks-engine/package.json\"\n",
     );
-    for name in ["node", "git"] {
+    for name in ["bun", "git"] {
         fs::set_permissions(bins.join(name), fs::Permissions::from_mode(0o755)).unwrap();
     }
     let capture = d.path().join("launch.txt");
@@ -564,8 +564,8 @@ fn viewer_dispatch_and_clone_preserve_config() {
                     .unwrap()
             )
         );
-        assert!(launch.ends_with("dev\n--detach\n"));
-        assert!(target.join("scripts/start.mjs").is_file());
+        assert!(launch.ends_with("dev\nstatus\n"));
+        assert!(target.join("agent-ks-engine/package.json").is_file());
     }
     assert_eq!(
         fs::read_to_string(framework.join(".env")).unwrap(),

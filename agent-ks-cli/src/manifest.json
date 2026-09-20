@@ -1,5 +1,23 @@
 [
   {
+    "bin": "ps", "group": null, "verb": "ps", "runtime": "native",
+    "summary": "Show dev and preview servers in the selected framework checkout",
+    "flags": [
+      {"name": "framework-dir", "value": "path", "desc": "Select a framework checkout"},
+      {"name": "dry-run", "desc": "Show the native operation without running it"},
+      {"name": "json", "desc": "Structured operation plan; requires --dry-run"}
+    ]
+  },
+  {
+    "bin": "stop", "group": null, "verb": "stop", "runtime": "native",
+    "summary": "Stop dev and preview servers in the selected framework checkout",
+    "flags": [
+      {"name": "framework-dir", "value": "path", "desc": "Select a framework checkout"},
+      {"name": "dry-run", "desc": "Show the native operation without running it"},
+      {"name": "json", "desc": "Structured operation plan; requires --dry-run"}
+    ]
+  },
+  {
     "bin": "docs-help",
     "group": null,
     "verb": "help",

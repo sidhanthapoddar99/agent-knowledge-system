@@ -700,7 +700,7 @@ mod tests {
     fn stale_official_latest_older_than_installed_falls_back_to_history() {
         let platform_asset = asset().unwrap();
         let releases = json!([
-            {"tag_name":"agent-ks-cli-v0.1.2","published_at":"2026-09-06T00:00:00Z"}
+            {"tag_name":format!("agent-ks-cli-v{CURRENT}"),"published_at":"2026-09-06T00:00:00Z"}
         ]);
         let get = |url: &str, _| {
             if let Some(response) = official_response(url, "0.1.1", &platform_asset) {
@@ -711,8 +711,7 @@ mod tests {
                 bail!("unexpected URL: {url}")
             }
         };
-        assert_eq!(CURRENT, "0.1.2");
-        assert_eq!(latest(&get).unwrap(), "0.1.2");
+        assert_eq!(latest(&get).unwrap(), CURRENT);
     }
     #[test]
     fn official_release_must_be_published_stable_with_required_assets() {

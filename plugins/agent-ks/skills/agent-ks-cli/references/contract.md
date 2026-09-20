@@ -6,11 +6,11 @@ The framework repository's `agent-ks-cli/src/manifest.json` declares commands. `
 
 Every command supports `--help` and `-h` without project config. Groups support help as well. `help --json` returns a command array with usage, examples and flags. Bare `agent-ks` shows the project overview.
 
-Value flags accept `--name value` and `--name=value`. `--` ends option parsing. Unknown flags, missing required arguments and invalid values exit 2. A misspelled filter must not broaden results.
+Value flags accept `--name value` and `--name=value`. `--` ends option parsing. Unknown flags, missing required arguments and invalid values exit 2. `start` forwards unrecognized flags to the engine package command; use `--` when a forwarded argument shares a CLI flag name. A misspelled content filter must not broaden results.
 
 ## Output
 
-`--json` writes one JSON document to stdout. Diagnostics belong on stderr. `start --json` requires `--dry-run`, because live server output is a log stream. Flush output before exiting.
+`--json` writes one JSON document to stdout. Diagnostics belong on stderr. Viewer commands (`start`, `ps`, `stop`) require `--dry-run` with `--json`, because live server output is a log stream. Flush output before exiting.
 
 | Exit | Meaning |
 |---|---|

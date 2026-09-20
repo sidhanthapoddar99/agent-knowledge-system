@@ -51,11 +51,11 @@ Run `agent-ks update` for an immediate CLI update. `update --status --json` read
 
 ## Start the viewer
 
-Run `agent-ks start --detach` when the task needs a running viewer, because a foreground server holds the terminal. `agent-ks start status` reports it; `agent-ks start stop` stops it. A missing framework checkout is cloned into the project by `start`. Node.js or Bun runs the viewer. Reading and editing content with the toolkit needs neither.
+Run `agent-ks start --detach` when the task needs a running viewer, because a foreground server holds the terminal. `agent-ks ps` reports dev and preview servers in the selected checkout; `agent-ks stop` stops them. Add `dev` or `preview` to select one. The Rust CLI owns the viewer lifecycle and clones a missing framework checkout. Bun or Node.js with npm runs the engine. See [viewer dependencies and bootstrap wrappers](./references/installation.md#viewer-dependencies) for the other operations.
 
 ## Output and decisions
 
-Prefer `--json` when processing results, because it writes one JSON document on stdout. Diagnostics go to stderr. Exit codes are 0 for success, 1 for no results/runtime failure/validation errors, and 2 for invalid usage. Unknown flags fail instead of broadening a query.
+Prefer `--json` when processing results, because it writes one JSON document on stdout. Diagnostics go to stderr. Exit codes are 0 for success, 1 for no results/runtime failure/validation errors, and 2 for invalid usage. Unknown query flags fail instead of broadening a query. `start` forwards engine options; use `--` before options that share CLI flag names.
 
 Choose filters, result limits and read-only navigation without asking. Record material validation failures and any truncated evidence in the task's findings, because later work depends on what was actually checked. Ask only when an unresolved project choice or an action outside the user's authorization prevents progress. An ambiguous subtask selector needs a more precise path before a writer can run.
 

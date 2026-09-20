@@ -68,15 +68,19 @@ The toolkit does not search parent directories or load `.env` to choose content.
 
 ## Viewer dependencies
 
-`agent-ks start` needs Node.js or Bun. Its first launch needs Git if the framework is missing. It clones into `<project>/agent-knowledge-system`, supplies the selected config in the process environment, and invokes the framework's launcher. It does not overwrite `.env`.
+`agent-ks start` needs Bun or Node.js with npm. Its first launch needs Git if the framework is missing. It clones into `<project>/agent-knowledge-system` and supplies the selected config in the process environment. The Rust CLI handles dependency installation, version checks, framework updates, builds and Astro server controls directly. It does not overwrite `.env`.
 
 ```bash
 agent-ks start --dry-run --json
 agent-ks start --detach
-agent-ks start status
-agent-ks start stop
+agent-ks ps
+agent-ks stop
 ```
 
 Use `--framework-dir PATH` to select an existing checkout. `--framework-ref TAG` selects the tag or branch for a new clone. The engine's content-version gate remains authoritative; resolve a mismatch with the [migration protocol](../../agent-ks-config/references/08_migrations.md).
+
+`start` accepts `dev`, `preview`, `build`, `doctor`, `update`, `stop`, `status`, `logs`, `clean [command]`, and engine package scripts. `ps` and `stop` default to both dev and preview; supply either name to narrow the scope. These commands use the selected framework checkout. Viewer `--json` requires `--dry-run`. `start update` updates the framework; top-level `update` updates the CLI.
+
+The framework's `./start` and `.\start.cmd` wrappers check for the CLI and offer installation if missing. Unix uses `agent-ks-cli/install.sh`; Windows uses `agent-ks-cli/install.ps1`. The wrappers read `CONFIG_DIR` from the framework-root `.env`, allow the process environment to override it, and pass it as `--config-dir`. Relative paths are resolved from the framework root. Noninteractive wrappers print installation instructions if the CLI is absent.
 
 Git commands need Git. `img` needs ImageMagick. Content queries, search, validators, scaffolding, moves and the built-in theme need no external interpreter.

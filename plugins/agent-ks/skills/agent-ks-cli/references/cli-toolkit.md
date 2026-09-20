@@ -1,6 +1,6 @@
 # `agent-ks` command reference
 
-Every command is `agent-ks <group> <verb> [flags]`, or a top-level `agent-ks <verb>` for General commands. Every command takes `--help`. Every command takes `--json`; live `start` uses it only with `--dry-run`. Every `issue` command takes `--tracker <path>` for another tracker. `--name <value>` takes a value. `--name` alone is a switch. The contract and the exit codes are in [SKILL.md](../SKILL.md).
+Every command is `agent-ks <group> <verb> [flags]`, or a top-level `agent-ks <verb>` for General commands. Every command takes `--help`. Every command takes `--json`; viewer commands (`start`, `ps`, `stop`) use it only with `--dry-run`. Every `issue` command takes `--tracker <path>` for another tracker. `--name <value>` takes a value. `--name` alone is a switch. The contract and the exit codes are in [SKILL.md](../SKILL.md).
 
 
 
@@ -14,6 +14,8 @@ Every command is `agent-ks <group> <verb> [flags]`, or a top-level `agent-ks <ve
 | `issue tree <id>` | File inventory with paths, titles, statuses and byte sizes | `--depth <N>` default 5 · `--limit <N>` default 200 · `--tracker <path>` |
 | `issue context <id>` | Bounded issue body, metadata, active plan, active subtasks, recent logs and memory pointer | `--max-chars <N>` default 4000 · `--last <N>` default 3 · `--limit <N>` default 200 · `--tracker <path>` |
 | `start [command]` | Clone the framework when missing and launch/manage the viewer | `--framework-dir <path>` · `--framework-ref <tag>` for a new clone · `--detach` · `--dry-run` · `--json` with dry-run |
+| `ps [dev\|preview]` | Report servers in the selected framework checkout; default both | `--framework-dir <path>` · `--dry-run` · `--json` with dry-run |
+| `stop [dev\|preview]` | Stop servers in the selected framework checkout; default both | `--framework-dir <path>` · `--dry-run` · `--json` with dry-run |
 
 Every command accepts `--config-dir`; normal use omits it. Config selection and installer usage live in [installation.md](./installation.md). Explicit limits of zero return zero results. `issue tree` and `issue context` report truncation. Search uses Rust regex syntax; literal matching avoids regex interpretation.
 

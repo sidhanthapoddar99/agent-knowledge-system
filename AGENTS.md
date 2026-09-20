@@ -94,13 +94,13 @@ own route and the framework's own business.
 
 ```
 <repo-root>/
-├── start, start.cmd         # Entrypoint shims → scripts/start.mjs
+├── start, start.cmd         # Bootstrap wrappers → agent-ks start
 ├── agent-ks-engine/         # Engine source plus engine-owned migrations and release notes
 │   ├── src/, package.json, astro.config.mjs, tsconfig.json, bun.lock
 │   ├── migration/           # Content-format migrations, version-named `<to-version>_<statement>.py`
 │   └── release-notes/       # Engine release notes consumed by the engine-tag workflow
 ├── default-docs/            # User content (data, config, themes, assets)
-├── scripts/                 # Development-stage tooling: start.mjs, lib/, bin/, checks/
+├── scripts/                 # Bootstrap helper, bin/ shim and development checks
 ├── plugins/                 # Repo-local skills and templates
 ├── agent-ks-cli/             # Native Rust toolkit; independent binary releases
 ├── .claude/, .claude-plugin/, .mcp.json
@@ -348,47 +348,24 @@ heading IDs, routing, redirects.
 
 ## Build Commands
 
-Use the `./start` wrapper at the repo root.
+`./start` and `.\start.cmd` bootstrap the installed `agent-ks` CLI, read `CONFIG_DIR` from the framework-root `.env` with a process-environment override, and pass it as `--config-dir`. They select this checkout with `--framework-dir`. If the CLI is missing, interactive runs offer the platform installer; noninteractive runs print installation instructions and exit.
+
+The Rust implementation lives in `agent-ks-cli/src/viewer.rs` and `src/viewer/`. It owns dependency freshness, engine-version checks, framework updates, builds and Astro server controls. The CLI skill owns command usage; the [toolkit README](./agent-ks-cli/README.md#start-the-viewer) describes the lifecycle and environment settings.
 
 ```bash
-./start            # Dev server. This is the default and the 99% case.
-./start dev        # Same thing, spelled out
-./start build      # Production build (wipes caches first; --no-clean to keep them)
-./start preview    # Serve the built site from dist/
-./start doctor     # Update check + install + a full build — the pre-publish check
-./start update     # Check upstream now and offer to pull — starts and builds nothing
-./start <script>   # Forward any package.json script
-
-./start stop       # Stop the running dev/preview server
-./start status     # Is anything running, and where
-./start logs       # Read a running server's output (--follow to stream)
-./start clean      # Wipe build caches (optionally then run a command)
-./start --help     # All of the above, authoritatively
-
---detach           # Background the server instead of holding the terminal
+./start                    # Dev; Ctrl-C stops a server started here
+./start --detach           # Leave the server running
+./start build              # Clean caches and build
+./start doctor             # Dependency/version checks and full build
+./start update             # Check framework upstream; offer fast-forward pull
+agent-ks ps                # Dev and preview in the selected checkout
+agent-ks stop              # Stop both; add dev or preview to select one
+./start logs --follow      # Follow dev logs
+./start clean              # Stop servers before removing lock files and caches
+./start --help
 ```
 
-**One implementation: `scripts/start.mjs`.** `./start` and `.\start.cmd` are three-line shims that exec it. It replaced a 447-line bash script *and* its 397-line PowerShell twin — the twin being the actual problem, since every feature had to be written twice, the two drifted, and the Windows half was only ever parse-verified. Supporting modules live in `scripts/lib/` (`runner`, `server`, `update`, `util`, `version`). `scripts/bin/` holds the bare-name `start` shim that `mise.toml` puts on PATH inside this repo and nowhere else, and `scripts/checks/` holds the development-stage gates (`check-links`, `check-route-parity`, `check-theme-contract`, `check-incremental-staleness`) plus the `_astro-server` lock-file reader they share.
-
-**Every launching or building command prechecks the version contract.** `dev`, `preview`, `build`, `doctor` and any forwarded script compare `site.yaml → engine_version` against the engine's `[MIN_CONTENT_VERSION, ENGINE_VERSION]` before anything starts, and stop with the migration chain to run when it falls outside. This does not replace the engine's gate — it fixes *when* that gate fires: in dev it fires at the first request, after the server has already said "ready", and in `preview` it never fires at all, so a `dist/` built from unmigrated content is served in silence. `scripts/lib/version.mjs` parses the two constants out of `engine-version.ts` rather than copying them, and downgrades to a warning whenever it cannot read a value — the engine stays the authority, and a precheck that guessed would become a new reason a working project fails to start.
-
-**The bare command is `dev`, and it does not build.** It used to run a full production build first as a sanity check. That check is real — dev resolves a request through `matchServerRoute()` while the build enumerates through `getStaticPaths()`, so a duplicate-URL bug fails the build and is *invisible* in dev — but it was the wrong cadence: measured at ~6 s and ~100 MB written per invocation, on a command typed ~20 times a day, for an answer that only matters at publish time. It now lives in **`./start doctor`**. Dev never reads `dist/` (verified by deleting it and serving every route).
-
-**The update check is throttled** — at most once every 6 h (`START_UPDATE_INTERVAL_HOURS`, `0` = every time; `START_SKIP_UPDATE_CHECK=1` disables). A git fetch plus a `Y/n` prompt on every dev start is friction on a 20×/day command, and the fetch is the thing most likely to hang on a bad connection. Server-control verbs never prompt at all. **`./start update` is the override**: it checks now, ignores both the interval and `START_SKIP_UPDATE_CHECK`, and names the reason when it cannot update (no upstream, dirty tree, diverged, offline) rather than returning quietly — a throttle you cannot see is a throttle you cannot tell apart from a bug. It touches git only; it starts nothing and builds nothing.
-
-**`./start` holds your terminal and `Ctrl-C` stops the server.** `--detach` opts out and leaves it running for `./start stop`. The mechanism matters when something goes wrong: Astro runs the server as a **detached daemon** regardless, the terminal follows its log stream, and the wrapper stops it through Astro's own lock file rather than through the process tree. The process tree is exactly what stopped being reliable — Astro re-spawns the server out of the launcher's own process group when it detects an AI-agent environment, so killing the thing you launched leaves the server holding its port and its heap. Eleven leaked during the Astro 7 upgrade, one for 18 hours at 1.19 GB.
-
-Consequences worth knowing:
-
-- **A server that outlives its terminal is now findable.** `./start status` reads the lock file, `./start stop` stops it. That is the whole point of the three verbs, and it is why scripted and agent use should reach for them rather than for `kill`.
-- **`./start dev` attaches read-only when a server is already running** — Astro reports the existing one rather than opening a second port. `Ctrl-C` then *detaches* and says so. You stop what you started.
-- **`./start clean` stops a running server before wiping `.astro/`**, because the lock file lives there and wiping it under a live server orphans it outright. It wipes `node_modules/.astro/` too — a different directory with a confusingly similar name, holding Astro's build cache.
-- **Never grep the startup banner.** In Astro 7 it is a JSON object; a check for the old `astro v5.x ready in NNN ms` text does not fail, it waits forever. Poll the port, or ask `./start status`.
-- `pgrep` for the astro binary path misses these servers — a background daemon runs `node_modules/astro/bin/astro.mjs`, not `node_modules/.bin/astro`. `./start status` is the reliable answer.
-
-**Windows (native cmd / PowerShell):** use `.\start.cmd` with the same arguments (`.\start.cmd dev`, `.\start.cmd stop`, `.\start.cmd clean build`, …). It execs the same `scripts/start.mjs` every other platform runs — there is no separate Windows port to keep in step any more. Note the leading `.\` — bare `start` is a cmd built-in, which is also why `mise` only puts the bare `start` name on PATH for Unix. Git Bash and WSL use `./start` as on Linux.
-
-If you're inside `agent-ks-engine/`, `bun run dev` / `bun run build` / `bun run preview` work directly.
+Use Astro's status and stop commands through the CLI, because detached servers can outlive their launcher. Attaching to an existing server does not transfer ownership: Ctrl-C detaches. `scripts/bin/start` forwards to the bootstrap wrapper for the repository's mise PATH; `scripts/checks/` holds development gates. Inside `agent-ks-engine/`, Bun package scripts also work directly.
 
 ## Releases — three independent streams
 

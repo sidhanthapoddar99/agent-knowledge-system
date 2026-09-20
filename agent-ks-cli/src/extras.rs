@@ -173,114 +173,11 @@ fn git_run(a: &Args) -> Result<i32> {
     }
     Ok(code)
 }
-fn start(a: &Args) -> Result<i32> {
-    let c = Context::resolve(a)?;
-    if !c.config_dir.join("site.yaml").is_file() {
-        bail!("Missing site.yaml in {}", c.config_dir.display());
-    }
-    let framework = if let Some(p) = a.get("framework-dir") {
-        absolute(p)?
-    } else {
-        c.framework_root()
-    };
-    let clone = !framework.exists();
-    let remote = "https://github.com/sidhanthapoddar99/agent-knowledge-system.git";
-    let script = framework.join("scripts/start.mjs");
-    let verb = a.pos.first().map(String::as_str).unwrap_or("dev");
-    let args = a.pos.clone();
-    let mut launch = if args.is_empty() {
-        vec!["dev".to_owned()]
-    } else {
-        args
-    };
-    for flag in ["detach", "no-clean", "follow"] {
-        if a.has(flag) {
-            launch.push(format!("--{flag}"));
-        }
-    }
-    if a.has("json") && !a.has("dry-run") {
-        return usage("start --json requires --dry-run; server output is a log stream");
-    }
-    if a.has("dry-run") {
-        return result(
-            a,
-            json!({"configDir":c.config_dir,"projectRoot":c.content_root,"frameworkDir":framework,"clone":clone,"repository":remote,"frameworkRef":a.get("framework-ref"),"command":["node",script.to_string_lossy().as_ref()],"arguments":launch}),
-        );
-    }
-    let runtime = ["node", "bun"]
-        .into_iter()
-        .find(|r| {
-            Command::new(r)
-                .arg("--version")
-                .stdout(Stdio::null())
-                .stderr(Stdio::null())
-                .status()
-                .is_ok_and(|s| s.success())
-        })
-        .context(
-            "The site viewer requires Node.js or Bun on PATH; the toolkit itself runs standalone",
-        )?;
-    if clone {
-        if ["stop", "status", "logs"].contains(&verb) {
-            bail!(
-                "No framework checkout at {}; start the viewer first",
-                framework.display()
-            );
-        }
-        let temp = framework.with_file_name(format!(".agent-ks-clone-{}", std::process::id()));
-        if temp.exists() {
-            bail!("Temporary clone path already exists: {}", temp.display());
-        }
-        let mut args = vec!["clone".into(), "--depth".into(), "1".into()];
-        if let Some(reference) = a.get("framework-ref") {
-            if reference.starts_with('-') {
-                return usage("--framework-ref must be a tag or branch");
-            }
-            args.extend(["--branch".into(), reference.into()]);
-        }
-        args.extend([remote.into(), temp.to_string_lossy().into_owned()]);
-        if let Some(parent) = framework.parent() {
-            std::fs::create_dir_all(parent)?;
-        }
-        eprintln!("Cloning viewer into {}", framework.display());
-        let result = command("git", &args, &c.content_root);
-        if let Err(e) = result {
-            let _ = std::fs::remove_dir_all(&temp);
-            return Err(e);
-        }
-        if !temp.join("scripts/start.mjs").is_file() {
-            let _ = std::fs::remove_dir_all(&temp);
-            bail!("Cloned repository has no viewer entrypoint");
-        }
-        std::fs::rename(&temp, &framework)?;
-    }
-    if !script.is_file() {
-        bail!(
-            "{} is not an agent-knowledge-system framework checkout",
-            framework.display()
-        );
-    }
-    let mut cmd = Command::new(runtime);
-    cmd.arg(&script)
-        .args(&launch)
-        .current_dir(&framework)
-        .env("CONFIG_DIR", &c.config_dir);
-    // exec preserves Ctrl-C handling in the existing viewer launcher.
-    #[cfg(unix)]
-    {
-        use std::os::unix::process::CommandExt;
-        Err(cmd.exec().into())
-    }
-    #[cfg(not(unix))]
-    {
-        Ok(cmd.status()?.code().unwrap_or(1))
-    }
-}
 pub fn run(a: &Args) -> Result<i32> {
     if a.command.starts_with("git ") {
         git_run(a)
-    } else if a.command == "start" {
-        start(a)
+    } else if ["start", "ps", "stop"].contains(&a.command.as_str()) {
+        crate::viewer::run(a)
     } else if a.command == "theme tokens" {
         crate::theme::run(a)
     } else if a.command == "img" {

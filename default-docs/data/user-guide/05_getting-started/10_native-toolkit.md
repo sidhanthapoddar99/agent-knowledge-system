@@ -83,11 +83,15 @@ After [scaffolding your config and content](./06_init-and-template.md):
 agent-ks start --dry-run --json
 agent-ks start
 agent-ks start --detach
-agent-ks start status
-agent-ks start stop
+agent-ks ps
+agent-ks stop
 ```
 
-`start` clones a missing framework into `agent-knowledge-system/` under the project and launches its existing viewer. It passes the selected config to that process without changing `.env`. `--framework-dir` selects an existing checkout; `--framework-ref` pins a new clone. The viewer needs Node.js or Bun and cloning needs Git. Content commands run without either runtime.
+`start` clones a missing framework into `agent-knowledge-system/` under the project. The Rust CLI installs dependencies, checks content versions and runs the viewer directly. It passes the selected config without changing `.env`. `--framework-dir` selects an existing checkout; `--framework-ref` pins a new clone. The viewer needs Bun or Node.js with npm, and cloning needs Git. Content commands run without either runtime.
+
+`agent-ks ps` reports both dev and preview servers in the selected checkout. `agent-ks stop` stops both. Add `dev` or `preview` to select one. `agent-ks start` also accepts `build`, `doctor`, `update`, `logs`, `clean [command]`, and engine package scripts. `start update` checks framework updates; `agent-ks update` updates the CLI.
+
+From the framework folder, `./start` and Windows `.\start.cmd` offer to install a missing CLI, read `CONFIG_DIR` from `.env`, and forward to `agent-ks start --config-dir <path>`. An environment `CONFIG_DIR` overrides the file. Relative paths use the framework folder. Noninteractive runs print installation instructions when the CLI is missing.
 
 ## Discover commands
 

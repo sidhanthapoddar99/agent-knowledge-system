@@ -2,7 +2,7 @@
 
 [![Engine 0.3.10](https://img.shields.io/badge/Engine-0.3.10-0b7285?labelColor=1f2328&logo=github&logoColor=white)](./agent-ks-engine/release-notes/0.3.10.md)
 [![Plugin 0.12.0](https://img.shields.io/badge/Plugin-0.12.0-5f3dc4?labelColor=1f2328&logo=claude&logoColor=white)](./plugins/agent-ks/release-notes/0.12.0.md)
-[![CLI 0.1.2](https://img.shields.io/badge/CLI-0.1.2-1971c2?labelColor=1f2328&logo=github&logoColor=white)](./agent-ks-cli/release-notes/0.1.2.md)
+[![CLI 0.1.3](https://img.shields.io/badge/CLI-0.1.3-1971c2?labelColor=1f2328&logo=github&logoColor=white)](./agent-ks-cli/release-notes/0.1.3.md)
 [![Engine runtime: Bun](https://img.shields.io/badge/Engine_runtime-Bun-fbf0df?labelColor=1f2328&logo=bun&logoColor=fbf0df)](https://bun.sh)
 [![CLI implementation: Rust](https://img.shields.io/badge/CLI_implementation-Rust-ce422b?labelColor=1f2328&logo=rust&logoColor=white)](./agent-ks-cli/README.md)
 
@@ -12,7 +12,7 @@
 |---|---:|---|
 | Engine | `0.3.10` | [Engine 0.3.10](./agent-ks-engine/release-notes/0.3.10.md) |
 | Plugin / skills | `0.12.0` | [Plugin 0.12.0](./plugins/agent-ks/release-notes/0.12.0.md) |
-| Native CLI | `0.1.2` | [CLI 0.1.2](./agent-ks-cli/release-notes/0.1.2.md) · [Downloads](https://github.com/sidhanthapoddar99/agent-knowledge-system/releases/latest) |
+| Native CLI | `0.1.3` | [CLI 0.1.3](./agent-ks-cli/release-notes/0.1.3.md) · [Downloads](https://github.com/sidhanthapoddar99/agent-knowledge-system/releases/latest) |
 
 A **knowledge + task system designed for AI consumers**, with human-readable docs as a first-class output — modular Astro layouts, YAML configuration, a folder-per-issue tracker, and live editing via Yjs CRDT. Self-contained **HTML artifacts** and **Mermaid / Graphviz / Excalidraw / draw.io** diagrams are first-class pages, rendered natively with no external service. Ships its own Claude Code plugin (skills + the `agent-ks` CLI) so agents operate the whole system natively.
 
@@ -157,9 +157,9 @@ agent-ks
 agent-ks start --detach
 ```
 
-`./start` is a thin shim at the framework folder root over `scripts/start.mjs`: it detects `bun` (falls back to `npm`), installs dependencies on first run, occasionally checks upstream for updates and offers a fast-forward pull, then starts the dev server. It does **not** build — run `./start doctor` for that, before you publish. Skip the automatic check with `START_SKIP_UPDATE_CHECK=1`; `./start update` checks on demand regardless, and says why when it cannot.
+`./start` checks for the installed `agent-ks` CLI and offers to install it if missing. It reads `CONFIG_DIR` from the framework's `.env` (an environment override takes precedence), then forwards to `agent-ks start --config-dir <path> --framework-dir <checkout>`. The Rust CLI owns dependency installation, version checks, framework updates, builds and server control. Run `agent-ks ps` to inspect dev and preview servers, and `agent-ks stop` to stop them. Add `dev` or `preview` to select one.
 
-On native Windows (cmd / PowerShell), use `.\start.cmd` with the same arguments — it execs the same `scripts/start.mjs` as every other platform. The leading `.\` matters: bare `start` is a cmd built-in. Git Bash and WSL use `./start` as-is.
+On native Windows (cmd / PowerShell), use `.\start.cmd` with the same arguments. Its PowerShell bootstrap reads configuration and offers the native Windows CLI installer. All viewer operations run in the Rust CLI. The leading `.\` matters: bare `start` is a cmd built-in. Git Bash and WSL use `./start` as-is.
 
 For a deeper walkthrough (folder layout, what each path means, when to use which mode), see the user-guide: [Installation](https://github.com/sidhanthapoddar99/agent-knowledge-system/blob/main/default-docs/data/user-guide/05_getting-started/02_installation.md), [Environment Variables](https://github.com/sidhanthapoddar99/agent-knowledge-system/blob/main/default-docs/data/user-guide/10_configuration/02_env.md), [Init and the Starter Template](https://github.com/sidhanthapoddar99/agent-knowledge-system/blob/main/default-docs/data/user-guide/05_getting-started/06_init-and-template.md).
 
@@ -186,7 +186,7 @@ Inside `agent-ks-engine/`, the usual `bun run dev` / `bun run build` / `bun run 
 
 ```
 agent-knowledge-system/                 ← THIS repo (= framework folder)
-├── start                               ← entrypoint shim → scripts/start.mjs
+├── start, start.cmd                    ← bootstrap wrappers → agent-ks start
 ├── .env, .env.example                  ← bootstrap (CONFIG_DIR points at the active config dir)
 ├── agent-ks-cli/                      ← standalone Rust toolkit, installer, tests and release notes
 ├── plugins/

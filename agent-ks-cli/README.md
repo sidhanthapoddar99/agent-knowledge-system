@@ -85,12 +85,20 @@ Queries use exit 0 for results, 1 for no results or runtime failure, and 2 for i
 ```bash
 agent-ks start --dry-run --json
 agent-ks start --detach
-agent-ks start status
-agent-ks start stop
+agent-ks ps                       # dev and preview in the selected checkout
+agent-ks stop                     # stop both; add dev or preview to select one
 agent-ks start build
 ```
 
-A missing framework is cloned into `<project>/agent-knowledge-system`. `--framework-dir PATH` selects another checkout; `--framework-ref TAG` pins a new clone. Existing checkouts are used as they are. The launcher passes the selected config through the environment, without overwriting `.env`. The framework's existing launcher manages dependencies, version checks and server lifecycle. Starting the viewer requires Node.js or Bun; cloning requires Git. Git metadata commands require Git, and `img` requires ImageMagick.
+A missing framework is cloned into `<project>/agent-knowledge-system`. `--framework-dir PATH` selects another checkout; `--framework-ref TAG` pins a new clone. The Rust CLI manages dependencies, content-version checks, builds, framework updates and server lifecycle directly through Bun or npm and Astro's server controls. It supplies the selected config through the environment without overwriting `.env`.
+
+`start` defaults to `dev`. It also accepts `preview`, `build`, `doctor`, `update`, `stop`, `status`, `logs`, `clean [command]`, or any engine package script. `start update` checks the framework; top-level `update` updates the CLI. `ps` and `stop` accept an optional `dev` or `preview` selector. Their scope is the selected checkout, including servers started through `./start`. Viewer commands accept `--json` only with `--dry-run`. Extra start arguments are forwarded to the engine; use `--` before arguments that share CLI flag names.
+
+Foreground starts follow logs. Ctrl-C stops a server started by this invocation; when attaching to an existing server, it detaches. `--detach` leaves the server running. Builds clean caches unless `--no-clean` is set; `doctor` builds without cleaning. `clean` stops servers before removing their lock-file directory and build caches. Framework update prompts run at most every six hours; `START_SKIP_UPDATE_CHECK=1` disables automatic checks, `START_UPDATE_INTERVAL_HOURS` changes the interval, and `START_NONINTERACTIVE=1` disables prompts.
+
+The framework-root `start` and `start.cmd` wrappers check for the CLI, offer installation if absent, read `CONFIG_DIR` from `.env` with an environment override, and forward it as `--config-dir`. Relative paths are resolved from the framework root. Unix uses `install.sh`; native Windows uses `install.ps1`, which verifies the numbered release archive checksum and executable version. A missing CLI in a noninteractive session prints installation instructions and exits.
+
+Starting the viewer requires Bun or Node.js with npm; cloning and framework updates require Git. Git metadata commands require Git, and `img` requires ImageMagick.
 
 ## Develop
 

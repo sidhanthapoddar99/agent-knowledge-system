@@ -11,6 +11,7 @@ mod scaffold;
 mod theme;
 mod update;
 mod util;
+mod viewer;
 use anyhow::Result;
 use args::Args;
 use std::io::{self, Write};

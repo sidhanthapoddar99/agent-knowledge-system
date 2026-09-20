@@ -1,10 +1,34 @@
 #!/usr/bin/env bash
-# Thin shim. The implementation is scripts/start.mjs — one file, all platforms.
-# This stays at the repo root because `./start` is the documented entry point in
-# the README, CLAUDE.md and the user guide; moving it would break every consumer.
-set -e
+# Bootstrap the native CLI and forward this checkout's configuration.
+set -euo pipefail
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-if command -v bun >/dev/null 2>&1; then exec bun "$DIR/scripts/start.mjs" "$@"; fi
-if command -v node >/dev/null 2>&1; then exec node "$DIR/scripts/start.mjs" "$@"; fi
-echo "[start] error: neither bun nor node found on PATH — install one and retry" >&2
-exit 1
+if ! command -v agent-ks >/dev/null 2>&1; then
+  if [[ ! -t 0 || "${START_NONINTERACTIVE:-}" == 1 ]]; then
+    echo "[start] agent-ks is missing. Install with: sh \"$DIR/agent-ks-cli/install.sh\"" >&2
+    exit 1
+  fi
+  read -r -p '[start] agent-ks is missing. Install it now? [y/N] ' reply
+  case "$reply" in
+    y|Y|yes|YES) sh "$DIR/agent-ks-cli/install.sh" ;;
+    *) exit 1 ;;
+  esac
+  export PATH="${HOME}/.local/bin:$PATH"
+fi
+command -v agent-ks >/dev/null 2>&1 || { echo '[start] agent-ks is still missing from PATH' >&2; exit 1; }
+# Parse data, never source .env as shell code. The last CONFIG_DIR wins.
+selected_config="${CONFIG_DIR:-}"
+if [[ -z "$selected_config" && -f "$DIR/.env" ]]; then
+  selected_config="$(awk '
+    /^[[:space:]]*(export[[:space:]]+)?CONFIG_DIR[[:space:]]*=/ {
+      sub(/^[^=]*=[[:space:]]*/, ""); sub(/[[:space:]]+#.*/, "");
+      sub(/[[:space:]]+$/, "");
+      if (($0 ~ /^".*"$/) || ($0 ~ /^\047.*\047$/)) $0=substr($0,2,length($0)-2);
+      value=$0
+    } END { print value }' "$DIR/.env")"
+fi
+if [[ -z "$selected_config" ]]; then
+  echo "[start] Set CONFIG_DIR in $DIR/.env or the environment" >&2
+  exit 1
+fi
+cd "$DIR"
+exec agent-ks start --config-dir "$selected_config" --framework-dir "$DIR" "$@"

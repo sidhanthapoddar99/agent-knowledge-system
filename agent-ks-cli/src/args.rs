@@ -188,6 +188,10 @@ impl Args {
                         && f["alias"].as_str() == Some(name))
             });
             let Some(flag) = flag else {
+                if a.command == "start" {
+                    a.pos.push(token);
+                    continue;
+                }
                 return usage(format!(
                     "Unknown flag {token}. Valid flags: --help, {}",
                     flags
@@ -243,6 +247,7 @@ impl Args {
                 | "check legacy-tags" => (0, 1),
                 "img" => (1, usize::MAX),
                 "start" => (0, usize::MAX),
+                "ps" | "stop" => (0, 1),
                 _ => (0, 0),
             };
             if a.pos.len() < min || a.pos.len() > max {
@@ -300,6 +305,7 @@ fn synopsis(command: &str) -> &str {
         "git commit" => "--scope <path> --message <text>",
         "theme tokens" => "[theme-name]",
         "start" => "[dev|build|preview|doctor|update|stop|status|logs|clean]",
+        "ps" | "stop" => "[dev|preview]",
         "help" => "[group [command]]",
         _ => "",
     }
@@ -335,7 +341,9 @@ fn example(command: &str) -> String {
  "git changed"=>"agent-ks git changed --since HEAD~1 --json".into(),
  "git commit"=>"agent-ks git commit --scope data/guide --message 'Document installation' --dry-run --json".into(),
  "theme tokens"=>"agent-ks theme tokens --json".into(),
- "start"=>"agent-ks start --detach\n  agent-ks start status\n  agent-ks start stop".into(),
+ "start"=>"agent-ks start --detach\n  agent-ks ps\n  agent-ks stop".into(),
+ "ps"=>"agent-ks ps\n  agent-ks ps preview".into(),
+ "stop"=>"agent-ks stop\n  agent-ks stop dev".into(),
  "move"=>"agent-ks move data/guide/10_old.md data/guide/20_new.md --dry-run".into(),
  "img"=>"agent-ks img ./data/guide/assets/screen.png --format webp --max-dim 1600 --rewrite-links".into(),
  _=>format!("agent-ks {} {} --json",command,synopsis(command))
@@ -401,6 +409,11 @@ pub fn help(a: &Args) -> Result<i32> {
     );
     if cmd == "update" || cmd == "init" {
         println!("  This command requires no project config.\n");
+    }
+    if cmd == "start" {
+        println!(
+            "  Native viewer commands:\n    dev (default), preview — serve; Ctrl-C stops a server started here\n    build — clean caches and build; --no-clean preserves caches\n    doctor — install, check versions and build\n    update — check framework upstream and offer a fast-forward pull\n    stop/status [dev|preview] — control both server types by default\n    logs [dev|preview] — read logs (default dev); --follow streams\n    clean [command] — stop servers, remove caches, optionally run command\n    <script> — run an engine package.json script\n  Extra arguments pass to the package runner; use -- for CLI flag names.\n  Environment: START_NONINTERACTIVE=1, START_SKIP_UPDATE_CHECK=1,\n    START_UPDATE_INTERVAL_HOURS=6, START_SKIP_VERSION_CHECK=1.\n"
+        );
     }
     for f in c["flags"].as_array().unwrap() {
         let alias = f["alias"]

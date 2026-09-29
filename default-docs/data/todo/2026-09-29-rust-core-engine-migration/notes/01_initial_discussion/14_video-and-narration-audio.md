@@ -8,6 +8,7 @@ The migration does **not** make video playback faster, because the player runs i
 
 - The video player spike on branch `spike/narrated-video`: a `video: true` markdown page plays as a narrated video in the browser, using the browser's built-in voice. The demo is the Architecture Tour page in dev-docs, under Architecture, on that branch only; link it here once the branch is merged.
 - [The ~/.agentks build cache](./07_agentks-home-and-build-cache.md)
+- [2026-09-29-narrated-video-pages](../../../2026-09-29-narrated-video-pages/issue.md) — the video feature's own issue: requirements, libraries, caching and the spike.
 
 # 04 Decisions
 

@@ -1,0 +1,10 @@
+{
+  "title": "Narrated video pages — markdown scripts played live in the browser",
+  "description": "Explain architecture and flows as narrated videos written as ordinary markdown and played live in the browser: no MP4, no stored media in git. A first spike lives on branch spike/narrated-video. Next: a proper video engine (grid scenes, widgets, cues, motion), a better narration voice with word timings, caching of generated audio and downloaded libraries under ~/.agentks, optional downloadable preset libraries, and project-level reusable elements. Discussion and requirements in notes/01_initial_discussion/.",
+  "status": "open",
+  "priority": "medium",
+  "component": ["components"],
+  "labels": ["feature", "discussion", "idea"],
+  "author": "claude",
+  "assignees": []
+}

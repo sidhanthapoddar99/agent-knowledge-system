@@ -164,6 +164,11 @@ fn mapped(p: &Path, moves: &[(PathBuf, PathBuf)]) -> PathBuf {
     let physical_path = physical(p).ok();
     for (from, to) in moves {
         if let Ok(rest) = p.strip_prefix(from) {
+            // `p` is the moved path itself: `join("")` would add a trailing
+            // slash, and writing to `file.md/` fails with ENOTDIR.
+            if rest.as_os_str().is_empty() {
+                return to.to_owned();
+            }
             return to.join(rest);
         }
         if physical_path

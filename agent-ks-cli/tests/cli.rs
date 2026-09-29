@@ -347,6 +347,35 @@ fn move_links_preserve_code_titles_and_sidecars() {
     assert!(text.contains("[example](./20_map.mmd)"));
     assert!(text.contains("[reference]: ./40_map.mmd"));
 }
+#[test]
+fn move_rewrites_links_inside_the_moved_file() {
+    let d = project();
+    let root = d.path();
+    put(
+        root,
+        "data/manual/10_a.md",
+        "---\ntitle: A\n---\n[B](./20_b.md)\n",
+    );
+    put(
+        root,
+        "data/manual/20_b.md",
+        "---\ntitle: B\n---\n[A](./10_a.md)\n",
+    );
+    ok(
+        root,
+        &[
+            "move",
+            "data/manual/20_b.md",
+            "data/other/20_b.md",
+            "--no-git",
+            "--json",
+        ],
+    );
+    let moved = fs::read_to_string(root.join("data/other/20_b.md")).unwrap();
+    assert!(moved.contains("[A](../manual/10_a.md)"));
+    let sibling = fs::read_to_string(root.join("data/manual/10_a.md")).unwrap();
+    assert!(sibling.contains("[B](../other/20_b.md)"));
+}
 #[cfg(unix)]
 #[test]
 fn symlink_write_escape_rejected() {

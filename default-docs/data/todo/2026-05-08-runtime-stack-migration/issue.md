@@ -1,3 +1,5 @@
+> → superseded by [2026-09-29-rust-core-engine-migration](../2026-09-29-rust-core-engine-migration/issue.md), which targets a Rust core shared with the CLI instead of Go. See [comment 001](./comments/001_2026-09-29_superseded-by-rust-core-engine-migration.md).
+
 ## Goal
 
 Replace the Astro runtime with a **Go HTTP server that embeds a Vite-built frontend bundle**, distributed as a single cross-compiled binary. End-state: `doc-engine serve` (or whatever the rebrand lands on) starts a production-grade server in any folder containing a `default-docs/` tree — no Node, no `node_modules/`, no Vite at runtime.

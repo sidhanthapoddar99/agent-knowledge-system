@@ -1,7 +1,9 @@
 ---
 title: "Search"
-status: open
+status: superseded
 ---
+
+→ superseded by [2026-04-19-site-wide-search](../../2026-04-19-site-wide-search/issue.md), which owns site search, and by the agent retrieval stage of [2026-09-29-rust-core-engine-migration](../../2026-09-29-rust-core-engine-migration/notes/02_future-stages/05_agent-hooks-and-retrieval.md).
 
 ## Goal
 

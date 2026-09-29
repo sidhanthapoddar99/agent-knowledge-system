@@ -2,7 +2,7 @@
 title: "Impact on other issues"
 ---
 
-**None of the 25 other active issues is untouched in substance, and none is fully solved by construction.** A review on 2026-09-29 read each one against this migration's decisions: 4 are partly delivered by the migration, 15 are still wanted but must be re-planned on the new architecture, 3 are obsolete, 2 are unaffected, and the idea dump is mixed. Most open work should **pause** now, because it builds on Astro code or the current editor that the migration replaces. No issue's status has been changed; this note is the record, and the user decides what to update.
+**None of the 25 other active issues is untouched in substance, and none is fully solved by construction.** A review on 2026-09-29 read each one against this migration's decisions: 4 are partly delivered by the migration, 15 are still wanted but must be re-planned on the new architecture, 3 are obsolete, 2 are unaffected, and the idea dump is mixed. Most open work should **pause** now, because it builds on Astro code or the current editor that the migration replaces. The review changed no issue's status. The clean-ups in section 08 came after, at the user's request.
 
 # 03 References
 
@@ -41,18 +41,18 @@ None yet. Updating the affected issues (a pointer to this note, a re-scope, or a
 |---|---|---|
 | [2025-06-25-blog-testing-polish](../../../2025-06-25-blog-testing-polish/issue.md) | Blog layouts become frontend components; sorting, authors and tags become Rust-computed values. The checklist becomes a Phase 1 check; design pagination on the new engine | Pause |
 | [2025-06-25-dev-only-content](../../../2025-06-25-dev-only-content/issue.md) | "Hidden in production" now means "left out of the Phase 3 export". Rust decides visibility; the frontend shows a badge | Pause |
-| [2025-06-25-dev-toolbar-enhancements](../../../2025-06-25-dev-toolbar-enhancements/issue.md) | Everything hangs off Astro's toolbar; the dev toolkit is rebuilt in Phase 2. Subtasks `01_ram-cpu-viewer` and `02_cache-inspector` already exist in code but are still `open` | Pause |
+| [2025-06-25-dev-toolbar-enhancements](../../../2025-06-25-dev-toolbar-enhancements/issue.md) | Everything hangs off Astro's toolbar; the dev toolkit is rebuilt in Phase 2. Subtask `01_ram-cpu-viewer` is built (in review); `02_cache-inspector` is only partly built and stays open | Pause |
 | [2025-06-25-layouts-and-variations](../../../2025-06-25-layouts-and-variations/issue.md) | Layouts become built-in frontend components, added on demand only; some items are speculative and should be dropped rather than carried | Pause; `04_built-in-themes` may continue if it uses only theme variables |
-| [2025-06-25-plugin-system](../../../2025-06-25-plugin-system/issue.md) | A user-code plugin API with build and render hooks contradicts "rules stay in Rust, CSS is the only extension". Search, AI and graph survive as the later retrieval stage. `02_search` and `04_graph-view` duplicate the search and knowledge-graph issues | Pause |
+| [2025-06-25-plugin-system](../../../2025-06-25-plugin-system/issue.md) | A user-code plugin API with build and render hooks contradicts "rules stay in Rust, CSS is the only extension". Search, AI and graph survive as the later retrieval stage. `02_search` and `04_graph-view` are superseded by the search and knowledge-graph issues | Pause |
 | [2025-06-25-sizing-and-responsive](../../../2025-06-25-sizing-and-responsive/issue.md) | Layout CSS moves into the SPA. Breakpoints and mobile layouts become SPA acceptance criteria; image `srcset` moves to the Rust asset and export pipeline | Pause; documenting the spacing system may continue |
 | [2026-04-10-editor-advanced](../../../2026-04-10-editor-advanced/issue.md) | Every subtask targets the discarded editor. Slash commands, spell check and drag-and-drop upload re-plan for Phase 2; wiki links and embedding are parser work that overlaps the knowledge-graph issue; `07_performance-improvements` is obsolete | Pause |
 | [2026-04-10-editor-core](../../../2026-04-10-editor-core/issue.md) | Much of it is obsolete. `03_client-side-rendering` contradicts the single-renderer decision. `02` toolbar, `04` auto-save (with echo suppression) and `12` live status re-plan for Phase 2. `09` doc switcher is obsolete (SPA navigation). `11` ToC view is delivered by Rust-computed outlines. `08` asset manager and `14` code editing are a Phase 2 toolkit question | Pause |
-| [2026-04-10-new-layout-types](../../../2026-04-10-new-layout-types/issue.md) | Fits "more layouts on demand", but every task names Astro files; it becomes a Rust loader, derived JSON and an SPA component. Its roadmap filters by milestone, which the project rule against scheduling fields forbids. RSS belongs to Phase 3 | Pause |
+| [2026-04-10-new-layout-types](../../../2026-04-10-new-layout-types/issue.md) | Fits "more layouts on demand", but every task names Astro files; it becomes a Rust loader, derived JSON and an SPA component. RSS belongs to Phase 3 | Pause |
 | [2026-04-10-sync-and-presence](../../../2026-04-10-sync-and-presence/issue.md) | Moves to the later multi-user stage on `yrs`, the Rust server and the same WebSocket; the current Yjs server is discarded. `03_sync-testing` of the old server would be wasted | Pause |
 | [2026-04-10-view-modes](../../../2026-04-10-view-modes/issue.md) | One model now: reading by default, live preview in place from the toolkit. `02_preview-mode` and `04_view-only-edit-mode` are delivered by that model; `01_live-preview` re-plans (CodeMirror decorations may be reused); `03_true-wysiwyg` is likely obsolete | Pause |
 | [2026-04-19-docs-phase-2](../../../2026-04-19-docs-phase-2/issue.md) | Pages documenting Astro internals, the Yjs editor and scoped layout classes will be deleted | Pause the Astro-internals parts of `01` and `02`, and `07`; **continue** `08`, `029` (fold in the rename) and `019` |
 | [2026-04-19-site-wide-search](../../../2026-04-19-site-wide-search/issue.md) | Built on Orama inside Astro, a Node search API and a multi-user CMS. The migration names a Rust retrieval index shared by the site and agents; search on the static export is a Phase 3 question. `02`, `09` and `04` are obsolete as written; `05` merges into the retrieval stage | Pause |
-| [2026-05-08-update-date-time-optimization](../../../2026-05-08-update-date-time-optimization/issue.md) | The algorithm carries over (eager `lastHash..HEAD` walk, merge-base check, pre-warming), retargeted to Rust and the `~/.agentks` build cache. Its deferral note still points at the superseded Go issue | Pause (already deferred) |
+| [2026-05-08-update-date-time-optimization](../../../2026-05-08-update-date-time-optimization/issue.md) | The algorithm carries over (eager `lastHash..HEAD` walk, merge-base check, pre-warming), retargeted to Rust and the `~/.agentks` build cache. Its deferral note now points here | Pause (already deferred) |
 | [2026-07-07-artifact-component](../../../2026-07-07-artifact-component/issue.md) | The shipped core (iframes, sidecar, skill, `/artifacts` route) carries over; the SPA router must keep `/artifacts` reserved. `110` overlaps note 11's "artifact as a top-level page"; `120` (inline HTML) changes how scripts run and are trusted inside an SPA | Pause `110` and `120` |
 
 ## 04 Obsolete
@@ -89,9 +89,10 @@ The review found four gaps in this issue's own notes. Each is now fixed where it
 3. **First-class diagram pages** (`.mmd`, `.dot`, `.excalidraw`, `.drawio` and their sidecars) were missing from Phase 1's scope and checks. Added to [phasing](./15_phasing.md) and [open question 06](./16_open-questions.md).
 4. **`[[...]]` syntax clash.** The wiki-links issue defines `[[target]]` as a link, but today's engine uses `[[path]]` as the embed syntax. Added as [open question 13](./16_open-questions.md).
 
-## 08 Tracker clean-ups spotted, not done
+## 08 Tracker clean-ups (done 2026-09-29)
 
-- `2025-06-25-dev-toolbar-enhancements` subtasks `01` and `02` look built but are still `open`.
-- `2026-04-10-new-layout-types` subtask `01_roadmap` filters by milestone, against the project's rule on scheduling fields.
-- `2025-06-25-plugin-system` subtasks `02_search` and `04_graph-view` duplicate the search and knowledge-graph issues.
-- `2026-05-08-update-date-time-optimization` note `04_deferred-until-runtime-migration.md` points at the superseded Go issue ([open question 09](./16_open-questions.md)).
+- `2025-06-25-dev-toolbar-enhancements`: subtask `01` is built and set to `review`. Subtask `02` is only partly built (it shows Yjs rooms, editor docs and presence, but not the content or issues caches), so it stays `open`.
+- `2026-04-10-new-layout-types`: subtask `01_roadmap` no longer filters by milestone; it filters by status, priority, component and labels.
+- `2025-06-25-plugin-system`: subtasks `02_search` and `04_graph-view` are `superseded`, each with a `→` line to the issue that owns the work.
+- `2026-05-08-update-date-time-optimization`: note `04_deferred-until-runtime-migration.md` now points at this issue, with Rust targets ([open question 09](./16_open-questions.md)).
+- `2026-07-01-demo-issue-anatomy-showcase`: the pointer comment to this note was removed. The issue is a curated fixture for checking how the layout looks, and a real comment there would change the sample, not track work.

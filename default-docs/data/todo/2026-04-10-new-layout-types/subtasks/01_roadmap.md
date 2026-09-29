@@ -7,10 +7,10 @@ A forward-looking, public-facing view of planned and in-flight work.
 
 ## Tasks
 
-- [ ] Decide data source — read from existing `issues` data (filtered by milestone) or a separate `roadmap/` folder
+- [ ] Decide data source — read from existing `issues` data (filtered by status, priority, component or label) or a separate `roadmap/` folder. No milestone or release-bucket field: the project rules out scheduling fields
 - [ ] Layout entry: `@roadmap/default`
 - [ ] Loader (`src/loaders/roadmap.ts`) — surface only non-cancelled, non-archived items
-- [ ] Index page — group by milestone, then by status; lane / timeline rendering
+- [ ] Index page — group by status category, then by priority; lane rendering
 - [ ] Per-item detail page (or link back to the source issue if reading from `issues`)
 - [ ] Filter by component / label
 - [ ] Hide internal-only items (respect `draft: true`)

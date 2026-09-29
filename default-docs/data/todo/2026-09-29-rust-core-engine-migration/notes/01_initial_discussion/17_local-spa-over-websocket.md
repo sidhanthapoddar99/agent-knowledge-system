@@ -60,11 +60,12 @@ Rules such as the issue statuses and their categories, the `NN_` ordering prefix
 - On connect, the frontend receives the manifest of hashes, compares it with what it has cached, and fetches only what changed.
 - When a file changes on disk, Rust pushes the new hashes. The frontend refetches only the affected pages and folders.
 - Cached data survives a refresh (browser storage such as IndexedDB) and is versioned by hash, so updates always show.
+- **A page's hash covers everything it inlines.** A page that embeds another file (`[[../assets/flow.mmd]]`) hashes its own bytes plus the hashes of every embedded file; otherwise editing the embedded file leaves the page stale in Rust's cache and the browser's ([2026-08-07-content-embed-cache-dependencies](../../../2026-08-07-content-embed-cache-dependencies/issue.md)).
 
 ## 06 The two Phase 1 safeguards
 
 1. **One data interface.** Every component asks through one small module: "page X", "sidebar for section Y", "issues index". In Phases 1 and 2 it talks to the WebSocket. In Phase 3 the same interface reads prebuilt files, or pages are prerendered. A few dozen lines now instead of a rewrite later.
-2. **Real URL paths** (`/dev-docs/architecture/overview`, not `/#/dev-docs/...`). Exported pages keep the same URLs, and relative links in the markdown keep resolving.
+2. **Real URL paths** (`/dev-docs/architecture/overview`, not `/#/dev-docs/...`), so exported pages keep the same URLs. Files on disk keep their relative links; **Rust resolves every link and outputs root-absolute hrefs**, because a relative href left for the browser to resolve breaks under routing and on static hosts ([2026-08-04-absolute-link-resolution](../../../2026-08-04-absolute-link-resolution/issue.md)).
 
 ## 07 What this drops
 

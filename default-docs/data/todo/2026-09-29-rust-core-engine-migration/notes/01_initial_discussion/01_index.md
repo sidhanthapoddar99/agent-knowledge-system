@@ -42,3 +42,4 @@ The decisions live in each note. The headline ones:
 | [01/15 Phasing](./15_phasing.md) | A proposed order of work (claude's proposal) |
 | [01/16 Open questions](./16_open-questions.md) | What to settle next |
 | [01/17 The architecture: a local SPA over WebSocket](./17_local-spa-over-websocket.md) | The central design: Rust computes, the frontend displays, one WebSocket, hash-versioned caching |
+| [01/18 Impact on other issues](./18_impact-on-other-issues.md) | Every active issue sorted as partial, rework, obsolete or unaffected, with what to pause |

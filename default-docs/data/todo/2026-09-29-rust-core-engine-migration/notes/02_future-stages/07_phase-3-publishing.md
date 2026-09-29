@@ -16,6 +16,7 @@ Publishing a site, for search engines or for readers outside the team, is **Phas
 - Decided (sidhantha, 2026-09-29): publishing is Phase 3, after editing (Phase 2).
 - Decided (sidhantha, 2026-09-29): a published site is a 100% static build (SSG), served by nginx or similar over HTTPS. No Rust server runs.
 - Decided (sidhantha, 2026-09-29): search-engine friendliness is this phase's job only.
+- Decided (sidhantha, 2026-09-29): the export is CDN friendly: plain static files with nothing computed per request, so any CDN can cache and serve them.
 - Decided (sidhantha, 2026-09-29): publishers stay on the last 0.x release, pinned with mise, until Phase 3 ships.
 
 # 05 Notes & Analysis
@@ -25,6 +26,7 @@ Publishing a site, for search engines or for readers outside the team, is **Phas
 - The local tool serves one or two developers. It does not need search engines, CDNs or static hosting.
 - A published site changes only when someone publishes, so every page can be built once, ahead of time.
 - Serving files with nginx is the smallest and safest thing to run in public: no application server, nothing to authenticate.
+- The same files can sit behind any CDN. Assets with a content hash in their URL can be cached forever; pages are revalidated when a new export is published.
 
 ## 02 How to prerender (decide when the phase starts)
 
@@ -39,7 +41,7 @@ The first two can be combined with the third: prerendered HTML for crawlers, pre
 ## 03 What Phase 1 must already do
 
 - All frontend data access goes through one interface, so Phase 3 swaps WebSocket for files without touching components.
-- The router uses real URL paths, so exported pages keep the same URLs and relative links keep resolving.
+- The router uses real URL paths, so exported pages keep the same URLs. Rust outputs root-absolute hrefs, so links do not depend on where a page is served from; the hosting path prefix from [2026-08-04-absolute-link-resolution](../../../2026-08-04-absolute-link-resolution/issue.md) is applied at export.
 
 ## 04 The gap between 1.0.0 and Phase 3
 

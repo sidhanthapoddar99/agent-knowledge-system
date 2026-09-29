@@ -34,6 +34,8 @@ When agentks starts, a small check reads `build-cache.json`. It deletes every pr
 
 ## 03 Proposed additions (claude, not yet agreed)
 
+- **A page's cache key includes the hashes of the files it embeds**, not only its own bytes, or edits to an embedded file go stale ([2026-08-07-content-embed-cache-dependencies](../../../2026-08-07-content-embed-cache-dependencies/issue.md)).
+
 - **Put the engine version in the cache key**, not only the config path hash. Two engine versions render different output, and with mise pinning ([versioning](./12_versioning-and-forced-migrations.md)) both can run on one machine.
 - A moved project gets a new hash and a cold cache. That is fine; the old entry expires after 15 days.
 - The prior audit's advice holds: cache what is expensive (git-derived dates, narration audio, highlighted code), and re-derive the rest.

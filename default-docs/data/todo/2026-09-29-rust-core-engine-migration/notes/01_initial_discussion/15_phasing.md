@@ -32,6 +32,7 @@ What Phase 1 contains, from the decisions so far:
 - **Project setup:** mandatory `config/` with `.env` inside it; `~/.agentks/` and the build cache; the `agentks` rename everywhere.
 - **Content:** forced migrations in Rust covering every 0.x format; custom layouts removed.
 - **CSS:** the CSS listing command, because CSS becomes the only way to brand a site.
+- **First-class diagram and artifact pages:** `.mmd`, `.dot`, `.excalidraw`, `.drawio` and `.html` pages with their `.meta.json` sidecars keep appearing in sidebars and routes as today.
 - **Proof:** the checks in [open questions](./16_open-questions.md) 06 pass against today's engine.
 
 ## 02 Proposed steps inside Phase 1 (claude, not agreed)

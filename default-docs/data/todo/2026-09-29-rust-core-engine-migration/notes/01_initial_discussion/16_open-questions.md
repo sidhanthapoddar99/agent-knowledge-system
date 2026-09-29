@@ -2,7 +2,7 @@
 title: "Open questions"
 ---
 
-The questions to settle before a plan is written. Each one gets a decision line here when it is answered, and the answer moves into the note it belongs to. Still open: **04** (which dev tools, Phase 2), **07** (the index's data structure), **08** (the structure model), **11** (narration audio) and **12** (the UI framework).
+The questions to settle before a plan is written. Each one gets a decision line here when it is answered, and the answer moves into the note it belongs to. Still open: **04** (which dev tools, Phase 2), **07** (the index's data structure), **08** (the structure model), **11** (narration audio), **12** (the UI framework) and **13** (the meaning of `[[...]]`).
 
 # 03 References
 
@@ -49,6 +49,7 @@ The dev toolkit is Phase 2 (decided). Still open: which of today's apps are rebu
 - **Route parity:** every route the Astro engine serves, the new engine serves (`scripts/checks/check-route-parity.mjs` already exists).
 - **Rendered content:** a headless browser loads each page from both engines and compares the rendered main content after normalising whitespace and attribute order — headings and their IDs, links and their targets, text, tables, code. With the frontend now a single-page app, comparing raw server HTML no longer works; the rendered page is what counts. The prior audit's [JIT rendering study](../../../2026-05-08-runtime-stack-migration/agent-log/010_au_migration-feasibility-rescope/02_working/021_question_jit-rendering.md) proposed the same golden-diff idea.
 - **Screenshots** of each layout in light and dark mode, reviewed by eye for "nothing drastic".
+- **Coverage** includes first-class diagram and artifact pages with their sidecars, and the tracker fixture [2026-07-01-demo-issue-anatomy-showcase](../../../2026-07-01-demo-issue-anatomy-showcase/issue.md) for the issues layout.
 - **The user's own use** as the final check.
 
 ## 07 Render on the fly, or build and cache?
@@ -80,3 +81,7 @@ The optional voice model and audio cache for video pages ([video](./14_video-and
 ## 12 Which UI framework does the frontend use?
 
 New with the single-page app. Candidates include React, Preact, Solid, Svelte and Vue. The engine already bundles React for Excalidraw, which counts slightly in React's favour. Criteria: first-load size, lazy loading of layouts, a router that handles real paths and `#heading` anchors, and how well AI agents write it.
+
+## 13 What does `[[...]]` mean?
+
+Today's engine uses `[[path]]` to embed a file's contents. [2026-04-19-knowledge-graph-and-wiki-links](../../../2026-04-19-knowledge-graph-and-wiki-links/issue.md) defines `[[target]]` as a wiki link and `[[[target]]]` as an embed. The Rust parser can support only one meaning. Changing today's meaning needs a migration.

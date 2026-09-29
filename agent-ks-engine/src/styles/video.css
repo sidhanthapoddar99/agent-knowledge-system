@@ -1,0 +1,275 @@
+/* ============================================================
+   Narrated video player — `video: true` pages
+   (markup: scripts/video/player.ts, stage motion: scripts/video/stage.ts)
+   ============================================================ */
+
+.video-player {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  margin: 0 0 var(--spacing-xl);
+  outline: none;
+}
+
+.video-player.vp-error {
+  padding: var(--spacing-md);
+  border: 1px solid var(--color-error);
+  border-radius: var(--border-radius-md);
+  color: var(--color-error);
+}
+
+/* Stage: title row, viewport, caption — nothing overlaps the viewport, so the
+   camera can use all of it */
+.vp-stage {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--border-radius-lg);
+  cursor: pointer;
+  user-select: none;
+}
+
+.video-player:focus-visible .vp-stage {
+  border-color: var(--color-brand-primary);
+}
+
+.vp-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--ui-text-body);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.vp-scene-count {
+  font-size: var(--ui-text-micro);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-text-muted);
+}
+
+.vp-viewport {
+  position: relative;
+  overflow: hidden;
+  margin: 0 var(--spacing-md);
+}
+
+.vp-canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: max-content;
+  transform-origin: 0 0;
+  transition: transform 900ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.vp-canvas.vp-still {
+  transition: none;
+}
+
+.vp-card {
+  display: none;
+  position: absolute;
+  inset: 0;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: var(--ui-text-title);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.vp-viewport.vp-empty .vp-card {
+  display: flex;
+}
+
+.vp-caption {
+  min-height: calc(3 * 1.5em + 2 * var(--spacing-sm));
+  padding: var(--spacing-sm) var(--spacing-lg);
+  font-size: var(--content-body);
+  line-height: 1.5;
+  text-align: center;
+  color: var(--color-text-secondary);
+  border-top: 1px solid var(--color-border-light);
+  background: var(--color-bg-primary);
+}
+
+.vp-caption strong {
+  color: var(--color-brand-primary);
+}
+
+.vp-start {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 4.5rem;
+  height: 4.5rem;
+  border: none;
+  border-radius: var(--border-radius-full);
+  background: var(--color-brand-primary);
+  color: var(--color-bg-primary);
+  font-size: var(--ui-text-title);
+  box-shadow: var(--shadow-lg);
+  cursor: pointer;
+}
+
+/* ---- Visuals ------------------------------------------------ */
+
+.vp-visual {
+  margin: 0;
+}
+
+.vp-visual-list,
+.vp-visual-table {
+  max-width: var(--max-width-secondary);
+  white-space: normal;
+}
+
+.vp-visual-code {
+  max-width: none;
+}
+
+.vp-visual-image img {
+  display: block;
+  max-width: var(--max-width-secondary);
+}
+
+/* Dark mode: the same invert the transcript's diagrams get (markdown.css) */
+[data-theme="dark"] .vp-visual-mermaid,
+[data-theme="dark"] .vp-visual-graphviz {
+  filter: invert(1) hue-rotate(180deg) brightness(0.95);
+}
+
+/* Focus: dim the rest, outline the focused part */
+.vp-visual .vp-dim,
+.vp-visual .vp-focus,
+.vp-visual .vp-pending {
+  transition: opacity var(--transition-normal), transform var(--transition-normal);
+}
+
+.vp-visual .vp-dim {
+  opacity: 0.25;
+}
+
+.vp-visual-mermaid .vp-focus :is(rect, circle, ellipse, polygon, path),
+.vp-visual-graphviz .vp-focus :is(polygon, ellipse, path) {
+  stroke: var(--color-brand-primary) !important;
+  stroke-width: 3px !important;
+}
+
+.vp-visual-code .line.vp-focus {
+  display: inline-block;
+  width: 100%;
+  background: var(--color-bg-tertiary);
+  box-shadow: inset 3px 0 0 var(--color-brand-primary);
+}
+
+.vp-visual :is(li, tr).vp-focus {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.vp-visual .vp-pending {
+  opacity: 0;
+  transform: translateY(0.5em);
+}
+
+/* ---- Controls ----------------------------------------------- */
+
+.vp-progress {
+  display: flex;
+  gap: 3px;
+  height: 6px;
+}
+
+.vp-seg {
+  position: relative;
+  min-width: 4px;
+  padding: 0;
+  border: none;
+  border-radius: var(--border-radius-full);
+  background: var(--color-border-default);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.vp-seg-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0;
+  background: var(--color-brand-primary);
+  transition: width var(--transition-normal);
+}
+
+.vp-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  font-size: var(--ui-text-micro);
+  color: var(--color-text-secondary);
+}
+
+.vp-left,
+.vp-right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.vp-btn,
+.vp-controls select {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--border-radius-sm);
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-size: var(--ui-text-body);
+  cursor: pointer;
+}
+
+.vp-controls select {
+  max-width: 14rem;
+  font-size: var(--ui-text-micro);
+}
+
+.vp-btn:hover {
+  border-color: var(--color-brand-primary);
+}
+
+.vp-time {
+  font-family: var(--font-family-mono);
+}
+
+.vp-silent {
+  color: var(--color-warning);
+}
+
+/* Fullscreen: the stage takes the screen, controls stay below it */
+.video-player:fullscreen {
+  justify-content: center;
+  padding: var(--spacing-lg);
+  background: var(--color-bg-primary);
+}
+
+.video-player:fullscreen .vp-stage {
+  width: min(100%, calc((100vh - 6rem) * 16 / 9));
+  margin: 0 auto;
+}
+
+.video-player:fullscreen :is(.vp-progress, .vp-controls) {
+  width: min(100%, calc((100vh - 6rem) * 16 / 9));
+  margin: 0 auto;
+}
+
+/* Transcript: the paragraph being spoken */
+.video-transcript .vp-current {
+  box-shadow: -3px 0 0 var(--color-brand-primary);
+  padding-left: var(--spacing-sm);
+  transition: box-shadow var(--transition-normal);
+}

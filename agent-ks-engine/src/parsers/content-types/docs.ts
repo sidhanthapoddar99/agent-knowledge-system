@@ -20,6 +20,7 @@ import { assetSrcPostprocessor } from '../postprocessors/asset-src';
 import { diagramEmbedPostprocessor } from '../postprocessors/diagram-embed';
 import { externalLinksPostprocessor } from '../postprocessors/external-links';
 import { tableWrapPostprocessor } from '../postprocessors/table-wrap';
+import { videoPagePostprocessor } from '../postprocessors/video-page';
 
 export class DocsParser extends BaseContentParser {
   constructor() {
@@ -37,7 +38,9 @@ export class DocsParser extends BaseContentParser {
       // aren't served at any browser-relative position).
       .addPostprocessor(assetSrcPostprocessor)
       .addPostprocessor(externalLinksPostprocessor)
-      .addPostprocessor(tableWrapPostprocessor);
+      .addPostprocessor(tableWrapPostprocessor)
+      // `video: true` pages → player mount + transcript wrapper (last: reads final HTML)
+      .addPostprocessor(videoPagePostprocessor);
   }
 
   /**
@@ -70,6 +73,7 @@ export class DocsParser extends BaseContentParser {
         'sidebar_position',
         'draft',
         'tags',
+        'video',
       ],
     };
   }

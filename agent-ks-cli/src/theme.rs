@@ -58,6 +58,10 @@ const BUILTIN: &[(&str, &str)] = &[
         "theme.yaml",
         include_str!("../../agent-ks-engine/src/styles/theme.yaml"),
     ),
+    (
+        "video.css",
+        include_str!("../../agent-ks-engine/src/styles/video.css"),
+    ),
 ];
 fn theme_path(c: &Context, name: &str) -> Result<PathBuf> {
     if name == "default" || name == "@theme/default" {

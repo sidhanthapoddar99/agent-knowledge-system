@@ -10,7 +10,7 @@ Today the docs are there because every install clones the framework, and the use
 
 - [The ~/.agentks home and build cache](../01_initial_discussion/07_agentks-home-and-build-cache.md) — where the cached docs live.
 - [Single install](../01_initial_discussion/05_single-install-tool-engine-frontend.md) — why there is no framework checkout any more.
-- [Libraries and reusable elements](../../../2026-09-29-narrated-video-pages/notes/01_initial_discussion/07_libraries-and-reusable-elements.md) — the preset libraries this shares a downloader with.
+- [The artifact library](./09_artifact-library.md) — the preset libraries this shares a downloader with.
 - [CLI rename and commands](../01_initial_discussion/08_cli-rename-and-commands.md)
 
 # 04 Decisions

@@ -21,7 +21,7 @@ The case for this migration is **distribution and one shared core**, not raw spe
 
 - The codebase keeps growing, and its size has to be accounted for.
 - One engine install for many projects. A user with ten agent-ks projects should have one engine, not ten.
-- The engine can grow larger, and ship many preconfigured artifacts, because it is installed once.
+- The engine can grow larger, and offer many ready-made artifacts, because it is installed once. The artifacts come as preset libraries, downloaded and cached once per machine ([the artifact library](../02_future-stages/09_artifact-library.md)).
 - A better file watcher.
 - Room for heavier features, like narration audio for video pages.
 

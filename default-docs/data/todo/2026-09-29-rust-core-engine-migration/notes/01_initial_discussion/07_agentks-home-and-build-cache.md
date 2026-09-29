@@ -38,6 +38,7 @@ When agentks starts, a small check reads `build-cache.json`. It deletes every pr
 
 - **Put the engine version in the cache key**, not only the config path hash. Two engine versions render different output, and with mise pinning ([versioning](./12_versioning-and-forced-migrations.md)) both can run on one machine.
 - A moved project gets a new hash and a cold cache. That is fine; the old entry expires after 15 days.
+- **Downloads get their own folders**: `libraries/<library>@<version>/`, `docs/<version>/` and `models/`, filled by one shared downloader ([the artifact library](../02_future-stages/09_artifact-library.md), [the docs command](../02_future-stages/08_agentks-docs-command.md)). A download is removed only when no project has used it for 15 days.
 - The prior audit's advice holds: cache what is expensive (git-derived dates, narration audio, highlighted code), and re-derive the rest.
 
 ## 04 Render on the fly or cache

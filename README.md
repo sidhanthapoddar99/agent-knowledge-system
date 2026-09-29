@@ -2,7 +2,7 @@
 
 [![Engine 0.3.10](https://img.shields.io/badge/Engine-0.3.10-0b7285?labelColor=1f2328&logo=github&logoColor=white)](./agent-ks-engine/release-notes/0.3.10.md)
 [![Plugin 0.12.0](https://img.shields.io/badge/Plugin-0.12.0-5f3dc4?labelColor=1f2328&logo=claude&logoColor=white)](./plugins/agent-ks/release-notes/0.12.0.md)
-[![CLI 0.1.3](https://img.shields.io/badge/CLI-0.1.3-1971c2?labelColor=1f2328&logo=github&logoColor=white)](./agent-ks-cli/release-notes/0.1.3.md)
+[![CLI 0.1.4](https://img.shields.io/badge/CLI-0.1.4-1971c2?labelColor=1f2328&logo=github&logoColor=white)](./agent-ks-cli/release-notes/0.1.4.md)
 [![Engine runtime: Bun](https://img.shields.io/badge/Engine_runtime-Bun-fbf0df?labelColor=1f2328&logo=bun&logoColor=fbf0df)](https://bun.sh)
 [![CLI implementation: Rust](https://img.shields.io/badge/CLI_implementation-Rust-ce422b?labelColor=1f2328&logo=rust&logoColor=white)](./agent-ks-cli/README.md)
 
@@ -12,7 +12,7 @@
 |---|---:|---|
 | Engine | `0.3.10` | [Engine 0.3.10](./agent-ks-engine/release-notes/0.3.10.md) |
 | Plugin / skills | `0.12.0` | [Plugin 0.12.0](./plugins/agent-ks/release-notes/0.12.0.md) |
-| Native CLI | `0.1.3` | [CLI 0.1.3](./agent-ks-cli/release-notes/0.1.3.md) · [Downloads](https://github.com/sidhanthapoddar99/agent-knowledge-system/releases/latest) |
+| Native CLI | `0.1.4` | [CLI 0.1.4](./agent-ks-cli/release-notes/0.1.4.md) · [Downloads](https://github.com/sidhanthapoddar99/agent-knowledge-system/releases/latest) |
 
 A **knowledge + task system designed for AI consumers**, with human-readable docs as a first-class output — modular Astro layouts, YAML configuration, a folder-per-issue tracker, and live editing via Yjs CRDT. Self-contained **HTML artifacts** and **Mermaid / Graphviz / Excalidraw / draw.io** diagrams are first-class pages, rendered natively with no external service. Ships its own Claude Code plugin (skills + the `agent-ks` CLI) so agents operate the whole system natively.
 

@@ -9,6 +9,7 @@ Videos draw on three sources of building blocks. **Built-in widgets** ship with 
 - [Caching](./06_caching.md)
 - [A proper video engine](./04_video-engine.md)
 - [CSS and theming in the engine migration](../../../2026-09-29-rust-core-engine-migration/notes/01_initial_discussion/10_css-and-theming.md) — the other place users extend the engine.
+- [The agentks docs command](../../../2026-09-29-rust-core-engine-migration/notes/02_future-stages/08_agentks-docs-command.md) — downloads and caches the docs the same way; the two should share one downloader.
 
 # 04 Decisions
 

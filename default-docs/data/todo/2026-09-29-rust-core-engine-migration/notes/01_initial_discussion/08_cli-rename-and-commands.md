@@ -26,6 +26,7 @@ The binary and its installer are renamed from `agent-ks` to **`agentks`**. The C
 | `agentks theme css` | Print the compiled CSS for this version ([theming](./10_css-and-theming.md)) |
 | `agentks theme eject` | Copy the CSS into `config/themes/` for editing (proposed) |
 | `agentks migrate` | Run content migrations ([versioning](./12_versioning-and-forced-migrations.md)) |
+| `agentks docs` | Open the agentks docs, downloaded and cached ([Phase 2](../02_future-stages/08_agentks-docs-command.md)) |
 
 ## 02 How far it reaches
 

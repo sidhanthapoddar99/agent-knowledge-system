@@ -2,7 +2,7 @@
 title: "Phasing"
 ---
 
-**Phase 1 is rendering**: the Rust engine and the single-page frontend show every page with the same correct results as today, locally. **Phase 2** adds the new editing mode and the dev toolkit. **Phase 3** is publishing: a static export served by nginx. **Later stages** add multi-user editing with auth, agent hooks with retrieval, and the GitHub issues layout. 1.0.0 ships with Phases 1 and 2; publishers stay on the last 0.x release until Phase 3. Inside Phase 1, claude proposes an order of steps so the project always has a working engine, which is how this plan answers the prior audit's 6–12 month estimate.
+**Phase 1 is rendering**: the Rust engine and the single-page frontend show every page with the same correct results as today, locally. **Phase 2** adds the new editing mode, the dev toolkit and the `agentks docs` command. **Phase 3** is publishing: a static export served by nginx. **Later stages** add multi-user editing with auth, agent hooks with retrieval, and the GitHub issues layout. 1.0.0 ships with Phases 1 and 2; publishers stay on the last 0.x release until Phase 3. Inside Phase 1, claude proposes an order of steps so the project always has a working engine, which is how this plan answers the prior audit's 6–12 month estimate.
 
 # 03 References
 
@@ -43,7 +43,7 @@ What Phase 1 contains, from the decisions so far:
 
 ## 03 Phase 2 — editing and dev tools
 
-[Editing mode](../02_future-stages/02_editing-mode.md) and [the dev toolkit](../02_future-stages/03_dev-toolkit.md). The live preview is rendered by Rust over the WebSocket; there is no WASM build. 1.0.0 ships when Phases 1 and 2 are done.
+[Editing mode](../02_future-stages/02_editing-mode.md), [the dev toolkit](../02_future-stages/03_dev-toolkit.md) and [the agentks docs command](../02_future-stages/08_agentks-docs-command.md). The docs command belongs here because 1.0.0 is the first release with no framework checkout, which is where the docs live today. The live preview is rendered by Rust over the WebSocket; there is no WASM build. 1.0.0 ships when Phases 1 and 2 are done.
 
 ## 04 Phase 3 — publishing
 
@@ -53,7 +53,6 @@ What Phase 1 contains, from the decisions so far:
 
 [Multi-user editing and auth](../02_future-stages/04_multi-user-editing-and-auth.md), [agent hooks and retrieval](../02_future-stages/05_agent-hooks-and-retrieval.md), [the GitHub issues layout](../02_future-stages/06_github-issues-layout.md).
 
-## 06 Not yet placed
+## 06 Tracked separately
 
-- **Narration audio** for video pages (the optional voice model and audio cache). See [open questions](./16_open-questions.md).
-- **The video player** is browser code and can continue at any time. It moves into the new frontend unchanged.
+Narrated video pages, their audio and the preset libraries are tracked in [2026-09-29-narrated-video-pages](../../../2026-09-29-narrated-video-pages/issue.md). The player is browser code and can continue at any time. The audio, the voice model and the library downloads land with or after Phase 1, because they need the `~/.agentks` home.

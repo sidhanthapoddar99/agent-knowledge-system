@@ -26,10 +26,10 @@ This issue is in its discussion stage. The discussion stage is done when:
 ## Scope decisions
 
 - **Phase 1, rendering:** the Rust engine, the Rust server with one WebSocket, the Vite single-page app with every built-in layout, the config and `.env` change, the `~/.agentks/` home and build cache, the `agentks` rename, forced migrations in Rust, dropping custom layouts. Done when the new engine shows every page with the same correct results as today.
-- **Phase 2:** the new editing mode in the reading view (the current editor is discarded) and the dev toolkit. 1.0.0 ships after Phases 1 and 2. See [future stages](./notes/02_future-stages/01_index.md).
+- **Phase 2:** the new editing mode in the reading view (the current editor is discarded), the dev toolkit, and `agentks docs`, which serves the agentks docs from a downloaded cache instead of a framework checkout. 1.0.0 ships after Phases 1 and 2. See [future stages](./notes/02_future-stages/01_index.md).
 - **Phase 3, publishing:** a fully static export for nginx or any static host, search-engine friendly, with no Rust server. Until it ships, publishers stay on the last 0.x release, pinned with mise.
 - **Later stages:** multi-user editing and the auth it needs; agent hooks and retrieval; a GitHub issues layout with machine-level GitHub sign-in.
-- **Not yet placed:** narration audio for video pages.
+- **Tracked separately:** narrated video pages and their audio, in [2026-09-29-narrated-video-pages](../2026-09-29-narrated-video-pages/issue.md).
 - **Out:** motion-graphics video (Remotion or HyperFrames level), custom user layouts, server-side page templates, a WASM build of the core, HTMX.
 
 Related: [2026-05-08-runtime-stack-migration](../2026-05-08-runtime-stack-migration/issue.md) · [2026-04-26-framework-as-cli-tool](../2026-04-26-framework-as-cli-tool/issue.md) · [2026-04-26-project-rebrand](../2026-04-26-project-rebrand/issue.md)

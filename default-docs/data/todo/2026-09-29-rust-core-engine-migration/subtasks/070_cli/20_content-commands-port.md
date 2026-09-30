@@ -1,6 +1,6 @@
 ---
 title: "Content commands port — today's toolkit on the shared core"
-status: open
+status: in-progress
 ---
 
 Today's `agent-ks` toolkit (about 6,600 lines of Rust in `agent-ks-cli/`) has its own copies of the rules: frontmatter parsing, link checking, the ordering grammar, the issue status vocabulary. The new engine has one core that the server also uses. This leaf ports every content command into the new binary **on that core**, keeping each command's behaviour, flags and JSON output, and moving the rules that live in the CLI today into the core. It also rebuilds `help` from one manifest.
@@ -28,17 +28,23 @@ Today's `agent-ks` toolkit (about 6,600 lines of Rust in `agent-ks-cli/`) has it
 - `cargo tree -p agentks-cli` shows the CLI depends on the core, and no parsing crate is used directly by the CLI crate.
 
 # 02 Status and Result
-Open. Not started.
+In progress. The command framework (the first To Do item) is built in wave 2 (branch `wave2/cli`); the command logic waits for the lower crates.
 
 ## Result
-None yet.
+- **Command framework, done.** `crates/cli/src/args/` declares every command with clap 4.6 (derive): 65 commands with every flag of today's manifest plus the new ones. The clap tree is the manifest; `src/catalog/table.rs` adds each command's example and needs (project, network, outside programs). `agentks help` lists every command, `agentks help <group>` a group, `agentks help <group> <command>` the full help with its example, `agentks help --json` the catalog (`command`, `group`, `verb`, `aliases`, `summary`, `usage`, `arguments`, `flags` with `name`/`alias`/`value`/`required`/`default`/`values`, `example`, `project`, `network`, `runtime`). A test checks the table and the clap tree name exactly the same commands.
+- Conventions: `--config-dir` and `--json` work before or after any command; unknown flags and bad values exit 2; `--json` writes one document; exit 1 for no result, runtime errors and validation errors.
+- Every content command is wired: it finds the project through `agentks_config::discover`, opens the site where it reads content, then calls the owning crate or says which piece is missing (`agentks: not implemented yet: doc search (content search in agentks-site)`), exit 1. `check config` calls `agentks_config::load` and prints the findings in today's `check` JSON shape (`kind`, `root`, `errors`, `warnings`, `ok`, `errorCount`, `warningCount`, `counts`). `theme css` calls `Site::theme_css`.
+- `img` is ported (`src/img/`), except `--rewrite-links`, which waits for the index crate's reference rewrite.
+- `check legacy-tags` and `check skill-links` are not in the binary (a test checks it).
+- Tests: 28 unit tests and 5 integration tests (`crates/cli/tests/cli.rs` runs the binary: version, help, `help --json`, six exit-2 cases, an unbuilt command's error document, `shell-init`), 0.2 s warm.
+- **Left:** the queries, tracker writers, validators, `move`, git helpers and `theme tokens`, which need functions in `agentks-site`, `agentks-content`, `agentks-index`, `agentks-git` and `agentks-render` first; porting today's `tests/cli.rs` cases; the golden `--json` comparison against `agent-ks`.
 
 ## Agent log
 none
 
 # 03 References
 
-**Where:** main repository, `apps/agentks-engine/crates/agentks-cli/` (commands) and the core crate (rules and writers).
+**Where:** main repository, `apps/agentks-engine/crates/cli/` (commands), `agentks-content` (rules and writers) and `agentks-index` (links). The file map is in [030/10](../030_rust-engine/10_workspace-and-crate-boundaries.md)'s Result.
 
 **Read first:**
 - [Rust CLI, sections 01, 05 and 06](../../notes/02_engine/05_rust-cli.md).
@@ -52,6 +58,10 @@ none
 # 04 Decisions
 - Decided (sidhantha, 2026-09-29): the CLI and the server share one core, so each rule has one implementation.
 - Proposed (claude, 2026-09-30), adopted here: `check legacy-tags` and `check skill-links` leave the shipped binary ([Rust CLI, section 06](../../notes/02_engine/05_rust-cli.md)).
+- Decided (claude, 2026-10-01): clap is the manifest instead of today's `manifest.json`, and a small table adds each command's example and needs, with a test that the two name the same commands, because the help text and the parser then come from one declaration and cannot drift. `help --json` drops the 0.x `bin` field (there is one binary) and replaces `runtime: "native"` with `project`, `network` and `runtime` (the outside programs a command needs).
+- Decided (claude, 2026-10-01): a content command whose lower-crate function does not exist yet finds the project first and then exits 1 with `not implemented yet: <command> (<crate piece>)`, because the CLI must not answer from a rule of its own; a stand-in answer would look right and be wrong.
+- Decided (claude, 2026-10-01): `resolve-context` prints `PROJECT_ROOT`, `CONFIG_DIR`, `PROJECT_KEY` and `FOUND_BY` (JSON `projectRoot`, `configDir`, `projectKey`, `foundBy`) instead of today's `CONTENT_ROOT`, `CONFIG_DIR` and `DATA_DIR`, because the new model has a project root and a key, and no single data folder.
+- Decided (claude, 2026-10-01): `img` stays in the cli crate (as the crate map says) and shells out to ImageMagick; simple `*`/`?` globs and folder walks replace the `regex` and `walkdir` dependencies.
 
 # 05 Notes & Analysis
 

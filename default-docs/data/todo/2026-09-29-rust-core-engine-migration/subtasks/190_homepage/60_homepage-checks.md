@@ -12,13 +12,13 @@ The homepage is small, so its checks can be strict and automatic: a Lighthouse s
 - [ ] **Bundle budget** — total JavaScript shipped by the homepage under 150 KB gzipped (a proposal; set from the first build plus a margin and record it).
 - [ ] **Screenshots** — Playwright screenshots at 1440 and 390 px wide, light and dark, stored as CI artifacts for review.
 - [ ] **No console errors** on load.
-- [ ] **Wire into `ctl gate`** (lint, typecheck) and `ctl e2e` (Lighthouse, axe, screenshots), and into the website workflow so a failing homepage blocks a deploy.
+- [ ] **Wire the checks in.** The gate already runs the homepage's lint (oxlint), typecheck and `bun test` ([20](./20_app-scaffold.md)). Lighthouse, axe, the screenshots and the console check need a browser, so they belong in the ladder's `e2e` rung, which the repository does not list yet: add that rung with the shared Playwright harness from [170/30](../170_testing/30_end-to-end.md). Also run the checks in the website workflow, so a failing homepage blocks a deploy.
 
 ## Guardrails
 - A floor can be lowered only in a change that says why.
 
 ## Done when
-- `ctl e2e --homepage` runs every check above and passes on the finished page.
+- The e2e rung runs every check above and passes on the finished page.
 - A deliberately broken change (remove an `alt` text, add a 300 KB script) fails the checks.
 
 # 02 Status and Result

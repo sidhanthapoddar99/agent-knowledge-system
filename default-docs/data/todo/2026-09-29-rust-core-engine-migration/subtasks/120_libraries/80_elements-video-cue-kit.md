@@ -55,7 +55,7 @@ none
 
 # 05 Notes & Analysis
 ## Watch out
-- The widgets' framework depends on the UI framework choice ([080/10](../080_ui-and-client/10_ui-framework-decision.md)). Library script widgets are plain HTML and JS in a sandboxed frame, so they do not depend on it; keep them that way.
+- Library script widgets are plain HTML and JS in a sandboxed frame, so they do not depend on the UI framework (Preact 11, [080/10](../080_ui-and-client/10_ui-framework-decision.md)); keep them that way.
 
 ## Open until the work starts
 - The cue syntax and the widget contract — owned by the video issue. See [open questions and risks](../../notes/01_overview/05_open-questions-and-risks.md) (video pages row).

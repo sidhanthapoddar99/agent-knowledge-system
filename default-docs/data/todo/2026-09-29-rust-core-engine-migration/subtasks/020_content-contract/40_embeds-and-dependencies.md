@@ -1,6 +1,6 @@
 ---
 title: "Embeds and dependencies — [[path]] inlining, and an embedded file is part of the page"
-status: open
+status: in-progress
 ---
 
 `[[./path]]` inserts another file's text into a page before markdown rendering. Today's engine did not record that dependency, so editing an embedded diagram left the page stale until a restart ([2026-08-07-content-embed-cache-dependencies](../../../2026-08-07-content-embed-cache-dependencies/issue.md), fixed for 0.x and in review). The lesson carries into the Rust engine as a rule: **a page's render hash includes the hash of every file it embeds.** This leaf implements the embed pass with today's exact syntax and makes the embedded-file list a first-class output of rendering.

@@ -1,6 +1,6 @@
 ---
 title: "The /_lib/ route, the sandbox, and the hosting path prefix"
-status: open
+status: in-progress
 ---
 
 Artifact pages load library elements through a reserved route, `/_lib/<alias>/<element>`. This leaf makes the local server serve that route, sandboxes library HTML so third-party code cannot touch the site, and solves the one open problem the notes left: a published site served under a path prefix (agentks.neuralabs.org/docs is exactly that) must still find `/_lib/` URLs written inside artifacts. When it is done, an artifact can show `<img src="/_lib/icons/server">` locally and on a prefixed published site, and a library's HTML runs in its own opaque origin.
@@ -32,10 +32,12 @@ Artifact pages load library elements through a reserved route, `/_lib/<alias>/<e
 - A test site built with `--base /docs` and served from a `/docs/` folder shows every library image in its artifacts.
 
 # 02 Status and Result
-Open. Not started.
+In progress. Element resolution and the serving rules are built in `agentks-library`; the HTTP route, reserving `_lib` in the routers, and the `--base` rewrite belong to the server, client and build tracks.
 
 ## Result
-None yet.
+- **Code:** `crates/library/src/url.rs` (`parse_lib_url` for `/_lib/<alias>/<element>[/<file>]`, `lib_urls_in` to find them in artifact HTML with line numbers), `src/libraries.rs` (`resolve`, `resolve_sibling`: canonical paths that must stay inside the library or the element's folder), `src/elements.rs` (`ElementFile::content_type`, `sandboxed`, `headers()` with `X-Content-Type-Options: nosniff` always and `Content-Security-Policy: sandbox allow-scripts` for `.html`, `.htm`, `.svg`; `LIB_SANDBOX_CSP`).
+- **Tests:** URL parsing and scanning, header sets per file type, a folder element with a sibling, a `../` escape refused, an unknown element with its message.
+- **Left:** the server route and its 404 body (map `LibraryError::ElementUnknown`), `_lib` in the client router (the engine side is already reserved in `agentks-core::RESERVED_SEGMENTS`), the `--base` rewrite in the build, and the nginx header note.
 
 ## Agent log
 none
@@ -56,9 +58,12 @@ none
 # 04 Decisions
 - Decided (sidhantha, 2026-09-30), on claude's proposal: artifacts load elements through `/_lib/<alias>/<element>` ([library system](../../notes/04_ecosystem/01_library-system.md)).
 - Decided (claude, 2026-09-30): library HTML is sandboxed, unlike the project's own artifacts, because it is third-party code (same note).
+- Decided (claude, 2026-10-01): The header list for `/_lib/` responses lives in one function, `ElementFile::headers()`, so the local server and the static build's host config cannot drift.
+- Decided (claude, 2026-10-01): A folder element resolves to its `index.html`, with `folder: true`; siblings resolve through `resolve_sibling`, which keeps them inside that folder after following symlinks.
 
 # 05 Notes & Analysis
 ## Watch out
 - `sandbox` without `allow-same-origin` also blocks the element's own `fetch` to its siblings with credentials; self-contained elements do not need it. Folder elements that fetch siblings must use relative URLs without credentials.
 - Some browsers treat `sandbox` in CSP differently for SVG loaded through `<img>` (scripts never run there anyway). Test SVG both through `<img>` and opened directly.
+- Screen frames load the `src` URL the parent passes: an image, or with `kind=page` a page in a nested sandboxed iframe ([library system](../../notes/04_ecosystem/01_library-system.md), section 14). A CSP on `/_lib/` that limits `img-src` or `frame-src` would break them.
 - A published site behind nginx needs the same headers. [150/70 Dockerfile](../150_publishing/70_dockerfile.md) and [195/00 hosting](../195_hosting/00_overview.md) must add `location /_lib/ { add_header Content-Security-Policy "sandbox allow-scripts"; }` for `.html` and `.svg`.

@@ -2,7 +2,7 @@
 title: "Library system: dep.yaml, dep.lock, manifests and the catalog"
 ---
 
-A **library** is a folder of reusable files, such as icons, frames, HTML artifacts, scene templates and scripts, that a project uses without copying them in. Every project declares its libraries in `config/dep.yaml`. The file is required even when it is empty. An entry points at a git repository (GitHub or any git URL), optionally a subfolder inside it and a version, or at a local folder relative to `dep.yaml`. agentks pins every git entry to an exact commit in `config/dep.lock` and fetches that commit once per machine into `~/.agentks/libraries/`. Each library describes itself in a `manifest.json`: a name, one x.y.z version for the whole library, the engine versions it supports, and its **elements** (the individual files it offers, each with a description and tags). agentks does not define kinds of library or element, and libraries never depend on each other. Elements are used only by video pages (inside cues) and artifact pages (through `/_lib/<alias>/<element>`). Markdown never names them. The default library and `library.json`, the catalog of libraries and templates agentks offers, live in `neuralabshq/agent-knowledge-system-library`. The feature ships in Phase 2.
+A **library** is a folder of reusable files, such as icons, frames, HTML artifacts, scene templates and scripts, that a project uses without copying them in. Every project declares its libraries in `config/dep.yaml`. The file is required even when it is empty. An entry points at a git repository (GitHub or any git URL), optionally a subfolder inside it and a version, or at a local folder relative to `dep.yaml`. agentks pins every git entry to an exact commit in `config/dep.lock` and fetches that commit once per machine into `~/.agentks/libraries/`. Each library describes itself in a `manifest.json`: a name, one x.y.z version for the whole library, the engine versions it supports, and its **elements** (the individual files it offers, each with a description and tags). agentks does not define kinds of library or element, and libraries never depend on each other. Elements are used only by video pages (inside cues) and artifact pages (through `/_lib/<alias>/<element>`). Markdown never names them. The default library and `library.json`, the catalog of libraries and templates agentks offers, live in `NeuraLabsHQ/agent-knowledge-system-library`. The feature ships in Phase 2.
 
 # 03 References
 
@@ -35,7 +35,7 @@ A **library** is a folder of reusable files, such as icons, frames, HTML artifac
 - Decided (sidhantha, 2026-09-30): no separate artifact releases. A library is a repository, and its tags are its releases.
 - Decided (sidhantha, 2026-09-30): the CLI and the skills read the installed libraries' manifests to help agents reuse elements.
 - Decided (sidhantha, 2026-09-30): library elements are used only in video pages and artifact pages. Markdown gets no library syntax.
-- Decided (sidhantha, 2026-09-30): the default library has its own repository, `neuralabshq/agent-knowledge-system-library`, with the templates and `library.json`. The official repositories are built into the binary.
+- Decided (sidhantha, 2026-09-30): the default library has its own repository, `NeuraLabsHQ/agent-knowledge-system-library`, with the templates and `library.json`. The official repositories are built into the binary.
 - Decided (sidhantha, 2026-09-30): `library.json` lists the libraries and templates agentks offers for quick install. It never moves.
 - Decided (sidhantha, 2026-09-30): `agentks library` works as a TUI and as plain commands. The TUI and the catalog are a convenience; any library can still be added through `dep.yaml`.
 - Decided (sidhantha, 2026-09-30): the voice model is not a library.
@@ -46,6 +46,7 @@ A **library** is a folder of reusable files, such as icons, frames, HTML artifac
 - Decided (claude, 2026-09-30): when the newest tag matching a selector needs a different engine, resolution fails and names both versions. It does not search older tags for a compatible one, so what gets installed is never a surprise.
 - Decided (claude, 2026-09-30): elements are self-contained single files, like artifacts today. The exception is a folder child of a manifest-less local library, which is served as a folder with `index.html` as its entry.
 - Decided (claude, 2026-09-30): library HTML is sandboxed, unlike the project's own artifacts. It is third-party code, so it gets no access to the site's origin.
+- Decided (claude, 2026-09-30): the HTML element contract in section 13: three messages (`agentks:element:data`, `agentks:element:theme`, `agentks:element:ready`), URL inputs resolved against the element's own address, and a screen frame's `src` as the one resource an element loads (section 14). [120/75 frames and widgets](../../subtasks/120_libraries/75_elements-frames-and-widgets.md) holds the reasons.
 
 # 05 Notes & Analysis
 
@@ -68,7 +69,7 @@ A **library** is a folder of reusable files, such as icons, frames, HTML artifac
 | `dep.yaml` | the project's `config/` | the user, or `agentks library add` | yes, required even when empty |
 | `dep.lock` | the project's `config/` | agentks only | yes |
 | `manifest.json` | the root of each library (the `path` folder) | the library's owner | in the library's repository |
-| `library.json` | the root of `neuralabshq/agent-knowledge-system-library` | the agentks team | in that repository; its address is built into the binary |
+| `library.json` | the root of `NeuraLabsHQ/agent-knowledge-system-library` | the agentks team | in that repository; its address is built into the binary |
 | cached libraries | `~/.agentks/libraries/<host>/<repository path>/<commit>/` | agentks | never; the machine's cache |
 
 ## 03 dep.yaml
@@ -77,7 +78,7 @@ A **library** is a folder of reusable files, such as icons, frames, HTML artifac
 # config/dep.yaml: required. An empty project writes `libraries: {}`.
 libraries:
   icons:                             # the alias: pages write icons:server
-    github: neuralabshq/agent-knowledge-system-library
+    github: NeuraLabsHQ/agent-knowledge-system-library
                                      # no selector: the latest x.y.z tag
   kit:
     github: acme/design-kit
@@ -125,7 +126,7 @@ libraries:
 # config/dep.lock: written by agentks, committed, never edited by hand
 libraries:
   icons:
-    github: neuralabshq/agent-knowledge-system-library
+    github: NeuraLabsHQ/agent-knowledge-system-library
     requested: latest
     commit: 9d02e11c5a7f...
     version: 2.1.0            # read from the library's manifest.json
@@ -199,23 +200,23 @@ A local entry (`path:` only) points at a folder in the project, for example the 
 
 ## 08 The catalog: library.json
 
-The catalog sits at the root of `neuralabshq/agent-knowledge-system-library`. Its address is built into the binary, so it must never move. It lists what `agentks library` offers for quick install, and the templates `agentks init` can use ([templates and init](./04_templates-and-init.md)).
+The catalog sits at the root of `NeuraLabsHQ/agent-knowledge-system-library`. Its address is built into the binary, so it must never move. It lists what `agentks library` offers for quick install, and the templates `agentks init` can use ([templates and init](./04_templates-and-init.md)).
 
 ```json
 {
   "libraries": {
     "agentks-default": {
-      "description": "The default library: icons, frames, scene templates",
-      "git": "https://github.com/neuralabshq/agent-knowledge-system-library.git",
+      "description": "The default library: icons for technical docs, device and window frames, and small data widgets",
+      "git": "https://github.com/NeuraLabsHQ/agent-knowledge-system-library.git",
       "path": ".",
       "latest": "1.0.0",
-      "tags": ["icons", "frames", "video"]
+      "tags": ["icons", "frames", "widgets"]
     }
   },
   "templates": {
     "agentks-default": {
       "description": "A docs site with a guide, a blog and an issue tracker",
-      "git": "https://github.com/neuralabshq/agent-knowledge-system-library.git",
+      "git": "https://github.com/NeuraLabsHQ/agent-knowledge-system-library.git",
       "path": "templates/agentks-default"
     }
   }
@@ -231,7 +232,7 @@ The catalog sits at the root of `neuralabshq/agent-knowledge-system-library`. It
 ```
 ~/.agentks/libraries/
   github.com/acme/design-kit/51aa0c3f9e20.../        the whole repository at one commit
-  github.com/neuralabshq/agent-knowledge-system-library/9d02e11c5a7f.../
+  github.com/NeuraLabsHQ/agent-knowledge-system-library/9d02e11c5a7f.../
   gitlab.com/acme/shapes/77c1d0e4b9a2.../
 ```
 
@@ -295,9 +296,26 @@ Every error names the page or the `dep.yaml` entry, what is wrong, and the comma
 **Only in video pages and artifact pages.** A markdown page never names a library element. Its body stays plain, portable markdown: `[text](./path.md)` links and `[[./path]]` embeds, both relative to the file ([content format](../02_engine/01_content-format.md)). Content written in agentks then opens cleanly in Obsidian or any other note app.
 
 - **A video page** names elements inside its cues, for example `<!-- panel: icons:server -->`. Cues are HTML comments or a fenced block, so other apps hide them or show them as code ([video pages](./05_video-pages.md)).
-- **An artifact** is HTML, not markdown. The engine serves each element at a reserved route, `/_lib/<alias>/<element>`, and the artifact loads it like any file, for example `<img src="/_lib/icons/server">`.
+- **An artifact** is HTML, not markdown. The engine serves each element at a reserved route, `/_lib/<alias>/<element>`, and the artifact loads it like any file, for example `<img src="/_lib/icons/server">`. An SVG icon loaded through `<img>` cannot see the page's text colour, so it draws black. For a theme-coloured icon, the artifact uses a CSS mask or inserts the SVG inline. The default library's README shows both.
 
 **Serving `/_lib/`.** The local server resolves the alias through the lock (or the local folder), finds the element's file through the manifest, and sets the content type from the file's extension. `_lib` is reserved in the router, like `artifacts`, so no section may use it. `agentks build` copies every element a page or artifact uses into the static output at the same path, so a published site needs no library at run time ([publishing](../05_delivery/02_publishing-ssg.md)).
+
+**The HTML element contract.** An `.html` element, such as a frame or a widget, runs sandboxed in its own opaque origin (section 14). The page that embeds it, the parent, talks to it only through its address and through messages. The default library follows this contract, and the [library authoring guide](../../subtasks/120_libraries/90_library-authoring-guide.md) teaches it to other library authors.
+
+- **Inputs** come from query parameters, for example `/_lib/default/phone-frame?theme=dark&src=…`. A comment at the top of each element lists its inputs.
+- **A URL input resolves against the element's own address**, not against the parent's. So the parent passes full URLs, for example `new URL("./assets/app.png", location.href)`.
+- **Messages** go through `postMessage` with target `"*"`, because the element's origin is opaque. The element checks each message's shape and ignores anything else.
+
+| Message | From → to | What it does |
+|---|---|---|
+| `{ type: "agentks:element:data", data }` | parent → element | Sends input data, for example the rows of a table |
+| `{ type: "agentks:element:theme", mode, tokens }` | parent → element | Switches to `light` or `dark`. `tokens` can map theme variable names to the site's values |
+| `{ type: "agentks:element:ready" }` | element → parent | Says the element is listening, so the parent can send |
+
+- **Theme.** `?theme=light|dark` sets the mode, else the reader's system setting. Styles use only the site's theme variable names. The built-in values copy today's default theme, because a sandboxed element cannot read the parent's CSS.
+- **Screen frames** (phone, tablet, laptop and browser) show `src` as an image by default. With `kind=page`, they show it as a page in a nested iframe sandboxed with `allow-scripts`. They accept only `http(s)` URLs, plus `data:image` URLs for an image.
+- **Bad input** shows a visible error in the element, never a blank or stale frame.
+- **Size.** The element fills its iframe. Nothing has a fixed outer size.
 
 ## 14 Trust
 
@@ -306,6 +324,7 @@ A library can hold HTML and scripts that run in the local viewer and on a publis
 - **No library arrives unseen.** agentks installs only what `dep.yaml` lists. `agentks library add` prints the repository and the manifest summary before installing. `agentks start` never adds an entry on its own.
 - **Content is verified by git** against the pinned commit on every fetch.
 - **Library HTML is sandboxed.** Today's artifacts are the project's own, first-party code, so they run unsandboxed on the site's origin ([the artifacts route folder](../../../../../../agent-ks-engine/src/pages/artifacts)). A library is third-party code, so `/_lib/` serves `.html` and `.svg` elements with a `Content-Security-Policy: sandbox allow-scripts` header. The browser then gives them their own opaque origin, even when opened directly, and they cannot read the page around them or the site's storage.
+- **An HTML element loads nothing on its own.** It inlines its CSS and scripts, makes no network request and uses no storage. The one exception is a screen frame's `src`: the frame loads the URL the parent passes, as an image, or with `kind=page` as a page in a nested iframe sandboxed with `allow-scripts`. It loads only that URL, and only because the parent asked for it. The default library's check rejects an element that loads anything else.
 - **A library script loaded by the project's own artifact** runs with that artifact's rights. The artifact's author chose to load it, and the review happens when the library is added to `dep.yaml`. The artifacts skill says so.
 - **Private repositories.** GitHub uses the machine-level GitHub sign-in from the later GitHub issues layout ([the GitHub issues layout](../../brainstorm/02_future-stages/06_github-issues-layout.md)). Until then, and for other hosts, agentks uses the machine's git credentials (SSH keys and the credential helper).
 
@@ -319,7 +338,7 @@ Only breaking engine releases change formats, so a library's `engine` range norm
 
 ## 16 The default library
 
-`neuralabshq/agent-knowledge-system-library` holds the default library (its `manifest.json` at the root), the templates, and `library.json`. It has its own version series, tagged in its repository, and is built and tested end to end with the engine and the client in step 1 of the launch. What it holds is decided by its manifest, not by the engine: icons, frames, scene templates and scripts are expected first. The engine knows only the catalog's address. It does not depend on any element being present, so a project that removes the default library still works.
+`NeuraLabsHQ/agent-knowledge-system-library` holds the default library (its `manifest.json` at the root), the templates, and `library.json`. It has its own version series, tagged `vX.Y.Z` in its repository, and is built and tested end to end with the engine and the client in step 1 of the launch. What it holds is decided by its manifest, not by the engine. Its elements are 74 icons for technical docs, most adapted from Lucide 1.49.0 (ISC licence); six device and window frames; and three small data widgets. There is no `github` icon, because GitHub's logo terms forbid changing the mark ([120/70 icons](../../subtasks/120_libraries/70_elements-icons.md)). Scene templates and script widgets for video pages belong to [120/80 the video cue kit](../../subtasks/120_libraries/80_elements-video-cue-kit.md). The shared CSS and JavaScript of its HTML elements are written once in `scripts/shared/`. Each element carries a marked copy, `scripts/check.py --sync-shared` rewrites the copies, and the check fails when a copy drifts. The engine knows only the catalog's address. It does not depend on any element being present, so a project that removes the default library still works.
 
 ## 17 What is not a library
 

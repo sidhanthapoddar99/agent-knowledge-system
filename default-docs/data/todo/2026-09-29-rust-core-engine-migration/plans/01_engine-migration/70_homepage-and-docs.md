@@ -1,6 +1,6 @@
 ---
 title: "Launch steps 3 and 4: the homepage and the docs rewrite"
-status: open
+status: in-progress
 outcome: "The homepage is built and the new docs are complete"
 notes: "Can run alongside [Phase 3](./50_phase-3-publishing.md)"
 who: "claude"

@@ -2,20 +2,22 @@
 title: "The spike on branch spike/narrated-video"
 ---
 
-The first implementation lives on **branch `spike/narrated-video`**, commit `8874d1f` on top of `main`. It proves the format: a normal markdown page with `video: true` plays as a narrated video in the browser. A five-minute tour costs a 6.3 KB file (about 1,600–2,000 tokens to write). The user judged it suitable but too basic, which led to [the proper engine](./04_video-engine.md).
+The first implementation lives on **branch `spike/narrated-video`**, commit `8874d1f` on top of `main`. It proved that a narrated video can play live in the browser from a small source file: a markdown page with `video: true` played as a narrated video, and a five-minute tour cost a 6.3 KB file (about 1,600–2,000 tokens to write). The user judged it suitable but too basic. **The markdown format is retired**: a video is now an independent YAML artifact ([the video artifact engine](../../brainstorm/01_video-artifact-engine/01_index.md)). The spike's narrator carries over as the browser-voice fallback ([the voiceover](../../brainstorm/01_video-artifact-engine/07_voiceover.md#11-the-browser-voice-as-the-fallback)).
 
 # 03 References
 
+- [The video artifact engine](../../brainstorm/01_video-artifact-engine/01_index.md)
 - [A proper video engine](./04_video-engine.md)
 - [Narration audio](./05_narration-audio.md)
 
 # 04 Decisions
 
 - Decided (sidhantha, 2026-09-29): the spike stays on its own branch, off `main`, until the video work is ready to merge.
+- Decided (claude, 2026-10-01): the markdown `video: true` format and its cues are retired, and nothing from the spike merges into today's engine, because sidhantha asked on 2026-09-30 for videos as independent artifacts. The branch stays as the reference for the browser-voice narrator, which carries over as the fallback voice.
 
 # 05 Notes & Analysis
 
-## 01 The format
+## 01 The spike's format
 
 - `video: true` in frontmatter marks the page.
 - The `#` title and the paragraphs before the first `##` are the intro scene.

@@ -23,6 +23,7 @@ State 1 is the agentks team developing agentks itself. The Rust engine runs from
 - Decided (sidhantha, 2026-09-30): development builds go to `data/builds/`, ignored by git. mise points `agentks` at them inside the repository, so the working tree overrides the installed release there.
 - Decided (sidhantha, 2026-09-30): the new repository is set up with the project-setup guide.
 - Decided (sidhantha, 2026-09-30): the first launch step is building the engine, the client and the default library, tested end to end.
+- Decided (claude, 2026-09-30): TypeScript apps lint with oxlint, typecheck with `tsc --noEmit` (after `next typegen` in a Next app) and test with `bun test`; `next build` runs in `ctl build`, not in the gate ([190/20 app scaffold](../../subtasks/190_homepage/20_app-scaffold.md)).
 - Proposed (claude, 2026-09-30), not yet agreed: the `ctl` verbs, the gate rungs and the test layers in sections 03 to 06; keeping a second name for the installed release inside the repository.
 
 # 05 Notes & Analysis
@@ -70,7 +71,7 @@ Today the working-tree binary has its own name, `agent-ks-dev`, so a maintainer 
 |---|---|
 | `ctl setup` | Installs toolchains (Rust, Bun) and dependencies |
 | `ctl dev` | Engine and Vite dev server together |
-| `ctl build` | The release binary into `data/builds/` |
+| `ctl build` | The binary into `data/builds/agentks` (`--release` for the release profile), then the homepage's static export into `apps/agentks-homepage/out/`. `ctl build engine` or `ctl build homepage` builds one |
 | `ctl test` | Every test layer below that needs no browser |
 | `ctl e2e` | The end-to-end and parity checks, with a headless browser |
 | `ctl gate` | The gate: lint, typecheck, test, check. Green means all four passed |
@@ -82,12 +83,14 @@ The project-setup guide's four-rung floor, filled in for this repository:
 
 | Rung | Rust (`apps/agentks-engine`) | TypeScript (`apps/packages/agentks-ui`, `apps/agentks-client`, `apps/agentks-ssg`, `apps/agentks-homepage`) |
 |---|---|---|
-| lint | `cargo fmt --check`, `cargo clippy -D warnings` | The linter each app ships with |
-| typecheck | (the compiler) | `tsc --noEmit` per app. Today's engine has no typecheck script; the new repository has one from day one |
-| test | `cargo test` | Unit tests per package |
-| check | The theme contract, the release contract, `agentks check` on `docs/` | The purity check on the shared package (below) |
+| lint | `cargo fmt --check`, `cargo clippy -D warnings` | oxlint, reading each app's `.oxlintrc.json` |
+| typecheck | `cargo check --workspace --all-targets` | `tsc --noEmit` per app. A Next app runs `next typegen && tsc --noEmit`, because Next generates the files its `next-env.d.ts` imports |
+| test | `cargo test`, the theme contract check, the migration chain test | `bun test` per app |
+| check | The crate layer check, the release contract, `agentks check` on `docs/` | The purity check on the shared package (below) |
 
 Every rung exits 0 only when its rule was proved. A skipped rung is red, not green.
+
+`next build` runs in `ctl build`, not in the gate. The ladder's `build` rung is not listed yet, so the gate does not build the homepage.
 
 ## 05 Test layers
 
@@ -129,4 +132,4 @@ Every rung exits 0 only when its rule was proved. A skipped rung is red, not gre
 
 ## 08 Open
 
-- Which UI framework the client and the shared package use, which decides the component-test and purity-check tools. See [open questions and risks](../01_overview/05_open-questions-and-risks.md).
+- The component-test and purity-check tools for Preact, the chosen UI framework ([shared UI package](../03_frontend/01_shared-ui-package.md), section 07).

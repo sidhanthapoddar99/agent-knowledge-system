@@ -141,7 +141,7 @@ A teammate who clones the project gets the same commits: `agentks start` or `age
 1. The user updates the binary (automatic updates, or `agentks update`).
 2. `agentks start` hits the version gate: the content's `engine_version` is below the new floor. The error names `agentks migrate`, and the mise pin for staying on the old version. The gate never needs a download.
 3. The user runs `agentks migrate`. It refuses to run on a git tree with uncommitted changes.
-4. The runner reads the content version and its own, lists the docs migrations in that range, and downloads them from the official repository at the binary's own release tag. It checks that the script runtime (uv for Python or bun for JavaScript) is present, and prints how to get it if not.
+4. The runner reads the content version and its own, lists the docs migrations in that range, and downloads them from the official repository at the binary's own release tag. It checks that uv, the scripts' runtime, is present, and prints how to get it if not.
 5. For each script, in version order: detect, dry run, show the result, migrate, re-detect. A zero-hit detect is a passed check.
 6. It checks every pinned library's `engine` range at once and lists every mismatch, suggesting `agentks install --update` or a mise pin.
 7. It bumps `engine_version` in `site.yaml` only after the whole chain passes, and reports anything left.

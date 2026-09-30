@@ -1,6 +1,6 @@
 ---
 title: "Phase 1: rendering"
-status: open
+status: in-progress
 outcome: "The Rust engine and client render this repository's docs and tracker"
 notes: "Starts when [the foundation](./10_foundation.md) is green"
 who: "claude"

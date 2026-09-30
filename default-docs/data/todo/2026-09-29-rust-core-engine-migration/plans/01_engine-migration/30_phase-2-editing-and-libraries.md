@@ -1,6 +1,6 @@
 ---
 title: "Phase 2: editing, the dev toolbar and libraries"
-status: open
+status: in-progress
 outcome: "People edit in place; projects pull library elements through dep.yaml and dep.lock"
 notes: "Starts when [Phase 1](./20_phase-1-rendering.md) renders with parity"
 who: "claude"

@@ -38,7 +38,7 @@ none
 
 # 03 References
 
-**Where:** main repository — server in `apps/agentks-engine/` (sync module), client in `apps/agentks-client/src/editor/` and the dev toolbar.
+**Where:** main repository — server in `apps/agentks-engine/` (`agentks-sync`), client in `apps/agentks-client/src/editor/` and the dev toolbar.
 
 **Read first:**
 - [Sync engine and server, section 06](../../notes/02_engine/04_sync-engine-and-server.md) — presence uses Yjs awareness; names typed by visitors.

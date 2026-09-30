@@ -1,6 +1,6 @@
 ---
 title: "Site index — one view of the project: entries, URLs, folder hashes, references"
-status: open
+status: in-progress
 ---
 
 Every derived value comes from one index of the whole project, built at start-up by walking every section once. It answers "which entry is at this path or URL", "what are this folder's ordered children", "did anything under this folder change", and "which pages link to or embed this file". It is also the file-to-URL map the link resolver reads ([020/30](../020_content-contract/30_links-and-urls.md)), and the registry the knowledge-graph issue planned. Its data structure is [open question 07](../../notes/01_overview/05_open-questions-and-risks.md); this leaf builds the proposed one, measures it, and records the decision.

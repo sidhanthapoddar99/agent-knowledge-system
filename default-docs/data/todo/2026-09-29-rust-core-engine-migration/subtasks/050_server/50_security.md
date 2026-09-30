@@ -1,6 +1,6 @@
 ---
 title: "Security — localhost bind, Host and Origin checks, paths and the MIME boundary"
-status: open
+status: in-progress
 ---
 
 The local server can read the project and, from Phase 2, write it. Any web page the user opens in the same browser can try to talk to `localhost`. This leaf builds the rules that stop that: bind to loopback only, refuse requests whose `Host` or `Origin` is not the server's own, keep every file access inside allowed roots, serve HTML only where HTML is expected, and send safe headers. Network access in share mode changes the bind and adds access keys ([060/50](../060_collaboration/50_network-exposure-and-tls.md)); it relaxes nothing else.
@@ -27,17 +27,24 @@ The local server can read the project and, from Phase 2, write it. Any web page 
 - A review pass with the `/security-review` checklist over the server crate finds no open item.
 
 # 02 Status and Result
-Open. Not started.
+Review: every rule is built and has a test; the `/security-review` pass over the crate has not run.
 
 ## Result
-None yet.
+- `src/security.rs`: the middleware in front of every route refuses a `Host` other than `localhost`, `127.0.0.1` or `[::1]` with this port (`421`), limits the time to start an answer (30 s, `408`), and adds `X-Content-Type-Options: nosniff`, `Referrer-Policy: same-origin` and `Cross-Origin-Resource-Policy: same-origin` to every response, refusals included.
+- The WebSocket upgrade needs `Origin` equal to `http://<the Host it was sent to>`, or the explicit dev origin (`ServeOptions::dev_origin`); missing or other → `403`.
+- File routes decode the path once and refuse `.`, `..`, empty segments, a leading `/`, backslashes, NUL and non-UTF-8, then ask the engine (`file_for`), which resolves symlinks and checks the root.
+- `src/mime.rs`: one allowlist; `text/html` only on `/artifacts/`, `/_lib/` and the client's `index.html`; `.html` elsewhere is `text/plain`; unknown is `application/octet-stream` with `Content-Disposition: attachment`.
+- CSP by route (`file_csp`): the app gets same-origin scripts, the socket, `blob:` and `data:` where diagram tools need them, and `frame-ancestors 'self'`; `/_lib/` gets a sandbox; `/content-assets/` and `/assets/` get `sandbox; default-src 'none'` so an SVG or XML opened directly runs no script; artifacts get none, as today.
+- Bind is loopback only; `--share` returns `NotImplemented`.
+- Tests: `foreign_hosts_traversal_and_symlinks_are_refused` (evil `Host`, rebinding `Host`, six traversal forms, a symlink to `/etc`, foreign and missing `Origin`, loopback-only addresses, headers on refusals), plus unit tests of each rule.
+- Left: the review pass with the `/security-review` checklist; the per-address connection cap belongs to share mode (060/50).
 
 ## Agent log
 none
 
 # 03 References
 
-**Where:** main repository, `apps/agentks-engine/` — path and MIME rules in the core, middleware in `agentks-server`.
+**Where:** main repository, `apps/agentks-engine/` — the MIME allowlist and the middleware in `agentks-server`, path checks through `agentks_cache::fs::canonical_inside`.
 
 **Read first:**
 - [Sync engine and server, section 07 Security](../../notes/02_engine/04_sync-engine-and-server.md).
@@ -52,6 +59,8 @@ none
 - Decided (sidhantha, 2026-09-29): the server listens on localhost only by default; network access needs an access key ([project config](../../notes/02_engine/02_project-config.md)).
 - Proposed (claude, 2026-09-30), adopted here: the security table of the server note.
 - Decided (claude, 2026-09-30): library HTML under `/_lib/` is sandboxed with a CSP; the project's own artifacts are not ([library system](../../notes/04_ecosystem/01_library-system.md)).
+- Decided (claude, 2026-10-01): file responses from `/content-assets/` and `/assets/` carry a `sandbox` CSP, because an SVG served same-origin and opened directly runs script like HTML does; the header does not affect the file used as an `<img>`.
+- Decided (claude, 2026-10-01): the path decoding and refusal of `..` sit in the server, and canonicalisation and the root check in the site's `file_for`, because the server does not know the roots; both run on every file request.
 
 # 05 Notes & Analysis
 

@@ -8,7 +8,7 @@ The Rust engine and the CLI are one binary, and most of agentks's rules live in 
 # 01 To Do
 - [ ] **Test layout per crate.** Each crate in the workspace ([030/10](../030_rust-engine/10_workspace-and-crate-boundaries.md)) keeps unit tests next to the code (`#[cfg(test)] mod tests`) and its own small fixtures under `crates/<crate>/tests/fixtures/`.
     - [ ] Write the rule into `AGENTS.md` of the main repository: a new rule ships with a unit test in the same change.
-- [ ] **A shared test-support crate.** `apps/agentks-engine/crates/agentks-test-support/` (dev-dependency only, never linked into the binary):
+- [ ] **A shared test-support crate.** Package `agentks-test-support` in `apps/agentks-engine/crates/test-support/` (dev-dependency only, never linked into the binary). List it in `crates/LAYERS.toml`, because the layer check fails on a crate missing from it:
     - [ ] `TempProject` — builds a project folder in a temporary directory from a fixture folder or inline files (`config/site.yaml`, `config/dep.yaml`, sections), and sets `AGENTKS_HOME` to a sibling temporary folder.
     - [ ] `TempGitRepo` — initialises git in a `TempProject` and makes commits with fixed dates, for the tracker's git-derived dates.
     - [ ] `FakeLibraryRepo` — a local bare git repository with tags and a `manifest.json`, served by path (`git:` or `path` source), so library tests need no network.
@@ -36,7 +36,7 @@ The Rust engine and the CLI are one binary, and most of agentks's rules live in 
 
 ## Done when
 - `cargo test --workspace` passes on Linux, macOS and Windows in CI, with no network.
-- Deleting any single rule in `agentks-core` (try three at random) makes at least one test fail.
+- Deleting any single rule in `agentks-config`, `agentks-content` or `agentks-index` (try three at random) makes at least one test fail.
 - `cargo insta test --check` passes with no pending snapshots.
 
 # 02 Status and Result

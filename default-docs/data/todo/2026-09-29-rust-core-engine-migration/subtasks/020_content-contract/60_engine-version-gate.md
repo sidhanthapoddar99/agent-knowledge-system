@@ -1,17 +1,17 @@
 ---
 title: "Engine version gate — content outside the supported range never starts"
-status: open
+status: in-progress
 ---
 
 Content declares the format version it targets in `site.yaml → engine_version`. The engine supports a range: from a floor (the oldest content it reads unmigrated) up to its own version. Content outside that range is a hard error before anything is served, with a message that names the fix. Today's gate lives in [engine-version.ts](../../../../../../agent-ks-engine/src/loaders/engine-version.ts); this leaf moves it into the Rust core, where the server and every content-reading CLI command share it.
 
 # 01 To Do
-- [ ] **Two constants in `agentks-config`**: `ENGINE_VERSION` (from the crate version, one source) and `MIN_CONTENT_VERSION`. 1.0.0's floor is 1.0.0: every 0.x project migrates once.
-- [ ] **The check**, run by config loading on `agentks start`, `agentks build` and every CLI command that reads content: parse `engine_version` as x.y.z (missing means `0.0.0`); content below the floor or above the engine is a fatal error.
-- [ ] **The message** names the content version, the supported range, and both fixes: `agentks migrate` for content below the floor ([140/20](../140_versioning-and-migrations/20_migrate-command.md)), `agentks update` for content above the engine, and pinning an older release with mise for users who stay on 0.x ([140/70](../140_versioning-and-migrations/70_mise-pinning.md)).
+- [x] **Two constants in `agentks-config`**: `ENGINE_VERSION` (from the crate version, one source) and `MIN_CONTENT_VERSION`. 1.0.0's floor is 1.0.0: every 0.x project migrates once.
+- [x] **The check**, run by config loading on `agentks start`, `agentks build` and every CLI command that reads content: parse `engine_version` as x.y.z (missing means `0.0.0`); content below the floor or above the engine is a fatal error.
+- [x] **The message** names the content version, the supported range, and both fixes: `agentks migrate` for content below the floor ([140/20](../140_versioning-and-migrations/20_migrate-command.md)), `agentks update` for content above the engine, and pinning an older release with mise for users who stay on 0.x ([140/70](../140_versioning-and-migrations/70_mise-pinning.md)).
 - [ ] **Commands that must work outside the range**: `help`, `--version`, `update`, `migrate`, `docs`, `init`. Each is tested against an out-of-range fixture.
-- [ ] **The version scheme** stated by position, carried from today's comment: X is reserved (0 beta, 1 production), Y moves for major upgrades, Z for small additions and fixes. The floor moves only on breaking changes.
-- [ ] **Tests**: below the floor, at the floor, at the engine, above the engine, missing, malformed (`"1.0"`, `"v1.0.0"`): each gives the expected outcome and message.
+- [x] **The version scheme** stated by position, carried from today's comment: X is reserved (0 beta, 1 production), Y moves for major upgrades, Z for small additions and fixes. The floor moves only on breaking changes.
+- [x] **Tests**: below the floor, at the floor, at the engine, above the engine, missing, malformed (`"1.0"`, `"v1.0.0"`): each gives the expected outcome and message.
 
 ## Guardrails
 - The gate lives in the binary and never depends on a download. Only migration scripts are downloaded.
@@ -23,10 +23,14 @@ Content declares the format version it targets in `site.yaml → engine_version`
 - `agentks migrate --help` and `agentks --version` work on that same project.
 
 # 02 Status and Result
-Open. Not started.
+In progress. The gate and its messages are built and tested in `agentks-config`. Left: the CLI wiring, so `help`, `--version`, `update`, `migrate`, `docs` and `init` work outside the range (each tested on an out-of-range fixture), and `agentks start` on a 0.x project stopping before it binds a port.
 
 ## Result
-None yet.
+- All code is in the main repo's `apps/agentks-engine/crates/config/` (worktree branch `wave2/config`). Tests: `cargo test -p agentks-config`, 27 tests (15 unit, 12 integration in `tests/load.rs`), about 0.02 s to run. `./ctl gate` green on 2026-10-01.
+- `check_version`, `VersionRange::contains`, and the `ConfigError::Unsupported` message (`src/gate.rs`): the content version, the range, and the fix (`agentks migrate` below the floor, `agentks update` above the engine, a mise pin for either). A missing `engine_version` says so.
+- `load` runs the gate right after reading `engine_version`, before any other check, so a 0.x project sees only the migration message. `read_content_version` reads the version without the gate, for `migrate` and `update`.
+- `ENGINE_VERSION` comes from `agentks-core` (the workspace version, 1.0.0); `MIN_CONTENT_VERSION` is 1.0.0. The version scheme by position is in the `MIN_CONTENT_VERSION` doc comment.
+- Tests: below the floor, at the floor, at the engine, above, missing, and malformed (`"1.0"`, `"v1.0.0"`, unquoted `1.0`) in `src/gate.rs` and `tests/load.rs`.
 
 ## Agent log
 none
@@ -38,9 +42,13 @@ none
 - **Unblocks:** [140/00 versioning and migrations](../140_versioning-and-migrations/00_overview.md).
 
 # 04 Decisions
+- Decided (claude, under sidhantha's delegation, 2026-10-01): the workspace version is 1.0.0, the version being built, and the content floor is 1.0.0. A 0.1.0 engine accepted no content at all. Nothing is tagged until [the release stage](../../plans/01_engine-migration/40_release-1-0-0.md).
 - Decided (sidhantha, 2026-09-29): forced migrations; older versions pinned with mise.
 - Decided (sidhantha, 2026-09-30): 1.0.0 ships after Phases 1 and 2; its floor is 1.0.0 ([05/03](../../notes/05_delivery/03_versioning-and-migrations.md)).
+- Decided (claude, 2026-10-01): the gate runs before every other config check, as today's engine does, because a 0.x `site.yaml` still carries removed keys and the migration message must be the only thing the user sees.
+- Decided (claude, 2026-10-01): a malformed `engine_version` is a `ConfigError::Invalid` with kind `engine-version-invalid` and a line, not `Unsupported`, because the gate cannot compare a value it cannot read.
 
 # 05 Notes & Analysis
 ## Watch out
 - Keep `ENGINE_VERSION` derived from `CARGO_PKG_VERSION` of one crate, so the binary's `--version`, the gate and the release tag cannot disagree.
+- The range is empty today: the workspace version is 0.1.0 and `MIN_CONTENT_VERSION` is 1.0.0, both as designed (`crates/config/src/gate.rs`, `crates/core/src/version.rs`). So no content passes the gate yet. Decide, and record here, whether to bump the workspace to 1.0.0 early or to give development builds a rule for reading 1.0.0 content.

@@ -35,7 +35,7 @@ none
 
 # 03 References
 
-**Where:** main repository — server shapes in the sync module of `apps/agentks-engine/`, client bindings in `apps/agentks-client/src/editor/`.
+**Where:** main repository — server shapes in `agentks-sync` in `apps/agentks-engine/`, client bindings in `apps/agentks-client/src/editor/`.
 
 **Read first:**
 - [Editor engines, section 08 Diagram editors](../../notes/03_frontend/03_editor-engines.md).

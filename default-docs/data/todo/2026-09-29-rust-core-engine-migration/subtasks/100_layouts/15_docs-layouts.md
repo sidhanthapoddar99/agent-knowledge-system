@@ -1,6 +1,6 @@
 ---
 title: "Docs layouts: default and compact"
-status: open
+status: in-progress
 ---
 
 Most pages are docs pages, so the docs layout is the first real layout and the one parity is measured on first. `@docs/default` has the sidebar tree, the body, the outline and prev/next pagination; `@docs/compact` drops the sidebar for a wider body. This leaf rebuilds both from today's Astro components as pure components fed by the `docs` page data, the section's sidebar tree and the manifest.

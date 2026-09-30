@@ -1,6 +1,6 @@
 ---
 title: "Layouts — group index"
-status: open
+status: in-progress
 ---
 
 This group rebuilds every built-in layout as components in the shared UI package `apps/packages/agentks-ui`, one leaf per layout kind. A layout takes one typed page-data object from Rust and draws it; it computes nothing. The same components draw the local client and, in Phase 3, the published site. Custom user layouts are gone: branding is CSS only, through the theme contract and documented hooks. The new output may differ from today's only by small visual improvements — nothing drastic — and route and content parity with today's engine is the acceptance test ([170/20](../170_testing/20_route-and-content-parity.md)).
@@ -9,7 +9,7 @@ This group rebuilds every built-in layout as components in the shared UI package
 
 | Leaf | Status | Delivers | Source it absorbs |
 |---|---|---|---|
-| [100/10 Theme contract and CSS](./10_theme-contract-and-css.md) | open | The contract, the built-in theme, `@layer` order, hooks, the contract check | — |
+| [100/10 Theme contract and CSS](./10_theme-contract-and-css.md) | in-progress | The contract, the built-in theme, `@layer` order, hooks, the contract check | — |
 | [100/15 Docs layouts](./15_docs-layouts.md) | open | `@docs/default`, `@docs/compact`: sidebar, body, outline, pagination, breadcrumbs | — |
 | [100/20 Blog layouts](./20_blog-layouts.md) | open | `@blog/default` index and post, pagination, tags, authors | [2025-06-25-blog-testing-polish](../../../2025-06-25-blog-testing-polish/issue.md) |
 | [100/25 Issues layouts](./25_issues-layouts.md) | open | Tracker index, issue detail, sub-document pages, the guide panel | the demo issue as fixture |
@@ -40,7 +40,7 @@ This group rebuilds every built-in layout as components in the shared UI package
 - Leaves 60, 65 and 70 are scheduled or closed by the plan.
 
 # 02 Status and Result
-Open. Not started.
+In progress. 10 is in progress; the rest are open.
 
 ## Result
 None yet.

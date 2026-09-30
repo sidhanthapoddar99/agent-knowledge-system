@@ -1,6 +1,6 @@
 ---
 title: "Document cache by location — the project key and relative-path addressing"
-status: open
+status: review
 ---
 
 Several projects live on one machine, and each runs its own server. Every cache, every running-server record, every stable port and every browser storage name must say which project it belongs to, and must never be mixed up with another project's. This leaf defines the **project key** and how cached documents are addressed inside it: by path relative to the project root, with content hashes deciding freshness. It also decides what happens when a project or a file moves.
@@ -25,10 +25,15 @@ Several projects live on one machine, and each runs its own server. Every cache,
 - No absolute path appears in any `/api` response for a fixture project (a test greps every response for the fixture's absolute root).
 
 # 02 Status and Result
-Open. Not started.
+Review. The cache crate's part is built: the project identity and machine settings.
 
 ## Result
-None yet.
+Where: the main repository, `apps/agentks-engine/crates/cache/` (branch `wave2/cache`). Tests: `cargo test -p agentks-cache`, 36 tests in 0.06 s; `./ctl gate` green.
+
+- `project_identity(config_dir)` in `settings.rs`: resolves symlinks, then calls core's `ProjectKey::from_config_dir`; on failure it falls back to the absolute path and sets `not_canonical` for the caller to log. A symlinked and a real path give one key (tested).
+- `MachineSettings::load(home)`: reads `~/.agentks/settings.json` `{"cache":{"memory_mb":N}}`; unknown keys come back as warnings; a known key with a bad value is an error.
+- The page's own path is part of `render_key` (tested).
+- Left for other crates: the manifest's `project.key` (api and site), relative-path addressing in the index, and the no-absolute-path test over `/api` responses (server).
 
 ## Agent log
 none
@@ -49,6 +54,9 @@ none
 # 04 Decisions
 - Decided (claude, 2026-09-30): each project keeps a stable port, and every browser storage name also carries the project key ([server note](../../notes/02_engine/04_sync-engine-and-server.md), [client note](../../notes/03_frontend/02_client-application.md)).
 - Decided (claude, 2026-09-30): the key is 16 hex characters of BLAKE3 over the canonical config path; the page's own path is part of its render key.
+- Decided (claude, 2026-10-01): `project_identity` lives in the cache crate, because core may do no I/O and the cache crate is the lowest layer that may; every caller (server, CLI, run records, ports) goes through it.
+- Decided (claude, 2026-10-01): machine settings are read by `agentks_cache::MachineSettings`; other groups add their keys to the same type, so one reader warns about unknown keys.
+- Decided (claude, 2026-10-01): case-insensitive file systems are not normalised beyond what `canonicalize` does; noted as a follow-up for macOS.
 
 # 05 Notes & Analysis
 

@@ -21,7 +21,7 @@ Live documents sync over the same `/api` WebSocket as everything else, in binary
 - [ ] **Role enforcement:** updates from a `read` connection are dropped and answered once with an error; awareness from `read` connections is allowed (they can be seen).
 - [ ] **Fan-out:** an update from one connection is applied to the server document and forwarded to every other joined connection. Bound each connection's queue as in [050/20](../050_server/20_websocket-api.md); on overflow force a resync for that document.
 - [ ] **Reconnect:** a client that reconnects re-joins with its epoch. Same epoch → normal step 1/2 exchange sends only what is missing. Different epoch → discard and apply unsaved text as a diff.
-- [ ] **Protocol version:** the `hello` exchange's `protocol` number covers this framing ([140/50](../140_versioning-and-migrations/50_protocol-version-handshake.md)). A framing change bumps it.
+- [ ] **Version:** the `hello` exchange's `api_version` covers this framing too; there is no separate sync number ([140/50](../140_versioning-and-migrations/50_protocol-version-handshake.md)). A framing change bumps it.
 - [ ] **Client adapter:** a small TypeScript provider in the client (replacing today's `yjs-client-v2.ts`) that speaks this framing; built with [110/40](../110_editing/40_save-path-and-sync.md).
 
 ## Guardrails
@@ -44,7 +44,7 @@ none
 
 # 03 References
 
-**Where:** main repository — server in `apps/agentks-engine/` (sync module), client provider in `apps/agentks-client/src/editor/`.
+**Where:** main repository — server in `apps/agentks-engine/` (`agentks-sync`), client provider in `apps/agentks-client/src/editor/`.
 
 **Read first:**
 - [Sync engine and server, sections 03 and 06](../../notes/02_engine/04_sync-engine-and-server.md) — "binary frames for sync updates, JSON for awareness"; this leaf moves awareness into binary frames too, because the Yjs awareness protocol is binary.

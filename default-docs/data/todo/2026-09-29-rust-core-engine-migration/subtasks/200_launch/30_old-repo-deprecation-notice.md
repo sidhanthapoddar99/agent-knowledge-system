@@ -62,4 +62,4 @@ none
 # 05 Notes & Analysis
 
 ## Watch out
-- The notes planned a transfer to neuralabshq for GitHub's redirects. The new repository already takes that name, so there is no redirect: the banner and the description are the only signposts. Make them impossible to miss.
+- The notes planned a transfer to NeuraLabsHQ for GitHub's redirects. The new repository already takes that name, so there is no redirect: the banner and the description are the only signposts. Make them impossible to miss.

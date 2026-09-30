@@ -1,6 +1,6 @@
 ---
 title: "HTTP and routes — axum, the route table and the embedded client"
-status: open
+status: in-progress
 ---
 
 The server answers every HTTP request of a project: the client app at any page path, the client's own files, the compiled theme CSS, the project's assets, artifacts and library elements. This leaf builds the axum application and its route table, serves the client bundle embedded in the binary, and serves files from disk with correct types and cache headers. The WebSocket at `/api` is [050/20](./20_websocket-api.md); the safety rules every route obeys are [050/50](./50_security.md).
@@ -40,17 +40,23 @@ The server answers every HTTP request of a project: the client app at any page p
 - The binary serves the client with no files on disk besides the project (run it from an empty temp folder with `--config-dir`).
 
 # 02 Status and Result
-Open. Not started.
+In progress: every route is built and tested; left is including the Vite build in the binary, which waits for the client app (080/70).
 
 ## Result
-None yet.
+- The route table in `src/http.rs`: `/api` (WebSocket, and the `426` probe without an upgrade), `/theme.<hex>.css` (immutable; another hash is `404`), `/client/*` (immutable), `/assets/*`, `/content-assets/*`, `/artifacts/*` (all `no-cache` + ETag), `/_lib/*` (`501` with the library CSP until 120/50), `/manifest.webmanifest` and `/sw.js` (`no-cache`), and `index.html` with `200` for every other path. Only `GET` and `HEAD`; other methods get `405`.
+- Reserved prefixes come from `agentks_core::RESERVED_SEGMENTS` and `RESERVED_ROOT_FILES`, the one constant the manifest builder also uses. A reserved prefix without a file (`/assets`, `/api/x`) is a real `404`.
+- `src/files.rs`: files streamed in 64 KB chunks, one `Range` (`206`, `416`), `If-Range`, ETag from the BLAKE3 content hash (cached per path by length and time, and dropped by the watcher on every event), `304` on `If-None-Match`.
+- `src/client.rs`: `ClientBundle` with pre-compressed forms, served by `Accept-Encoding` (brotli, gzip, then plain). `ClientBundle::embedded()` returns development mode until 080/70 fills it: no `/client/*` and no `index.html`, and the hello says `client_build: "dev"`.
+- Graceful shutdown: `ServerHandle::shutdown()`.
+- Tests: `tests/server.rs` `every_route_answers_with_its_type_and_cache_rule` and `development_mode_serves_no_client`, on a real localhost socket with a hand-built backend.
+- Left: include the Vite build at compile time (080/70), then the "empty temp folder" check of Done when.
 
 ## Agent log
 none
 
 # 03 References
 
-**Where:** main repository, `apps/agentks-engine/crates/agentks-server/`.
+**Where:** main repository, `apps/agentks-engine/crates/server/`.
 
 **Read first:**
 - [Sync engine and server, sections 01, 02 and 07](../../notes/02_engine/04_sync-engine-and-server.md) — serving by state, routes, security.
@@ -66,6 +72,10 @@ none
 - Decided (sidhantha, 2026-09-29): the frontend bundle is embedded in the binary.
 - Proposed (claude, 2026-09-30), adopted here: the route table and the `.html` boundary of the server note.
 - Decided (claude, 2026-09-30): the health probe is `GET /api` without upgrade, answering `426` with the version and project key.
+- Decided (claude, 2026-10-01): the server reaches the engine only through a `Backend` trait in `agentks-server`, which `Site` implements, because `Site` cannot be constructed yet and the transport must be testable with a hand-built backend; the trait is also the seam for any later embedder.
+- Decided (claude, 2026-10-01): every non-`/api` path goes through one dispatch function that reads the raw URL path, because axum's path extractors decode, and a file route must decode exactly once.
+- Decided (claude, 2026-10-01): the theme URL is `/theme.<64 hex digits>.css` (`Hash::to_hex`, no `b3:`), and a hash that is not the current theme's is `404`, because answering an old immutable URL with today's CSS would poison browser caches.
+- Decided (claude, 2026-10-01): with no embedded client the server answers page paths with a plain `404` that names the Vite dev server, because serving nothing silently would look like a broken app.
 
 # 05 Notes & Analysis
 

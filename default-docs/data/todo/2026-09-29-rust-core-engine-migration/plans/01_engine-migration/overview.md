@@ -18,7 +18,7 @@ The order in which the migration runs, from empty repositories to the archived o
 - [ ] [Stage 90: switch-over and archival](./90_archival.md) (launch step 6)
 
 # 02 Status and Result
-Stage 10 is in progress: the three repositories exist and are being initialised. Nothing else has started.
+Stage 10 is in progress: wave 1 landed on 2026-09-30 (see [stage 10](./10_foundation.md)). Wave 2 builds the engine crates, the client and the remaining foundation items in parallel.
 
 # 03 References
 - [Issue](../../issue.md), [the launch order](../../comments/002_2026-09-30_launch-order.md)

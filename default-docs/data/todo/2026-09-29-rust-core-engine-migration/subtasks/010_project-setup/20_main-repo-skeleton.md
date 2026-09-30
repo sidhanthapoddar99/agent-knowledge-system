@@ -10,7 +10,7 @@ The main repository needs one fixed tree before any code lands, so every agent w
 - [ ] **Create the apps with role names:**
     - [ ] `apps/agentks-engine/` — Rust. A Cargo workspace inside the app (`Cargo.toml` at the app root, `crates/` below), plus `migrations/docs/`, `migrations/library/`, `release-notes/`, `clippy.toml`, `rust-toolchain.toml` (from [30](./30_toolchain-pins.md)). The crate list is [030/10](../030_rust-engine/10_workspace-and-crate-boundaries.md)'s; this leaf creates only an `agentks-cli` crate whose `main` prints the version, so the build and gate have something to run.
     - [ ] `apps/packages/agentks-ui/` — the shared UI package: its own `package.json` (`private: true`, `exports` pointing at `src/`), `tsconfig.json`, lint config, `src/index.ts`.
-    - [ ] `apps/agentks-client/` — Vite app: `package.json`, `vite.config.ts`, `index.html`, `src/main.ts`. Depends on the UI package by path: `"@agentks/ui": "file:../packages/agentks-ui"`.
+    - [ ] `apps/agentks-client/` — Vite app: `package.json`, `vite.config.ts`, `index.html`, `src/main.ts`. Depends on the UI package by path: `"@agentks/ui": "link:../packages/agentks-ui"`.
     - [ ] `apps/agentks-ssg/` — the static renderer run by `agentks build`: `package.json`, `src/render.ts`. Same path dependency on the UI package.
     - [ ] `apps/agentks-homepage/` — a placeholder `README.md` only. [190/00 homepage](../190_homepage/00_overview.md) creates the app.
 - [ ] **`docs/`** — an agentks project: `docs/config/` with `site.yaml`, `navbar.yaml`, `footer.yaml`, an empty `dep.yaml` (`libraries: {}`), and `docs/data/`. Empty sections only; content comes from [180/00 documentation](../180_documentation/00_overview.md).
@@ -41,7 +41,7 @@ agent-knowledge-system/
 ```
 
 ## Guardrails
-- **No JavaScript workspace.** No root `package.json`, no `bun.lock` at the root or in `apps/` or `apps/packages/`. Each app and the package own their manifest and lock (project-setup `01_layout.md`). The UI package is linked with a `file:` dependency.
+- **No JavaScript workspace.** No root `package.json`, no `bun.lock` at the root or in `apps/` or `apps/packages/`. Each app and the package own their manifest and lock (project-setup `01_layout.md`). The apps consume the UI package with a `link:` dependency (project-setup `04_stack.md`).
 - **The Cargo workspace lives inside `apps/agentks-engine/`**, not at the repository root.
 - **`ctl` is the only executable at the root**; `.mise.toml` puts the root on `PATH`.
 - **Only `AGENTS.md`**; no `CLAUDE.md`.
@@ -53,13 +53,13 @@ agent-knowledge-system/
 - `ctl check` reports no placeholder `<version>` and no workspace manifest.
 
 # 02 Status and Result
-In progress. The engine half exists; the client half waits for the UI framework decision ([080/10](../080_ui-and-client/10_ui-framework-decision.md)).
+In progress. The engine half exists. The client half can start: [080/10](../080_ui-and-client/10_ui-framework-decision.md) chose Preact 11 and is in review.
 
 ## Result
 - The project-setup shape: `ctl`, `scripts/` (common, config, build, test, gate), `.mise.toml`, `.env.template`, `.gitignore`, `data/` and `logs/` with their own ignore files, `AGENTS.md`, `README.md`, `LICENSE`, `.github/workflows/gate.yml`.
 - `apps/agentks-engine`: a Cargo workspace (Rust 1.98.1, edition 2024) with `agentks-core` and the `agentks` binary. `ctl build` writes `data/builds/agentks`; `agentks --version` prints `agentks 0.1.0`.
 - `./ctl setup` and `./ctl gate` exit 0 locally and in CI.
-- Left: `apps/agentks-client` and `apps/packages/agentks-ui` (after 080/10), and the client build check in Done when.
+- Left: `apps/agentks-client` and `apps/packages/agentks-ui`, and the client build check in Done when.
 
 ## Agent log
 none

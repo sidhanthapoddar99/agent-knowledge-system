@@ -1,6 +1,6 @@
 ---
 title: "In-memory cache — least-recently-used, with a byte budget"
-status: open
+status: review
 ---
 
 The engine keeps hot derived values in memory so a page view costs a map lookup, not a render. A large tracker has thousands of pages, and a long-running server must not grow without bound. This leaf builds one in-memory cache, shared by every connection and every user of a project's server, that evicts the least recently used entries once a byte budget is reached.
@@ -28,10 +28,14 @@ The engine keeps hot derived values in memory so a page view costs a map lookup,
 - A soak test on a generated 5,000-page project, browsing every page twice, keeps the process's resident memory under budget plus a fixed overhead ([170/40](../170_testing/40_performance-budget.md) sets the number).
 
 # 02 Status and Result
-Open. Not started.
+Review. The in-memory cache is built and tested.
 
 ## Result
-None yet.
+Where: the main repository, `apps/agentks-engine/crates/cache/` (branch `wave2/cache`). Tests: `cargo test -p agentks-cache`, 36 tests in 0.06 s; `./ctl gate` green.
+
+- `MemoryCache` in `memory.rs`: `with_budget`, `get`, `insert`, `set_resident` / `resident`, `get_or_insert_with` (single flight), `clear`, `metrics`. `DEFAULT_MEMORY_BUDGET` is 256 MB; `MachineSettings` reads `cache.memory_mb`.
+- Tests: the cache stays under budget and evicts the least recently used first; a handed-out value survives eviction; resident slots are never evicted; 50 concurrent requests for one missing key run exactly one render; a failed render is not shared; one miss then one hit.
+- Left: filling from the build cache before rendering is the site crate's orchestration (it holds both caches); the 5,000-page soak test belongs to 170/40.
 
 ## Agent log
 none
@@ -52,6 +56,11 @@ none
 - Decided (claude, 2026-09-30): cached values are the serialised response bytes, held behind reference-counted handles.
 - Decided (claude, 2026-09-30): the index, manifest, CSS and active-branch git dates are always resident; everything else is evictable.
 - Proposed (claude, 2026-09-30): a 256 MB default budget, set per machine.
+- Decided (claude, 2026-10-01): no LRU crate: a `HashMap` plus a `BTreeMap` of use ticks under one mutex, with hit, miss and eviction counters as atomics, because the render runs on the blocking pool (so moka's async machinery buys nothing) and it avoids a dependency.
+- Decided (claude, 2026-10-01): single flight blocks on a mutex and condition variable instead of shared futures, because 030/90 puts rendering on blocking threads; a failed or panicking render is never shared, and one waiter takes over and renders again.
+- Decided (claude, 2026-10-01): always-resident values sit in named slots (`set_resident("manifest", key, bytes)`), one value per slot, outside the budget, because each is replaced as a whole when it changes and a slot drops the old value without a scan.
+- Decided (claude, 2026-10-01): a value larger than the whole budget is not stored (keeping it would evict everything); single-flight waiters still receive it.
+- Decided (claude, 2026-10-01): `clear()` drops evictable entries and keeps resident slots; there is no `drop_prefix(project)`, because one server process serves one project, so the whole cache is that project's.
 
 # 05 Notes & Analysis
 

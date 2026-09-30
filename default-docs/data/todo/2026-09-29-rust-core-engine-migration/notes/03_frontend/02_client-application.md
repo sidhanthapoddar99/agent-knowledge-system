@@ -27,6 +27,9 @@ title: "The client application: agentks-client"
 - Decided (sidhantha, 2026-09-29): the router uses real URL paths.
 - Decided (sidhantha, 2026-09-30): the client is mobile friendly and PWA friendly.
 - Decided (sidhantha, 2026-09-30): the client is fully client-rendered, and its layouts come from `apps/packages/agentks-ui`.
+- Decided (claude, under sidhantha's delegation, 2026-09-30): the client is written in Preact 11, with a small manifest-driven router of our own ([080/10](../../subtasks/080_ui-and-client/10_ui-framework-decision.md); [the shared UI package](./01_shared-ui-package.md) section 07).
+- Decided (claude, 2026-09-30): the client sends `hello` first, with `api_version` and `client_build`, and the server decides whether the client must reload ([030/80](../../subtasks/030_rust-engine/80_page-data-interface.md)).
+- Decided (claude, under sidhantha's delegation, 2026-09-30): an installed PWA with the server off shows cached pages read-only, clearly labelled ([090/30](../../subtasks/090_frontend-performance/30_service-worker-and-offline.md)).
 
 # 05 Notes & Analysis
 
@@ -64,7 +67,7 @@ The two Phase 2 folders exist only here. The static renderer never imports them,
 
 ## 03 Routing
 
-**Routes come from Rust.** On connect, the client receives the site manifest: every URL with its page kind, the layout named in config and its content hash. The router looks a path up in that manifest. It never works a URL out from a file name, a slug or an `NN_` prefix.
+**Routes come from Rust.** On connect, the client receives the site manifest: every URL with its section, the data key that answers it and that key's hash, and every section with its layout. The router looks a path up in that manifest. It never works a URL out from a file name, a slug or an `NN_` prefix. The router is our own, about 60 lines, because the manifest is the route table ([the shared UI package](./01_shared-ui-package.md) section 07).
 
 | Path | Handled by |
 |---|---|
@@ -90,23 +93,26 @@ The reserved prefixes stay reserved: no content page may take a URL under them. 
 
 ## 04 The WebSocket client
 
-One connection per tab, to `/api` on the same host. The message format belongs to [the sync engine and server](../02_engine/04_sync-engine-and-server.md). The client's side of it:
+One connection per tab, to `/api` on the same host. The message format belongs to [the sync engine and server](../02_engine/04_sync-engine-and-server.md); the shapes are in the engine's `crates/api/src/messages/`. The client's side of it:
 
-| Direction | Message (working names) | Client's use |
+| Direction | Message | Client's use |
 |---|---|---|
-| Pull | `manifest` | On connect and after a reconnect |
-| Pull | `page`, `sidebar`, `issues.index` | Through `DataSource`, when the cache does not have the current hash |
+| First frame | `hello`, with `api_version` and `client_build` | Opens every connection. The server answers with its own `hello` before anything else |
+| Pull | `get` with `what: manifest` | On connect and after a reconnect |
+| Pull | `get` with `what` set to `page`, `sidebar`, `issues-index`, `issue`, `blog-index` or `custom`, and `have` set to the hash the client holds | Through `DataSource`. The reply says `unchanged` when the hash still matches |
 | Pull | `render` | Phase 2: the live preview asks Rust to render a block ([editor engines](./03_editor-engines.md)) |
 | Pull | `save` | Phase 2: write an edited file |
-| Push | `changed` | A list of paths and new hashes after files change on disk |
-| Push | `error` | A content error for the current page; the dev toolbar shows the full list |
+| Push | `changed` | The new hash of every changed data key, the keys removed, and the new URL of a moved page |
+| Push | `errors` | The current content problems of one file; the dev toolbar shows the full list |
+| Push | `fatal` | A config change broke loading. It carries every problem |
+| Push | `resync` | The server dropped pushes for this client: fetch the manifest again and compare hashes |
 | Push | presence and sync | The multi-user stage |
 
-Rules for the client (claude, proposed):
+Rules for the client:
 
 - **Requests carry an id**, and the answer echoes it, so several requests can be in flight on one connection.
-- **Reconnect with backoff.** When the server stops, the client shows a small "disconnected" notice and keeps the current page on screen. On reconnect it fetches the manifest again and refreshes whatever changed while it was away.
-- **Version handshake.** The first answer includes the engine version. If a tab was opened before the binary was upgraded, the versions differ and the client reloads itself, so an old client never talks to a new engine.
+- **Reconnect with backoff** (claude, proposed). When the server stops, the client shows a small "disconnected" notice and keeps the current page on screen. On reconnect it fetches the manifest again and refreshes whatever changed while it was away.
+- **Version handshake.** The client's first frame is `hello` with its `api_version` and `client_build`. The server compares both with its own and answers `ok: false, reload: true` on a mismatch; a `dev` build is accepted in development. The client then reloads itself, so an old client never talks to a new engine.
 
 ## 05 The browser cache
 
@@ -130,10 +136,10 @@ Pages not on screen are fetched again only when visited.
 
 ## 07 Drawing a page
 
-1. The router finds the URL in the manifest and reads its kind and layout.
-2. `DataSource.page(url)` returns the data, from the cache or over the socket.
-3. The layout component draws it, with the body HTML Rust rendered.
-4. `islands.ts` mounts the islands marked in the body and in the layout (diagrams, artifact frames, filters, the video player).
+1. The router finds the URL in the manifest and reads its section and data key.
+2. `DataSource` returns the data for that key (`page(url)` for a page), from the cache or over the socket.
+3. The layout component draws it, with the body HTML Rust rendered. The layout's interactive parts, such as the filters and the sidebar, render live as components.
+4. `islands.ts` mounts the islands Rust marked in the body (diagrams, embedded artifacts, code copy buttons) from the package's island registry.
 
 Heavy libraries (Mermaid, Excalidraw, the draw.io viewer) load only on pages that use them, as today.
 
@@ -142,7 +148,7 @@ Heavy libraries (Mermaid, Excalidraw, the draw.io viewer) load only on pages tha
 - **Mobile friendly.** Every layout works on a phone: the sidebar becomes a drawer, tables scroll sideways, touch targets are large enough. The breakpoints from [2025-06-25-sizing-and-responsive](../../../2025-06-25-sizing-and-responsive/issue.md) become acceptance checks.
 - **Installable.** A web app manifest and a service worker let a browser install the local site as an app window. A service worker is allowed on `localhost`, which browsers treat as a secure origin.
 - **The service worker caches the app shell only**: `index.html`, the scripts and the CSS files of this client version. Page data stays in IndexedDB, where the hash logic above controls it (claude, proposed).
-- **When the server is not running**, the installed app opens with the cached shell, shows that the server is off, and can show pages already in the cache, read-only (claude, proposed). It never pretends to be up to date.
+- **When the server is not running**, the installed app opens with the cached shell, shows that the server is off, and can show pages already in the cache, read-only. It never pretends to be up to date.
 
 ## 09 Embedded in the binary
 
@@ -177,10 +183,3 @@ The engine in dev mode serves only data and files, never the client, so there is
 - **Localhost only by default.** The server listens on localhost, so the client and, in Phase 2, editing are not reachable from the network. Network access needs `--share` and an access key ([the sync engine and server](../02_engine/04_sync-engine-and-server.md)).
 - **Artifacts run in iframes**, as today, so their scripts cannot reach the app around them. Which files Rust serves as HTML stays a deliberate list; it is the security boundary the prior audit named.
 - **Page bodies are the project's own content**, rendered by Rust, and are placed in the page as HTML. The client never inserts HTML that came from anywhere else.
-
-## 12 Open
-
-- The UI framework, which also decides the router ([open question 12](../01_overview/05_open-questions-and-risks.md)).
-- An installed PWA with the server off shows cached pages read-only, clearly labelled. Decided (claude, under sidhantha's delegation, 2026-09-30) in [090/30](../../subtasks/090_frontend-performance/30_service-worker-and-offline.md).
-
-The open one is tracked in [open questions and risks](../01_overview/05_open-questions-and-risks.md).

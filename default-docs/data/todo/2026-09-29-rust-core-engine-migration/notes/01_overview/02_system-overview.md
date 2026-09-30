@@ -28,7 +28,7 @@ agentks is a **local tool** for writing and reading agent-native documentation: 
 - Decided (sidhantha, 2026-09-30): the first Rust release is 1.0.0, and it ships after Phases 1 and 2.
 - Decided (sidhantha, 2026-09-30): agentks runs in three states: developing agentks, using agentks, and publishing with `agentks build`.
 - Decided (sidhantha, 2026-09-30): three Phase 1 safeguards keep Phase 3 cheap: one data interface, real URL paths, and pure layouts in a shared package.
-- Decided (sidhantha, 2026-09-30): the project moves to the neuralabshq organisation, at agentks.neuralabs.org.
+- Decided (sidhantha, 2026-09-30): the project moves to the NeuraLabsHQ organisation, at agentks.neuralabs.org.
 
 # 05 Notes & Analysis
 
@@ -136,4 +136,4 @@ Narrated video pages are tracked in their own issue, [2026-09-29-narrated-video-
 
 ## 09 Open
 
-The UI framework, the index data structure, which dev tools return and the structure model are still open. See [01/05 Open questions and risks](./05_open-questions-and-risks.md).
+The index data structure, which dev tools return and the structure model are still open. See [01/05 Open questions and risks](./05_open-questions-and-risks.md).

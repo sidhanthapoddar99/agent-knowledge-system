@@ -1,6 +1,6 @@
 ---
 title: "Cache metrics — hit rate, size and evictions, where people can see them"
-status: open
+status: review
 ---
 
 A cache nobody can observe is a cache nobody can trust or tune. This leaf counts what each cache layer does — hits, misses, evictions, bytes, render and walk times — and exposes the numbers to the dev toolbar's cache view and to `agentks cache status`. It replaces today's cache inspector, which reads the Astro engine's in-memory caches.
@@ -22,10 +22,14 @@ A cache nobody can observe is a cache nobody can trust or tune. This leaf counts
 - A benchmark shows no measurable slowdown of a cached page request with metrics on (within noise).
 
 # 02 Status and Result
-Open. Not started.
+Review. The counters and timings in the cache crate are built and tested.
 
 ## Result
-None yet.
+Where: the main repository, `apps/agentks-engine/crates/cache/` (branch `wave2/cache`). Tests: `cargo test -p agentks-cache`, 36 tests in 0.06 s; `./ctl gate` green.
+
+- `LayerMetrics` (memory: hits, misses, evictions, entries, bytes), `DiskMetrics` (build cache: hits, misses, rejected, writes, bytes written) and `TimingWindow` (rolling window of 256 timings: count, last, p50, p95), all serialisable. Counters are atomics outside the cache lock.
+- Tests: one miss then one hit; evictions after exceeding a small budget; rejected entries counted; the timing window keeps the newest values and correct percentiles.
+- Left for other crates: the `/api` snapshot request and its access rule (server, 050/20), `cache status --json` including a running server's snapshot (CLI), the shutdown log line, git walk timings (git crate).
 
 ## Agent log
 none
@@ -44,8 +48,11 @@ none
 
 # 04 Decisions
 - Decided (claude, 2026-09-30): cache stats are a `/api` request, visible to localhost and `edit` keys only.
+- Decided (claude, 2026-10-01): the build cache has its own `DiskMetrics` rather than reusing `LayerMetrics`, because "entries held now" and "evictions" have no cheap meaning on disk and a rejected-entry count does.
+- Decided (claude, 2026-10-01): timings are a bounded window of the newest 256 values, sorted on read, so recording is one push and a snapshot is exact.
 
 # 05 Notes & Analysis
 
 ## Watch out
-- Which dev tools come back is still open question 04 ([open questions](../../notes/01_overview/05_open-questions-and-risks.md)). Build the data source either way; the CLI uses it even if the toolbar view is dropped.
+- The dev toolbar keeps a Cache view ([03/05 Dev toolbar](../../notes/03_frontend/05_dev-toolbar.md), decided under question 04). The CLI reads the same data source.
+- In the built `/api` types, `get` is the cacheable pull: every `what` is a data key with a hash, which pushes name and the browser caches ([050/20](../050_server/20_websocket-api.md)). A stats snapshot has no content hash, so `cache-stats` may fit better as its own `op`, like `render`. Settle the shape with 050/20 when building it, and record the decision here.

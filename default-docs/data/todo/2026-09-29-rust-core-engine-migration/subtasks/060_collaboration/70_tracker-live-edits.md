@@ -40,7 +40,7 @@ none
 
 # 03 References
 
-**Where:** main repository — writers in the core of `apps/agentks-engine/`, operations in the server crate, the client helper in `apps/agentks-client/src/data/`.
+**Where:** main repository — writers in `agentks-content` under `apps/agentks-engine/`, operations in the server crate, the client helper in `apps/agentks-client/src/data/`.
 
 **Read first:**
 - [Rust CLI, section 05](../../notes/02_engine/05_rust-cli.md) — the tracker writers carried over.

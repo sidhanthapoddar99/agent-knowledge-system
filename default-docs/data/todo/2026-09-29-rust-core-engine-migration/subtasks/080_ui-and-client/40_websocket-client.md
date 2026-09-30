@@ -1,18 +1,19 @@
 ---
 title: "The WebSocket client and DataSource over /api"
-status: open
+status: in-progress
 ---
 
 The client talks to the Rust engine over exactly one WebSocket per tab, at `/api`. This leaf builds that connection and the `DataSource` implementation on top of it: requests with ids, the `have` hash so unchanged data is never resent, pushes, reconnect with backoff, and the version handshake that reloads a tab opened before the binary was upgraded. Caching in IndexedDB is [090/20](../090_frontend-performance/20_data-cache-indexeddb.md); this leaf calls it through a small interface.
 
 # 01 To Do
-- [ ] **`src/data/socket.ts`** — one connection to `ws(s)://<same host>/api`.
-    - [ ] Requests: `{ id, op: "get", what, params, have }`. `id` is a per-connection counter; the reply echoes it. Several requests may be in flight.
-    - [ ] Replies: `{ id, ok: true, hash, data }`, `{ id, ok: true, hash, unchanged: true }`, or `{ id, ok: false, error: { type, message } }`. Reject the pending promise with a typed error on `ok: false`.
-    - [ ] Pushes (no `id`): `changed`, `errors`, `fatal`; later `presence` and binary `yrs` frames for [060_collaboration](../060_collaboration/00_overview.md). Expose a typed event emitter; unknown push types are logged in dev and ignored.
+- [ ] **`src/data/socket.ts`** — one connection to `ws(s)://<same host>/api`. The message shapes are the generated types from `api.schema.json` ([080/20](./20_shared-ui-package.md)); the Rust source is `apps/agentks-engine/crates/api/src/messages/`, and `apps/agentks-engine/schema/fixtures/client-messages.json` and `server-messages.json` show every message.
+    - [ ] Hello first: on open, send `{ op: "hello", api_version, client_build }` and wait for the server's hello before any request.
+    - [ ] Requests: `{ id, op: "get", what, params, have }`. `id` is a per-connection counter; the reply echoes it. Several requests may be in flight. `render` (Phase 2) is its own `op` with `{ id, op: "render", params: { path, markdown } }`.
+    - [ ] Replies: `{ id, ok: true, hash, data }`, `{ id, ok: true, hash, unchanged: true }`, or `{ id, ok: false, error: { type, message, errors? } }`, where `type` is one of the closed `ReplyErrorKind` list. Reject the pending promise with a typed error on `ok: false`; `busy` may be retried.
+    - [ ] Pushes (no `id`): `changed` (with `removed` and `moved`), `errors`, `fatal` (with `errors`, a list), `resync`; later `presence` and binary `yrs` frames for [060_collaboration](../060_collaboration/00_overview.md). Expose a typed event emitter; unknown push types are logged in dev and ignored. On `resync`, refetch the manifest and compare hashes.
     - [ ] Timeouts: a request with no reply in 10 s rejects with `timeout`; the router shows a retry.
-- [ ] **Reconnect.** On close, show a small "disconnected" notice, keep the current page on screen, retry with exponential backoff (250 ms doubling to 5 s, with jitter). On reconnect, fetch the manifest again, compare hashes, refetch what the screen shows.
-- [ ] **Version handshake.** The manifest carries the engine version (and the protocol version from [140/50](../140_versioning-and-migrations/50_protocol-version-handshake.md)). If it differs from the version this client was built for, reload the tab once (guard against loops with a session flag) so an old client never talks to a new engine.
+- [ ] **Reconnect.** On close, show a small "disconnected" notice, keep the current page on screen, retry with exponential backoff (250 ms doubling to 5 s, with jitter). On reconnect, send the hello again, then fetch the manifest, compare hashes, refetch what the screen shows.
+- [ ] **Version handshake.** The server decides: it compares the hello's `api_version` and `client_build` with its own and answers `ok: false, reload: true` on a mismatch ([140/50](../140_versioning-and-migrations/50_protocol-version-handshake.md)). On `reload: true`, reload the tab once (guard against loops with a session flag) so an old client never talks to a new engine. The Vite dev server's client sends `client_build: "dev"`.
 - [ ] **`src/data/source.ts`** — `DataSource` over the socket:
     - [ ] Look in the cache by key (`page:<url>`, `sidebar:<section>`, …); send its hash as `have`.
     - [ ] `unchanged` → return the cached data; otherwise store the new data under its hash and return it.

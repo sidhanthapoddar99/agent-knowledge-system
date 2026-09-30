@@ -14,8 +14,8 @@ The default library lives in its own repository, `NeuraLabsHQ/agent-knowledge-sy
     - [x] `AGENTS.md` (the only instruction file; no `CLAUDE.md`), `README.md`, `LICENSE` (same licence as the main repository), `.gitignore`.
 - [x] **AGENTS.md.** Say what the repository is, the manifest rules from [120/30](./30_manifest-and-catalog.md), that one version covers the whole library, that `library.json` must never move, how to test locally (a project whose `dep.yaml` uses `path:` pointing at a checkout), and that library migrations are run by the owner with `agentks migrate --library .`.
 - [ ] **CI.** (Partly done: the workflow runs `scripts/check.py`, its tests and the tag check; the `agentks` steps wait for a binary.) A GitHub Actions workflow that installs the latest `agentks` build (a released binary, or the main repository's build artifact before 1.0.0) and runs `agentks check libraries` against a tiny test project that uses this repository through `path:`. It also validates `library.json` against its schema and checks every template with `agentks check config`.
-- [x] **Versioning.** Tags are the releases: `1.0.0` (or `v1.0.0`; pick one form and record it). `manifest.json → version` must equal the tag; CI fails a tag push where they differ.
-- [ ] **First tag.** Tag `1.0.0` when the icons ([120/70](./70_elements-icons.md)), frames ([120/75](./75_elements-frames-and-widgets.md)) and the default template ([120/85](./85_templates.md)) pass the end-to-end run in [170/30](../170_testing/30_end-to-end.md), alongside the engine's 1.0.0.
+- [x] **Versioning.** Tags are the releases, in the form `vX.Y.Z` (see Decisions). `manifest.json → version` must equal the tag; CI fails a tag push where they differ.
+- [ ] **First tag.** Tag `v1.0.0` when the icons ([120/70](./70_elements-icons.md)), frames ([120/75](./75_elements-frames-and-widgets.md)) and the default template ([120/85](./85_templates.md)) pass the end-to-end run in [170/30](../170_testing/30_end-to-end.md), alongside the engine's 1.0.0.
 - [ ] **Push** to `origin` (`git@github.com:NeuraLabsHQ/agent-knowledge-system-library.git`). The repository is private until the launch; making it public is part of [200/00 launch](../200_launch/00_overview.md).
 
 ## Guardrails
@@ -66,5 +66,5 @@ none
 
 # 05 Notes & Analysis
 ## Watch out
-- The notes write `neuralabshq/…`; the organisation is `NeuraLabsHQ`. Use the real casing in `library.json` and the binary's constants.
+- The organisation is `NeuraLabsHQ`. GitHub also accepts `neuralabshq`, but `library.json` and the binary's constants use the real casing.
 - Keep the whole repository small; each fetch is shallow but still downloads every file at that commit. Large binaries (videos, big images) do not belong here.

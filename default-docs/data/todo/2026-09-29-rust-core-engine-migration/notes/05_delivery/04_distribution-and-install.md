@@ -53,7 +53,7 @@ agentks releases **one thing: a compressed installer** per platform, published o
 
 | Item | Detail |
 |---|---|
-| Tag | `vX.Y.Z` on `neuralabshq/agent-knowledge-system`. The single product needs no tag namespace |
+| Tag | `vX.Y.Z` on `NeuraLabsHQ/agent-knowledge-system`. The single product needs no tag namespace |
 | Platforms | Linux x64 and ARM64, macOS Intel and Apple Silicon, Windows x64, as today |
 | Assets | One archive per platform (`agentks-<version>-<target>.tar.gz`, `.zip` on Windows), plus `SHA256SUMS` |
 | Notes | One release note per version in `apps/agentks-engine/release-notes/`, stating breaking changes and the migration to run |
@@ -67,7 +67,7 @@ The client and the static renderer are built in the same workflow run and embedd
 ```sh
 # Linux and macOS
 curl -fsSL https://agentks.neuralabs.org/install.sh | sh
-curl -fsSL https://github.com/neuralabshq/agent-knowledge-system/releases/latest/download/install.sh | sh
+curl -fsSL https://github.com/NeuraLabsHQ/agent-knowledge-system/releases/latest/download/install.sh | sh
 
 # Windows (PowerShell)
 irm https://agentks.neuralabs.org/install.ps1 | iex

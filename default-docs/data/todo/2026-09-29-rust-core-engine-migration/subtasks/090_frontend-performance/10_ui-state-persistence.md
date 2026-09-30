@@ -59,6 +59,7 @@ none
 # 04 Decisions
 - Decided (claude, 2026-09-30): UI state lives only in the browser, per person and per browser; the server never stores it ([the sync engine and server](../../notes/02_engine/04_sync-engine-and-server.md)).
 - Decided (claude, 2026-09-30): every browser storage key carries the project key ([the client](../../notes/03_frontend/02_client-application.md) section 05). This replaces the older idea of moving dev UI state server-side for isolation.
+- Decided (claude, 2026-10-01, with [190/40](../190_homepage/40_shared-look-with-docs.md)): the theme mode is the one exception to the project-key rule. It is stored under the unnamespaced key `theme`, as `light` or `dark`; no entry means follow the OS (the table's "system"). It is set as `data-theme` on `<html>` by a blocking script before first paint, and a `storage` listener applies a change made in another tab. This is because the mode must cross from the homepage at `/` to the docs at `/docs` on one origin, and the homepage has no project key; sharing it between projects on one port is harmless, since it is a person's preference, not project state. The homepage's `apps/agentks-homepage/src/lib/theme.ts` is the reference: its `resolveTheme` and boot script are tested against each other.
 
 # 05 Notes & Analysis
 ## 01 Value shape (carried over)
@@ -70,3 +71,4 @@ none
 ## Watch out
 - `<details>` toggle events fire asynchronously after a programmatic restore; today's code needs a suppress guard to avoid writing the restore back. The new sidebar will not be `<details>`-based necessarily, but any restore path must not write.
 - localStorage is synchronous and small (about 5 MB per origin); keep blobs tiny and never store page data here.
+- The homepage, on the same origin as the published docs, already stores the theme mode under the unnamespaced `theme` key (`light` or `dark`; no entry means follow the OS) and sets `data-theme` on `<html>`, as today's docs engine does (`apps/agentks-homepage/src/lib/theme.ts`). The `theme` row above would give the docs a different key. Decide the theme-mode key with [190/40 shared look](../190_homepage/40_shared-look-with-docs.md): keep it unnamespaced, which needs an exception to this leaf's guardrail that every key carries the project key, or 190/40 changes the homepage to read the namespaced key. Record the answer in both leaves.

@@ -30,7 +30,8 @@ title: "Sync engine and server: HTTP, the /api WebSocket and the watcher"
 - Decided (sidhantha, 2026-09-29): layouts and major data are cached in the browser, versioned by hash.
 - Decided (sidhantha, 2026-09-29): the audience is one or two developers at a time.
 - Proposed (claude, 2026-09-29): the server listens on localhost only from Phase 1; network access is an explicit opt-in that needs an access key.
-- Proposed (claude, 2026-09-30): the message protocol, the routes and the safety rules below.
+- Decided (claude, 2026-09-30): the `/api` messages of section 03, built as Rust types in `agentks-api`: the client's hello comes first, one `api_version` versions every message and shape, `render` is its own `op`, and request failures are a closed list ([030/80](../../subtasks/030_rust-engine/80_page-data-interface.md), [030/20](../../subtasks/030_rust-engine/20_error-model.md)).
+- Proposed (claude, 2026-09-30): the routes and the safety rules below.
 
 # 05 Notes & Analysis
 
@@ -57,14 +58,27 @@ title: "Sync engine and server: HTTP, the /api WebSocket and the watcher"
 
 **The `.html` boundary is explicit.** A file is served as `text/html` only from `/artifacts/` and `/_lib/`. Everywhere else, `.html` is served as plain text or refused. The MIME map is an allowlist; an unknown extension is served as `application/octet-stream` with `Content-Disposition: attachment`.
 
-## 03 The /api protocol (claude, proposed)
+## 03 The /api protocol
 
-Text frames carry JSON. Binary frames are reserved for `yrs` updates in the multi-user stage.
+Text frames carry JSON. Binary frames are reserved for `yrs` updates in the multi-user stage. The message types are Rust types in `apps/agentks-engine/crates/api/src/messages/`, and `apps/agentks-engine/schema/api.schema.json` is generated from them ([030/80](../../subtasks/030_rust-engine/80_page-data-interface.md)).
 
-**Requests from the client** carry an `id`; the reply echoes it.
+**Hello first.** The client's first frame is its hello. The server answers with its own hello before anything else. A connection whose first frame is not a hello is closed with code `4400`.
+
+```json
+{ "op": "hello", "api_version": 1, "client_build": "a1b2c3" }
+{ "op": "hello", "ok": true, "api_version": 1, "engine": "1.0.0", "project": "8c1f...", "role": "owner", "client_build": "a1b2c3" }
+{ "op": "hello", "ok": false, "api_version": 1, "engine": "1.0.0", "project": "8c1f...", "client_build": "d4e5f6", "reload": true }
+```
+
+- **`api_version`** is one number for the whole message set and every data shape. It goes up on any breaking change: a removed or renamed field or message, or a changed meaning. An added optional field is not breaking.
+- **`client_build`** is the hash of the client bundle. The server compares both values with its own. On a mismatch it answers `ok: false, reload: true`, and the client reloads itself. The Vite dev server's client sends `dev`, which the server accepts ([140/50](../../subtasks/140_versioning-and-migrations/50_protocol-version-handshake.md)).
+- **`role`** is `owner` for a localhost connection, or the access key's role (`edit`, `read`) in share mode. It is present when `ok` is true.
+
+**Requests** carry an `id`; the reply echoes it, possibly out of order. `get` is the cacheable pull: `what` names the data, `params` picks the item, and `have` is the hash the client already holds.
 
 ```json
 { "id": 7, "op": "get", "what": "page", "params": { "url": "/dev-docs/architecture/overview" }, "have": "b3:5f1c..." }
+{ "id": 9, "op": "render", "params": { "path": "data/dev-docs/01_intro.md", "markdown": "..." } }
 ```
 
 | `what` | `params` |
@@ -76,29 +90,34 @@ Text frames carry JSON. Binary frames are reserved for `yrs` updates in the mult
 | `issue` | `section`, `id` |
 | `blog-index` | `section` |
 | `custom` | `page` |
-| `render` (Phase 2) | `path`, `markdown` |
 
-`have` is the hash the client already holds. If it still matches, the reply says `"unchanged": true` and carries no data.
+Each `what` with its params is a data key, written as a string such as `page:/dev-docs/a` or `issue:todo/<id>`. Pushes name changed data by these keys, and the browser caches by them. An action has no hash to compare, so it is its own `op`, not a `what`. `render` (Phase 2) renders unsaved markdown for the live preview; `open`, `save` and the other editing requests are ops too (section 05).
 
 **Replies:**
 
 ```json
 { "id": 7, "ok": true, "hash": "b3:5f1c...", "data": { ... } }
-{ "id": 7, "ok": false, "error": { "type": "not-found", "message": "No page at /dev-docs/x" } }
+{ "id": 7, "ok": true, "hash": "b3:5f1c...", "unchanged": true }
+{ "id": 8, "ok": false, "error": { "type": "not-found", "message": "No page at /dev-docs/x." } }
 ```
+
+- When `have` still matches, the reply says `"unchanged": true` and carries no data.
+- A failed reply's `error` is `{ type, message, errors? }`. `type` comes from the closed `ReplyErrorKind` list: `not-found`, `invalid-request`, `forbidden`, `conflict`, `busy`, `fatal`, `internal`, `not-implemented`. `errors` holds the error records behind a `fatal` failure. A content problem never fails a request; it travels in the data's own `errors` ([the Rust engine](./03_rust-engine.md), section 08).
 
 **Pushes from the engine** carry no `id`:
 
 ```json
-{ "push": "changed", "hashes": { "page:/dev-docs/a": "b3:...", "sidebar:dev-docs": "b3:...", "manifest": "b3:..." }, "removed": ["page:/dev-docs/old"] }
+{ "push": "changed", "hashes": { "page:/dev-docs/a": "b3:...", "sidebar:dev-docs": "b3:...", "manifest": "b3:..." }, "removed": ["page:/dev-docs/old"], "moved": { "page:/dev-docs/old": "/dev-docs/new" } }
 { "push": "errors", "file": "data/dev-docs/01_x.md", "errors": [ ... ] }
-{ "push": "fatal", "error": { "type": "config", "message": "site.yaml: unknown alias @dat" } }
+{ "push": "fatal", "errors": [{ "file": "config/site.yaml", "line": 12, "type": "alias-unknown", "severity": "error", "message": "Unknown alias @dat.", "key": "pages.docs.data", "suggestion": "Did you mean @data?" }] }
+{ "push": "resync" }
 ```
 
-- **On connect**, the client asks for the manifest and compares its hashes with its cache. It refetches only what differs.
-- **On a change**, the engine pushes the new hashes of every affected key: the page, the pages that embed it, the section's sidebar, the tracker index, the manifest when config changed. The client refetches only keys it is showing or caching.
-- **`fatal`** covers a config edit that breaks loading. The server stays up and shows the error page until the config is fixed, instead of dying.
-- **Versioning.** The manifest carries the engine version. A client from another version reloads itself, which matters in state 1 when the engine is rebuilt.
+- **On connect**, after the hello, the client asks for the manifest and compares its hashes with its cache. It refetches only what differs.
+- **On a change**, the engine pushes the new hashes of every affected key: the page, the pages that embed it, the section's sidebar, the tracker index, the manifest when config changed. `removed` lists keys that no longer exist, and `moved` gives the new URL of a page whose file moved. The client refetches only keys it is showing or caching.
+- **`errors`** carries the current content problems of one file. An empty list means the file is clean now.
+- **`fatal`** covers a config edit that breaks loading, and carries every problem as an error record. The server stays up and keeps serving the last good config, and the client shows the errors until the config is fixed.
+- **`resync`** tells a client that the server dropped pushes for it, because its outgoing queue was full. The client refetches the manifest and compares hashes.
 
 ## 04 The watcher
 

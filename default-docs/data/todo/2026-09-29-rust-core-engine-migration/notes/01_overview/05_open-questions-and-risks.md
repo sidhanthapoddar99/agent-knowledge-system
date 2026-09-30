@@ -18,6 +18,7 @@ Two design questions are still open: the site index's data structure (07) and wh
 - Decided (claude, delegated by sidhantha, 2026-09-29): the new engine is proven by route parity, a rendered-content comparison in a headless browser, layout screenshots in light and dark mode, and the user's own use (question 06).
 - Decided (sidhantha, 2026-09-30): the UI framework must render the shared components to HTML at build time and support islands (a hard requirement on question 12).
 - Decided (claude, under sidhantha's delegation, 2026-09-30): the UI framework is Preact 11, with a small manifest-driven router of our own and islands hydrated one by one. The measured reasons are in [03/01 Shared UI package](../03_frontend/01_shared-ui-package.md) section 07 (question 12).
+- Decided (claude, under sidhantha's delegation, 2026-09-30): the `/api` message set, built as Rust types: the client's hello first, cacheable `get` pulls, `render` as its own request, and pushes of changed hashes, errors, `fatal` and `resync` ([02/04 Sync engine and server](../02_engine/04_sync-engine-and-server.md), section 03).
 - Decided (claude, under sidhantha's delegation, 2026-09-30): migration scripts are Python, run with `uv run` ([05/03](../05_delivery/03_versioning-and-migrations.md)).
 - Decided (claude, under sidhantha's delegation, 2026-09-30): the dev tools that come back are the ones [03/05 Dev toolbar](../03_frontend/05_dev-toolbar.md) recommends (question 04).
 - Decided (claude, under sidhantha's delegation, 2026-09-30): single-user diagram editing is part of Phase 2 ([03/03 Editor engines](../03_frontend/03_editor-engines.md)).
@@ -38,7 +39,6 @@ These sit in the component notes marked as proposals. Each needs a yes, a change
 
 | Area | Proposal | Owner note |
 |---|---|---|
-| Server | The `/api` message set: pulls (manifest, page, sidebar, issues index, render markdown) and pushes (changed hashes; later editing and presence) | [02/04 Sync engine and server](../02_engine/04_sync-engine-and-server.md) |
 | Server | Localhost only by default from Phase 1; network access only with `--share` and an access key | [02/04 Sync engine and server](../02_engine/04_sync-engine-and-server.md) |
 | Editing | A save carries the hash it started from; a changed file on disk is a conflict, not an overwrite | [03/03 Editor engines](../03_frontend/03_editor-engines.md) |
 | Cache | The engine version is part of the build cache key; a page's key includes the hashes of every file it embeds | [02/06 Machine home and build cache](../02_engine/06_machine-home-and-build-cache.md) |

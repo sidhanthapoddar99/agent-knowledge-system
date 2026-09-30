@@ -39,7 +39,7 @@ none
 
 # 03 References
 
-**Where:** main repository, `apps/agentks-engine/crates/agentks-cli/`.
+**Where:** main repository, `apps/agentks-engine/crates/cli/`.
 
 **Read first:**
 - [Rust CLI, sections 02 and 07](../../notes/02_engine/05_rust-cli.md) — server and project commands; runtimes each command needs.

@@ -13,6 +13,7 @@ agentks ships a **fixed set of built-in layouts**, one or more per content type,
 - [Project config](../02_engine/02_project-config.md) — `site.yaml`, where layouts and the theme are chosen.
 - [Versioning and migrations](../05_delivery/03_versioning-and-migrations.md) — the migration of custom layouts and of renamed hooks.
 - Today's theme contract: [theme.yaml](../../../../../../agent-ks-engine/src/styles/theme.yaml), the built-in theme's CSS in [the styles folder](../../../../../../agent-ks-engine/src/styles), [the theme CSS route](../../../../../../agent-ks-engine/src/pages/theme.css.ts), and [the contract check](../../../../../../scripts/checks/check-theme-contract.mjs).
+- The built-in theme in the new engine: `apps/agentks-engine/themes/` in the main repository, with `default/` (the theme), `examples/` (today's two user themes, as compiler test inputs), `README.md` (the contract rules and what the compiler must do) and `check-contract.ts`.
 - Today's layouts: [the layouts folder](../../../../../../agent-ks-engine/src/layouts), and [the file-type glyphs](../../../../../../agent-ks-engine/src/layouts/file-type-icons.ts).
 - Today's rules, carried over: [UX standards](../../../../dev-docs/05_architecture/05_layout-internals/08_ux-standards.md) and [the layout types](../../../../dev-docs/05_architecture/05_layout-internals/02_layout-types.md).
 - [2025-06-25-layouts-and-variations](../../../2025-06-25-layouts-and-variations/issue.md), [2026-04-10-new-layout-types](../../../2026-04-10-new-layout-types/issue.md) and [2025-06-25-sizing-and-responsive](../../../2025-06-25-sizing-and-responsive/issue.md) — paused issues that re-plan onto this note.
@@ -28,6 +29,7 @@ agentks ships a **fixed set of built-in layouts**, one or more per content type,
 - Decided (sidhantha, 2026-09-29): a GitHub issues layout, with machine-level GitHub sign-in, is a later stage.
 - Decided (sidhantha, 2026-09-29): the new engine's output may differ from today's only in small visual improvements. Nothing drastic.
 - Decided (sidhantha, 2026-09-30): the layouts live in the shared package `apps/packages/agentks-ui`, used by the local client and the static build.
+- Decided (claude, 2026-09-30): the built-in theme's files live in `apps/agentks-engine/themes/default/`, outside any crate, and its `theme.yaml` carries a `layers` map that puts each file in a cascade layer ([100/10](../../subtasks/100_layouts/10_theme-contract-and-css.md)).
 
 # 05 Notes & Analysis
 
@@ -63,7 +65,7 @@ The first-class page kinds keep their own views inside the sections they belong 
 - **A layout is a component in `agentks-ui`**, under `layouts/<type>/<style>/`, beside the parts it is made of. It takes one typed page-data object and draws it ([the shared UI package](./01_shared-ui-package.md)).
 - **It computes nothing.** Order, URLs, status categories, filter options, dates and sidebar trees arrive from Rust.
 - **It stays small.** The rule carries over: split a file past about 400 lines into parts.
-- **Its interactive parts are islands.** Each has its own mount script and its props as JSON, never whole-page hydration.
+- **Its interactive parts are islands.** Each is registered by name and hydrated on its own element from a JSON props tag, never as a whole page ([the shared UI package](./01_shared-ui-package.md) section 07).
 - **Its classes carry the layout's prefix**, so its CSS cannot reach another layout. This replaces Astro's scoped CSS, and the old gotcha with runtime-created elements goes away.
 
 ## 04 The theme contract, carried over
@@ -81,7 +83,7 @@ The rule for membership is today's, word for word in effect: **a variable is on 
 | Elements | `--spacing-xs` … `--spacing-3xl`, `--border-radius-sm/md/lg/full`, `--shadow-sm` … `--shadow-xl`, `--transition-fast/normal` |
 | Layout sizes | `--sidebar-width`, `--navbar-height`, `--outline-width`, `--max-width-primary/secondary` |
 
-The authoritative list is `theme.yaml`, carried into the new engine; the table is a map of it.
+The authoritative list is `apps/agentks-engine/themes/default/theme.yaml`; the table is a map of it.
 
 **Rules for every component** (unchanged):
 
@@ -90,7 +92,7 @@ The authoritative list is `theme.yaml`, carried into the new engine; the table i
 - Three chrome text tiers are the whole palette. Emphasis comes from weight, colour and position, not a fourth size.
 - `em` is allowed where a size is meant to follow the surrounding text, such as inline code in a heading.
 
-**The contract check carries over.** Today's check compares the contract with what the layouts read, in both directions. In the new repository it reads the component CSS of `agentks-ui` (claude, proposed: it becomes a test of that package, run on every change).
+**The contract check carries over, in two parts.** `apps/agentks-engine/themes/check-contract.ts` checks the built-in theme's files: every listed file exists, the theme declares every required variable, every variable it reads is declared, and each file sits in exactly one layer. It runs on bun, in the gate's test rung (`ctl test`). Today's check also compares the contract with what the layouts read, in both directions. In the new repository that part reads the component CSS of `agentks-ui` (claude, proposed: it becomes a test of that package, run on every change).
 
 **The artifacts skill keeps its inline copy** of the variable names, so artifacts written in `site` theme mode have the token names. Any change to the contract updates that copy in the same change.
 
@@ -98,19 +100,23 @@ The authoritative list is `theme.yaml`, carried into the new engine; the table i
 
 | Part | Lives in | Loaded how |
 |---|---|---|
-| The built-in theme: colours, fonts, elements, reset, markdown, breakpoints, and the base CSS of navbar, footer, docs and blog | The engine, versioned with it | Compiled by Rust into the project's theme CSS |
+| The built-in theme: colours, fonts, elements, reset, markdown, breakpoints, and the base CSS of navbar, footer, docs and blog | `apps/agentks-engine/themes/default/`, outside any crate, versioned with the engine | Embedded in the binary by the render crate's theme compiler, and compiled by Rust into the project's theme CSS |
 | Component CSS of the layouts and islands | `agentks-ui`, beside each component | Bundled into the client build, and into the static build's output |
-| The user's theme | The project, by default under `config/themes/<name>/` (claude, proposed; today `theme_paths` in `site.yaml`) | Compiled by Rust with the built-in theme, `extends` and `override_mode` as today |
+| The user's theme | The project, by default under `config/themes/<name>/` (claude, proposed; today `theme_paths` in `site.yaml`) | Compiled by Rust with the built-in theme, through `extends` and `override_mode` |
 
-**How Rust compiles it** (claude, proposed, following today's loader):
+**How Rust compiles it**, as `apps/agentks-engine/themes/README.md` sets out for the compiler ([030/85](../../subtasks/030_rust-engine/85_theme-css-compiler.md)):
 
 1. Read the active theme named in `site.yaml`, and follow its `extends` chain to the built-in theme.
-2. Merge parent then child, or replace when the theme says `override_mode: replace`.
-3. Check the result against the contract. A missing required variable is an error naming the variable and the theme.
-4. Cache the result per project, keyed by the hashes of its source files and the engine version.
-5. Serve it from one URL that carries the content hash, as today's `/theme.css` does, so a browser fetches it once and a change is a new URL. The static build writes the same file into its output.
+2. Read only the files each theme lists in `files`, in order. `@import` is not followed.
+3. Merge by `override_mode`, which has three values. `merge` (the default) takes the parent's files, then the child's. `override` takes the parent's files except any whose name the child also lists, then the child's. `replace` takes the child's files only.
+4. Check the result against the contract. A missing required variable is an error naming the variable and the theme.
+5. Wrap each file in its cascade layer (below).
+6. Cache the result per project, keyed by the hashes of its source files and the engine version.
+7. Serve it from one URL that carries the content hash, as today's `/theme.css` does, so a browser fetches it once and a change is a new URL. The static build writes the same file into its output.
 
-**The cascade order** (claude, proposed): reset, then theme variables, then element and markdown styles, then component CSS, then the user's overrides. CSS cascade layers (`@layer`) fix that order explicitly, so a user's rule wins over a component's rule of the same strength without `!important`.
+**The cascade order.** The stylesheet starts with `@layer reset, theme, elements, components, user;`. The built-in `theme.yaml` carries a `layers` map that puts each of its files in a layer: `reset` (reset.css), `theme` (color, font, element and breakpoints) and `elements` (markdown, navbar, footer, docs and blogs). Component CSS from `agentks-ui` goes in `components`, and every file of a user theme goes in `user`. So a user's rule wins over a built-in or component rule of the same strength without `!important`.
+
+`!important` works the other way round across layers: an `!important` declaration in an earlier layer beats one in a later layer. The built-in CSS has seven of them, six in markdown.css and one in navbar.css, and each beats a user's `!important` on the same property. No example theme uses `!important`.
 
 **Dark mode** stays a `data-theme` attribute on the root, with each theme declaring `supports_dark_mode`. Code highlighting uses CSS classes from Rust's highlighter, so light and dark code colours come from the theme too.
 
@@ -151,8 +157,7 @@ A built-in layout that shows the issues of a linked GitHub repository. The proje
 
 ## 10 Open
 
-- The UI framework the layouts are written in ([open question 12](../01_overview/05_open-questions-and-risks.md)).
 - Whether the structure, layout, theme and shell model from the Go issue is adopted (open question 08).
 - Where user themes live by default (section 05).
 
-All are tracked in [open questions and risks](../01_overview/05_open-questions-and-risks.md).
+Both are tracked in [open questions and risks](../01_overview/05_open-questions-and-risks.md).

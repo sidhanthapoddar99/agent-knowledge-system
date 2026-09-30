@@ -6,7 +6,7 @@ status: review
 Agents building artifacts and video scenes keep drawing the same icons (a server, a database, a browser, a user, a cloud) from scratch, which costs thousands of tokens and never looks the same twice. This leaf adds a first icon set to the default library, each icon an element with a description and tags so `agentks library find` surfaces it. When it is done, an agent asking for "server" gets `icons:server` in one command, and every icon renders cleanly in light and dark themes.
 
 # 01 To Do
-- [x] **Pick the set.** About 60 icons covering what technical docs draw most. Start from this list and extend where the docs in this repository show a need:
+- [x] **Pick the set.** 74 icons covering what technical docs draw most (see Decisions). Start from this list and extend where the docs in this repository show a need:
     - [x] Infrastructure: server, database, cache, queue, load-balancer, cloud, container, cluster, cdn, storage, network, firewall.
     - [x] Clients: browser, phone, laptop, desktop, terminal, api, webhook.
     - [x] People and roles: user, team, admin, agent (an AI agent), robot.

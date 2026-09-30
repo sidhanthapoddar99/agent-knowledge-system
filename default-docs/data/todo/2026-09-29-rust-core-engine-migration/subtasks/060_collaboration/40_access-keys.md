@@ -42,7 +42,7 @@ none
 
 # 03 References
 
-**Where:** main repository, `apps/agentks-engine/` — key store and checks in the server crate; commands in the CLI crate.
+**Where:** main repository, `apps/agentks-engine/` — the key store in `agentks-sync` (`crates/sync/src/keys.rs`), the checks in the server crate, the commands in the CLI crate.
 
 **Read first:**
 - [Sync engine and server, sections 06 and 07](../../notes/02_engine/04_sync-engine-and-server.md) — access keys, cookie swap, names, network access.
@@ -64,4 +64,5 @@ none
 Whether a key can expire, and the exact `share` command names, are open ([open questions and risks, section 03](../../notes/01_overview/05_open-questions-and-risks.md)). Build `expires` into the store shape as an optional field so adding it needs no format change.
 
 ## Watch out
+- The store types in `crates/sync/src/keys.rs` (`AccessKeys`, `KeyInfo`) have no serde derives yet. Add them together with the store's `format` field, set from `agentks_core::formats::SHARE_KEYS_FORMAT`.
 - `SameSite=Strict` cookies are not sent on the first navigation from another site's link. The `?key=` link still works because the key is in the URL; an existing session opened from an outside link shows the prompt once. Acceptable; document it.

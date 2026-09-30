@@ -32,7 +32,7 @@ none
 
 # 03 References
 
-**Where:** main repository, `apps/agentks-engine/crates/agentks-cli/`.
+**Where:** main repository, `apps/agentks-engine/crates/cli/`.
 
 **Read first:**
 - [Sync engine and server, section 06](../../notes/02_engine/04_sync-engine-and-server.md) — "the owner runs a command such as `agentks share`".

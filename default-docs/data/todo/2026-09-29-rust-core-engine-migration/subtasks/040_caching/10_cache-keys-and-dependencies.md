@@ -1,6 +1,6 @@
 ---
 title: "Cache keys and dependencies — one key function for every derived value"
-status: open
+status: in-progress
 ---
 
 Every cached value needs a key that changes exactly when the value would change. Today's engine got this wrong for `[[path]]` embeds: a page that inlined a file did not know it depended on that file, so the page went stale until a restart ([2026-08-07](../../../2026-08-07-content-embed-cache-dependencies/issue.md)). This leaf builds **one key function**, in the shared core, that every cache layer and the browser use. The key covers the engine version, the page's own bytes, the hashes of every file it embeds, and a fingerprint of only the settings that shape it.
@@ -27,17 +27,21 @@ Every cached value needs a key that changes exactly when the value would change.
 - A manual probe with the server running reproduces the 2026-08-07 case: edit an embedded `.mmd`, and the open page updates with no reload and no restart.
 
 # 02 Status and Result
-Open. Not started.
+In progress. The key functions are built and tested; the dependency record and change propagation are left for the index and site crates.
 
 ## Result
-None yet.
+Where: the main repository, `apps/agentks-engine/crates/cache/` (branch `wave2/cache`). Tests: `cargo test -p agentks-cache`, 36 tests in 0.06 s; `./ctl gate` green.
+
+- `keys.rs`: `render_key` (now also carries `PAGES_FORMAT`), `sidebar_key`, `issues_index_key`, `manifest_key`, `theme_key` (carries `CSS_FORMAT`), a new `highlight_key` (carries `HIGHLIGHT_FORMAT`), `folder_hash` (Merkle roll-up of sorted `(name, hash)` pairs), `absent_file_hash` (the sentinel for a missing embed) and `settings_fingerprint`.
+- Tests cover: embed order does not change the key; embed content, a dropped embed, an absent-then-present embed, the page's bytes, its path, its settings and the engine each change it; folder hashes ignore read order; a theme input change moves only the theme key.
+- Left, outside the cache crate: storing each page's dependencies and file and folder hashes in the index entry (030/40, calling `folder_hash`), reporting embeds at both embed sites (030/50), change propagation from watcher events to affected keys (index and site), and the manual probe with a running server.
 
 ## Agent log
 none
 
 # 03 References
 
-**Where:** main repository, `apps/agentks-engine/`, the core crate (hashing, keys) with the cache crate using it. Crate names are fixed by [030/10](../030_rust-engine/10_workspace-and-crate-boundaries.md).
+**Where:** main repository, `apps/agentks-engine/`: hashing in `agentks-core` (`Hash`), the key functions in the cache crate (`crates/cache/src/keys.rs`). Crate names are fixed by [030/10](../030_rust-engine/10_workspace-and-crate-boundaries.md).
 
 **Read first:**
 - [The Rust engine, sections 03 and 06](../../notes/02_engine/03_rust-engine.md) — hashes, the render hash, the caching layers.
@@ -52,6 +56,9 @@ none
 - Decided (sidhantha, 2026-09-29): layouts and major data are cached in the browser, versioned by hash ([server note](../../notes/02_engine/04_sync-engine-and-server.md)).
 - Proposed (claude, 2026-09-30), adopted here: BLAKE3 content hashes; a page hash includes the hashes of its embedded files ([Rust engine](../../notes/02_engine/03_rust-engine.md)).
 - Decided (claude, 2026-09-30): the key also carries a settings fingerprint limited to the settings that shape the value, so a config edit invalidates only what it affects.
+- Decided (claude, 2026-10-01): the render, theme and highlight keys carry their store's format version, because the browser caches by the same hash and must miss too when a data format changes without a version change.
+- Decided (claude, 2026-10-01): a missing embed is recorded with `keys::absent_file_hash()`, a domain-separated hash no real file can have (not even an empty one), because the key must change when the file appears.
+- Decided (claude, 2026-10-01): `keys::folder_hash` sorts children by name before hashing, so the order the index reads a folder in never changes the hash.
 
 # 05 Notes & Analysis
 

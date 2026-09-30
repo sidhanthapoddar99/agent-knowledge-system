@@ -48,6 +48,7 @@ none
 **Unblocks:** [140/20](./20_migrate-command.md), [140/50](./50_protocol-version-handshake.md), [160/10](../160_distribution/10_installer-and-release-workflow.md), [120/20](../120_libraries/20_fetch-and-resolve.md) (the running version for engine ranges).
 
 # 04 Decisions
+- Decided (claude, under sidhantha's delegation, 2026-10-01): during development the engine already carries 1.0.0 (main repository commit on 2026-10-01); the tag waits for the release stage.
 - Decided (sidhantha, 2026-09-30): the only release is the compressed installer; the plugins and default library version on their own ([versioning and migrations](../../notes/05_delivery/03_versioning-and-migrations.md)).
 - Decided (sidhantha, 2026-09-30): 1.0.0 is the first Rust release.
 

@@ -41,7 +41,7 @@ none
 
 # 03 References
 
-**Where the work happens:** the main repository, `/home/sid/projects/06_02_NeuraLabs/agent-knowledge-system`, crate `apps/agentks-engine/crates/agentks-server/` (name fixed by [030/10](../030_rust-engine/10_workspace-and-crate-boundaries.md)).
+**Where the work happens:** the main repository, `/home/sid/projects/06_02_NeuraLabs/agent-knowledge-system`, crate `agentks-server` in `apps/agentks-engine/crates/server/` ([030/10](../030_rust-engine/10_workspace-and-crate-boundaries.md) fixes the crates and their folders).
 
 **Read first (every leaf):**
 - [Sync engine and server](../../notes/02_engine/04_sync-engine-and-server.md) — the design this group builds.

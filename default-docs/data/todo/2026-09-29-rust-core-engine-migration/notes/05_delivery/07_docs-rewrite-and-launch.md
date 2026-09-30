@@ -2,7 +2,7 @@
 title: "The docs rewrite and the launch"
 ---
 
-The launch runs in **six steps**, in this order: build the Rust engine, the client and the default library, and test them end to end; get the Neuralabs plugin marketplace running; build the homepage; rewrite the docs completely; host the website at agentks.neuralabs.org; archive this repository. The engine comes first and the website last. Until the new docs are fully migrated and usable, **this repository's docs and skills stay in use**. The skills for the new version are written before the switch. Then **everything switches at once**: new docs, new skills, new installer. Nobody is ever caught between two half-finished systems. The tracker moves into the new repository earlier, during step 1, once the new engine and client render it correctly. This repository stops building once the new release is final, and is transferred to neuralabshq and archived at the end, so its old links keep redirecting.
+The launch runs in **six steps**, in this order: build the Rust engine, the client and the default library, and test them end to end; get the Neuralabs plugin marketplace running; build the homepage; rewrite the docs completely; host the website at agentks.neuralabs.org; archive this repository. The engine comes first and the website last. Until the new docs are fully migrated and usable, **this repository's docs and skills stay in use**. The skills for the new version are written before the switch. Then **everything switches at once**: new docs, new skills, new installer. Nobody is ever caught between two half-finished systems. The tracker moves into the new repository earlier, during step 1, once the new engine and client render it correctly. This repository stops building once the new release is final, and is transferred to NeuraLabsHQ and archived at the end, so its old links keep redirecting.
 
 # 03 References
 
@@ -26,7 +26,7 @@ The launch runs in **six steps**, in this order: build the Rust engine, the clie
 - Decided (sidhantha, 2026-09-30): the tracker moves into `docs/` of the new repository once the Rust engine and the client work.
 - Decided (sidhantha, 2026-09-30): the first Rust release is 1.0.0, after Phases 1 and 2.
 - Decided (sidhantha, 2026-09-30): this repository stops building once the new release is final, and is archived after it. Existing users get an option to update.
-- Decided (sidhantha, 2026-09-30): the marketplace moves to `neuralabshq/neuralabs-plugin-marketplace`, with two agentks plugins: one for using agentks, one for building and hosting libraries.
+- Decided (sidhantha, 2026-09-30): the marketplace moves to `NeuraLabsHQ/neuralabs-plugin-marketplace`, with two agentks plugins: one for using agentks, one for building and hosting libraries.
 - Decided (sidhantha, 2026-09-30): no subtasks yet; the notes are kept consistent first.
 - Proposed (claude, 2026-09-30), not yet agreed: the switch-over checklist in section 04, the docs structure in section 03, and the retirement steps in section 05.
 
@@ -37,7 +37,7 @@ The launch runs in **six steps**, in this order: build the Rust engine, the clie
 | Step | Work | Needs | Done when |
 |---|---|---|---|
 | 1 | Build the Rust engine, the client and the default library, and test them end to end | — | Phases 1 and 2 pass their checks ([development workflow](./05_development-workflow-and-testing.md)); the default library is tagged; 1.0.0 can be released |
-| 2 | Get the Neuralabs plugin marketplace running, with the two agentks plugins | Step 1, so the skills describe the real tool | Both plugins install from `neuralabshq/neuralabs-plugin-marketplace` and their skills match 1.0.0 |
+| 2 | Get the Neuralabs plugin marketplace running, with the two agentks plugins | Step 1, so the skills describe the real tool | Both plugins install from `NeuraLabsHQ/neuralabs-plugin-marketplace` and their skills match 1.0.0 |
 | 3 | The agentks homepage | — | `apps/agentks-homepage` exports a complete static site |
 | 4 | The docs migration: a complete rewrite | Step 1 | Every page in the new `docs/` is written for the new version and renders correctly with the new engine |
 | 5 | Hosting: agentks.neuralabs.org, `/` and `/docs` | Steps 3 and 4, and Phase 3's `agentks build` | The site is live; `agentks docs` ships |

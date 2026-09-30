@@ -84,11 +84,11 @@ flowchart LR
 | **Rust core** | `apps/agentks-engine` | Rust | Config loading, path resolution, the site index, file watching, markdown parsing and body HTML, the issue tracker, every derived value, theme CSS compilation, library resolution, the version gate |
 | **CLI** | `apps/agentks-engine` (same crate set, same binary) | Rust | Every command: queries, checks, scaffolding, `move`, `start`/`stop`/`ps`, `install`, `library`, `migrate`, `build`, `docs`, `cache` |
 | **Server** | `apps/agentks-engine` | Rust (axum) | The `/api` WebSocket, the embedded client, project assets, artifacts, library element files; localhost by default |
-| **Shared UI package** | `apps/packages/agentks-ui` | TypeScript (framework open) | Every layout and component: data in, markup out |
+| **Shared UI package** | `apps/packages/agentks-ui` | TypeScript, Preact | Every layout and component: data in, markup out |
 | **Client app** | `apps/agentks-client` | TypeScript, Vite | Routing with real paths, the data interface over the WebSocket, the browser cache, diagram and video rendering, the Phase 2 editor and dev toolbar |
 | **Static renderer** | `apps/agentks-ssg` | TypeScript | Renders every page to HTML once for `agentks build`, with islands |
 | **Migration scripts** | `apps/agentks-engine/migrations/{docs,library}` | Python, run with `uv run` | Format changes between versions; downloaded, never compiled in |
-| **Default library and catalog** | `neuralabshq/agent-knowledge-system-library` | files + `manifest.json` + `library.json` | Reusable elements, templates, the list `agentks library` offers |
+| **Default library and catalog** | `NeuraLabsHQ/agent-knowledge-system-library` | files + `manifest.json` + `library.json` | Reusable elements, templates, the list `agentks library` offers |
 | **AI plugins** | `plugins/` | Markdown skills | The `agentks` usage plugin and the library-development plugin |
 | **Homepage** | `apps/agentks-homepage` | Next.js static export | agentks.neuralabs.org `/` |
 
@@ -210,4 +210,4 @@ The rejected options (templates, WASM, HTMX, SSR, a JSON API in production, Rust
 
 ## 10 Open
 
-The UI framework for the shared package (question 12) and the index data structure (question 07) shape this architecture's internals. See [01/05 Open questions and risks](./05_open-questions-and-risks.md).
+The index data structure (question 07) shapes this architecture's internals. See [01/05 Open questions and risks](./05_open-questions-and-risks.md). The UI framework (question 12) is Preact 11 ([03/01 Shared UI package](../03_frontend/01_shared-ui-package.md), section 07).

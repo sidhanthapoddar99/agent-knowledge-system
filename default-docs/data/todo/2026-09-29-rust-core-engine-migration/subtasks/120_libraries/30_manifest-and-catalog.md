@@ -1,6 +1,6 @@
 ---
 title: "manifest.json, local libraries and the library.json catalog"
-status: open
+status: review
 ---
 
 Each library describes itself in a `manifest.json` at its root: a name, one x.y.z version, the engine versions it supports, and its **elements** (the files it offers, each with a description and tags). A local library may skip the manifest, and then each child of its folder is an element. `library.json` is the catalog of libraries and templates agentks offers for quick install. This leaf builds the types, loaders and checks for all three, and the element lookup (`alias:element` → a file) that pages and the `/_lib/` route use.
@@ -36,10 +36,13 @@ Each library describes itself in a `manifest.json` at its root: a name, one x.y.
 - A page naming `icons:does-not-exist` fails the check with the page, line and name.
 
 # 02 Status and Result
-Open. Not started.
+Review. Manifests, local libraries, the element lookup, the catalog and find are built in `agentks-library`; the CLI "Done when" checks run once 120/40 wires the commands.
 
 ## Result
-None yet.
+- **Code:** `crates/library/src/manifest.rs` (`parse_manifest`, file containment, engine range, tag warning), `src/libraries.rs` (`Libraries::load`, `load_with`, `resolve`, `resolve_sibling`, `find`, `manifests`, `elements`), `src/local_lib.rs` (manifest-less folders), `src/elements.rs` (`ElementRef`, `ElementFile`), `src/catalog.rs` (`parse_catalog`, `Catalog::search`, `fetch_catalog`, `fetch_catalog_from`), `src/search.rs` (the one ranking: name 3, tag 2, description 1).
+- Unknown alias or element → `LibraryError::ElementUnknown` naming `agentks library list` or `agentks library show <alias>`.
+- **Tests:** manifest unit tests (a good manifest, every broken field at once, file escapes), a manifest-less folder with a folder element, a stem clash, a skipped README and a folder without `index.html`, catalog parse and search, and the lookup tests in `tests/sync.rs`.
+- **Left:** `agentks library show icons --json` and the page-line error in `check libraries` come with the CLI (120/40).
 
 ## Agent log
 none
@@ -59,6 +62,11 @@ none
 - Decided (sidhantha, 2026-09-30): each library has a `manifest.json` at its root, with a required version; no kinds of library or element; one version series per library; every library states its engine range ([library system](../../notes/04_ecosystem/01_library-system.md)).
 - Decided (sidhantha, 2026-09-30): `library.json` lists what agentks offers for quick install and never moves.
 - Decided (claude, 2026-09-30): elements are self-contained single files, except folder children of a manifest-less local library (same note).
+- Decided (claude, 2026-10-01): Unknown keys in `manifest.json` are errors, because agentks owns the format and a typo like `descripton` would otherwise hide an element from `find`.
+- Decided (claude, 2026-10-01): Unknown keys in `library.json` are ignored, because the catalog never moves and older binaries must keep reading it after it gains a field.
+- Decided (claude, 2026-10-01): In a manifest-less local folder, a child whose name breaks the element rule (such as `README.md`) or a folder without `index.html` is skipped with a warning, not an error, because such folders hold stray files; asking for one still fails as an unknown element.
+- Decided (claude, 2026-10-01): The catalog is read from the `main` branch of the library repository (`CATALOG_BRANCH`), because the git API lists branches but not the remote `HEAD`; the address and branch are one constant each, and `fetch_catalog_from` takes both as parameters.
+- Decided (claude, 2026-10-01): `find` and `search` share one ranking (a word in the name 3, a tag 2, the description 1; every word must match), because two copies would drift.
 
 # 05 Notes & Analysis
 ## 01 Manifest example
@@ -66,7 +74,7 @@ none
 {
   "name": "agentks-default",
   "version": "1.0.0",
-  "description": "The default library: icons, frames and scene templates",
+  "description": "The default agentks library: a technical-docs icon set, device and window frames, and small data widgets",
   "engine": ">=1.0.0 <2.0.0",
   "elements": {
     "server": { "file": "icons/server.svg", "description": "A rack server", "tags": ["icon", "infrastructure"] }

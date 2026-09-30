@@ -1,6 +1,6 @@
 ---
 title: "Watcher and push — from a change on disk to a pushed hash"
-status: open
+status: in-progress
 ---
 
 The AI is the main author, so files change on disk all the time while a page is open. The watcher sees those changes, the engine updates its index and caches, and the server pushes the new hashes so every open tab refreshes exactly what changed. This leaf builds that path with `notify`, handling the traps today's engine hit: unreliable modification times on WSL, editors that save by rename, `git checkout` touching hundreds of files at once, and config edits that break loading.
@@ -38,17 +38,24 @@ Integration tests with a real watcher on a temp project:
 - Commit on the active branch → issue dates update and are pushed.
 
 # 02 Status and Result
-Open. Not started.
+Review: the watcher is built and tested on a real temp project; some Done-when scenarios depend on the engine (fatal config, embeds, git dates) and are covered only by the code path.
 
 ## Result
-None yet.
+- `src/watcher.rs`: one `notify` 8 watcher, recursive, over `Backend::watch_roots()` (today the project root, plus the config folder when outside it). Folders, not inodes.
+- Noise filter (`is_ignored`): swap and backup files, `.#*`, `4913`, `*.tmp-*`, `node_modules`, `data/builds`, and all of `.git/` except `HEAD`, `packed-refs` and `refs/**` (not `*.lock`). Access events are dropped: the watcher's own hashing opens files.
+- Debounce 50 ms (`Limits::debounce`), then one batch on the blocking pool. Change by content hash against the watcher's own table of last hashes (seeded by one walk at start); a removed folder removes every known file under it. The first batch after seeding counts every path as written, so nothing changed during the seed walk is lost.
+- The batch goes to `Backend::apply_changes`; `ChangeSet::pushes()` go out in order. An engine error of kind `fatal` becomes a `fatal` push; the server keeps serving.
+- Overflow (`need_rescan`, or a watcher error) compares every file again and pushes `resync`. Polling (1 s, content compare) on WSL `/mnt/*` or when native events fail.
+- Echo step: a written file whose hash is in the echo table is marked as the server's own write (050/35).
+- Tests: unit `changes_are_decided_by_content`, `noise_is_ignored_and_git_refs_are_not`; integration `a_change_on_disk_becomes_one_push_and_a_touch_none` (touch → nothing; save by rename → one `changed` with the new hash).
+- Not built: the separate ~100 ms git-ref debounce; a git directory outside the project root or in a worktree; per-section watch roots (needs a site API).
 
 ## Agent log
 none
 
 # 03 References
 
-**Where:** main repository, `apps/agentks-engine/crates/agentks-server/` (the watcher module), calling the core and the cache crate.
+**Where:** main repository, `apps/agentks-engine/crates/server/` (the watcher module), calling `agentks-site` (`apply_changes`) and the cache crate.
 
 **Read first:**
 - [Sync engine and server, section 04 The watcher](../../notes/02_engine/04_sync-engine-and-server.md).
@@ -63,6 +70,9 @@ none
 - Decided (sidhantha, 2026-09-29): the WebSocket carries pushes; the engine pushes changes.
 - Proposed (claude, 2026-09-30), adopted here: ~50 ms debounce, content-hash comparison, folder watching and git-ref watching, `fatal` on a broken config.
 - Decided (claude, 2026-09-30): an event-queue overflow triggers a full re-index and a `resync` push; network mounts fall back to hash polling.
+- Decided (claude, 2026-10-01): the watcher keeps its own table of last content hashes, seeded by one walk, because `FileChange` must arrive already confirmed by hash and the site exposes no per-file hash.
+- Decided (claude, 2026-10-01): until the site names its watch roots, the watcher watches the whole project root and drops noise by path, because a missed change is worse than an extra event; the site should expose the real roots (sections, config, themes, local libraries, git refs).
+- Decided (claude, 2026-10-01): an echoed save still goes through `apply_changes` and is pushed as `changed`; the `saved` push replaces it once `agentks-api` has `saved`, because the index must learn the new hash either way.
 
 # 05 Notes & Analysis
 

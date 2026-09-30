@@ -13,7 +13,7 @@ The homepage app itself: a Next.js project with static export, in the main repos
 - [x] **Wire into the monorepo.**
     - [x] No JS workspace: the app owns its `package.json` and `bun.lock`.
     - [x] `ctl dev` can start it (`ctl dev homepage`), `ctl build` exports it to `apps/agentks-homepage/out/`.
-    - [x] `ctl gate` runs its lint (oxlint with the nextjs, react and jsx-a11y plugins), `tsc --noEmit`, and its checks from [60](./60_homepage-checks.md).
+    - [x] `ctl gate` runs its lint (oxlint with the nextjs, react and jsx-a11y plugins), its typecheck (`next typegen && tsc --noEmit`) and `bun test`. The checks from [60](./60_homepage-checks.md) join when 60 builds them.
 - [x] **A placeholder page** with the site shell (header with the logo and links to `/docs` and GitHub, footer), light and dark mode, so hosting can be tested before the content lands.
 - [x] **A README section** in the app: how to run it, how it is deployed, that it must stay static.
 - [x] **`.gitignore`**: `out/`, `.next/`, `node_modules/`.
@@ -33,7 +33,7 @@ Review. The app builds, exports and is wired into `ctl` and the gate; `ctl gate`
 
 ## Result
 
-In the main repo, worktree branch `wave1/homepage`:
+On the main repo's `main` branch:
 
 - `apps/agentks-homepage/`: Next.js 16.3.8, React 19.3.0, TypeScript 7.0.2, App Router. `next.config.ts` sets `output: 'export'`, `trailingSlash: true`, `images.unoptimized`. Its own `package.json` and `bun.lock`; `.oxlintrc.json` (the complexity floor plus the react, typescript, nextjs and jsx-a11y plugins); `README.md` (how to run it, how it is deployed, why it stays static).
 - `.mise.toml` pins Bun 1.4.2 and Node 24.21.0 and sets `NEXT_TELEMETRY_DISABLED=1`. `ctl setup` installs the app's packages through the existing manifest discovery.

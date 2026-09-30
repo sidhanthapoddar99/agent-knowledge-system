@@ -37,7 +37,7 @@ none
 
 # 03 References
 
-**Where:** main repository, `apps/agentks-engine/`, the sync crate or module.
+**Where:** main repository, `apps/agentks-engine/`, the sync crate `agentks-sync` (`crates/sync/`).
 
 **Read first:**
 - [Editor engines, section 06 Saving, and the document on the server](../../notes/03_frontend/03_editor-engines.md).

@@ -1,6 +1,6 @@
 ---
 title: "Libraries — overview and rules for the group"
-status: open
+status: in-progress
 ---
 
 This group builds the library system of agentks: `config/dep.yaml` and `config/dep.lock`, fetching and resolving git libraries, `manifest.json` and the `library.json` catalog, the `agentks library` commands and TUI, the `/_lib/` route, and the default library with its first elements and templates. A **library** is a folder of reusable files (icons, frames, HTML artifacts, scene templates, scripts) that a project uses without copying them in. The feature ships in Phase 2, before 1.0.0. The default library is built and tested end to end with the engine in step 1 of the launch.
@@ -15,9 +15,9 @@ This group builds the library system of agentks: `config/dep.yaml` and `config/d
 | [120/30 Manifest and catalog](./30_manifest-and-catalog.md) | open | 2 | `manifest.json`, local libraries without one, `library.json` |
 | [120/40 Library commands and TUI](./40_library-commands-and-tui.md) | open | 2 | `agentks install`, `agentks library …`, `check libraries`, the TUI |
 | [120/50 /_lib/ route and sandbox](./50_lib-route-and-sandbox.md) | open | 2 | Serving elements, the CSP sandbox, the path-prefix fix |
-| [120/60 Default library scaffold](./60_default-library-scaffold.md) | open | 2 (launch step 1) | The library repository, its root manifest, tags, CI |
-| [120/70 Elements: icons](./70_elements-icons.md) | open | 2 | The first icon set |
-| [120/75 Elements: frames and widgets](./75_elements-frames-and-widgets.md) | open | 2 | Device frames, browser frames, HTML widgets |
+| [120/60 Default library scaffold](./60_default-library-scaffold.md) | in-progress | 2 (launch step 1) | The library repository, its root manifest, tags, CI |
+| [120/70 Elements: icons](./70_elements-icons.md) | review | 2 | The first icon set |
+| [120/75 Elements: frames and widgets](./75_elements-frames-and-widgets.md) | review | 2 | Device frames, browser frames, HTML widgets |
 | [120/80 Elements: video cue kit](./80_elements-video-cue-kit.md) | open | after the video cue syntax | Scene templates and script widgets for video pages |
 | [120/85 Templates](./85_templates.md) | open | 2 (launch step 1) | The `agentks-default` template and its catalog entry |
 | [120/90 Library authoring guide](./90_library-authoring-guide.md) | open | 2 | How to build, test, version and migrate a library |
@@ -25,7 +25,7 @@ This group builds the library system of agentks: `config/dep.yaml` and `config/d
 Order: 10 → 20 → 30 → 40 and 50 in parallel → 60 → 70, 75, 85 in parallel → 90. Leaf 80 waits for the video issue's cue syntax.
 
 # 02 Status and Result
-Open. Not started.
+In progress. 60 is in progress; 70 and 75 are in review; the rest are open.
 
 ## Result
 None yet.
@@ -62,4 +62,4 @@ none
 # 05 Notes & Analysis
 ## Watch out
 - The notes disagree on one detail: the [Rust CLI note](../../notes/02_engine/05_rust-cli.md) says `install --update` moves branch and latest entries; the [library system note](../../notes/04_ecosystem/01_library-system.md) says it also re-resolves ranges. The library note wins (claude decision there); [120/40](./40_library-commands-and-tui.md) builds it that way.
-- The notes spell the organisation `neuralabshq`. The GitHub organisation is `NeuraLabsHQ`; GitHub treats the two the same. Use `NeuraLabsHQ` in URLs built into the binary so they match what GitHub shows.
+- The GitHub organisation is `NeuraLabsHQ`. GitHub ignores the case of the name, but URLs built into the binary and into `library.json` use `NeuraLabsHQ`, so they match what GitHub shows.

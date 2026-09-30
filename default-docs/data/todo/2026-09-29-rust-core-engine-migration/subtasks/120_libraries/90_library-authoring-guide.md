@@ -10,13 +10,19 @@ People who build their own library (a company design kit, a team's artifacts, a 
     - [ ] What a library is and is not (not a plugin, not a template, not markdown syntax).
     - [ ] `manifest.json` field by field, with the element-name rule and a full example.
     - [ ] Element types and how each is shown: SVG and images, self-contained HTML (sandboxed), scripts (the page's contract), folder elements of manifest-less local libraries.
-    - [ ] The element contract for HTML frames and widgets from [120/75](./75_elements-frames-and-widgets.md) (inputs, theme, size) and the `currentColor` trick for icons from [120/70](./70_elements-icons.md).
+    - [ ] **The HTML element contract**, as built in [120/75](./75_elements-frames-and-widgets.md) and written in the [library system note](../../notes/04_ecosystem/01_library-system.md), sections 13 and 14:
+        - [ ] Inputs through query parameters, the theme mode through `?theme=light|dark`, the element fills its iframe, and bad input shows a visible error.
+        - [ ] The three messages: `agentks:element:data` (data from the parent), `agentks:element:theme` with `mode` and `tokens` (theme changes), and `agentks:element:ready` (the element posts it once it listens). The parent posts with target `"*"`, and the element checks each message's shape.
+        - [ ] A URL input resolves against the element's own address, so the parent passes full URLs (`new URL(path, location.href)`).
+        - [ ] The one network exception: a screen frame's `src`, which the parent passes, loads as an image, or with `kind=page` as a page in a nested sandboxed iframe. An element loads nothing else, makes no other request and uses no storage.
+    - [ ] **Theme-coloured icons** from [120/70](./70_elements-icons.md): an icon draws with `currentColor`, but through `<img>` it cannot see the page's colour and draws black. Use a CSS mask or an inline SVG.
     - [ ] Testing: a project with `path: ../my-library` in `dep.yaml`, `agentks check libraries`, `agentks library show`.
     - [ ] Versioning: one version for the whole library, tags `x.y.z`, the `engine` range, pre-releases, what a breaking change is.
     - [ ] Publishing: push a tag; users add `github: owner/repo` and a selector. Official libraries also get a `library.json` entry.
     - [ ] Library migrations: `agentks migrate --library <folder>` ([140/40](../140_versioning-and-migrations/40_library-migrations.md)), then a new version with a new `engine` range.
     - [ ] Trust: what users see when they add a library, and why library HTML is sandboxed.
 - [ ] **Link from** the libraries page of the user guide ([180/40](../180_documentation/40_libraries-and-templates.md)) and from `agentks help library`.
+- [ ] **The same exception in the library's `AGENTS.md`.** Its HTML element contract says an element "makes no network request" and does not name the screen frame's `src`. Add the exception there, in the same words as the guide.
 - [ ] **Every example must run**: build a tiny example library in the library repository's test folder and check the guide's commands against it.
 
 ## Guardrails

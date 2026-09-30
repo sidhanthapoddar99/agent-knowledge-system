@@ -1,6 +1,6 @@
 ---
 title: "Clean and reset — `agentks cache status · clean <root>… · reset`"
-status: open
+status: in-progress
 ---
 
 Nothing in `~/.agentks/` is cleaned automatically. When the user wants the space back, they run `agentks cache clean <root>…`: agentks scans the given folders for every agentks project, keeps what those projects still need, shows a report, and removes the rest only after a yes. `cache status` shows sizes, and `cache reset` drops the current project's build cache. This leaf builds the logic in the core; the command surface is [070/60](../070_cli/60_cache-commands.md).
@@ -30,10 +30,15 @@ Nothing in `~/.agentks/` is cleaned automatically. When the user wants the space
 - `cache reset` removes only the current project's build cache.
 
 # 02 Status and Result
-Open. Not started.
+In progress. Planning, removal, reset and status are built and tested; removing unused migration downloads is left.
 
 ## Result
-None yet.
+Where: the main repository, `apps/agentks-engine/crates/cache/` (branch `wave2/cache`). Tests: `cargo test -p agentks-cache`, 36 tests in 0.06 s; `./ctl gate` green.
+
+- `clean.rs`: `plan_clean` and `plan_clean_with_progress` (report only), `apply_clean`, `reset_project`, `status` (`CacheStatus`: build caches, libraries, models, migrations, notes). `CleanPlan` and `CacheStatus` serialise for `--json`.
+- The scan skips `node_modules`, `target`, every hidden folder (so `.git` and `.venv`), `data/builds` and the machine home; it never follows a symlink; overlapping roots count a project once.
+- Tests on a fixture tree (three projects, two shared commits, one orphan, one dead build cache, overlapping roots): the plan lists exactly the orphan commit and the dead cache, and applying it removes only those; a running project outside the roots keeps its commit; an unknown running project keeps every commit; a commit whose lock is held is not removed; a forged plan path is refused; `reset_project` removes one project's cache only.
+- Left: removing a `migrations/<version>/` folder no project uses. It needs each project's content version, which `ProjectNeeds` does not give yet, and the rule for "uses" needs a decision (the content version only, or every version between it and the engine's). The CLI command is 070/60; the `--all-branches` flag belongs to the `ProjectNeeds` implementation in the library crate.
 
 ## Agent log
 none
@@ -54,6 +59,11 @@ none
 - Decided (sidhantha, 2026-09-30): no automatic cleanup; cleanup is started by the user, from the CLI or by asking an AI, never on a schedule.
 - Decided (sidhantha, 2026-09-30): cleanup is given a root folder, scans for every project under it, and removes what none needs. Thoroughness matters more than speed.
 - Proposed (claude, 2026-09-30): `cache reset` for one project; reading other branches' locks.
+- Decided (claude, 2026-10-01): when any found project's pins cannot be read, or a running server's project is unknown, the plan removes no library commit at all and says why under `skipped`, because an unsure answer must keep everything rather than guess.
+- Decided (claude, 2026-10-01): a build cache is removable only when its recorded config folder is confirmed gone (`try_exists` is `Ok(false)`); one with no record, or whose existence cannot be checked, is kept and listed under `skipped`.
+- Decided (claude, 2026-10-01): every hidden folder is skipped during the scan, which covers `.git` and `.venv`.
+- Decided (claude, 2026-10-01): `apply_clean` refuses a plan whose build cache path is not `build-cache/<key>` of this home, before it removes anything, so a hand-edited plan cannot delete elsewhere.
+- Decided (claude, 2026-10-01): `plan_clean_with_progress` takes a callback for the terminal progress line, because the cache crate may not print.
 
 # 05 Notes & Analysis
 

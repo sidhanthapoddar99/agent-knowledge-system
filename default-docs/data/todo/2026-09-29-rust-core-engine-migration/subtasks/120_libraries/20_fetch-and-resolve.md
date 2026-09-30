@@ -1,6 +1,6 @@
 ---
 title: "Fetch and resolve: selectors, tags and the sync"
-status: open
+status: review
 ---
 
 This leaf turns `dep.yaml` entries into pinned commits and makes sure every pinned commit is on the machine. It implements version selection (exact tags, ranges, latest, branches, commits), the git fetch through a Rust git library with no `git` binary, and the **sync**: the one algorithm that `agentks start`, `agentks install`, `agentks library add` and `agentks init` all run. When it is done, a fresh clone with a lock installs exactly the locked commits, and a changed entry resolves without moving any other pin.
@@ -42,10 +42,14 @@ This leaf turns `dep.yaml` entries into pinned commits and makes sure every pinn
 - Deleting the cache and running `agentks install` again fetches the same commit; `git diff config/dep.lock` is empty.
 
 # 02 Status and Result
-Open. Not started.
+Review for the engine side. Selectors, tag resolution and the sync are built and tested against a fake remote; the real remote calls (`list_remote`, `fetch_commit` in `agentks-git`) are the git track's, so the network "Done when" checks run after the merge.
 
 ## Result
-None yet.
+- **Code:** `crates/library/src/resolve.rs` (version tags, `TagSpec`, `select`), `src/sync/` (`sync`, `sync_with`, `plan`, `SyncReport` with `to_json()` in the shape of 05/01, `LockedCommits`), `src/project.rs` (`ProjectPaths`, the `GitRemote` and `CommitStore` traits, `NetworkRemote`, the `CommitStore` impl for the cache's `LibraryStore`).
+- The sync follows 01 step by step: keep, mark, drop; resolve (one listing per URL); fetch once per repository and commit; load every manifest and check `engine`; write the lock only when changed. A failure in resolve, fetch or manifest returns before the lock is touched.
+- A project with no git library and no lock gets no lock file.
+- **Tests:** `crates/library/tests/sync.rs`, 9 tests on a fake remote and a folder store: fresh sync (3 pins, 1 fetch), second sync writes nothing, `start` never moves a pin, `--update` for one alias and for all, a changed entry resolves without moving others, a removed entry drops, a failed resolve and an engine mismatch leave the lock byte-identical, offline with a cached lock works, offline without the cache names `agentks install`, a force-pushed branch suggests `install --update <alias>`. Selector unit tests in `resolve.rs` cover tags `1.0.0`, `v1.1.0`, `1.2.0-beta.1`, `2.0.0`, a branch, no version tags and a duplicate version.
+- **Left, outside this crate:** gitoxide listing and shallow fetch in `agentks-git`; the network checks in "Done when" (install against the real library repository twice, and again after deleting the cache).
 
 ## Agent log
 none
@@ -64,6 +68,12 @@ none
 - Decided (sidhantha, 2026-09-30), on claude's proposal: starting agentks never moves a pin; the cache is keyed by repository and commit ([library system](../../notes/04_ecosystem/01_library-system.md)).
 - Decided (claude, 2026-09-30): `install --update` re-resolves ranges as well as branches and latest; a newest match that needs another engine fails instead of falling back to an older tag (same note).
 - Decided (sidhantha, 2026-09-30): starting agentks installs missing libraries automatically; `agentks install` pre-installs them.
+- Decided (claude, 2026-10-01): The sync reaches git and the store through two traits in this crate, `GitRemote` and `CommitStore`, with `NetworkRemote` and the cache's `LibraryStore` as the real implementations, because the git and cache crates were built in parallel and the sync must be testable without a network.
+- Decided (claude, 2026-10-01): A range written with spaces (`>=1.2.0 <2.0.0`, the npm form in the note) is accepted by joining comparators with commas before `semver` parses it.
+- Decided (claude, 2026-10-01): Build metadata (`1.0.0+x`) does not make a tag a version tag, because two builds of one version would otherwise compete.
+- Decided (claude, 2026-10-01): The lock's `version` comes from the manifest at the pin, as the note's 05 example says; a version tag that disagrees gives a warning in the report.
+- Decided (claude, 2026-10-01): No `Offline` error is claimed on a fetch failure: the git crate cannot yet tell "unreachable" from "no access", so the message names both causes and `agentks install`. Asked the git crate for a distinguishing error (see the wave report).
+- Decided (claude, 2026-10-01): A project with no git library and no existing lock gets no `dep.lock`, so `git status` stays clean.
 
 # 05 Notes & Analysis
 ## 01 The sync's report (JSON shape for `--json`)

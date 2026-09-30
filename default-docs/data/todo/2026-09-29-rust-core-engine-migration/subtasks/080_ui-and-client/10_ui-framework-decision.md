@@ -3,11 +3,11 @@ title: "Choose the UI framework (open question 12)"
 status: review
 ---
 
-Every layout, island, the client and the static renderer are written in one UI framework, and it is not chosen yet ([open question 12](../../notes/01_overview/05_open-questions-and-risks.md)). This leaf chooses it by a short, measured spike, records the choice with its reasons in the design notes, and unblocks the rest of the frontend. The decision is Claude's to make under sidhantha's delegation (2026-09-30); it must be written down before any other frontend leaf starts.
+Every layout, island, the client and the static renderer are written in one UI framework ([open question 12](../../notes/01_overview/05_open-questions-and-risks.md)). This leaf chooses it by a short, measured spike, records the choice with its reasons in the design notes, and unblocks the rest of the frontend. The decision is Claude's to make under sidhantha's delegation (2026-09-30); it must be written down before any other frontend leaf starts.
 
 # 01 To Do
 - [x] **Shortlist.** Start from the candidates in [the shared UI package](../../notes/03_frontend/01_shared-ui-package.md) section 07: React, Preact, Solid, Svelte, Vue. Drop any that fails a hard requirement on paper (below). Keep at most three for the spike.
-- [x] **Spike each finalist** in a throwaway folder of the main repository (`spikes/ui-framework/<name>/`, deleted after the decision), with Vite 8.3.1:
+- [x] **Spike each finalist** in a throwaway scratch folder outside the main repository, deleted after the decision, with Vite 8.3.1:
     - [x] **The docs layout** — sidebar tree, body HTML from a fixture, outline, prev/next — drawn from a JSON fixture of the docs `page` payload ([030/80](../030_rust-engine/80_page-data-interface.md); until it exists, hand-write the JSON from the example in [the Rust engine](../../notes/02_engine/03_rust-engine.md) section 05).
     - [x] **Rendered to an HTML string** under Bun 1.4.2 and under Node 24, with no DOM available.
     - [x] **Two islands mounted into that static HTML** without hydrating the page: the theme toggle and the sidebar collapse. Props from a `<script type="application/json">` tag.
@@ -27,14 +27,14 @@ Every layout, island, the client and the static renderer are written in one UI f
 ## Done when
 - The shared UI package note names the framework, the router and the island approach, with the measured numbers and the reason in one paragraph.
 - Question 12 is marked decided in the open questions note, linking to it.
-- `spikes/ui-framework/` no longer exists in the main repository.
+- The spike folder is deleted, and no spike code is in the main repository.
 
 # 02 Status and Result
 Review. Decided: Preact 11.0.0, with a manifest-driven router of our own and islands hydrated one by one. The spike is deleted.
 
 ## Result
 - **The decision and its numbers** are in [the shared UI package](../../notes/03_frontend/01_shared-ui-package.md) section 07. Question 12 is marked decided in [open questions and risks](../../notes/01_overview/05_open-questions-and-risks.md).
-- **The spike** ran in the scratch folder `/home/sid/projects/06_02_NeuraLabs/.agentks-worktrees/ui-spike`, not in `spikes/ui-framework/` of the main repository, because the orchestrator gave this track a scratch folder so the main repository stayed clean. It built the same docs layout (sidebar tree, body HTML, outline, prev and next, theme toggle) in Preact 11.0.0, Solid 1.9.15 and Svelte 5.57.1 with Vite 8.3.1, from a hand-written payload in the shape of [the Rust engine](../../notes/02_engine/03_rust-engine.md) section 05. The payload types came from a JSON Schema through `json-schema-to-typescript` 16.0.0. The folder is deleted.
+- **The spike** ran in a scratch folder outside the main repository, so the main repository stayed clean. It built the same docs layout (sidebar tree, body HTML, outline, prev and next, theme toggle) in Preact 11.0.0, Solid 1.9.15 and Svelte 5.57.1 with Vite 8.3.1, from a hand-written payload in the shape of [the Rust engine](../../notes/02_engine/03_rust-engine.md) section 05. The payload types came from a JSON Schema through `json-schema-to-typescript` 16.0.0. The folder is deleted.
 - **Checks that passed for all three** (headless Chromium, one script per framework, about 4 s each): the theme and sidebar islands hydrate on a static page and work; the static page loads no layout code; the Excalidraw viewer mounts lazily as a React 19.3.0 island on the static page and in the SPA; the SPA scrolls to `#caching` on first load, starts a new page at the top, restores scroll 1,500 on back, returns to the top on forward, and jumps to a same-page `#routing` link. Rendering ran under Bun 1.4.2 and Node 24.21.0 with no DOM present.
 
 | Measured | Preact | Solid | Svelte |
@@ -50,7 +50,7 @@ Review. Decided: Preact 11.0.0, with a manifest-driven router of our own and isl
 none
 
 # 03 References
-- **Where:** main repository `/home/sid/projects/06_02_NeuraLabs/agent-knowledge-system` for the spike; the decision is written into this tracker's notes.
+- **Where:** a scratch folder outside the main repository for the spike; the decision is written into this tracker's notes.
 - **Read first:** [the shared UI package](../../notes/03_frontend/01_shared-ui-package.md) (sections 03, 05, 07), [the client application](../../notes/03_frontend/02_client-application.md) (section 03, routing), [publishing with SSG](../../notes/05_delivery/02_publishing-ssg.md) (section 05, islands), [open questions and risks](../../notes/01_overview/05_open-questions-and-risks.md) (question 12).
 - **Today's code the spike imitates:** the docs layout in [the docs layout folder](../../../../../../agent-ks-engine/src/layouts/docs/default), the island-like scripts in [the scripts folder](../../../../../../agent-ks-engine/src/scripts).
 - **Unblocks:** every other leaf in this group, [090_frontend-performance](../090_frontend-performance/00_overview.md), [100_layouts](../100_layouts/00_overview.md), [110_editing](../110_editing/00_overview.md), [150/20 SSG renderer](../150_publishing/20_ssg-renderer.md), and the video player in [100/40](../100_layouts/40_video-pages.md).

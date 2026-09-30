@@ -1,6 +1,6 @@
 ---
 title: "Tracker loader — issues, anatomy sections, statuses and derived fields in Rust"
-status: open
+status: in-progress
 ---
 
 The tracker is the most complex section type: one folder per issue, seven anatomy sections read by four different readers, a fixed eight-status vocabulary, and derived fields (`created`, `updated`, status category, subtask counts, the review queue, filter options). Today these rules exist twice: in the Astro loader and in the Rust CLI's `issue` and `check issues` commands. This leaf merges them into one implementation that the issues pages, `agentks issue …` and `agentks check issues` all call.

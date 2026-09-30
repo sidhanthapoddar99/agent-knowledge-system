@@ -1,7 +1,7 @@
 {
-  "title": "Narrated video pages — markdown scripts played live in the browser",
-  "description": "Explain architecture and flows as narrated videos written as ordinary markdown and played live in the browser: no MP4, no stored media in git. A first spike lives on branch spike/narrated-video. Next: a proper video engine (grid scenes, widgets, cues, motion), a better narration voice with word timings, caching of generated audio under ~/.agentks, and scene templates and custom video logic drawn from the libraries a project declares in config/dep.yaml. Discussion and requirements in notes/01_initial_discussion/.",
-  "status": "open",
+  "title": "Video artifacts — a small YAML file of slides and narration, played live with a voiceover",
+  "description": "A video is an independent artifact: one NN_<slug>.video.yaml file of slides, the items on them, narration beats and one-line actions, about 7 KB for three minutes. Rust checks it, resolves its components from the project's libraries and computes every time; a framework-free TypeScript player draws it live in the browser with the Web Animations API on a 12 x 6 grid. The voice is Kokoro-82M, run by a separate helper, agentks-voice, with a pronunciation list; clips live in ~/.agentks/audio/ and are never committed. No MP4 or any rendered video file. Frames, icons, charts, layouts, presets and slide templates come from library components. Design in brainstorm/01_video-artifact-engine/.",
+  "status": "in-progress",
   "priority": "medium",
   "component": ["components"],
   "labels": ["feature", "discussion", "idea"],

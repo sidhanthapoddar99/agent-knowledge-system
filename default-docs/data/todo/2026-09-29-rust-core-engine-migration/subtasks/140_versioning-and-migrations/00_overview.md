@@ -1,6 +1,6 @@
 ---
 title: "Versioning and migrations — overview and rules for the group"
-status: open
+status: in-progress
 ---
 
 This group builds how agentks versions itself and moves content forward: the single binary version and its release note, the version gate's constants, `agentks migrate` (a thin runner that downloads migration scripts from the official repository at the binary's own tag), the 0.x → 1.0.0 docs migration that every existing project runs once, library migrations run by library owners, the version handshake that makes a stale browser tab reload instead of talking to a newer server, the versioning of the settings schema, and pinning an older version per project with mise. Migrations are **forced**: the engine supports current content only.
@@ -13,15 +13,15 @@ This group builds how agentks versions itself and moves content forward: the sin
 | [140/10 Version and release stream](./10_version-and-release-stream.md) | open | 1 | One version, `ENGINE_VERSION` and `MIN_CONTENT_VERSION`, release notes |
 | [140/50 Protocol version handshake](./50_protocol-version-handshake.md) | open | 1 | A stale tab or PWA reloads instead of talking to a newer server |
 | [140/60 Settings schema versioning](./60_settings-schema-versioning.md) | open | 1 | Typed settings per version; a published schema; every schema change has a migration |
-| [140/20 migrate command](./20_migrate-command.md) | open | 1 (before 1.0.0) | `agentks migrate`: fetch, detect, dry run, migrate, verify, bump |
-| [140/30 Docs migration 0.x → 1.0.0](./30_docs-migration-0x-to-1.md) | open | before 1.0.0 | The scripts that bring every 0.x project to 1.0.0 |
+| [140/20 migrate command](./20_migrate-command.md) | in-progress | 1 (before 1.0.0) | `agentks migrate`: fetch, detect, dry run, migrate, verify, bump |
+| [140/30 Docs migration 0.x → 1.0.0](./30_docs-migration-0x-to-1.md) | in-progress | before 1.0.0 | The scripts that bring every 0.x project to 1.0.0 |
 | [140/40 Library migrations](./40_library-migrations.md) | open | before 1.0.0 (runner flag); scripts after | `agentks migrate --library` for library owners |
 | [140/70 mise pinning](./70_mise-pinning.md) | open | 1.0.0 release | Per-project pins for 1.x and for the last 0.x |
 
 Order: 10 → 50 and 60 → 20 → 30 → 40 → 70.
 
 # 02 Status and Result
-Open. Not started.
+In progress. 20 and 30 are in progress; the rest are open.
 
 ## Result
 None yet.

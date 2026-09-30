@@ -2,11 +2,13 @@
 title: "Initial discussion — index"
 ---
 
-The 2026-09-29 discussion of narrated video pages, one note per point. Lines marked **Decided** are the user's decisions. Anything marked as proposed by claude is not agreed yet.
+The 2026-09-29 discussion of narrated video, one note per point, corrected to the video artifact design of 2026-10-01. Lines marked **Decided (sidhantha, …)** are the user's decisions; lines marked **Decided (claude, …)** are claude's, which sidhantha can overturn. The full design is [the video artifact engine](../../brainstorm/01_video-artifact-engine/01_index.md); it graduates to its own notes group once sidhantha agrees it after the two spikes.
 
 # 03 References
 
 - [issue.md](../../issue.md)
+- [The video artifact engine](../../brainstorm/01_video-artifact-engine/01_index.md)
+- [The build plan](../../plans/01_video-build/overview.md)
 
 # 04 Decisions
 
@@ -28,10 +30,10 @@ The headline ones; each note holds its own.
 | Note | What it covers |
 |---|---|
 | [01/02 Research: Remotion and alternatives](./02_research-remotion-and-alternatives.md) | Remotion's licence and rendering, file sizes, HyperFrames and others, why none is used |
-| [01/03 The spike](./03_the-spike.md) | What exists on branch `spike/narrated-video`: format, player, files, what was verified |
-| [01/04 A proper video engine](./04_video-engine.md) | Grid scenes, widgets, cues, artifacts as panels, motion style, morphing, token cost |
-| [01/05 Narration audio](./05_narration-audio.md) | Browser voice now, a generated voice later, word timings |
-| [01/06 Caching](./06_caching.md) | Generated audio and downloaded libraries under `~/.agentks` |
-| [01/07 Libraries and reusable elements](./07_libraries-and-reusable-elements.md) | What video draws from the shared libraries: widgets, scene templates, custom video logic |
-| [01/08 Relation to the engine migration](./08_relation-to-the-engine-migration.md) | What lives in the frontend, what in Rust, what can start now |
-| [01/09 Open questions](./09_open-questions.md) | What to settle next |
+| [01/03 The spike](./03_the-spike.md) | What exists on branch `spike/narrated-video`: the retired markdown format, the narrator that carries over, what was verified |
+| [01/04 A proper video engine](./04_video-engine.md) | The user's requirements for richer visuals, and how the design answers each example |
+| [01/05 Narration audio](./05_narration-audio.md) | Kokoro through the `agentks-voice` helper, the pronunciation list, clips and one stream per video, the browser voice as fallback |
+| [01/06 Caching](./06_caching.md) | The machine-wide audio store, the helper, the model and libraries under `~/.agentks` |
+| [01/07 Libraries and reusable elements](./07_libraries-and-reusable-elements.md) | What the player owns and what libraries own; typed `alias:name` fields |
+| [01/08 Relation to the engine migration](./08_relation-to-the-engine-migration.md) | What lives in the player, the compiler and the helper; what can start now |
+| [01/09 Open questions](./09_open-questions.md) | The questions for sidhantha: two open until the voice spike, four decided provisionally |

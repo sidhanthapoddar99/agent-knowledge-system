@@ -56,7 +56,7 @@ RUN bun install --frozen-lockfile && bun run build        # static export → ou
 FROM oven/bun:1-debian AS docs
 ARG AGENTKS_VERSION
 RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates \
- && curl -fsSL https://github.com/neuralabshq/agent-knowledge-system/releases/latest/download/install.sh \
+ && curl -fsSL https://github.com/NeuraLabsHQ/agent-knowledge-system/releases/latest/download/install.sh \
     | sh -s -- --version "${AGENTKS_VERSION}" --no-shell-setup
 ENV PATH="/root/.local/bin:${PATH}"
 WORKDIR /site
@@ -72,6 +72,7 @@ COPY --from=docs /out/docs/ /usr/share/nginx/html/docs/
 ```
 
 - The build context is the repository root, so the Dockerfile can reach both `apps/agentks-homepage` and `docs/`.
+- The homepage stage runs `bun install --frozen-lockfile` in the app's own folder, because the app owns its `package.json` and `bun.lock` and there is no workspace. It needs no network access for fonts: they come from `@fontsource` packages, not Google Fonts.
 - The docs are built with a **released** agentks, pinned by `AGENTKS_VERSION`, not the working tree. The website shows what users get.
 - Production runs only the nginx stage.
 
@@ -82,8 +83,8 @@ server {
   listen 80;
   root /usr/share/nginx/html;
 
-  location = /install.sh  { return 302 https://github.com/neuralabshq/agent-knowledge-system/releases/latest/download/install.sh; }
-  location = /install.ps1 { return 302 https://github.com/neuralabshq/agent-knowledge-system/releases/latest/download/install.ps1; }
+  location = /install.sh  { return 302 https://github.com/NeuraLabsHQ/agent-knowledge-system/releases/latest/download/install.sh; }
+  location = /install.ps1 { return 302 https://github.com/NeuraLabsHQ/agent-knowledge-system/releases/latest/download/install.ps1; }
 
   location ~* /_(assets|content|lib)/ { add_header Cache-Control "public, max-age=31536000, immutable"; }
   location ~* \.html$                  { add_header Cache-Control "no-cache"; }

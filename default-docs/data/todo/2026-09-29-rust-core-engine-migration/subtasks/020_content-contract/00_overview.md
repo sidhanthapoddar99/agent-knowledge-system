@@ -42,7 +42,7 @@ None yet.
 none
 
 # 03 References
-- **Where:** `/home/sid/projects/06_02_NeuraLabs/agent-knowledge-system`, crates `agentks-config`, `agentks-content`, `agentks-index` under `apps/agentks-engine/crates/` ([030/10](../030_rust-engine/10_workspace-and-crate-boundaries.md)).
+- **Where:** `/home/sid/projects/06_02_NeuraLabs/agent-knowledge-system`, the crates `agentks-config`, `agentks-content` and `agentks-index`, in the folders `config/`, `content/` and `index/` under `apps/agentks-engine/crates/` ([030/10](../030_rust-engine/10_workspace-and-crate-boundaries.md)).
 - **Read first, for every leaf:** [02/01 Content format](../../notes/02_engine/01_content-format.md), [02/02 Project config](../../notes/02_engine/02_project-config.md), [02/03 The Rust engine](../../notes/02_engine/03_rust-engine.md) sections 03 to 08, and today's [AGENTS.md](../../../../../../AGENTS.md) "The filesystem is the document".
 - **Depends on:** [010/00 project setup](../010_project-setup/00_overview.md) (the repository), [030/10](../030_rust-engine/10_workspace-and-crate-boundaries.md) (the crates exist).
 

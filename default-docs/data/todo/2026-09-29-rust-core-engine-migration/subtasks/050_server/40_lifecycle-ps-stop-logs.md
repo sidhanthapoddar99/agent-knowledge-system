@@ -1,6 +1,6 @@
 ---
 title: "Lifecycle — start, attach, detach, shutdown, and machine-wide ps, stop and logs"
-status: open
+status: in-progress
 ---
 
 With one global install, one machine may run servers for several projects at once. The user needs to see them all (`agentks ps`), stop any of them (`agentks stop`), read their logs, and never start a second server for a project that already has one. This leaf builds the server lifecycle and the run records in `~/.agentks/run/` that make that possible. It replaces today's viewer lifecycle, which drives Astro through Bun.
@@ -37,10 +37,15 @@ With one global install, one machine may run servers for several projects at onc
 - Works on Linux, macOS and Windows (CI matrix, [170/10](../170_testing/10_rust-tests.md)).
 
 # 02 Status and Result
-Open. Not started.
+Review: start, attach, detach, shutdown, run records, `ps` and `stop` are built; `logs`, `--open` and the log format belong to the CLI, and `stop` on Windows is not built.
 
 ## Result
-None yet.
+- `src/lifecycle.rs`: `RunRecord` with serde and a `format` field on disk (`RUN_RECORD_FORMAT`), written atomically once listening, removed on shutdown only by the process that wrote it. `running_servers` checks each record with the `426` probe and removes stale or unreadable ones. `stop` sends SIGTERM (Unix, through `rustix`), waits up to 10 s, and returns the ones that stopped.
+- `src/run.rs`: `serve_backend` (what `serve` calls): attach when this project's record answers the probe; a file lock `run/<key>.lock` held from the check to the record, so two starts at once give one server; choose the port; bind; write the record; wait for Ctrl-C or SIGTERM (a second Ctrl-C exits at once); shut down; remove the record. `StopOn::Channel` lets tests and embedders stop it.
+- `--detach`: re-runs this program with the same arguments and `AGENTKS_DETACHED_CHILD=1`, in its own process group (no console window on Windows), output appended to the run log (rotated at 10 MB, one old file kept); returns `Detached` once the probe answers, or an error naming the log.
+- `src/probe.rs`: `probe(port)` → nothing, another program, or an agentks server with its project key.
+- Tests: `start_attach_ps_conflicts_and_stop` (start, `ps`, second start attaches, another project on the port and a foreign holder both fail), record round trip, dates.
+- Left: `agentks logs` and `--open` in the CLI (070/30), the CLI's tracing subscriber and log line format, `stop` on Windows, flushing caches on shutdown (needs a site API).
 
 ## Agent log
 none
@@ -62,8 +67,12 @@ none
 - Decided (sidhantha, 2026-09-29): server commands such as `agentks ps` stay part of the CLI.
 - Proposed (claude, 2026-09-30), adopted here: `run/` records and machine-wide `ps` and `stop`.
 - Decided (claude, 2026-09-30): the live check is the process plus the `426` probe; logs rotate at 10 MB.
+- Decided (claude, 2026-10-01): a server is live when its port answers the `426` probe with its key; the pid is not checked, because the probe already proves it and a pid check needs platform code.
+- Decided (claude, 2026-10-01): `--detach` re-runs the same command line with `AGENTKS_DETACHED_CHILD=1` instead of forking, because forking a Rust process is unsafe and the server crate must not know the CLI's flags.
+- Decided (claude, 2026-10-01): `ServeOptions` gains `configured_port`, filled by the CLI from `ProjectConfig::configured_port()`, because `Site` does not expose its config; requested a site accessor so this field can go.
 
 # 05 Notes & Analysis
 
 ## Watch out
 - A pid can be reused by another program after a crash. The probe (which returns the project key) is what proves the record is live; never trust the pid alone.
+- `RunRecord` in `crates/server/src/lifecycle.rs` has no serde derives yet. Add them together with its `format` field, set from `agentks_core::formats::RUN_RECORD_FORMAT`.

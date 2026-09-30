@@ -1,6 +1,6 @@
 ---
 title: "Markdown pipeline — today's stages in Rust, on a syntax tree, same output"
-status: open
+status: in-progress
 ---
 
 Rust renders every page body to HTML. The output must match today's engine: the same heading IDs, link targets and text, and the same element structure and classes the theme CSS styles. This leaf ports today's pipeline stage by stage into `agentks-render`, using comrak for markdown and working on comrak's syntax tree rather than regular expressions over HTML strings, so a stage cannot corrupt markup it did not mean to touch.
@@ -63,4 +63,5 @@ none
 # 05 Notes & Analysis
 ## Watch out
 - Shiki colours today come from its themes; class-based highlighting changes code colours slightly. That is an allowed visual change, but the code **text** must match.
+- The built-in theme's `markdown.css` (`apps/agentks-engine/themes/default/`) still styles Shiki's output (`.shiki`, `--shiki-dark`). The highlighter's class names and the rules for them land together: [100/10](../100_layouts/10_theme-contract-and-css.md) replaces the Shiki rules once the classes are fixed here.
 - comrak's alert syntax support and its output classes differ from `marked-alert`'s; wrap or post-process the node to emit today's classes.

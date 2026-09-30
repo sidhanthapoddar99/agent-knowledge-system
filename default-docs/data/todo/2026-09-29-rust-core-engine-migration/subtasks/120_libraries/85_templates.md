@@ -17,10 +17,10 @@ status: open
     - [ ] `Dockerfile` — the one from [150/70](../150_publishing/70_dockerfile.md). Until Phase 3 ships `agentks build`, ship it with a comment saying it needs Phase 3, or leave it out and add it in 150/70; record which.
     - [ ] `.gitignore` — `dist/`, `config/.env`.
 - [ ] **No placeholder language.** The template is a valid, runnable project. `init` writes identity from `--title`, `--description`, `--repo` into known `site.yaml` keys.
-- [ ] **Catalog entry** in `library.json`: `templates.agentks-default` with `description`, `git`, `path: templates/agentks-default`.
+- [ ] **Catalog entry** in `library.json`: `templates.agentks-default` with `description`, `git` (`https://github.com/NeuraLabsHQ/agent-knowledge-system-library.git`), `path: templates/agentks-default`. Add it in the same change as the folder, because `scripts/check.py` rejects a template entry whose path does not exist.
 - [ ] **Checks in the library repository's CI:** `agentks check config`, `agentks check section` for each section, `agentks check issues`, and `agentks start` smoke test (start, request `/`, stop) on the template folder.
 - [ ] **End-to-end:** `agentks init` (defaults) in an empty folder → `cd docs && agentks start` → the site renders. Include this in [170/30](../170_testing/30_end-to-end.md).
-- [ ] **Bump the library version** and tag; templates follow the library repository's version series.
+- [ ] **Version.** Templates follow the library repository's version series. The template ships in the first tag, `v1.0.0`, with no separate bump, because nothing is tagged before it ([120/60](./60_default-library-scaffold.md)).
 
 ## Guardrails
 - A template holds no layout code; custom layouts are gone.

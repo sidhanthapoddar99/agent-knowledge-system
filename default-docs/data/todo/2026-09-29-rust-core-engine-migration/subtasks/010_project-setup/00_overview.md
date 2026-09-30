@@ -1,6 +1,6 @@
 ---
 title: "Project setup — the three NeuraLabsHQ repositories, ready to build in"
-status: open
+status: in-progress
 ---
 
 This group turns three empty GitHub repositories into working repositories that the rest of the migration builds in. When it is done, `NeuraLabsHQ/agent-knowledge-system` has the project-setup shape (`apps/`, `ctl`, `AGENTS.md`, pinned toolchains, CI), and the library and marketplace repositories have their first files. Every other group writes code into the tree this group creates, so it goes first.
@@ -16,14 +16,14 @@ This group turns three empty GitHub repositories into working repositories that 
 
 | Leaf | Delivers | Repository | Status |
 |---|---|---|---|
-| [10](./10_create-neuralabshq-repos.md) | First commit, README, licence, default branch, repository settings | all three | open |
-| [20](./20_main-repo-skeleton.md) | The project-setup tree: `apps/`, `scripts/`, `data/`, `logs/`, `docs/`, `.env.template`, `ctl` | main | open |
-| [30](./30_toolchain-pins.md) | `rust-toolchain.toml`, `.mise.toml`, the app manifests' version pins | main | open |
-| [40](./40_ctl-and-gate.md) | `ctl` verbs and the four-rung gate | main | open |
-| [50](./50_ci-workflows.md) | The GitHub Actions workflows | main, library | open |
-| [60](./60_agents-md-contracts.md) | One `AGENTS.md` per repository | all three | open |
-| [70](./70_library-repo-skeleton.md) | `library.json`, the default library's `manifest.json`, `templates/` | library | open |
-| [80](./80_marketplace-repo-skeleton.md) | The Neuralabs marketplace file, pointing at the agentks plugins | marketplace | open |
+| [10](./10_create-neuralabshq-repos.md) | First commit, README, licence, default branch, repository settings | all three | review |
+| [20](./20_main-repo-skeleton.md) | The project-setup tree: `apps/`, `scripts/`, `data/`, `logs/`, `docs/`, `.env.template`, `ctl` | main | in-progress |
+| [30](./30_toolchain-pins.md) | `rust-toolchain.toml`, `.mise.toml`, the app manifests' version pins | main | in-progress |
+| [40](./40_ctl-and-gate.md) | `ctl` verbs and the four-rung gate | main | in-progress |
+| [50](./50_ci-workflows.md) | The GitHub Actions workflows | main, library | in-progress |
+| [60](./60_agents-md-contracts.md) | One `AGENTS.md` per repository | all three | review |
+| [70](./70_library-repo-skeleton.md) | `library.json`, the default library's `manifest.json`, `templates/` | library | in-progress |
+| [80](./80_marketplace-repo-skeleton.md) | The Neuralabs marketplace file, pointing at the agentks plugins | marketplace | in-progress |
 | [90](./90_contributor-setup-guide.md) | The guide a new contributor follows from clone to green gate | main | open |
 
 ## Guardrails
@@ -38,7 +38,7 @@ This group turns three empty GitHub repositories into working repositories that 
 - CI runs the gate on every push to the main repository and is green.
 
 # 02 Status and Result
-Open. The three repositories exist on GitHub since 2026-09-30, empty, with `origin` set locally.
+In progress. 10 and 60 are in review; 20 to 50, 70 and 80 are in progress; 90 is open.
 
 ## Result
 None yet.

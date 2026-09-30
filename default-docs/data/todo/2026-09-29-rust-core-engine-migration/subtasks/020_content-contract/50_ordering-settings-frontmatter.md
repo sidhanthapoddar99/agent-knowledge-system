@@ -1,6 +1,6 @@
 ---
 title: "Ordering, settings and frontmatter — the NN_ grammar, settings.json, page kinds, slugs"
-status: open
+status: in-progress
 ---
 
 Order, labels and page kinds come from file names, `settings.json` and frontmatter. Today the ordering grammar has one TypeScript implementation mirrored in the CLI, and the frontmatter rules are split between the engine and the CLI's validators. This leaf writes each once in `agentks-content`, so the sidebar, the URLs and `agentks check` agree by construction.
@@ -21,7 +21,7 @@ Order, labels and page kinds come from file names, `settings.json` and frontmatt
 - [ ] **Page kinds** ([02/01](../../notes/02_engine/01_content-format.md) section 03): markdown, video (`video: true`), diagram (`.mmd .mermaid .dot .gv .excalidraw .drawio` with an `NN_` prefix, outside `assets/`, unless the section root sets `allow_diagram_pages: false`), artifact (`NN_*.html` in docs sections and tracker `notes/`/`brainstorm/`). Sidecars: `<name>.meta.json` or `.meta.jsonc`.
 - [ ] **Derived values** ([02/01](../../notes/02_engine/01_content-format.md) section 08): slug, sidebar label (`sidebar_label`, else `title`; folders from `label`), order, heading IDs (the rule is implemented in [030/50](../030_rust-engine/50_markdown-pipeline.md), tested here).
 - [ ] **Slug collisions**: a `.md`, a diagram and an `.html` that claim one URL are resolved against one shared pool, as today ([first-class-page.ts](../../../../../../agent-ks-engine/src/loaders/first-class-page.ts)): the first keeps the URL and shows the collision error; the rest are dropped and reported.
-- [ ] **The error record** used by every rule: `{ file, line, type, message, suggestion }`, shared with the CLI and the page ([02/03](../../notes/02_engine/03_rust-engine.md) section 08).
+- [ ] **The error record** used by every rule: `{ file, line, type, severity, message, key, suggestion }`, shared with the CLI and the page ([02/03](../../notes/02_engine/03_rust-engine.md) section 08). `line`, `key` and `suggestion` are optional; `key` is the config key path (such as `pages.todo.layout`) for config problems. It is `agentks_core::ErrorRecord`, built in [030/20](../030_rust-engine/20_error-model.md).
 
 ## Guardrails
 - One implementation; the CLI's `content.rs` and `checks.rs` copies are replaced by calls into `agentks-content`.

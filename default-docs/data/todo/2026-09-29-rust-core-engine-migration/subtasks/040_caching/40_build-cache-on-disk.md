@@ -1,6 +1,6 @@
 ---
 title: "Build cache on disk — per project, per engine version, self-healing"
-status: open
+status: review
 ---
 
 Restarting a server, or running a CLI command, should not pay again for work already done: highlighted code, compiled CSS, rendered pages, git dates and narration audio. The build cache keeps that work on disk under `~/.agentks/build-cache/`, per project and per engine version. Every entry is named by its content hash, written atomically, and ignored and rebuilt if anything about it is wrong.
@@ -33,10 +33,16 @@ Restarting a server, or running a CLI command, should not pay again for work alr
 - `AGENTKS_HOME=/tmp/x agentks start` writes only under `/tmp/x`.
 
 # 02 Status and Result
-Open. Not started.
+Review. The build cache and `build-cache.json` are built and tested.
 
 ## Result
-None yet.
+Where: the main repository, `apps/agentks-engine/crates/cache/` (branch `wave2/cache`). Tests: `cargo test -p agentks-cache`, 36 tests in 0.06 s; `./ctl gate` green.
+
+- `BuildCache` in `disk.rs`: `open`, `get`, `put`, `path`, `open_stream` (for audio: the file positioned after the header), `read_named` / `write_named` / `list_named` / `remove_named`, `record_usage`, `metrics`, `disabled_reason`.
+- Entry layout: `build-cache/<key>/<engine>/<kind>/<hex>.<json|css|bin>`, each starting with the text line `agentks-cache <kind> <format> <key> <length>`. Writes go through `fs::atomic_write` (temporary file, fsync, rename, folder fsync).
+- `index.rs`: `build-cache.json` (`{"format":1,"entries":[…]}`), updated under `build-cache.json.lock`; missing, broken or older → rebuilt by walking `build-cache/`; newer → left untouched. `build-cache/<key>/project.json` names the config folder and has its own format, `PROJECT_FILE_FORMAT`. `last_used` is `null` when the system clock is before 1970, never a made-up date.
+- Tests: round trip; engine folders never share; five kinds of corrupt entry (short, flipped magic, wrong format, empty, another key's bytes) are deleted and read as a miss; two concurrent writers of 40 entries leave every entry valid and no temporary file; a read-only home opens the cache disabled; the index records, rebuilds and never downgrades.
+- Left: the restart-without-render check needs the server; `AGENTKS_HOME` is honoured by `MachineHome::locate` in core.
 
 ## Agent log
 none
@@ -56,6 +62,13 @@ none
 - Decided (sidhantha, 2026-09-29): machine-wide state lives in `~/.agentks/`, with a build cache per project.
 - Decided (sidhantha, 2026-09-29): generated narration audio may live in the build cache and be embedded in a build, but is never committed.
 - Proposed (claude, 2026-09-29), adopted here: the engine version is a level of the build cache path; `AGENTKS_HOME` overrides the home.
+- Decided (claude, 2026-10-01): entry headers are one text line (`agentks-cache pages 1 b3:<hex> <len>`), so an entry can be inspected with `head` and the header check is a string compare.
+- Decided (claude, 2026-10-01): audio entries are `audio/<hex>.bin` with the same header, read through `open_stream`, because `path()` takes no extension and a headed file is not a playable audio file anyway.
+- Decided (claude, 2026-10-01): each project cache gets `build-cache/<key>/project.json` (`{"format":1,"project":"<config dir>"}`), because without it a walk that rebuilds `build-cache.json` cannot name any project, and cleanup could not tell a dead cache from a live one.
+- Decided (claude, 2026-10-01): a read-only home is detected at `open` by creating and removing a probe file; the cache then opens disabled (reads miss, writes are skipped) and `disabled_reason()` gives the one line to log, because the cache crate may not print.
+- Decided (claude, 2026-10-01): `bytes` in `build-cache.json` is measured once when a project's entry is first created, then grows by the bytes this process wrote.
+- Decided (claude, 2026-10-01): the narration audio format constant is `agentks_cache::AUDIO_FORMAT` for now, because `agentks_core::formats` has none and core belongs to another track.
+- Decided (claude, 2026-10-01): `project.json` has its own format, `agentks_cache::PROJECT_FILE_FORMAT`, not `BUILD_CACHE_INDEX_FORMAT`, because an index bump would otherwise make the `project.json` of every dead project unreadable, and clean would then keep those dead caches forever. It lives in the cache crate until `agentks_core::formats` adds it.
 
 # 05 Notes & Analysis
 

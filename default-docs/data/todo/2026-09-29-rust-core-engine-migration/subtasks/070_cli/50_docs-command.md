@@ -32,7 +32,7 @@ none
 
 # 03 References
 
-**Where:** main repository, `apps/agentks-engine/crates/agentks-cli/`.
+**Where:** main repository, `apps/agentks-engine/crates/cli/`.
 
 **Read first:**
 - [The agentks docs command (brainstorm)](../../brainstorm/02_future-stages/08_agentks-docs-command.md).

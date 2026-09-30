@@ -1,6 +1,6 @@
 ---
 title: "Links and URLs — one resolver, root-absolute hrefs, and the hosting path prefix"
-status: open
+status: in-progress
 ---
 
 Every internal link in today's engine is emitted as a browser-relative href, and that is the defect: a relative href is a claim about where the reader is standing, which the renderer cannot know. Two constant-shift fixes were tried and reverted in [2026-08-04-absolute-link-resolution](../../../2026-08-04-absolute-link-resolution/issue.md). The fix, decided there and carried into the migration, is to stop guessing: resolve each relative link to the **file** it names, look that file's URL up in one map, and emit a **root-absolute** href. The same map then owns the hosting path prefix. This leaf builds the resolver in Rust and takes over all of that issue's remaining work.

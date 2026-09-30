@@ -46,7 +46,7 @@ The dependency runs one way. The client and the static renderer import the packa
 |---|---|
 | Layouts: docs, blog, issues, the built-in custom pages, navbar, footer, first-class diagram, artifact and video pages | The router. Each build routes its own way |
 | Components those layouts are made of: sidebar tree, outline, pagination, issue table, status badges, cards | The WebSocket client, the browser cache, the service worker. Those are the client's |
-| Islands: the interactive parts, each with its own small mount script (section 05) | The dev toolbar and the editor. They exist only in the local tool ([the dev toolbar](./05_dev-toolbar.md), [editor engines](./03_editor-engines.md)) |
+| Islands: the interactive parts, each loaded by name from one registry (sections 05 and 07) | The dev toolbar and the editor. They exist only in the local tool ([the dev toolbar](./05_dev-toolbar.md), [editor engines](./03_editor-engines.md)) |
 | Component CSS, written against the theme variables ([theming](./04_theming-and-layouts.md)) | The theme CSS itself. Rust compiles it per project |
 | The TypeScript types of the page data (section 03) | Any rule: ordering, URLs, slugs, status categories, filter option lists, date formats that depend on config |
 | Shared display helpers with no rule inside: class-name joins, icon glyph lookups by a value Rust sent | Fetching, timers, or storage while rendering |
@@ -58,12 +58,15 @@ The dependency runs one way. The client and the static renderer import the packa
 Safeguard 1 says every piece of data reaches the UI through one small interface. The package defines that interface as a TypeScript type. Each build implements it once.
 
 ```ts
-// agentks-ui/src/data/source.ts (claude, proposed shape)
+// agentks-ui/src/data/source.ts (claude, proposed shape: one method per `get` the engine answers)
 export interface DataSource {
-  manifest(): Promise<SiteManifest>;            // every route: url, kind, layout, hash
+  manifest(): Promise<Manifest>;                // every route: url, section, data key, hash
   page(url: string): Promise<PageData>;         // one page's data, by its URL
-  sidebar(section: string): Promise<SidebarTree>;
+  sidebar(section: string): Promise<Sidebar>;
   issuesIndex(section: string): Promise<IssuesIndex>;
+  issue(section: string, id: string): Promise<IssueDetail>;
+  blogIndex(section: string): Promise<BlogIndex>;
+  custom(page: string): Promise<CustomPage>;
 }
 ```
 
@@ -76,19 +79,18 @@ export interface DataSource {
 
 **Every payload carries its hash.** Each `PageData`, sidebar and index includes the content hash it was built from. The client caches by it; the static renderer ignores it.
 
-**The page kinds** (claude, proposed). `PageData` is a tagged union on `kind`, one variant per layout the package can draw:
+**The shapes**, as the engine defines them ([030/80](../../subtasks/030_rust-engine/80_page-data-interface.md)). `PageData`, what `get page` returns, is tagged on `kind`, one variant per kind of page body. Every page also carries `url`, `hash`, `section`, `layout` (such as `@docs/default`), `source` (the file path), `title`, breadcrumbs, `prev`, `next` and its content `errors`; field names are snake_case.
 
 | `kind` | Drawn by | Main fields |
 |---|---|---|
-| `docs` | the docs layout named in config | `title`, `bodyHtml`, `outline`, `sidebarSection`, `prev`, `next`, frontmatter values for display |
-| `blog-index` · `blog-post` | the blog layouts | posts with dates and tags already sorted and formatted; one post's `bodyHtml` |
-| `issues-index` · `issue` · `issue-subdoc` | the issues layouts | issues with status, category, priority and labels already resolved; the facet values filters match on; one issue's files |
-| `custom` | the built-in custom page named in config (home, info, countdown) | the page's YAML data |
-| `diagram` | the diagram page | the diagram's source and type, from `.mmd`, `.dot`, `.excalidraw` or `.drawio` |
-| `artifact` | the artifact page | the iframe URL and the `.meta.json` sidecar values |
-| `video` | the video page | the video's cues and transcript ([video pages](../04_ecosystem/05_video-pages.md)) |
+| `markdown` | the section's layout: a docs page, a blog post, an issue's sub-document | `body_html`, `outline`, `diagrams`; a blog post adds a `post` block with date, author and tags |
+| `video` | the video page | `body_html`, as a markdown page; the cue data joins with the video work ([video pages](../04_ecosystem/05_video-pages.md)) |
+| `diagram` | the diagram page | `lang` and `source_text`, from `.mmd`, `.dot`, `.excalidraw` or `.drawio`; display options from the sidecar |
+| `artifact` | the artifact page | `artifact_url`, `theme` (`site` or `self`) and display options from the `.meta.json` sidecar |
 
-**Where the types come from** (claude, proposed). The Rust structs that the engine serialises are the source. Rust writes a JSON Schema from them (`schemars`, [030/80](../../subtasks/030_rust-engine/80_page-data-interface.md)), and the package generates its TypeScript types from that schema at build time (section 07), so the two cannot drift. This generates the *shape* of the data, not a rule: no ordering, status category or URL logic crosses over, which keeps the decision on question 10 intact. If the user reads that decision as forbidding generated types too, the fallback is hand-written types checked against JSON fixtures that Rust emits in its tests.
+The other layouts draw their own answers, not `PageData`: the blog index (`BlogIndex`, posts already sorted and formatted), the issues index (`IssuesIndex`, each issue's status, category, priority and labels resolved, plus the filter option lists), one issue (`IssueDetail`, its body and its anatomy tree; each sub-document is a page with its own URL) and a built-in custom page (`CustomPage`, its YAML data).
+
+**Where the types come from.** The Rust structs that the engine serialises are the source. Rust writes `api.schema.json` from them (`schemars`, [030/80](../../subtasks/030_rust-engine/80_page-data-interface.md)), and `json-schema-to-typescript` generates the package's TypeScript types from that schema at build time (section 07), so the two cannot drift. This generates the *shape* of the data, not a rule: no ordering, status category or URL logic crosses over, which keeps the decision on question 10 intact.
 
 ## 04 Body HTML from Rust
 
@@ -116,13 +118,13 @@ An island is a component that needs JavaScript in the reader's browser. Everythi
 | Video player | Plays a narrated video page | The page's cues ([video pages](../04_ecosystem/05_video-pages.md)) |
 | Code copy, tooltips | Copy a code block; show a tip only when text is cropped | The markup itself |
 
-**The island contract** (claude, proposed):
+**The island contract** (the mount is in section 07):
 
 - Each island is a component in the package with a stable name and a props type.
-- Its props are serialisable data. The static renderer writes them into the page as a `<script type="application/json">` tag beside the island's markup, never as script variables, because a bundled module cannot read those.
-- A mount function renders the island into its element and returns a function that removes it.
+- Its props are serialisable data. The static renderer writes them into the page as a `<script type="application/json" data-props>` tag beside the island's markup, never as script variables, because a bundled module cannot read those.
+- The islands entry loads each island by name from a registry of lazy imports, hydrates it on its own element, and unmounts it with `render(null, el)`.
 - Heavy islands (Mermaid, Excalidraw, draw.io, the video player) are loaded on demand, only on pages that use them. They already dominate the bundle today.
-- In the client app the same island components mount inside the live page, so there is one implementation, not a static copy and a live copy.
+- In the client app the same components render live inside the page, with no island wrapper, so there is one implementation, not a static copy and a live copy.
 
 **No whole-page hydration.** A published page never re-renders itself in the browser and never loads its own content again as JSON. That is the slow part SSG is meant to remove.
 
@@ -171,9 +173,3 @@ The hard requirements the spike checked:
 - **Render checks** (claude, proposed). Each layout renders a set of fixture pages both ways: to an HTML string, as the static renderer does, and into a live page, as the client does. The two results must match after normalising whitespace and attribute order. That catches a component that reads `window` or fetches while rendering.
 - **The Phase 1 parity checks** apply to what the package draws: every route, every heading ID, link, table and code block matches today's engine, and screenshots of each layout in light and dark mode show nothing drastic ([development and testing](../05_delivery/05_development-workflow-and-testing.md)).
 - **The theme contract check** carries over and reads the package's CSS ([theming](./04_theming-and-layouts.md)).
-
-## 09 Open
-
-- Whether generated TypeScript types for the data shape are acceptable under the decision on question 10 (section 03).
-
-It is tracked in [open questions and risks](../01_overview/05_open-questions-and-risks.md).

@@ -25,33 +25,35 @@ The Rust engine is **one library, the core, compiled into one binary** with the 
 - Decided (sidhantha, 2026-09-29): Rust compiles and caches each project's theme CSS.
 - Decided (sidhantha, 2026-09-29): routes, heading IDs, links and text match today's engine exactly.
 - Decided (sidhantha, 2026-09-29): the CLI and the server share one core, so each rule has one implementation.
-- Proposed (claude, 2026-09-30): the crate layout in section 01, comrak for markdown, and a highlighter that emits CSS classes.
+- Decided (claude, 2026-09-30): the 14 crates in layers of section 01, because each crate then has one job and a check can prove that dependencies point down ([030/10](../../subtasks/030_rust-engine/10_workspace-and-crate-boundaries.md)).
+- Decided (claude, 2026-09-30): the page shapes of section 05 are Rust types in `agentks-api`, published as a JSON Schema ([030/80](../../subtasks/030_rust-engine/80_page-data-interface.md)).
+- Decided (claude, 2026-09-30): the error record gains an optional `key`, and request failures are a separate closed list (section 08, [030/20](../../subtasks/030_rust-engine/20_error-model.md)).
+- Proposed (claude, 2026-09-30): comrak for markdown, and a highlighter that emits CSS classes.
 - Proposed (claude, 2026-09-30): BLAKE3 content hashes, and a page hash that includes the hashes of its embedded files.
 
 # 05 Notes & Analysis
 
-## 01 Crate layout (claude, proposed)
+## 01 Crate layout
 
-One Cargo workspace in `apps/agentks-engine`, built into one binary named `agentks`.
+One Cargo workspace in `apps/agentks-engine`, built into one binary named `agentks`. It holds 14 crates in nine layers. A crate may depend only on crates in lower layers. The full table, with what each crate owns and may not do, is in [030/10](../../subtasks/030_rust-engine/10_workspace-and-crate-boundaries.md).
 
-```
-apps/agentks-engine/
-  Cargo.toml                 the workspace
-  crates/
-    agentks-core/            config, aliases, the version gate, the content model, the site index,
-                             ordering, URLs, the tracker rules, validation. No I/O beyond reading files
-    agentks-render/          the markdown pipeline: pre-processing, comrak, post-processing, highlighting,
-                             theme CSS compilation
-    agentks-libraries/       dep.yaml, dep.lock, fetching, the machine cache, manifests (Phase 2)
-    agentks-server/          axum, the /api WebSocket, the watcher, file serving, editing sync
-    agentks-cli/             argument parsing, commands, output; the binary's main
-  migrations/
-    docs/  library/          migration scripts, fetched at run time, never compiled in
-```
+| Layer | Crates |
+|---|---|
+| 0 | `core`: paths, hashes, versions, the error record, the fixed vocabularies (section types, page kinds, statuses and their categories). No I/O |
+| 1 | `config` · `git` · `cache` · `api` (the wire types of the data interface) |
+| 2 | `content` (the format rules and validation) · `library` · `migrate` |
+| 3 | `index`: the site index, URLs, the link resolver, folder hashes |
+| 4 | `render`: the markdown pipeline, highlighting, theme CSS |
+| 5 | `site`: the engine as one object, which answers "the page for this URL" |
+| 6 | `sync`: live documents, presence, access keys |
+| 7 | `server`: axum, the `/api` WebSocket, file routes, the watcher |
+| 8 | `cli`: commands, output, the binary's `main` |
 
-- **Dependencies point one way**: `cli` → `server` → `render` → `core`, and `libraries` → `core`. The core knows nothing of HTTP or the terminal.
+- **Folders and names.** Each crate lives in `crates/<short name>/`, such as `crates/core` or `crates/render`. Its package name is `agentks-<name>`.
+- **Dependencies point one way**, down the layers, and `scripts/gate/crate-layers.ts` fails the gate on any other edge. No crate below `server` knows HTTP, and no crate below `cli` prints. When a lower crate needs something from a higher one, the lower crate defines a trait and the higher one implements it.
 - **The CLI and the server call the same functions.** `agentks check issues` and the issues page read one loader. That is the "one core instead of two copies" the migration exists for.
-- **The embedded bundles** (the built client and the static renderer, compressed) are included by the `server` and `cli` crates at compile time.
+- **The embedded bundles** are included at compile time: the built client by `server`, the static renderer by `cli`.
+- **Migration scripts** sit in `apps/agentks-engine/migrations/` (`docs/` and `library/`). They are fetched at run time and never compiled in.
 
 ## 02 Start-up
 
@@ -114,43 +116,44 @@ The frontend asks for data by name; the engine answers with JSON. The same shape
 
 | Request | Returns |
 |---|---|
-| `manifest` | Site identity, logo, theme CSS URL and hash, navbar, footer, the section list (name, type, layout style, base URL, hash), the route table, the engine version |
+| `manifest` | Site identity, logo, theme CSS URL and hash, navbar, footer, the section list (name, type, layout style, base URL, hash), the route table (each URL with its section, data key and hash), redirects, the engine version and `api_version` |
 | `page` (by URL) | One page's data, below |
-| `sidebar` (by section) | The section's tree: label, URL, kind, order, collapsed state, children, plus the tree's hash |
+| `sidebar` (by section) | The section's tree: label, URL, kind, collapsed state, children, plus the tree's hash. There is no `order` field: the array order is the order |
 | `issues-index` (by tracker) | Every issue with its derived fields, and the filter option lists |
-| `issue` (by id) | One issue with its anatomy sections, subtasks, plans, logs and comments, each with its status and category |
+| `issue` (by id) | One issue with its body and its anatomy tree: sections, subtasks, plans, logs and comments, each with its URL, status and category. Sub-document bodies are not included; the client fetches each with `page` |
 | `blog-index` (by section) | Posts newest first, with dates, authors and tags |
 | `custom` (by page) | The YAML data of a built-in custom page |
-| `render` (Phase 2) | The body HTML of unsaved markdown, for the live preview |
+| `render` (Phase 2) | The body HTML of unsaved markdown, for the live preview. It is its own request type, not a data name ([the server note](./04_sync-engine-and-server.md)) |
 
-A page's data:
+A markdown page's data:
 
 ```json
 {
   "url": "/dev-docs/architecture/overview",
   "hash": "b3:5f1c...",
   "section": "dev-docs",
-  "kind": "markdown",
   "layout": "@docs/default",
   "source": "data/dev-docs/05_architecture/01_overview.md",
   "title": "Overview",
   "description": "...",
   "frontmatter": { "tags": ["architecture"], "draft": false },
-  "body_html": "<h1 id=\"overview\">Overview</h1>...",
-  "outline": [{ "depth": 2, "id": "the-layers", "text": "The layers" }],
   "breadcrumbs": [{ "label": "Architecture", "url": "/dev-docs/architecture" }],
   "prev": { "title": "...", "url": "..." },
   "next": { "title": "...", "url": "..." },
-  "diagrams": [{ "id": "d1", "lang": "mermaid" }],
-  "errors": [{ "line": 42, "type": "link-missing", "message": "No file ./02_x.md", "suggestion": "..." }]
+  "errors": [{ "file": "data/dev-docs/05_architecture/01_overview.md", "line": 42, "type": "link-missing", "severity": "error", "message": "No file ./02_x.md", "suggestion": "..." }],
+  "kind": "markdown",
+  "body_html": "<h1 id=\"overview\">Overview</h1>...",
+  "outline": [{ "depth": 2, "id": "the-layers", "text": "The layers" }],
+  "diagrams": [{ "id": "d1", "lang": "mermaid" }]
 }
 ```
 
-- **`kind`** is `markdown`, `video`, `diagram` or `artifact`. A diagram page carries its source and sidecar options instead of `body_html`; an artifact page carries its `/artifacts/` URL and sidecar options.
+- **`kind`** is `markdown`, `video`, `diagram` or `artifact`, and it decides the body fields. A markdown or video page carries `body_html`, `outline` and `diagrams`. A diagram page carries `lang`, `source_text` and the sidecar `options` instead. The text is `source_text` because `source` is already the file path. An artifact page carries `artifact_url` (its `/artifacts/` URL), `theme` (`site` or `self`) and the sidecar `options`.
+- **A blog post** adds a `post` block: `date`, `author`, `tags`, `image` and `draft`.
 - **Every value is final.** The frontend never strips a prefix, sorts a list, maps a status to a category or resolves a link.
 - **Every response carries its hash**, so the browser can cache it and ask again only when the hash changes.
 
-The field lists are a starting contract. The shared UI package fixes the final shapes, and both builds type-check against one schema file generated from the Rust types (claude, proposed; generated types are data shapes, not rules).
+The Rust types in `agentks-api` are the contract ([030/80](../../subtasks/030_rust-engine/80_page-data-interface.md)). `schemars` writes them to `apps/agentks-engine/schema/api.schema.json`, and the UI package generates its TypeScript types from that file ([shared UI package](../03_frontend/01_shared-ui-package.md), section 07). Only data shapes cross over, never a rule. Hand-written examples of every shape sit in `apps/agentks-engine/schema/fixtures/`.
 
 ## 06 Caching
 
@@ -167,7 +170,9 @@ The field lists are a starting contract. The shared UI package fixes the final s
 
 ## 07 Theme CSS
 
-- The engine merges the built-in default theme, the chosen theme and its `extends` chain, and the project's overrides into one stylesheet per project.
+- The built-in theme's files live in `apps/agentks-engine/themes/default/`, outside any crate. The theme compiler in `agentks-render` embeds them in the binary ([030/85](../../subtasks/030_rust-engine/85_theme-css-compiler.md)).
+- The engine merges the built-in default theme, the chosen theme and its `extends` chain, and the project's overrides into one stylesheet per project. A theme's `override_mode` says how it meets its parent: `merge` (the default) takes the parent's files, then the child's; `override` skips any parent file whose name the child also lists; `replace` takes the child's files only.
+- The built-in `theme.yaml` has a `layers` map that puts each of its files in a CSS cascade layer (`reset`, `theme` or `elements`). Every file of a user theme goes in the `user` layer, so a user rule beats a built-in rule of the same strength ([theming and layouts](../03_frontend/04_theming-and-layouts.md)).
 - The result is cached by the hash of its inputs and served at a hashed URL, so the browser caches it for good.
 - The theme variable contract (`required_variables`) is checked here. A theme missing a required variable is an error, not a silent fallback.
 - `agentks theme css` prints the same compiled CSS, so an agent always sees the CSS the installed version uses ([theming and layouts](../03_frontend/04_theming-and-layouts.md)).
@@ -184,7 +189,9 @@ Two classes, handled differently:
 Rules:
 
 - **Never guess.** A link whose target is missing is marked broken, not pointed at the nearest match. A repository with no x.y.z tags is an error, not "use the default branch".
-- **One error record** (`file`, `line`, `type`, `message`, `suggestion`), as today, so the CLI, the page and the toolkit show the same thing.
+- **One error record** (`file`, `line`, `type`, `severity`, `message`, `key`, `suggestion`), so the CLI, the page and the toolkit show the same thing. `line`, `key` and `suggestion` are optional. `key` is the config key path, such as `pages.todo.layout`, for config problems. On the wire the kind is the field `type`; in Rust it is `kind`. The record lives in `agentks-core` ([030/20](../../subtasks/030_rust-engine/20_error-model.md)).
+- **A fatal error carries every problem** one load found, as an `ErrorList` that is never empty, so the user fixes them all in one pass.
+- **A request failure is not a content problem.** Request failures are a separate closed list, `ReplyErrorKind` in `agentks-api`: `not-found`, `invalid-request`, `forbidden`, `conflict`, `busy`, `fatal`, `internal`, `not-implemented`. A content problem never fails a request; it travels in the data's `errors`. `SiteError::to_reply` is the one mapping from an engine error to a failed reply.
 - **The CLI's validators and the renderer share code.** A problem `agentks check` reports is exactly a problem the page shows.
 
 ## 09 What the core replaces

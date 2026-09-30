@@ -6,11 +6,12 @@ status: review
 The page itself, built from the copy and design plan in [10](./10_content-and-design.md) on the scaffold from [20](./20_app-scaffold.md). One page, a few sections, each doing one job, ending in two actions: install agentks, or read the docs.
 
 # 01 To Do
-- [x] **Header** — the agentks logo and name, links to Docs (`/docs`), GitHub (`https://github.com/NeuraLabsHQ/agent-knowledge-system`), and the theme toggle. On mobile, a compact menu.
+- [x] **Header** — the agentks logo and name, links to Docs (`/docs`), GitHub (`https://github.com/NeuraLabsHQ/agent-knowledge-system`), and the theme toggle. On mobile, the same two links and the toggle, with no menu: they fit at 360 px.
 - [x] **Hero** — the one-sentence message, the one memorable element from the design plan (the folder-to-page view is the proposal), and the two actions: the install command with a copy button, and "Read the docs".
-- [x] **What it does** — three to five capabilities, each shown with a real example rather than an icon grid: write in plain markdown in any editor; read and edit it as a site; a tracker built for AI agents; libraries of reusable elements; publish as a static site. Use structure that fits the content; a numbered layout only for a real sequence.
-- [x] **How it works** — the real sequence (install, `agentks init`, `agentks start`, edit, `agentks build`), which *is* a sequence, so numbering fits here.
-- [x] **Works with your AI** — the agentks plugin from the Neuralabs marketplace, the CLI as the agent's tool; one real command and its output.
+- [x] **What it does** — five capabilities, each shown with a real file excerpt rather than an icon grid: write plain markdown in any editor; read and edit it as a site; an issue tracker agents can work in; diagrams and artifacts are pages too; share elements through libraries. Use structure that fits the content; a numbered layout only for a real sequence.
+- [ ] **Add a "publish as a static site" row** to "What you get" (`src/modules/home/content.ts`) when Phase 3 ships `agentks build`, before the site goes live.
+- [x] **How it works** — the real sequence, numbered: install, `agentks init`, `agentks start`, write. `agentks build` is left out, because 1.0.0 does not ship it.
+- [x] **Works with your AI** — the agentks plugin from the Neuralabs marketplace (the Claude Code commands), the CLI as the agent's tool; one command, shown without output until a 1.0.0 binary can produce one ([10](./10_content-and-design.md)).
 - [x] **Install** — the Linux/macOS and Windows commands in tabs, each with a copy button; a link to the install page in the docs for options.
 - [x] **Footer** — Docs, GitHub, the library repository, the marketplace, "A Neuralabs project" linking to neuralabs.org, the licence.
 - [x] **Responsive** down to 360 px wide; visible keyboard focus; `prefers-reduced-motion` respected; colour contrast AA in both themes.
@@ -27,11 +28,11 @@ The page itself, built from the copy and design plan in [10](./10_content-and-de
 - sidhantha has reviewed the page.
 
 # 02 Status and Result
-Review. Every section is built and passed a screenshot critique. Left for later work: re-copying the commands from a real 1.0.0 run, the 190/60 checks, and sidhantha's review.
+Review. Every section is built and passed a screenshot critique. Left for later work: re-copying the commands from a real 1.0.0 run, the publishing row once Phase 3 ships, the 190/60 checks, and sidhantha's review.
 
 ## Result
 
-In the main repo, worktree branch `wave1/homepage`, `apps/agentks-homepage/src/`:
+On the main repo's `main` branch, in `apps/agentks-homepage/src/`:
 
 | Section | File |
 |---|---|

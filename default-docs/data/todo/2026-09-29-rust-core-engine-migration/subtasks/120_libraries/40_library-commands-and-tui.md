@@ -1,6 +1,6 @@
 ---
 title: "agentks install, agentks library and check libraries"
-status: open
+status: in-progress
 ---
 
 This leaf gives users and agents the commands to manage libraries: `agentks install`, the `agentks library` family (`add`, `remove`, `list`, `show`, `find`, `search`), `agentks check libraries`, and the `agentks library` TUI (a full-screen terminal interface) for people. Every plain command takes `--json`, because agents cannot drive a TUI. The commands are thin: they call the sync, the manifest loader and the catalog from [120/20](./20_fetch-and-resolve.md) and [120/30](./30_manifest-and-catalog.md).
@@ -37,10 +37,12 @@ This leaf gives users and agents the commands to manage libraries: `agentks inst
 - Snapshot tests of every `--json` output pass.
 
 # 02 Status and Result
-Open. Not started.
+In progress. The logic behind every command is in `agentks-library`; the command wiring, `--json` output, help entries, exit codes and the ratatui TUI land with the CLI track.
 
 ## Result
-None yet.
+- **Code:** `crates/library/src/commands.rs` — `git_entry` (catalog id, `owner/repo` or git URL, default alias, flags checked by the dep.yaml rules), `local_entry` (a folder written relative to `dep.yaml`), `list_rows`, `show`, `find_rows` (all `Serialize`, for `--json`). `add_entry` and `remove_entry` edit `dep.yaml` keeping comments and refuse a duplicate or unknown alias. `sync` with `UpdateMode::{Keep, All, Only}` is `install [--update [ALIAS...]]`; `SyncReport::to_json()` is its `--json`. `Libraries::find` is `library find`; `Catalog::search` is `library search`; `lib_urls_in` finds `/_lib/` names for `check libraries`.
+- **Tests:** unit tests for sources, aliases and local paths; the add/remove edit tests in `dep/edit.rs`.
+- **Left:** the CLI subcommands and flags, help entries, human output, exit codes, the TUI and its non-terminal fallback, snapshot tests of the `--json` shapes, and scanning video cues once their syntax is settled.
 
 ## Agent log
 none
@@ -60,6 +62,8 @@ none
 - Decided (sidhantha, 2026-09-30): `agentks library` works as a TUI and as plain commands; the TUI and the catalog are a convenience ([library system](../../notes/04_ecosystem/01_library-system.md)).
 - Decided (sidhantha, 2026-09-30), on claude's proposal: adding a library prints its source.
 - Decided (claude, 2026-09-30): `install --update` re-resolves ranges too.
+- Decided (claude, 2026-10-01): The command logic lives in `agentks-library::commands` and returns `Serialize` rows, so the CLI, the TUI and any server panel print the same data; the CLI owns only flags, text and exit codes.
+- Decided (claude, 2026-10-01): A bad alias or source is `LibraryError::Usage`, so the CLI can exit 2 for wrong usage.
 
 # 05 Notes & Analysis
 ## Watch out

@@ -10,7 +10,7 @@ The static renderer is the JavaScript program that turns page data into finished
 - [ ] **Protocol over stdin/stdout** (newline-delimited JSON; claude's proposal, record the final form):
     - [ ] Rust → renderer: `{ "type": "site", "base": "/docs", "theme_css": "_assets/theme.<hash>.css", "islands": {…bundle paths…}, "chrome": {…navbar, footer…} }` once, then `{ "type": "page", "path": "/user-guide/intro/", "data": <page data> }` per page, then `{ "type": "end" }`.
     - [ ] Renderer → Rust: `{ "type": "html", "path": …, "html": "<!doctype html>…", "islands": ["search","theme-toggle"] }` per page, `{ "type": "error", "path": …, "message": … }` on failure, `{ "type": "done" }`.
-    - [ ] Versioned: the first message carries `protocol`; mismatch → error.
+    - [ ] Versioned: the first message carries `api_version`, the one version number for messages and data shapes ([140/50](../140_versioning-and-migrations/50_protocol-version-handshake.md)); mismatch → error.
     - [ ] Back-pressure: Rust sends the next page only after a reply, or keeps a bounded queue; measure and pick.
 - [ ] **Rendering.** For each page, render the page kind's layout from `agentks-ui` with the data, wrap it in the document shell (head from [150/60](./60_seo-sitemap-feeds.md) data, theme CSS link, island scripts), and return the string.
 - [ ] **Islands.** Components mark themselves as islands in `agentks-ui`. The renderer emits each island's markup plus a small loader that hydrates only that island with its props (serialised into the page). A page with no island ships no JavaScript. Island bundles are built once per build by Vite and hashed.

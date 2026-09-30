@@ -2,7 +2,7 @@
 title: "AI plugins and skills"
 ---
 
-In agentks, a **plugin** always means an AI-agent plugin: a folder of skills (instructions an agent loads when a task matches) for Claude Code, Codex or another agent. It never means a code extension of agentks; those are [extensions](./03_extensions.md). agentks ships **two plugins**, both in the main repository's `plugins/` folder. The first is `agentks`, the usage plugin: today's `agent-ks` skills, renamed and rewritten for the new version. The second is a smaller plugin for people who build and host libraries. Both are installed through the Neuralabs marketplace, `neuralabshq/neuralabs-plugin-marketplace`, which only points at them. The skills treat the binary as the source of truth: they send the agent to `agentks help`, the manifests of the installed libraries, the compiled CSS and the hosted docs, and do not copy them. The new plugins are written before the switch-over, and the marketplace goes live in step 2 of the launch. Hooks for Claude Code and Codex, and a retrieval index for agents, are a later stage.
+In agentks, a **plugin** always means an AI-agent plugin: a folder of skills (instructions an agent loads when a task matches) for Claude Code, Codex or another agent. It never means a code extension of agentks; those are [extensions](./03_extensions.md). agentks ships **two plugins**, both in the main repository's `plugins/` folder. The first is `agentks`, the usage plugin: today's `agent-ks` skills, renamed and rewritten for the new version. The second is a smaller plugin for people who build and host libraries. Both are installed through the Neuralabs marketplace, `NeuraLabsHQ/neuralabs-plugin-marketplace`, which only points at them. The skills treat the binary as the source of truth: they send the agent to `agentks help`, the manifests of the installed libraries, the compiled CSS and the hosted docs, and do not copy them. The new plugins are written before the switch-over, and the marketplace goes live in step 2 of the launch. Hooks for Claude Code and Codex, and a retrieval index for agents, are a later stage.
 
 # 03 References
 
@@ -23,7 +23,7 @@ In agentks, a **plugin** always means an AI-agent plugin: a folder of skills (in
 - Decided (sidhantha, 2026-09-29): a skill teaches how to override CSS and points to the CLI command that prints the compiled CSS as its reference.
 - Decided (sidhantha, 2026-09-30): **plugin** means an AI-agent plugin with skills, for Claude Code, Codex or another agent. **Library** means a dependency in `dep.yaml`.
 - Decided (sidhantha, 2026-09-30): two agentks plugins: one for using agentks, and a smaller, developer-oriented one for building and hosting libraries.
-- Decided (sidhantha, 2026-09-30): both plugins live in the main repository's `plugins/` folder. The Claude Code marketplace moves from the personal account to `neuralabshq/neuralabs-plugin-marketplace`, which serves all of Neuralabs. The personal marketplace stays for personal plugins.
+- Decided (sidhantha, 2026-09-30): both plugins live in the main repository's `plugins/` folder. The Claude Code marketplace moves from the personal account to `NeuraLabsHQ/neuralabs-plugin-marketplace`, which serves all of Neuralabs. The personal marketplace stays for personal plugins.
 - Decided (sidhantha, 2026-09-30): the CLI and the skills use the installed libraries to help agents build better docs.
 - Decided (sidhantha, 2026-09-30): until the new docs are fully migrated and usable, this repository's docs and skills stay in use. The skills for the new version are ready before the switch.
 - Decided (sidhantha, 2026-09-30): the marketplace goes live in step 2 of the launch, after the engine, client and default library work end to end.
@@ -90,11 +90,11 @@ This replaces today's two workarounds. Today the artifacts skill keeps an inline
 ## 05 The marketplace
 
 ```
-neuralabshq/neuralabs-plugin-marketplace/          all of Neuralabs
+NeuraLabsHQ/neuralabs-plugin-marketplace/          all of Neuralabs
   .claude-plugin/marketplace.json        lists agentks and agentks-library,
                                          each pointing at the main repository's plugins/<name>
 
-neuralabshq/agent-knowledge-system/
+NeuraLabsHQ/agent-knowledge-system/
   plugins/
     agentks/                             the usage plugin
     agentks-library/                     the library-development plugin
@@ -103,7 +103,7 @@ neuralabshq/agent-knowledge-system/
 - The marketplace holds no plugin code. Each entry points at a folder of the main repository, so a plugin changes in the same commit as the engine behaviour it describes.
 - Each plugin is versioned in its own manifests, independently of the installer and the default library ([versioning and migrations](../05_delivery/03_versioning-and-migrations.md)).
 - The personal marketplace keeps personal plugins. At the switch-over, its `agent-ks` entry is removed, so there is only one place to install agentks skills from.
-- Codex installs the same folders through its own plugin mechanism.
+- Codex installs the same folders through its own plugin mechanism. No Codex install command is recorded yet, so the homepage shows only the Claude Code commands until one is.
 
 ## 06 When the new plugins ship
 

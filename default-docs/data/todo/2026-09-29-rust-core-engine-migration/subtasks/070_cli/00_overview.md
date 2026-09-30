@@ -1,6 +1,6 @@
 ---
 title: "CLI — the `agentks` command surface"
-status: open
+status: in-progress
 ---
 
 The index leaf of the CLI group. `agentks` is one binary: the engine, the server and the command-line tool. This group renames today's `agent-ks` to `agentks`, ports every content command onto the shared core, and adds the commands a single machine-wide install needs. Commands owned by other groups are listed below so nothing is built twice.
@@ -40,17 +40,20 @@ The conventions every command follows (carried from today's CLI, [Rust CLI, sect
 - The CLI test suite ([170/10](../170_testing/10_rust-tests.md)) runs every command in `--json` mode against fixture projects on Linux, macOS and Windows.
 
 # 02 Status and Result
-Open. Not started.
+In progress. Wave 2 (branch `wave2/cli`) built the command surface, the conventions, the updater and `shell-init`; see [070/10](./10_rename-to-agentks.md), [070/20](./20_content-commands-port.md) and [070/70](./70_update-and-shell-init.md).
 
 ## Result
-None yet.
+- `agentks help --json` lists 65 commands: every command of the CLI note, including those owned elsewhere (`install`, `library …`, `check libraries`, `migrate`, `build`), each with an example.
+- The conventions hold and are tested: project selection through `agentks-config`, `--json` one document, diagnostics on stderr, exit 0/1/2, unknown flags rejected, one manifest for all help.
+- Commands that delete outside the project (`cache clean`, `cache reset`, `share revoke`) show a report and need `--yes` or a typed confirmation on a terminal; with no terminal and no `--yes`, or under `--json` without `--yes`, they change nothing.
+- **Left:** the leaves listed in the table; most command logic waits for the lower crates.
 
 ## Agent log
 none
 
 # 03 References
 
-**Where the work happens:** the main repository, `/home/sid/projects/06_02_NeuraLabs/agent-knowledge-system`, crate `apps/agentks-engine/crates/agentks-cli/` (the binary's `main`).
+**Where the work happens:** the main repository, `/home/sid/projects/06_02_NeuraLabs/agent-knowledge-system`, crate `agentks-cli` in `apps/agentks-engine/crates/cli/` (the binary's `main`).
 
 **Read first (every leaf):**
 - [The Rust CLI](../../notes/02_engine/05_rust-cli.md) — the whole command surface, conventions, what leaves the binary, runtimes, the rename.
@@ -62,6 +65,7 @@ none
 - Decided (sidhantha, 2026-09-29): the installer and binary are named `agentks`; the rename covers binary, installer, home folder, plugins and skills.
 - Decided (sidhantha, 2026-09-29): server commands such as `agentks ps` stay part of the CLI.
 - Decided (sidhantha, 2026-09-29): the CLI and the server share one core.
+- Decided (claude, 2026-10-01): the in-memory cache budget the CLI passes to `Site::open` is 256 MB (the proposed default of 040/30) until a crate reads `cache.memory_mb` from `~/.agentks/settings.json`.
 
 # 05 Notes & Analysis
 

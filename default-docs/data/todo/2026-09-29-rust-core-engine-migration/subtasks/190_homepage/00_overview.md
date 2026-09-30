@@ -30,7 +30,7 @@ agentks gets its own homepage at agentks.neuralabs.org/: a static marketing page
 - sidhantha has reviewed the page and every leaf is in `review` or closed.
 
 # 02 Status and Result
-In progress. 10, 20 and 30 are in review (built on branch `wave1/homepage` of the main repo); 40, 50 and 60 are open.
+In progress. 10, 20 and 30 are in review (the page is on the main repository's `main` branch); 40, 50 and 60 are open.
 
 ## Result
 None yet.

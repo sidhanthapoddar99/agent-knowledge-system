@@ -2,7 +2,7 @@
 title: "Templates and agentks init"
 ---
 
-`agentks init --template <template id or url> <path>` creates a new agentks project from a **template**, a ready-made project folder. The template defaults to `agentks-default` and the path to `docs`. The path can be `.`, `..` or any folder. Templates live in the library repository, `neuralabshq/agent-knowledge-system-library`, and are listed in its `library.json`. A template can also come from any git URL or a local folder. It is copied into the project once. It is not a dependency and is never listed in `dep.yaml`. A template holds everything a project needs to run and to publish: the `config/` folder with `site.yaml`, an empty `dep.yaml` and `.env.example`, starter pages, and a basic **Dockerfile** that the user owns and can change. `init` never overwrites anything. It refuses a folder that already holds a project or any file the template would replace.
+`agentks init --template <template id or url> <path>` creates a new agentks project from a **template**, a ready-made project folder. The template defaults to `agentks-default` and the path to `docs`. The path can be `.`, `..` or any folder. Templates live in the library repository, `NeuraLabsHQ/agent-knowledge-system-library`, and are listed in its `library.json`. A template can also come from any git URL or a local folder. It is copied into the project once. It is not a dependency and is never listed in `dep.yaml`. A template holds everything a project needs to run and to publish: the `config/` folder with `site.yaml`, an empty `dep.yaml` and `.env.example`, starter pages, and a basic **Dockerfile** that the user owns and can change. `init` never overwrites anything. It refuses a folder that already holds a project or any file the template would replace.
 
 # 03 References
 
@@ -17,7 +17,7 @@ title: "Templates and agentks init"
 # 04 Decisions
 
 - Decided (sidhantha, 2026-09-30): `agentks init --template <template id or url> <path>` creates a project from a template. The template defaults to `agentks-default` and the path to `docs`; the path can be `.`, `..` or any folder.
-- Decided (sidhantha, 2026-09-30): templates live in the library repository, `neuralabshq/agent-knowledge-system-library`, and are listed in `library.json`.
+- Decided (sidhantha, 2026-09-30): templates live in the library repository, `NeuraLabsHQ/agent-knowledge-system-library`, and are listed in `library.json`.
 - Decided (sidhantha, 2026-09-30): no Docker image is published. A basic Dockerfile ships with the docs and the template, for users to change: it installs agentks, runs `agentks build`, and serves the output with nginx.
 - Decided (sidhantha, 2026-09-30): `config/dep.yaml` is required in every project, even when empty.
 - Decided (sidhantha, 2026-09-30), on claude's proposal: a template id is looked up in the catalog; a URL is a git source, optionally with a subfolder and a version.
@@ -121,7 +121,7 @@ COPY --from=build /out /usr/share/nginx/html
 
 ## 05 Where templates live, and who maintains them
 
-- **Official templates** start with `agentks-default`: a docs site with a guide, a blog and an issue tracker, an empty `dep.yaml` and the Dockerfile. They are folders in `neuralabshq/agent-knowledge-system-library` under `templates/`, each with an entry in `library.json` ([library system](./01_library-system.md)). They share the library repository's version series and are tested end to end with the engine in step 1 of the launch.
+- **Official templates** start with `agentks-default`: a docs site with a guide, a blog and an issue tracker, an empty `dep.yaml` and the Dockerfile. They are folders in `NeuraLabsHQ/agent-knowledge-system-library` under `templates/`, each with an entry in `library.json` ([library system](./01_library-system.md)). They share the library repository's version series and are tested end to end with the engine in step 1 of the launch.
 - **Third-party templates** are any git repository or subfolder. No catalog entry is needed.
 - **A breaking engine release** means the template's owner migrates it with the docs migrations, like any project, and tags a new version. Projects already created from it are the users' own content and migrate through `agentks migrate`.
 

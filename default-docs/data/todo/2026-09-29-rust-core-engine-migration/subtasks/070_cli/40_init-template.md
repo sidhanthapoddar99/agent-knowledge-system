@@ -45,7 +45,7 @@ none
 
 # 03 References
 
-**Where:** main repository, `apps/agentks-engine/crates/agentks-cli/`, using the libraries crate for fetching.
+**Where:** main repository, `apps/agentks-engine/crates/cli/`, using `agentks-library` for fetching.
 
 **Read first:**
 - [Templates and init](../../notes/04_ecosystem/04_templates-and-init.md) — the command, what it does, what a template contains, decisions.

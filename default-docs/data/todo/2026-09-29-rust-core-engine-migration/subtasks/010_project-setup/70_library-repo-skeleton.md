@@ -6,31 +6,24 @@ status: in-progress
 `NeuraLabsHQ/agent-knowledge-system-library` holds the default library, the project templates and `library.json`, the catalog the binary reads. The engine's library code ([120](../120_libraries/00_overview.md)) and `agentks init` ([070/40](../070_cli/40_init-template.md)) need a real repository with valid files to be built and tested against. This leaf creates that first valid shape; filling the library with elements is [120](../120_libraries/00_overview.md)'s work.
 
 # 01 To Do
-- [ ] **`library.json`** at the root, with one library and one template entry:
+- [ ] **`library.json`** at the root, with the `agentks-default` library entry. The `agentks-default` template entry lands with [120/85](../120_libraries/85_templates.md), when `templates/agentks-default` exists, because the library's check rejects a template path that does not exist ([120/60](../120_libraries/60_default-library-scaffold.md)):
     ```json
     {
       "libraries": {
         "agentks-default": {
-          "description": "The default library: icons, frames, scene templates",
-          "git": "https://github.com/neuralabshq/agent-knowledge-system-library.git",
+          "description": "The default library: icons for technical docs, device and window frames, and small data widgets",
+          "git": "https://github.com/NeuraLabsHQ/agent-knowledge-system-library.git",
           "path": ".",
           "latest": "0.1.0",
-          "tags": ["icons", "frames", "video"]
+          "tags": ["icons", "frames", "widgets"]
         }
       },
-      "templates": {
-        "agentks-default": {
-          "description": "A docs site with a guide, a blog and an issue tracker",
-          "git": "https://github.com/neuralabshq/agent-knowledge-system-library.git",
-          "path": "templates/agentks-default"
-        }
-      }
+      "templates": {}
     }
     ```
 - [ ] **`manifest.json`** at the root: `name`, `version` `0.1.0`, `description`, `engine` range, `elements` with one real element (an SVG icon under `icons/`), so resolution has something to find.
 - [ ] **`templates/agentks-default/`**: an ordinary agentks project that runs with `agentks start` from its own folder — `config/site.yaml` (with `engine_version`), `navbar.yaml`, `footer.yaml`, `dep.yaml` (`libraries: {}`), `.env.example`, one starter page per section, `assets/`, a `Dockerfile` stub, `.gitignore` (`dist/`, `config/.env`). The full contents are [04/04](../../notes/04_ecosystem/04_templates-and-init.md) section 03; this leaf only makes it valid.
 - [ ] **JSON Schemas** for `library.json` and `manifest.json` in `schemas/`, and the `check.yml` workflow ([50](./50_ci-workflows.md)) that validates every manifest against them and checks every element `file` exists inside the library folder.
-- [ ] **Tag `v0.1.0`** once the files validate, so selector resolution ("the newest x.y.z tag") can be tested. 1.0.0 comes with the launch.
 
 ## Guardrails
 - One version series for the whole repository: a change to any element is a new version ([04/01](../../notes/04_ecosystem/01_library-system.md)).
@@ -39,7 +32,6 @@ status: in-progress
 
 ## Done when
 - `library.json` and `manifest.json` validate against their schemas in CI.
-- `git ls-remote --tags origin` shows `v0.1.0`.
 - `templates/agentks-default/config/dep.yaml` exists and parses as YAML with `libraries: {}`.
 
 # 02 Status and Result
@@ -47,7 +39,7 @@ In progress. The catalog and the manifest exist; wave 1 builds the default libra
 
 ## Result
 - `library.json` (the catalog, one library entry, templates empty) and `manifest.json` (`agentks-default`, version 0.1.0, engine `>=1.0.0 <2.0.0`, no elements yet), `README.md`, `AGENTS.md`, `LICENSE`, `.gitignore`. Commit `80aa127`.
-- Left: the schemas and their CI check, `templates/agentks-default/`, the `v0.1.0` tag.
+- Left: the schemas and their CI check, and `templates/agentks-default/`. The first tag, `v1.0.0`, belongs to [120/60](../120_libraries/60_default-library-scaffold.md).
 
 ## Agent log
 none
@@ -60,9 +52,9 @@ none
 
 # 04 Decisions
 - Decided (sidhantha, 2026-09-30): libraries get their own repository; `manifest.json` per library; one version series per library; `library.json` is the catalog in the library repository.
-- Decided (claude, 2026-09-30): the first tag is `v0.1.0`, so development resolution can be tested before the launch's 1.0.0.
+- Decided (claude, 2026-09-30): the manifest stays at `0.1.0` until the first tag, `v1.0.0`, and tags use the form `vX.Y.Z` ([120/60](../120_libraries/60_default-library-scaffold.md) holds the reasons).
 
 # 05 Notes & Analysis
 ## Watch out
-- The catalog's `git` URLs use `neuralabshq` in lower case; GitHub treats the organisation name case-insensitively, so `NeuraLabsHQ` and `neuralabshq` both resolve.
+- The catalog's `git` URLs use the real casing, `NeuraLabsHQ` ([120/60](../120_libraries/60_default-library-scaffold.md)). GitHub also accepts `neuralabshq`.
 - The repository is private until launch. Fetching it from the engine in tests needs the developer's git credentials; CI in the main repository needs a read token for it, or tests use a local clone path.

@@ -1,6 +1,6 @@
 ---
 title: "Rust engine — a modular core in one binary"
-status: open
+status: in-progress
 ---
 
 The Rust engine replaces today's Astro loaders, parsers and cache manager, and absorbs the rules the Rust CLI already duplicates. sidhantha asked on 2026-09-30 for it to be **very modular and properly structured**, with memory, cache and versioning handled deliberately. This group builds it as a Cargo workspace of small crates with one-way dependencies, checked in CI, so each crate can be understood, tested and replaced alone. The server ([050](../050_server/00_overview.md)), the CLI ([070](../070_cli/00_overview.md)), caching ([040](../040_caching/00_overview.md)) and collaboration ([060](../060_collaboration/00_overview.md)) are built on these crates.
@@ -16,14 +16,14 @@ The Rust engine replaces today's Astro loaders, parsers and cache manager, and a
 
 | Leaf | Delivers | Crate(s) | Absorbs | Status |
 |---|---|---|---|---|
-| [10](./10_workspace-and-crate-boundaries.md) | The Cargo workspace, 14 crates, the layer check | all | — | open |
-| [20](./20_error-model.md) | Typed errors, the shared error record, fatal vs content errors | `agentks-core` | — | open |
+| [10](./10_workspace-and-crate-boundaries.md) | The Cargo workspace, 14 crates, the layer check | all | — | review |
+| [20](./20_error-model.md) | Typed errors, the shared error record, fatal vs content errors | `agentks-core` | — | review |
 | [30](./30_config-loader-and-settings-schema.md) | Typed settings; each setting declares what it affects; live reload | `agentks-config` | — | open |
 | [40](./40_site-index.md) | The index: entries, URLs, folder hashes, the reference graph | `agentks-index` | [knowledge graph](../../../2026-04-19-knowledge-graph-and-wiki-links/issue.md) subtasks 01, 02 | open |
 | [50](./50_markdown-pipeline.md) | Pre-processing, comrak, highlighting, heading IDs, post-processing | `agentks-render` | — | open |
 | [60](./60_tracker-loader.md) | Issues, anatomy sections, statuses, derived fields | `agentks-content`, `agentks-site` | — | open |
 | [70](./70_diagram-and-artifact-sources.md) | Diagram, artifact and video page data; sidecars | `agentks-content`, `agentks-site` | — | open |
-| [80](./80_page-data-interface.md) | The one data interface the client and the static build read | `agentks-api`, `agentks-site` | — | open |
+| [80](./80_page-data-interface.md) | The one data interface the client and the static build read | `agentks-api`, `agentks-site` | — | in-progress |
 | [85](./85_theme-css-compiler.md) | One compiled, contract-checked stylesheet per project | `agentks-render` | — | open |
 | [90](./90_memory-and-concurrency.md) | The runtime model, snapshots, bounded queues, a memory budget | `agentks-site`, `agentks-server` | — | open |
 | [95](./95_retrieval-index.md) | Full-text search for the site and agents | `agentks-search` (later) | [site-wide search](../../../2026-04-19-site-wide-search/issue.md), Rust side | open |
@@ -43,7 +43,7 @@ These hold for every leaf in the group.
 - The engine renders every page of the corpus with zero unexpected differences from the golden snapshot.
 
 # 02 Status and Result
-Open. Not started.
+In progress. 10 and 20 are in review; 80 is in progress; the rest are open.
 
 ## Result
 None yet.
@@ -61,7 +61,7 @@ none
 - Decided (sidhantha, 2026-09-29): Rust owns the engine logic; browser code stays TypeScript; no WASM; Rust renders page bodies, not layouts.
 - Decided (sidhantha, 2026-09-29): the hybrid — index at start-up, pages rendered on request, cached where it pays.
 - Decided (sidhantha, 2026-09-30): the engine is very modular and properly structured, with memory, cache and versioning handled deliberately.
-- Decided (claude, 2026-09-30): 14 crates in layers ([10](./10_workspace-and-crate-boundaries.md)), refining the five-crate proposal in [02/03](../../notes/02_engine/03_rust-engine.md) section 01.
+- Decided (claude, 2026-09-30): 14 crates in layers, with dependencies pointing one way ([10](./10_workspace-and-crate-boundaries.md) holds the layer table; [02/03](../../notes/02_engine/03_rust-engine.md) section 01 summarises it).
 
 # 05 Notes & Analysis
 ## Watch out

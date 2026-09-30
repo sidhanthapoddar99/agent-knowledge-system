@@ -131,7 +131,7 @@ An island is a component that ships JavaScript because it is interactive. Everyt
 
 - Each island is hydrated on its own: the page's HTML is already complete, and the island only attaches behaviour.
 - A page with no island ships no JavaScript.
-- The components mark which parts are islands, so the client (which runs everything) and the static renderer (which runs only islands) use one component tree. The UI framework must support this ([open questions and risks](../01_overview/05_open-questions-and-risks.md), the UI framework).
+- The components mark which parts are islands, so the client (which runs everything) and the static renderer (which runs only islands) use one component tree. Preact, the chosen UI framework, hydrates each island on its own from the props written beside it ([the shared UI package](../03_frontend/01_shared-ui-package.md), section 07).
 - Whether search on a static site needs a WASM build of the Rust search code is decided when search is built, for that feature only.
 
 ## 06 Diagrams at build time
@@ -199,6 +199,4 @@ These are the three Phase 1 safeguards. Without them this phase becomes a rewrit
 
 ## 12 Open
 
-- The UI framework, which must render at build time and support islands.
-- Whether search on a static site needs WASM.
-- Both in [open questions and risks](../01_overview/05_open-questions-and-risks.md).
+- Whether search on a static site needs WASM ([open questions and risks](../01_overview/05_open-questions-and-risks.md)).

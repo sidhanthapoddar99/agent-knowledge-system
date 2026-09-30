@@ -31,7 +31,7 @@ none
 
 # 03 References
 
-**Where:** main repository, `apps/agentks-engine/crates/agentks-cli/`.
+**Where:** main repository, `apps/agentks-engine/crates/cli/`.
 
 **Read first:**
 - [Theming and layouts, sections 04–06](../../notes/03_frontend/04_theming-and-layouts.md) — the contract, where CSS comes from, hooks as a public contract.

@@ -1,6 +1,6 @@
 ---
 title: "UI package and client — group index"
-status: open
+status: in-progress
 ---
 
 This group builds the two frontend pieces every page goes through. The shared package `apps/packages/agentks-ui` holds every layout, component and island, and is pure: data in, markup out. The client `apps/agentks-client` is the Vite single-page app of the local tool: it routes real URL paths, talks to the Rust engine over one WebSocket at `/api`, caches data by content hash, mounts islands, and is embedded in the `agentks` binary. The static renderer of Phase 3 uses the same package ([150_publishing](../150_publishing/00_overview.md)), so nothing here may assume a browser while rendering.
@@ -9,7 +9,7 @@ This group builds the two frontend pieces every page goes through. The shared pa
 
 | Leaf | Status | Delivers | Waits on |
 |---|---|---|---|
-| [080/10 UI framework decision](./10_ui-framework-decision.md) | open | The framework for the package, the client and the static renderer, chosen by a spike and recorded | [020/10 golden fixtures](../020_content-contract/10_golden-fixtures.md) for the spike pages |
+| [080/10 UI framework decision](./10_ui-framework-decision.md) | review | The framework for the package, the client and the static renderer, chosen by a spike and recorded | [020/10 golden fixtures](../020_content-contract/10_golden-fixtures.md) for the spike pages |
 | [080/20 Shared UI package](./20_shared-ui-package.md) | open | `agentks-ui` scaffold: `DataSource`, page-data types, layout registry, island contract, purity check | 10, [030/80 page data interface](../030_rust-engine/80_page-data-interface.md) |
 | [080/30 Client shell and routing](./30_client-shell-and-routing.md) | open | The app shell, the real-path router, link interception, scroll, focus, not-found | 20 |
 | [080/40 WebSocket client](./40_websocket-client.md) | open | The one `/api` connection: requests with ids, pushes, reconnect, version handshake, `DataSource` over the socket | 20, [050/20 WebSocket API](../050_server/20_websocket-api.md) |
@@ -33,7 +33,7 @@ This group builds the two frontend pieces every page goes through. The shared pa
 - The client opens this repository's docs and tracker from `agentks start` and passes route parity ([170/20](../170_testing/20_route-and-content-parity.md)).
 
 # 02 Status and Result
-Open. Not started.
+In progress. 10 is in review; the rest are open.
 
 ## Result
 None yet.
@@ -46,13 +46,13 @@ none
 - **Design, read first:** [the shared UI package](../../notes/03_frontend/01_shared-ui-package.md), [the client application](../../notes/03_frontend/02_client-application.md), [theming and layouts](../../notes/03_frontend/04_theming-and-layouts.md), [the Rust engine's data interface](../../notes/02_engine/03_rust-engine.md), [the sync engine and server](../../notes/02_engine/04_sync-engine-and-server.md).
 - **Discussion:** [the local SPA over WebSocket](../../brainstorm/01_initial-discussion/17_local-spa-over-websocket.md), [Phase 3 publishing](../../brainstorm/02_future-stages/07_phase-3-publishing.md), [repositories and three states](../../brainstorm/02_future-stages/12_repositories-and-three-states.md).
 - **Toolchain:** [toolchain versions](../../agent-memory/toolchain-versions.md) — Vite 8.3.1, Bun 1.4.2, Node 24.
-- **Open questions:** [open questions and risks](../../notes/01_overview/05_open-questions-and-risks.md) (question 12, the UI framework).
 
 # 04 Decisions
 - Decided (sidhantha, 2026-09-29): the frontend is a Vite single-page app over one WebSocket; it holds display logic only ([the client](../../notes/03_frontend/02_client-application.md)).
 - Decided (sidhantha, 2026-09-29): the three Phase 1 safeguards — one data interface, real URL paths, pure shared components ([the shared UI package](../../notes/03_frontend/01_shared-ui-package.md)).
 - Decided (sidhantha, 2026-09-30): layouts live in `apps/packages/agentks-ui`, used by `apps/agentks-client` and `apps/agentks-ssg`.
 - Decided (sidhantha, 2026-09-30): use the latest Vite ([toolchain versions](../../agent-memory/toolchain-versions.md)).
+- Decided (claude, 2026-09-30): Preact 11.0.0, a small manifest-driven router of our own, islands hydrated one by one, and types generated from the engine's `api.schema.json` ([10](./10_ui-framework-decision.md); [the shared UI package](../../notes/03_frontend/01_shared-ui-package.md) section 07 has the reasons and the measurements).
 
 # 05 Notes & Analysis
 ## 01 Where the pieces sit
@@ -69,4 +69,4 @@ apps/
 
 ## Watch out
 - The prior audit counted the single-page app chores a server-rendered site gets free: `#heading` anchors, back-and-forward scroll, focus and announcements, first-load size. They are acceptance items in [30](./30_client-shell-and-routing.md), not polish.
-- Excalidraw and tldraw are React components. Whatever framework [10](./10_ui-framework-decision.md) picks, they run inside a React island on the pages that use them.
+- Excalidraw and tldraw are React components. They run on real React in their own lazy chunk, only on the pages that use them, never on Preact's compatibility layer ([10](./10_ui-framework-decision.md)).

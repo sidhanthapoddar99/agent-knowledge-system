@@ -7,7 +7,8 @@ Before any code, the homepage needs to know what it says and how it looks. This 
 
 # 01 To Do
 - [x] **The message.** One sentence for what agentks is, one for who it is for, one for why it is different. Draft from the [system overview](../../notes/01_overview/02_system-overview.md): "The filesystem is the document. The app renders it."
-- [x] **Copy for each section** in [30](./30_sections.md): plain verbs, sentence case, no filler, user words not system words ("your docs folder", not "content sections"). Every command shown is real and was run.
+- [x] **Copy for each section** in [30](./30_sections.md): plain verbs, sentence case, no filler, user words not system words ("your docs folder", not "content sections"). The commands shown come from the design notes; none is copied from a real run yet, because no 1.0.0 binary exists.
+- [ ] **Re-copy every command from a real run** of the released 1.0.0 binary before launch: the install commands, `agentks init`, `agentks start`, the plugin commands and `agentks issue context`. Add a real output sample to the agent section then.
 - [x] **The design plan**, written into this leaf's Result:
     - [x] Colour: 4–6 named hex values, derived from or compatible with the docs theme tokens ([40](./40_shared-look-with-docs.md)), in light and dark.
     - [x] Type: one or two families with distinct roles, a type scale, weights. Chosen for this product, not a default.
@@ -28,11 +29,11 @@ Before any code, the homepage needs to know what it says and how it looks. This 
 - sidhantha has approved or amended both; the answers are in Decisions.
 
 # 02 Status and Result
-Review. The message, the copy and the design plan are written and built into the page; waiting on sidhantha's review of both.
+Review. The message, the copy and the design plan are written and built into the page; waiting on sidhantha's review of both. Before launch, every command on the page is re-copied from a real 1.0.0 run.
 
 ## Result
 
-The page built from this plan is in the main repo at `apps/agentks-homepage/` (worktree branch `wave1/homepage`). Every word of copy is in one file, `apps/agentks-homepage/src/modules/home/content.ts`; addresses and commands are in `src/lib/site.ts`.
+The page built from this plan is on the main repo's `main` branch, at `apps/agentks-homepage/`. Every word of copy is in one file, `apps/agentks-homepage/src/modules/home/content.ts`; addresses and commands are in `src/lib/site.ts`.
 
 ### The message
 
@@ -124,7 +125,7 @@ Footer: mark, Neuralabs line | links
 none
 
 # 03 References
-- **Repository:** `NeuraLabsHQ/agent-knowledge-system`, `apps/agentks-homepage/` (the copy may live in `apps/agentks-homepage/content/` once the scaffold exists).
+- **Repository:** `NeuraLabsHQ/agent-knowledge-system`, `apps/agentks-homepage/` (the copy is in `src/modules/home/content.ts`).
 - **Read first:**
   - [System overview](../../notes/01_overview/02_system-overview.md) and [architecture](../../notes/01_overview/03_architecture.md) — the product in its own words.
   - [AGENTS.md](../../../../../../AGENTS.md), "The filesystem is the document. The app renders it." — the load-bearing principle, the best source for the message.

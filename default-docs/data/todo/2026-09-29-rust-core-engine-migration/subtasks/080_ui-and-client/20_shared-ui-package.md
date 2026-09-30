@@ -1,23 +1,23 @@
 ---
 title: "Scaffold the shared UI package agentks-ui"
-status: open
+status: in-progress
 ---
 
 `apps/packages/agentks-ui` is where every layout, component and island lives once, so the local client and the static renderer can never drift. This leaf builds the package's skeleton and its contracts: the `DataSource` interface, the page-data types, the layout registry, the island contract, the shared display helpers, component CSS rules, and the checks that keep the package pure. The layouts themselves are built in [100_layouts](../100_layouts/00_overview.md) on top of it.
 
 # 01 To Do
-- [ ] **Create the package** in the Bun workspace of the main repository: `apps/packages/agentks-ui/` with `package.json` (name `@agentks/ui`, `private: true`), `tsconfig.json` in strict mode, and `src/` laid out as below. The client and, later, `apps/agentks-ssg` depend on it by workspace path.
+- [ ] **Create the package** `apps/packages/agentks-ui/` in the main repository, with its own `package.json` (name `@agentks/ui`, `private: true`), `tsconfig.json` in strict mode, and `src/` laid out as below. There is no JS workspace (the project-setup rule): the client and, later, `apps/agentks-ssg` each own their `package.json` and `bun.lock` and depend on the package with `link:../packages/agentks-ui`.
+- [ ] **Add the framework and the type generator** to the package: `preact` 11.0.0, `preact-render-to-string` 6.7.0, `@preact/preset-vite` 2.10.6 (it needs `@babel/core` as a peer) and `json-schema-to-typescript` 16.0.0. Record them in the Stack section of the main repository's AGENTS.md ([the shared UI package](../../notes/03_frontend/01_shared-ui-package.md) section 07).
 - [ ] **Page-data types** in `src/data/types.ts`.
-    - [ ] Generate them from the Rust structs that the engine serialises (for example with `ts-rs`), into `src/data/generated/`, as part of the engine's build. They carry the shape only: no ordering, URL or status logic crosses over.
-    - [ ] Commit the generated files and fail `ctl gate` when a regeneration changes them without the commit (drift check).
-    - [ ] Fallback, if generation is judged to break the decision on question 10: hand-written types checked against JSON fixtures that the Rust tests write. Record which path was taken in [the shared UI package](../../notes/03_frontend/01_shared-ui-package.md).
+    - [ ] Generate `src/data/generated/api.ts` from the engine's `apps/agentks-engine/schema/api.schema.json` with `json-schema-to-typescript`, as part of the package's build ([030/80](../030_rust-engine/80_page-data-interface.md) writes the schema). The types carry the shape only: no ordering, URL or status logic crosses over.
+    - [ ] Commit the generated file and fail `ctl gate` when a regeneration changes it without the commit (drift check).
 - [ ] **`DataSource`** in `src/data/source.ts`: the one interface every build implements (`manifest`, `page`, `sidebar`, `issuesIndex`, plus `issue`, `blogIndex` and `custom` to match the engine's request list). Components never import it; route-level code does.
-- [ ] **The page-kind union.** `PageData` tagged on `kind`, one variant per layout the package draws: `docs`, `blog-index`, `blog-post`, `issues-index`, `issue`, `issue-subdoc`, `custom`, `diagram`, `artifact`, `video`. Reconcile the names with the engine's `kind` values in [030/80](../030_rust-engine/80_page-data-interface.md) so there is one list.
+- [ ] **The page shapes come from the schema, one list.** `PageData`, what `get page` returns, is tagged on `kind`: `markdown`, `video`, `diagram` or `artifact`, and names its `layout` (for example `@docs/default`). The blog index, the issues index, an issue's detail, a custom page and a sidebar are separate answers with their own types (`BlogIndex`, `IssuesIndex`, `IssueDetail`, `CustomPage`, `Sidebar`) ([030/80](../030_rust-engine/80_page-data-interface.md)). The package keeps no second list of kinds.
 - [ ] **The layout registry** in `src/layouts/registry.ts`: maps the layout name from the manifest (for example `@docs/default`) to a lazily imported component. An unknown name is an error the route level shows; it never falls back to another layout.
-- [ ] **The island contract** in `src/islands/`:
-    - [ ] Each island has a stable name, a props type and a mount function `mount(el, props) => unmount`.
-    - [ ] Props are serialisable. The static renderer writes them in a `<script type="application/json" data-island-props>` tag beside the island's markup.
-    - [ ] The body HTML from Rust marks islands with `data-island="<name>"`; the registry maps names to lazily imported islands.
+- [ ] **The island contract** in `src/islands/` ([the shared UI package](../../notes/03_frontend/01_shared-ui-package.md) section 07):
+    - [ ] Each island is a Preact component with a stable name and a props type. `src/islands/registry.ts` maps each name to a lazy import.
+    - [ ] Props are serialisable. The static renderer writes each island as `<div data-island="name">markup</div>` followed by `<script type="application/json" data-props>`. The islands entry calls Preact's `hydrate` on that element alone, and unmounts with `render(null, el)` ([50](./50_islands.md) builds the entry).
+    - [ ] The body HTML from Rust marks islands with `data-island="<name>"` and their input in `data-` attributes; they use the same registry.
 - [ ] **Shared display helpers** in `src/shared/`: class-name joins, the file-type glyph list (from today's [file-type icons](../../../../../../agent-ks-engine/src/layouts/file-type-icons.ts)), the tooltip rule (`data-tip`, `data-tip-always`), status badge mapping from the status **Rust sent** to its theme variable.
 - [ ] **Component CSS rules**: each component's CSS beside it; every layout's classes carry its prefix (for example `aks-docs-`); `@layer` order reset, theme, elements, components, user ([theming](../../notes/03_frontend/04_theming-and-layouts.md) section 05). The public hooks (`data-part`) are listed in `src/hooks.json`, which `agentks theme css` prints ([070/80](../070_cli/80_theme-commands.md)).
 - [ ] **Purity check** (`bun test` in the package, run by `ctl gate`):
@@ -56,7 +56,7 @@ none
 - Decided (sidhantha, 2026-09-29): every rule stays in Rust; the frontend receives results as data. No TypeScript is generated from Rust **rules** ([open questions](../../brainstorm/01_initial-discussion/16_open-questions.md), question 10).
 - Decided (sidhantha, 2026-09-29): all data access goes through one small interface.
 - Decided (sidhantha, 2026-09-30): the package is `apps/packages/agentks-ui`, used by the client and the static renderer.
-- Proposed (claude, 2026-09-30): TypeScript **data-shape** types are generated from the Rust structs; the fallback is fixture-checked hand-written types ([the shared UI package](../../notes/03_frontend/01_shared-ui-package.md) section 03).
+- Decided (claude, 2026-09-30): the TypeScript **data-shape** types are generated from the engine's `api.schema.json` with `json-schema-to-typescript` ([080/10](./10_ui-framework-decision.md), [the shared UI package](../../notes/03_frontend/01_shared-ui-package.md) section 07).
 
 # 05 Notes & Analysis
 ## 01 Folder layout
@@ -67,8 +67,8 @@ apps/packages/agentks-ui/
   src/
     data/
       source.ts           DataSource interface
-      types.ts            PageData union, re-exports generated shapes
-      generated/          types generated from Rust structs (committed)
+      types.ts            re-exports the generated shapes
+      generated/api.ts    generated from api.schema.json (committed)
     layouts/
       registry.ts         layout name → lazy component
       docs/default/  docs/compact/  blog/default/  issues/default/
@@ -76,14 +76,13 @@ apps/packages/agentks-ui/
       navbar/default/  navbar/minimal/  footer/default/  footer/minimal/
       pages/diagram/  pages/artifact/  pages/video/
     islands/
-      registry.ts         island name → lazy mount
+      registry.ts         island name → lazy import
       theme-toggle/  sidebar-collapse/  issue-filters/  code-copy/  tooltip/
       diagram-mermaid/  diagram-graphviz/  diagram-excalidraw/  diagram-drawio/
       artifact-frame/  video-player/
     shared/               glyphs, tooltip rule, class joins, status → variable
     hooks.json            the public CSS hooks per layout
-  test/
-    fixtures/             page payloads from the Rust tests
+  fixtures/               corpus page payloads written by the Rust tests (030/80)
 ```
 
 ## 02 The `DataSource` shape (starting contract)
@@ -103,5 +102,6 @@ export interface DataSource {
 Every payload carries `hash`. The client caches by it; the static renderer ignores it.
 
 ## Watch out
+- Until [030/80](../030_rust-engine/80_page-data-interface.md) writes corpus fixtures into the package, develop against the hand-written fixtures in `apps/agentks-engine/schema/fixtures/`: one per page kind and per answer, each checked by a round trip through the Rust types.
 - Heading IDs, link hrefs and highlighted code arrive finished inside `body_html`. A layout never rewrites the body.
 - Status colour comes only from the theme's status variables; the mapping is display, not a rule, because Rust already sent the status and its category.

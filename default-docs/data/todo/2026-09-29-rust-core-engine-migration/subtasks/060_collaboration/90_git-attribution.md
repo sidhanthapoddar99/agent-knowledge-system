@@ -32,7 +32,7 @@ none
 
 # 03 References
 
-**Where:** main repository, `apps/agentks-engine/` — journal in the server crate; `share log` and the commit trailers in the CLI crate.
+**Where:** main repository, `apps/agentks-engine/` — the journal in `agentks-sync` (`EditJournal` in `crates/sync/src/keys.rs`); `share log` and the commit trailers in the CLI crate.
 
 **Read first:**
 - [Sync engine and server, section 06](../../notes/02_engine/04_sync-engine-and-server.md) — "edits are attributed in git to the key's label".

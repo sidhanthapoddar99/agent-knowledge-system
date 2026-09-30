@@ -20,7 +20,7 @@ Artifacts and video scenes often show content inside a device or window: a phone
     - [x] Inputs: query parameters, and an optional `postMessage({ type: "agentks:element:data", data })` from the parent.
     - [x] Theme: read `?theme=light|dark` (the parent passes its mode) and use the theme variable names from the site contract with sensible built-in values, because a sandboxed element cannot read the parent's CSS.
     - [x] Size: fill the iframe; no fixed pixel size on the outer element.
-    - [x] No network requests, no storage (the sandbox blocks them anyway).
+    - [x] No network requests and no storage; `scripts/check.py` rejects both. The one exception is a screen frame's `src`, which the parent passes: an image, or with `kind=page` a page in a nested sandboxed iframe ([library system](../../notes/04_ecosystem/01_library-system.md), section 14).
 - [x] **Manifest entries** with descriptions that say what goes in and how (`"A phone frame. Pass ?src= with an image URL, or post data…"`) and tags (`frame`, `mobile`, `device`).
 - [ ] **Test artifact** (Partly done: `preview/index.html` shows every frame and widget in both modes, sandboxed, with sample inputs and a `postMessage` to `kv-table`; the agentks test project waits for the binary and the `/_lib/` route.) in the library's test project showing each frame and widget, both theme modes.
 - [ ] **Bump the library version** (minor) and tag. Folded into the first tag, `v1.0.0` ([120/60](./60_default-library-scaffold.md)).

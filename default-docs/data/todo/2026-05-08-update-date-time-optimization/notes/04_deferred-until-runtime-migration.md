@@ -34,8 +34,8 @@ These need **no** revision when work resumes under the migration:
 
 | Today's target | Target in the Rust engine |
 |---|---|
-| `agent-ks-engine/src/loaders/issue-dates.ts` (TypeScript) | The Rust engine's tracker module, shared with the CLI |
-| `agent-ks-engine/src/dev-tools/integration.ts` (watcher wiring) | The Rust engine's file watcher (`notify`) |
+| [issue-dates.ts](../../../../../agent-ks-engine/src/loaders/issue-dates.ts) (TypeScript) | The Rust engine's tracker module, shared with the CLI |
+| [integration.ts](../../../../../agent-ks-engine/src/dev-tools/integration.ts) (watcher wiring) | The Rust engine's file watcher (`notify`) |
 | `cache.delete()` + `moduleGraph.invalidateModule` | One removal from the engine's index. No dual invalidation |
 | `chokidar` + custom `.git/HEAD` watching | `notify` + the same `.git/HEAD` logic |
 | Per-branch JSON under `.cache/<repo>/<branch>.json` | The per-project build cache, `~/.agentks/build-cache/<project hash>/`, keyed by branch; the migration proposes the engine version in the key too ([the build cache note](../../2026-09-29-rust-core-engine-migration/brainstorm/01_initial-discussion/07_agentks-home-and-build-cache.md)) |

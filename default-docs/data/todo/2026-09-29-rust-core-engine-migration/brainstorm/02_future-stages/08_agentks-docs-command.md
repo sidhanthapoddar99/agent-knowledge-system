@@ -4,7 +4,7 @@ title: "The agentks docs command"
 
 `agentks docs` **opens the agentks documentation in the browser**, at `agentks.neuralabs.org/docs`. The docs are not bundled in the binary and not downloaded. They are one hosted site, and only the latest version is published.
 
-Today the docs are on the machine because every install clones the framework, and the user guide sits in `default-docs/`. The skills link straight into it. After the migration there is no framework checkout on the machine, so the docs need a new home. The hosted site is that home.
+Today the docs are on the machine because every install clones the framework, and [the user guide](../../../../user-guide) sits in it. The skills link straight into it. After the migration there is no framework checkout on the machine, so the docs need a new home. The hosted site is that home.
 
 # 03 References
 
@@ -32,5 +32,5 @@ Today the docs are on the machine because every install clones the framework, an
 ## 02 How it could work (claude, proposed)
 
 - `agentks docs` opens the docs home. `agentks docs <page>` opens one page, such as `agentks docs issues`.
-- **For agents**, the site publishes each page's raw markdown and an `llms.txt` index, so an agent can read a page without a browser ([launch](./10_launch-order-and-hosting.md)). The skills stay the agent's main manual and link to the hosted pages instead of the framework's `default-docs/`.
+- **For agents**, the site publishes each page's raw markdown and an `llms.txt` index, so an agent can read a page without a browser ([launch](./10_launch-order-and-hosting.md)). The skills stay the agent's main manual and link to the hosted pages instead of the framework's [bundled user guide](../../../../user-guide).
 - **Offline**, the command prints the URL and says it could not be reached. It does not fail silently.

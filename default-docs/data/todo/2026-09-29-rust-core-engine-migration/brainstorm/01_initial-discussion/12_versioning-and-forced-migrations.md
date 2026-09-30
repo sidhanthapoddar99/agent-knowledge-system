@@ -27,7 +27,7 @@ mise can install a specific release straight from GitHub. A project that wants t
 
 ## 02 Migrations are scripts fetched from git
 
-Today migrations are Python scripts in `agent-ks-engine/migration/`, named `<to-version>_<statement>.py`, each with detect, dry-run, migrate and re-detect steps. That stays. The scripts move to the new repository, next to the engine that owns the format (proposed: `apps/agentks-engine/migrations/`), and they are **not compiled into the binary**.
+Today migrations are Python scripts in [the engine's migration folder](../../../../../../agent-ks-engine/migration), named `<to-version>_<statement>.py`, each with detect, dry-run, migrate and re-detect steps. That stays. The scripts move to the new repository, next to the engine that owns the format (proposed: `apps/agentks-engine/migrations/`), and they are **not compiled into the binary**.
 
 **Two kinds of migration**, in two parts of that folder:
 

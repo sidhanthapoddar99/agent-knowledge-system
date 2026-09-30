@@ -19,7 +19,7 @@ The developer tools come back in **phase 2**, rebuilt in the new frontend. They 
 
 ## 01 What exists today
 
-The Astro dev toolbar hosts these apps (`agent-ks-engine/src/dev-tools/`):
+The Astro dev toolbar hosts these apps ([the dev-tools folder](../../../../../../agent-ks-engine/src/dev-tools)):
 
 | App | Job |
 |---|---|

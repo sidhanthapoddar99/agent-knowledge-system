@@ -118,4 +118,4 @@ This repository's docs and skills stay the reference until everything below is r
 
 ## 07 Where the work starts
 
-The user created `~/projects/06_02_NeuraLabs/agent-knowledge-system/` for the new work; it is empty today. Whether that folder becomes the main repository itself or holds the main and library repositories side by side is settled when the repositories are scaffolded with the project-setup guide.
+The user created the `agent-knowledge-system` folder in the Neuralabs workspace for the new work; it is empty today. Whether that folder becomes the main repository itself or holds the main and library repositories side by side is settled when the repositories are scaffolded with the project-setup guide.

@@ -47,7 +47,7 @@ An earlier proposal (claude) used minijinja templates in Rust to lay out pages. 
 
 ## 03 Why no shared-rules code generation
 
-Rules such as the issue statuses and their categories, the `NN_` ordering prefix, and URL slugs exist today in up to three copies: the TypeScript engine, the Rust CLI and browser scripts (for example `scripts/detail/types.ts` and `scripts/index/filters.ts` in the issues layout). After the migration the engine and CLI copies merge into the Rust core. The browser copies disappear because Rust sends results, not rules: each issue arrives with its category, each page with its order and URL. Nothing is left to generate.
+Rules such as the issue statuses and their categories, the `NN_` ordering prefix, and URL slugs exist today in up to three copies: the TypeScript engine, the Rust CLI and browser scripts (for example [the detail types](../../../../../../agent-ks-engine/src/layouts/issues/default/scripts/detail/types.ts) and [the index filters](../../../../../../agent-ks-engine/src/layouts/issues/default/scripts/index/filters.ts) in the issues layout). After the migration the engine and CLI copies merge into the Rust core. The browser copies disappear because Rust sends results, not rules: each issue arrives with its category, each page with its order and URL. Nothing is left to generate.
 
 ## 04 Why WebSocket for everything
 

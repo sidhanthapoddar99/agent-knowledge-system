@@ -9,7 +9,7 @@ title: "Phasing"
 - [The architecture: a local SPA over WebSocket](./17_local-spa-over-websocket.md)
 - [Future stages](../02_future-stages/01_index.md) — Phase 2 onwards, one note each.
 - [Why and the prior audit](./02_why-and-prior-audit.md)
-- `scripts/checks/check-route-parity.mjs` — an existing check that compares old and new builds route by route.
+- [the route-parity check](../../../../../../scripts/checks/check-route-parity.mjs) — an existing check that compares old and new builds route by route.
 
 # 04 Decisions
 

@@ -48,7 +48,7 @@ The dev toolkit is Phase 2 (decided). Still open: which of today's apps are rebu
 
 **Decided (delegated to claude):**
 
-- **Route parity:** every route the Astro engine serves, the new engine serves (`scripts/checks/check-route-parity.mjs` already exists).
+- **Route parity:** every route the Astro engine serves, the new engine serves ([the route-parity check](../../../../../../scripts/checks/check-route-parity.mjs) already exists).
 - **Rendered content:** a headless browser loads each page from both engines and compares the rendered main content after normalising whitespace and attribute order — headings and their IDs, links and their targets, text, tables, code. With the frontend now a single-page app, comparing raw server HTML no longer works; the rendered page is what counts. The prior audit's [JIT rendering study](../../../2026-05-08-runtime-stack-migration/agent-log/010_au_migration-feasibility-rescope/02_working/021_question_jit-rendering.md) proposed the same golden-diff idea.
 - **Screenshots** of each layout in light and dark mode, reviewed by eye for "nothing drastic".
 - **Coverage** includes first-class diagram and artifact pages with their sidecars, and the tracker fixture [2026-07-01-demo-issue-anatomy-showcase](../../../2026-07-01-demo-issue-anatomy-showcase/issue.md) for the issues layout.
@@ -74,7 +74,7 @@ The dev toolkit is Phase 2 (decided). Still open: which of today's apps are rebu
 
 ## 10 How do shared rules reach the TypeScript frontend?
 
-**Decided:** they don't need to. Rules stay in Rust, and the frontend receives their results as data — each issue with its status category, each page with its order and URL. Today's copies in browser scripts (for example the issues layout's `scripts/detail/types.ts` and `scripts/index/filters.ts`) disappear. See [the architecture note](./17_local-spa-over-websocket.md).
+**Decided:** they don't need to. Rules stay in Rust, and the frontend receives their results as data — each issue with its status category, each page with its order and URL. Today's copies in browser scripts (for example the issues layout's [the detail types](../../../../../../agent-ks-engine/src/layouts/issues/default/scripts/detail/types.ts) and [the index filters](../../../../../../agent-ks-engine/src/layouts/issues/default/scripts/index/filters.ts)) disappear. See [the architecture note](./17_local-spa-over-websocket.md).
 
 ## 11 Where does narration audio go?
 

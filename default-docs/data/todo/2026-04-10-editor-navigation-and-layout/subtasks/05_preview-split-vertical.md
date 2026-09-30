@@ -1,6 +1,6 @@
 ---
 title: "Preview split vertical option"
-status: open
+status: dropped
 ---
 
 ## Tasks

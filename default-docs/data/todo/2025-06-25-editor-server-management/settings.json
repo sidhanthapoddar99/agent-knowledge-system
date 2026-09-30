@@ -1,7 +1,7 @@
 {
   "title": "Editor server lifecycle management",
   "description": "Promote the dev editor into a long-running server: process management, auto-restart, graceful shutdown, health checks.",
-  "status": "open",
+  "status": "superseded",
   "priority": "low",
   "component": [
     "editor"

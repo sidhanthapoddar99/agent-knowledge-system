@@ -1,7 +1,7 @@
 {
   "title": "Document presentation modes",
   "description": "How the document is rendered to the user: Source (default), Live Preview, Preview (rendered HTML), True WYSIWYG (future), View-only / edit-mode lock.",
-  "status": "open",
+  "status": "done",
   "priority": "medium",
   "component": [
     "editor"

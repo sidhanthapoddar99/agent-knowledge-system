@@ -9,6 +9,7 @@ Several people editing the same content at once comes **after phase 2**, and it 
 - [Server, WebSockets and editing](../01_initial_discussion/09_server-websockets-and-editing.md) — the `/api` WebSocket and the localhost default.
 - [Editing mode](./02_editing-mode.md) — the single-user editing this extends.
 - [2026-04-10-sync-and-presence](../../../2026-04-10-sync-and-presence/issue.md) — the existing sync and presence work.
+- [Diagram editing with presence](../../../2026-04-10-editor-diagrams/subtasks/30_editor/40_in-place-and-multi-user-editing.md) — several people editing one Excalidraw, tldraw, Mermaid or draw.io diagram at once.
 - [Auth and access control](../../../2026-05-08-runtime-stack-migration/brainstorm/02_idea_editor-as-standalone-product/03_discuss_auth-and-access-control.md) — earlier thinking on gating, from the Go issue.
 
 # 04 Decisions

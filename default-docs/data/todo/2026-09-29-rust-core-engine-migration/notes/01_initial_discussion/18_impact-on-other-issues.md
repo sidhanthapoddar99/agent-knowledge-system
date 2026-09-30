@@ -49,7 +49,7 @@ None yet. Updating the affected issues (a pointer to this note, a re-scope, or a
 | [2026-04-10-editor-core](../../../2026-04-10-editor-core/issue.md) | Much of it is obsolete. `03_client-side-rendering` contradicts the single-renderer decision. `02` toolbar, `04` auto-save (with echo suppression) and `12` live status re-plan for Phase 2. `09` doc switcher is obsolete (SPA navigation). `11` ToC view is delivered by Rust-computed outlines. `08` asset manager and `14` code editing are a Phase 2 toolkit question | Pause |
 | [2026-04-10-new-layout-types](../../../2026-04-10-new-layout-types/issue.md) | Fits "more layouts on demand", but every task names Astro files; it becomes a Rust loader, derived JSON and an SPA component. RSS belongs to Phase 3 | Pause |
 | [2026-04-10-sync-and-presence](../../../2026-04-10-sync-and-presence/issue.md) | Moves to the later multi-user stage on `yrs`, the Rust server and the same WebSocket; the current Yjs server is discarded. `03_sync-testing` of the old server would be wasted | Pause |
-| [2026-04-10-view-modes](../../../2026-04-10-view-modes/issue.md) | One model now: reading by default, live preview in place from the toolkit. `02_preview-mode` and `04_view-only-edit-mode` are delivered by that model; `01_live-preview` re-plans (CodeMirror decorations may be reused); `03_true-wysiwyg` is likely obsolete | Pause |
+| [2026-04-10-view-modes](../../../2026-04-10-view-modes/issue.md) | One model now: reading by default, live preview in place from the toolkit. `02_preview-mode` and `04_view-only-edit-mode` are delivered by that model; `01_live-preview` is built and carries over; `03_true-wysiwyg` is not wanted. **Closed as done on 2026-09-30** by the user: two modes only, raw and live preview | Done |
 | [2026-04-19-docs-phase-2](../../../2026-04-19-docs-phase-2/issue.md) | Pages documenting Astro internals, the Yjs editor and scoped layout classes will be deleted. The docs are then rewritten completely, as step 4 of [the launch order](../02_future-stages/10_launch-order-and-hosting.md) | Pause the Astro-internals parts of `01` and `02`, and `07`; **continue** `08`, `029` (fold in the rename) and `019` |
 | [2026-04-19-site-wide-search](../../../2026-04-19-site-wide-search/issue.md) | Built on Orama inside Astro, a Node search API and a multi-user CMS. The migration names a Rust retrieval index shared by the site and agents; search on the static export is a Phase 3 question. `02`, `09` and `04` are obsolete as written; `05` merges into the retrieval stage | Pause |
 | [2026-05-08-update-date-time-optimization](../../../2026-05-08-update-date-time-optimization/issue.md) | The algorithm carries over (eager `lastHash..HEAD` walk, merge-base check, pre-warming), retargeted to Rust and the `~/.agentks` build cache. Its deferral note now points here | Pause (already deferred) |
@@ -60,8 +60,8 @@ None yet. Updating the affected issues (a pointer to this note, a re-scope, or a
 | Issue | Why |
 |---|---|
 | [2025-06-25-codebase-refactoring](../../../2025-06-25-codebase-refactoring/issue.md) | Every open subtask refactors the TypeScript loaders that the Rust core replaces (Phase 1, step 2). `06_docs-and-example-sync` becomes the dev-docs rewrite |
-| [2025-06-25-editor-server-management](../../../2025-06-25-editor-server-management/issue.md) | Wants the current editor run as a managed long-lived server; that editor is discarded and the CLI already owns the Rust server's lifecycle |
-| [2026-04-10-editor-navigation-and-layout](../../../2026-04-10-editor-navigation-and-layout/issue.md) | IDE chrome for the discarded editor page. Only tab persistence survives (the editing-mode note keeps it); status and CPU panels move to the dev toolkit |
+| [2025-06-25-editor-server-management](../../../2025-06-25-editor-server-management/issue.md) | Wants the current editor run as a managed long-lived server; that editor is discarded and the CLI already owns the Rust server's lifecycle. **Superseded by this issue on 2026-09-30** |
+| [2026-04-10-editor-navigation-and-layout](../../../2026-04-10-editor-navigation-and-layout/issue.md) | IDE chrome for the discarded editor page. Editing happens in place with no separate navigation, so nothing survives; status and CPU panels move to the dev toolkit. **Dropped by the user on 2026-09-30** |
 
 ## 05 Unaffected
 
@@ -89,10 +89,11 @@ The review found four gaps in this issue's own notes. Each is now fixed where it
 3. **First-class diagram pages** (`.mmd`, `.dot`, `.excalidraw`, `.drawio` and their sidecars) were missing from Phase 1's scope and checks. Added to [phasing](./15_phasing.md) and [open question 06](./16_open-questions.md).
 4. **`[[...]]` syntax clash.** The wiki-links issue defines `[[target]]` as a link, but today's engine uses `[[path]]` as the embed syntax. Added as [open question 13](./16_open-questions.md), decided on 2026-09-30: `[[...]]` stays an embed.
 
-## 08 Tracker clean-ups (done 2026-09-29)
+## 08 Tracker clean-ups (2026-09-29 and 2026-09-30)
 
 - `2025-06-25-dev-toolbar-enhancements`: subtask `01` is built and set to `review`. Subtask `02` is only partly built (it shows Yjs rooms, editor docs and presence, but not the content or issues caches), so it stays `open`.
 - `2026-04-10-new-layout-types`: subtask `01_roadmap` no longer filters by milestone; it filters by status, priority, component and labels.
 - `2025-06-25-plugin-system`: subtasks `02_search` and `04_graph-view` are `superseded`, each with a `→` line to the issue that owns the work.
 - `2026-05-08-update-date-time-optimization`: note `04_deferred-until-runtime-migration.md` now points at this issue, with Rust targets ([open question 09](./16_open-questions.md)).
+- On 2026-09-30, at the user's instruction: `2025-06-25-editor-server-management` superseded by this issue; `2026-04-10-editor-navigation-and-layout` dropped with its open subtasks; `2026-04-10-view-modes` done (`01` done, `02` and `04` superseded by the two-mode decision, `03` dropped).
 - `2026-07-01-demo-issue-anatomy-showcase`: the pointer comment to this note was removed. The issue is a curated fixture for checking how the layout looks, and a real comment there would change the sample, not track work.

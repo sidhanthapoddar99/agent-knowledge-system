@@ -13,6 +13,7 @@ The developer tools come back in **phase 2**, rebuilt in the new frontend. They 
 
 - Decided (sidhantha, 2026-09-29): the dev toolkit, its toolbar, cache clearing and the other dev tools move to phase 2.
 - Decided (sidhantha, 2026-09-29): the toolkit holds the switch for editing mode.
+- Decided (sidhantha, 2026-09-30): the toolkit is a bar, like Astro's dev toolbar. Its Edit option makes an editable page's content editable in place; raw and live preview are the two editing modes ([editing mode](./02_editing-mode.md)).
 
 # 05 Notes & Analysis
 
@@ -32,5 +33,4 @@ The Astro dev toolbar hosts these apps (`agent-ks-engine/src/dev-tools/`):
 ## 02 Still to decide
 
 - Which of these are rebuilt and which are dropped. This is [open question](../01_initial_discussion/16_open-questions.md) 04.
-- Where the toolkit lives in the page: a toolbar like Astro's, or a panel.
 - Cache clearing: a button in the toolkit, or `agentks` commands only, or both.

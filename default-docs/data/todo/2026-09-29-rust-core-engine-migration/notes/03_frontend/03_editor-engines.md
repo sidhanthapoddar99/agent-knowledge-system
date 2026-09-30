@@ -10,7 +10,7 @@ Editing is a Phase 2 feature of the local client, and it happens **in place, on 
 - [The dev toolbar](./05_dev-toolbar.md) — where Edit and the mode switch live.
 - [The client application](./02_client-application.md) — the app the editor runs in, and its WebSocket client.
 - [The sync engine and server](../02_engine/04_sync-engine-and-server.md) — the server side of `render`, `save` and document sync.
-- [Multi-user editing and auth](../../brainstorm/02_future-stages/04_multi-user-editing-and-auth.md) — the later stage.
+- [Multi-user editing and auth](../../brainstorm/02_future-stages/04_multi-user-editing-and-auth.md) — the discussion. The design is in [the server](../02_engine/04_sync-engine-and-server.md).
 - [Diagram editing in place, with multi-user presence](../../../2026-04-10-editor-diagrams/subtasks/30_editor/40_in-place-and-multi-user-editing.md) — the subtask that owns diagram editing.
 - [2026-04-10-view-modes](../../../2026-04-10-view-modes/issue.md) (done) and [2026-04-10-editor-navigation-and-layout](../../../2026-04-10-editor-navigation-and-layout/issue.md) (dropped) — closed on 2026-09-30 by these decisions.
 - [2026-04-10-editor-core](../../../2026-04-10-editor-core/issue.md), [2026-04-10-editor-advanced](../../../2026-04-10-editor-advanced/issue.md) and [2026-04-10-sync-and-presence](../../../2026-04-10-sync-and-presence/issue.md) — paused issues whose surviving items re-plan onto this design.
@@ -24,7 +24,7 @@ Editing is a Phase 2 feature of the local client, and it happens **in place, on 
 - Decided (sidhantha, 2026-09-29): editing mode belongs to Phase 2, and is switched on and off from the dev toolkit.
 - Decided (sidhantha, 2026-09-29): no WASM build. The live preview asks Rust to render over the WebSocket.
 - Decided (sidhantha, 2026-09-29): editing talks to the server directly, over the same WebSocket.
-- Decided (sidhantha, 2026-09-29): multi-user editing is a later stage, after Phase 2, and needs auth first.
+- Decided (sidhantha, 2026-09-30): multi-user access uses access keys, with no sign-in. Decided (claude, 2026-09-30): multi-user sync is the stage right after single-user editing, inside 1.0.0.
 - Decided (sidhantha, 2026-09-30): the dev toolbar has an Edit option. On a page that can be edited, it makes the content area editable in place.
 - Decided (sidhantha, 2026-09-30): two modes only: raw and live preview. Read-only is editing switched off. No preview page, no WYSIWYG mode, no view-only mode.
 - Decided (sidhantha, 2026-09-30): no separate navigation for editing: no tabs, file explorer, extra sidebars or split views.
@@ -95,7 +95,7 @@ The rule: **anything whose output could differ from the real page comes from Rus
 **The server holds the document** (claude, proposed). When a file is opened for editing, Rust creates a shared document for it with `yrs`, the Rust port of Yjs, and the client's CodeMirror syncs with it over `/api`. This is the model today's editor already uses in TypeScript. Using it from Phase 2 onwards, even for one user, has two gains:
 
 - **Outside edits merge instead of clashing.** The AI is the main editor, so a file often changes on disk while a person has it open. When the watcher sees such a change, Rust works out the difference against the document and applies it as an ordinary edit. The person sees the AI's change appear, and neither side loses work. Today's server instead resets the whole document on an outside change.
-- **The later multi-user stage adds only auth and presence.** Sync already works; a second person joins the same document.
+- **The multi-user stage adds only access keys and presence.** Sync already works; a second person joins the same document.
 
 The save path:
 
@@ -124,7 +124,7 @@ A diagram is edited where it appears: on its own first-class page, or by clickin
 
 - **The file on disk stays the diagram's own format**, readable and editable outside agentks.
 - **Saving uses the same path** as text: checks, a safe write, echo suppression. Canvas formats save a whole new file on change rather than syncing keystrokes (claude, proposed); multi-user canvas sync comes with the later stage.
-- **Multi-user presence** on diagrams (who is here, their cursor or selection) belongs to the later multi-user stage, like text.
+- **Multi-user presence** on diagrams (who is here, their cursor or selection) belongs to the multi-user stage, like text.
 - The full scope and its done-when live in [the diagram editing subtask](../../../2026-04-10-editor-diagrams/subtasks/30_editor/40_in-place-and-multi-user-editing.md). Its open question is whether the single-user half ships in Phase 2; claude suggests yes, since it needs only editing mode.
 
 ## 09 What editing does not have
@@ -134,7 +134,7 @@ A diagram is edited where it appears: on its own first-class page, or by clickin
 - No preview page, WYSIWYG mode or view-only mode.
 - No advanced tools. Slash commands, spell check and drag-and-drop upload from [2026-04-10-editor-advanced](../../../2026-04-10-editor-advanced/issue.md) are not part of Phase 2 unless the user re-plans them.
 
-## 10 The later multi-user stage
+## 10 The multi-user stage
 
 - **Sync:** the same server-held `yrs` documents; a second client joins the same document.
 - **Presence:** who is on the page, with their cursor and selection, from [2026-04-10-sync-and-presence](../../../2026-04-10-sync-and-presence/issue.md).

@@ -153,7 +153,7 @@ flowchart TB
 
 1. The CLI resolves the project (`./config`, or `--config-dir`, or `AGENTKS_CONFIG_FOLDER`), checks the version gate, and installs any locked library missing from the cache.
 2. The core builds the site index: every file's path, frontmatter, content hash and folder roll-up hashes. Cached, expensive results (git-derived dates, highlighted code, compiled CSS) come from `~/.agentks/build-cache/<project hash>/`.
-3. The server binds to localhost and serves the embedded client at `/**` and the WebSocket at `/api`. Network access is off until auth exists.
+3. The server binds to localhost and serves the embedded client at `/**` and the WebSocket at `/api`. Network access is off unless the owner opts in with an access key.
 4. The watcher reacts to file changes: re-hash the file and its parent chain, invalidate dependent cache entries (including pages that embed the file), and push the changed hashes to every connected client.
 5. Page bodies are rendered on request and cached by content hash, in Rust and in the browser.
 
@@ -194,7 +194,7 @@ The binary stays lean because four things are fetched, not bundled. Every fetch 
 
 ## 08 Security boundaries
 
-- **Localhost only.** The local server binds to localhost by default from Phase 1. Network access is an explicit opt-in once auth exists.
+- **Localhost only.** The local server binds to localhost by default from Phase 1. Network access is an explicit opt-in that needs an access key.
 - **The `.html` MIME boundary.** Which files the server serves as HTML is a security decision. Artifacts and `.html` library elements run in sandboxed iframes, on the reserved `/artifacts` and `/_lib/<alias>/<element>` routes.
 - **Trusted sources.** Migration scripts come only from the official repository at the binary's tag. Libraries arrive only through `dep.yaml`, fetched through git, which verifies content against the pinned commit.
 - **No secrets in published output.** The static build is public. Tokens, such as the later GitHub sign-in, stay in the Rust process and never reach the browser.

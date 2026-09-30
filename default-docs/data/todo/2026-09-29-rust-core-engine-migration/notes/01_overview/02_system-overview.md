@@ -21,7 +21,8 @@ agentks is a **local tool** for writing and reading agent-native documentation: 
 - Decided (sidhantha, 2026-09-29): agentks is a local tool for one or two developers at a time. It is not built for search engines or large audiences; publishing is Phase 3's job.
 - Decided (sidhantha, 2026-09-29): every rule stays in Rust. The frontend holds display and UI logic only.
 - Decided (sidhantha, 2026-09-29): Phase 1 is rendering with correct results. Phase 2 is editing mode, the dev toolkit and libraries. Phase 3 is publishing as a static site with no Rust server.
-- Decided (sidhantha, 2026-09-29): multi-user editing with auth, agent hooks with retrieval, and a GitHub issues layout are later stages.
+- Decided (sidhantha, 2026-09-29): agent hooks with retrieval and a GitHub issues layout are later stages.
+- Decided (sidhantha, 2026-09-30): multi-user access uses access keys, with no sign-in. Claude placed multi-user sync in 1.0.0, right after single-user editing ([the server](../02_engine/04_sync-engine-and-server.md)).
 - Decided (sidhantha, 2026-09-29): forced migrations. A user who does not migrate pins an older release with mise.
 - Decided (sidhantha, 2026-09-29): no custom layouts. Branding is done with CSS. Built-in layouts are added on demand.
 - Decided (sidhantha, 2026-09-30): the first Rust release is 1.0.0, and it ships after Phases 1 and 2.

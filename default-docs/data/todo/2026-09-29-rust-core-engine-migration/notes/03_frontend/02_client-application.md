@@ -100,7 +100,7 @@ One connection per tab, to `/api` on the same host. The message format belongs t
 | Pull | `save` | Phase 2: write an edited file |
 | Push | `changed` | A list of paths and new hashes after files change on disk |
 | Push | `error` | A content error for the current page; the dev toolbar shows the full list |
-| Push | presence and sync | Later stage: multi-user editing |
+| Push | presence and sync | The multi-user stage |
 
 Rules for the client (claude, proposed):
 
@@ -112,7 +112,8 @@ Rules for the client (claude, proposed):
 
 - **What is stored:** page data, sidebars and indexes, keyed by their content hash, in IndexedDB so they survive a refresh.
 - **How it stays correct:** on connect the client compares the manifest's hashes with what it holds and fetches only what changed. A page's hash covers every file it embeds, so editing an embedded diagram changes the page's hash too ([2026-08-07-content-embed-cache-dependencies](../../../2026-08-07-content-embed-cache-dependencies/issue.md)).
-- **One cache per project.** Each project's server runs on its own port, so each is its own browser origin, with its own storage.
+- **One cache per project.** Each project's server runs on its own stable port, so each is its own browser origin, with its own storage. Every storage name and key also carries the project key, so storage stays correct even if a port is ever reused ([the server](../02_engine/04_sync-engine-and-server.md)).
+- **The server owns derived data.** Rendering, git dates, CSS and search are computed once on the server and shared by every user and tab. The browser copy only saves a round trip; it is never the source.
 - **Engine upgrades** (claude, proposed): the store's name includes the engine version, so an upgrade starts a fresh cache instead of reading data shaped by the old engine.
 - **Clearing:** the browser-cache tool of the dev toolbar ([the dev toolbar](./05_dev-toolbar.md)), or the browser's own site-data controls.
 

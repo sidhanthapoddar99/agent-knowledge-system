@@ -22,7 +22,10 @@ title: "Sync engine and server: HTTP, the /api WebSocket and the watcher"
 - Decided (sidhantha, 2026-09-29): the WebSocket carries pulls and pushes. There is no separate HTTP data API.
 - Decided (sidhantha, 2026-09-29): in development, the Vite dev server proxies to Rust. When installed, the Rust server serves the embedded client.
 - Decided (sidhantha, 2026-09-29): editing mode talks to the server over the same WebSocket.
-- Decided (sidhantha, 2026-09-29): multi-user editing is a later stage; auth is designed first.
+- Decided (sidhantha, 2026-09-30): multi-user access has no sign-in. The project owner grants access with an access key, shared or generated.
+- Decided (claude, 2026-09-30): multi-user sync ships in 1.0.0, as the stage right after single-user editing. Single-user editing already runs on one `yrs` document per open file, so multi-user adds presence and access keys, not a second protocol.
+- Decided (claude, 2026-09-30): derived data is cached once, on the server, and shared by every user and tab. The browser keeps only a hash-checked copy of it plus each user's own UI state.
+- Decided (claude, 2026-09-30): each project keeps a stable port, so its browser origin and storage survive restarts, and a reused port can never show another project's storage.
 - Decided (sidhantha, 2026-09-29): no Rust server in a published site.
 - Decided (sidhantha, 2026-09-29): layouts and major data are cached in the browser, versioned by hash.
 - Decided (sidhantha, 2026-09-29): the audience is one or two developers at a time.
@@ -122,14 +125,17 @@ Rules:
 - **Echo suppression.** The engine records the hash it just wrote. When the watcher reports that file with that hash, the event is the save's own echo: it becomes a `saved` push, not an outside change. Any other hash is an outside change and is pushed as usual.
 - **Single user.** Two editors on one file are handled by the conflict rule until the multi-user stage.
 
-## 06 Multi-user editing and presence, later stage
+## 06 Multi-user editing and presence
 
 - **Shared editing** uses `yrs` on the server, one document per open file, synced with Yjs in the browser. `yrs` is native to Rust, so the prior audit's concern about a server-side CRDT does not apply.
 - **Transport** is the same `/api` socket: binary frames for sync updates, JSON for awareness.
 - **Presence** (who is on the page, their cursor or selection) uses the Yjs awareness protocol.
 - **Persistence.** The file on disk stays the source of truth. The shared document writes back through the `save` path, with echo suppression.
 - **Diagrams** join through the diagram editing subtask in [2026-04-10-editor-diagrams](../../../2026-04-10-editor-diagrams/issue.md).
-- **Auth comes first.** Who signs in, what they may do and how edits are attributed in git are decided at that stage. Secrets go in `config/.env`.
+- **Access keys, no sign-in.** The owner runs a command such as `agentks share` to create a key. A key is random (at least 128 bits), has a role (`read` or `edit`) and a label, and can be revoked. The server stores only a hash of each key, in the machine home, never in the project.
+- **Using a key.** The first visit carries the key once (a link, or a prompt in the client). The server swaps it for an `HttpOnly`, `SameSite=Strict` session cookie, so the key does not stay in the URL, the history or the logs.
+- **Names.** A visitor types a display name, shown in presence. Edits are attributed in git to the key's label, because there is no identity beyond the key.
+- **Network access** needs both a key and an explicit flag, such as `agentks start --share`. Without the flag the server stays on localhost. Over any network other than a trusted LAN, TLS comes from a tunnel or a reverse proxy in front of the server.
 
 ## 07 Security
 
@@ -141,16 +147,16 @@ Rules:
 | Canonicalise every requested path and require it inside an allowed root: the content sections, the config-named asset paths, the library cache | Path traversal (`../`) and symlinks out of the project are refused |
 | Serve HTML only from `/artifacts/` and `/_lib/` | The MIME boundary the prior audit named |
 | Writes go only through `save`, only to existing files inside content sections | The editor cannot write config, `.git` or anything outside the project |
-| Network access is an explicit opt-in, available only once auth exists | Reaching the editor over a network needs sign-in |
+| Network access is an explicit opt-in (`--share`) and every remote request needs a valid access key | Reaching the editor over a network needs a key |
 
 ## 08 Several projects on one machine
 
-- Each `agentks start` serves one project on its own port, from `server.port`, or the next free port when that one is taken (reported, never silent).
+- Each `agentks start` serves one project on its own stable port: `server.port` when set, otherwise a port derived from the project key and recorded in the machine home. When that port is taken by something else, start fails with a clear error and the fix, rather than moving to another port. A moved port would change the browser origin, lose the project's browser cache, and could show one project's stored UI state to another.
 - Each running server records itself in the machine home (project path, port, process id), so `agentks ps` lists every server on the machine and `agentks stop` can find one by project ([machine home](./06_machine-home-and-build-cache.md)).
 - Starting a project that already has a server attaches to it and prints its address, instead of starting a second one.
 
 ## 09 Open
 
 - Whether the dev toolkit keeps a system-metrics panel, which needs a metrics message on the socket ([open question 04](../01_overview/05_open-questions-and-risks.md)).
-- The auth design, at the multi-user stage.
+- The exact `agentks share` command surface, and whether a key can expire.
 - Library HTML under `/_lib/` is sandboxed, with a `Content-Security-Policy` header ([library system](../04_ecosystem/01_library-system.md)). Whether the project's own artifacts, which run unsandboxed today, should also get a header is open ([open questions and risks](../01_overview/05_open-questions-and-risks.md)).

@@ -122,7 +122,7 @@ sequenceDiagram
 4. **Save.** The editor sends the text with the hash it started from. The server writes the file, records that this write is its own, and returns the new hash. If the file changed on disk meanwhile, the server reports a conflict instead of overwriting (claude, proposed).
 5. **No echo.** The watcher sees the write, recognises it, and does not tell the saving client to reload. Other clients get the normal push.
 
-Humans edit existing files only: there is no new-file command and no separate navigation. Phase 2 is single-user. Diagram editing in place and multi-user presence are later ([03/03 Editor engines](../03_frontend/03_editor-engines.md)).
+Humans edit existing files only: there is no new-file command and no separate navigation. Phase 2 is single-user. Multi-user presence is the next stage ([03/03 Editor engines](../03_frontend/03_editor-engines.md)).
 
 ## 05 Add a library and lock it (Phase 2)
 

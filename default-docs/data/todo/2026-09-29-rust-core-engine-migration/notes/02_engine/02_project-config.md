@@ -23,7 +23,7 @@ title: "Project config: the config/ folder"
 - Decided (sidhantha, 2026-09-29): `.env` overrides settings defined in config, mainly ports.
 - Decided (sidhantha, 2026-09-29): user-authored custom layouts and the logic behind them are dropped.
 - Decided (sidhantha, 2026-09-30): `config/dep.yaml` is required, even when empty; `config/dep.lock` sits beside it.
-- Decided (sidhantha, 2026-09-29): the server listens on localhost only; network access waits for auth.
+- Decided (sidhantha, 2026-09-29): the server listens on localhost only by default; network access needs an access key ([the server](../02_engine/04_sync-engine-and-server.md)).
 - Proposed (claude, 2026-09-30): the `site.yaml` keys that change in 1.0.0 are the ones in section 04. Every other key keeps its meaning, so the migration is small.
 
 # 05 Notes & Analysis
@@ -115,7 +115,7 @@ Every alias is resolved once, when config loads. A reference to an undefined ali
 |---|---|---|
 | Framework-root `.env` with `CONFIG_DIR` | Gone. `config/` is found by the rule in section 02 | No framework folder in a project any more |
 | `LAYOUT_EXT_DIR` in `.env`; the `@ext-layouts` alias; user layout folders | Gone | Custom layouts are dropped. `layout` names a built-in style only |
-| `server.allowedHosts` | Gone | The server binds to localhost; network access waits for auth |
+| `server.allowedHosts` | Gone | The server binds to localhost; network access needs `--share` and an access key |
 | `editor:` block (autosave and presence timings) | Gone | The old editor is discarded. Editing settings, if any, return with Phase 2 |
 | `PORT`, `HOST` in `.env` | `server.port` in `site.yaml`, overridable by `.env` | `.env` only overrides config |
 | No `dep.yaml` | `dep.yaml` required | Libraries |
@@ -128,7 +128,7 @@ The 1.0.0 docs migration makes each change and bumps `engine_version` ([versioni
 - It may only override a key `site.yaml` defines. In 1.0.0 that is the port: `AGENTKS_PORT=3090` overrides `server.port` (claude, proposed name).
 - An unknown key is a warning, not ignored silently, so a typo is noticed.
 - `.env.example` is committed and documents every key.
-- When auth arrives, its secrets go here too ([sync engine and server](./04_sync-engine-and-server.md)).
+- Access keys are not stored here. The server keeps only their hashes, in the machine home ([sync engine and server](./04_sync-engine-and-server.md)).
 
 ## 06 navbar.yaml and footer.yaml
 

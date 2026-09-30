@@ -31,7 +31,7 @@ Four design questions from the discussion are still open: which dev tools come b
 | 08 | **Adopt the structure / layout / theme / shell model** from the Go issue? | In the new split, "structure" (URLs, parsing rules) would be Rust and "layout" and "shell" the frontend. Its external-layout option is contradicted by the no-custom-layouts decision. The Go issue's open subtask `01_define-and-discuss-structure` could move here, re-scoped to built-in layouts | Naming inside the Rust core and the shared package | [02/03 Rust engine](../02_engine/03_rust-engine.md) |
 | — | **Python or JavaScript** for migration scripts | Claude: Python, because today's scripts are Python (no rewrite) and `uv run` runs a single-file script with its dependencies. JavaScript would run with `bun` | Phase 1 step 3 | [05/03 Versioning and migrations](../05_delivery/03_versioning-and-migrations.md) |
 | — | **The Neuralabs workspace folder**: is the `agent-knowledge-system` folder the main repository itself, or a folder holding the main and library repositories side by side? | Settled when the repositories are scaffolded with the project-setup guide | Phase 1 start | [05/01 Repositories and layout](../05_delivery/01_repositories-and-layout.md) |
-| — | **Is single-user in-place diagram editing part of Phase 2?** | Claude: yes. It needs only editing mode; the multi-user half needs auth and waits for the later stage | Phase 2 scope | [03/03 Editor engines](../03_frontend/03_editor-engines.md) |
+| — | **Is single-user in-place diagram editing part of Phase 2?** | Claude: yes. It needs only editing mode; the multi-user half follows in the multi-user stage | Phase 2 scope | [03/03 Editor engines](../03_frontend/03_editor-engines.md) |
 
 ## 02 Proposed by claude, not yet confirmed
 
@@ -62,7 +62,7 @@ Not needed for 1.0.0. Recorded so they are not lost.
 |---|---|
 | Phase 3 | Must search or filtering work on the static site? If so, that feature may need a WASM build of the relevant Rust code. The exact nginx layout for agentks.neuralabs.org |
 | Libraries | Adding catalogs other than the built-in one, for a company that runs its own |
-| Multi-user and auth | Who signs in and how; what a signed-in person may do; how edits are attributed in git |
+| Multi-user access | The exact `agentks share` commands; whether an access key can expire ([the server](../02_engine/04_sync-engine-and-server.md)) |
 | Agent hooks and retrieval | Which hooks earn their noise; Codex hook support; whether semantic search earns its model download; one index shared with site search |
 | GitHub issues layout | Read-only or write; live or build-time snapshot; one repository or several; reuse the tracker UI or a plain list; keychain or credentials file |
 | Extensions | Whether an extension is a kind of library; the `agentksx` command contract; whether site scripts need a sandbox or a permission list |
@@ -89,7 +89,7 @@ Not needed for 1.0.0. Recorded so they are not lost.
 | **The switch-over strands users** | Installed 0.x CLIs keep checking this repository and never see the new release | The final 0.x release points the updater at the new repository or prints a notice; the switch happens in one go when the new docs and skills are ready |
 | **Latest-only docs** | Hosted docs describe features an older binary lacks | Each feature page says the version it arrived in; automatic updates keep most users current |
 | **Unverified numbers** | The footprint and memory figures predate the Astro 7 upgrade | Re-measure before quoting any of them in a decision |
-| **Scope creep from later stages** | Multi-user, hooks, GitHub issues and extensions pull work into Phase 1 | Each is recorded as a later stage; Phase 1 is rendering only |
+| **Scope creep from later stages** | Hooks, GitHub issues and extensions pull work into Phase 1 | Each is recorded as a later stage; Phase 1 is rendering only |
 
 ## 05 Losses the prior audit named, and where each is answered
 

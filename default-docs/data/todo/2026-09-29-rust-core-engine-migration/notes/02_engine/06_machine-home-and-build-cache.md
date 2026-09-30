@@ -56,6 +56,9 @@ Everything agentks keeps outside a project lives in **one folder per machine, `~
   run/
     <project key>.json             a running server: project path, port, process id, start time
     <project key>.log              that server's log, for `agentks logs`
+  ports.json                       each project's stable port, keyed by project key
+  share/
+    <key id>.json                  one access key: its hash, role, label, created and revoked times
   credentials.json                 later stage: the GitHub sign-in, when no OS keychain exists
 ```
 

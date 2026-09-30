@@ -134,7 +134,7 @@ Humans edit existing files only: there is no new-file command and no separate na
 6. It writes `config/dep.lock` with the requested selector, the commit and the manifest version. The user commits both files.
 7. From now on, `agentks library find <words>` returns the library's elements, and the skills tell agents to reuse them. Video pages name them in cues and artifact pages load them from `/_lib/<alias>/<element>`, both as `alias:element`. Markdown pages never name them.
 
-A teammate who clones the project gets the same commits: `agentks start` or `agentks install` fetches exactly the lock. Only `agentks install --update [alias]` moves branch and latest entries.
+A teammate who clones the project gets the same commits: `agentks start` or `agentks install` fetches exactly the lock. Only `agentks install --update [alias]` moves branch, range and latest entries.
 
 ## 06 Upgrade across a breaking version
 

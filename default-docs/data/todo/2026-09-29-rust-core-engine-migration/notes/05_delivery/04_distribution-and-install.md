@@ -101,7 +101,7 @@ The installer keeps today's behaviour, renamed:
 ## 05 Moving users over from agent-ks
 
 - The final 0.x release of `agent-ks` changes its updater to print a notice naming the new install command, instead of installing the new binary silently. A silent jump would rename the command and break every project at once.
-- This repository is transferred to neuralabshq before it is archived, so old install URLs and links keep redirecting.
+- This repository is archived in place, with a banner pointing to `NeuraLabsHQ/agent-knowledge-system`. Its releases stay downloadable, so old install URLs and links keep working.
 - The migration guide says: install `agentks`, run `agentks migrate` in each project, remove the old framework folder.
 
 ## 06 Size

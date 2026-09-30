@@ -26,7 +26,7 @@ The launch runs in **six steps**, in this order: build the Rust engine, the clie
 - Decided (sidhantha, 2026-09-30): the tracker moves into `docs/` of the new repository once the Rust engine and the client work.
 - Decided (sidhantha, 2026-09-30): the first Rust release is 1.0.0, after Phases 1 and 2.
 - Decided (sidhantha, 2026-09-30): this repository stops building once the new release is final, and is archived after it. Existing users get an option to update.
-- Decided (sidhantha, 2026-09-30): the marketplace moves to `neuralabshq/plugin-marketplace`, with two agentks plugins: one for using agentks, one for building and hosting libraries.
+- Decided (sidhantha, 2026-09-30): the marketplace moves to `neuralabshq/neuralabs-plugin-marketplace`, with two agentks plugins: one for using agentks, one for building and hosting libraries.
 - Decided (sidhantha, 2026-09-30): no subtasks yet; the notes are kept consistent first.
 - Proposed (claude, 2026-09-30), not yet agreed: the switch-over checklist in section 04, the docs structure in section 03, and the retirement steps in section 05.
 
@@ -37,11 +37,11 @@ The launch runs in **six steps**, in this order: build the Rust engine, the clie
 | Step | Work | Needs | Done when |
 |---|---|---|---|
 | 1 | Build the Rust engine, the client and the default library, and test them end to end | — | Phases 1 and 2 pass their checks ([development workflow](./05_development-workflow-and-testing.md)); the default library is tagged; 1.0.0 can be released |
-| 2 | Get the Neuralabs plugin marketplace running, with the two agentks plugins | Step 1, so the skills describe the real tool | Both plugins install from `neuralabshq/plugin-marketplace` and their skills match 1.0.0 |
+| 2 | Get the Neuralabs plugin marketplace running, with the two agentks plugins | Step 1, so the skills describe the real tool | Both plugins install from `neuralabshq/neuralabs-plugin-marketplace` and their skills match 1.0.0 |
 | 3 | The agentks homepage | — | `apps/agentks-homepage` exports a complete static site |
 | 4 | The docs migration: a complete rewrite | Step 1 | Every page in the new `docs/` is written for the new version and renders correctly with the new engine |
 | 5 | Hosting: agentks.neuralabs.org, `/` and `/docs` | Steps 3 and 4, and Phase 3's `agentks build` | The site is live; `agentks docs` ships |
-| 6 | The official archival of this repository | Step 5, so users have somewhere to go | This repository is transferred and archived |
+| 6 | The official archival of this repository | Step 5, so users have somewhere to go | This repository is archived in place |
 
 **Where the phases fall.** Phases 1 and 2 are step 1, and 1.0.0 ships at its end. Phase 3 must be finished before step 5, because the docs at `/docs` are built by `agentks build`. Steps 3 and 4 can run beside Phase 3.
 
@@ -96,7 +96,7 @@ Until then, users keep using `agent-ks` 0.x with today's docs and skills, and pu
 |---|---|
 | Stop building once 1.0.0 is final | No work splits across two engines |
 | Final 0.x release with the notice above | Installed CLIs keep checking this repository; without the notice they never learn about the new one |
-| Transfer to neuralabshq, then archive | GitHub keeps redirects for a transferred repository, so old install commands, links and mise pins keep working, read-only |
+| Archive in place, with a banner pointing to NeuraLabsHQ | `NeuraLabsHQ/agent-knowledge-system` is a new repository, so this one cannot be transferred there. An archived repository stays readable and its releases stay downloadable, so old install commands, links and mise pins keep working |
 | Keep the 0.x releases and docs | Publishers pinned to 0.x until Phase 3 still need them |
 | A migration guide in the new docs | Install `agentks`, run `agentks migrate` in each project, remove the old framework folder |
 
@@ -104,6 +104,5 @@ The personal marketplace stays for personal plugins; the agentks plugins leave i
 
 ## 06 Open
 
-- Whether the Neuralabs workspace folder becomes the main repository or holds both repositories side by side ([repositories and layout](./01_repositories-and-layout.md)).
 - The exact nginx layout and host, at step 5 ([deployment and hosting](./06_deployment-and-hosting.md)).
 - Both in [open questions and risks](../01_overview/05_open-questions-and-risks.md).

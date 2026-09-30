@@ -174,13 +174,13 @@ The engine in dev mode serves only data and files, never the client, so there is
 
 ## 11 Safety
 
-- **Localhost only by default.** The server listens on localhost, so the client and, in Phase 2, editing are not reachable from the network. Network access waits for auth in the multi-user stage ([the sync engine and server](../02_engine/04_sync-engine-and-server.md)).
+- **Localhost only by default.** The server listens on localhost, so the client and, in Phase 2, editing are not reachable from the network. Network access needs `--share` and an access key ([the sync engine and server](../02_engine/04_sync-engine-and-server.md)).
 - **Artifacts run in iframes**, as today, so their scripts cannot reach the app around them. Which files Rust serves as HTML stays a deliberate list; it is the security boundary the prior audit named.
 - **Page bodies are the project's own content**, rendered by Rust, and are placed in the page as HTML. The client never inserts HTML that came from anywhere else.
 
 ## 12 Open
 
 - The UI framework, which also decides the router ([open question 12](../01_overview/05_open-questions-and-risks.md)).
-- How much an installed PWA does while the server is off (section 08).
+- An installed PWA with the server off shows cached pages read-only, clearly labelled. Decided (claude, under sidhantha's delegation, 2026-09-30) in [090/30](../../subtasks/090_frontend-performance/30_service-worker-and-offline.md).
 
-Both are tracked in [open questions and risks](../01_overview/05_open-questions-and-risks.md).
+The open one is tracked in [open questions and risks](../01_overview/05_open-questions-and-risks.md).

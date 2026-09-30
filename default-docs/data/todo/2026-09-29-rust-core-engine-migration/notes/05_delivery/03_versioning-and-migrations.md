@@ -17,6 +17,8 @@ agentks has one version, x.y.z, carried by the binary; the first Rust release is
 
 # 04 Decisions
 
+- Decided (claude, under sidhantha's delegation, 2026-09-30): migration scripts are Python, run with `uv run` as single-file scripts with inline dependencies. Today's scripts are Python, so they port without a rewrite.
+
 - Decided (sidhantha, 2026-09-29): migrations are forced. Users migrate, or install and keep using an older version.
 - Decided (sidhantha, 2026-09-29): mise is the recommended way to pin an older version per project.
 - Decided (sidhantha, 2026-09-29): publishers stay on the last 0.x release until Phase 3 ships.
@@ -25,7 +27,7 @@ agentks has one version, x.y.z, carried by the binary; the first Rust release is
 - Decided (sidhantha, 2026-09-30): the official repository's address is built into the binary; scripts come only from it. No hashes of the scripts are stored.
 - Decided (sidhantha, 2026-09-30): two kinds of migration — docs migrations run by users, library migrations done by library owners. Every library states the engine versions it is built for.
 - Decided (sidhantha, 2026-09-30): the only release is the compressed installer. The plugins and the default library version on their own.
-- Proposed (claude, 2026-09-30), not yet agreed: the gate and runner details in sections 02 to 05; the safety rails in section 06; the script contract in section 04. The script language (Python or JavaScript) is still open.
+- Proposed (claude, 2026-09-30), not yet agreed: the gate and runner details in sections 02 to 05; the safety rails in section 06; the script contract in section 04.
 
 # 05 Notes & Analysis
 

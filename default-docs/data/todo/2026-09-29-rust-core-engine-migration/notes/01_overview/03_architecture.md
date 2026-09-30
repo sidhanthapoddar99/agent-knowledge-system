@@ -87,7 +87,7 @@ flowchart LR
 | **Shared UI package** | `apps/packages/agentks-ui` | TypeScript (framework open) | Every layout and component: data in, markup out |
 | **Client app** | `apps/agentks-client` | TypeScript, Vite | Routing with real paths, the data interface over the WebSocket, the browser cache, diagram and video rendering, the Phase 2 editor and dev toolbar |
 | **Static renderer** | `apps/agentks-ssg` | TypeScript | Renders every page to HTML once for `agentks build`, with islands |
-| **Migration scripts** | `apps/agentks-engine/migrations/{docs,library}` | Python or JavaScript (open) | Format changes between versions; downloaded, never compiled in |
+| **Migration scripts** | `apps/agentks-engine/migrations/{docs,library}` | Python, run with `uv run` | Format changes between versions; downloaded, never compiled in |
 | **Default library and catalog** | `neuralabshq/agent-knowledge-system-library` | files + `manifest.json` + `library.json` | Reusable elements, templates, the list `agentks library` offers |
 | **AI plugins** | `plugins/` | Markdown skills | The `agentks` usage plugin and the library-development plugin |
 | **Homepage** | `apps/agentks-homepage` | Next.js static export | agentks.neuralabs.org `/` |

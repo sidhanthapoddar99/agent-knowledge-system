@@ -2,7 +2,7 @@
 title: "The repositories, and the three states agentks runs in"
 ---
 
-agentks lives in **three repositories**. `neuralabshq/agent-knowledge-system` holds the Rust engine, the Vite client, the Next.js homepage, the docs (with the tracker) and the AI plugins. `neuralabshq/agent-knowledge-system-library` is the default library, and it holds `library.json`, the list of libraries and templates that `agentks library` offers. `neuralabshq/plugin-marketplace` is the Neuralabs Claude Code marketplace, which serves all of Neuralabs.
+agentks lives in **three repositories**. `neuralabshq/agent-knowledge-system` holds the Rust engine, the Vite client, the Next.js homepage, the docs (with the tracker) and the AI plugins. `neuralabshq/agent-knowledge-system-library` is the default library, and it holds `library.json`, the list of libraries and templates that `agentks library` offers. `neuralabshq/neuralabs-plugin-marketplace` is the Neuralabs Claude Code marketplace, which serves all of Neuralabs.
 
 **The only thing agentks releases is the installer:** one compressed download holding the binary, with the engine and the built client inside it. The binary knows the official repositories. It fetches migration scripts and the library catalog from them when needed, so nothing else has to be bundled.
 
@@ -18,7 +18,7 @@ agentks runs in **three states**. In state 1 the team develops agentks itself: e
 
 # 04 Decisions
 
-- Decided (sidhantha, 2026-09-30): three repositories. `neuralabshq/agent-knowledge-system` for engine, client, homepage, docs and plugins; `neuralabshq/agent-knowledge-system-library` for the default library and `library.json`; `neuralabshq/plugin-marketplace` for the Neuralabs marketplace. Libraries get their own repository to keep the main one simple.
+- Decided (sidhantha, 2026-09-30): three repositories. `neuralabshq/agent-knowledge-system` for engine, client, homepage, docs and plugins; `neuralabshq/agent-knowledge-system-library` for the default library and `library.json`; `neuralabshq/neuralabs-plugin-marketplace` for the Neuralabs marketplace. Libraries get their own repository to keep the main one simple.
 - Decided (sidhantha, 2026-09-30): the homepage is open source and lives in the main repository. The docs must be open anyway.
 - Decided (sidhantha, 2026-09-30): the main repository's layout in section 02, set up with the project-setup guide. The apps folder is `apps/`, as the guide names it.
 - Decided (sidhantha, 2026-09-30): development builds go to `data/builds/`, ignored by git. mise points `agentks` at them inside the repository, so the working tree overrides the installed release there.
@@ -64,7 +64,7 @@ agent-knowledge-system-library/  neuralabshq/agent-knowledge-system-library
   manifest.json                  the default library's manifest
   ...                            its icons, artifacts, video elements, scripts, templates
 
-plugin-marketplace/              neuralabshq/plugin-marketplace (all of Neuralabs)
+plugin-marketplace/              neuralabshq/neuralabs-plugin-marketplace (all of Neuralabs)
 ```
 
 | Path | Holds | Notes (claude) |

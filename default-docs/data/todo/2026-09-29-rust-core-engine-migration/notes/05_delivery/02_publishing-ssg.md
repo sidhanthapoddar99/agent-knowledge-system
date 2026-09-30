@@ -20,6 +20,8 @@ Publishing is **Phase 3** and **state 3** of agentks. `agentks build` writes a f
 
 # 04 Decisions
 
+- Decided (claude, under sidhantha's delegation, 2026-09-30): static search uses Pagefind, built by `agentks build` ([150/40](../../subtasks/150_publishing/40_static-search.md)).
+
 - Decided (sidhantha, 2026-09-29): publishing is Phase 3, after editing (Phase 2).
 - Decided (sidhantha, 2026-09-29): a published site is 100% static, served by nginx or similar over HTTPS. No Rust server runs.
 - Decided (sidhantha, 2026-09-29): search-engine friendliness is this phase's job only.

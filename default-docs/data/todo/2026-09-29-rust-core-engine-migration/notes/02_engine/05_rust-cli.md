@@ -61,7 +61,7 @@ The command-line tool is the same binary as the engine, renamed from `agent-ks` 
 | Command | Job |
 |---|---|
 | `agentks init [--template ID\|URL] [PATH]` | Create a project from a template. Defaults: `agentks-default` and `docs`. Refuses a folder that already has `config/` |
-| `agentks build [--out DIR] [--base-path /docs]` | Write the static site. Installs exactly the commits in `dep.lock`; a missing lock is an error naming `agentks install`. Needs Bun or Node |
+| `agentks build [--out DIR] [--base /docs]` | Write the static site. Installs exactly the commits in `dep.lock`; a missing lock is an error naming `agentks install`. Needs Bun or Node |
 | `agentks migrate [--dry-run] [--yes]` | Bring the content to this binary's version. Refuses a dirty git tree, shows a dry run first, downloads the scripts for the version range from the official repository at the binary's release tag, runs them in order, re-checks, and reports what is left. Also checks every locked library's engine range. Needs Python (through `uv`) or Bun, depending on the scripts' language |
 | `agentks update [--check \| --status]` | Update the binary from the latest release; show cached state; check without installing |
 | `agentks shell-init` | Print the shell set-up for the PATH and silent automatic updates (today's `init`) |
@@ -71,7 +71,7 @@ The command-line tool is the same binary as the engine, renamed from `agent-ks` 
 
 | Command | Job |
 |---|---|
-| `agentks install [--update [ALIAS]]` | Install every locked commit missing from the cache. `--update` moves `branch` and latest entries to their newest commit and prints old → new |
+| `agentks install [--update [ALIAS]]` | Install every locked commit missing from the cache. `--update` re-resolves `branch`, range and latest entries to their newest match and prints old → new ([library system](../04_ecosystem/01_library-system.md)) |
 | `agentks library` | With no arguments, in a terminal: the TUI. It shows the catalog, what this project uses and what the machine has cached; one key installs. Without a terminal it prints `library list` |
 | `agentks library add NAME\|OWNER/REPO\|URL [--path P] [--tag T \| --commit C \| --branch B] [--as ALIAS]` | Add an entry to `dep.yaml`, resolve it, install it, and print its source and manifest summary |
 | `agentks library remove ALIAS` | Remove the entry and its lock record. Cached files stay until a cleanup |

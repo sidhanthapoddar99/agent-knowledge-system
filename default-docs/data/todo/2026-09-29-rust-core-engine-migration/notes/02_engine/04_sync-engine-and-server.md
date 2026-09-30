@@ -2,7 +2,7 @@
 title: "Sync engine and server: HTTP, the /api WebSocket and the watcher"
 ---
 
-`agentks start` runs one local server per project, built on axum. It serves the embedded client at every path, the project's files at a few fixed routes, and **one WebSocket at `/api` that carries everything else**. Over it the client pulls data (manifest, pages, sidebars, indexes) and the engine pushes changes: when the file watcher sees a file change on disk, the engine updates its index and pushes the new hashes, and the client refetches only what changed. Phase 2 adds editing on the same socket: live-preview renders and saves, with echo suppression so a saved file does not come back as an outside change. A later stage adds multi-user editing with `yrs` (the Rust port of Yjs) and presence, and it needs auth first. Until then the server binds to localhost only, checks the `Host` and `Origin` of every request, and serves only files inside the project and the library cache. A published site runs no server at all.
+`agentks start` runs one local server per project, built on axum. It serves the embedded client at every path, the project's files at a few fixed routes, and **one WebSocket at `/api` that carries everything else**. Over it the client pulls data (manifest, pages, sidebars, indexes) and the engine pushes changes: when the file watcher sees a file change on disk, the engine updates its index and pushes the new hashes, and the client refetches only what changed. Phase 2 adds editing on the same socket: live-preview renders and saves, with echo suppression so a saved file does not come back as an outside change. The multi-user stage, right after single-user editing, adds presence and access keys on the same `yrs` documents (`yrs` is the Rust port of Yjs). Until then the server binds to localhost only, checks the `Host` and `Origin` of every request, and serves only files inside the project and the library cache. A published site runs no server at all.
 
 # 03 References
 
@@ -29,7 +29,7 @@ title: "Sync engine and server: HTTP, the /api WebSocket and the watcher"
 - Decided (sidhantha, 2026-09-29): no Rust server in a published site.
 - Decided (sidhantha, 2026-09-29): layouts and major data are cached in the browser, versioned by hash.
 - Decided (sidhantha, 2026-09-29): the audience is one or two developers at a time.
-- Proposed (claude, 2026-09-29): the server listens on localhost only from Phase 1; network access is an explicit opt-in once auth exists.
+- Proposed (claude, 2026-09-29): the server listens on localhost only from Phase 1; network access is an explicit opt-in that needs an access key.
 - Proposed (claude, 2026-09-30): the message protocol, the routes and the safety rules below.
 
 # 05 Notes & Analysis

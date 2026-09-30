@@ -2,7 +2,7 @@
 title: "Editor engines: in-place editing and diagram editors"
 ---
 
-Editing is a Phase 2 feature of the local client, and it happens **in place, on the page people read**. Choosing **Edit** in the dev toolbar turns the content area of an editable page into an editor. The layout around it stays as it is. There are **two modes only**. **Raw** shows the whole file as markdown. **Live preview** shows the markdown only where the cursor is and keeps everything else rendered, Obsidian-style. With editing off the page is read-only. The text engine is **the CodeMirror 6 live preview built today**, carried over and improved rather than rebuilt; the separate `/editor` page and its IDE chrome are discarded. The main editor of agentks content is an AI, so a human edits **existing files only**: small fixes and quick ideas, with no new-file command, no file tree and no second navigation. Saving goes over the `/api` WebSocket to Rust, which writes the file and does not mistake its own write for an outside change. Rich blocks in the live preview are rendered by Rust, the same renderer as every page, so the preview equals the real page. Diagrams (Excalidraw, tldraw, Mermaid, draw.io) get their own editors in the same place. Several people editing at once is a later stage, after auth.
+Editing is a Phase 2 feature of the local client, and it happens **in place, on the page people read**. Choosing **Edit** in the dev toolbar turns the content area of an editable page into an editor. The layout around it stays as it is. There are **two modes only**. **Raw** shows the whole file as markdown. **Live preview** shows the markdown only where the cursor is and keeps everything else rendered, Obsidian-style. With editing off the page is read-only. The text engine is **the CodeMirror 6 live preview built today**, carried over and improved rather than rebuilt; the separate `/editor` page and its IDE chrome are discarded. The main editor of agentks content is an AI, so a human edits **existing files only**: small fixes and quick ideas, with no new-file command, no file tree and no second navigation. Saving goes over the `/api` WebSocket to Rust, which writes the file and does not mistake its own write for an outside change. Rich blocks in the live preview are rendered by Rust, the same renderer as every page, so the preview equals the real page. Diagrams (Excalidraw, tldraw, Mermaid, draw.io) get their own editors in the same place. Several people editing at once is the multi-user stage that follows, using access keys.
 
 # 03 References
 
@@ -17,6 +17,8 @@ Editing is a Phase 2 feature of the local client, and it happens **in place, on 
 - Today's editor, in [the editor folder](../../../../../../agent-ks-engine/src/dev-tools/editor): [the live preview](../../../../../../agent-ks-engine/src/dev-tools/editor/live-preview/index.ts), [its decoration builder](../../../../../../agent-ks-engine/src/dev-tools/editor/live-preview/build-decorations.ts), [the formatting commands](../../../../../../agent-ks-engine/src/dev-tools/editor/core/formatting-commands.ts), [the Yjs client](../../../../../../agent-ks-engine/src/dev-tools/editor/sync/yjs-client-v2.ts); and the server side, [the editor store](../../../../../../agent-ks-engine/src/dev-tools/server/editor-store.ts) and [the Yjs sync](../../../../../../agent-ks-engine/src/dev-tools/server/yjs-sync.ts).
 
 # 04 Decisions
+
+- Decided (claude, under sidhantha's delegation, 2026-09-30): single-user diagram editing ships in Phase 2; presence on diagrams comes with the multi-user stage.
 
 - Decided (sidhantha, 2026-09-29): the current editor, the separate `/editor` page, is discarded.
 - Decided (sidhantha, 2026-09-29): editing happens in the reading and review UI, which changes only slightly when editing is on.
@@ -138,11 +140,10 @@ A diagram is edited where it appears: on its own first-class page, or by clickin
 
 - **Sync:** the same server-held `yrs` documents; a second client joins the same document.
 - **Presence:** who is on the page, with their cursor and selection, from [2026-04-10-sync-and-presence](../../../2026-04-10-sync-and-presence/issue.md).
-- **Auth first.** Until it exists the server listens on localhost only, so nobody on the network can reach the editor ([the sync engine and server](../02_engine/04_sync-engine-and-server.md)).
+- **Access keys.** Without `--share` and a key the server listens on localhost only, so nobody on the network can reach the editor ([the sync engine and server](../02_engine/04_sync-engine-and-server.md)).
 
 ## 11 Open
 
-- Whether single-user diagram editing ships in Phase 2 (section 08).
-- Whether Phase 2 uses server-held `yrs` documents from the start, as proposed in section 06, or a plain save with a conflict notice.
+- Server-held `yrs` documents from the start of Phase 2 are settled by the multi-user decision in [the server](../02_engine/04_sync-engine-and-server.md).
 
-Both are tracked in [open questions and risks](../01_overview/05_open-questions-and-risks.md).
+The open one is tracked in [open questions and risks](../01_overview/05_open-questions-and-risks.md).

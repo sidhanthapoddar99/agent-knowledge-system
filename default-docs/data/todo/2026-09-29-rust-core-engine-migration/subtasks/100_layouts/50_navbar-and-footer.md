@@ -1,0 +1,45 @@
+---
+title: "Navbar and footer"
+status: open
+---
+
+Every page carries a navbar and a footer, each chosen by name in config: `default` or `minimal`. This leaf rebuilds the four components, fed by the navbar and footer data in the manifest (from `navbar.yaml` and `footer.yaml`), including logos that switch with light and dark mode, the section links, and the mobile menu.
+
+# 01 To Do
+- [ ] **Components** in `agentks-ui/src/layouts/navbar/{default,minimal}/` and `footer/{default,minimal}/`, from today's [navbar](../../../../../../agent-ks-engine/src/layouts/navbar) and [footer](../../../../../../agent-ks-engine/src/layouts/footer).
+- [ ] **Data from the manifest**: site name, logo URLs for light and dark mode (resolved by Rust from `@assets/…` references), navbar items with resolved URLs and the active section, footer columns and links, the theme-toggle placement.
+- [ ] **Logo switching** by CSS on `data-theme`, no script, so it is right before first paint.
+- [ ] **Mobile menu.** Below the tablet breakpoint the navbar collapses into a menu button; it also opens the sidebar drawer on docs pages ([080/60](../080_ui-and-client/60_pwa-and-mobile.md)).
+- [ ] **Hooks** for the brand, items and footer columns ([10](./10_theme-contract-and-css.md)).
+- [ ] **From the variations backlog (absorbed 03, open items):** a centred-logo navbar, a four-column footer and a mega menu are **not built now**; they go to [65](./65_layout-variations.md) as on-demand candidates.
+- [ ] **Parity** with today on every page type, light and dark.
+
+## Guardrails
+- Unknown navbar or footer names fail start-up with the list of names.
+- The navbar height is `--navbar-height`; nothing hard-codes it.
+
+## Done when
+- Both navbar and both footer styles render with parity, logos switch with the theme, and the mobile menu works at 320 pixels.
+
+# 02 Status and Result
+Open. Not started.
+
+## Result
+None yet.
+
+## Agent log
+none
+
+# 03 References
+- **Where:** main repository `/home/sid/projects/06_02_NeuraLabs/agent-knowledge-system`, `apps/packages/agentks-ui/src/layouts/navbar/` and `footer/`.
+- **Read first:** [theming and layouts](../../notes/03_frontend/04_theming-and-layouts.md) (section 01), [project config](../../notes/02_engine/02_project-config.md) (navbar and footer files).
+- **Today's config:** [navbar.yaml](../../../../../config/navbar.yaml), [footer.yaml](../../../../../config/footer.yaml).
+- **Absorbed:** [layouts-and-variations subtask 03 navbar and footer](../../../2025-06-25-layouts-and-variations/subtasks/03_navbar-and-footer.md) (its done items carry over as behaviour; its open items move to [65](./65_layout-variations.md)).
+- **Depends on:** [10](./10_theme-contract-and-css.md), [080/20](../080_ui-and-client/20_shared-ui-package.md).
+
+# 04 Decisions
+- Decided (sidhantha, 2026-09-29): navbar and footer keep `default` and `minimal` ([theming and layouts](../../notes/03_frontend/04_theming-and-layouts.md) section 01).
+
+# 05 Notes & Analysis
+## Watch out
+- Today's logo path fix (`resolveAssetUrl` for `theme.dark` and `theme.light`) is a rule; the new engine resolves these in Rust and sends URLs.

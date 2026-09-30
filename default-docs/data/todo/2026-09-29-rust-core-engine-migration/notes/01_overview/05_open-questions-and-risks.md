@@ -2,7 +2,7 @@
 title: "Open questions and risks"
 ---
 
-Four design questions from the discussion are still open: which dev tools come back (question 04), the site index's data structure (07), whether to adopt the structure model (08) and the UI framework (12). Three more came up on 2026-09-30: the language of migration scripts, how the Neuralabs workspace folder maps to repositories, and whether single-user diagram editing is part of Phase 2. A longer list of smaller points is proposed by claude but not yet confirmed by the user. The biggest risks are the size of the rewrite, rendering drift, a forced migration that damages content, and the publishing gap between 1.0.0 and Phase 3. Every component note links here for its open items. When a question is decided, its answer moves into the owning note and its row here is removed.
+Three design questions are still open: the site index's data structure (07), whether to adopt the structure model (08) and the UI framework (12). Each is decided inside its subtask when the work starts: [030/40 site index](../../subtasks/030_rust-engine/40_site-index.md) and [080/10 UI framework](../../subtasks/080_ui-and-client/10_ui-framework-decision.md). A longer list of smaller points is proposed by claude but not yet confirmed by the user. The biggest risks are the size of the rewrite, rendering drift, a forced migration that damages content, and the publishing gap between 1.0.0 and Phase 3. Every component note links here for its open items. When a question is decided, its answer moves into the owning note and its row here is removed.
 
 # 03 References
 
@@ -17,7 +17,10 @@ Four design questions from the discussion are still open: which dev tools come b
 - Decided (sidhantha, 2026-09-29): the site is indexed at start-up and pages are rendered on request (question 07's first half). The data structure is the open half.
 - Decided (claude, delegated by sidhantha, 2026-09-29): the new engine is proven by route parity, a rendered-content comparison in a headless browser, layout screenshots in light and dark mode, and the user's own use (question 06).
 - Decided (sidhantha, 2026-09-30): the UI framework must render the shared components to HTML at build time and support islands (a hard requirement on question 12).
-- Decided (sidhantha, 2026-09-30): migration scripts are Python or JavaScript, to be chosen.
+- Decided (claude, under sidhantha's delegation, 2026-09-30): migration scripts are Python, run with `uv run` ([05/03](../05_delivery/03_versioning-and-migrations.md)).
+- Decided (claude, under sidhantha's delegation, 2026-09-30): the dev tools that come back are the ones [03/05 Dev toolbar](../03_frontend/05_dev-toolbar.md) recommends (question 04).
+- Decided (claude, under sidhantha's delegation, 2026-09-30): single-user diagram editing is part of Phase 2 ([03/03 Editor engines](../03_frontend/03_editor-engines.md)).
+- Decided (claude, under sidhantha's delegation, 2026-09-30): search on the static site uses Pagefind, built at build time, with no WASM ([05/02 Publishing](../05_delivery/02_publishing-ssg.md)).
 
 # 05 Notes & Analysis
 
@@ -27,11 +30,7 @@ Four design questions from the discussion are still open: which dev tools come b
 |---|---|---|---|---|
 | 12 | **Which UI framework** for `apps/packages/agentks-ui` and the client? Candidates: React, Preact, Solid, Svelte, Vue | Criteria: renders to HTML at build time with islands (hard requirement); first-load size; lazy-loaded layouts; a router with real paths and `#heading` anchors; how well AI agents write it. Preact, Solid and Svelte meet the islands requirement well; React can with more work, and the engine already bundles React for Excalidraw | Phase 1 step 2: every layout is written in it | [03/01 Shared UI package](../03_frontend/01_shared-ui-package.md) |
 | 07 | **The site index's data structure** | Claude: an ordered map keyed by path, with Merkle-style content hashes rolled up through folders. A change re-hashes only its parent chain; folder hashes answer "did anything under here change?" and give cache keys. No Patricia or radix tree: the prior audit measured a median of 3 entries per folder and found a plain ordered map fast enough at about 1,300 pages | Phase 1 step 1 | [02/03 Rust engine](../02_engine/03_rust-engine.md) |
-| 04 | **Which dev tools come back** in the Phase 2 toolkit: layout picker, error log, cache inspector, browser cache, system metrics. And is cache clearing a toolbar button, CLI commands only, or both? | Not discussed yet. The Edit option is settled | Phase 2 | [03/05 Dev toolbar](../03_frontend/05_dev-toolbar.md) |
 | 08 | **Adopt the structure / layout / theme / shell model** from the Go issue? | In the new split, "structure" (URLs, parsing rules) would be Rust and "layout" and "shell" the frontend. Its external-layout option is contradicted by the no-custom-layouts decision. The Go issue's open subtask `01_define-and-discuss-structure` could move here, re-scoped to built-in layouts | Naming inside the Rust core and the shared package | [02/03 Rust engine](../02_engine/03_rust-engine.md) |
-| — | **Python or JavaScript** for migration scripts | Claude: Python, because today's scripts are Python (no rewrite) and `uv run` runs a single-file script with its dependencies. JavaScript would run with `bun` | Phase 1 step 3 | [05/03 Versioning and migrations](../05_delivery/03_versioning-and-migrations.md) |
-| — | **The Neuralabs workspace folder**: is the `agent-knowledge-system` folder the main repository itself, or a folder holding the main and library repositories side by side? | Settled when the repositories are scaffolded with the project-setup guide | Phase 1 start | [05/01 Repositories and layout](../05_delivery/01_repositories-and-layout.md) |
-| — | **Is single-user in-place diagram editing part of Phase 2?** | Claude: yes. It needs only editing mode; the multi-user half follows in the multi-user stage | Phase 2 scope | [03/03 Editor engines](../03_frontend/03_editor-engines.md) |
 
 ## 02 Proposed by claude, not yet confirmed
 
@@ -40,7 +39,7 @@ These sit in the component notes marked as proposals. Each needs a yes, a change
 | Area | Proposal | Owner note |
 |---|---|---|
 | Server | The `/api` message set: pulls (manifest, page, sidebar, issues index, render markdown) and pushes (changed hashes; later editing and presence) | [02/04 Sync engine and server](../02_engine/04_sync-engine-and-server.md) |
-| Server | Localhost only by default from Phase 1; network access only once auth exists | [02/04 Sync engine and server](../02_engine/04_sync-engine-and-server.md) |
+| Server | Localhost only by default from Phase 1; network access only with `--share` and an access key | [02/04 Sync engine and server](../02_engine/04_sync-engine-and-server.md) |
 | Editing | A save carries the hash it started from; a changed file on disk is a conflict, not an overwrite | [03/03 Editor engines](../03_frontend/03_editor-engines.md) |
 | Cache | The engine version is part of the build cache key; a page's key includes the hashes of every file it embeds | [02/06 Machine home and build cache](../02_engine/06_machine-home-and-build-cache.md) |
 | Cache | `agentks cache clean` also reads `dep.lock` from each project's other local branches | [02/06 Machine home and build cache](../02_engine/06_machine-home-and-build-cache.md) |
@@ -51,7 +50,7 @@ These sit in the component notes marked as proposals. Each needs a yes, a change
 | Migrations | Safety rails: refuse a dirty git tree, dry run first, re-detect after | [05/03 Versioning and migrations](../05_delivery/03_versioning-and-migrations.md) |
 | Publishing | `agentks build [--out <folder>]` defaulting to `dist/` beside `config/`; per-page raw markdown and `llms.txt` in the output; a cache mount for libraries in the Dockerfile | [05/02 Publishing (SSG)](../05_delivery/02_publishing-ssg.md) |
 | Development | mise puts `data/builds/` first on the PATH inside the repository, with a second name kept for the installed release | [05/05 Development workflow and testing](../05_delivery/05_development-workflow-and-testing.md) |
-| Launch | The final 0.x release points the updater at the new repository; transfer this repository before archiving; move the tracker by copying active issues into `docs/` | [05/07 Docs rewrite and launch](../05_delivery/07_docs-rewrite-and-launch.md) |
+| Launch | The final 0.x release points the updater at the new repository; archive this repository in place; move the tracker by copying active issues into `docs/` | [05/07 Docs rewrite and launch](../05_delivery/07_docs-rewrite-and-launch.md) |
 | Docs command | `agentks docs <page>`; ships at the hosting step (claude decided this; the user can move it) | [02/05 Rust CLI](../02_engine/05_rust-cli.md) |
 
 ## 03 Open points for later stages
@@ -60,7 +59,7 @@ Not needed for 1.0.0. Recorded so they are not lost.
 
 | Stage | Open points |
 |---|---|
-| Phase 3 | Must search or filtering work on the static site? If so, that feature may need a WASM build of the relevant Rust code. The exact nginx layout for agentks.neuralabs.org |
+| Phase 3 | The exact nginx layout for agentks.neuralabs.org. Search uses Pagefind; issue filters compare values Rust precomputed, so neither needs WASM |
 | Libraries | Adding catalogs other than the built-in one, for a company that runs its own |
 | Multi-user access | The exact `agentks share` commands; whether an access key can expire ([the server](../02_engine/04_sync-engine-and-server.md)) |
 | Agent hooks and retrieval | Which hooks earn their noise; Codex hook support; whether semantic search earns its model download; one index shared with site search |
@@ -85,7 +84,8 @@ Not needed for 1.0.0. Recorded so they are not lost.
 | **Save echo** | The editor reloads a file it just saved and loses the cursor or the user's typing | The server marks its own writes and does not echo them to the saving client |
 | **Migration runtime and network** | `agentks migrate` needs uv or bun and a network connection | Migrations are rare (once per breaking release); the runner checks and prints how to get the runtime; the gate's error says what to download |
 | **Build-time JavaScript runtime** | `agentks build` needs Bun or Node | CI and CDN pipelines usually have Node; the Dockerfile installs Bun in one line |
-| **Fixed addresses** | Every released binary reads `library.json` and the migration scripts from fixed repository addresses | Those files never move; the repositories are transferred rather than recreated so GitHub keeps redirects |
+| **Fixed addresses** | Every released binary reads `library.json` and the migration scripts from fixed repository addresses | Those files never move, and the repositories are never renamed |
+| **Private until launch** | The three new repositories are private, so installer downloads, `agentks migrate`, library fetches and marketplace installs need GitHub credentials until launch | Development and CI use local paths or authenticated git; the repositories go public at launch step 5 |
 | **The switch-over strands users** | Installed 0.x CLIs keep checking this repository and never see the new release | The final 0.x release points the updater at the new repository or prints a notice; the switch happens in one go when the new docs and skills are ready |
 | **Latest-only docs** | Hosted docs describe features an older binary lacks | Each feature page says the version it arrived in; automatic updates keep most users current |
 | **Unverified numbers** | The footprint and memory figures predate the Astro 7 upgrade | Re-measure before quoting any of them in a decision |

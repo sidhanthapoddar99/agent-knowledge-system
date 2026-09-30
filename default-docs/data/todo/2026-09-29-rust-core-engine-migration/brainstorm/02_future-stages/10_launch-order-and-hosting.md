@@ -20,7 +20,7 @@ agentks moves to the **neuralabshq** GitHub organisation, and its website is **a
 - Decided (sidhantha, 2026-09-30): the website has two parts. `/` is the agentks homepage, a Next.js static build served by nginx. `/docs` is the docs, built with the Rust engine. A Dockerfile builds both (`agentks build` for the docs) and serves them with nginx. It is published later, not now.
 - Decided (sidhantha, 2026-09-30): only the latest docs are published. No older versions.
 - Decided (sidhantha, 2026-09-30): the install command's URL can be on agentks.neuralabs.org or a GitHub release; both work. The agentks.neuralabs.org one only passes the request on to the GitHub release.
-- Decided (sidhantha, 2026-09-30): the Claude Code plugin marketplace moves from the personal account to `neuralabshq/plugin-marketplace`, serving all of Neuralabs. The personal marketplace stays for personal plugins.
+- Decided (sidhantha, 2026-09-30): the Claude Code plugin marketplace moves from the personal account to `neuralabshq/neuralabs-plugin-marketplace`, serving all of Neuralabs. The personal marketplace stays for personal plugins.
 - Decided (sidhantha, 2026-09-30): **plugin** means an AI-agent plugin with skills, for Claude Code, Codex or another agent. **Library** means a dependency in `dep.yaml`. There are two agentks plugins: one for using agentks, and a smaller, developer-oriented one for building and hosting libraries.
 - Decided (sidhantha, 2026-09-30): the new repository starts from scratch, set up with the project-setup guide. Only what is needed moves across.
 - Decided (sidhantha, 2026-09-30): this repository stops building once the new release is final, and is archived after it. Existing users get an option to update.

@@ -16,6 +16,8 @@ The dev toolbar is a **bar, like Astro's dev toolbar**, that the local client sh
 
 # 04 Decisions
 
+- Decided (claude, under sidhantha's delegation, 2026-09-30): the tools in section 03 are the ones that come back (question 04).
+
 - Decided (sidhantha, 2026-09-29): the dev toolkit, its toolbar, cache clearing and the other dev tools are Phase 2. Phase 1 is rendering only.
 - Decided (sidhantha, 2026-09-29): the toolkit holds the switch for editing mode.
 - Decided (sidhantha, 2026-09-30): the toolkit is a bar, like Astro's dev toolbar. Its Edit option makes an editable page's content editable in place; raw and live preview are the two editing modes.
@@ -39,7 +41,7 @@ The dev toolbar is a **bar, like Astro's dev toolbar**, that the local client sh
 
 Turning Edit on loads the editor code on demand, so a page that is only read never pays for it. The full behaviour is in [editor engines](./03_editor-engines.md).
 
-## 03 The tools (claude's recommendation; open question 04)
+## 03 The tools
 
 Today's Astro toolbar has six apps, about 1,800 lines, all tied to Astro's toolbar host. None moves across as code; each is rebuilt or dropped.
 
@@ -82,6 +84,5 @@ Users cannot add toolbar tools. The later extensions stage may add site scripts,
 
 ## 07 Open
 
-- Which tools come back ([open question 04](../01_overview/05_open-questions-and-risks.md)). Section 03 is claude's recommendation, not a decision.
 
 Tracked in [open questions and risks](../01_overview/05_open-questions-and-risks.md).

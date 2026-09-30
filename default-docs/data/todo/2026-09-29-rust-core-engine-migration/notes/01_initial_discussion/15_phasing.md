@@ -2,7 +2,7 @@
 title: "Phasing"
 ---
 
-**Phase 1 is rendering**: the Rust engine and the single-page frontend show every page with the same correct results as today, locally. **Phase 2** adds the new editing mode, the dev toolkit, the `agentks docs` command and the artifact library. **Phase 3** is publishing: a static export served by nginx. **Later stages** add multi-user editing with auth, agent hooks with retrieval, and the GitHub issues layout. 1.0.0 ships with Phases 1 and 2; publishers stay on the last 0.x release until Phase 3. Inside Phase 1, claude proposes an order of steps so the project always has a working engine, which is how this plan answers the prior audit's 6–12 month estimate.
+**Phase 1 is rendering**: the Rust engine and the single-page frontend show every page with the same correct results as today, locally. **Phase 2** adds the new editing mode, the dev toolkit, the `agentks docs` command and libraries (`config/dep.yaml`). **Phase 3** is publishing: a static export served by nginx. **Later stages** add multi-user editing with auth, agent hooks with retrieval, and the GitHub issues layout. 1.0.0 ships with Phases 1 and 2; publishers stay on the last 0.x release until Phase 3. Inside Phase 1, claude proposes an order of steps so the project always has a working engine, which is how this plan answers the prior audit's 6–12 month estimate.
 
 # 03 References
 
@@ -43,7 +43,7 @@ What Phase 1 contains, from the decisions so far:
 
 ## 03 Phase 2 — editing and dev tools
 
-[Editing mode](../02_future-stages/02_editing-mode.md), [the dev toolkit](../02_future-stages/03_dev-toolkit.md) [the agentks docs command](../02_future-stages/08_agentks-docs-command.md) and [the artifact library](../02_future-stages/09_artifact-library.md). The two share one downloader. The docs command belongs here because 1.0.0 is the first release with no framework checkout, which is where the docs live today. The live preview is rendered by Rust over the WebSocket; there is no WASM build. 1.0.0 ships when Phases 1 and 2 are done.
+[Editing mode](../02_future-stages/02_editing-mode.md), [the dev toolkit](../02_future-stages/03_dev-toolkit.md) [the agentks docs command](../02_future-stages/08_agentks-docs-command.md) and [libraries](../02_future-stages/09_libraries-and-dependencies.md). The docs are fetched through the library machinery. The docs command belongs here because 1.0.0 is the first release with no framework checkout, which is where the docs live today. The live preview is rendered by Rust over the WebSocket; there is no WASM build. 1.0.0 ships when Phases 1 and 2 are done.
 
 ## 04 Phase 3 — publishing
 
@@ -55,4 +55,4 @@ What Phase 1 contains, from the decisions so far:
 
 ## 06 Tracked separately
 
-Narrated video pages and their audio are tracked in [2026-09-29-narrated-video-pages](../../../2026-09-29-narrated-video-pages/issue.md). The player is browser code and can continue at any time. The audio and the voice model land with or after Phase 1, because they need the `~/.agentks` home. The preset libraries videos use are [the artifact library](../02_future-stages/09_artifact-library.md), in Phase 2.
+Narrated video pages and their audio are tracked in [2026-09-29-narrated-video-pages](../../../2026-09-29-narrated-video-pages/issue.md). The player is browser code and can continue at any time. The audio and the voice model land with or after Phase 1, because they need the `~/.agentks` home. The libraries videos draw on are [project libraries](../02_future-stages/09_libraries-and-dependencies.md), in Phase 2.

@@ -27,7 +27,11 @@ The binary and its installer are renamed from `agent-ks` to **`agentks`**. The C
 | `agentks theme eject` | Copy the CSS into `config/themes/` for editing (proposed) |
 | `agentks migrate` | Run content migrations ([versioning](./12_versioning-and-forced-migrations.md)) |
 | `agentks docs` | Open the agentks docs, downloaded and cached ([Phase 2](../02_future-stages/08_agentks-docs-command.md)) |
-| `agentks library add` | Download a preset library and pin it to the project ([Phase 2](../02_future-stages/09_artifact-library.md)) |
+| `agentks install` | Install the libraries in `config/dep.lock`; `--update` moves branch and latest entries ([Phase 2](../02_future-stages/09_libraries-and-dependencies.md)) |
+| `agentks library add` · `remove` | Add a library to `config/dep.yaml` and install it, or remove it |
+| `agentks library list` · `show` · `find` | What the project's libraries offer, read from their manifests, so agents reuse elements |
+| `agentks check libraries` | Check the manifests of the project's libraries |
+| `agentks cache status` · `clean <root>` | Show cache sizes; remove what no project under the root needs, after a report ([the home note](./07_agentks-home-and-build-cache.md)) |
 
 ## 02 How far it reaches
 

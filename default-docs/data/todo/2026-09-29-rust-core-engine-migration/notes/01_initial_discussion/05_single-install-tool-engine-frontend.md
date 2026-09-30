@@ -2,7 +2,7 @@
 title: "One install: tool + engine + published frontend"
 ---
 
-`agentks` grows from a CLI tool into **tool + engine + published Vite build**, installed once per machine. Projects stop carrying their own framework folder and `node_modules`. Ready-made artifacts come as **preset libraries**, downloaded on request and cached once per machine, not packaged in the binary ([the artifact library](../02_future-stages/09_artifact-library.md)). Both costs are paid once per machine, not once per project.
+`agentks` grows from a CLI tool into **tool + engine + published Vite build**, installed once per machine. Projects stop carrying their own framework folder and `node_modules`. Ready-made artifacts, icons and other reusable elements come as **libraries**: GitHub repositories a project lists in `config/dep.yaml`, cached once per machine, not packaged in the binary ([libraries](../02_future-stages/09_libraries-and-dependencies.md)). Both costs are paid once per machine, not once per project.
 
 # 03 References
 
@@ -13,7 +13,7 @@ title: "One install: tool + engine + published frontend"
 
 - Decided (sidhantha, 2026-09-29): one global install serves every project on the machine.
 - Decided (sidhantha, 2026-09-29): the frontend bundle ships embedded in the binary.
-- Decided (sidhantha, 2026-09-29): preset libraries of ready-made artifacts are downloaded and cached, never packaged in the binary.
+- Decided (sidhantha, 2026-09-29): libraries of ready-made artifacts are downloaded and cached, never packaged in the binary.
 
 # 05 Notes & Analysis
 
@@ -21,7 +21,7 @@ title: "One install: tool + engine + published frontend"
 
 - The space one install takes will grow, because the binary now carries the engine and the frontend.
 - A user with ten agent-ks projects has one engine instead of ten copies, so the total is far smaller.
-- A larger engine becomes affordable, with more built-in layouts. Ready-to-use artifacts come from preset libraries, cached once per machine and shared by every project.
+- A larger engine becomes affordable, with more built-in layouts. Ready-to-use artifacts come from libraries, cached once per machine and shared by every project.
 
 ## 02 What the binary carries
 
@@ -29,7 +29,7 @@ title: "One install: tool + engine + published frontend"
 - The Rust core and server.
 - The prebuilt Vite frontend (the single-page app).
 
-Not in the binary: preset libraries, the docs and the narration voice model. agentks downloads them on request into `~/.agentks/` through one shared downloader ([the artifact library](../02_future-stages/09_artifact-library.md)).
+Not in the binary: libraries, the docs and the narration voice model. agentks downloads them into `~/.agentks/`. Libraries and the docs share one fetcher ([libraries](../02_future-stages/09_libraries-and-dependencies.md)); the voice model is a separate download.
 
 ## 03 The frontend is embedded
 

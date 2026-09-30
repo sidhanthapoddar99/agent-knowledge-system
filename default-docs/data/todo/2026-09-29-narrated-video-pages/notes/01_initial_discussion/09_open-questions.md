@@ -7,11 +7,12 @@ What to settle before the video work is split into subtasks. Each gets a decisio
 # 03 References
 
 - [Index](./01_index.md)
-- [The artifact library's open points](../../../2026-09-29-rust-core-engine-migration/notes/02_future-stages/09_artifact-library.md) — where project elements live, and how preset libraries are hosted and trusted.
+- [Libraries, dep.yaml and dep.lock](../../../2026-09-29-rust-core-engine-migration/notes/02_future-stages/09_libraries-and-dependencies.md) — where libraries come from and how they are pinned and trusted.
 
 # 04 Decisions
 
-- Decided (sidhantha, 2026-09-29): the reusable library is not video-only. It is shared engine machinery, tracked in [the artifact library](../../../2026-09-29-rust-core-engine-migration/notes/02_future-stages/09_artifact-library.md), and its open points moved there.
+- Decided (sidhantha, 2026-09-29): the reusable library is not video-only. It is shared engine machinery, tracked in [libraries](../../../2026-09-29-rust-core-engine-migration/notes/02_future-stages/09_libraries-and-dependencies.md), and its open points moved there.
+- Decided (sidhantha, 2026-09-30): libraries are GitHub repositories or local folders listed in `config/dep.yaml`, so hosting needs no release pipeline, and the project's own elements live wherever `dep.yaml` points.
 
 # 05 Notes & Analysis
 

@@ -31,7 +31,7 @@ The decisions live in each note. The headline ones:
 | [01/04 WASM and HTMX](./04_wasm-and-htmx.md) | Why neither is used |
 | [01/05 One install](./05_single-install-tool-engine-frontend.md) | agentks as tool + engine + published frontend, installed once per machine |
 | [01/06 Config folder and .env](./06_config-folder-and-env.md) | Mandatory `config/`, `.env` inside it, ports only |
-| [01/07 ~/.agentks and the build cache](./07_agentks-home-and-build-cache.md) | The global home, the per-project cache, the 15-day cleanup |
+| [01/07 ~/.agentks and the build cache](./07_agentks-home-and-build-cache.md) | The global home, the per-project cache, shared libraries, the manual cleanup |
 | [01/08 The agentks rename and commands](./08_cli-rename-and-commands.md) | The new name, `agentks ps` and other commands |
 | [01/09 Server and WebSocket](./09_server-websockets-and-editing.md) | axum, one WebSocket for pull and push, dev and production serving, localhost default |
 | [01/10 CSS and theming](./10_css-and-theming.md) | Listing the compiled CSS, the override skill, class names as a contract |

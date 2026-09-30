@@ -2,7 +2,7 @@
 title: "Config folder and .env"
 ---
 
-The `config/` folder becomes **mandatory**, and `.env` no longer decides where it is. `.env` and `.env.example` move **inside** `config/`, and `.env` only overrides values that `config/` already defines, mostly ports. In about 90% of projects it is written once and forgotten.
+The `config/` folder becomes **mandatory**, and `.env` no longer decides where it is. `.env` and `.env.example` move **inside** `config/`, and `.env` only overrides values that `config/` already defines, mostly ports. In about 90% of projects it is written once and forgotten. `config/dep.yaml` (the libraries the project uses) is required too, even when empty, and agentks writes `config/dep.lock` beside it.
 
 # 03 References
 
@@ -14,6 +14,7 @@ The `config/` folder becomes **mandatory**, and `.env` no longer decides where i
 - Decided (sidhantha, 2026-09-29): `.env` and `.env.example` live under `config/`.
 - Decided (sidhantha, 2026-09-29): `.env` does not choose the config folder's location. The logic that did (`CONFIG_DIR`) is removed.
 - Decided (sidhantha, 2026-09-29): `.env` overrides settings defined in config, mainly ports. Define once and forget.
+- Decided (sidhantha, 2026-09-30): `config/dep.yaml` is required, even when empty; `config/dep.lock` sits beside it. See [libraries](../02_future-stages/09_libraries-and-dependencies.md).
 
 # 05 Notes & Analysis
 
@@ -26,6 +27,16 @@ The `config/` folder becomes **mandatory**, and `.env` no longer decides where i
 
 The CLI already resolves config as `--config-dir` > `AGENTKS_CONFIG_FOLDER` > `./config`, with no `.env` lookup. The new rule matches it.
 
-## 03 Later use
+## 03 What config holds
+
+| File | Written by | Committed |
+|---|---|---|
+| `site.yaml`, `navbar.yaml`, `footer.yaml` | the user | yes |
+| `dep.yaml` | the user, or `agentks library add` | yes, required even when empty |
+| `dep.lock` | agentks | yes |
+| `.env.example` | the user | yes |
+| `.env` | the user | no |
+
+## 04 Later use
 
 `.env` is also where secrets would go when auth arrives ([server and editing](./09_server-websockets-and-editing.md)). `.env.example` documents every key and is committed. `.env` is ignored by git.

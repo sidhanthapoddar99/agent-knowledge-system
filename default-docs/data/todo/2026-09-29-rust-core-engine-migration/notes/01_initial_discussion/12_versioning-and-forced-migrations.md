@@ -25,7 +25,7 @@ mise can install a specific release straight from GitHub. A project that wants t
 
 Today migrations are Python scripts in `agent-ks-engine/migration/`. A single-binary tool cannot require Python on every user's machine. They become `agentks migrate`, written in Rust, keeping today's detect → dry-run → migrate → re-detect structure.
 
-The prior audit warned that restarting at 1.0.0 leaves every existing project below the version floor. Forced migrations answer that only if `agentks migrate` covers **every 0.x format**, from the oldest supported content version up.
+The prior audit warned that restarting at 1.0.0 leaves every existing project below the version floor. Forced migrations answer that only if `agentks migrate` covers **every 0.x format**, from the oldest supported content version up. The 1.0.0 migration also creates the files 1.0.0 requires, such as an empty `config/dep.yaml` ([libraries](../02_future-stages/09_libraries-and-dependencies.md)).
 
 ## 03 Safety rails (claude, proposed)
 

@@ -1,6 +1,6 @@
 ---
 title: "Page data interface — the one set of shapes the client and the static build read"
-status: open
+status: in-progress
 ---
 
 The frontend asks for data by name and receives final, ready-to-display JSON; it recomputes nothing. The same shapes feed two consumers: the local client over the `/api` WebSocket, and the static renderer during `agentks build`. This leaf defines those shapes in `agentks-api` and implements the functions in `agentks-site` that produce them, so the server and the build cannot drift.

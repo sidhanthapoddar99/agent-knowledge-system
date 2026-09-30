@@ -1,6 +1,6 @@
 ---
 title: "Error model — typed errors, one error record, fatal versus content errors"
-status: open
+status: in-progress
 ---
 
 The engine's rule is "when unsure, return an error". That only works if errors are typed, carry where they happened, and look the same in the terminal, on the page and in the dev toolbar. Today the CLI and the Astro engine each have their own shape. This leaf defines one model for all crates.

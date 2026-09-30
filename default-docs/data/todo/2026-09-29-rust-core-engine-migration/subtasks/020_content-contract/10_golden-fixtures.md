@@ -52,6 +52,7 @@ none
 - **Unblocks:** every leaf in this group; [170/20 route and content parity](../170_testing/20_route-and-content-parity.md).
 
 # 04 Decisions
+- Decided (sidhantha, 2026-09-30): testing comes at the end. The corpus snapshot, the capture script and the comparison helper run in [stage 38](../../plans/01_engine-migration/38_testing.md). The small spec fixtures stay with the content crate's build, because they are fast unit-test inputs.
 - Decided (claude, delegated by sidhantha, 2026-09-29): the engine is proven by route parity and a rendered-content comparison ([05/05](../../notes/05_delivery/05_development-workflow-and-testing.md)).
 - Decided (claude, 2026-09-30): the snapshot stores normalised JSON with resolved link targets, and pins the source by commit instead of copying the content.
 

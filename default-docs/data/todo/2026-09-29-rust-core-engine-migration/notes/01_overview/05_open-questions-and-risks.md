@@ -2,7 +2,7 @@
 title: "Open questions and risks"
 ---
 
-Three design questions are still open: the site index's data structure (07), whether to adopt the structure model (08) and the UI framework (12). Each is decided inside its subtask when the work starts: [030/40 site index](../../subtasks/030_rust-engine/40_site-index.md) and [080/10 UI framework](../../subtasks/080_ui-and-client/10_ui-framework-decision.md). A longer list of smaller points is proposed by claude but not yet confirmed by the user. The biggest risks are the size of the rewrite, rendering drift, a forced migration that damages content, and the publishing gap between 1.0.0 and Phase 3. Every component note links here for its open items. When a question is decided, its answer moves into the owning note and its row here is removed.
+Two design questions are still open: the site index's data structure (07) and whether to adopt the structure model (08). Each is decided inside its subtask when the work starts, for example [030/40 site index](../../subtasks/030_rust-engine/40_site-index.md). Question 12, the UI framework, is decided: Preact, after a measured spike in [080/10 UI framework](../../subtasks/080_ui-and-client/10_ui-framework-decision.md). A longer list of smaller points is proposed by claude but not yet confirmed by the user. The biggest risks are the size of the rewrite, rendering drift, a forced migration that damages content, and the publishing gap between 1.0.0 and Phase 3. Every component note links here for its open items. When a question is decided, its answer moves into the owning note and its row here is removed.
 
 # 03 References
 
@@ -17,6 +17,7 @@ Three design questions are still open: the site index's data structure (07), whe
 - Decided (sidhantha, 2026-09-29): the site is indexed at start-up and pages are rendered on request (question 07's first half). The data structure is the open half.
 - Decided (claude, delegated by sidhantha, 2026-09-29): the new engine is proven by route parity, a rendered-content comparison in a headless browser, layout screenshots in light and dark mode, and the user's own use (question 06).
 - Decided (sidhantha, 2026-09-30): the UI framework must render the shared components to HTML at build time and support islands (a hard requirement on question 12).
+- Decided (claude, under sidhantha's delegation, 2026-09-30): the UI framework is Preact 11, with a small manifest-driven router of our own and islands hydrated one by one. The measured reasons are in [03/01 Shared UI package](../03_frontend/01_shared-ui-package.md) section 07 (question 12).
 - Decided (claude, under sidhantha's delegation, 2026-09-30): migration scripts are Python, run with `uv run` ([05/03](../05_delivery/03_versioning-and-migrations.md)).
 - Decided (claude, under sidhantha's delegation, 2026-09-30): the dev tools that come back are the ones [03/05 Dev toolbar](../03_frontend/05_dev-toolbar.md) recommends (question 04).
 - Decided (claude, under sidhantha's delegation, 2026-09-30): single-user diagram editing is part of Phase 2 ([03/03 Editor engines](../03_frontend/03_editor-engines.md)).
@@ -28,7 +29,6 @@ Three design questions are still open: the site index's data structure (07), whe
 
 | # | Question | Current leaning | Blocks | Owner note |
 |---|---|---|---|---|
-| 12 | **Which UI framework** for `apps/packages/agentks-ui` and the client? Candidates: React, Preact, Solid, Svelte, Vue | Criteria: renders to HTML at build time with islands (hard requirement); first-load size; lazy-loaded layouts; a router with real paths and `#heading` anchors; how well AI agents write it. Preact, Solid and Svelte meet the islands requirement well; React can with more work, and the engine already bundles React for Excalidraw | Phase 1 step 2: every layout is written in it | [03/01 Shared UI package](../03_frontend/01_shared-ui-package.md) |
 | 07 | **The site index's data structure** | Claude: an ordered map keyed by path, with Merkle-style content hashes rolled up through folders. A change re-hashes only its parent chain; folder hashes answer "did anything under here change?" and give cache keys. No Patricia or radix tree: the prior audit measured a median of 3 entries per folder and found a plain ordered map fast enough at about 1,300 pages | Phase 1 step 1 | [02/03 Rust engine](../02_engine/03_rust-engine.md) |
 | 08 | **Adopt the structure / layout / theme / shell model** from the Go issue? | In the new split, "structure" (URLs, parsing rules) would be Rust and "layout" and "shell" the frontend. Its external-layout option is contradicted by the no-custom-layouts decision. The Go issue's open subtask `01_define-and-discuss-structure` could move here, re-scoped to built-in layouts | Naming inside the Rust core and the shared package | [02/03 Rust engine](../02_engine/03_rust-engine.md) |
 

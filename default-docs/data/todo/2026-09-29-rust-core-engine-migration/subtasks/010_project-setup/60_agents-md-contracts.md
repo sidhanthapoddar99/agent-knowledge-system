@@ -1,6 +1,6 @@
 ---
 title: "AGENTS.md contracts — one brief per repository"
-status: open
+status: review
 ---
 
 Many agents will work in these repositories in parallel, most of them starting cold. `AGENTS.md` is the one file every agent reads first, so it must carry the choices each repository has made, its hard limits and where the product contract lives. sidhantha asked on 2026-09-30 for `AGENTS.md` only: no `CLAUDE.md` anywhere. This leaf writes the three briefs.
@@ -29,10 +29,12 @@ Many agents will work in these repositories in parallel, most of them starting c
 - `ctl check` (which checks the brief) passes in the main repository.
 
 # 02 Status and Result
-Open. Not started.
+In review. Each repository has an `AGENTS.md` and no `CLAUDE.md`.
 
 ## Result
-None yet.
+- Main repository: `AGENTS.md` with every template section filled; it records the layout exceptions (separate static apps, no `docker/`, `data/builds/`), the apps deferred until their subtasks, and where the plan lives. `ctl check` fails if a `CLAUDE.md` appears, and passes today.
+- Library and marketplace repositories: an `AGENTS.md` each, describing their contracts and their layout exception (content repositories, no `ctl`).
+- `find` over the three folders finds no `CLAUDE.md`.
 
 ## Agent log
 none

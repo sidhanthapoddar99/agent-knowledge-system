@@ -1,6 +1,6 @@
 ---
 title: "ctl and the gate — one entrypoint, green means proved"
-status: open
+status: in-progress
 ---
 
 Every contributor and every agent runs the repository through `ctl`, so there is one way to set up, develop, build and check. The gate is what "green" means: a commit is done only when `ctl gate` passes. This leaf adapts the project-setup `ctl` to agentks's apps and fills in the four floor rungs for Rust and TypeScript.
@@ -44,10 +44,12 @@ Every contributor and every agent runs the repository through `ctl`, so there is
 - `./ctl dev` serves the client at the Vite port and a request to `/api` reaches the engine (a WebSocket echo is enough until [050](../050_server/00_overview.md) lands).
 
 # 02 Status and Result
-Open. Not started.
+In progress. The gate works; `ctl dev` waits for the server and client.
 
 ## Result
-None yet.
+- `ctl` verbs today: `setup`, `check`, `status`, `build`, `test`, `gate`.
+- `ctl gate` runs `lint typecheck test check` and is green in about one second locally.
+- Left: `ctl dev` (needs [050](../050_server/00_overview.md) and the client), the deliberate red-rung check in Done when.
 
 ## Agent log
 none

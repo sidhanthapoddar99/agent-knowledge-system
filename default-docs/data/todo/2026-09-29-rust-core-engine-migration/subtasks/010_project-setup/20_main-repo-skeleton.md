@@ -1,6 +1,6 @@
 ---
 title: "Main repository skeleton — the project-setup tree for agentks"
-status: open
+status: in-progress
 ---
 
 The main repository needs one fixed tree before any code lands, so every agent working in parallel puts files in the same places. This leaf creates that tree from the project-setup template, adapted to agentks: one Rust app (the engine and CLI), three TypeScript apps (client, static renderer, homepage), one shared package (the UI), `docs/` as an agentks project, and `plugins/`. It ends with an empty but green gate.
@@ -53,10 +53,13 @@ agent-knowledge-system/
 - `ctl check` reports no placeholder `<version>` and no workspace manifest.
 
 # 02 Status and Result
-Open. Not started.
+In progress. The engine half exists; the client half waits for the UI framework decision ([080/10](../080_ui-and-client/10_ui-framework-decision.md)).
 
 ## Result
-None yet.
+- The project-setup shape: `ctl`, `scripts/` (common, config, build, test, gate), `.mise.toml`, `.env.template`, `.gitignore`, `data/` and `logs/` with their own ignore files, `AGENTS.md`, `README.md`, `LICENSE`, `.github/workflows/gate.yml`.
+- `apps/agentks-engine`: a Cargo workspace (Rust 1.98.1, edition 2024) with `agentks-core` and the `agentks` binary. `ctl build` writes `data/builds/agentks`; `agentks --version` prints `agentks 0.1.0`.
+- `./ctl setup` and `./ctl gate` exit 0 locally and in CI.
+- Left: `apps/agentks-client` and `apps/packages/agentks-ui` (after 080/10), and the client build check in Done when.
 
 ## Agent log
 none

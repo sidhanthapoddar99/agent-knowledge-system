@@ -1,6 +1,6 @@
 ---
 title: "Library repository skeleton — library.json, the default manifest, templates/"
-status: open
+status: in-progress
 ---
 
 `NeuraLabsHQ/agent-knowledge-system-library` holds the default library, the project templates and `library.json`, the catalog the binary reads. The engine's library code ([120](../120_libraries/00_overview.md)) and `agentks init` ([070/40](../070_cli/40_init-template.md)) need a real repository with valid files to be built and tested against. This leaf creates that first valid shape; filling the library with elements is [120](../120_libraries/00_overview.md)'s work.
@@ -43,10 +43,11 @@ status: open
 - `templates/agentks-default/config/dep.yaml` exists and parses as YAML with `libraries: {}`.
 
 # 02 Status and Result
-Open. Not started.
+In progress. The catalog and the manifest exist; wave 1 builds the default library's scaffold and first elements ([120/60](../120_libraries/60_default-library-scaffold.md)).
 
 ## Result
-None yet.
+- `library.json` (the catalog, one library entry, templates empty) and `manifest.json` (`agentks-default`, version 0.1.0, engine `>=1.0.0 <2.0.0`, no elements yet), `README.md`, `AGENTS.md`, `LICENSE`, `.gitignore`. Commit `80aa127`.
+- Left: the schemas and their CI check, `templates/agentks-default/`, the `v0.1.0` tag.
 
 ## Agent log
 none

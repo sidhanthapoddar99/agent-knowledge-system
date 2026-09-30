@@ -2,7 +2,7 @@
 title: "Release 1.0.0"
 status: open
 outcome: "agentks 1.0.0 installs from GitHub Releases and migrates 0.x content"
-notes: "Needs [multi-user](./35_multi-user.md). This closes launch step 1"
+notes: "Needs [testing](./38_testing.md). This closes launch step 1"
 who: "claude"
 subtasks:
   - "[140/10 One version: constants, release stream and release notes](../../subtasks/140_versioning-and-migrations/10_version-and-release-stream.md)"

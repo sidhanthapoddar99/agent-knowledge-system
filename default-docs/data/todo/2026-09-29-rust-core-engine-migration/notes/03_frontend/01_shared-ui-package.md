@@ -2,7 +2,7 @@
 title: "The shared UI package: agentks-ui"
 ---
 
-Every layout and every UI component lives once, in the shared package `apps/packages/agentks-ui`. Two builds use it: `apps/agentks-client`, the single-page app of the local tool, and `apps/agentks-ssg`, the static renderer behind `agentks build`. The package is **pure**: a component takes data as props and returns markup. It never fetches data, never opens the WebSocket, never touches browser-only objects while it renders, and never computes a rule. Rust computes every value; the package only decides how it looks. Interactive parts are **islands**: small components that carry their own JavaScript, so a published page ships code only for them. Because one implementation serves both the local tool and the published site, the two cannot drift. The UI framework is still open ([open question 12](../01_overview/05_open-questions-and-risks.md)); this note fixes the requirements it must meet.
+Every layout and every UI component lives once, in the shared package `apps/packages/agentks-ui`. Two builds use it: `apps/agentks-client`, the single-page app of the local tool, and `apps/agentks-ssg`, the static renderer behind `agentks build`. The package is **pure**: a component takes data as props and returns markup. It never fetches data, never opens the WebSocket, never touches browser-only objects while it renders, and never computes a rule. Rust computes every value; the package only decides how it looks. Interactive parts are **islands**: small components that carry their own JavaScript, so a published page ships code only for them. Because one implementation serves both the local tool and the published site, the two cannot drift. The UI framework is Preact, chosen by a measured spike (section 07).
 
 # 03 References
 
@@ -22,7 +22,8 @@ Every layout and every UI component lives once, in the shared package `apps/pack
 - Decided (sidhantha, 2026-09-29): all data access goes through one small interface, and the router uses real URL paths (safeguards 1 and 2).
 - Decided (sidhantha, 2026-09-30): the layouts and components live in `apps/packages/agentks-ui`, used by `apps/agentks-client` and `apps/agentks-ssg` (safeguard 3).
 - Decided (sidhantha, 2026-09-30): published pages are not hydrated as a whole and do not load their content as JSON. Only interactive parts carry JavaScript.
-- Decided (sidhantha, 2026-09-30): the UI framework must render the shared components to HTML at build time and support islands. Which framework is still open (question 12).
+- Decided (sidhantha, 2026-09-30): the UI framework must render the shared components to HTML at build time and support islands.
+- Decided (claude, under sidhantha's delegation, 2026-09-30): the UI framework is Preact 11, the router is a small manifest-driven one in `agentks-client`, islands hydrate one by one from a registry, component CSS is a plain prefixed CSS file beside each component, and the TypeScript types are generated from the engine's JSON Schema (section 07, question 12).
 
 # 05 Notes & Analysis
 
@@ -87,7 +88,7 @@ export interface DataSource {
 | `artifact` | the artifact page | the iframe URL and the `.meta.json` sidecar values |
 | `video` | the video page | the video's cues and transcript ([video pages](../04_ecosystem/05_video-pages.md)) |
 
-**Where the types come from** (claude, proposed). The Rust structs that the engine serialises are the source. The TypeScript types are generated from them at build time, for example with `ts-rs`, so the two cannot drift. This generates the *shape* of the data, not a rule: no ordering, status category or URL logic crosses over, which keeps the decision on question 10 intact. If the user reads that decision as forbidding generated types too, the fallback is hand-written types checked against JSON fixtures that Rust emits in its tests.
+**Where the types come from** (claude, proposed). The Rust structs that the engine serialises are the source. Rust writes a JSON Schema from them (`schemars`, [030/80](../../subtasks/030_rust-engine/80_page-data-interface.md)), and the package generates its TypeScript types from that schema at build time (section 07), so the two cannot drift. This generates the *shape* of the data, not a rule: no ordering, status category or URL logic crosses over, which keeps the decision on question 10 intact. If the user reads that decision as forbidding generated types too, the fallback is hand-written types checked against JSON fixtures that Rust emits in its tests.
 
 ## 04 Body HTML from Rust
 
@@ -134,7 +135,28 @@ An island is a component that needs JavaScript in the reader's browser. Everythi
 
 ## 07 The UI framework
 
-Still open. The hard requirements, from the decisions above:
+**Decided: Preact 11.0.0** (claude, 2026-09-30, [080/10](../../subtasks/080_ui-and-client/10_ui-framework-decision.md)). A spike built the docs layout three times, in Preact, Solid and Svelte, from a hand-written page payload. All three met every hard requirement, and all three render far faster than we need. Preact won on size and simplicity. Its two islands cost 8.0 KiB of gzipped JavaScript on a static page, against 11.1 for Solid and 16.5 for Svelte. Its hydration needs no markers in the HTML and no bootstrap script, so an island hydrates any markup, wherever the server rendered it. One compile serves the server and the browser. It is JSX with hooks, the idiom AI agents write most reliably. React and Vue were dropped on paper: React's runtime is several times Preact's on every page, and Vue had no edge over the three finalists.
+
+| Measured (production builds, 2026-09-30) | Preact 11.0.0 | Solid 1.9.15 | Svelte 5.57.1 |
+|---|---|---|---|
+| Static docs page, two islands: gzipped JS | **8.0 KiB** | 11.1 KiB, plus a 0.4 KB inline hydration script | 16.5 KiB |
+| Same page with the Excalidraw island | 417.5 KiB | 420.6 KiB | 426.0 KiB |
+| SPA first load: gzipped JS | **9.2 KiB** | 12.6 KiB | 18.2 KiB |
+| 1,300 pages to HTML strings, Bun 1.4.2 / Node 24.21.0 | 44 / 54 ms | 29 / 48 ms | 24 / 33 ms |
+| In-app navigation, median of 10 (fetch + draw) | 12.7 ms | 11.4 ms | 12.3 ms |
+| Lines of code for the spike's components and entries | 100 | 110 | 116 |
+| Hard edges | none | islands need the `_$HY` hydration script in every page, a render ID each, and `data-hk` keys in the markup | the markup is full of hydration comment markers; a separate server compile; the server bundle inlines 45 KB of `svelte/server` |
+
+**What the choice implies for the builds:**
+
+- **Router.** A small router of our own in `agentks-client`, about 60 lines in the spike. It looks each path up in the manifest, intercepts same-origin links to known pages, keeps the scroll position in `history.state`, restores it on back and forward, scrolls to `#heading` on first load and after navigation, and moves focus and the title to the new page's heading. A pattern-matching router adds nothing when the manifest is the route table. The spike checked every one of these behaviours in headless Chromium.
+- **Island mount.** The server writes each island as `<div data-island="name">markup</div>` followed by `<script type="application/json" data-props>`. The islands entry scans the page for `[data-island]`, loads each island's module on demand from a registry keyed by name, and calls Preact's `hydrate` on that element alone. Unmount is `render(null, el)`. Islands that Rust marks inside the body HTML use the same registry, with their input in `data-` attributes. In the client app the same components render live, with no island wrapper. The published page never loads the layout's code.
+- **React islands.** Excalidraw and tldraw run on real React 19, mounted with `createRoot` in their own lazy chunk. Preact's React aliases stay off (`reactAliasesEnabled: false`), so the React-only components never run on the compatibility layer. The cost is about 410 KiB of gzipped JavaScript, on the one page that shows such a diagram, and nothing elsewhere.
+- **Component CSS.** A plain CSS file beside each component, imported by the component, with classes prefixed by layout (`docs-…`) and values only from the theme variables (section 06). Vite bundles it for the client, and the static renderer links the CSS files listed in Vite's build manifest. No CSS modules and no CSS-in-JS, because hashed class names would break the public class contract.
+- **Types.** Rust writes `api.schema.json` from its types (`schemars`, [030/80](../../subtasks/030_rust-engine/80_page-data-interface.md)). `json-schema-to-typescript` turns it into `src/data/generated/api.ts` in the package, as part of the build; it took 0.1 s in the spike. A stale file fails the gate. Only data shapes cross over, never a rule.
+- **Build tools.** Vite 8.3.1 with `@preact/preset-vite` 2.10.6 (it needs `@babel/core` as a peer) and `preact-render-to-string` 6.7.0.
+
+The hard requirements the spike checked:
 
 | Requirement | Why |
 |---|---|
@@ -144,8 +166,6 @@ Still open. The hard requirements, from the decisions above:
 | A router that handles real paths, `#heading` anchors and scroll on back and forward | Safeguard 2, and a usable single-page app |
 | Written well by AI agents | The AI is the main author of changes |
 
-The candidates named so far are React, Preact, Solid, Svelte and Vue. Preact, Solid and Svelte do build-time rendering with islands well; React can, with more work. Excalidraw and tldraw are React components, so any other framework mounts them inside a React island. That costs React's runtime on the pages that show them, and nothing elsewhere.
-
 ## 08 How the package is checked
 
 - **Render checks** (claude, proposed). Each layout renders a set of fixture pages both ways: to an HTML string, as the static renderer does, and into a live page, as the client does. The two results must match after normalising whitespace and attribute order. That catches a component that reads `window` or fetches while rendering.
@@ -154,7 +174,6 @@ The candidates named so far are React, Preact, Solid, Svelte and Vue. Preact, So
 
 ## 09 Open
 
-- The UI framework (question 12).
 - Whether generated TypeScript types for the data shape are acceptable under the decision on question 10 (section 03).
 
-Both are tracked in [open questions and risks](../01_overview/05_open-questions-and-risks.md).
+It is tracked in [open questions and risks](../01_overview/05_open-questions-and-risks.md).

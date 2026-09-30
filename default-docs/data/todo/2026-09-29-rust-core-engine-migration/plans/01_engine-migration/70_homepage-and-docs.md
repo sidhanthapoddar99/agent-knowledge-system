@@ -10,7 +10,6 @@ subtasks:
   - "[190/30 Homepage: the sections of the page](../../subtasks/190_homepage/30_sections.md)"
   - "[190/40 Homepage: one look across / and /docs](../../subtasks/190_homepage/40_shared-look-with-docs.md)"
   - "[190/50 Homepage: SEO, social cards and metadata](../../subtasks/190_homepage/50_seo-and-metadata.md)"
-  - "[190/60 Homepage: checks in the gate](../../subtasks/190_homepage/60_homepage-checks.md)"
   - "[180/10 Docs: getting started](../../subtasks/180_documentation/10_getting-started.md)"
   - "[180/20 Docs: writing content, content types and configuration](../../subtasks/180_documentation/20_content-and-config.md)"
   - "[180/25 Docs: the issue tracker](../../subtasks/180_documentation/25_issue-tracker.md)"

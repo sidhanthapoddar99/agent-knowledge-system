@@ -1,6 +1,6 @@
 ---
 title: "Workspace and crate boundaries — 14 crates, dependencies point one way"
-status: open
+status: in-progress
 ---
 
 A single large crate lets any module reach any other, and after a year nobody can change one part without reading all of it. sidhantha asked for a very modular engine. This leaf creates the Cargo workspace with one crate per responsibility, arranges the crates in layers, and adds a check that fails the gate when a crate depends on a layer above it. Every later leaf writes into one of these crates.

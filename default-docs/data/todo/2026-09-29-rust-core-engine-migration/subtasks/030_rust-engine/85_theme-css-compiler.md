@@ -6,7 +6,7 @@ status: open
 Rust compiles and caches each project's theme CSS: the built-in theme, the chosen theme and its `extends` chain, and the project's overrides, merged into one stylesheet served at a hashed URL. Today's [theme.ts](../../../../../../agent-ks-engine/src/loaders/theme.ts) does this in TypeScript. This leaf ports it and makes the variable contract a hard check: a theme missing a required variable is an error, not a silent fallback.
 
 # 01 To Do
-- [ ] **Carry the built-in theme into the engine**: `theme.yaml` (with `required_variables`) and the CSS files from [agent-ks-engine/src/styles/](../../../../../../agent-ks-engine/src/styles/theme.yaml) move to `apps/agentks-engine/crates/agentks-render/theme/`, embedded in the binary. The base CSS of navbar, footer, docs and blog chrome stays here; component CSS lives in the UI package ([03/04](../../notes/03_frontend/04_theming-and-layouts.md) section 05).
+- [ ] **Carry the built-in theme into the engine**: `theme.yaml` (with `required_variables`) and the CSS files from [agent-ks-engine/src/styles/](../../../../../../agent-ks-engine/src/styles/theme.yaml) are in `apps/agentks-engine/themes/default/` (theme files done, see Result); the compiler embeds that folder in the binary. The base CSS of navbar, footer, docs and blog chrome stays here; component CSS lives in the UI package ([03/04](../../notes/03_frontend/04_theming-and-layouts.md) section 05).
 - [ ] **Resolve the theme**: `theme:` in `site.yaml` names a built-in theme or a folder found through `theme_paths` (default `config/themes/`). Follow `extends` (`@theme/<name>`) to the built-in default; a cycle or an unknown parent is a fatal error.
 - [ ] **Merge**: parent then child; `override_mode: replace` drops the parent and keeps only what the child defines.
 - [ ] **Check the contract**: every variable in `required_variables` is defined after the merge; otherwise a fatal error naming the variable and the theme. `supports_dark_mode` is read and sent in the manifest.
@@ -28,7 +28,7 @@ Rust compiles and caches each project's theme CSS: the built-in theme, the chose
 Open. Not started.
 
 ## Result
-None yet.
+- Theme files (done by the default-theme track, 2026-09-30): the built-in theme is in `apps/agentks-engine/themes/default/`, today's two user themes are in `apps/agentks-engine/themes/examples/` as test inputs, and `apps/agentks-engine/themes/README.md` lists what the compiler must do with them (resolve, extends, merge modes, contract check, `@layer` wrapping from the new `layers` map, cache and serve). `bun apps/agentks-engine/themes/check-contract.ts` checks the files. The compiler itself is not started.
 
 ## Agent log
 none
@@ -40,6 +40,7 @@ none
 - **Unblocks:** [100/10 theme contract and CSS](../100_layouts/10_theme-contract-and-css.md), [070/80](../070_cli/80_theme-commands.md).
 
 # 04 Decisions
+- Decided (claude, 2026-09-30): the theme files live in `apps/agentks-engine/themes/`, outside any crate, because they are data several parts read; the compiler embeds them from there. The built-in `theme.yaml` carries a `layers` map that the compiler uses to wrap each file in its cascade layer.
 - Decided (sidhantha, 2026-09-29): Rust compiles and caches each project's theme CSS; branding is CSS only.
 - Proposed (claude, 2026-09-30, [03/04](../../notes/03_frontend/04_theming-and-layouts.md)): user themes default to `config/themes/<name>/`; the cascade-layer order above.
 

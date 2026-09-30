@@ -1,6 +1,6 @@
 ---
 title: "Create the three NeuraLabsHQ repositories: first commit, README, licence, settings"
-status: open
+status: review
 ---
 
 The three repositories were created on GitHub on 2026-09-30 as private, empty repositories with `origin` set in their local folders. Nothing is committed yet. This leaf gives each one a first commit that says what the repository is, a licence, a protected default branch and sensible settings, so the skeleton leaves ([20](./20_main-repo-skeleton.md), [70](./70_library-repo-skeleton.md), [80](./80_marketplace-repo-skeleton.md)) start from a real history.
@@ -29,10 +29,13 @@ The three repositories were created on GitHub on 2026-09-30 as private, empty re
 - Each repository has `README.md` and `LICENSE` on `main`.
 
 # 02 Status and Result
-Open. The repositories exist since 2026-09-30 (private, empty, `origin` set, local branch `main`, no commits).
+In review. All three repositories are live on `main`, private, with descriptions.
 
 ## Result
-None yet.
+- `NeuraLabsHQ/agent-knowledge-system` (first commit `b8de147`, then `5019933` fixing the CI toolchain), `NeuraLabsHQ/agent-knowledge-system-library` (`80aa127`), `NeuraLabsHQ/neuralabs-plugin-marketplace` (`5c1b48d`). Created and pushed 2026-09-30.
+- `gh repo view NeuraLabsHQ/<name> --json defaultBranchRef,visibility,description` shows `main`, `PRIVATE` and the description for all three.
+- Each has `README.md`, `LICENSE` (MIT, copied from this repository) and `AGENTS.md` on `main`.
+- Not done: branch protection and topics. They wait until the repositories go public at launch.
 
 ## Agent log
 none

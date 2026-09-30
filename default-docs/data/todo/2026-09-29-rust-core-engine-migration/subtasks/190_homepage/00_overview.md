@@ -1,6 +1,6 @@
 ---
 title: "Homepage — overview"
-status: open
+status: in-progress
 ---
 
 agentks gets its own homepage at agentks.neuralabs.org/: a static marketing page that says what agentks is, shows it, and gets a visitor to install it or read the docs at `/docs`. It is a Next.js app in the main repository (`apps/agentks-homepage`), exported as static files and served by the same nginx as the docs. It is launch step 3 and can be built alongside the engine work, because it depends on nothing but the product's story and the brand. The homepage is open source.
@@ -9,9 +9,9 @@ agentks gets its own homepage at agentks.neuralabs.org/: a static marketing page
 
 | Leaf | Delivers | Status |
 |---|---|---|
-| [190/10 Content and design](./10_content-and-design.md) | The message, the copy and the design plan | open |
-| [190/20 App scaffold](./20_app-scaffold.md) | `apps/agentks-homepage`: Next.js static export, wired into `ctl` and the gate | open |
-| [190/30 Sections](./30_sections.md) | The page itself: hero, what it does, install, libraries and AI, links | open |
+| [190/10 Content and design](./10_content-and-design.md) | The message, the copy and the design plan | review |
+| [190/20 App scaffold](./20_app-scaffold.md) | `apps/agentks-homepage`: Next.js static export, wired into `ctl` and the gate | review |
+| [190/30 Sections](./30_sections.md) | The page itself: hero, what it does, install, libraries and AI, links | review |
 | [190/40 Shared look with the docs](./40_shared-look-with-docs.md) | One brand across `/` and `/docs`: tokens, logo, fonts, theme toggle, navigation | open |
 | [190/50 SEO and metadata](./50_seo-and-metadata.md) | Titles, social cards, sitemap, robots, `llms.txt` | open |
 | [190/60 Homepage checks](./60_homepage-checks.md) | Lighthouse, accessibility, links, screenshots in the gate | open |
@@ -30,7 +30,7 @@ agentks gets its own homepage at agentks.neuralabs.org/: a static marketing page
 - sidhantha has reviewed the page and every leaf is in `review` or closed.
 
 # 02 Status and Result
-Open. Not started.
+In progress. 10, 20 and 30 are in review (built on branch `wave1/homepage` of the main repo); 40, 50 and 60 are open.
 
 ## Result
 None yet.

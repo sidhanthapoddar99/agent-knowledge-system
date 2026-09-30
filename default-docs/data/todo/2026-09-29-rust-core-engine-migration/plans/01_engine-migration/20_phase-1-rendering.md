@@ -1,7 +1,7 @@
 ---
 title: "Phase 1: rendering"
 status: open
-outcome: "The Rust engine and client render this repository's docs and tracker with route and content parity"
+outcome: "The Rust engine and client render this repository's docs and tracker"
 notes: "Starts when [the foundation](./10_foundation.md) is green"
 who: "claude"
 subtasks:
@@ -46,7 +46,6 @@ subtasks:
   - "[090/50 Prefetch page data](../../subtasks/090_frontend-performance/50_prefetch.md)"
   - "[090/60 Large-list virtualisation](../../subtasks/090_frontend-performance/60_large-list-virtualisation.md)"
   - "[090/70 Render performance: navigation and in-place redraws](../../subtasks/090_frontend-performance/70_render-performance.md)"
-  - "[090/80 Performance budget checks in CI](../../subtasks/090_frontend-performance/80_perf-budget-checks.md)"
   - "[100/10 Theme contract, built-in theme CSS and public hooks](../../subtasks/100_layouts/10_theme-contract-and-css.md)"
   - "[100/15 Docs layouts: default and compact](../../subtasks/100_layouts/15_docs-layouts.md)"
   - "[100/20 Blog layouts: index and post](../../subtasks/100_layouts/20_blog-layouts.md)"
@@ -58,12 +57,9 @@ subtasks:
   - "[100/50 Navbar and footer](../../subtasks/100_layouts/50_navbar-and-footer.md)"
   - "[100/55 Responsive layouts: breakpoints and mobile checks](../../subtasks/100_layouts/55_responsive.md)"
   - "[100/65 Layout variations: what survives, on demand](../../subtasks/100_layouts/65_layout-variations.md)"
-  - "[170/20 Route and content parity — the new engine against today's](../../subtasks/170_testing/20_route-and-content-parity.md)"
-  - "[170/30 End-to-end tests in a real browser, with the default library](../../subtasks/170_testing/30_end-to-end.md)"
-  - "[170/40 Performance budget — engine start-up, memory, render, build and size](../../subtasks/170_testing/40_performance-budget.md)"
 ---
 
-`agentks start` renders every page of this repository's docs and tracker, proven by route parity, rendered-content comparison and screenshots.
+`agentks start` renders every page of this repository's docs and tracker. The parity proof runs in [stage 38](./38_testing.md).
 
 # 01 To Do
 - [ ] **Engine core:** config, site index, markdown pipeline, tracker, diagram and artifact sources, the page data interface, theme CSS (group 030).
@@ -72,7 +68,7 @@ subtasks:
 - [ ] **CLI:** the rename, the ported content commands, `start`, cache and theme commands (group 070).
 - [ ] **UI and client:** the shared package, shell, WebSocket client, islands, PWA, embedding (group 080), within the performance budgets (group 090).
 - [ ] **Layouts** for every content type (group 100).
-- [ ] **Proof:** parity, end-to-end and performance tests (group 170).
+- [ ] **Basic tests only** while building: unit tests and a little integration testing, under 10 seconds for the whole run.
 
 # 02 Status and Result
 Not started.

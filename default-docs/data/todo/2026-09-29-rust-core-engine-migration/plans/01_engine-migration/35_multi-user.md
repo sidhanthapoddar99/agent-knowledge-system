@@ -13,7 +13,6 @@ subtasks:
   - "[060/70 Tracker live edits — status, labels and comments, changed from the page, live for everyone](../../subtasks/060_collaboration/70_tracker-live-edits.md)"
   - "[060/80 Diagram collaboration — several people editing one diagram](../../subtasks/060_collaboration/80_diagram-collaboration.md)"
   - "[060/90 Git attribution — who edited what, carried into commits](../../subtasks/060_collaboration/90_git-attribution.md)"
-  - "[060/95 Collaboration tests — convergence, reconnect, conflicts, access and load](../../subtasks/060_collaboration/95_collaboration-tests.md)"
   - "[070/90 Share commands — `agentks share` and `start --share`](../../subtasks/070_cli/90_share-commands.md)"
 ---
 
@@ -23,7 +22,7 @@ Presence, live sync, access keys and `--share`, tracker live edits and git attri
 - [ ] **Sync and presence** on the same `/api` socket (060/20, 060/30).
 - [ ] **Access keys** and network exposure (060/40, 060/50, 070/90).
 - [ ] **Merging disk edits, tracker live edits, diagrams, attribution** (060/60 to 060/90).
-- [ ] **Tests** with two clients (060/95).
+- [ ] **Basic tests only**; the two-client suite runs in [stage 38](./38_testing.md).
 
 # 02 Status and Result
 Not started.

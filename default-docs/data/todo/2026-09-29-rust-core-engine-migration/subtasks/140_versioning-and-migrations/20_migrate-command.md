@@ -1,6 +1,6 @@
 ---
 title: "agentks migrate: the migration runner"
-status: open
+status: in-progress
 ---
 
 When a user upgrades across a breaking version, the version gate stops their project and names `agentks migrate`. This leaf builds that command: a thin runner that downloads the migration scripts for the version range from the official repository, at the installed binary's own release tag, checks their runtime is present, shows what each would change, runs them in order, verifies nothing is left, checks every pinned library's engine range, and bumps `engine_version` last. The runner holds no migration logic; the scripts do.
@@ -20,6 +20,8 @@ When a user upgrades across a breaking version, the version gate stops their pro
     10. **Bump** `engine_version` to Y in `site.yaml` as the last step, preserving the file's comments and formatting.
 - [ ] **Fetching.** Use the same Rust git code as libraries ([120/20](../120_libraries/20_fetch-and-resolve.md)): a shallow fetch of the tag, then read the tree. The repository address is the one official constant shared with the catalog and updater.
 - [ ] **Script call contract.** `<runtime> <script> detect|dry-run|migrate|verify --root <project> --json`. Parse each step's JSON; a script that exits non-zero or prints invalid JSON stops the run with its stderr shown.
+    - [x] The script side: the contract is written in `apps/agentks-engine/migrations/README.md` and the eight 0.x scripts follow it (see Result).
+    - [ ] The runner side: `verify` exits 1 when something is left, so the runner reads that exit as "not clean" and shows the JSON's `hits` and blocking `manual` items, rather than treating it as a crash. Exit 2 means the script could not tell which folders are content.
 - [ ] **`--json`** output: one document with every step's result.
 - [ ] **Offline**: an error saying a network connection is needed once, for the download (unless the cache for Y is present).
 - [ ] **Tests.** A fixture repository with tagged script sets; fixture projects at several versions; test the guard (dirty tree), the range selection, ordering, dry-run-only mode, verify failure, the final bump, and that a failure before step 10 leaves `engine_version` unchanged.
@@ -34,10 +36,13 @@ When a user upgrades across a breaking version, the version gate stops their pro
 - On a dirty tree it refuses without touching anything.
 
 # 02 Status and Result
-Open. Not started.
+In progress. The script contract is written and the 0.x scripts follow it; the Rust runner is not started.
 
 ## Result
-None yet.
+- **Script contract**, in the main repository's `apps/agentks-engine/migrations/README.md` (branch `wave1/migrations`): name `<to-version>_<statement>.py`; one file with PEP 723 inline dependencies, run by `uv run`; steps `detect`, `locate` (human view of detect), `dry-run` (= `migrate --dry-run`), `migrate`, `verify`; `--root <project>` is the folder holding `config/site.yaml`; exit 0 = step ran (and, for `verify`, nothing left), 1 = `verify` found something left or blocking, 2 = bad arguments or unreadable scope.
+- **JSON shape** (one document per call): `script`, `to_version`, `step`, `root`, `scope {content, trackers}`, `hits[]`, `changes[]`, `manual[]`, `clean`. Each item is `{file, line, kind, detail, blocking}`; `file` is relative to `--root`. `manual` items with `blocking: true` keep `verify` failing until a person acts; the rest are reports for the combined output.
+- **Evidence:** the eight 0.x scripts in `apps/agentks-engine/migrations/docs/` implement it; `uv run apps/agentks-engine/migrations/tests/test_docs_chain.py` runs the chain through every step in about 1.6 s.
+- **Left:** the whole Rust runner (every other To Do item).
 
 ## Agent log
 none
@@ -58,8 +63,14 @@ none
 - Decided (claude, under sidhantha's delegation, 2026-09-30): migration scripts are Python, run with `uv run` as single-file scripts with inline dependencies. Today's eight scripts are Python, so they port without a rewrite.
 - Decided (sidhantha, 2026-09-30): scripts are not shipped in the binary; they are downloaded from the official repository at the binary's tag; no hashes are stored ([versioning and migrations](../../notes/05_delivery/03_versioning-and-migrations.md)).
 - Decided (claude, 2026-09-30): the runner fetches scripts with the same git code as libraries (a shallow fetch of the tag), so there is one download path to secure and test.
+- Decided (claude, 2026-09-30): scripts find content from `--root/config/site.yaml`, not from a path the runner computes, so the runner passes only the project folder and each script's scope matches what the 0.x engine read.
+- Decided (claude, 2026-09-30): `verify` exits 1 when something is left; every other step exits 0 when it ran, whatever it found. The runner reads findings from the JSON, and a non-zero exit from any other step is a real failure.
+- Decided (claude, 2026-09-30): a `manual` list with a `blocking` flag carries what a script cannot do alone (paste-in settings edits, refused links) and what it only reports (custom colours to move to CSS, retired agent-log shapes). This keeps the old scripts' human-facing reports without making every report stop the run.
+- Decided (claude, 2026-09-30): `locate` stays as a fifth step for people running a script by hand; the runner never needs it.
 
 # 05 Notes & Analysis
 ## Watch out
 - The main repository is private until the launch. Before then, `migrate` needs the machine's git credentials; after the launch it needs none. Test both.
 - Windows: run scripts through the runtime binary explicitly (`uv run script.py`), never rely on shebangs.
+- The combined dry run is a preview, not a promise: a later script's `detect` and `dry-run` see today's tree, not what earlier scripts will write. Say so in the dry-run report, and rely on the `verify` pass after `migrate`.
+- `verify` runs every script in the range again after all migrations. A script's `verify` must stay true after later scripts have run; the 0.x chain passes that in the test.

@@ -1,6 +1,6 @@
 ---
 title: "CI workflows — the gate on every push, parity on engine changes"
-status: open
+status: in-progress
 ---
 
 CI proves on a clean machine what `ctl gate` proves locally. Without it, a green gate depends on one maintainer's machine. This leaf adds the workflows the repositories need now; the release workflow and the website deploy are owned by their groups and only stubbed here.
@@ -24,10 +24,12 @@ CI proves on a clean machine what `ctl gate` proves locally. Without it, a green
 - The library repository's `check` workflow runs green on its first manifest.
 
 # 02 Status and Result
-Open. Not started.
+In progress. The main repository's gate runs green in CI.
 
 ## Result
-None yet.
+- `.github/workflows/gate.yml` runs `ctl setup` and `ctl gate` on push and pull request. Run `36753313412` on `main` is green (28 s).
+- The first run failed because mise installed Rust without rustfmt; fixed in `5019933`.
+- Left: the deliberate red check, the library repository's check workflow.
 
 ## Agent log
 none

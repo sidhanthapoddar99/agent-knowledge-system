@@ -1,6 +1,6 @@
 ---
 title: "Toolchain pins — latest Rust and Vite, one version everywhere"
-status: open
+status: in-progress
 ---
 
 sidhantha asked on 2026-09-30 for the latest Rust and the latest Vite. Every machine and CI must build with the same versions, or a green gate on one machine means nothing on another. This leaf pins the toolchain in the files the tools read, and records the versions in `AGENTS.md`.
@@ -39,10 +39,11 @@ sidhantha asked on 2026-09-30 for the latest Rust and the latest Vite. Every mac
 - `AGENTS.md` has the "Stack" table with the same numbers as the files.
 
 # 02 Status and Result
-Open. Not started.
+In progress. Rust is pinned; Bun and Node are being added by the homepage track in wave 1.
 
 ## Result
-None yet.
+- Rust 1.98.1 pinned in `apps/agentks-engine/rust-toolchain.toml` and in `.mise.toml`, where clippy and rustfmt are listed as components (mise sets `RUSTUP_TOOLCHAIN`, which bypasses the toolchain file's components; CI failed without them).
+- `AGENTS.md` has the Stack section with Rust 1.98.1, and Vite 8.3.1, Bun 1.4.2 and Node 24.21.0 for when the first frontend lands.
 
 ## Agent log
 none

@@ -9,6 +9,7 @@ The order in which the migration runs, from empty repositories to the archived o
 - [ ] [Stage 20: Phase 1, rendering](./20_phase-1-rendering.md)
 - [ ] [Stage 30: Phase 2, editing and libraries](./30_phase-2-editing-and-libraries.md)
 - [ ] [Stage 35: multi-user](./35_multi-user.md)
+- [ ] [Stage 38: testing and hardening](./38_testing.md)
 - [ ] [Stage 40: release 1.0.0](./40_release-1-0-0.md) (launch step 1)
 - [ ] [Stage 50: Phase 3, publishing](./50_phase-3-publishing.md)
 - [ ] [Stage 60: marketplace](./60_marketplace.md) (launch step 2)
@@ -28,6 +29,8 @@ Stage 10 is in progress: the three repositories exist and are being initialised.
 - Decided (sidhantha, 2026-09-30): the six-step launch order in [the launch comment](../../comments/002_2026-09-30_launch-order.md).
 - Decided (sidhantha, 2026-09-30): Claude has full autonomy in the three NeuraLabsHQ repositories (commit, branch, push). In this repository Claude edits and sidhantha commits. Hosting needs sidhantha.
 - Decided (sidhantha, 2026-09-30): the latest Rust and the latest Vite; `AGENTS.md` is the only instruction file.
+- Decided (sidhantha, 2026-09-30): build fast. Testing comes at the end ([stage 38](./38_testing.md)); while building, tests are basic unit tests and a little integration testing, under 10 seconds in total. Keep the tracker updated as work lands.
+- Decided (claude, under sidhantha's delegation, 2026-09-30): the build runs in waves of parallel agents, one track per agent, each in its own git worktree of the main repository; an independent reviewer checks each track; the main session merges, runs the gate and commits between waves. How it runs is in [the build process](../../agent-memory/build-process.md).
 - Decided (claude, under sidhantha's delegation, 2026-09-30): subtasks are grouped by component and stages by phase, so a subtask keeps one home while stages order the work.
 - Decided (claude, under sidhantha's delegation, 2026-09-30): multi-user sync is stage 35, inside 1.0.0, because the per-file `yrs` documents already exist from Phase 2.
 - Decided (claude, under sidhantha's delegation, 2026-09-30): Phase 3 comes after 1.0.0 and must finish before hosting, because `/docs` is built with `agentks build`. Stage 70 can run alongside it.
@@ -36,8 +39,8 @@ Stage 10 is in progress: the three repositories exist and are being initialised.
 ## 01 Stage order and blocking
 
 ```
-10 foundation ─► 20 Phase 1 ─► 30 Phase 2 ─► 35 multi-user ─► 40 release 1.0.0 ─┬─► 50 Phase 3 ──┐
-                                                  └─► 60 marketplace            └─► 70 homepage and docs ─┴─► 80 hosting ─► 90 archival
+10 foundation ─► 20 Phase 1 ─► 30 Phase 2 ─► 35 multi-user ─► 38 testing ─► 40 release 1.0.0 ─┬─► 50 Phase 3 ──┐
+                                                  └─► 60 marketplace                          └─► 70 homepage and docs ─┴─► 80 hosting ─► 90 archival
 ```
 
 - Inside a stage, each group's `00_overview.md` gives the order of work. Groups in one stage run in parallel where their leaves' **Depends on** lines allow.

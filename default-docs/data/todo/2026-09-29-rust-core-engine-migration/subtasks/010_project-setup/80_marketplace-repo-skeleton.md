@@ -1,6 +1,6 @@
 ---
 title: "Marketplace repository skeleton — the Neuralabs Claude Code marketplace"
-status: open
+status: in-progress
 ---
 
 The Neuralabs marketplace replaces the personal marketplace as the place to install agentks's AI plugins. It holds no plugin code: each entry points at a plugin folder in the main repository, so a skill changes in the same commit as the engine behaviour it describes. This leaf creates the marketplace file with the two agentks plugins. It goes live in step 2 of the launch, after the engine, client and default library work.
@@ -40,10 +40,11 @@ The Neuralabs marketplace replaces the personal marketplace as the place to inst
 - Adding the marketplace from its local folder in Claude Code lists `agentks` and `agentks-library`.
 
 # 02 Status and Result
-Open. Not started.
+In progress. The catalogues exist and are empty until the plugins are rewritten.
 
 ## Result
-None yet.
+- `.claude-plugin/marketplace.json` and `.agents/plugins/marketplace.json`, both valid JSON with an empty plugin list, plus `README.md`, `AGENTS.md` (the two-catalogue sync checklist) and `LICENSE`. Commit `5c1b48d`.
+- Left: the `agentks` and library-development plugin entries ([130/30](../130_ai-plugins/30_marketplace-listing.md)).
 
 ## Agent log
 none

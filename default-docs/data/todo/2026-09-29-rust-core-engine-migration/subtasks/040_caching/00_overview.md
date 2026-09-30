@@ -19,6 +19,7 @@ The index leaf of the caching group. agentks caches in three places: the engine'
 | [040/80 Cache format versions](./80_cache-format-versions.md) | A format version in every store; a mismatch rebuilds, never reads | review |
 | [040/90 Clean and reset](./90_clean-and-reset.md) | `agentks cache status · clean <root>… · reset`, and `build-cache.json` | in-progress |
 | [040/95 Cache metrics](./95_cache-metrics.md) | Hit rate, size and eviction counts, for the dev toolbar and `cache status` | review |
+| [040/97 Dev build disk cache](./97_dev-build-disk-cache.md) | `ctl build` names its commit, so a dev build keeps pages on disk; a notice when it does not | open |
 
 **Order of work inside the group.** 10 → 50 → 80 first: they fix the key, the address and the format rules every other layer uses. Then 30 and 40 (the two page-data layers), 20 (needs the settings schema from [030/30](../030_rust-engine/30_config-loader-and-settings-schema.md)), 70 (needs the tracker loader), 60 (needed by the library group), 90 and 95 last.
 
@@ -36,7 +37,7 @@ The index leaf of the caching group. agentks caches in three places: the engine'
 - The end-to-end test in [170/30](../170_testing/30_end-to-end.md) shows: editing a page, an embedded file, a theme setting and a navbar item each refreshes exactly the affected views, with no restart.
 
 # 02 Status and Result
-In progress. 20, 30, 40, 50, 60, 80 and 95 are in review; 10, 70 and 90 are in progress.
+In progress. 20, 30, 40, 50, 60, 80 and 95 are in review; 10, 70 and 90 are in progress; 97 is open.
 
 ## Result
 None yet.

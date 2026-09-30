@@ -16,8 +16,9 @@ This group builds the two frontend pieces every page goes through. The shared pa
 | [080/50 Islands](./50_islands.md) | in-progress | Theme toggle, sidebar collapse, issue filters, code copy, tooltips, diagram viewers, artifact frame, lazy mounting | 20, 30 |
 | [080/60 PWA and mobile](./60_pwa-and-mobile.md) | open | Web app manifest, app-shell service worker, the "server is off" state, mobile shell behaviour | 30, 40, [090/30 service worker and offline](../090_frontend-performance/30_service-worker-and-offline.md) |
 | [080/70 Embed in binary](./70_embed-in-binary.md) | in-progress | `vite build` output compressed into the binary and served from memory with the right cache headers; the dev proxy | 30, [050/10 HTTP and routes](../050_server/10_http-and-routes.md) |
+| [080/80 Binary size](./80_binary-size.md) | open | The release binary without symbols and without the raw copies of compressed client files | 70 |
 
-**Order inside the group.** 10 first, because every other leaf is written in the chosen framework. Then 20. Then 30 and 40 in parallel. Then 50. Then 60 and 70. Performance work lives in [090_frontend-performance](../090_frontend-performance/00_overview.md) and the layouts in [100_layouts](../100_layouts/00_overview.md); both build on 20.
+**Order inside the group.** 10 first, because every other leaf is written in the chosen framework. Then 20. Then 30 and 40 in parallel. Then 50. Then 60 and 70, then 80. Performance work lives in [090_frontend-performance](../090_frontend-performance/00_overview.md) and the layouts in [100_layouts](../100_layouts/00_overview.md); both build on 20.
 
 ## Guardrails
 - **Rules stay in Rust.** No leaf here computes an order, a URL, a slug, a status category, a filter option list or a config-dependent date format. If a helper could give a wrong answer about the content, it is a rule, and Rust sends the answer.
@@ -33,7 +34,7 @@ This group builds the two frontend pieces every page goes through. The shared pa
 - The client opens this repository's docs and tracker from `agentks start` and passes route parity ([170/20](../170_testing/20_route-and-content-parity.md)).
 
 # 02 Status and Result
-In progress. 10 and 20 are in review; 30, 40, 50 and 70 are in progress; 60 is open.
+In progress. 10 and 20 are in review; 30, 40, 50 and 70 are in progress; 60 and 80 are open.
 
 ## Result
 None yet.

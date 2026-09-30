@@ -69,5 +69,8 @@ none
 - Decided (claude, 2026-10-01): the benchmark is an ignored integration test (`crates/site/tests/corpus.rs`), not a `benches/` binary, because it needs only the public `Site` API and runs under the test harness `ctl` already drives.
 
 # 05 Notes & Analysis
+## 01 Measured through the server, 2026-10-01
+The release `agentks start` served the same corpus (a copy of this repository's data, 1,512 pages) to a WebSocket client ([comment 005](../../comments/005_2026-10-01_performance-metrics.md)). RAM at start was 39 MB. After every page was rendered cold it was 300 MB, which is also the peak. After a restart that answered every page from the disk cache it was 58 MB. So about 240 MB comes from rendering, which fits the highlighter cause in `## Result`: pages read from disk never compile a grammar.
+
 ## Watch out
 - The audience today is one or two developers; multi-user access adds a few more. Design for tens of connections, not thousands, and do not add machinery for scale nobody has.

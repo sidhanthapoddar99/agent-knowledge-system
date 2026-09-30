@@ -38,7 +38,7 @@ These need **no** revision when work resumes under the migration:
 | `agent-ks-engine/src/dev-tools/integration.ts` (watcher wiring) | The Rust engine's file watcher (`notify`) |
 | `cache.delete()` + `moduleGraph.invalidateModule` | One removal from the engine's index. No dual invalidation |
 | `chokidar` + custom `.git/HEAD` watching | `notify` + the same `.git/HEAD` logic |
-| Per-branch JSON under `.cache/<repo>/<branch>.json` | The per-project build cache, `~/.agentks/build-cache/<project hash>/`, keyed by branch; the migration proposes the engine version in the key too ([the build cache note](../../2026-09-29-rust-core-engine-migration/notes/01_initial_discussion/07_agentks-home-and-build-cache.md)) |
+| Per-branch JSON under `.cache/<repo>/<branch>.json` | The per-project build cache, `~/.agentks/build-cache/<project hash>/`, keyed by branch; the migration proposes the engine version in the key too ([the build cache note](../../2026-09-29-rust-core-engine-migration/brainstorm/01_initial-discussion/07_agentks-home-and-build-cache.md)) |
 | `git log --no-merges --name-only --pretty=format:'§%aI' -- <tracker>` | Same command, run from Rust, or a native Rust git library |
 
 The code changes language; the algorithm doesn't.
@@ -61,5 +61,5 @@ Lift the deferral if any of these becomes true before the migration's Phase 1 sh
 
 ## Cross-reference
 
-- Successor: [2026-09-29-rust-core-engine-migration](../../2026-09-29-rust-core-engine-migration/issue.md). Its [impact note](../../2026-09-29-rust-core-engine-migration/notes/01_initial_discussion/18_impact-on-other-issues.md) lists this issue.
+- Successor: [2026-09-29-rust-core-engine-migration](../../2026-09-29-rust-core-engine-migration/issue.md). Its [impact note](../../2026-09-29-rust-core-engine-migration/brainstorm/01_initial-discussion/18_impact-on-other-issues.md) lists this issue.
 - The earlier Go plan, [2026-05-08-runtime-stack-migration](../../2026-05-08-runtime-stack-migration/issue.md), is superseded.

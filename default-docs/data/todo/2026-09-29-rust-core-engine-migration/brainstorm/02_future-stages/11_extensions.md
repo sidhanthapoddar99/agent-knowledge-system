@@ -7,8 +7,8 @@ A later idea: libraries could one day **add functionality to agentks itself**, n
 # 03 References
 
 - [Libraries, dep.yaml and dep.lock](./09_libraries-and-dependencies.md) — how an extension would be declared and fetched.
-- [CSS and theming](../01_initial_discussion/10_css-and-theming.md) — today's only way to change the site's look.
-- [The architecture note](../01_initial_discussion/17_local-spa-over-websocket.md) — why rules stay in Rust.
+- [CSS and theming](../01_initial-discussion/10_css-and-theming.md) — today's only way to change the site's look.
+- [The architecture note](../01_initial-discussion/17_local-spa-over-websocket.md) — why rules stay in Rust.
 - [2025-06-25-plugin-system](../../../2025-06-25-plugin-system/issue.md) — the earlier plugin API idea, set aside by the migration.
 
 # 04 Decisions

@@ -6,7 +6,7 @@ Everything a video needs beyond its markdown is **derived or downloaded, so it i
 
 # 03 References
 
-- [The ~/.agentks home and build cache](../../../2026-09-29-rust-core-engine-migration/notes/01_initial_discussion/07_agentks-home-and-build-cache.md)
+- [The ~/.agentks home and build cache](../../../2026-09-29-rust-core-engine-migration/brainstorm/01_initial-discussion/07_agentks-home-and-build-cache.md)
 - [Narration audio](./05_narration-audio.md)
 - [Libraries and reusable elements](./07_libraries-and-reusable-elements.md)
 
@@ -14,7 +14,7 @@ Everything a video needs beyond its markdown is **derived or downloaded, so it i
 
 - Decided (sidhantha, 2026-09-29): video assets are cached, not packaged and not committed.
 - Decided (sidhantha, 2026-09-29): libraries are stored in the cache after download.
-- Decided (sidhantha, 2026-09-30): nothing is cleaned up automatically; cleanup is a command the user starts ([the home note](../../../2026-09-29-rust-core-engine-migration/notes/01_initial_discussion/07_agentks-home-and-build-cache.md)).
+- Decided (sidhantha, 2026-09-30): nothing is cleaned up automatically; cleanup is a command the user starts ([the home note](../../../2026-09-29-rust-core-engine-migration/brainstorm/01_initial-discussion/07_agentks-home-and-build-cache.md)).
 
 # 05 Notes & Analysis
 
@@ -35,7 +35,7 @@ Everything a video needs beyond its markdown is **derived or downloaded, so it i
 
 ## 03 Cleanup
 
-Nothing is removed automatically. `agentks cache clean <root>` scans the folders the user names for agentks projects and removes library commits none of them pins and build caches whose project is gone, after showing a report ([the home note](../../../2026-09-29-rust-core-engine-migration/notes/01_initial_discussion/07_agentks-home-and-build-cache.md)). Generated audio lives in a project's build cache, so it goes with it. A removed clip is regenerated the next time the video plays.
+Nothing is removed automatically. `agentks cache clean <root>` scans the folders the user names for agentks projects and removes library commits none of them pins and build caches whose project is gone, after showing a report ([the home note](../../../2026-09-29-rust-core-engine-migration/brainstorm/01_initial-discussion/07_agentks-home-and-build-cache.md)). Generated audio lives in a project's build cache, so it goes with it. A removed clip is regenerated the next time the video plays.
 
 ## 04 Before the migration
 

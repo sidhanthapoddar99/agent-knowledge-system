@@ -8,12 +8,12 @@ A project lists the **libraries** it uses in `config/dep.yaml`. Every project ha
 
 # 03 References
 
-- [The ~/.agentks home and build cache](../01_initial_discussion/07_agentks-home-and-build-cache.md) — the cache layout, and the manual cleanup that scans for projects.
-- [The config folder and .env](../01_initial_discussion/06_config-folder-and-env.md) — `dep.yaml` and `dep.lock` join the required config files.
+- [The ~/.agentks home and build cache](../01_initial-discussion/07_agentks-home-and-build-cache.md) — the cache layout, and the manual cleanup that scans for projects.
+- [The config folder and .env](../01_initial-discussion/06_config-folder-and-env.md) — `dep.yaml` and `dep.lock` join the required config files.
 - [The repositories and three states](./12_repositories-and-three-states.md) — `neuralabshq/agent-knowledge-system-library` holds the default library, the templates and `library.json`.
 - [Phase 3: publishing](./07_phase-3-publishing.md) — how `agentks build` installs libraries from the lock.
 - [Later stage: extensions](./11_extensions.md) — libraries that add commands or site scripts, later.
-- [Open question 13](../01_initial_discussion/16_open-questions.md) — the markdown syntax decision that keeps library names out of markdown.
+- [Open question 13](../01_initial-discussion/16_open-questions.md) — the markdown syntax decision that keeps library names out of markdown.
 - [GitHub issues layout](./06_github-issues-layout.md) — the machine-level GitHub sign-in that private libraries reuse.
 - [Libraries in the video issue](../../../2026-09-29-narrated-video-pages/notes/01_initial_discussion/07_libraries-and-reusable-elements.md) — the video side: widgets, scene templates, custom video logic.
 - [2026-07-07-artifact-component](../../../2026-07-07-artifact-component/issue.md) — today's artifact pages. An `.html` element from a library runs the same way.
@@ -35,7 +35,7 @@ A project lists the **libraries** it uses in `config/dep.yaml`. Every project ha
 - Decided (sidhantha, 2026-09-30): the CLI and the skills use the installed libraries to help agents build better docs.
 - Decided (sidhantha, 2026-09-30): the voice model is not a library. It is a separate download.
 - Decided (sidhantha, 2026-09-30), on claude's proposal: starting agentks never moves a pin; the cache is keyed by repository and commit, not by name; video and artifact pages name an element as `alias:element`; the manifest sits at the library's root; adding a library prints its source.
-- Decided (sidhantha, 2026-09-30): library elements are used only in **video pages and artifact pages**. Markdown gets no library syntax: no `icons:server` in a markdown page. Markdown stays portable to Obsidian and other note apps, with only `[[file]]` embeds and `[text](path)` links, both relative to the file ([open question 13](../01_initial_discussion/16_open-questions.md)).
+- Decided (sidhantha, 2026-09-30): library elements are used only in **video pages and artifact pages**. Markdown gets no library syntax: no `icons:server` in a markdown page. Markdown stays portable to Obsidian and other note apps, with only `[[file]]` embeds and `[text](path)` links, both relative to the file ([open question 13](../01_initial-discussion/16_open-questions.md)).
 - Decided (sidhantha, 2026-09-30): the default library has its own repository, `neuralabshq/agent-knowledge-system-library`, to keep the main repository simple. The templates live there too.
 - Decided (sidhantha, 2026-09-30): `library.json`, at the root of the library repository, lists the libraries and templates agentks offers for quick install, like a marketplace file. It never moves. The official repositories are built into the binary.
 - Decided (sidhantha, 2026-09-30): `agentks library` works as an interactive TUI (a menu in the terminal) and as plain commands. The TUI and `library.json` are a convenience: any third-party library can still be added through `dep.yaml`.
@@ -92,7 +92,7 @@ libraries:
 | `path` | Where the library's manifest sits: inside the repository for a git entry, relative to `dep.yaml` for a local one |
 | `tag` · `commit` · `branch` | At most one. `tag` takes an exact version (`1.4.0`) or a range (`^1.4`, `~1.4.2`, `>=1.2.0 <2.0.0`), resolved to the newest matching tag. None of them means the **latest release**: the newest version tag. A repository with no x.y.z tags is an error asking for a branch or a commit; agentks does not guess |
 
-**Why the file is required.** It gives agents one fixed place to look. It also marks a folder as an agentks project, which is what the [manual cleanup](../01_initial_discussion/07_agentks-home-and-build-cache.md) scans for. A missing file is an error naming the fix. The forced migration creates an empty one in existing projects.
+**Why the file is required.** It gives agents one fixed place to look. It also marks a folder as an agentks project, which is what the [manual cleanup](../01_initial-discussion/07_agentks-home-and-build-cache.md) scans for. A missing file is an error naming the fix. The forced migration creates an empty one in existing projects.
 
 ## 03 dep.lock (claude, proposed)
 
@@ -236,7 +236,7 @@ Only breaking engine releases change formats, so a library's `engine` range norm
 
 - **A user upgrades the engine past a pinned library's range.** agentks stops and names the library, its range and the engine version. It suggests `agentks install --update` to move to a library version built for the new engine, or pinning the older engine with mise.
 - **`agentks migrate` checks every pinned library's range** while migrating the docs, so the user hears about all mismatches at once, not one per start.
-- **The owner migrates the library.** The engine's migrations folder has a `library/` part next to `docs/`: the scripts a library owner runs on their library for a breaking engine release ([versioning](../01_initial_discussion/12_versioning-and-forced-migrations.md)). The owner then publishes a new version with the new `engine` range. Libraries sit read-only in the users' cache, so users never edit them.
+- **The owner migrates the library.** The engine's migrations folder has a `library/` part next to `docs/`: the scripts a library owner runs on their library for a breaking engine release ([versioning](../01_initial-discussion/12_versioning-and-forced-migrations.md)). The owner then publishes a new version with the new `engine` range. Libraries sit read-only in the users' cache, so users never edit them.
 
 ## 13 Publishing builds
 

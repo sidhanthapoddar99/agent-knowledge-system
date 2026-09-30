@@ -10,8 +10,8 @@ Today the docs are on the machine because every install clones the framework, an
 
 - [Launch: order, hosting, retiring this repository](./10_launch-order-and-hosting.md) — the website, and when it goes live.
 - [Phase 3: publishing](./07_phase-3-publishing.md) — `agentks build`, which builds `/docs`.
-- [Single install](../01_initial_discussion/05_single-install-tool-engine-frontend.md) — why there is no framework checkout any more.
-- [CLI rename and commands](../01_initial_discussion/08_cli-rename-and-commands.md)
+- [Single install](../01_initial-discussion/05_single-install-tool-engine-frontend.md) — why there is no framework checkout any more.
+- [CLI rename and commands](../01_initial-discussion/08_cli-rename-and-commands.md)
 
 # 04 Decisions
 

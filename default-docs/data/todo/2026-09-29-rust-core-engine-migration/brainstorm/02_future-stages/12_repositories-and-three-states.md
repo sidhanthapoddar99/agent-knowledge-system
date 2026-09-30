@@ -13,7 +13,7 @@ agentks runs in **three states**. In state 1 the team develops agentks itself: e
 - [Launch order and hosting](./10_launch-order-and-hosting.md) — when each part is built, and when the switch-over happens.
 - [Phase 3: publishing](./07_phase-3-publishing.md) — state 3, `agentks build` and the Dockerfile.
 - [Libraries, dep.yaml and dep.lock](./09_libraries-and-dependencies.md) — what the library repository and `library.json` hold.
-- [Versioning and forced migrations](../01_initial_discussion/12_versioning-and-forced-migrations.md) — migration scripts fetched from the official repository.
+- [Versioning and forced migrations](../01_initial-discussion/12_versioning-and-forced-migrations.md) — migration scripts fetched from the official repository.
 - The repository's `AGENTS.md`, section "Three stages" — today's version of the three-state rule.
 
 # 04 Decisions

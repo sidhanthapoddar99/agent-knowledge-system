@@ -12,9 +12,9 @@ Diagrams should be editable right where they are read, in the same in-place edit
 - [ ] Decide whether tldraw joins the supported diagram formats for display too, not only editing
 
 ## Guardrails
-- Editing happens in place from the dev toolbar's Edit option. No separate editor page and no separate navigation ([editing mode](../../../2026-09-29-rust-core-engine-migration/notes/02_future-stages/02_editing-mode.md)).
+- Editing happens in place from the dev toolbar's Edit option. No separate editor page and no separate navigation ([editing mode](../../../2026-09-29-rust-core-engine-migration/brainstorm/02_future-stages/02_editing-mode.md)).
 - The file on disk stays the diagram's own format, readable and editable outside agentks.
-- Multi-user editing needs auth first ([multi-user editing and auth](../../../2026-09-29-rust-core-engine-migration/notes/02_future-stages/04_multi-user-editing-and-auth.md)).
+- Multi-user editing needs auth first ([multi-user editing and auth](../../../2026-09-29-rust-core-engine-migration/brainstorm/02_future-stages/04_multi-user-editing-and-auth.md)).
 
 ## Questions
 - Is single-user in-place diagram editing part of Phase 2, with the multi-user half in the later multi-user stage? Claude suggests yes: the single-user half needs only editing mode; the multi-user half needs auth.
@@ -33,8 +33,8 @@ None yet.
 none
 
 # 03 References
-- [Editing mode](../../../2026-09-29-rust-core-engine-migration/notes/02_future-stages/02_editing-mode.md) — in-place editing, raw and live preview.
-- [Multi-user editing and auth](../../../2026-09-29-rust-core-engine-migration/notes/02_future-stages/04_multi-user-editing-and-auth.md) — `yrs` on the server, presence, auth first.
+- [Editing mode](../../../2026-09-29-rust-core-engine-migration/brainstorm/02_future-stages/02_editing-mode.md) — in-place editing, raw and live preview.
+- [Multi-user editing and auth](../../../2026-09-29-rust-core-engine-migration/brainstorm/02_future-stages/04_multi-user-editing-and-auth.md) — `yrs` on the server, presence, auth first.
 - [The Excalidraw plan](../../notes/01_excalidraw.md) — the existing editor plan, including Yjs sync.
 - [30_excalidraw](./30_excalidraw.md) — the existing single-format editing subtask this extends.
 

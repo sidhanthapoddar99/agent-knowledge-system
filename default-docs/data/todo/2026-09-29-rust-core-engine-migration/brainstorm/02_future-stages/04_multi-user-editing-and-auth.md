@@ -6,7 +6,7 @@ Several people editing the same content at once comes **after phase 2**, and it 
 
 # 03 References
 
-- [Server, WebSockets and editing](../01_initial_discussion/09_server-websockets-and-editing.md) — the `/api` WebSocket and the localhost default.
+- [Server, WebSockets and editing](../01_initial-discussion/09_server-websockets-and-editing.md) — the `/api` WebSocket and the localhost default.
 - [Editing mode](./02_editing-mode.md) — the single-user editing this extends.
 - [2026-04-10-sync-and-presence](../../../2026-04-10-sync-and-presence/issue.md) — the existing sync and presence work.
 - [Diagram editing with presence](../../../2026-04-10-editor-diagrams/subtasks/30_editor/40_in-place-and-multi-user-editing.md) — several people editing one Excalidraw, tldraw, Mermaid or draw.io diagram at once.
@@ -24,7 +24,7 @@ Several people editing the same content at once comes **after phase 2**, and it 
 - **Shared editing:** `yrs`, the Rust port of Yjs, on the server. The prior audit's worry about the server-side CRDT does not apply in Rust, where `yrs` is native.
 - **Transport:** the same `/api` WebSocket the single-user editor uses.
 - **Presence:** who is here and where their cursor is, from the sync and presence issue.
-- **Secrets:** in `config/.env` ([config and .env](../01_initial_discussion/06_config-folder-and-env.md)).
+- **Secrets:** in `config/.env` ([config and .env](../01_initial-discussion/06_config-folder-and-env.md)).
 
 ## 02 Until then
 

@@ -3,7 +3,7 @@ title: "Preview mode (rendered HTML)"
 status: superseded
 ---
 
-→ superseded by the two-mode decision in [the engine migration's editing mode](../../2026-09-29-rust-core-engine-migration/notes/02_future-stages/02_editing-mode.md): with editing off, the page is the rendered reading view, so no separate preview mode is needed.
+→ superseded by the two-mode decision in [the engine migration's editing mode](../../2026-09-29-rust-core-engine-migration/brainstorm/02_future-stages/02_editing-mode.md): with editing off, the page is the rendered reading view, so no separate preview mode is needed.
 
 The pure render mode — no editor surface, just the rendered HTML output of the document.
 

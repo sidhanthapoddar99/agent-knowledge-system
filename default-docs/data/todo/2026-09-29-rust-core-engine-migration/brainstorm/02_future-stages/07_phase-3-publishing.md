@@ -6,9 +6,9 @@ Publishing a site, for search engines or for readers outside the team, is **Phas
 
 # 03 References
 
-- [The architecture: a local SPA over WebSocket](../01_initial_discussion/17_local-spa-over-websocket.md) — the three safeguards that keep this phase cheap.
-- [Open question 12](../01_initial_discussion/16_open-questions.md) — the UI framework, which must support build-time rendering and islands.
-- [Versioning and forced migrations](../01_initial_discussion/12_versioning-and-forced-migrations.md) — pinning 0.x with mise.
+- [The architecture: a local SPA over WebSocket](../01_initial-discussion/17_local-spa-over-websocket.md) — the three safeguards that keep this phase cheap.
+- [Open question 12](../01_initial-discussion/16_open-questions.md) — the UI framework, which must support build-time rendering and islands.
+- [Versioning and forced migrations](../01_initial-discussion/12_versioning-and-forced-migrations.md) — pinning 0.x with mise.
 - [Docker design](../../../2026-05-08-runtime-stack-migration/notes/deployment-methods/02_docker-design.md) — static build behind nginx, `base_url`, from the Go issue.
 - [The repositories and three states](./12_repositories-and-three-states.md) — state 3 among the three.
 - [Libraries](./09_libraries-and-dependencies.md) — what a build must download.
@@ -114,4 +114,4 @@ COPY --from=build /out /usr/share/nginx/html
 
 ## 07 Also for this phase
 
-- Deciding whether search or filtering must work in the static site. If so, that one feature may need a WASM build of the relevant Rust code ([WASM and HTMX](../01_initial_discussion/04_wasm-and-htmx.md)).
+- Deciding whether search or filtering must work in the static site. If so, that one feature may need a WASM build of the relevant Rust code ([WASM and HTMX](../01_initial-discussion/04_wasm-and-htmx.md)).

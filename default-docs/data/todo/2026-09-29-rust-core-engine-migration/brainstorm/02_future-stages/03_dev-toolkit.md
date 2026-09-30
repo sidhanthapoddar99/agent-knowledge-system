@@ -7,7 +7,7 @@ The developer tools come back in **phase 2**, rebuilt in the new frontend. They 
 # 03 References
 
 - [Editing mode](./02_editing-mode.md)
-- [Rust core and Vite frontend](../01_initial_discussion/03_rust-core-and-vite-frontend.md) — the prior audit found 1,793 lines of toolbar apps tied to Astro's toolbar host, with nothing equivalent outside Astro.
+- [Rust core and Vite frontend](../01_initial-discussion/03_rust-core-and-vite-frontend.md) — the prior audit found 1,793 lines of toolbar apps tied to Astro's toolbar host, with nothing equivalent outside Astro.
 
 # 04 Decisions
 
@@ -32,5 +32,5 @@ The Astro dev toolbar hosts these apps (`agent-ks-engine/src/dev-tools/`):
 
 ## 02 Still to decide
 
-- Which of these are rebuilt and which are dropped. This is [open question](../01_initial_discussion/16_open-questions.md) 04.
+- Which of these are rebuilt and which are dropped. This is [open question](../01_initial-discussion/16_open-questions.md) 04.
 - Cache clearing: a button in the toolkit, or `agentks` commands only, or both.

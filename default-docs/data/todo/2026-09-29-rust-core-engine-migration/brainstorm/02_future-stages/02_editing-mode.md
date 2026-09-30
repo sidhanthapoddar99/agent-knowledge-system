@@ -10,7 +10,7 @@ The main editor of agentks content is an AI. Human editing is for small tweaks a
 
 - [Dev toolkit](./03_dev-toolkit.md) — where editing mode is switched on and off.
 - [Multi-user editing and auth](./04_multi-user-editing-and-auth.md) — the later stage this builds towards.
-- [Server and WebSocket](../01_initial_discussion/09_server-websockets-and-editing.md) — the live preview is rendered by Rust over the WebSocket.
+- [Server and WebSocket](../01_initial-discussion/09_server-websockets-and-editing.md) — the live preview is rendered by Rust over the WebSocket.
 - [2026-05-07-sidebar-state-persistence](../../../2026-05-07-sidebar-state-persistence/issue.md) — UI state caching that exists today.
 - [2026-04-10-view-modes](../../../2026-04-10-view-modes/issue.md) — closed on 2026-09-30: live preview is built; the other modes are not needed.
 - [2026-04-10-editor-navigation-and-layout](../../../2026-04-10-editor-navigation-and-layout/issue.md) — dropped on 2026-09-30: no IDE-style navigation.

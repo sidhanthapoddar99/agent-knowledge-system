@@ -8,7 +8,7 @@ title: "Idea: agent hooks and fast retrieval"
 
 - [2026-04-19-site-wide-search](../../../2026-04-19-site-wide-search/issue.md) — full-text search, planned with Orama (a JavaScript search library). A Rust index would serve both the site and agents, so the two should be designed together.
 - [2026-04-19-knowledge-graph-and-wiki-links](../../../2026-04-19-knowledge-graph-and-wiki-links/issue.md) — the link-graph indexer (backlinks, orphans, broken links). The same index can hold it.
-- [The ~/.agentks build cache](../01_initial_discussion/07_agentks-home-and-build-cache.md) — where the index would live.
+- [The ~/.agentks build cache](../01_initial-discussion/07_agentks-home-and-build-cache.md) — where the index would live.
 
 # 04 Decisions
 

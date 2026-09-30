@@ -6,9 +6,9 @@ A new built-in layout that **shows the issues of a linked GitHub repository** in
 
 # 03 References
 
-- [Layouts](../01_initial_discussion/11_layouts.md) — built-in layouts are added on demand. This is one such demand.
-- [The ~/.agentks home](../01_initial_discussion/07_agentks-home-and-build-cache.md) — where the credentials file would live.
-- [Server, WebSockets and editing](../01_initial_discussion/09_server-websockets-and-editing.md) — the local server that would talk to GitHub.
+- [Layouts](../01_initial-discussion/11_layouts.md) — built-in layouts are added on demand. This is one such demand.
+- [The ~/.agentks home](../01_initial-discussion/07_agentks-home-and-build-cache.md) — where the credentials file would live.
+- [Server, WebSockets and editing](../01_initial-discussion/09_server-websockets-and-editing.md) — the local server that would talk to GitHub.
 
 # 04 Decisions
 

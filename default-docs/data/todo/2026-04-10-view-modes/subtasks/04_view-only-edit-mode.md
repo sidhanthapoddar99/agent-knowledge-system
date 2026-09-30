@@ -3,7 +3,7 @@ title: "View-only mode / edit-mode lock"
 status: superseded
 ---
 
-→ superseded by the two-mode decision in [the engine migration's editing mode](../../2026-09-29-rust-core-engine-migration/notes/02_future-stages/02_editing-mode.md): read-only is simply editing switched off in the dev toolbar.
+→ superseded by the two-mode decision in [the engine migration's editing mode](../../2026-09-29-rust-core-engine-migration/brainstorm/02_future-stages/02_editing-mode.md): read-only is simply editing switched off in the dev toolbar.
 
 ## Tasks
 

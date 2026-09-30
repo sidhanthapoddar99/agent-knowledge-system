@@ -6,8 +6,8 @@ What comes after phase 1. **Phase 1 is rendering only**: the Rust engine renders
 
 # 03 References
 
-- [Initial discussion](../01_initial_discussion/01_index.md)
-- [Phasing](../01_initial_discussion/15_phasing.md)
+- [Initial discussion](../01_initial-discussion/01_index.md)
+- [Phasing](../01_initial-discussion/15_phasing.md)
 
 # 04 Decisions
 

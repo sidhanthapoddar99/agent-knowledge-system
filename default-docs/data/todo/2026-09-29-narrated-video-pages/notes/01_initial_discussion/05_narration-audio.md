@@ -7,7 +7,7 @@ Narration starts with the **browser's built-in voice** (no files, no setup) and 
 # 03 References
 
 - [Caching](./06_caching.md) — where generated audio lives.
-- [The engine migration's audio note](../../../2026-09-29-rust-core-engine-migration/notes/01_initial_discussion/14_video-and-narration-audio.md)
+- [The engine migration's audio note](../../../2026-09-29-rust-core-engine-migration/brainstorm/01_initial-discussion/14_video-and-narration-audio.md)
 
 # 04 Decisions
 

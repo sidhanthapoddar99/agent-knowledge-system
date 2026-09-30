@@ -7,7 +7,7 @@ The video work does not have to wait for the Rust migration. The **player, scene
 # 03 References
 
 - [2026-09-29-rust-core-engine-migration](../../../2026-09-29-rust-core-engine-migration/issue.md)
-- [The migration's architecture note](../../../2026-09-29-rust-core-engine-migration/notes/01_initial_discussion/17_local-spa-over-websocket.md)
+- [The migration's architecture note](../../../2026-09-29-rust-core-engine-migration/brainstorm/01_initial-discussion/17_local-spa-over-websocket.md)
 
 # 04 Decisions
 

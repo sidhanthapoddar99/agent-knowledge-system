@@ -1,0 +1,15 @@
+head: Start-up builds an index
+layout: split
+items:
+  tree: {tree: [config/site.yaml, data/docs/01_intro.md, data/docs/02_setup.md, data/blog/2026-09-30-hello.md], at: left}
+  pages: {stat: 1300, label: pages indexed, at: right}
+  speed: {stat: 7.8, unit: ms, label: to rebuild the index, at: right}
+beats:
+  - say: When you run agentks start, the core walks your folder once.
+    do: show tree rise @walks
+  - say: It records each file's path, its title, its order and a content hash.
+    do: emph tree.data/docs/01_intro.md mark @path
+  - say: Folder hashes roll up from their children, so one edit only touches its own branch.
+    do: emph tree.data/docs mark @roll
+  - say: On this repository that is about thirteen hundred pages, rebuilt in under eight milliseconds.
+    do: [show pages count @thirteen, show speed count @eight]

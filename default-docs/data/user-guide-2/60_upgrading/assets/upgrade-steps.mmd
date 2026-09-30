@@ -1,0 +1,15 @@
+flowchart TD
+    publish{"Do you publish your site<br/>with agent-ks 0.x?"}
+    stay["Read 'Staying on agent-ks 0.x'<br/>before you go on"]
+    install["Install agentks<br/>once per machine"]
+    commit["In each project:<br/>commit everything"]
+    dry["agentks migrate --dry-run"]
+    migrate["agentks migrate"]
+    fix["Do what the report<br/>leaves for you"]
+    check["agentks check …<br/>agentks start"]
+    clean["Remove the old framework folder<br/>and swap the plugin"]
+
+    publish -->|yes| stay
+    stay -.->|"when you are ready"| install
+    publish -->|no| install
+    install --> commit --> dry --> migrate --> fix --> check --> clean

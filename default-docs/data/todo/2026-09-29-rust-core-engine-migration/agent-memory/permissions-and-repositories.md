@@ -10,6 +10,7 @@ Granted by sidhantha on 2026-09-30, for the life of this migration.
 | The three new repositories (below) | Everything: commit, branch, push, merge, structure | Nothing, until the migration completes |
 | Hosting, DNS, agentks.neuralabs.org | Prepare everything | The hosting work itself needs sidhantha |
 
+- **Merging and pushing (sidhantha, 2026-10-01).** Claude merges each finished wave or track into `main` as it lands, even while other agents are running in their own worktrees, and pushes `main` after each merge once the gate is green. Track branches stay local unless sidhantha asks. The auto-mode permission check may still ask sidhantha to approve a push.
 - **Superseding issues.** Claude may mark an issue `superseded` (with its `→` line) once its work is finished or taken over and it is no longer relevant. `done` and `dropped` stay sidhantha's.
 - **Instruction files.** Use only `AGENTS.md` in every repository. No `CLAUDE.md`.
 

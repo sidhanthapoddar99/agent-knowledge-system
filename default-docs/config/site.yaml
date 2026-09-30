@@ -73,6 +73,19 @@ pages:
     layout: "@docs/default"
     data: "@data/dev-docs"
 
+  # The agentks 1.0 docs, written here until they move to the new repository
+  user-guide-2:
+    base_url: "/user-guide-2"
+    type: docs
+    layout: "@docs/default"
+    data: "@data/user-guide-2"
+
+  dev-docs-2:
+    base_url: "/dev-docs-2"
+    type: docs
+    layout: "@docs/default"
+    data: "@data/dev-docs-2"
+
   todo:
     base_url: "/todo"
     type: issues

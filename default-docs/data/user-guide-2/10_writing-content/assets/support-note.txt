@@ -1,0 +1,2 @@
+> [!NOTE]
+> Stuck? Run `agentks check section` on the folder first. Most problems are a missing prefix, a missing `title` or a missing `settings.json`.

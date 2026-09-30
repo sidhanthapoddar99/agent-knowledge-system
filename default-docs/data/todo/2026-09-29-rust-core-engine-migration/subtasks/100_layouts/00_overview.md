@@ -10,14 +10,14 @@ This group rebuilds every built-in layout as components in the shared UI package
 | Leaf | Status | Delivers | Source it absorbs |
 |---|---|---|---|
 | [100/10 Theme contract and CSS](./10_theme-contract-and-css.md) | in-progress | The contract, the built-in theme, `@layer` order, hooks, the contract check | — |
-| [100/15 Docs layouts](./15_docs-layouts.md) | open | `@docs/default`, `@docs/compact`: sidebar, body, outline, pagination, breadcrumbs | — |
-| [100/20 Blog layouts](./20_blog-layouts.md) | open | `@blog/default` index and post, pagination, tags, authors | [2025-06-25-blog-testing-polish](../../../2025-06-25-blog-testing-polish/issue.md) |
-| [100/25 Issues layouts](./25_issues-layouts.md) | open | Tracker index, issue detail, sub-document pages, the guide panel | the demo issue as fixture |
-| [100/30 Artifact pages](./30_artifact-pages.md) | open | Artifact embeds and pages, `/artifacts/` full page, site-theme mode, HTML fragments | [2026-07-07-artifact-component](../../../2026-07-07-artifact-component/issue.md) 110, 120 |
-| [100/35 Diagram pages](./35_diagram-pages.md) | open | First-class `.mmd`, `.dot`, `.excalidraw`, `.drawio` pages and embeds | [2026-04-10-editor-diagrams](../../../2026-04-10-editor-diagrams/issue.md) display half |
+| [100/15 Docs layouts](./15_docs-layouts.md) | in-progress | `@docs/default`, `@docs/compact`: sidebar, body, outline, pagination, breadcrumbs | — |
+| [100/20 Blog layouts](./20_blog-layouts.md) | in-progress | `@blog/default` index and post, pagination, tags, authors | [2025-06-25-blog-testing-polish](../../../2025-06-25-blog-testing-polish/issue.md) |
+| [100/25 Issues layouts](./25_issues-layouts.md) | in-progress | Tracker index, issue detail, sub-document pages, the guide panel | the demo issue as fixture |
+| [100/30 Artifact pages](./30_artifact-pages.md) | in-progress | Artifact embeds and pages, `/artifacts/` full page, site-theme mode, HTML fragments | [2026-07-07-artifact-component](../../../2026-07-07-artifact-component/issue.md) 110, 120 |
+| [100/35 Diagram pages](./35_diagram-pages.md) | in-progress | First-class `.mmd`, `.dot`, `.excalidraw`, `.drawio` pages and embeds | [2026-04-10-editor-diagrams](../../../2026-04-10-editor-diagrams/issue.md) display half |
 | [100/40 Video pages](./40_video-pages.md) | open | The video page layout and player island | [2026-09-29-narrated-video-pages](../../../2026-09-29-narrated-video-pages/issue.md) UI side |
-| [100/45 Custom pages](./45_custom-pages.md) | open | `home`, `info`, `countdown` from YAML | [2025-06-25-layouts-and-variations](../../../2025-06-25-layouts-and-variations/issue.md) 02 |
-| [100/50 Navbar and footer](./50_navbar-and-footer.md) | open | `default` and `minimal` navbar and footer, logos per mode | layouts-and-variations 03 |
+| [100/45 Custom pages](./45_custom-pages.md) | in-progress | `home`, `info`, `countdown` from YAML | [2025-06-25-layouts-and-variations](../../../2025-06-25-layouts-and-variations/issue.md) 02 |
+| [100/50 Navbar and footer](./50_navbar-and-footer.md) | review | `default` and `minimal` navbar and footer, logos per mode | layouts-and-variations 03 |
 | [100/55 Responsive](./55_responsive.md) | open | Breakpoints and mobile layouts as acceptance checks for every layout | [2025-06-25-sizing-and-responsive](../../../2025-06-25-sizing-and-responsive/issue.md) |
 | [100/60 Roadmap and releases](./60_roadmap-and-releases.md) | open | Two new content types, built on demand after 1.0.0 | [2026-04-10-new-layout-types](../../../2026-04-10-new-layout-types/issue.md) |
 | [100/65 Layout variations](./65_layout-variations.md) | open | What survives of the variations backlog, as a demand-driven list | [2025-06-25-layouts-and-variations](../../../2025-06-25-layouts-and-variations/issue.md) 01, 04 |
@@ -40,7 +40,7 @@ This group rebuilds every built-in layout as components in the shared UI package
 - Leaves 60, 65 and 70 are scheduled or closed by the plan.
 
 # 02 Status and Result
-In progress. 10 is in progress; the rest are open.
+In progress. 50 is in review; 10, 15, 20, 25, 30, 35 and 45 are in progress; 40, 55, 60, 65 and 70 are open.
 
 ## Result
 None yet.

@@ -1,6 +1,6 @@
 ---
 title: "Security — localhost bind, Host and Origin checks, paths and the MIME boundary"
-status: in-progress
+status: review
 ---
 
 The local server can read the project and, from Phase 2, write it. Any web page the user opens in the same browser can try to talk to `localhost`. This leaf builds the rules that stop that: bind to loopback only, refuse requests whose `Host` or `Origin` is not the server's own, keep every file access inside allowed roots, serve HTML only where HTML is expected, and send safe headers. Network access in share mode changes the bind and adds access keys ([060/50](../060_collaboration/50_network-exposure-and-tls.md)); it relaxes nothing else.

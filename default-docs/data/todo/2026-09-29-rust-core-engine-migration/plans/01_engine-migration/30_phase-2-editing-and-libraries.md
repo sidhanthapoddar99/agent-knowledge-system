@@ -21,7 +21,7 @@ subtasks:
   - "[120/60 Default library: scaffold the library repository](../../subtasks/120_libraries/60_default-library-scaffold.md)"
   - "[120/70 Elements: the default icon set](../../subtasks/120_libraries/70_elements-icons.md)"
   - "[120/75 Elements: frames and HTML widgets](../../subtasks/120_libraries/75_elements-frames-and-widgets.md)"
-  - "[120/80 Elements: the video cue kit (scene templates and script widgets)](../../subtasks/120_libraries/80_elements-video-cue-kit.md)"
+  - "[120/80 Elements: the video component set](../../subtasks/120_libraries/80_elements-video-cue-kit.md)"
   - "[120/85 Templates: agentks-default and its catalog entry](../../subtasks/120_libraries/85_templates.md)"
   - "[120/90 Library authoring guide](../../subtasks/120_libraries/90_library-authoring-guide.md)"
   - "[040/60 Library cache — the global store of library repositories at one commit](../../subtasks/040_caching/60_library-cache.md)"
@@ -40,7 +40,12 @@ Editing in place (raw and live preview, diagrams), the dev toolbar, libraries an
 - [ ] **AI plugins** rewritten for agentks (130/10, 130/20).
 
 # 02 Status and Result
-Not started.
+In progress. Parts of Phase 2 were built early, beside Phase 1.
+
+- **Libraries:** wave 2 built the library crate (merged 2026-10-01, `3e22f2d`): `dep.yaml` and `dep.lock`, selectors and the sync, manifests, local libraries and the catalog (120/10, 120/20, 120/30 in review), and the global library cache (040/60 in review). A fix beside wave 3 taught the crate the `category` field. The CLI wiring and TUI (120/40) and the `/_lib/` route (120/50) are in progress. The library repository has the default library's scaffold and its first elements (120/60 in progress; 120/70 and 120/75 in review).
+- **Editing:** wave 3 builds the dev toolbar, edit in place and the live preview (110/10 to 110/30). The server's echo table exists; its `open` and `save` ops wait for the site crate (050/35). The per-file `yrs` document is in review (060/10).
+- **AI plugins:** the `agentks` and `agentks-library` plugins were merged into `main` on 2026-10-01 (`7d0246e`). A trim toward the size bar runs beside wave 3, so 130/10 and 130/20 stay in progress.
+- **Not started:** the save path, diagram editing and authoring helpers (110/40 to 110/60), the video component set (120/80, built by the video issue), templates (120/85), the library authoring guide (120/90), `agentks init` (070/40) and the retrieval index (030/95).
 
 # 03 References
 - [The plan overview](./overview.md)

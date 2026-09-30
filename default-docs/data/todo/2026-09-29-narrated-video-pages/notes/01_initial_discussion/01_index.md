@@ -22,6 +22,7 @@ The headline ones; each note holds its own.
 - Decided (sidhantha, 2026-09-29): libraries are downloadable and cached, never packaged with the engine.
 - Decided (sidhantha, 2026-09-29): users can define reusable elements in their project configuration.
 - Decided (sidhantha, 2026-09-29): the library is shared engine machinery, not video-only, and is tracked in the migration issue.
+- Decided (sidhantha, 2026-10-01): a video can also be a folder: `settings.json` marks it, a controller holds what is true of the whole video, and each scene is its own file, so an agent fixing one scene edits one file ([the folder form](../../brainstorm/01_video-artifact-engine/01_index.md#the-folder-form)).
 
 # 05 Notes & Analysis
 
@@ -36,4 +37,4 @@ The headline ones; each note holds its own.
 | [01/06 Caching](./06_caching.md) | The machine-wide audio store, the helper, the model and libraries under `~/.agentks` |
 | [01/07 Libraries and reusable elements](./07_libraries-and-reusable-elements.md) | What the player owns and what libraries own; typed `alias:name` fields |
 | [01/08 Relation to the engine migration](./08_relation-to-the-engine-migration.md) | What lives in the player, the compiler and the helper; what can start now |
-| [01/09 Open questions](./09_open-questions.md) | The questions for sidhantha: two open until the voice spike, four decided provisionally |
+| [01/09 Open questions](./09_open-questions.md) | The questions for sidhantha: two open until the voice spike, five decided provisionally |

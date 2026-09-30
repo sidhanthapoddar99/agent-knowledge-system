@@ -1,6 +1,6 @@
 ---
 title: "Server — HTTP, the /api WebSocket, the watcher and the server lifecycle"
-status: open
+status: in-progress
 ---
 
 The index leaf of the server group. `agentks start` runs one local server per project, built on axum (a Rust web framework). It serves the embedded client at every path, the project's files at a few fixed routes, and **one WebSocket at `/api`** that carries every data request and every push. A file watcher turns changes on disk into pushed hashes. This group builds the server itself; the data it serves comes from the engine (030) and the caches (040), and multi-user sync on the same socket is [060/00](../060_collaboration/00_overview.md).
@@ -9,13 +9,13 @@ The index leaf of the server group. `agentks start` runs one local server per pr
 
 | Leaf | Delivers | Status |
 |---|---|---|
-| [050/10 HTTP and routes](./10_http-and-routes.md) | axum, the route table, the embedded client, static file serving | open |
-| [050/20 WebSocket API](./20_websocket-api.md) | The `/api` protocol: hello, requests, replies, pushes, errors | open |
-| [050/30 Watcher and push](./30_watcher-and-push.md) | `notify`, debounce, git refs, change batches, pushed hashes, `fatal` | open |
-| [050/35 File writes and echo suppression](./35_file-writes-and-echo-suppression.md) | `open` and `save`: path checks, conflict by base hash, atomic write, echo suppression | open |
-| [050/40 Lifecycle, ps, stop, logs](./40_lifecycle-ps-stop-logs.md) | Run records, attach, detach, graceful shutdown, machine-wide `ps` and `stop`, logs | open |
-| [050/45 Stable ports](./45_stable-ports.md) | One stable port per project; fail rather than move | open |
-| [050/50 Security](./50_security.md) | Localhost bind, `Host` and `Origin` checks, path canonicalisation, the MIME allowlist, headers | open |
+| [050/10 HTTP and routes](./10_http-and-routes.md) | axum, the route table, the embedded client, static file serving | in-progress |
+| [050/20 WebSocket API](./20_websocket-api.md) | The `/api` protocol: hello, requests, replies, pushes, errors | review |
+| [050/30 Watcher and push](./30_watcher-and-push.md) | `notify`, debounce, git refs, change batches, pushed hashes, `fatal` | review |
+| [050/35 File writes and echo suppression](./35_file-writes-and-echo-suppression.md) | `open` and `save`: path checks, conflict by base hash, atomic write, echo suppression | in-progress |
+| [050/40 Lifecycle, ps, stop, logs](./40_lifecycle-ps-stop-logs.md) | Run records, attach, detach, graceful shutdown, machine-wide `ps` and `stop`, logs | review |
+| [050/45 Stable ports](./45_stable-ports.md) | One stable port per project; fail rather than move | review |
+| [050/50 Security](./50_security.md) | Localhost bind, `Host` and `Origin` checks, path canonicalisation, the MIME allowlist, headers | review |
 
 **Order of work inside the group.** 10 and 50 together (routes and their safety rules are one piece of work), then 20, 45 and 40, then 30, then 35 (Phase 2).
 
@@ -31,7 +31,7 @@ The index leaf of the server group. `agentks start` runs one local server per pr
 - A security test suite covering every rule of [050/50](./50_security.md) passes.
 
 # 02 Status and Result
-Open. Not started.
+In progress. 20, 30, 40, 45 and 50 are in review; 10 and 35 are in progress.
 
 ## Result
 None yet.

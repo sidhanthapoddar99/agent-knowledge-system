@@ -1,0 +1,18 @@
+head: The render pipeline
+layout: full
+items:
+  fm: {shape: pill, label: Frontmatter}
+  embeds: {shape: pill, label: Embeds}
+  md: {shape: pill, label: Markdown}
+  links: {shape: pill, label: Links}
+  html: {shape: pill, label: HTML, tone: accent}
+  line: {arrow: fm>embeds>md>links>html}
+beats:
+  - say: A page is rendered only when someone asks for it.
+    do: [show fm+embeds+md+links+html rise stagger=0.1, show line draw @asks]
+  - say: The core reads the frontmatter, pulls in embedded files, and turns markdown into HTML.
+    do: [send line @reads, emph fm pulse @frontmatter, emph embeds pulse @embedded, emph md pulse @markdown]
+  - say: Then it resolves every relative link to a real address, and sets the heading ids.
+    do: emph links pulse @resolves
+  - say: The result is cached by its hash, so the second request costs almost nothing. Nothing is rendered twice.
+    do: emph html glow @cached

@@ -1,6 +1,6 @@
 ---
 title: "Multi-user sync and access keys"
-status: open
+status: in-progress
 outcome: "Two people edit one file or diagram together over an access key"
 notes: "Needs [Phase 2](./30_phase-2-editing-and-libraries.md)'s per-file yrs documents"
 who: "claude"
@@ -25,7 +25,7 @@ Presence, live sync, access keys and `--share`, tracker live edits and git attri
 - [ ] **Basic tests only**; the two-client suite runs in [stage 38](./38_testing.md).
 
 # 02 Status and Result
-Not started.
+In progress. Access keys started early: the key store and its checks are built and tested in the sync crate (060/40 in progress). Wave 3's sync track works in the same crate now. The server side of keys, `--share` and the rest of this stage are not started.
 
 # 03 References
 - [The plan overview](./overview.md)

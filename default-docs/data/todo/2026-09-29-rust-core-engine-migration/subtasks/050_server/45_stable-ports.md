@@ -1,6 +1,6 @@
 ---
 title: "Stable ports — one port per project, kept across restarts"
-status: in-progress
+status: review
 ---
 
 A browser keeps storage per origin, and the port is part of the origin. If a project's server moves to another port, its browser cache and its saved UI state (open sidebar folders, filters) are lost; worse, a project that takes over another project's old port could see that project's stored state. So **each project keeps one stable port**. When the port is taken by something else, `agentks start` fails with a clear message and the fix, instead of moving silently.

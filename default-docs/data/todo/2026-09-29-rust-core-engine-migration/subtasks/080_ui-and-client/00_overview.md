@@ -10,12 +10,12 @@ This group builds the two frontend pieces every page goes through. The shared pa
 | Leaf | Status | Delivers | Waits on |
 |---|---|---|---|
 | [080/10 UI framework decision](./10_ui-framework-decision.md) | review | The framework for the package, the client and the static renderer, chosen by a spike and recorded | [020/10 golden fixtures](../020_content-contract/10_golden-fixtures.md) for the spike pages |
-| [080/20 Shared UI package](./20_shared-ui-package.md) | open | `agentks-ui` scaffold: `DataSource`, page-data types, layout registry, island contract, purity check | 10, [030/80 page data interface](../030_rust-engine/80_page-data-interface.md) |
-| [080/30 Client shell and routing](./30_client-shell-and-routing.md) | open | The app shell, the real-path router, link interception, scroll, focus, not-found | 20 |
-| [080/40 WebSocket client](./40_websocket-client.md) | open | The one `/api` connection: requests with ids, pushes, reconnect, version handshake, `DataSource` over the socket | 20, [050/20 WebSocket API](../050_server/20_websocket-api.md) |
-| [080/50 Islands](./50_islands.md) | open | Theme toggle, sidebar collapse, issue filters, code copy, tooltips, diagram viewers, artifact frame, lazy mounting | 20, 30 |
+| [080/20 Shared UI package](./20_shared-ui-package.md) | review | `agentks-ui` scaffold: `DataSource`, page-data types, layout registry, island contract, purity check | 10, [030/80 page data interface](../030_rust-engine/80_page-data-interface.md) |
+| [080/30 Client shell and routing](./30_client-shell-and-routing.md) | in-progress | The app shell, the real-path router, link interception, scroll, focus, not-found | 20 |
+| [080/40 WebSocket client](./40_websocket-client.md) | in-progress | The one `/api` connection: requests with ids, pushes, reconnect, version handshake, `DataSource` over the socket | 20, [050/20 WebSocket API](../050_server/20_websocket-api.md) |
+| [080/50 Islands](./50_islands.md) | in-progress | Theme toggle, sidebar collapse, issue filters, code copy, tooltips, diagram viewers, artifact frame, lazy mounting | 20, 30 |
 | [080/60 PWA and mobile](./60_pwa-and-mobile.md) | open | Web app manifest, app-shell service worker, the "server is off" state, mobile shell behaviour | 30, 40, [090/30 service worker and offline](../090_frontend-performance/30_service-worker-and-offline.md) |
-| [080/70 Embed in binary](./70_embed-in-binary.md) | open | `vite build` output compressed into the binary and served from memory with the right cache headers; the dev proxy | 30, [050/10 HTTP and routes](../050_server/10_http-and-routes.md) |
+| [080/70 Embed in binary](./70_embed-in-binary.md) | in-progress | `vite build` output compressed into the binary and served from memory with the right cache headers; the dev proxy | 30, [050/10 HTTP and routes](../050_server/10_http-and-routes.md) |
 
 **Order inside the group.** 10 first, because every other leaf is written in the chosen framework. Then 20. Then 30 and 40 in parallel. Then 50. Then 60 and 70. Performance work lives in [090_frontend-performance](../090_frontend-performance/00_overview.md) and the layouts in [100_layouts](../100_layouts/00_overview.md); both build on 20.
 
@@ -33,7 +33,7 @@ This group builds the two frontend pieces every page goes through. The shared pa
 - The client opens this repository's docs and tracker from `agentks start` and passes route parity ([170/20](../170_testing/20_route-and-content-parity.md)).
 
 # 02 Status and Result
-In progress. 10 is in review; the rest are open.
+In progress. 10 and 20 are in review; 30, 40, 50 and 70 are in progress; 60 is open.
 
 ## Result
 None yet.

@@ -32,13 +32,15 @@ The client `apps/agentks-client` is a single-page app: one page load, then it dr
 - Screen reader check: the live region announces each new page title.
 
 # 02 Status and Result
-Open. Not started.
+In progress. The shell, router and live updates are built and tested against a mock engine. Left: the checks that need the real engine and a browser (every route of this repository, 50 random sidebar clicks headless, the screen reader check), and `src/pwa/` ([60](./60_pwa-and-mobile.md)).
 
 ## Result
-None yet.
-
-## Agent log
-none
+- `apps/agentks-client/`: Vite 8.3.1, Preact 11.0.0, `@preact/preset-vite` 2.10.6; own `package.json` and `bun.lock`; `index.html`, `vite.config.ts`, `src/main.ts`, `src/app/` (`controller.ts`, `App.tsx`, `document.ts`), `src/router/` (`routes.ts`, `links.ts`, `scroll.ts`, `router.ts`), `src/data/`, `src/state/view.ts`, `src/islands.ts`, and `src/pwa/`, `src/devtoolbar/`, `src/editor/` holding a README each.
+- The router: the route table from the manifest only (routes and redirects), reserved prefixes never routed (`/api`, `/artifacts`, `/content-assets`, `/assets`, `/_lib`, `/client`, `/theme.<hash>.css`), link interception that leaves modified clicks, `target`, `download`, other origins and unknown paths to the browser, same-page hash links without a refetch, `history.scrollRestoration = 'manual'`, scroll saved per entry and restored on back and forward, anchors on first load, after navigation and after islands mount, focus to the main heading, the title, and a polite live region.
+- The controller: start-up (socket, manifest, first URL, navbar and footer from the manifest), not-found inside the frame with a way back into the section, a progress bar after 150 ms, `fatal` pushes and failures drawn as the error list, `changed` pushes redrawing the page, its sidebar or the manifest once per animation frame, a removed or moved page shown as a notice, `resync` and reconnect rechecking every hash, the theme CSS link swapped when its URL changes.
+- `ctl build client` writes `apps/agentks-client/dist/` (19 files; first-load JS 13.5 KiB gzipped, each layout its own chunk) and `dist/client-build.txt`.
+- Tests: Vitest 5.0.3 with happy-dom, 21 tests in under 1 s (router, link rules, route table, scroll, and the whole app drawing a docs fixture page through `DataSource`, following a sidebar link without a reload, not-found, and an unbuilt section layout shown as an error).
+- `ctl dev client` runs Vite on 5173 against `CLIENT_ENGINE_URL`, or against the mock engine in `dev/` on 5174 when it is blank; checked by hand: the page, the theme CSS and `/api` all pass through the proxy.
 
 # 03 References
 - **Where:** main repository `/home/sid/projects/06_02_NeuraLabs/agent-knowledge-system`, folder `apps/agentks-client`.
@@ -53,6 +55,13 @@ none
 - Decided (sidhantha, 2026-09-29): one server; `/api` is the WebSocket and `/**` serves the client ([the client](../../notes/03_frontend/02_client-application.md)).
 - Decided (claude, 2026-09-30): routes come only from the manifest; a reserved prefix can never be a content URL (Rust enforces it when it builds the manifest).
 - Decided (claude, 2026-09-30): the router is our own, about 60 lines, in `agentks-client`, because the manifest is the route table and a pattern router adds nothing ([10](./10_ui-framework-decision.md)).
+- Decided (claude, 2026-10-01): the client resolves `@agentks/ui` by a path alias in `tsconfig.json` and `vite.config.ts`, not a `link:` dependency, because bun 1.4.2 cannot link a package by path (`FileNotFound: failed linking dependency/workspace`) and `file:` copies the folder, so edits would not show; Vite's `resolve.dedupe: ['preact']` keeps one Preact.
+- Decided (claude, 2026-10-01): the client's tests run on Vitest with happy-dom, not `bun test` and not a headless browser, because Vitest resolves modules through the same Vite config as the build (one deduped Preact); `bun test` would load the package's own Preact copy and bun runtime plugins cannot redirect bare imports; browser runs wait for the testing stage.
+- Decided (claude, 2026-10-01): a section whose layout is not in the package yet (blog, issues, custom) draws a load error naming the layout, never another layout, because a wrong page that looks right is worse than an error.
+- Decided (claude, 2026-10-01): the router matches paths exactly (no trailing-slash folding), because the manifest's URLs are canonical and folding would be a URL rule outside Rust; the engine's redirects cover old URLs.
+- Decided (claude, 2026-10-01): the app's route level is `src/app/` (a controller plus `App.tsx`), beside the subtask's folders, because the project-setup shape wants route logic out of components and the controller is testable without rendering.
+- Decided (claude, 2026-10-01): `client_build` is a hash of the built bundle: a Vite plugin puts a fixed-length placeholder in the code, hashes every chunk and asset after bundling, writes the hash in place of the placeholder and into `dist/client-build.txt` for the engine's embed step; the dev server sends `dev`.
+- Decided (claude, 2026-10-01): a body island whose name the registry does not know keeps its plain content and gets `data-island-state="unknown"`, with a dev log, because the page must still show the source while the island is not built.
 
 # 05 Notes & Analysis
 ## 01 The manifest's route entry ([030/80](../030_rust-engine/80_page-data-interface.md))

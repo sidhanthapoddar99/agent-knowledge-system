@@ -6,7 +6,7 @@ status: open
 The new engine must produce the same routes, heading IDs, link targets and text as today's Astro engine. That can only be proved against a recorded answer. This leaf builds two kinds of fixture: small spec fixtures, one folder per rule, for unit tests; and a captured snapshot of today's engine rendering this repository's docs and tracker (about 1,300 pages), for the corpus comparison. Every other leaf in this group, and the parity checks in [170](../170_testing/00_overview.md), test against them.
 
 # 01 To Do
-- [ ] **Spec fixtures** in `apps/agentks-engine/tests/fixtures/spec/`, one small project per rule, each with an `expected.json`:
+- [ ] **Spec fixtures** in each crate's own `tests/spec/` (the content rules in `apps/agentks-engine/crates/content/tests/spec/`), one small project per rule, each with an `expected.json`:
     - [ ] ordering prefixes: 2 to 5 digits, mixed widths, gaps, legacy `-` separators in the tracker, missing prefixes in docs (error);
     - [ ] folder `settings.json` and `settings.jsonc` (JSONC preferred when both exist), missing `label` (error);
     - [ ] frontmatter per kind, unknown keys (drift warning), bad YAML (content error with line);
@@ -37,10 +37,16 @@ The new engine must produce the same routes, heading IDs, link targets and text 
 - The comparison helper reports zero differences when fed the snapshot itself, and reports one difference of the right kind when a single heading ID is altered in its input.
 
 # 02 Status and Result
-Open. Not started.
+Open. The content-rule spec fixtures exist (wave 2); the other spec fixtures, the corpus snapshot and the comparison helper do not.
 
 ## Result
-None yet.
+- **Content-rule spec fixtures**, in `apps/agentks-engine/crates/content/tests/spec/` of the main repository (the crate's own tests folder, not `tests/fixtures/spec/`), one small project and one `expected.json` each, run by `cargo test -p agentks-content spec_`:
+    - `ordering/`: 2 to 5 digit prefixes, mixed widths and gaps, a shared prefix value, missing prefixes in docs (error for markdown and folders, warning for a diagram), `index.md`, the tracker's legacy `-` separator, slugs.
+    - `settings/`: `settings.jsonc` winning over `settings.json`, a missing `label` (error), a missing settings file (error), bad JSON with its line, the older `collapsible` name, `allow_diagram_pages` at the root.
+    - `frontmatter/`: docs, blog and tracker kinds, unknown keys (drift warnings), a missing title (error), bad YAML (error with its line).
+    - `collisions/`: page kinds by extension, prefix and place (`assets/` included), a sidecar with `artifact.theme`, and a `.md`, a diagram and an `.html` claiming one URL.
+    - `tracker/`: every anatomy section, plans with stage references, run folders and slots, comments, legacy and unknown statuses, a derived index status, the depth cap, and the `check issues` findings.
+- **Not yet:** the spec fixtures for links, embeds, heading IDs, a blog with sibling links, and a `base_url` unlike its folder name belong to the index and render crates; the corpus snapshot and the comparison helper belong to stage 38.
 
 ## Agent log
 none

@@ -51,10 +51,15 @@ Every internal link in today's engine is emitted as a browser-relative href, and
 - `agentks build --base /docs`, served under `/docs` by a static server, passes the rendered-link crawl with zero failures, the same as the unprefixed build and the local server.
 
 # 02 Status and Result
-Open. Not started.
+In progress. The index's part is built and tested: the resolver, the URL function with the hosting prefix, reserved prefixes, the route set, link-form checks and the move rewrite. What is left belongs to other crates and later stages, listed below.
 
 ## Result
-None yet.
+- `SiteIndex::resolve(href, containing_file) -> Resolution` in `apps/agentks-engine/crates/index/src/snapshot/resolve.rs`: scheme, `#`-only and `//` links are external; a leading `/` is a `link-form` miss; the path is percent-decoded and joined with the file's folder; a climb out of the project is `path-escapes-project`; a page gives its URL with the fragment kept; any other file of a section gives `/content-assets/<path>`; a folder gives its index page (a docs `index.md`, an issue, a plan, a section root); everything else is a `link-missing` miss with a one-sentence reason. Blog posts lose their date, tracker files keep their prefixes, `issue.md` and every tracker body resolve from their own file with no re-rooting.
+- `SiteIndex::href` and `href_of` apply the hosting prefix once; `with_base_path` sets it (the index builds at `/`). `artifact_url` and `content_asset_url` give the served paths.
+- Reserved prefixes: a page URL under `/api`, `/client`, `/assets`, `/content-assets`, `/artifacts` or `/_lib` gets no URL and a `url-reserved` error.
+- `check_link_form` and `rewrite_for_move` ported from the CLI's `links.rs`, on one shared scanner (`scan_references`) that also finds `[[path]]` embeds.
+- Tests in `crates/index/src/tests/` cover every case of 2026-08-04 that the index owns: docs, blog and tracker links, fragments and queries, assets, diagram and artifact pages, folder links, link-form, misses and escapes, a renamed `base_url` breaking no link, the prefix, reserved URLs, links in embedded text resolving from the embedded file.
+- Left: the render pipeline calling the resolver and marking misses (030/50, 020/40), the anchor check against the target's outline (the renderer, through `SiteIndex::target_of`), `agentks build --base` and the built-files-versus-routes check (150), the rendered-link crawl in `ctl e2e` (170/20), and the golden comparison (020/10).
 
 ## Agent log
 none
@@ -76,6 +81,14 @@ none
 - Decided (claude, 2026-09-30): the file-to-URL map is the site index itself, not a third structure.
 - Decided (claude, 2026-09-30): links inside embedded markdown resolve against the embedded file, following the rule that a reference is relative to the file that contains it.
 - Decided (claude, 2026-09-30): the local server always serves at `/`; the prefix is a build parameter.
+- Decided (claude, 2026-10-01): `/content-assets/<path>` and `/artifacts/<path>` carry the project-relative path (for example `/content-assets/data/guide/assets/x.png`), not today's path below the content root, because sections may live anywhere under the project and the server can map a project path back without a second table.
+- Decided (claude, 2026-10-01): every URL segment is percent-encoded outside RFC 3986 `pchar`, with upper-case hex, because that is what browsers send; a file name with a space, `#`, `%` or a non-ASCII letter still gets one stable URL. Plain ASCII names are unchanged, so today's routes are unchanged.
+- Decided (claude, 2026-10-01): the query of a link is dropped and the fragment kept; a link to a plan stage file lands on the plan page at the stage's anchor unless the link names its own fragment.
+- Decided (claude, 2026-10-01): a link to a file outside every content section, and a link to a tracker folder that is neither an issue nor a plan (a subtask group, a log run), is a `link-missing` miss, as it is a 404 today. No folder-index guess.
+- Decided (claude, 2026-10-01): a link to a section root resolves to the canonical page, so a docs root link gives the first page, not the redirect.
+- Decided (claude, 2026-10-01): the anchor check is the renderer's, because outlines come from rendered bodies; the index gives the target file through `SiteIndex::target_of`.
+- Decided (claude, 2026-10-01): the source-form redirects mirror today's static paths exactly: the path with a markdown, YAML or JSON extension removed, so a diagram or artifact page's alias keeps its extension.
+- Decided (claude, 2026-10-01): the move rewrite now also rewrites `[[path]]` embeds (today it skipped them and left moved embeds broken), and the scanner ignores footnote definitions (`[^1]: text`), which the old one read as links.
 
 # 05 Notes & Analysis
 ## 01 What 2026-08-04 absorbed, subtask by subtask

@@ -18,14 +18,14 @@ The Rust engine replaces today's Astro loaders, parsers and cache manager, and a
 |---|---|---|---|---|
 | [10](./10_workspace-and-crate-boundaries.md) | The Cargo workspace, 14 crates, the layer check | all | — | review |
 | [20](./20_error-model.md) | Typed errors, the shared error record, fatal vs content errors | `agentks-core` | — | review |
-| [30](./30_config-loader-and-settings-schema.md) | Typed settings; each setting declares what it affects; live reload | `agentks-config` | — | open |
-| [40](./40_site-index.md) | The index: entries, URLs, folder hashes, the reference graph | `agentks-index` | [knowledge graph](../../../2026-04-19-knowledge-graph-and-wiki-links/issue.md) subtasks 01, 02 | open |
-| [50](./50_markdown-pipeline.md) | Pre-processing, comrak, highlighting, heading IDs, post-processing | `agentks-render` | — | open |
-| [60](./60_tracker-loader.md) | Issues, anatomy sections, statuses, derived fields | `agentks-content`, `agentks-site` | — | open |
+| [30](./30_config-loader-and-settings-schema.md) | Typed settings; each setting declares what it affects; live reload | `agentks-config` | — | in-progress |
+| [40](./40_site-index.md) | The index: entries, URLs, folder hashes, the reference graph | `agentks-index` | [knowledge graph](../../../2026-04-19-knowledge-graph-and-wiki-links/issue.md) subtasks 01, 02 | review |
+| [50](./50_markdown-pipeline.md) | Pre-processing, comrak, highlighting, heading IDs, post-processing | `agentks-render` | — | review |
+| [60](./60_tracker-loader.md) | Issues, anatomy sections, statuses, derived fields | `agentks-content`, `agentks-site` | — | review |
 | [70](./70_diagram-and-artifact-sources.md) | Diagram, artifact and video page data; sidecars | `agentks-content`, `agentks-site` | — | open |
 | [80](./80_page-data-interface.md) | The one data interface the client and the static build read | `agentks-api`, `agentks-site` | — | in-progress |
-| [85](./85_theme-css-compiler.md) | One compiled, contract-checked stylesheet per project | `agentks-render` | — | open |
-| [90](./90_memory-and-concurrency.md) | The runtime model, snapshots, bounded queues, a memory budget | `agentks-site`, `agentks-server` | — | open |
+| [85](./85_theme-css-compiler.md) | One compiled, contract-checked stylesheet per project | `agentks-render` | — | review |
+| [90](./90_memory-and-concurrency.md) | The runtime model, snapshots, bounded queues, a memory budget | `agentks-site`, `agentks-server` | — | in-progress |
 | [95](./95_retrieval-index.md) | Full-text search for the site and agents | `agentks-search` (later) | [site-wide search](../../../2026-04-19-site-wide-search/issue.md), Rust side | open |
 
 ## Guardrails
@@ -43,7 +43,7 @@ These hold for every leaf in the group.
 - The engine renders every page of the corpus with zero unexpected differences from the golden snapshot.
 
 # 02 Status and Result
-In progress. 10 and 20 are in review; 80 is in progress; the rest are open.
+In progress. 10, 20, 40, 50, 60 and 85 are in review; 30, 80 and 90 are in progress; 70 and 95 are open.
 
 ## Result
 None yet.

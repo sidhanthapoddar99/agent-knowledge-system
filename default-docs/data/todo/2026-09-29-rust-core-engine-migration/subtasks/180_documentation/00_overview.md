@@ -1,9 +1,9 @@
 ---
 title: "Documentation — overview and outline"
-status: open
+status: in-progress
 ---
 
-agentks 1.0.0 gets new documentation, written from scratch for the new version. Today's docs describe Astro internals, the discarded editor, custom layouts and the framework checkout, none of which exist after the migration, so they are not ported. This group writes the new docs in the main repository's `docs/` folder, which is itself an ordinary agentks project. It is launch step 4. It takes over the remaining work of [2026-04-19-docs-phase-2](../../../2026-04-19-docs-phase-2/issue.md). Until every page here is written and renders correctly with the new engine, this repository's docs stay the reference.
+agentks 1.0.0 gets new documentation, written from scratch for the new version. Today's docs describe Astro internals, the discarded editor, custom layouts and the framework checkout, none of which exist after the migration, so they are not ported. This group writes the new docs in this repository, as two new sections beside today's: `default-docs/data/user-guide-2/` and `default-docs/data/dev-docs-2/`, so today's viewer shows them while the new engine is built. At the switch-over they move to the main repository's `docs/` folder, which is itself an ordinary agentks project. It is launch step 4. It takes over the remaining work of [2026-04-19-docs-phase-2](../../../2026-04-19-docs-phase-2/issue.md). Until every page here is written and renders correctly with the new engine, this repository's docs stay the reference.
 
 # 01 To Do
 
@@ -24,11 +24,12 @@ agentks 1.0.0 gets new documentation, written from scratch for the new version. 
 **The outline.** The docs keep today's audience split (from [AGENTS.md](../../../../../../AGENTS.md)): the user guide teaches how to use agentks; the developer docs explain how it is built.
 
 ```
-docs/data/
-  user-guide/
+default-docs/data/
+  user-guide-2/
     05_getting-started/        ← leaf 10
     10_writing-content/        ← leaf 20
     15_docs/ 20_blog/ 25_custom-pages/   ← leaf 20
+    28_videos/                 ← the video issue
     30_issue-tracker/          ← leaf 25
     35_configuration/          ← leaf 20
     40_libraries/              ← leaf 40
@@ -37,15 +38,20 @@ docs/data/
     55_publishing/             ← leaf 60
     60_upgrading/              ← leaf 90
     65_cli-reference/          ← leaf 80
-  dev-docs/                    ← leaf 70
+  dev-docs-2/                  ← leaf 70
+    05_overview/ 10_engine/ 15_server-and-protocol/ 20_caching/
+    25_frontend/ 30_collaboration/ 35_libraries/ 40_video-engine/
+    45_publishing/ 50_versioning/ 55_contributing/
 ```
 
-**Order of work.** 00 fixes the outline first, with a stub page per section so every leaf writes into a known place. 10, 20 and 25 can start as soon as Phase 1 renders content. 30 waits for the layout set. 40 and 50 wait for Phase 2. 60 waits for Phase 3. 80 is generated last, from the release candidate. 90 and 95 finish right before the switch-over.
+Every section folder starts with `01_overview.md`, so a page can link to another section before that section's other pages exist. Pages link only inside `user-guide-2/` and `dev-docs-2/`, so the two sections move to the new repository without broken links.
+
+**Order of work.** Every section is written now, in parallel with the build, from the settled design in the notes. Each page is checked against the code when its feature lands, and again against the release candidate in leaf 80's pass. 80 is generated from the binary at that pass. 90 and 95 are finished right before the switch-over.
 
 ## Guardrails
 - **Current system only.** The docs describe 1.0.0 as it is. No history, no "before 1.0 this was …", no removed features. The one page allowed to name old formats is the migration guide (leaf 90).
 - **The docs are an ordinary agentks project.** No special case in the engine for them. If the docs need a feature, users need it too; file it as a leaf in the right group.
-- **Every page renders with the new engine** and passes `agentks check section` and `agentks check link-form`, with relative links only.
+- **Every page renders** in today's viewer while it lives here, and with the new engine after the move. It passes `agent-ks check section` and `agent-ks check link-form` here and the `agentks` checks after the move, with relative links only.
 - **A page for a feature newer than 1.0.0 states the version it arrived in** ("since 1.2").
 - **Don't edit or delete this repository's docs** as part of this group. They stay in use until the switch-over ([200/20](../200_launch/20_switch-over.md)).
 - The user guide never explains internals; the developer docs never teach usage. A page on the wrong side is misfiled.
@@ -79,6 +85,8 @@ none
 - Decided (sidhantha, 2026-09-30): only the latest docs are published ([deployment and hosting](../../notes/05_delivery/06_deployment-and-hosting.md)).
 - Decided (sidhantha, 2026-09-30): `agentks docs` opens agentks.neuralabs.org/docs; the docs are not bundled in the binary.
 - Decided (claude, 2026-09-30): writing the documentation is its own group of leaves, one per section, so each can be picked up as its feature lands. The outline above is the one from the notes, with the tracker split into its own section because today's tracker docs are the largest user-guide section.
+- Decided (sidhantha, 2026-10-01): the new docs are written now, in parallel with the build, by several agents at once. They live in this repository as `user-guide-2` and `dev-docs-2` until the switch-over, when they move to the new repository's `docs/`.
+- Decided (claude, 2026-10-01): the outline gains `28_videos/` in the user guide and eleven sections in the developer docs. Each section opens with `01_overview.md`, and pages link only inside the two new sections, so parallel writers can link across sections and the move stays clean.
 
 # 05 Notes & Analysis
 
@@ -100,5 +108,5 @@ The issue itself is superseded at launch by [200/50](../200_launch/50_close-abso
 - Use the `agent-ks-docs` skill (or its `agentks` successor) for page mechanics.
 
 ## Watch out
-- Docs drift from code fast. Write a page only once its feature is in `review` or later, and re-check it against the release candidate in leaf 80's pass.
+- Docs drift from code fast, and these pages are written ahead of much of the code. Re-check each page when its feature reaches `review`, and again against the release candidate in leaf 80's pass.
 - Screenshots go stale fastest. Prefer text and diagrams; when a screenshot is needed, take it from the end-to-end suite's run so it can be regenerated.

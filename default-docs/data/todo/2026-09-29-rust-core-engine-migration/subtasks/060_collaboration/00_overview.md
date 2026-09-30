@@ -1,6 +1,6 @@
 ---
 title: "Collaboration — shared live documents, presence and access keys"
-status: open
+status: in-progress
 ---
 
 The index leaf of the collaboration group. Several people edit one project together: text and diagrams sync live, everyone sees who is on a page and where their cursor is, and tracker changes (status, labels, comments) appear for everyone at once. There is **no sign-in**: the owner grants access with an **access key**. The sync runs on `yrs` (the Rust port of Yjs) inside the server, over the same `/api` socket, and the file on disk stays the source of truth. This group takes over [2026-04-10-sync-and-presence](../../../2026-04-10-sync-and-presence/issue.md) and the multi-user half of [diagram editing](../../../2026-04-10-editor-diagrams/subtasks/30_editor/40_in-place-and-multi-user-editing.md).
@@ -9,11 +9,11 @@ The index leaf of the collaboration group. Several people edit one project toget
 
 | Leaf | Delivers | Phase | Status |
 |---|---|---|---|
-| [060/10 yrs document per file](./10_yrs-document-per-file.md) | The server-held live document for each open file: load, epochs, unload, memory | 2 (single user) | open |
+| [060/10 yrs document per file](./10_yrs-document-per-file.md) | The server-held live document for each open file: load, epochs, unload, memory | 2 (single user) | review |
 | [060/20 Sync protocol](./20_sync-protocol.md) | Binary frames on `/api`: join, sync steps, updates, awareness | 2 | open |
 | [060/60 Disk and live document merge](./60_disk-and-live-doc-merge.md) | An AI edit on disk merges into the open document; autosave writes back | 2 | open |
 | [060/30 Presence](./30_presence.md) | Who is on a page; cursors, selections, names, colours | multi-user | open |
-| [060/40 Access keys](./40_access-keys.md) | `agentks share`: keys, roles, hashed storage, cookie sessions, revoke | multi-user | open |
+| [060/40 Access keys](./40_access-keys.md) | `agentks share`: keys, roles, hashed storage, cookie sessions, revoke | multi-user | in-progress |
 | [060/50 Network exposure and TLS](./50_network-exposure-and-tls.md) | `--share`: bind, allowed hosts, TLS through a tunnel or proxy, limits | multi-user | open |
 | [060/70 Tracker live edits](./70_tracker-live-edits.md) | Status, labels and comments changed from the page, live for everyone | multi-user | open |
 | [060/80 Diagram collaboration](./80_diagram-collaboration.md) | Excalidraw, tldraw, Mermaid, Graphviz, draw.io edited together | multi-user | open |
@@ -34,7 +34,7 @@ The index leaf of the collaboration group. Several people edit one project toget
 - Two people on two machines, one with an `edit` key over `--share`, edit one page and one Excalidraw diagram at once, see each other's cursors, and the files on disk end identical to both editors' views.
 
 # 02 Status and Result
-Open. Not started.
+In progress. 10 is in review; 40 is in progress; 20, 30, 50, 60, 70, 80, 90 and 95 are open.
 
 ## Result
 None yet.

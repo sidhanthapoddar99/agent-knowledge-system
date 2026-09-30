@@ -1,6 +1,6 @@
 ---
 title: "AI plugins — overview and rules for the group"
-status: open
+status: in-progress
 ---
 
 This group builds the AI-agent side of agentks: the two plugins (the `agentks` usage plugin, rewritten from today's `agent-ks` skills, and the smaller `agentks-library` plugin for library authors), their listing in the Neuralabs marketplace, and two later-stage ideas recorded so nothing blocks them: **extensions** (`agentksx` commands and site scripts) and **agent hooks and retrieval**. In agentks, a **plugin** always means an AI-agent plugin (a folder of skills with a manifest per agent), never a code extension. The plugins are rewritten against the real binary during launch step 1, and the marketplace goes live in step 2.
@@ -10,8 +10,8 @@ This group builds the AI-agent side of agentks: the two plugins (the `agentks` u
 
 | Leaf | Status | When | Delivers |
 |---|---|---|---|
-| [130/10 agentks plugin port](./10_agentks-plugin-port.md) | open | launch step 1, as commands land | The ten skills renamed and rewritten; skills point at commands, not copies |
-| [130/20 Library-development plugin](./20_library-dev-plugin.md) | open | launch step 1, after libraries | `agentks-library`: build, test, version and migrate a library |
+| [130/10 agentks plugin port](./10_agentks-plugin-port.md) | in-progress | launch step 1, as commands land | The ten skills renamed and rewritten; skills point at commands, not copies |
+| [130/20 Library-development plugin](./20_library-dev-plugin.md) | in-progress | launch step 1, after libraries | `agentks-library`: build, test, version and migrate a library |
 | [130/30 Marketplace listing](./30_marketplace-listing.md) | open | launch step 2 | `NeuraLabsHQ/neuralabs-plugin-marketplace` lists both plugins; the personal marketplace entry is removed at the switch-over |
 | [130/40 Extensions](./40_extensions.md) | open | later stage | The `agentksx` design, from what survives of the old plugin-system issue |
 | [130/50 Agent hooks and retrieval](./50_agent-hooks-and-retrieval.md) | open | later stage | Hooks for Claude Code and Codex; one retrieval index shared with site search |
@@ -19,7 +19,7 @@ This group builds the AI-agent side of agentks: the two plugins (the `agentks` u
 Order: 10 → 20 → 30. 40 and 50 wait until after 1.0.0.
 
 # 02 Status and Result
-Open. Not started.
+In progress. 10 and 20 are in progress; 30, 40 and 50 are open.
 
 ## Result
 None yet.

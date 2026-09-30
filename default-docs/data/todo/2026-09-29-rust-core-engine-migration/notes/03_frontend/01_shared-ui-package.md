@@ -33,12 +33,15 @@ Every layout and every UI component lives once, in the shared package `apps/pack
 apps/
   packages/
     agentks-ui/        layouts, components, islands, component CSS, the data types
+    agentks-video/     the video player: framework-free TypeScript, wrapped by the video island
   agentks-client/      state 1 and 2: wires the package to live data over the WebSocket
   agentks-ssg/         state 3: renders the package to static HTML once per page
   agentks-engine/      Rust: computes the data both builds feed to the package
 ```
 
 The dependency runs one way. The client and the static renderer import the package. The package imports neither of them, and no Rust code. It knows the **shape** of the data it receives and nothing about where the data came from.
+
+`agentks-video` sits beside the package, not inside it, because the standalone video page loads the player with nothing else. `agentks-ui` imports it only from the video island's lazy chunk, and the player imports nothing.
 
 ## 02 What may live in the package
 
@@ -84,7 +87,7 @@ export interface DataSource {
 | `kind` | Drawn by | Main fields |
 |---|---|---|
 | `markdown` | the section's layout: a docs page, a blog post, an issue's sub-document | `body_html`, `outline`, `diagrams`; a blog post adds a `post` block with date, author and tags |
-| `video` | the video page | `body_html`, as a markdown page; the cue data joins with the video work ([video pages](../04_ecosystem/05_video-pages.md)) |
+| `video` | the video page | `video` (the compiled `VideoData`), `transcript_html` and `audio` (its voice state) ([video artifacts](../04_ecosystem/05_video-pages.md)) |
 | `diagram` | the diagram page | `lang` and `source_text`, from `.mmd`, `.dot`, `.excalidraw` or `.drawio`; display options from the sidecar |
 | `artifact` | the artifact page | `artifact_url`, `theme` (`site` or `self`) and display options from the `.meta.json` sidecar |
 
@@ -103,6 +106,17 @@ The body arrives finished:
 - **Code is highlighted with CSS classes**, not inline colours, so light and dark mode come from CSS.
 - **Interactive spots are marked, not scripted.** A diagram, an embedded artifact or a copy button appears as an element with a `data-island` attribute and its input (claude, proposed). For example: `<div data-island="mermaid" data-src-hash="…"><pre>graph TD; …</pre></div>`. The client mounts the matching island on it. The static renderer may replace the source with a pre-rendered SVG.
 
+**The markers the body carries**, which the client reads:
+
+| Marker | Means |
+|---|---|
+| `id="Diagram-N"` on a diagram block | The diagram's id, the same as `DiagramRef.id` in the page data |
+| A diagram-file placeholder with `data-src` or `data-page`, and `data-title` | An embedded `.excalidraw` or `.drawio` file: `data-src` is its asset URL, `data-page` the URL of its diagram page. There is no `?v=` parameter; the page hash already covers the file |
+| `a.broken-link[data-href]` | A link whose target is missing; `data-href` holds the link as written |
+| `img.broken-image[data-src]` | An image whose file is missing |
+| `span.embed-missing` | An embed whose file is missing |
+| `pre.highlight[data-language]` with `hl-` spans | A highlighted code block; the theme colours the `hl-` classes |
+
 ## 05 Islands
 
 An island is a component that needs JavaScript in the reader's browser. Everything else on a page is plain markup.
@@ -115,7 +129,7 @@ An island is a component that needs JavaScript in the reader's browser. Everythi
 | Search | Query the site | Phase 3: a search index written at build time ([publishing](../05_delivery/02_publishing-ssg.md)) |
 | Diagram viewers | Mermaid, Graphviz, Excalidraw, draw.io; pan, zoom, lightbox | The source in the body. On a published page, a pre-rendered SVG where possible |
 | Artifact frame | The iframe, with expand and open-full-page. Sandboxed for library HTML only ([library system](../04_ecosystem/01_library-system.md)) | The artifact URL and sidecar |
-| Video player | Plays a narrated video page | The page's cues ([video pages](../04_ecosystem/05_video-pages.md)) |
+| Video player | Plays a video artifact. About 30 lines that call `mountVideo` and `destroy` from `apps/packages/agentks-video` | The page's compiled `VideoData` ([video artifacts](../04_ecosystem/05_video-pages.md)) |
 | Code copy, tooltips | Copy a code block; show a tip only when text is cropped | The markup itself |
 
 **The island contract** (the mount is in section 07):
@@ -132,7 +146,7 @@ An island is a component that needs JavaScript in the reader's browser. Everythi
 
 - Each component's CSS lives beside it and ships with it into both builds.
 - Every value comes from the theme contract: colours, sizes, spacing and radii are `var(--…)` from `theme.yaml`'s required variables and the semantic tokens. No hex codes, no invented names, no fallbacks that freeze a value ([theming](./04_theming-and-layouts.md)).
-- Each layout's classes carry a prefix, so the CSS of one layout cannot leak into another. This replaces Astro's scoped CSS, which the prior audit counted at 1,364 lines.
+- The layouts use the built-in theme's class names (`sidebar__…`, `navbar__…`, `docs-…`), because those names are the hooks today's themes and user CSS already target. Only CSS the package adds carries the `aks-` prefix, inside `@layer components`, so it cannot collide with a theme's rules. This replaces Astro's scoped CSS, which the prior audit counted at 1,364 lines.
 - The classes and `data-part` attributes a user may style are a **public contract**. Renaming one needs a migration ([theming](./04_theming-and-layouts.md)).
 
 ## 07 The UI framework
@@ -154,9 +168,10 @@ An island is a component that needs JavaScript in the reader's browser. Everythi
 - **Router.** A small router of our own in `agentks-client`, about 60 lines in the spike. It looks each path up in the manifest, intercepts same-origin links to known pages, keeps the scroll position in `history.state`, restores it on back and forward, scrolls to `#heading` on first load and after navigation, and moves focus and the title to the new page's heading. A pattern-matching router adds nothing when the manifest is the route table. The spike checked every one of these behaviours in headless Chromium.
 - **Island mount.** The server writes each island as `<div data-island="name">markup</div>` followed by `<script type="application/json" data-props>`. The islands entry scans the page for `[data-island]`, loads each island's module on demand from a registry keyed by name, and calls Preact's `hydrate` on that element alone. Unmount is `render(null, el)`. Islands that Rust marks inside the body HTML use the same registry, with their input in `data-` attributes. In the client app the same components render live, with no island wrapper. The published page never loads the layout's code.
 - **React islands.** Excalidraw and tldraw run on real React 19, mounted with `createRoot` in their own lazy chunk. Preact's React aliases stay off (`reactAliasesEnabled: false`), so the React-only components never run on the compatibility layer. The cost is about 410 KiB of gzipped JavaScript, on the one page that shows such a diagram, and nothing elsewhere.
-- **Component CSS.** A plain CSS file beside each component, imported by the component, with classes prefixed by layout (`docs-…`) and values only from the theme variables (section 06). Vite bundles it for the client, and the static renderer links the CSS files listed in Vite's build manifest. No CSS modules and no CSS-in-JS, because hashed class names would break the public class contract.
-- **Types.** Rust writes `api.schema.json` from its types (`schemars`, [030/80](../../subtasks/030_rust-engine/80_page-data-interface.md)). `json-schema-to-typescript` turns it into `src/data/generated/api.ts` in the package, as part of the build; it took 0.1 s in the spike. A stale file fails the gate. Only data shapes cross over, never a rule.
+- **Component CSS.** A plain CSS file beside each component, imported by the component, using the built-in theme's class names, with `aks-` only on classes the package adds, and values only from the theme variables (section 06). Vite bundles it for the client, and the static renderer links the CSS files listed in Vite's build manifest. No CSS modules and no CSS-in-JS, because hashed class names would break the public class contract.
+- **Types.** Rust writes `api.schema.json` from its types (`schemars`, [030/80](../../subtasks/030_rust-engine/80_page-data-interface.md)). `json-schema-to-typescript` turns it into `src/data/generated/api.ts` in the package, as part of the build; it took 0.1 s in the spike. `schemars` writes JSON Schema draft 2020-12, where a `$ref` may have sibling keys; the generator does not read that form, so the build first rewrites each such `$ref` into an `allOf`. A stale file fails the gate. Only data shapes cross over, never a rule.
 - **Build tools.** Vite 8.3.1 with `@preact/preset-vite` 2.10.6 (it needs `@babel/core` as a peer) and `preact-render-to-string` 6.7.0.
+- **How the client reaches the package.** There is no JS workspace, and Bun 1.4.2 cannot install a package with `link:`. So the client names `@agentks/ui` as a path alias in `vite.config.ts` and `tsconfig.json`, and Vite's `dedupe` keeps one copy of Preact, because two copies break hooks. The client's tests run on Vitest for the same reason: Vitest reads the Vite config, so the tests see the same single Preact.
 
 The hard requirements the spike checked:
 

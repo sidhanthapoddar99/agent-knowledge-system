@@ -30,7 +30,7 @@ Narration has two voices. The good one is a **generated voice**: Kokoro-82M, run
 - **Text-to-speech, not a transcriber.** The job is text in, voice out. A transcriber (speech to text, like whisper) matters only for recorded voice.
 - **Model:** Kokoro-82M v1.0, the timestamped export, 8-bit (92 MB, Apache 2.0). The English pronunciation step is misaki-rs (MIT), built without its `espeak` feature, because that feature compiles espeak-ng, which is GPL-3.0. Version 1 narrates in English only.
 - **The helper, `agentks-voice`**, runs the model with `ort` in its own process. `agentks voice install` downloads it with the model, never the installer, so the main binary stays lean.
-- **Unknown words are an error**, `video.unknown-word`. Without espeak-ng, a word the voice does not know would be spelled letter by letter. The fix is a pronunciation list: `pronounce:` in `config/video.yaml` for the project, and the video's own `pronounce:` for one-off words. Words in capitals, such as CLI, are spelled on purpose and never flagged.
+- **Unknown words are an error**, `video-unknown-word`. Without espeak-ng, a word the voice does not know would be spelled letter by letter. The fix is a pronunciation list: `pronounce:` in `config/video.yaml` for the project, and the video's own `pronounce:` for one-off words. Words in capitals, such as CLI, are spelled on purpose and never flagged.
 - **One clip per beat**, Ogg Opus, mono, 24 kHz, 24 kbit/s, with its word timings beside it. Rewording one beat regenerates one clip.
 - **One joined stream per video.** The engine joins the beat clips by copying their packets, with no re-encoding, and fills pauses with silent packets. The stream runs as long as the video: about 180 KB a minute.
 

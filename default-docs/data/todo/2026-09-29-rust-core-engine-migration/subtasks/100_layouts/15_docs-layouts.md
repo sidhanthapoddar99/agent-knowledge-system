@@ -22,13 +22,13 @@ Most pages are docs pages, so the docs layout is the first real layout and the o
 - The compact layout draws a section configured with it, with a wider body and no sidebar.
 
 # 02 Status and Result
-Open. Not started.
+In progress. Both layouts are built as pure components and render every fixture. Left: parity against today's layout on every docs page of this repository (needs the Rust pipeline and the server), screenshots in light and dark, and the islands a published page needs (sidebar collapse, outline highlight, [080/50](../080_ui-and-client/50_islands.md)).
 
 ## Result
-None yet.
-
-## Agent log
-none
+- `apps/packages/agentks-ui/src/layouts/docs/default/`: `Layout.tsx`, `Sidebar.tsx`, `SidebarNode.tsx` (folders nest to any depth, fold and unfold live, open when they hold the page on screen), `Body.tsx`, `PageBody.tsx` (markdown and video bodies as Rust sent them; diagram source marked `data-island="diagram-<lang>"`; artifacts in a frame), `Outline.tsx` with `outline-spy.client.ts` (the heading in view), `Pagination.tsx`, `Breadcrumbs.tsx`, `docs.css`.
+- `docs/compact/Layout.tsx`: the same parts without the sidebar (`docs-layout docs-layout--minimal`).
+- The site frame the layouts need: `navbar/default/` (brand, links, menus, external marks from Rust's `external`, the theme toggle island, the small-screen menu), `footer/default/`, `site/` (the frame, notices, not-found, fatal-errors and load-error pages).
+- Rendered and compared in the package's tests; drawn live in the client's app test.
 
 # 03 References
 - **Where:** main repository `/home/sid/projects/06_02_NeuraLabs/agent-knowledge-system`, `apps/packages/agentks-ui/src/layouts/docs/`.
@@ -39,6 +39,10 @@ none
 
 # 04 Decisions
 - Decided (sidhantha, 2026-09-29): `docs` keeps `default` and `compact` as built-in layouts ([theming and layouts](../../notes/03_frontend/04_theming-and-layouts.md) section 01).
+- Decided (claude, 2026-10-01): the layout draws the outline Rust sent without filtering levels, and does not render a title header (the page's h1 comes from its markdown, as today), because level choice is config and a rule, and parity says the page looks as it did.
+- Decided (claude, 2026-10-01): breadcrumbs appear above the body when the page data carries them, a small addition the old layout lacked, because the subtask lists them and the data has them.
+- Decided (claude, 2026-10-01): a heading anchor lands below the fixed navbar through `scroll-margin-top` in `docs.css`, so the browser, the outline and the router all use the same offset with no script.
+- Decided (claude, 2026-10-01): the sidebar folds a folder with `useState` in the client; state kept between visits and the published-page island wait for [080/50](../080_ui-and-client/50_islands.md) and [090/10](../090_frontend-performance/10_ui-state-persistence.md), because the sidebar payload has no stable collapse key yet.
 
 # 05 Notes & Analysis
 ## Watch out

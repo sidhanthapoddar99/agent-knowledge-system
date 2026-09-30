@@ -2,7 +2,7 @@
 title: "Open questions and risks"
 ---
 
-Two design questions are still open: the site index's data structure (07) and whether to adopt the structure model (08). Each is decided inside its subtask when the work starts, for example [030/40 site index](../../subtasks/030_rust-engine/40_site-index.md). Question 12, the UI framework, is decided: Preact, after a measured spike in [080/10 UI framework](../../subtasks/080_ui-and-client/10_ui-framework-decision.md). A longer list of smaller points is proposed by claude but not yet confirmed by the user. The biggest risks are the size of the rewrite, rendering drift, a forced migration that damages content, and the publishing gap between 1.0.0 and Phase 3. Every component note links here for its open items. When a question is decided, its answer moves into the owning note and its row here is removed.
+One design question is still open: whether to adopt the structure model (08). Question 07, the site index's data structure, is decided with numbers in [030/40 site index](../../subtasks/030_rust-engine/40_site-index.md). Question 12, the UI framework, is decided: Preact, after a measured spike in [080/10 UI framework](../../subtasks/080_ui-and-client/10_ui-framework-decision.md). A longer list of smaller points is proposed by claude but not yet confirmed by the user. The biggest risks are the size of the rewrite, rendering drift, a forced migration that damages content, and the publishing gap between 1.0.0 and Phase 3. Every component note links here for its open items. When a question is decided, its answer moves into the owning note and its row here is removed.
 
 # 03 References
 
@@ -14,7 +14,8 @@ Two design questions are still open: the site index's data structure (07) and wh
 
 # 04 Decisions
 
-- Decided (sidhantha, 2026-09-29): the site is indexed at start-up and pages are rendered on request (question 07's first half). The data structure is the open half.
+- Decided (sidhantha, 2026-09-29): the site is indexed at start-up and pages are rendered on request (question 07's first half).
+- Decided (claude, 2026-10-01): the site index is two ordered maps keyed by path, with folder hashes rolled up Merkle style, and no radix tree (question 07's second half). The answer is in [02/03 Rust engine](../02_engine/03_rust-engine.md) section 03; the benchmark is in [030/40](../../subtasks/030_rust-engine/40_site-index.md).
 - Decided (claude, delegated by sidhantha, 2026-09-29): the new engine is proven by route parity, a rendered-content comparison in a headless browser, layout screenshots in light and dark mode, and the user's own use (question 06).
 - Decided (sidhantha, 2026-09-30): the UI framework must render the shared components to HTML at build time and support islands (a hard requirement on question 12).
 - Decided (claude, under sidhantha's delegation, 2026-09-30): the UI framework is Preact 11, with a small manifest-driven router of our own and islands hydrated one by one. The measured reasons are in [03/01 Shared UI package](../03_frontend/01_shared-ui-package.md) section 07 (question 12).
@@ -30,7 +31,6 @@ Two design questions are still open: the site index's data structure (07) and wh
 
 | # | Question | Current leaning | Blocks | Owner note |
 |---|---|---|---|---|
-| 07 | **The site index's data structure** | Claude: an ordered map keyed by path, with Merkle-style content hashes rolled up through folders. A change re-hashes only its parent chain; folder hashes answer "did anything under here change?" and give cache keys. No Patricia or radix tree: the prior audit measured a median of 3 entries per folder and found a plain ordered map fast enough at about 1,300 pages | Phase 1 step 1 | [02/03 Rust engine](../02_engine/03_rust-engine.md) |
 | 08 | **Adopt the structure / layout / theme / shell model** from the Go issue? | In the new split, "structure" (URLs, parsing rules) would be Rust and "layout" and "shell" the frontend. Its external-layout option is contradicted by the no-custom-layouts decision. The Go issue's open subtask `01_define-and-discuss-structure` could move here, re-scoped to built-in layouts | Naming inside the Rust core and the shared package | [02/03 Rust engine](../02_engine/03_rust-engine.md) |
 
 ## 02 Proposed by claude, not yet confirmed
@@ -65,7 +65,6 @@ Not needed for 1.0.0. Recorded so they are not lost.
 | Agent hooks and retrieval | Which hooks earn their noise; Codex hook support; whether semantic search earns its model download; one index shared with site search |
 | GitHub issues layout | Read-only or write; live or build-time snapshot; one repository or several; reuse the tracker UI or a plain list; keychain or credentials file |
 | Extensions | Whether an extension is a kind of library; the `agentksx` command contract; whether site scripts need a sandbox or a permission list |
-| Video pages | The cue syntax, owned by [2026-09-29-narrated-video-pages](../../../2026-09-29-narrated-video-pages/issue.md) |
 
 ## 04 Risks
 
@@ -78,6 +77,8 @@ Not needed for 1.0.0. Recorded so they are not lost.
 | **Stale caches** | A page that embeds a changed file, or a cache shared by two engine versions, shows old output | A page's hash covers the files it embeds; the engine version joins the cache key; the lesson of [2026-08-07-content-embed-cache-dependencies](../../../2026-08-07-content-embed-cache-dependencies/issue.md) |
 | **Single-page app chores** | `#heading` anchors, back-and-forward scroll, focus and accessibility, first-load size are free in a server-rendered site | Acceptance criteria for the client; lazy-loaded layouts and diagram libraries |
 | **Frontend weight** | Mermaid, Excalidraw and draw.io dominate the bundle | They already load only on pages that use them; published sites render diagrams to SVG at build time |
+| **The voice helper's native build.** `agentks-voice` links ONNX Runtime and libopus on three platforms | A helper that does not build or run on one platform leaves its users with only the browser voice | The voice spike builds it first; the helper links ONNX Runtime's prebuilt static libraries and sits outside the engine's workspace, so the engine's gate never compiles it ([the voiceover](../../../2026-09-29-narrated-video-pages/brainstorm/01_video-artifact-engine/07_voiceover.md)) |
+| **Unknown words without espeak-ng.** The GPL-free pronunciation step cannot guess a word it does not know | A product name spelled letter by letter sounds broken while the file and the check look fine | The pronunciation list in `config/video.yaml` and in each video, and the `video.unknown-word` error, so no clip ever spells a word by mistake |
 | **User CSS breaks on upgrade** | CSS is the only branding tool, so renaming a class breaks someone's site silently | Documented hooks treated like theme variables; renaming needs a migration; `agentks theme css` lists them per version |
 | **Library content is code** | `.html` and script elements run in the local viewer | Fetch only through git, verified against the pinned commit; sandboxed iframes; libraries arrive only through `dep.yaml`; `library add` prints the source |
 | **Network exposure** | Today's dev server listens on the whole network with the editor on | Localhost only by default from Phase 1 |
@@ -98,7 +99,7 @@ Not needed for 1.0.0. Recorded so they are not lost.
 | Shiki fidelity | A Rust highlighter that outputs CSS classes; small visual changes allowed ([02/03 Rust engine](../02_engine/03_rust-engine.md)) |
 | The dev-toolbar host | Rebuilt in the client in Phase 2 ([03/05 Dev toolbar](../03_frontend/05_dev-toolbar.md)) |
 | External layouts | Dropped by decision ([03/04 Theming and layouts](../03_frontend/04_theming-and-layouts.md)) |
-| Scoped CSS (1,364 lines) | Moves with its components; a class prefix per layout doubles as the stable hooks ([03/04 Theming and layouts](../03_frontend/04_theming-and-layouts.md)) |
+| Scoped CSS (1,364 lines) | Moves with its components; the layouts keep the built-in theme's class names, which are the stable hooks, and CSS the UI package adds uses the `aks-` prefix ([03/04 Theming and layouts](../03_frontend/04_theming-and-layouts.md)) |
 | The server-side CRDT | `yrs` is native in Rust ([02/04 Sync engine and server](../02_engine/04_sync-engine-and-server.md)) |
 | ~11,000 lines of docs | The complete docs rewrite, launch step 4 ([05/07 Docs rewrite and launch](../05_delivery/07_docs-rewrite-and-launch.md)) |
 | The `.html` MIME boundary | [02/04 Sync engine and server](../02_engine/04_sync-engine-and-server.md) |

@@ -30,7 +30,7 @@ This issue is in its discussion stage. The discussion stage is done when:
 - **Phase 3, publishing:** `agentks build`, static site generation from the shared components (JavaScript only for interactive parts), a fully static site for nginx, any static host or a CDN (with a basic Dockerfile for users), search-engine friendly, with no Rust server. Until it ships, publishers stay on the last 0.x release, pinned with mise.
 - **Launch:** the move to the NeuraLabsHQ organisation, a new main repository and a separate default-library repository ([repositories and three states](./brainstorm/02_future-stages/12_repositories-and-three-states.md)), the homepage and the docs at agentks.neuralabs.org, and the archival of this repository, in the order in [the launch note](./brainstorm/02_future-stages/10_launch-order-and-hosting.md).
 - **Later stages:** multi-user editing and the auth it needs; agent hooks and retrieval; a GitHub issues layout with machine-level GitHub sign-in; extensions that add `agentksx` commands or site scripts.
-- **Tracked separately:** narrated video pages and their audio, in [2026-09-29-narrated-video-pages](../2026-09-29-narrated-video-pages/issue.md).
-- **Out:** motion-graphics video (Remotion or HyperFrames level), custom user layouts, server-side page templates, a WASM build of the core, HTMX.
+- **Tracked separately:** video artifacts and their voiceover, in [2026-09-29-narrated-video-pages](../2026-09-29-narrated-video-pages/issue.md).
+- **Out:** film-level motion graphics and any rendered video file, custom user layouts, server-side page templates, a WASM build of the core, HTMX.
 
 Related: [2026-05-08-runtime-stack-migration](../2026-05-08-runtime-stack-migration/issue.md) · [2026-04-26-framework-as-cli-tool](../2026-04-26-framework-as-cli-tool/issue.md) · [2026-04-26-project-rebrand](../2026-04-26-project-rebrand/issue.md)

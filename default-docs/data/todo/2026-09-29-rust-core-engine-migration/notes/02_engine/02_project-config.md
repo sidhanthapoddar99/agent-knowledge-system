@@ -24,6 +24,8 @@ title: "Project config: the config/ folder"
 - Decided (sidhantha, 2026-09-29): user-authored custom layouts and the logic behind them are dropped.
 - Decided (sidhantha, 2026-09-30): `config/dep.yaml` is required, even when empty; `config/dep.lock` sits beside it.
 - Decided (sidhantha, 2026-09-29): the server listens on localhost only by default; network access needs an access key ([the server](../02_engine/04_sync-engine-and-server.md)).
+- Decided (claude, 2026-10-01): `paths` aliases stay, because keeping them makes the migration smaller. `@root` and `@config` are reserved ([020/20](../../subtasks/020_content-contract/20_config-folder.md)).
+- Decided (claude, 2026-10-01): `AGENTKS_PORT` is the only `.env` key in 1.0.0 ([020/20](../../subtasks/020_content-contract/20_config-folder.md)).
 - Proposed (claude, 2026-09-30): the `site.yaml` keys that change in 1.0.0 are the ones in section 04. Every other key keeps its meaning, so the migration is small.
 
 # 05 Notes & Analysis
@@ -36,7 +38,8 @@ title: "Project config: the config/ folder"
 | `navbar.yaml` | the user | yes | yes | Navbar style and items |
 | `footer.yaml` | the user | yes | yes | Footer style, columns, copyright |
 | `dep.yaml` | the user, or `agentks library add` | yes | yes, even as `libraries: {}` | The libraries the project uses |
-| `dep.lock` | agentks | yes | written on first install | The exact commit of every git library |
+| `dep.lock` | agentks | yes | written on the first install of a git library; a project with no git libraries has none | The exact commit of every git library |
+| `video.yaml` | the user | yes | no; a project with no videos has none | The project's default narration `voice:` and its `pronounce:` list ([video artifacts](../04_ecosystem/05_video-pages.md)) |
 | `.env.example` | the user | yes | no | Every `.env` key, documented |
 | `.env` | the user | no, git-ignored | no | Local overrides |
 | `themes/<name>/` | the user | yes | no | CSS overrides for a named theme |
@@ -102,10 +105,10 @@ pages:
 | `site.*` | Name, title and description, shown in the chrome and page metadata |
 | `engine_version` | The content version. Required; missing means `0.0.0`, which the 1.x gate refuses |
 | `server.port` | The local server's port |
-| `paths` | User aliases (`@data`, `@assets` and any other name) resolved against `config/`. Only `@root` may appear inside a value, and it means the project root. A path that escapes the project root is refused |
+| `paths` | User aliases (`@data`, `@assets` and any other name) resolved against `config/`. Two aliases are reserved and cannot be redefined: `@root`, the project root, and `@config`, the config folder. Only `@root` may appear inside a value. An absolute path is refused, because a project must work wherever it is checked out. A path that escapes the project root is refused, and so is a symlink that leads out of it |
 | `theme`, `theme_paths` | The active theme and where user themes are found |
-| `logo` | Logo per colour mode, and the favicon |
-| `pages.<name>` | One section: its URL base, type, built-in layout style and data folder or file |
+| `logo` | Logo per colour mode, and the favicon. Each must be a file inside the project that exists; a web address is refused |
+| `pages.<name>` | One section: its URL base, type, built-in layout style and data. `data` is a folder for docs, blog and issues sections, and one YAML file for a custom page |
 
 Every alias is resolved once, when config loads. A reference to an undefined alias, a missing data folder or an unknown layout style stops the start with an error naming the key.
 
@@ -125,7 +128,7 @@ The 1.0.0 docs migration makes each change and bumps `engine_version` ([versioni
 ## 05 .env
 
 - `.env` lives at `config/.env`, is git-ignored, and is optional.
-- It may only override a key `site.yaml` defines. In 1.0.0 that is the port: `AGENTKS_PORT=3090` overrides `server.port` (claude, proposed name).
+- It may only override a key `site.yaml` defines. In 1.0.0 that is the port: `AGENTKS_PORT=3090` overrides `server.port`. `AGENTKS_PORT` is the only key 1.0.0 reads. A removed 0.x key, such as `PORT` or `HOST`, is an error that names its fix.
 - An unknown key is a warning, not ignored silently, so a typo is noticed.
 - `.env.example` is committed and documents every key.
 - Access keys are not stored here. The server keeps only their hashes, in the machine home ([sync engine and server](./04_sync-engine-and-server.md)).
@@ -155,8 +158,3 @@ The full format is in [library system](../04_ecosystem/01_library-system.md).
 - The error names the content version, the supported range and the fix: `agentks migrate`, or pinning the older release with mise.
 - The gate lives in the binary and never depends on a download. Only the migration scripts are downloaded.
 - 1.0.0's floor is 1.0.0: every 0.x project migrates once.
-
-## 09 Open
-
-- Whether `paths` aliases survive, or sections name folders relative to the project root directly. Keeping them makes the migration smaller. See [open questions and risks](../01_overview/05_open-questions-and-risks.md).
-- The exact `.env` key names.

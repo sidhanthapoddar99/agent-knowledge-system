@@ -28,36 +28,29 @@ The page itself, built from the copy and design plan in [10](./10_content-and-de
 - sidhantha has reviewed the page.
 
 # 02 Status and Result
-Review. Every section is built and passed a screenshot critique. Left for later work: re-copying the commands from a real 1.0.0 run, the publishing row once Phase 3 ships, the 190/60 checks, and sidhantha's review.
+Review. The sections were rebuilt on 2026-10-01 (merged at `a9c94b9`): the hero workspace story, seven chapters (track, discuss, remember, docs, artifacts, video in preview, library), the issue structure, agents, three principles and install. Each passed a screenshot critique in both modes, on mobile and with reduced motion (`data/homepage-3/` in the main checkout). Left for later work: re-copying the commands from a real 1.0.0 run, the publishing row once Phase 3 ships, the 190/60 checks, and sidhantha's review.
 
 ## Result
 
-On the main repo's `main` branch, in `apps/agentks-homepage/src/`:
+On the main repo's `main` branch (merged at `a9c94b9`), in `apps/agentks-homepage/src/`:
 
 | Section | File |
 |---|---|
-| Header: logo, Docs, GitHub, theme toggle | `layout/site/header.tsx` |
-| Hero: message, install command with copy button, Read the docs, the folder-to-page figure | `modules/home/components/hero.tsx`, `folder-to-page.tsx` |
-| What you get: five rows, words beside a real file excerpt | `modules/home/components/capabilities.tsx` |
-| From install to your first page: four numbered steps | `modules/home/components/steps.tsx` |
-| Made for your coding agent: plugin commands, one CLI command | `modules/home/components/agents.tsx` |
-| Install: Linux and macOS / Windows tabs (arrow keys work), copy buttons | `modules/home/components/install.tsx` |
-| Footer: Docs, GitHub, library, marketplace, Neuralabs, MIT licence | `layout/site/footer.tsx` |
+| Header: the mark, Features, Structure, Agents, "by NeuraLabs", theme toggle | `layout/site/header.tsx` |
+| Hero: the message, the lede with the full name, and the workspace story of one issue from request to approval | `modules/home/components/hero.tsx`, `workspace-story.tsx` |
+| A place for every kind of work: seven chapters, each with an animated example of a real agentks file; a sticky stage on desktop, inline on mobile | `modules/home/components/chapters.tsx`, `chapter-story.tsx`, `demos.tsx` |
+| One structure for every issue: the five numbered parts and the files beside them | `modules/home/components/structure.tsx` |
+| Agents: the plugin commands, then the CLI lines | `modules/home/components/agents.tsx` |
+| Built on files you own: three principles | `modules/home/components/principles.tsx` |
+| Install: Linux and macOS / Windows tabs, copy buttons | `modules/home/components/install.tsx` |
+| Footer: the full name, links, Neuralabs, MIT licence | `layout/site/footer.tsx` |
 | 404 page, exported as `out/404.html` | `app/not-found.tsx` |
 
-- Copy: `modules/home/content.ts`. Addresses and commands: `lib/site.ts`, shared by the hero, the steps and the install tabs.
-- Quality floor: responsive to 360 px, a skip link, visible focus rings, `prefers-reduced-motion` shows the figure's end state, tabs follow the WAI-ARIA pattern. Contrast was chosen for AA (graphite `#545b66` on white is about 6.6:1); 190/60 measures it.
-- Tests: `lib/site.test.ts`, 7 tests in about 15 ms. They check that every shown command is one line of printable ASCII (so the copy button copies exactly what is shown), that links are https or root paths, and that the app owns no `docs`, `install.sh`, `install.ps1` or `llms.txt` route.
-
-### Critique pass (Playwright screenshots, 1440 px light and dark, 360 and 375 px)
-
-| Before | After |
-|---|---|
-| At 375 px the page was 582 px wide: grid tracks sized to long commands | Every grid track is `minmax(0, 1fr)`; long commands scroll inside their box. 360 px renders at 360 px |
-| The hero install command was cut off at 34 rem | The command box takes its own width |
-| The four steps sat in four narrow columns and cut off the curl command | A vertical numbered list: number, words, command |
-| The agent section's two columns cut off the plugin commands | Prose above, commands below at 44 rem |
-| The hero window had a drop shadow | Removed: the border already separates it. This was the one decoration cut |
+- Shared pieces: `marks.tsx` (the dot for who acted and the status mark, both passive), `play-on-view.tsx` (a figure waits until it comes into view, then plays), and `lib/motion.ts` (the three motion hooks). Figures play only on screen and pause in background tabs; reduced motion and no JavaScript show them finished.
+- Copy: `modules/home/content.ts`. Addresses and commands: `lib/site.ts`.
+- Quality floor: responsive to 360 px, a skip link, visible focus rings, tabs follow the WAI-ARIA pattern. 190/60 measures contrast.
+- Tests: 36 homepage tests pass in the gate (`lib/site.test.ts`, `lib/seo.test.ts`, `lib/theme.test.ts`, `styles/theme.test.ts`). `styles/theme.test.ts` allows a local custom property, such as `--tone`, in a component's CSS only when it shadows no theme or `--home-` name.
+- Screenshots: 21 in the main checkout's `data/homepage-3/`, in both modes, on mobile and with reduced motion. They were taken by hand with Playwright and the cached Chromium, not in the gate.
 
 ## Agent log
 none

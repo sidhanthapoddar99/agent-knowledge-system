@@ -1,15 +1,16 @@
 ---
-title: "Video pages: what the engine provides"
+title: "Video artifacts: what the engine provides"
 ---
 
-A **video page** is an ordinary markdown file with `video: true` in its frontmatter. The browser plays it as a narrated video: each `##` heading is a scene, each paragraph is one spoken beat, and short **cues** (HTML comments or a fenced block) drive the visuals. Nothing is rendered to MP4, and no media is committed to git. The video feature is owned by its own issue, [2026-09-29-narrated-video-pages](../../../2026-09-29-narrated-video-pages/issue.md). This note records only what the engine migration provides for it. The Rust engine reads the page into scenes, beats and cues, and sends them as data like every other page. It checks every cue and every library element a cue names. It generates and caches narration audio with an optional local voice model. The player and its widgets live in the shared UI package, so the local app and a published site play the same way. On a published page the player is an island, the only part of the page that ships JavaScript. Video pages are one of the two places where library elements may be used, always as `alias:element` inside a cue.
+A **video artifact** is data in YAML: one `NN_<slug>.video.yaml` file for a short video, or a folder of small files for a longer one. It holds slides, the items on them, narration beats and one-line actions. It composes library components, and a small player plays it live in the browser with a generated voiceover. No video file of any kind is ever made, and no media is committed to git. The video feature is owned by its own issue, [2026-09-29-narrated-video-pages](../../../2026-09-29-narrated-video-pages/issue.md), whose design is [the video artifact engine](../../../2026-09-29-narrated-video-pages/brainstorm/01_video-artifact-engine/01_index.md). This note records only what the engine provides for it. A compiler crate in the Rust engine loads either form, checks it, resolves its components, computes every time and emits typed video data. The engine first serves it as a standalone player page at `/artifacts/<path>.video`, then as a page of kind `video` in the app. A separate helper, `agentks-voice`, generates the voice; clips live in a machine-wide store, `~/.agentks/audio/`. Video artifacts are one of the two places where library elements may be used, always as `alias:name` in a typed field of its YAML.
 
 # 03 References
 
-- The video issue: [issue.md](../../../2026-09-29-narrated-video-pages/issue.md), and its notes on [the spike](../../../2026-09-29-narrated-video-pages/notes/01_initial_discussion/03_the-spike.md), [the video engine](../../../2026-09-29-narrated-video-pages/notes/01_initial_discussion/04_video-engine.md), [narration audio](../../../2026-09-29-narrated-video-pages/notes/01_initial_discussion/05_narration-audio.md), [caching](../../../2026-09-29-narrated-video-pages/notes/01_initial_discussion/06_caching.md), [libraries and reusable elements](../../../2026-09-29-narrated-video-pages/notes/01_initial_discussion/07_libraries-and-reusable-elements.md), [the relation to this migration](../../../2026-09-29-narrated-video-pages/notes/01_initial_discussion/08_relation-to-the-engine-migration.md) and [its open questions](../../../2026-09-29-narrated-video-pages/notes/01_initial_discussion/09_open-questions.md).
-- [Video and narration audio](../../brainstorm/01_initial-discussion/14_video-and-narration-audio.md): this issue's side of the discussion.
+- The video issue: [issue.md](../../../2026-09-29-narrated-video-pages/issue.md) and its design, [the video artifact engine](../../../2026-09-29-narrated-video-pages/brainstorm/01_video-artifact-engine/01_index.md): [the format](../../../2026-09-29-narrated-video-pages/brainstorm/01_video-artifact-engine/03_artifact-format.md), [the player](../../../2026-09-29-narrated-video-pages/brainstorm/01_video-artifact-engine/06_player.md), [the voiceover](../../../2026-09-29-narrated-video-pages/brainstorm/01_video-artifact-engine/07_voiceover.md), [library components](../../../2026-09-29-narrated-video-pages/brainstorm/01_video-artifact-engine/08_library-components.md), [how it fits the new architecture](../../../2026-09-29-narrated-video-pages/brainstorm/01_video-artifact-engine/09_architecture-fit.md), [the authoring skill](../../../2026-09-29-narrated-video-pages/brainstorm/01_video-artifact-engine/10_authoring-skill.md).
+- The video issue's [open questions](../../../2026-09-29-narrated-video-pages/notes/01_initial_discussion/09_open-questions.md) and [build plan](../../../2026-09-29-narrated-video-pages/plans/01_video-build/overview.md).
+- [Video and narration audio](../../brainstorm/01_initial-discussion/14_video-and-narration-audio.md): this issue's side of the first discussion.
 - [Open questions](../../brainstorm/01_initial-discussion/16_open-questions.md), questions 11 and 13: audio belongs to the video issue; markdown stays plain.
-- Sibling notes: [library system](./01_library-system.md), [content format](../02_engine/01_content-format.md), [Rust engine](../02_engine/03_rust-engine.md), [machine home and build cache](../02_engine/06_machine-home-and-build-cache.md), [shared UI package](../03_frontend/01_shared-ui-package.md), [publishing](../05_delivery/02_publishing-ssg.md), [AI plugins and skills](./02_ai-plugins-and-skills.md).
+- Sibling notes: [library system](./01_library-system.md), [content format](../02_engine/01_content-format.md), [project config](../02_engine/02_project-config.md), [Rust engine](../02_engine/03_rust-engine.md), [Rust CLI](../02_engine/05_rust-cli.md), [machine home and build cache](../02_engine/06_machine-home-and-build-cache.md), [shared UI package](../03_frontend/01_shared-ui-package.md), [client application](../03_frontend/02_client-application.md), [publishing](../05_delivery/02_publishing-ssg.md), [AI plugins and skills](./02_ai-plugins-and-skills.md).
 
 # 04 Decisions
 
@@ -17,85 +18,91 @@ A **video page** is an ordinary markdown file with `video: true` in its frontmat
 - Decided (sidhantha, 2026-09-29): generated narration audio may live in the local build cache and be embedded in a build, as long as it is never uploaded to GitHub.
 - Decided (sidhantha, 2026-09-29): libraries are shared engine machinery, not video-only.
 - Decided (sidhantha, 2026-09-30): narration audio and the voice model belong to the video issue. The voice model is a separate download, not a library.
-- Decided (sidhantha, 2026-09-30): library elements are used only in video pages and artifact pages. A video names them inside its cues; the narration prose stays plain markdown.
+- Decided (sidhantha, 2026-09-30): library elements are used only in video artifacts and artifact pages. A video names them in typed fields of its YAML file; markdown never names them.
 - Decided (sidhantha, 2026-09-30), on claude's proposal: pages name an element as `alias:element`.
-- Decided (claude, 2026-09-30): after the migration, Rust reads the scenes, beats and cues and sends them as data; the frontend only plays. The video issue's relation note proposed it, and it follows the rule that the frontend holds no rules.
+- Decided (sidhantha, 2026-09-30): a video is first an independent artifact, not a markdown page; a markdown embed comes later ([the video issue's comment 001](../../../2026-09-29-narrated-video-pages/comments/001_2026-09-30_video-artifacts-direction.md)).
+- Decided (sidhantha, 2026-10-01): a video can also be a folder with a `settings.json`, a controller and one file per scene ([the design](../../../2026-09-29-narrated-video-pages/brainstorm/01_video-artifact-engine/01_index.md#the-folder-form)).
+- Decided (claude, 2026-10-01): Rust compiles the video and sends typed video data; the frontend only plays, and the player alone measures real text, so it reports layout problems as diagnostics. It follows the rule that the frontend holds no rules.
+- Decided (claude, 2026-10-01): generated audio lives in a machine-wide store, `~/.agentks/audio/`, not in the build cache, because a clip is keyed by everything that decides its sound. The 2026-09-29 decision that audio "may live in the build cache" allows this.
+- Decided (claude, 2026-10-01): the voice runs in a separate helper, `agentks-voice`, downloaded on request, so the main binary stays lean and a native crash cannot take the server down.
 
 # 05 Notes & Analysis
 
 ## 01 The format, in short
 
-The full format belongs to the video issue. What the engine must parse:
+The full format belongs to the video issue ([the format](../../../2026-09-29-narrated-video-pages/brainstorm/01_video-artifact-engine/03_artifact-format.md)). What the engine must know:
 
 | Part | Meaning |
 |---|---|
-| `video: true` in frontmatter | Marks the page as a video |
-| The `#` title and paragraphs before the first `##` | The intro scene |
-| Each `##` heading | Starts a scene |
-| Each paragraph | One beat, spoken in turn |
-| A diagram, code block, list, table or lone image | A visual the stage shows |
-| **Bold** text in a beat | Focuses the matching part of the visual |
-| A cue: `<!-- flow: browser -> server -->`, or a fenced `scene` block | An action or a layout for the scene. The only place a video names a library element: `<!-- panel: icons:server -->` |
+| `NN_<slug>.video.yaml` | A video as one file, in a docs section or a tracker's `notes/` or `brainstorm/`. Images sit beside it in `assets/` |
+| `NN_<slug>/` with `settings.json` `{"kind": "video"}` | A video as a folder: `controller.yaml` (the header), one `NN_<slug>.yaml` per slide in prefix order, optional `components/<category>/` named `self:name`, and `assets/`. One page, never a sidebar group |
+| `slides` | Each slide picks a layout (or a slide template) and lists its items: 12 built-in kinds, placed by named areas and quadrants on a 12 × 6 grid, never by pixels |
+| `beats` | Narration, one or two sentences each, with actions such as `show list.2 rise @Obsidian` tied to a spoken word, a percentage or an offset |
+| Typed fields (`icon:`, `frame:`, `in:`, `style:` …) | Name library components as `alias:name`; the field gives the category. A bare name is a player built-in |
+| `pronounce:` | One-off pronunciations; the project's list is in `config/video.yaml` |
 
-On disk, in Obsidian or on GitHub, the file reads as an ordinary document, and the site shows the same text as the video's transcript. Cues are hidden (HTML comments) or shown as code (a fenced block) by other apps. The cue syntax is still open in the video issue.
+The files read as a script on disk. The 3-minute example is a folder of a 91-byte controller and ten scenes under 1 KB each. `agentks check video` warns when one file passes its limit (4 KB for a single file, 2 KB for a scene or the controller) and when narration passes 600 words, about four minutes.
 
 ## 02 What each side owns
 
 | Part | Side | Why |
 |---|---|---|
-| Reading the markdown into scenes, beats and cues | Rust engine | A rule. It is sent as page data, like a sidebar or an outline |
-| Checking cues and `alias:element` names | Rust engine, shared with the CLI | An unknown widget, cue target, alias or element is an error naming the page and line, never a silent miss. `agentks check libraries` runs the same check |
-| Resolving an element to its file | Rust engine | Through `dep.lock` and the library's manifest ([library system](./01_library-system.md)) |
-| Generated audio, the voice model, word timings | Rust engine | Machine-level work, cached under `~/.agentks/` |
-| The player, stage, widgets and motion | Frontend, in `apps/packages/agentks-ui` | Display. The same code plays in the local app and on a published site |
-| The browser's built-in voice | Frontend | The fallback when no generated audio exists |
-| A published video page | `agentks build` | The page and its transcript become static HTML; the player is an island |
+| Loading both forms, checking, resolving, expanding templates, the SVG allowlist, the timeline | Rust, `crates/video` (package `agentks-video-compiler`) | A rule. Every error names the file to change, with its line and column. An unknown name or an anchor that matches no whole word is an error, never a guess |
+| Resolving a component to its file | Rust | Through `dep.lock`, the library's manifest and the component's category ([library system](./01_library-system.md)) |
+| Generating clips, word timings | The `agentks-voice` helper, driven by Rust | Kokoro-82M through ONNX Runtime, in its own process |
+| Joining clips into one stream per video | Rust, `crates/video` | Packet copying, no re-encoding, so the main binary gains no audio codec |
+| The player: stage, layout, kinds, motion, captions, layout diagnostics | Frontend, `apps/packages/agentks-video` | Display. Framework-free TypeScript using the Web Animations API, 30 KB gzipped at most |
+| The video page and its island | Frontend, `apps/packages/agentks-ui` | The layout and a small island that wraps the player |
+| The browser's built-in voice | Frontend | The fallback when clips are missing |
+| Standalone pages, published pages and audio | Rust and `agentks build` | One shell writer serves the route, `agentks video preview` and the build |
 
-The spike on branch `spike/narrated-video` reads the scenes in the browser from the rendered page. After the migration that moves to Rust, and the player only plays.
+## 03 Library components in videos
 
-## 03 Library elements in videos
-
-- **Built-in widgets** (file tree, flow, browser frame, phone frame, chart, code, terminal, diagram) are part of the player in the shared UI package. They are not library elements and need no `dep.yaml` entry.
-- **Library elements** fill widgets and panels: icons, scene templates, HTML artifacts shown in a frame, and a team's own script widgets. A cue names them as `alias:element`. The alias says which library, so no search order is needed.
-- **A script element** follows the widget contract: it receives its cue and its panel, and animates only inside that panel. It runs in a sandboxed frame like other library HTML, so it cannot reach the player around it.
-- **A published video** gets every element it names copied into the static output at `/_lib/<alias>/<element>` by `agentks build`, so it plays with no library installed.
+- **The player holds the mechanics; libraries hold the looks.** Built-in: the stage, the grid, nine layouts, the item kinds, a minimal preset pack, a plain style. Libraries: frames, icons, illustrations, backgrounds, annotations, chart templates, layouts, slide templates, presets, transitions and styles, in `components/<category>/`.
+- **Most components are data (JSON) or SVG**, read by the compiler and inlined into the compiled video, so a video plays with no extra requests and no library code runs. Inlined SVG passes an allowlist first ([library system](./01_library-system.md), section 14).
+- **Images** load from `/_lib/<alias>/<name>`; `agentks build` copies the ones a video uses into the static output.
+- **Script components** have a contract but wait for a later version. When they come, they run sandboxed and are driven by `seek` messages.
 
 ## 04 Narration audio
 
 | Voice | Where it comes from | Notes |
 |---|---|---|
-| The browser's built-in voice | The Web Speech API | Always available, no setup. Quality varies by browser. Timing is estimated |
-| A generated voice | A local text-to-speech model, run by the binary | An optional download into `~/.agentks/models/<model>-<version>/`, tens to hundreds of MB, never in the base binary. Kokoro, run through ONNX, is the first candidate |
+| Generated | Kokoro-82M v1.0, timestamped, 8-bit (92 MB, Apache 2.0), run by `agentks-voice` | Installed with `agentks voice install`. Exact durations and word times. English only in version 1 |
+| The browser's built-in voice | The Web Speech API | The fallback. Quality varies by browser. Timing is estimated and the clock waits for speech |
 
-- **One clip per paragraph.** A clip's length sets its beat's length, and rewording one paragraph regenerates one clip.
-- **Word timings** come from the model or from aligning the clip, so a cue can land on the spoken word.
-- **Format:** Opus at about 48 kbps, roughly 0.35 MB per minute.
-- **Choosing the voice:** the page's frontmatter, else the project default, else the browser voice. The reader can always switch to the browser voice.
+- **Pronunciation:** misaki-rs (MIT) built without its `espeak` feature, so no GPL code enters the chain. A word the voice cannot say is an error, `video.unknown-word`, fixed by `pronounce:` in `config/video.yaml` or in the video.
+- **One clip per beat:** Ogg Opus, mono, 24 kHz, 24 kbit/s, with its word timings beside it. Rewording one beat regenerates one clip.
+- **One stream per video:** the engine joins the clips and fills pauses with silent packets, so one audio element plays the whole video and seeking is exact. About 180 KB a minute.
+- **Choosing the voice:** the video's `voice`, else `config/video.yaml`, else the browser voice. The reader can always switch to the browser voice.
+- **When:** in the background when a video is opened and the helper is installed; `agentks video voice` on request; and in `agentks build`.
 
-## 05 Caching
+## 05 Where things live
 
 ```
 ~/.agentks/
-  models/<model>-<version>/                        the voice model, once per machine
-  libraries/<host>/<repository path>/<commit>/     libraries the videos use
-  build-cache/<project key>/
-    audio/<hash of text + voice + model>.opus      one clip per paragraph
+  tools/agentks-voice/<version>/                 the helper, installed on request
+  models/kokoro-82m-v1.0-timestamped-q8/         the model and its voices, once per machine
+  libraries/<host>/<repository path>/<commit>/   libraries the videos use
+  audio/<beat key>.opus · .json                  clips and word timings, shared by every project
+  audio/<stream key>.opus                        each video's joined stream
 ```
 
-- An audio clip's key is the hash of the paragraph's text, the voice and the model version. Editing one paragraph invalidates one clip. Changing the voice regenerates the whole video.
-- Audio lives in the project's build cache, so it goes when that cache is cleaned. A removed clip is regenerated the next time the video plays.
-- Nothing here is cleaned automatically ([machine home and build cache](../02_engine/06_machine-home-and-build-cache.md)).
+- A clip's key is the BLAKE3 hash of the beat's text, the pronunciation entries that apply, the voice, the model id and the helper's version. The playback rate is not in it.
+- The store is outside the engine version, so an upgrade regenerates nothing.
+- Nothing here is cleaned automatically. `agentks cache clean` keeps the clips the videos in the scanned projects still use ([machine home and build cache](../02_engine/06_machine-home-and-build-cache.md)).
 
-## 06 Publishing
+## 06 Routes, commands and publishing
 
-- `agentks build` writes the video page and its transcript as static HTML. The player is the only island on the page.
-- Generated audio is copied into the build output when it exists. A build machine without the voice model either downloads it and generates the audio, or publishes without generated audio, and the player falls back to the browser voice. Audio is never committed to git either way.
+- **Routes:** `/artifacts/<path>.video` (the standalone page, with `?sheet` for the review sheet and `?theme`), `/_audio/<key>.opus` (streams, with range requests), the page over `/api` as `kind: "video"` ([client application](../03_frontend/02_client-application.md)).
+- **Commands:** `check video`, `video info`, `video preview`, `video schema`, `video voice`, `voice install · status · remove` ([Rust CLI](../02_engine/05_rust-cli.md)).
+- **Publishing:** `agentks build` writes each video page with its transcript and island, each standalone page to `artifacts/<path>.video/`, and each video's stream to `_audio/`. Without the helper or cached clips, a video publishes with the browser voice.
 
 ## 07 Timing against the migration
 
-- **Can start now:** the player, scenes, widgets and motion style, as browser code in today's engine. They move into the shared UI package unchanged. The video issue plans a second spike (grid scenes, cues, the first widgets) before the full widget set.
-- **Waits for the migration:** generated audio and its cache, the voice model download, library downloads and element lookup. They need the `~/.agentks/` home (Phase 1) and libraries (Phase 2). Building them in today's engine would mean building them twice.
+- **Can start now:** the player spike and the voice spike in the new main repository, and the library restructure before the library's first tag.
+- **Waits for the migration:** the compiler needs the core's config loading and site index; video pages need the client and its islands; audio in the app needs the machine home; publishing needs `agentks build`. Nothing is built in today's engine.
+- Video work does not block the migration's 1.0.0.
 
 ## 08 Open
 
-The video issue owns these ([its open questions](../../../2026-09-29-narrated-video-pages/notes/01_initial_discussion/09_open-questions.md)): the cue syntax, the voice model, whether to build the second spike first, and what the widgets are written in, which depends on this migration's UI framework choice ([open questions and risks](../01_overview/05_open-questions-and-risks.md)).
+The video issue owns these ([its open questions](../../../2026-09-29-narrated-video-pages/notes/01_initial_discussion/09_open-questions.md)): the default voice and how the voice says "agentks", both waiting on sidhantha's listening test, plus four answers claude took provisionally.

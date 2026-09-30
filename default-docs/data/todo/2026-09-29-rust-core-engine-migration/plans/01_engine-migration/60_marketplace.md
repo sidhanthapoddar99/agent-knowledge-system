@@ -14,7 +14,7 @@ The marketplace lists the agentks plugins for Claude Code and Codex.
 - [ ] **List both plugins** in both catalogues (130/30).
 
 # 02 Status and Result
-Not started.
+Not started. Both plugins it lists are merged into the main repository's `main` (2026-10-01, `7d0246e`), and a trim runs beside wave 3. The marketplace repository's catalogues exist and are empty (010/80).
 
 # 03 References
 - [The plan overview](./overview.md)

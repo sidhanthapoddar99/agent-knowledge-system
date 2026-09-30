@@ -72,22 +72,27 @@ The gate is small and has no network path. It must work offline and on a machine
 ```
 agentks migrate [--dry-run] [--yes] [--json]
   1. read      content version X (site.yaml), engine version Y (the binary)
-  2. guard     refuse on a git tree with uncommitted changes
-  3. fetch     list apps/agentks-engine/migrations/docs/ at tag vY on the main
-               repository; download every script with a version in (X, Y]
-  4. runtime   check that uv is present; if not, print how to install it
+  2. version   X above Y is an error; X equal to Y is done, with nothing to run
+  3. guard     refuse a project that is not in git (NotVersioned), and a git
+               tree with uncommitted changes
+  4. fetch     fetch apps/agentks-engine/migrations/ at tag vY on the main
+               repository; pick every docs script with a version in (X, Y]
+  5. runtime   check that uv is present; if not, print how to install it
                and stop
-  5. detect    run every script's detect step; show what each would change
-  6. dry run   show the full dry run and ask to continue (--yes skips the ask)
-  7. migrate   run the scripts in version order
-  8. verify    run every script's verify step; anything left, or a blocking
+  6. detect    run every script's detect step; show what each would change
+  7. dry run   show the full dry run and ask to continue (--yes skips the ask)
+  8. migrate   run the scripts in version order
+  9. verify    run every script's verify step; anything left, or a blocking
                manual item, is an error
-  9. check     read every pinned library's engine range; list all mismatches
- 10. bump      set engine_version to Y in site.yaml, as the last step
+ 10. bump      set engine_version to Y in site.yaml, the last step of the run
+ 11. check     the CLI reads every pinned library's engine range after the run
+               and lists all mismatches
 ```
 
-- **Scripts come only from the official repository**, at the tag of the installed binary. A user can never point `agentks migrate` at another source. Git and HTTPS protect the download; no separate hash list is kept.
-- **Downloaded scripts are cached** under `~/.agentks/migrations/<version>/`, so re-running after a fix does not download again.
+- **The version guard runs before the clean-tree guard**, so a project that needs nothing is never refused for uncommitted changes.
+- **The library check is the CLI's step.** `agentks-migrate` and `agentks-library` are both layer 2 and may not depend on each other, so the CLI calls the library check after `run()` returns.
+- **Scripts come only from the official repository**, at the tag of the installed binary. A user can never point `agentks migrate` at another source. Git and HTTPS protect the download; no separate hash list is kept. A development build is the exception: it reads its own checkout's `migrations/` folder and fetches nothing.
+- **Downloaded scripts are cached** under `~/.agentks/migrations/<version>/`, which holds the release's whole `migrations/` folder (`docs/`, `library/`, the README and `tests/`), so re-running after a fix does not download again.
 - **Offline** is an error that says a network connection is needed once, for the download.
 - **Covering every 0.x format.** The 1.0.0 scripts must bring any content from the oldest supported 0.x version up to 1.0.0. That includes creating what 1.0.0 requires: an empty `config/dep.yaml`, `.env` moved into `config/`, `CONFIG_DIR` removed, custom layouts replaced by a built-in style or an artifact.
 
@@ -143,7 +148,7 @@ A library's users never migrate it. Libraries sit read-only in the machine cache
 
 A forced migration that corrupts content is the worst failure in this design, so the runner:
 
-- refuses to run on a git tree with uncommitted changes, so every change can be reviewed and undone with git;
+- refuses to run on a project that is not in git, or on a git tree with uncommitted changes, so every change can be reviewed and undone with git;
 - always shows a dry run before changing anything;
 - re-runs every detect step afterwards and reports anything left as an error;
 - bumps `engine_version` last, never first, so a half-finished migration is still caught by the gate.

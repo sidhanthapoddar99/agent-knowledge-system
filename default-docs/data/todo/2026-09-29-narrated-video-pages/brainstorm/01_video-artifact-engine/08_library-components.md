@@ -2,7 +2,7 @@
 title: "Library components"
 ---
 
-**The player holds the mechanics; libraries hold the looks.** Every library keeps its components in `components/<category>/`, one folder per category, with fifteen fixed categories. Most video components are data (JSON presets, transitions, layouts, slide templates, chart templates, styles) or SVG (icons, illustrations, backgrounds, frames, annotations). The Rust compiler reads the ones a video uses, checks them against their category's contract, and inlines them into the video's compiled data. So a video plays with no extra requests and no library code runs. Inlined SVG passes an allowlist first. Code components (`scripts`) have a contract but wait for a later version. The manifest gains one field, `category`. The default library ships the full Lucide icon set and about 115 video components on day one, so videos look good from the first one.
+**The player holds the mechanics; libraries hold the looks.** Every library keeps its components in `components/<category>/`, one folder per category, with fifteen fixed categories. Most video components are data (JSON presets, transitions, layouts, slide templates, chart templates, styles) or SVG (icons, illustrations, backgrounds, frames, annotations). The Rust compiler reads the ones a video uses, checks them against their category's contract, and inlines them into the video's compiled data. So a video plays with no extra requests and no library code runs. Inlined SVG passes an allowlist first. Code components (`scripts`) have a contract but wait for a later version. The manifest gains one field, `category`. The default library ships the full Lucide icon set and a first set of video components on day one ([section 08](#08-the-day-one-set)), so videos look good from the first one.
 
 ## 01 Who owns what
 
@@ -43,18 +43,18 @@ The built-in set exists so a project that removes every library still plays its 
 
 The default library's repository keeps its other top-level folders beside `components/`: `templates/` for starter projects (`agentks init`), `scripts/` for its own tooling, `preview/`, `LICENSES/`. Those are not components.
 
-**The structure is the same for every library**, not only the default one. A manifest-less local library follows it too: each file's category is its folder and its name is its file name without the extension.
+**The structure is the same for every library**, not only the default one. A manifest-less local library follows it too: each file's category is its folder and its name is its file name without the extension. So does a folder video's own `components/`, which the compiler reads as a manifest-less library named `self`, with the same resolver and the same contract checks ([the format](./03_artifact-format.md#the-videos-own-components)).
 
 ## 03 The categories
 
 | Category | Holds | Type | A video names it in | Artifacts use it | Size cap |
 |---|---|---|---|---|---|
-| `icons` | Single-colour glyphs | SVG | `icon:` | `<img>` or inline, from `/_lib/` | 2 KB |
-| `illustrations` | Multi-part artwork: people, devices, scenes | SVG | `image:` | Yes | 30 KB |
+| `icons` | Single-colour glyphs | SVG | `icon:` | Through a CSS mask or inline, from `/_lib/` | 2 KB |
+| `illustrations` | Multi-part artwork: people, devices, scenes | SVG | `image:` | Inline, with the roles mapped | 30 KB |
 | `images` | Photos, screenshots, textures, before-and-after states | WebP, AVIF, PNG, JPEG | `image:` | Yes | 250 KB, 1920 px long side |
-| `backgrounds` | Slide backgrounds: gradients, dots, grids, meshes | SVG | `bg:` | Yes | 8 KB |
-| `frames` | Anything with a screen slot: device and window chrome (browser, phone, terminal) and containers (card, callout, speech bubble, sticky note) | SVG | `frame:` | Yes, as images, or through a widget | 12 KB |
-| `annotations` | Marks drawn around, under or over an item: hand-drawn circles, underlines, brackets, highlight boxes, arrows, ticks | SVG | an emphasis preset's `overlay` | Yes | 4 KB |
+| `backgrounds` | Slide backgrounds: gradients, dots, grids, meshes | SVG | `bg:` | Inline, with the roles mapped | 8 KB |
+| `frames` | Anything with a screen slot: device and window chrome (browser, phone, terminal) and containers (card, callout, speech bubble, sticky note) | SVG | `frame:` | Inline, with the roles mapped, or through a widget | 12 KB |
+| `annotations` | Marks drawn around, under or over an item: hand-drawn circles, underlines, brackets, highlight boxes, arrows, ticks | SVG | an emphasis preset's `overlay` | Inline, over its target | 4 KB |
 | `widgets` | Interactive HTML for artifacts | HTML | not used | In a sandboxed iframe | 15 KB |
 | `charts` | Chart templates over the player's marks | JSON | `chart:` | No | 4 KB |
 | `layouts` | Named areas on the body grid | JSON | `layout:` | No | 2 KB |
@@ -77,6 +77,7 @@ The default library's repository keeps its other top-level folders beside `compo
 - **The field in the video gives the category**, so a name needs no prefix: `frame: ks:phone-frame`, `icon: ks:phone`.
 - **Where two categories want the same word**, one of them takes a suffix that says its kind. Frames end in `-frame`, so the icon `phone` and the frame `phone-frame` never clash, and both read naturally.
 - **Inside a component**, `self:name` names another component of the same library, and a bare name is a player built-in. Libraries cannot depend on other libraries, so nothing else is allowed.
+- **`self` always means "the collection I belong to".** Inside a library component it is that library. In a folder video's scene files and its own components it is the folder's `components/`. `self` is reserved: `config/dep.yaml` refuses it as an alias.
 
 ## 05 The manifest
 
@@ -99,6 +100,8 @@ One new required field per element, `category`, which must match the element's f
 
 `agentks library find` and `library show` gain `--category`, so an agent can list, say, every entrance preset in one short command. `library show ks --category slides` prints each template's slots.
 
+**Decided (claude, 2026-10-01):** tags name what a drawing shows, never a vendor or product it does not show, because `agentks library find aws` must find AWS things, not a generic cloud. So `cloud-services` lost `aws`, and the review of every tag dropped the other vendor names on generic drawings: `iphone` and `android` on `phone-frame`, `chrome` and `safari` on `browser-frame`, `vscode` on `code-frame` and `ide-frame`, `docker`, `kubernetes`, `redis` and the cloud vendors on the curated icons, and a few more. The library's `AGENTS.md` states the rule.
+
 ## 06 The contract of each category
 
 The engine owns one JSON Schema per data category and prints it with `agentks video schema --component <category>`. `agentks check libraries` and the library's own check apply these rules.
@@ -107,9 +110,32 @@ The engine owns one JSON Schema per data category and prints it with `agentks vi
 
 | Rule | Icons | Illustrations | Backgrounds | Frames | Annotations |
 |---|---|---|---|---|---|
-| View box | `0 0 24 24` | Any | `0 0 1920 1080`, `preserveAspectRatio="xMidYMid slice"` | Any | Any; `preserveAspectRatio="none"` so it stretches to its target |
-| Colour | `currentColor` only; stroke 2, round caps and joins, no fill | `currentColor` and the player's role variables | Role variables, low contrast, no text | Role variables | `currentColor` strokes with `vector-effect="non-scaling-stroke"`, so the line keeps its weight when stretched |
-| Special parts | No ids | `data-part` names on parts, which may be targeted later | An optional `<g data-drift>` the player moves slowly | One `<rect data-slot>` marks the screen; an optional `<text data-label>` takes the item's label | `data-fit`: `around`, `under`, `over`, `left` or `right` of the target |
+| View box | `0 0 24 24` | `0 0 400 400` | `0 0 1920 1080`, `preserveAspectRatio="xMidYMid slice"` | Any | Any. `preserveAspectRatio="none"` so it stretches to its target, or `xMidYMid meet` for the six marks that keep their shape |
+| Colour | `currentColor` only; stroke 2, round caps and joins, no fill | `currentColor` ink, stroke 4, round caps and joins; role variables for fills; hair in `--vx-warn` | Role variables, low contrast, no text | Role variables; a label's font is `var(--vx-font-text)` or `var(--vx-font-code)` | A `currentColor` pen set on the `<svg>`; a path may set its own `stroke-width` and `opacity`; `vector-effect="non-scaling-stroke"` on each path, so the line keeps its weight when stretched |
+| Special parts | None | Top-level `<g data-part>` groups in drawing order, with no `transform` or `opacity`; shared names `ground`, `deco`, `links` and `packets`; a standing subject on the ground line at y=352 | An optional `<g data-drift>` that the player moves by at most 96 units, and that reaches at least 120 units past each stage edge | One `<rect data-slot="">` marks the screen, with a straight top edge; its `rx` rounds only the bottom corners. An optional `<text data-label="">` takes the item's label. Optional `data-part` markers | `data-fit`: `around`, `under`, `over`, `left` or `right` of the target. Only `<path>` elements, one subpath each, in drawing order, with `pathLength="1"` |
+| Ids | None | Each starts with the element's name | Each starts with the element's name | Each starts with the element's name | Each starts with the element's name |
+
+**Decided (claude, 2026-10-01): frames.**
+
+- A slot is `<rect data-slot="">` and a label is `<text data-label="">`. A check tests that the attribute is there, not its value, because XML needs some value and the value carries no meaning.
+- A part may carry a `data-part` marker, like the browser's `title`. A `<device>-view` widget fills or hides the parts it knows, and a video leaves them as drawn, because one frame serves both: the widget writes the page title into the tab, and a video shows the chrome as it is.
+- A slot's top edge is straight, and its `rx` rounds only the bottom corners, because the player rounds only the bottom corners of an image that covers the slot. The top of a slot meets chrome, such as a status bar or a title bar. `photo-frame`'s backing was redrawn with a straight top edge to match.
+- A label may use `var(--vx-font-text)` or `var(--vx-font-code)`, because the style picks the typefaces, and a URL or a file name reads as code.
+- Ids start with the frame's name, like `browser-frame-title`, because an artifact inlines SVGs into one page, where ids are global.
+
+**Decided (claude, 2026-10-01): annotations.**
+
+- Each stroke is its own `<path>` with one subpath, listed in drawing order, and a mark draws only with `<path>`, because the player's line draw runs down each path in turn. A second subpath inside one path would draw at the same time as the first, and a `<rect>` or a `<circle>` starts at a point the author does not choose.
+- The six marks that must keep their shape, `tick-mark`, `cross-mark`, `star-mark`, `hand-arrow`, `curved-arrow` and `loop-arrow`, use `xMidYMid meet`. The others keep `none`, because a tick or an arrow squashed to a word's box no longer reads as one, while a circle or an underline must stretch to fit.
+- A path may set its own `stroke-width` and `opacity`, because a highlighter swipe is wide and faint while the pen is a 5-unit line. Nothing else overrides the pen.
+
+**Decided (claude, 2026-10-01): backgrounds.** Ids start with the background's name, like `dots-grid`, for the same reason as frames. A drift layer reaches at least 120 units past each stage edge, and the player moves it by at most 96 units, because then a moving layer never shows its edge, with 24 units to spare. `scripts/generate_backgrounds.py` now writes every background, because it reproduces the shipped files byte for byte; a test fails when a file and its code disagree.
+
+**Decided (claude, 2026-10-01): illustrations.** The set's conventions are written down in the category's `README.md`: the 400×400 view box, the 4-unit ink stroke with round caps and joins, the ground line at y=352, parts as top-level `<g data-part>` groups in drawing order, and the shared part names. Hair is `var(--vx-warn)` in every illustration, because `currentColor` turns hair white in dark mode and `--vx-muted` is grey in both modes. `--vx-warn` reads as golden brown in light mode and blond in dark mode, and stays a hair colour under the other test palettes.
+
+**Decided (claude, 2026-10-01): artifacts.** An artifact inlines an SVG element and maps the ten roles and the two font variables to its theme, because an SVG in an `<img>` cannot see the page's variables and loses every role fill. The library's `README.md` gives this recipe once, with a snippet, beside the icon and widget recipes. Icons keep their `currentColor` mask recipe, because an icon has one colour and a mask needs no script.
+
+**Decided (claude, 2026-10-01): the library check owns the id rule for now.** `scripts/check.py` checks that every id in a non-icon SVG starts with the element's name, because nothing else checks it until `agentks check libraries` exists. It then moves to Rust with the other content rules.
 
 ### SVG safety: an allowlist
 
@@ -122,13 +148,27 @@ The compiler inlines SVG into the page, so SVG is the one library content that r
 | **`style` attributes** with allowlisted properties only | |
 | **References:** `url(#id)` and `href="#id"` to an id in the same file only | |
 
+**Open (claude, 2026-10-01): what the shipped SVGs need from the allowlist.** Beyond the elements and markers above, the default library's SVGs use `pathLength` (annotations), `gradientUnits`, `patternUnits`, `offset`, `stop-color` and `stop-opacity` (backgrounds), `clip-path="url(#…)"`, `font-size`, `font-weight`, `text-anchor` and `dominant-baseline` (frames), `fill-opacity`, `stroke-opacity` and `stroke-dasharray`, `transform` on inner elements, and `width`, `height` and `xmlns` on the root. Their `style` attributes use `fill`, `stroke`, `opacity`, `fill-opacity`, `stroke-opacity` and `font-family`. Values use `var(--vx-*)`, in `style` and in presentation attributes such as `fill` and `stop-color`. The Rust allowlist must admit all of these, or the library must change.
+
 **Ids are made unique.** Two inlined SVGs that both define `#g` for a gradient would break each other. So the compiler rewrites every id and every reference to it with a placeholder prefix, and the player fills in a prefix unique to each use when it inserts the SVG. The same icon can then appear twice on a slide safely.
 
 **This is a sanctioned exception** to the library system's rule that library files are sandboxed. After the allowlist, an SVG is drawing data, not code: nothing in it can run, load, or reach outside itself. The library system note records the exception and this reason ([what this changes elsewhere](./11_changes-to-existing-design.md)).
 
 **One implementation.** The allowlist and every per-category rule live once, in Rust. `agentks check libraries` runs them. The library repository's CI calls that command, and its own `scripts/check.py` keeps only what is about the repository itself, such as the manifest and the frame-to-widget sync. Two copies of the rules would drift.
 
-**The player's role variables** are `--vx-bg`, `--vx-surface`, `--vx-text`, `--vx-muted`, `--vx-line`, `--vx-accent`, `--vx-good`, `--vx-warn`, `--vx-bad` and `--vx-info`. A style maps each to a theme contract variable. Components use only these names, so one component looks right under every style and in light and dark mode.
+**The player's role variables** are `--vx-bg`, `--vx-surface`, `--vx-text`, `--vx-muted`, `--vx-line`, `--vx-accent`, `--vx-good`, `--vx-warn`, `--vx-bad` and `--vx-info`, plus two font variables, `--vx-font-text` and `--vx-font-code`. A style maps each to a theme contract variable. Components use only these names, so one component looks right under every style and in light and dark mode.
+
+### Widgets
+
+Widgets are for artifacts only. Their contract is the library's HTML element contract, and the library's `components/widgets/README.md` holds their conventions.
+
+**Decided (claude, 2026-10-01): widgets.**
+
+- The data widgets' helpers moved into an optional shared group, `data-css` with `data-js`, that only the eighteen data widgets carry. The change pill is a second group, `delta-css` with `delta-js`, carried by the four widgets that show one. The explainers' `--wire` and `--tint` moved into a third, `explainer-css`. `check.py --sync-shared` keeps every copy in step, and the check fails on a drifted copy, on half a group, and on a block with no file. This was done because the eighteen hand-kept copies had already drifted apart, with two versions each of `el` and `text`.
+- A group goes only into the widgets that use all of it, because every copy counts against each widget's size cap. For the same reason the code only device views need, such as the screen loader, moved from the block every widget carries into the view block.
+- Every widget stays under 15,360 bytes, its shared blocks included. `sparkline-card` was trimmed to fit and now has 5 bytes of room.
+- The widget conventions are written into the widgets `README.md`: `title` and `note` inputs, the tone names `brand`, `info`, `success`, `warning`, `error` and `neutral`, the change rule (a plain number is a percentage, and `good` sets the colour), the "Example data" marker on a data widget's built-in example, and which widget carries which shared group. This was done because one set of names means an author who knows one widget knows them all. To match, `decision-tree` now takes the shared tone names instead of `good`, `warn` and `bad`, and `callout-card` also accepts `neutral`.
+- `metric-delta` shows no percentage pill when `before` is 0, because a change from zero has no percentage.
 
 ### Animations
 
@@ -255,7 +295,7 @@ JSON components are never served over `/_lib/`: only the compiler needs them. A 
 
 ## 08 The day-one set
 
-What the default library ships before the first video is judged. Counts are targets for the component track.
+What the default library ships before the first video is judged. The rows for backgrounds, frames, annotations, illustrations, icons and widgets name what the library holds now, after the component batches were merged (branch `comp/polish`). The other rows are still targets for their tracks.
 
 | Category | Count | Components |
 |---|---|---|
@@ -264,13 +304,13 @@ What the default library ships before the first video is judged. Counts are targ
 | `slides` | 12 | `title`, `section`, `bullets`, `bullets-image`, `compare`, `process-3`, `process-4`, `timeline`, `quote`, `big-number`, `code-explain`, `closing` |
 | `animations` | 32 | Enter: `blur-in`, `rise-blur`, `slide-left`, `slide-right`, `slide-up`, `reveal-up`, `words`, `letters`, `spring-pop`, `flip-in`, `stamp`, `scale-in`. Emphasis: `underline`, `spotlight`, `color-shift`, `heartbeat`, `wiggle`, `tilt`. Exit: `blur-out`, `slide-out-left`, `slide-out-down`, `collapse`, `fade-down`, `scale-out`. With an annotation: `circle-it`, `underline-it`, `bracket-it`, `box-it`, `point-at`, `tick`, `cross-out`, `star-it` |
 | `transitions` | 10 | `dissolve`, `slide-up`, `push-up`, `iris`, `blinds`, `split`, `zoom-through`, `flip`, `cover`, `reveal` |
-| `backgrounds` | 10 | `plain`, `soft-gradient`, `soft-grid`, `dots`, `blueprint`, `mesh`, `paper`, `spotlight`, `diagonal`, `aurora` |
-| `frames` | 12 | Devices and windows: `browser-frame`, `phone-frame`, `laptop-frame`, `tablet-frame`, `terminal-frame`, `code-frame`. Containers: `card-frame`, `callout-frame`, `bubble-frame`, `note-frame`, `panel-frame`, `window-frame` |
-| `annotations` | 8 | `scribble-circle`, `scribble-underline`, `bracket`, `highlight-box`, `hand-arrow`, `tick`, `cross`, `star` |
+| `backgrounds` | 23 | Soft: `soft-gradient`, `soft-spotlight`, `mesh`, `aurora`. Grids: `soft-grid`, `graph-paper`, `blueprint-grid`, `dots`, `plus-grid`, `isometric-grid`, `hexagon-grid`, `diagonal`, `perspective-grid`. Paper and print: `paper`, `ruled-paper`, `halftone`. Lines and shapes: `wave-lines`, `topographic`, `constellation`, `circuit-traces`, `concentric-rings`, `orbits`, `corner-marks`. The planned `blueprint` shipped as `blueprint-grid` and `spotlight` as `soft-spotlight`; no `plain` background shipped |
+| `frames` | 36 | Devices and windows: `browser-frame`, `phone-frame`, `tablet-frame`, `tablet-portrait-frame`, `laptop-frame`, `monitor-frame`, `terminal-frame`, `code-frame`, `ide-frame`, `window-frame`, `dialog-frame`, `watch-frame`. Containers: `card-frame`, `header-card-frame`, `step-card-frame`, `featured-card-frame`, `stack-frame`, `circle-frame`, `panel-frame`, `group-frame`, `column-frame`, `callout-frame`, `callout-good-frame`, `callout-warn-frame`, `callout-bad-frame`, `bubble-frame`, `bubble-right-frame`, `thought-frame`, `note-frame`, `tooltip-frame`, `badge-frame`, `quote-frame`, `photo-frame`, `document-frame`, `folder-frame`, `ticket-frame` |
+| `annotations` | 21 | Around: `scribble-circle`, `oval`, `highlight-box`, `bracket`, `focus-corners`, `spotlight-ring`, `burst`. Under: `scribble-underline`, `double-underline`, `wavy-underline`, `under-brace`. Over: `strike-through`, `big-cross`, `marker-highlight`. Beside: `curly-brace`, `tick-mark`, `cross-mark`, `star-mark`, `hand-arrow`, `curved-arrow`, `loop-arrow` |
 | `charts` | 8 | `bars`, `columns`, `grouped-columns`, `line`, `area`, `donut`, `funnel`, `progress` |
-| `illustrations` | 12 | Drawn for the library or adapted from CC0 sources, each licence in `LICENSES/`: a developer at a laptop, a team, a server rack, a cloud, a database, a phone user, a browser window, a pipeline, a lock and key, a rocket, a checklist, a lightbulb |
-| `icons` | 1,857 plus 74 | The full Lucide set (ISC licence, `lucide-static` 1.49.0), imported with Lucide's tags by a script in the library's `scripts/`, so an update is a re-run. The 74 curated icons keep their names and win any clash. A video inlines only the icons it uses, so the set costs nothing at play time |
-| `widgets` | 3 today, plus 6 | The six device frame views below |
+| `illustrations` | 20 | All drawn for the library: `person-figure`, `team-group`, `developer-laptop`, `server-rack`, `cloud-services`, `database-cluster`, `phone-user`, `document-stack`, `security-shield`, `rocket-launch`, `lightbulb-idea`, `puzzle-pieces`, `process-gears`, `node-network`, `checklist-board`, `build-pipeline`, `ai-agent`, `analytics-dashboard`, `knowledge-book`, `chat-conversation` |
+| `icons` | 1,897 | The 74 curated icons and 1,823 from the Lucide set (ISC licence, `lucide-static` 1.49.0), imported with Lucide's tags by a script in the library's `scripts/`, so an update is a re-run. The curated icons keep their names and win any clash. A video inlines only the icons it uses, so the set costs nothing at play time |
+| `widgets` | 44 | For artifacts only. Device views: `phone-view`, `tablet-view`, `laptop-view`, `browser-view`, `terminal-view`, `code-view`. Data: `callout-card`, `step-list`, `kv-table`, `stat-card`, `kpi-row`, `metric-delta`, `sparkline-card`, `gauge-card`, `bar-list`, `meter-list`, `share-bar`, `heat-grid`, `leaderboard`, `compare-table`, `data-table`, `pros-cons`, `status-board`, `checklist`, `progress-steps`, `changelog`, `badge-row`. Explainers: `flow-steps`, `event-timeline`, `layer-stack`, `hub-spoke`, `pipeline`, `quadrant`, `venn`, `funnel-stages`, `tabs`, `accordion`, `code-compare`, `before-after`, `file-tree`, `sequence`, `mind-map`, `decision-tree`, `cycle` |
 | `images`, `scripts`, `fonts` | 0 | Contracts only in version 1. Images come from the project's own `assets/`, which is where screenshots and before-and-after states belong anyway |
 
 ## 09 What happens to today's library content

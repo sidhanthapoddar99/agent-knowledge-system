@@ -44,12 +44,14 @@ Every contributor and every agent runs the repository through `ctl`, so there is
 - `./ctl dev` serves the client at the Vite port and a request to `/api` reaches the engine (a WebSocket echo is enough until [050](../050_server/00_overview.md) lands).
 
 # 02 Status and Result
-In progress. The gate works; `ctl dev` waits for the server and client.
+In progress. The gate works, and `ctl dev`, `ctl ps` and `ctl stop` are built; left: `e2e`, `release-check`, `clean rust`, the deliberate red-rung check, and `ctl dev` end to end once the engine opens a project.
 
 ## Result
-- `ctl` verbs today: `setup`, `check`, `status`, `build`, `test`, `gate`.
-- `ctl gate` runs `lint typecheck test check` and is green in about one second locally.
-- Left: `ctl dev` (needs [050](../050_server/00_overview.md) and the client), the deliberate red-rung check in Done when.
+- `ctl` verbs today: `setup`, `check`, `status`, `build`, `dev`, `ps`, `stop`, `test`, `gate`.
+- `ctl gate` runs `lint typecheck test check` and is green in about 11 s warm (the engine's clippy, check and tests dominate).
+- `ctl dev` (2026-10-01) follows the project-setup dev controller. `scripts/common/_process.sh` (from the template) runs each app in its own recorded process group (`logs/run/<name>.process/`, log `logs/dev/dev-<app>.log`); `scripts/dev/_apps.sh` is the app table (engine, client, the mock, homepage); `scripts/dev/rust-watch.ts` runs `cargo run -p agentks-cli -- start --port $ENGINE_DEV_PORT --dev-origin http://localhost:$CLIENT_DEV_PORT --config-dir $ENGINE_DEV_CONFIG` under watchexec 2.7.3. `ctl dev` with no app runs engine and client; `ctl dev client` runs Vite against the mock engine; `--detach`, `--dry-run`. `ctl ps` lists the recorded groups with state, pid, port and log; `ctl stop` stops them (TERM, then KILL after the grace period).
+- Checked by hand: `ctl dev client --detach` then `ctl ps` then `ctl stop` (0.5 s); foreground `ctl dev client` stopped by SIGINT leaves no record and no listener; a taken port is refused before anything starts; `ctl dev` builds the engine, starts the watcher and, when `agentks start` exits, fails within the 30 s readiness wait, printing the end of the engine's log.
+- `ctl dev` end to end stops at `agentks start`: "not implemented yet: opening a site" (the site track), and `ENGINE_DEV_CONFIG` defaults to `./docs/config`, which does not exist yet.
 
 ## Agent log
 none
@@ -63,6 +65,11 @@ none
 # 04 Decisions
 - Decided (sidhantha, 2026-09-30): the repository is set up with the project-setup guide, so `ctl` is the one entrypoint and `ctl gate` is what green means.
 - Decided (claude, 2026-09-30): the verb table above, including `e2e` and `release-check`, from [05/05](../../notes/05_delivery/05_development-workflow-and-testing.md) section 03.
+- Decided (claude, 2026-10-01): `ctl dev` runs `agentks start --port $ENGINE_DEV_PORT` (5175, in `.env`), because Vite must know the engine's address before the engine starts; the port sits outside 20000-29999, where installed servers take their derived ports.
+- Decided (claude, 2026-10-01): the dev engine gets its own machine home (`ENGINE_DEV_HOME`, default `data/dev-home`), because with the shared `~/.agentks` it would attach to an installed agentks already serving the same project and never run the working-tree code.
+- Decided (claude, 2026-10-01): `ctl dev` compiles the engine with `cargo build` before starting the watcher, so the 30 s readiness wait covers start-up only, not the first compile.
+- Decided (claude, 2026-10-01): a free port is tested by connecting to it, not by `lsof`, because `lsof` took minutes on this machine; `ctl stop` still signals only recorded process groups, never a port's holder.
+- Decided (claude, 2026-10-01): `ctl ps` is a plain list of this checkout's recorded processes, not the template's interactive browser with port killing, because that browser offers to kill any listener on a dev port, including another checkout's.
 
 # 05 Notes & Analysis
 ## Watch out

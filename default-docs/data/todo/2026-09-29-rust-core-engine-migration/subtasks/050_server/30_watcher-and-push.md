@@ -1,6 +1,6 @@
 ---
 title: "Watcher and push — from a change on disk to a pushed hash"
-status: in-progress
+status: review
 ---
 
 The AI is the main author, so files change on disk all the time while a page is open. The watcher sees those changes, the engine updates its index and caches, and the server pushes the new hashes so every open tab refreshes exactly what changed. This leaf builds that path with `notify`, handling the traps today's engine hit: unreliable modification times on WSL, editors that save by rename, `git checkout` touching hundreds of files at once, and config edits that break loading.
@@ -13,7 +13,7 @@ The AI is the main author, so files change on disk all the time while a page is 
 - [ ] **Decide by content, not time.** For each path in a batch, hash the file and compare with the index. Same hash → no change (WSL and `touch` produce such events). Missing → removed.
 - [ ] **Process a batch:**
     1. Config paths → reload and diff config ([040/20](../040_caching/20_settings-invalidation.md)); invalid → push `fatal`, keep serving the last good config, stop here.
-    2. Content paths → update index entries, rolled-up folder hashes and dependency records.
+    2. Content paths → update index entries, rolled-up folder hashes and dependency records. A change under a video folder (one whose settings file says `"kind": "video"`) re-hashes that folder and updates its one `Video` entry, because the files inside a video folder have no entries of their own ([030/40](../030_rust-engine/40_site-index.md)).
     3. Ask the key function which keys changed ([040/10](../040_caching/10_cache-keys-and-dependencies.md)).
     4. Git ref paths → run the git-dates reconcile ([040/70](../040_caching/70_git-dates-cache.md)).
     5. Echo check: a path whose new hash equals a hash the server just wrote is the server's own save ([050/35](./35_file-writes-and-echo-suppression.md)) → push `saved`, not `changed`.

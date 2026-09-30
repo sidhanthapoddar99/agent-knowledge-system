@@ -38,7 +38,7 @@ This group turns three empty GitHub repositories into working repositories that 
 - CI runs the gate on every push to the main repository and is green.
 
 # 02 Status and Result
-In progress. 10 and 60 are in review; 20 to 50, 70 and 80 are in progress; 90 is open.
+In progress. 10 and 60 are in review; 20, 30, 40, 50, 70 and 80 are in progress; 90 is open.
 
 ## Result
 None yet.

@@ -68,7 +68,7 @@ What sits around the binary.
 | [04/02 AI plugins and skills](../04_ecosystem/02_ai-plugins-and-skills.md) | Which AI plugins exist, what do their skills teach, and how will agent hooks and retrieval fit? |
 | [04/03 Extensions](../04_ecosystem/03_extensions.md) | What could `agentksx` commands and site scripts add later, and what must they never change? |
 | [04/04 Templates and init](../04_ecosystem/04_templates-and-init.md) | How does `agentks init --template` create a project? |
-| [04/05 Video pages](../04_ecosystem/05_video-pages.md) | What does the engine give narrated video pages: audio, the voice model, libraries? |
+| [04/05 Video artifacts: what the engine provides](../04_ecosystem/05_video-pages.md) | What does the engine give a video artifact (a small YAML file or folder, played live with a voiceover): the compiler crate, routes, commands, the audio store, libraries? |
 
 ## 06 Delivery
 

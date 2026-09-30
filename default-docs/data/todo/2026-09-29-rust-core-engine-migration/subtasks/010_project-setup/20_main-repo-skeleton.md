@@ -53,16 +53,14 @@ agent-knowledge-system/
 - `ctl check` reports no placeholder `<version>` and no workspace manifest.
 
 # 02 Status and Result
-In progress. The engine half exists. The client half can start: [080/10](../080_ui-and-client/10_ui-framework-decision.md) chose Preact 11 and is in review.
+In progress. The engine half and the client half exist. Left: `apps/agentks-ssg`, `docs/`, `plugins/` and `RELEASING.md` from the target tree, which other leaves create.
 
 ## Result
 - The project-setup shape: `ctl`, `scripts/` (common, config, build, test, gate), `.mise.toml`, `.env.template`, `.gitignore`, `data/` and `logs/` with their own ignore files, `AGENTS.md`, `README.md`, `LICENSE`, `.github/workflows/gate.yml`.
-- `apps/agentks-engine`: a Cargo workspace (Rust 1.98.1, edition 2024) with `agentks-core` and the `agentks` binary. `ctl build` writes `data/builds/agentks`; `agentks --version` prints `agentks 0.1.0`.
-- `./ctl setup` and `./ctl gate` exit 0 locally and in CI.
-- Left: `apps/agentks-client` and `apps/packages/agentks-ui`, and the client build check in Done when.
-
-## Agent log
-none
+- `apps/agentks-engine`: a Cargo workspace (Rust 1.98.1, edition 2024). `ctl build` writes `data/builds/agentks`.
+- `apps/packages/agentks-ui` (`@agentks/ui`) and `apps/agentks-client` (Vite 8.3.1, Preact 11.0.0), each with its own `package.json`, `bun.lock` and `.oxlintrc.json`; no JS workspace. `ctl build client` produces `apps/agentks-client/dist/`, which imports the package's layouts.
+- `ctl` knows the new apps: `ctl build client`, `ctl dev client` (with the mock engine), and the `ui` and `client` targets of `ctl gate lint`, `ctl gate typecheck` and `ctl test`. `.env.template` has `CLIENT_DEV_PORT`, `CLIENT_ENGINE_URL` and `CLIENT_MOCK_PORT`.
+- `./ctl setup` and `./ctl gate` exit 0 (gate 14 s).
 
 # 03 References
 - **Where:** `/home/sid/projects/06_02_NeuraLabs/agent-knowledge-system`.
@@ -79,6 +77,7 @@ none
 - Decided (sidhantha, 2026-09-30): the apps folder is `apps/`; the shared UI lives in `apps/packages/agentks-ui`, used by `apps/agentks-client` and `apps/agentks-ssg`; the homepage is in the main repository; dev builds go to `data/builds/` ([05/01](../../notes/05_delivery/01_repositories-and-layout.md)).
 - Decided (claude, 2026-09-30): no `docker/` folder and no compose stack. agentks releases an installer only; the website's Dockerfile lives in `docs/` ([05/06](../../notes/05_delivery/06_deployment-and-hosting.md)). Record as an exception in `AGENTS.md`.
 - Decided (claude, 2026-09-30): `data/builds/` stays under `data/` as decided, although project-setup puts frozen builds under `logs/`. Record as an exception.
+- Decided (claude, 2026-10-01): the client depends on the UI package through a path alias, not `link:`, because bun 1.4.2 cannot install a `link:` dependency by path; recorded in the main repository's AGENTS.md under Skeletons.
 
 # 05 Notes & Analysis
 ## Watch out

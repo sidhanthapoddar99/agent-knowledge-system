@@ -25,7 +25,7 @@ The homepage is how people find agentks from search engines, links shared in cha
 - Sharing the URL in a chat app shows the preview card (checked once the site is live).
 
 # 02 Status and Result
-Review: everything buildable now is built. The live checks (a chat-app preview, Google's Rich Results test) wait for the site to be hosted.
+Review: everything buildable now is built. On 2026-10-01 the social card was redrawn (the headline plus three story lines), and the meta title is "agentks: a workspace for your AI agents". The live checks (a chat-app preview, Google's Rich Results test) wait for the site to be hosted.
 
 ## Result
 - **Page metadata** in `apps/agentks-homepage/src/app/layout.tsx`: title, description, canonical `https://agentks.neuralabs.org/`, `lang="en"`, `og:locale` `en_GB`, and `theme-color` for light and dark read from the theme files. The words live in `meta` in `src/modules/home/content.ts`.

@@ -25,7 +25,7 @@ A visitor moves from the homepage at `/` to the docs at `/docs` and should feel 
 - A grep of `apps/agentks-homepage/src` finds no hex colour literals outside the token mapping.
 
 # 02 Status and Result
-In progress: the homepage side is built and the gate is green; the docs side waits for `docs/` and the client.
+In progress: the homepage side is built and the gate is green; the docs side waits for `docs/` and the client. On 2026-10-01 Geist, Geist Mono and the new mark moved into `apps/agentks-homepage/brand/`; the theme link to `apps/agentks-engine/themes/default/` is unchanged.
 
 ## Result
 - **One token source.** `apps/agentks-homepage/src/styles/theme.css` imports the built-in theme's `theme`-layer files from `apps/agentks-engine/themes/default/` (`color.css`, `font.css`, `element.css`, `breakpoints.css`), then the brand theme's files, the same files the docs are built from. `next.config.ts` sets `turbopack.root` to `apps/` so the bundler may read them.

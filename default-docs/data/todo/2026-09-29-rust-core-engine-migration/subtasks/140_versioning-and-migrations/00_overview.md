@@ -21,7 +21,7 @@ This group builds how agentks versions itself and moves content forward: the sin
 Order: 10 → 50 and 60 → 20 → 30 → 40 → 70.
 
 # 02 Status and Result
-In progress. 20 and 30 are in progress; the rest are open.
+In progress. 20 and 30 are in progress; 10, 40, 50, 60 and 70 are open.
 
 ## Result
 None yet.

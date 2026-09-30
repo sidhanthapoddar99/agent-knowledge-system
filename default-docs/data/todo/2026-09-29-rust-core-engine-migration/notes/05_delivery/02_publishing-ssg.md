@@ -48,7 +48,9 @@ agentks build
   3. data         Rust builds the site index and computes every page's data
   4. render       apps/agentks-ssg renders each page with apps/packages/agentks-ui
   5. diagrams     Mermaid, Graphviz, Excalidraw, draw.io embeds → inline SVG
-  6. assets       copy assets, artifacts and library files; hash their names
+  6. assets       copy assets, artifacts and library files; hash their names;
+                  generate missing voice clips when the helper is installed, join each
+                  video's audio stream, write standalone video pages
   7. extras       sitemap.xml, robots.txt, 404.html, raw markdown, llms.txt
   8. write        replace the output folder in one step
 ```
@@ -100,8 +102,10 @@ dist/
     theme.51aa0c3f.css        the compiled theme CSS, content-hashed
     search.9d02e11c.json      data an island loads when used (the search index)
   _content/…                  page assets (./assets/… in the source), content-hashed
-  _lib/<alias>/<element>      library elements used by artifact and video pages
+  _lib/<alias>/<element>      library elements used by artifact pages, and images used by videos
+  _audio/<stream key>.opus    one joined audio stream per video, served with range requests
   artifacts/…                 artifact pages, served in their iframes
+  artifacts/<path>.video/     one standalone player page per video, written by the engine's shell writer
   sitemap.xml
   robots.txt
   llms.txt                    a plain list of pages with one line each, for AI readers
@@ -113,7 +117,7 @@ dist/
 | Every page is `<path>/index.html` | Clean URLs on every static host, with no rewrite rules. Fixes the trailing-slash bug 0.x publishers have on static hosts |
 | URLs are the same as in the local tool | The router uses real URL paths from Phase 1 ([client application](../03_frontend/02_client-application.md)) |
 | Every href is root-absolute, with the base prefix | Rust resolves links; relative hrefs break under routing and on static hosts |
-| Hashed names for everything under `_assets/`, `_content/` and `_lib/` | They can be cached forever. Only the HTML is revalidated on each publish |
+| Hashed names for everything under `_assets/`, `_content/`, `_lib/` and `_audio/` | They can be cached forever. Only the HTML is revalidated on each publish |
 | `artifacts/` keeps its route | Artifacts run in iframes on `/artifacts/<path>`, as today |
 
 ## 05 Islands
@@ -126,7 +130,7 @@ An island is a component that ships JavaScript because it is interactive. Everyt
 | Search | Every page with search on | The search index, only when search opens |
 | Issue filters and sorting | The tracker index | The issue list the page was built with, embedded in the page |
 | Artifact frame controls | Artifact pages and embeds | Expand and open-full-page controls |
-| Video player | Video pages | The player and the page's cues |
+| Video player | Video pages | The player chunk (`apps/packages/agentks-video`), loaded on demand, with the compiled video as props; the audio stream from `_audio/` |
 | Interactive diagrams | Only where a diagram cannot be static (for example a zoomable Excalidraw scene) | That diagram's library |
 
 - Each island is hydrated on its own: the page's HTML is already complete, and the island only attaches behaviour.

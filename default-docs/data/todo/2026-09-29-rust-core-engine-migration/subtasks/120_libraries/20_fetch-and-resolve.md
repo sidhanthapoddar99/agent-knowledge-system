@@ -3,10 +3,10 @@ title: "Fetch and resolve: selectors, tags and the sync"
 status: review
 ---
 
-This leaf turns `dep.yaml` entries into pinned commits and makes sure every pinned commit is on the machine. It implements version selection (exact tags, ranges, latest, branches, commits), the git fetch through a Rust git library with no `git` binary, and the **sync**: the one algorithm that `agentks start`, `agentks install`, `agentks library add` and `agentks init` all run. When it is done, a fresh clone with a lock installs exactly the locked commits, and a changed entry resolves without moving any other pin.
+This leaf turns `dep.yaml` entries into pinned commits and makes sure every pinned commit is on the machine. It implements version selection (exact tags, ranges, latest, branches, commits), the git fetch, which `agentks-git` does by running the `git` program, and the **sync**: the one algorithm that `agentks start`, `agentks install`, `agentks library add` and `agentks init` all run. When it is done, a fresh clone with a lock installs exactly the locked commits, and a changed entry resolves without moving any other pin.
 
 # 01 To Do
-- [ ] **Remote listing.** For a git source, list its tags and branches with their commits, without cloning (the git "ls-refs" step). Use gitoxide (`gix`) unless it cannot do something below; record the choice.
+- [ ] **Remote listing.** For a git source, list its tags and branches with their commits, without cloning (`git ls-remote`, with annotated tags peeled). `agentks-git` runs the `git` program for this ([040/70](../040_caching/70_git-dates-cache.md) records why it is not gitoxide).
 - [ ] **Version tags.** A tag named `x.y.z` or `vx.y.z` is a version; ignore every other tag. Two tags naming the same version on different commits → error naming both.
 - [ ] **Selector rules** (use the `semver` crate):
     - [ ] Exact `tag` → that tag's commit, `v` optional.
@@ -49,7 +49,7 @@ Review for the engine side. Selectors, tag resolution and the sync are built and
 - The sync follows 01 step by step: keep, mark, drop; resolve (one listing per URL); fetch once per repository and commit; load every manifest and check `engine`; write the lock only when changed. A failure in resolve, fetch or manifest returns before the lock is touched.
 - A project with no git library and no lock gets no lock file.
 - **Tests:** `crates/library/tests/sync.rs`, 9 tests on a fake remote and a folder store: fresh sync (3 pins, 1 fetch), second sync writes nothing, `start` never moves a pin, `--update` for one alias and for all, a changed entry resolves without moving others, a removed entry drops, a failed resolve and an engine mismatch leave the lock byte-identical, offline with a cached lock works, offline without the cache names `agentks install`, a force-pushed branch suggests `install --update <alias>`. Selector unit tests in `resolve.rs` cover tags `1.0.0`, `v1.1.0`, `1.2.0-beta.1`, `2.0.0`, a branch, no version tags and a duplicate version.
-- **Left, outside this crate:** gitoxide listing and shallow fetch in `agentks-git`; the network checks in "Done when" (install against the real library repository twice, and again after deleting the cache).
+- **Left, outside this crate:** the network checks in "Done when" (install against the real library repository twice, and again after deleting the cache).
 
 ## Agent log
 none

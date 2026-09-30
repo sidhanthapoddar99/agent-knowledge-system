@@ -1,0 +1,14 @@
+head: One binary, three parts
+layout: thirds
+items:
+  cli: {icon: ks:terminal, at: a, label: CLI}
+  core: {icon: ks:cpu, at: b, label: Rust core, tone: accent}
+  app: {icon: ks:browser, at: c, label: Web app}
+  link: {arrow: cli>core>app}
+beats:
+  - say: agentks is one binary per machine. Inside it are three parts.
+    do: show cli+core+app pop stagger=0.15 @three
+  - say: The CLI runs commands. The Rust core holds every rule. And a small web app shows the result.
+    do: [emph cli pulse @CLI, emph core pulse @core, show link draw @rule, emph app pulse @web]
+  - say: If a value could be wrong, Rust computes it. The browser only decides how things look. That keeps every rule in one place.
+    do: focus core @Rust

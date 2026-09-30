@@ -11,9 +11,9 @@ agentks gets its own homepage at agentks.neuralabs.org/: a static marketing page
 |---|---|---|
 | [190/10 Content and design](./10_content-and-design.md) | The message, the copy and the design plan | review |
 | [190/20 App scaffold](./20_app-scaffold.md) | `apps/agentks-homepage`: Next.js static export, wired into `ctl` and the gate | review |
-| [190/30 Sections](./30_sections.md) | The page itself: hero, what it does, install, libraries and AI, links | review |
-| [190/40 Shared look with the docs](./40_shared-look-with-docs.md) | One brand across `/` and `/docs`: tokens, logo, fonts, theme toggle, navigation | open |
-| [190/50 SEO and metadata](./50_seo-and-metadata.md) | Titles, social cards, sitemap, robots, `llms.txt` | open |
+| [190/30 Sections](./30_sections.md) | The page itself: the workspace story, seven chapters, the issue structure, agents, principles, install | review |
+| [190/40 Shared look with the docs](./40_shared-look-with-docs.md) | One brand across `/` and `/docs`: tokens, logo, fonts, theme toggle, navigation | in-progress |
+| [190/50 SEO and metadata](./50_seo-and-metadata.md) | Titles, social cards, sitemap, robots, `llms.txt` | review |
 | [190/60 Homepage checks](./60_homepage-checks.md) | Lighthouse, accessibility, links, screenshots in the gate | open |
 
 **Order of work.** 10 first: the words and the design plan decide everything else. 20 can run beside 10. 30 builds on both. 40 needs the docs theme tokens from [100/10](../100_layouts/10_theme-contract-and-css.md). 50 and 60 finish it.
@@ -30,7 +30,7 @@ agentks gets its own homepage at agentks.neuralabs.org/: a static marketing page
 - sidhantha has reviewed the page and every leaf is in `review` or closed.
 
 # 02 Status and Result
-In progress. 10, 20 and 30 are in review (the page is on the main repository's `main` branch); 40, 50 and 60 are open.
+In progress. The page was rebuilt around agents on 2026-10-01 (wave3/homepage-3, merged into `main` at `a9c94b9`). 10, 20, 30 and 50 are in review; 40 is in progress; 60 is open.
 
 ## Result
 None yet.

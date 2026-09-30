@@ -37,10 +37,10 @@ A text-to-speech model like Kokoro does not read letters. A first step, called G
 
 | Piece | Design |
 |---|---|
-| **The pronunciation list** | A map from a word to how it is said. Project-wide in `config/video.yaml` under `pronounce:`, and per video under the video's own `pronounce:` key, which wins for that video. A value is either a respelling in known words (`agentks: agent K S`) or phonemes between slashes in misaki's alphabet (`/ˈeɪdʒənt keɪ ɛs/`). Matching is on whole words, ignoring case |
+| **The pronunciation list** | A map from a word to how it is said. Project-wide in `config/video.yaml` under `pronounce:`, and per video under the video's own `pronounce:` key (in a single file's header, or in a folder's `controller.yaml`), which wins for that video. A value is either a respelling in known words (`agentks: agent K S`) or phonemes between slashes in misaki's alphabet (`/ˈeɪdʒənt keɪ ɛs/`). Matching is on whole words, ignoring case |
 | **How it reaches the model** | The compiler sends the helper each beat's original text plus the entries that apply to it. The helper rewrites those words with misaki's inline override form before G2P, and maps the word timings back onto the original characters. So anchors still match the text the author wrote |
 | **Finding unknown words** | The helper has a fast `g2p` request that runs only the pronunciation step, with no audio. It returns every word that fell back to spelling. Words written in capitals, such as CLI or HTML, are spelled on purpose and are not reported |
-| **The error** | `agentks check video` sends each beat to `g2p` when the helper is installed and reports `video.unknown-word` with the words and a fix hint. Without the helper it prints one note that pronunciation was not checked, because the browser voice will be used anyway. At generation, the helper refuses a beat with an unknown word, so no clip ever spells a word by mistake |
+| **The error** | `agentks check video` sends each beat to `g2p` when the helper is installed and reports `video-unknown-word` with the words and a fix hint. Without the helper it prints one note that pronunciation was not checked, because the browser voice will be used anyway. At generation, the helper refuses a beat with an unknown word, so no clip ever spells a word by mistake |
 | **The starter template** | Ships `config/video.yaml` with a `pronounce:` entry for "agentks" (how it is said is question 2 in [the index](./01_index.md#questions-for-sidhantha)) |
 
 **The other road.** The helper could instead be released as a separate GPL-3.0 program that includes espeak-ng. It talks to `agentks` only over standard input and output, so the main binary's MIT licence would not change, and most unknown words would be said on their own. The cost is that agentks would distribute GPL code. This is a licensing choice for sidhantha, so it is question 4 in [the index](./01_index.md#questions-for-sidhantha). The design recommends staying GPL-free unless the voice spike finds more than about one unknown word per minute of typical technical narration.
@@ -157,7 +157,7 @@ The spike's narrator carries over:
 |---|---|
 | Writing for the ear: short sentences, numbers as spoken ("thirteen hundred"), symbols spelled out ("site dot yaml"), no brackets | The authoring skill |
 | Beats of one or two sentences | The format's limits and the skill |
-| Product names and jargon said right | The pronunciation list, enforced by `video.unknown-word` |
+| Product names and jargon said right | The pronunciation list, enforced by `video-unknown-word` |
 | One consistent voice per project, set once | `voice:` in `config/video.yaml` (see question 1 in [the index](./01_index.md#questions-for-sidhantha)) |
 | Even loudness, no clicks, no gaps | The helper's normalising and fades, and the joined stream |
 

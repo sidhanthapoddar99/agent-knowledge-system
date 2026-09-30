@@ -1,0 +1,15 @@
+head: Live updates
+layout: full
+items:
+  save: {icon: ks:document, label: You save}
+  watch: {icon: ks:refresh, label: Watcher}
+  push: {icon: ks:sync, label: WebSocket}
+  view: {icon: ks:browser, label: Browser, tone: accent}
+  wire: {arrow: save>watch>push>view}
+beats:
+  - say: Now edit that file in any editor and save it.
+    do: show save pop @save
+  - say: The watcher notices, re-hashes the file and its folders, and pushes the new hashes over one WebSocket.
+    do: [show watch pop @watcher, show push pop @pushes, show wire draw @pushes, send wire @WebSocket]
+  - say: The browser fetches only what changed, and redraws in place. Your scroll position stays where it was.
+    do: [show view pop @browser, emph view glow @redraws]

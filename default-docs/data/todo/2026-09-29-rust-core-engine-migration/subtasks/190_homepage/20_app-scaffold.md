@@ -20,7 +20,7 @@ The homepage app itself: a Next.js project with static export, in the main repos
 
 ## Guardrails
 - No server features: no route handlers, no middleware, no `getServerSideProps`, no ISR, no `next/image` optimisation. `next build` must succeed with `output: 'export'`.
-- No routes under `/docs`, and no `install.sh`, `install.ps1` or `llms.txt` at the root of `out/` unless [50](./50_seo-and-metadata.md) deliberately adds a root `llms.txt`.
+- No routes under `/docs`, and no `install.sh` or `install.ps1` at the root of `out/`. The homepage owns the root `llms.txt` ([50](./50_seo-and-metadata.md)); only `/docs/llms.txt` belongs to the docs build.
 - Dependencies at their latest stable versions; add as few as possible.
 
 ## Done when

@@ -44,7 +44,7 @@ agentks releases **one thing: a compressed installer** per platform, published o
 |---|---|---|
 | Libraries | Git, pinned by `config/dep.lock` | `~/.agentks/libraries/` |
 | Templates | The library repository | Copied into the new project by `agentks init` |
-| The voice model | A separate download | `~/.agentks/models/` |
+| The voice helper and its model | `agentks voice install`: the helper from the main repository's release, the model from Hugging Face at a pinned revision, each checked against a SHA-256 built into the binary | `~/.agentks/tools/agentks-voice/<version>/` and `~/.agentks/models/` |
 | Migration scripts | The main repository, at the binary's tag | `~/.agentks/migrations/` |
 | The docs | Hosted at agentks.neuralabs.org/docs | Nowhere; `agentks docs` opens them |
 | Bun or Node | The user installs it, only for `agentks build` and migrations | — |
@@ -54,8 +54,8 @@ agentks releases **one thing: a compressed installer** per platform, published o
 | Item | Detail |
 |---|---|
 | Tag | `vX.Y.Z` on `NeuraLabsHQ/agent-knowledge-system`. The single product needs no tag namespace |
-| Platforms | Linux x64 and ARM64, macOS Intel and Apple Silicon, Windows x64, as today |
-| Assets | One archive per platform (`agentks-<version>-<target>.tar.gz`, `.zip` on Windows), plus `SHA256SUMS` |
+| Platforms | Linux x64 and ARM64, macOS Intel and Apple Silicon, Windows x64, as today. The targets are `x86_64-unknown-linux-musl`, `aarch64-unknown-linux-musl`, `x86_64-apple-darwin`, `aarch64-apple-darwin` and `x86_64-pc-windows-msvc`; the updater in the binary expects exactly these |
+| Assets | One archive per platform (`agentks-<version>-<target>.tar.gz`, `.zip` on Windows), plus `SHA256SUMS`. Each archive holds exactly one regular file, `agentks` (`agentks.exe` on Windows), because the updater refuses any other layout. The installer and the release workflow ([160/10](../../subtasks/160_distribution/10_installer-and-release-workflow.md)) must produce exactly that. Beside them, one `agentks-voice` archive per platform, fetched only by `agentks voice install`, never by the installer |
 | Notes | One release note per version in `apps/agentks-engine/release-notes/`, stating breaking changes and the migration to run |
 | Workflow | Runs only on a pushed `vX.Y.Z` tag: format, lint, tests, the end-to-end checks, then release builds on every platform. Publication needs every job green. After publishing, it marks the newest stable version as GitHub's Latest |
 | Who tags | The repository owner, after review. Agents prepare the version and the note; they never tag, push or publish |
@@ -110,6 +110,6 @@ The binary grows from a CLI into tool, engine and two embedded bundles. That cos
 
 ## 07 One install, many projects
 
-- `agentks` finds a project from the folder it runs in: the nearest `config/` with a `dep.yaml`, or `--config-dir`.
+- `agentks` finds a project by one rule: `--config-dir`, then the `AGENTKS_CONFIG_FOLDER` environment variable, then `./config` in the folder it runs in. It does not search parent folders ([project config](../02_engine/02_project-config.md) section 02).
 - Two projects can run at once on different ports. `agentks ps` lists every running server.
 - Each project has its own build cache under `~/.agentks/build-cache/`, keyed by the project's path and the engine version, so two pinned engine versions on one machine never share cached output.

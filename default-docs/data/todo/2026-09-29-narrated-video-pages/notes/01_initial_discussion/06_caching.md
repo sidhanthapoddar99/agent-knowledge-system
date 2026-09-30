@@ -2,7 +2,7 @@
 title: "Caching"
 ---
 
-Everything a video needs beyond its `.video.yaml` file and its `assets/` is **derived or downloaded, so it is cached, never committed**: generated narration audio, the voice helper and its model, and the libraries a project declares. All of it lives under `~/.agentks/`, the machine home the engine migration introduces, and can be deleted and rebuilt at any time. Audio has its own machine-wide store, `~/.agentks/audio/`, outside the build cache, because a clip is keyed by its content and is right for every project ([the voiceover](../../brainstorm/01_video-artifact-engine/07_voiceover.md#08-the-store)).
+Everything a video needs beyond its own files (one `.video.yaml` file or a video folder) and their `assets/` is **derived or downloaded, so it is cached, never committed**: generated narration audio, the voice helper and its model, and the libraries a project declares. All of it lives under `~/.agentks/`, the machine home the engine migration introduces, and can be deleted and rebuilt at any time. Audio has its own machine-wide store, `~/.agentks/audio/`, outside the build cache, because a clip is keyed by its content and is right for every project ([the voiceover](../../brainstorm/01_video-artifact-engine/07_voiceover.md#08-the-store)).
 
 # 03 References
 

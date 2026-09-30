@@ -34,6 +34,8 @@ agentks's website is **agentks.neuralabs.org**, and it is a fully static site. T
 | Path | Served from | Built by |
 |---|---|---|
 | `/` and every other path outside the ones below | The homepage's static export | `next build` with static export, in `apps/agentks-homepage` |
+| `/robots.txt`, `/sitemap.xml` (a sitemap index), `/sitemap-home.xml`, `/llms.txt`, `/favicon.svg`, `/apple-icon.png`, `/social-card.png`, `/manifest.webmanifest` | The root files the homepage owns | The same `next build` |
+| `/fonts/…` | The brand fonts, shared by the homepage and `/docs` through the `agentks` theme | The same `next build`, which copies them from the `@fontsource` packages |
 | `/docs/…` | The docs' static build | `agentks build --base /docs --site-url https://agentks.neuralabs.org` in `docs/` |
 | `/docs/…/index.md`, `/docs/llms.txt` | Raw markdown and the page list, for AI readers | The same `agentks build` |
 | `/install.sh`, `/install.ps1` | A 302 redirect to the latest GitHub release's asset | nginx config |
@@ -86,7 +88,7 @@ server {
   location = /install.sh  { return 302 https://github.com/NeuraLabsHQ/agent-knowledge-system/releases/latest/download/install.sh; }
   location = /install.ps1 { return 302 https://github.com/NeuraLabsHQ/agent-knowledge-system/releases/latest/download/install.ps1; }
 
-  location ~* /_(assets|content|lib)/ { add_header Cache-Control "public, max-age=31536000, immutable"; }
+  location ~* /_(assets|content|lib|audio)/ { add_header Cache-Control "public, max-age=31536000, immutable"; }
   location ~* \.html$                  { add_header Cache-Control "no-cache"; }
 
   location /docs/ { try_files $uri $uri/ /docs/404.html; }
@@ -108,6 +110,7 @@ server {
 - **Deploy.** A workflow in the main repository builds the image on every push to the default branch that touches `docs/`, `apps/agentks-homepage/` or `docs/Dockerfile`, and on every installer release (so the docs build with the newest binary). It pushes the image to the Neuralabs registry and the host pulls it.
 - **Rollback.** Redeploy the previous image tag. The site holds no state.
 - **Preview.** A pull request that changes `docs/` gets a build check, so a broken link blocks the merge before it reaches the site.
+- **Sites with videos.** A CI deploy caches `~/.agentks/audio/`, `~/.agentks/tools/agentks-voice/` and `~/.agentks/models/`, keyed by the helper version, so it generates only the narration that changed. Without that cache it downloads about 130 MB and generates every clip. The static host must serve range requests for `_audio/`, which nginx and every common static host do by default ([video artifacts](../04_ecosystem/05_video-pages.md)).
 
 ## 05 Latest docs only
 

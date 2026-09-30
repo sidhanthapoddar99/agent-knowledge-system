@@ -22,7 +22,7 @@ The homepage is small, so its checks can be strict and automatic: a Lighthouse s
 - A deliberately broken change (remove an `alt` text, add a 300 KB script) fails the checks.
 
 # 02 Status and Result
-Open. Not started.
+Open. Not started. The 2026-10-01 rebuild's screenshots were taken by hand, not in the gate; the Playwright MCP needs Google Chrome installed on this machine.
 
 ## Result
 None yet.

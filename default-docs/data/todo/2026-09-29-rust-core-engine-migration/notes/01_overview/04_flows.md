@@ -129,10 +129,10 @@ Humans edit existing files only: there is no new-file command and no separate na
 1. The user or an agent runs `agentks library add acme/design-kit --tag ^1.4` (or edits `config/dep.yaml` by hand, or picks from the `agentks library` TUI).
 2. The CLI writes the entry to `dep.yaml` under an alias.
 3. It resolves the selector: a range to the newest matching x.y.z tag, a tag or branch to its commit, no selector to the newest version tag. A repository with no x.y.z tags and no selector is an error asking for a branch or a commit.
-4. It fetches that commit shallow through a Rust git library into `~/.agentks/libraries/<host>/<repo path>/<commit>/`. Git verifies the content against the commit.
+4. It fetches that commit shallow, by running the `git` program, into `~/.agentks/libraries/<host>/<repo path>/<commit>/`. Git verifies the content against the commit.
 5. It reads `manifest.json` at the library's `path`, checks `version` and the `engine` range, and prints the source and a manifest summary.
 6. It writes `config/dep.lock` with the requested selector, the commit and the manifest version. The user commits both files.
-7. From now on, `agentks library find <words>` returns the library's elements, and the skills tell agents to reuse them. Video pages name them in cues and artifact pages load them from `/_lib/<alias>/<element>`, both as `alias:element`. Markdown pages never name them.
+7. From now on, `agentks library find <words>` returns the library's elements, and the skills tell agents to reuse them. Video files name them in typed fields (`frame:`, `icon:`, `in:` …) and artifact pages load them from `/_lib/<alias>/<element>`, both as `alias:element`. Markdown pages never name them.
 
 A teammate who clones the project gets the same commits: `agentks start` or `agentks install` fetches exactly the lock. Only `agentks install --update [alias]` moves branch, range and latest entries.
 
@@ -177,7 +177,7 @@ sequenceDiagram
 2. It installs exactly the locked commits, like `npm ci`. It never resolves `dep.yaml` afresh.
 3. The core computes every page's data exactly as it does for the WebSocket, and applies the hosting path prefix to every root-absolute href.
 4. The binary unpacks the static renderer and runs it. The renderer renders each page with the same `agentks-ui` components the client uses. Diagrams can render to SVG.
-5. The output is plain files: finished HTML, JavaScript only for islands (theme toggle, search, issue filters, artifact frames), assets with content hashes in their names, each page's raw markdown and an `llms.txt` index.
+5. The output is plain files: finished HTML, JavaScript only for islands (theme toggle, search, issue filters, artifact frames, the video player), assets with content hashes in their names, each page's raw markdown and an `llms.txt` index. A project with videos also gets a standalone page per video under `artifacts/<path>.video/` and each video's audio stream under `_audio/`.
 6. A host serves the files. In Docker, the user's Dockerfile runs these steps in a build stage and copies the output into an nginx stage.
 
 ## 08 Open the docs

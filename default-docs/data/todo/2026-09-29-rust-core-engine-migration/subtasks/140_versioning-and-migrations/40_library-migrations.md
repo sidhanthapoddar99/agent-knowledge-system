@@ -3,7 +3,7 @@ title: "Library migrations, run by library owners"
 status: open
 ---
 
-When a breaking engine release changes something a library file depends on (an artifact's contract, a manifest field, a cue format), the library's owner, not its users, migrates the library and tags a new version with a new `engine` range. Users only move their pin with `agentks install --update`. This leaf adds `agentks migrate --library <folder>` and the `migrations/library/` half of the scripts folder, with the same runner and safety rails as docs migrations.
+When a breaking engine release changes something a library file depends on (an artifact's contract, a manifest field, a component category's contract), the library's owner, not its users, migrates the library and tags a new version with a new `engine` range. Users only move their pin with `agentks install --update`. This leaf adds `agentks migrate --library <folder>` and the `migrations/library/` half of the scripts folder, with the same runner and safety rails as docs migrations.
 
 # 01 To Do
 - [ ] **Runner flag.** `agentks migrate --library <folder> [--to X.Y.Z] [--dry-run] [--yes] [--json]`:

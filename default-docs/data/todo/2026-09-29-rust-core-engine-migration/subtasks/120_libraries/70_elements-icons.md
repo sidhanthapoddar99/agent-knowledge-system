@@ -3,7 +3,7 @@ title: "Elements: the default icon set"
 status: review
 ---
 
-Agents building artifacts and video scenes keep drawing the same icons (a server, a database, a browser, a user, a cloud) from scratch, which costs thousands of tokens and never looks the same twice. This leaf adds a first icon set to the default library, each icon an element with a description and tags so `agentks library find` surfaces it. When it is done, an agent asking for "server" gets `icons:server` in one command, and every icon renders cleanly in light and dark themes.
+Agents building artifacts and videos keep drawing the same icons (a server, a database, a browser, a user, a cloud) from scratch, which costs thousands of tokens and never looks the same twice. This leaf adds a first icon set to the default library, each icon an element with a description and tags so `agentks library find` surfaces it. When it is done, an agent asking for "server" gets `icons:server` in one command, and every icon renders cleanly in light and dark themes.
 
 # 01 To Do
 - [x] **Pick the set.** 74 icons covering what technical docs draw most (see Decisions). Start from this list and extend where the docs in this repository show a need:
@@ -15,14 +15,15 @@ Agents building artifacts and video scenes keep drawing the same icons (a server
     - [x] Tools (all but `github`, see Decisions): git, github, search, settings, bug, test, deploy, build, package.
 - [x] **Source.** Draw them, or take them from an icon set whose licence allows redistribution and modification (for example Lucide, ISC licence). Record the source and licence in the library's `README.md` and a `LICENSES/` file when third-party.
 - [x] **Format.** SVG, 24×24 viewBox, stroke-based, `stroke="currentColor"` and `fill="none"` (or `currentColor` for fills), so the icon takes the text colour of wherever it is shown and works in both theme modes. No embedded fonts, no scripts, no external references. Optimise with SVGO; keep each file small.
-- [x] **Manifest entries.** One element per icon: name in the element-name rule (`load-balancer`), `file: icons/<name>.svg`, a one-sentence `description` that says what it depicts and when to use it, `tags` with synonyms (`["icon", "infrastructure", "backend", "host"]`). Synonyms are what make `find` work.
+- [x] **Manifest entries.** One element per icon: name in the element-name rule (`load-balancer`), `category: icons`, `file: components/icons/<name>.svg`, a one-sentence `description` that says what it depicts and when to use it, `tags` with synonyms (`["icon", "infrastructure", "backend", "host"]`). Synonyms are what make `find` work.
+- [ ] **The full Lucide set.** Import all 1,857 Lucide icons (ISC, `lucide-static` 1.49.0) with Lucide's own tags into `components/icons/` through a re-runnable script in the library's `scripts/`, so an update is a re-run. The 74 curated icons keep their names and win any clash. The video issue's [T4a library restructure](../../../2026-09-29-narrated-video-pages/subtasks/030_library-restructure.md) does this, with the move to `components/icons/`.
 - [ ] **Check.** (Partly done: `scripts/check.py` passes and `preview/index.html` shows every icon in both modes; `agentks check libraries` waits for the binary.) `agentks check libraries` passes; a small test artifact in the library's test project shows every icon in a grid, in light and dark mode.
 - [ ] **Bump the library version** (minor) and tag, following [120/60](./60_default-library-scaffold.md). Folded into the first tag, `v1.0.0` (see Decisions).
 
 ## Guardrails
 - Consistent visual style across the set: one stroke width, one corner style.
 - No brand logos whose trademark terms forbid redistribution. Framework logos (for the video issue's "framework logos") need a licence check each; skip any that is unclear.
-- Icons are elements, not markdown syntax: they are used from artifacts (`<img src="/_lib/icons/server">`) and video cues only.
+- Icons are elements, not markdown syntax: they are used from artifacts (`<img src="/_lib/icons/server">`) and video files only.
 
 ## Done when
 - `agentks library find database --json` in a project using the default library returns `icons:database` first.
@@ -51,7 +52,7 @@ Review. The icon set is in the library and passes the library check; `agentks ch
 none
 
 # 03 References
-**Where:** the library repository, `/home/sid/projects/06_02_NeuraLabs/agent-knowledge-system-library`, folder `icons/`.
+**Where:** the library repository, `/home/sid/projects/06_02_NeuraLabs/agent-knowledge-system-library`, folder `components/icons/`.
 
 **Read first**
 - [Library system](../../notes/04_ecosystem/01_library-system.md), sections 06 (manifest) and 14 (trust: SVG is sandboxed).
@@ -68,6 +69,7 @@ none
 - Decided (claude, 2026-09-30): status icons (check, cross, warning, info) are the circled forms, so the four read as one family.
 - Decided (claude, 2026-09-30): `refresh` is one arrow turning and `sync` is two arrows chasing, so the two names never share a shape.
 - Decided (claude, 2026-09-30): 74 icons, not about 60, because the extra ones (cpu, memory, function, web, json, log, event, workflow, pull-request, plugin, dashboard, chart, metrics, mail, chat, notification, link, tag, book, idea) are common in technical docs and cost under 1 KB each.
+- Decided (claude, 2026-10-01): the full Lucide set joins the 74 curated icons, because a video inlines only the icons it uses, so the set costs disk space only, and an agent then finds almost any icon with `library find`. Curated names win a clash.
 - Decided (claude, 2026-09-30): no version bump for this leaf. Nothing is tagged yet, so the icons land in `0.1.0` and ship in the first tag, `v1.0.0` ([120/60](./60_default-library-scaffold.md)).
 
 # 05 Notes & Analysis

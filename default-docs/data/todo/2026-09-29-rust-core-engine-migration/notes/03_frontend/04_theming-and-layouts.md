@@ -44,11 +44,13 @@ agentks ships a **fixed set of built-in layouts**, one or more per content type,
 | navbar | `default`, `minimal` | On every page |
 | footer | `default`, `minimal` | On every page |
 
-The first-class page kinds keep their own views inside the sections they belong to: **diagram pages** (`.mmd`, `.dot`, `.excalidraw`, `.drawio`), **artifact pages** (`.html` with a `.meta.json` sidecar), and **video pages** ([video pages](../04_ecosystem/05_video-pages.md)).
+The first-class page kinds keep their own views inside the sections they belong to: **diagram pages** (`.mmd`, `.dot`, `.excalidraw`, `.drawio`), **artifact pages** (`.html` with a `.meta.json` sidecar), and **video artifacts**: a video is a small YAML file or a folder of YAML files, played live with a voiceover ([video artifacts](../04_ecosystem/05_video-pages.md)).
 
 **Choosing a layout** stays as today: each section in `site.yaml` names its layout, and the navbar and footer name theirs. The exact config keys belong to [project config](../02_engine/02_project-config.md). An unknown layout name is an error at start-up that lists the names available, never a silent fallback.
 
-**Adding a built-in layout** (on demand) means three things in one change: a component in `agentks-ui`, the page data it needs from the Rust engine, and its entry in the docs. If it replaces a layout that projects name, a docs migration renames the reference.
+**The table above is the source of the config crate's closed layout list** (`crates/config/src/layouts.rs`), which the config loader checks each `layout` against. The two must agree.
+
+**Adding a built-in layout** (on demand) means four things in one change: a component in `agentks-ui`, the page data it needs from the Rust engine, its name in the config crate's layout list, and its entry in the docs. If it replaces a layout that projects name, a docs migration renames the reference.
 
 ## 02 What goes with custom layouts
 
@@ -66,7 +68,7 @@ The first-class page kinds keep their own views inside the sections they belong 
 - **It computes nothing.** Order, URLs, status categories, filter options, dates and sidebar trees arrive from Rust.
 - **It stays small.** The rule carries over: split a file past about 400 lines into parts.
 - **Its interactive parts are islands.** Each is registered by name and hydrated on its own element from a JSON props tag, never as a whole page ([the shared UI package](./01_shared-ui-package.md) section 07).
-- **Its classes carry the layout's prefix**, so its CSS cannot reach another layout. This replaces Astro's scoped CSS, and the old gotcha with runtime-created elements goes away.
+- **Its classes are the built-in theme's class names** (`sidebar__…`, `navbar__…`, `docs-…`), which are the public hooks. CSS the UI package adds uses the `aks-` prefix. This replaces Astro's scoped CSS, and the old gotcha with runtime-created elements goes away.
 
 ## 04 The theme contract, carried over
 
@@ -94,7 +96,7 @@ The authoritative list is `apps/agentks-engine/themes/default/theme.yaml`; the t
 
 **The contract check carries over, in two parts.** `apps/agentks-engine/themes/check-contract.ts` checks the built-in theme's files: every listed file exists, the theme declares every required variable, every variable it reads is declared, and each file sits in exactly one layer. It runs on bun, in the gate's test rung (`ctl test`). Today's check also compares the contract with what the layouts read, in both directions. In the new repository that part reads the component CSS of `agentks-ui` (claude, proposed: it becomes a test of that package, run on every change).
 
-**The artifacts skill keeps its inline copy** of the variable names, so artifacts written in `site` theme mode have the token names. Any change to the contract updates that copy in the same change.
+**The artifacts skill keeps no copy** of the variable names. It points the agent at `agentks theme tokens --json`, which prints every variable with its light and dark value, and at `agentks theme css`, which prints the compiled CSS. So a change to the contract needs no change to the skill.
 
 ## 05 Where theme CSS comes from
 
@@ -118,7 +120,9 @@ The authoritative list is `apps/agentks-engine/themes/default/theme.yaml`; the t
 
 `!important` works the other way round across layers: an `!important` declaration in an earlier layer beats one in a later layer. The built-in CSS has seven of them, six in markdown.css and one in navbar.css, and each beats a user's `!important` on the same property. No example theme uses `!important`.
 
-**Dark mode** stays a `data-theme` attribute on the root, with each theme declaring `supports_dark_mode`. Code highlighting uses CSS classes from Rust's highlighter, so light and dark code colours come from the theme too.
+**Dark mode** stays a `data-theme` attribute on the root, with each theme declaring `supports_dark_mode`. Code highlighting uses CSS classes from Rust's highlighter. The compiler writes their colours itself: the compiled stylesheet ends with an engine-generated code-highlighting block in the `elements` layer, with GitHub's light colours and One Half Dark for dark mode. So a user theme overrides code colours like any other built-in rule. The `.shiki` rules still in the built-in `markdown.css`, and the `--shiki-` entry in `check-contract.ts`'s list of outside variables, are left from today's engine and can be removed.
+
+**agentks's own docs use a user theme named `agentks`**: paper and ink colours, a link blue, Source Serif 4 and IBM Plex Mono. It extends `@theme/default` and sets only the palette and the font families. The homepage reads the same files, so `/` and `/docs` look alike. It sits in `apps/agentks-homepage/brand/theme/` today and moves to `docs/themes/agentks/` when `docs/` exists.
 
 ## 06 Hooks: the public CSS contract
 

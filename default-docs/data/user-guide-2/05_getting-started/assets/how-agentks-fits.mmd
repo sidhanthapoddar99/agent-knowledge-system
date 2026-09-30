@@ -1,0 +1,13 @@
+flowchart LR
+    files["Your project folder<br/>config/ and plain files"]
+    agentks["agentks<br/>one binary per machine"]
+    browser["The local site<br/>in your browser"]
+    agent["An AI agent<br/>with the agentks plugin"]
+    you["You"]
+
+    files --> agentks
+    agentks -->|"agentks start"| browser
+    agent -->|"agentks commands"| agentks
+    agent -->|"reads and writes"| files
+    you -->|"read and review"| browser
+    you -->|"edit"| files

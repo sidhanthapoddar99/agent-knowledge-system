@@ -1,0 +1,14 @@
+head: Publishing
+layout: quad
+items:
+  build: {icon: ks:build, at: tl, label: agentks build}
+  html: {icon: ks:document, at: tr, label: Static HTML}
+  island: {icon: ks:plugin, at: bl, label: Small islands of script}
+  cdn: {icon: ks:cdn, at: br, label: Any static host}
+beats:
+  - say: To publish, agentks build renders every page to static HTML, once.
+    do: [show build pop @build, show html pop @HTML]
+  - say: Only the interactive parts, like search, filters and this video player, ship any script.
+    do: show island pop @interactive
+  - say: The output is plain files. Any static host or CDN can serve it, with no server running.
+    do: show cdn pop @host

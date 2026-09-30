@@ -25,17 +25,18 @@ The Rust engine is **one library, the core, compiled into one binary** with the 
 - Decided (sidhantha, 2026-09-29): Rust compiles and caches each project's theme CSS.
 - Decided (sidhantha, 2026-09-29): routes, heading IDs, links and text match today's engine exactly.
 - Decided (sidhantha, 2026-09-29): the CLI and the server share one core, so each rule has one implementation.
-- Decided (claude, 2026-09-30): the 14 crates in layers of section 01, because each crate then has one job and a check can prove that dependencies point down ([030/10](../../subtasks/030_rust-engine/10_workspace-and-crate-boundaries.md)).
+- Decided (claude, 2026-09-30): the crates in layers of section 01, because each crate then has one job and a check can prove that dependencies point down ([030/10](../../subtasks/030_rust-engine/10_workspace-and-crate-boundaries.md)).
 - Decided (claude, 2026-09-30): the page shapes of section 05 are Rust types in `agentks-api`, published as a JSON Schema ([030/80](../../subtasks/030_rust-engine/80_page-data-interface.md)).
 - Decided (claude, 2026-09-30): the error record gains an optional `key`, and request failures are a separate closed list (section 08, [030/20](../../subtasks/030_rust-engine/20_error-model.md)).
-- Proposed (claude, 2026-09-30): comrak for markdown, and a highlighter that emits CSS classes.
+- Decided (claude, 2026-10-01): comrak for markdown, and syntect with two-face's extra grammars for code highlighting, which emits CSS classes. Two-face covers every language today's docs use ([030/50](../../subtasks/030_rust-engine/50_markdown-pipeline.md)).
+- Decided (claude, 2026-10-01): the site index is two ordered maps keyed by path, one for files and one for folders, with folder hashes rolled up Merkle style, and no radix tree (open question 07; the numbers are in [030/40](../../subtasks/030_rust-engine/40_site-index.md)).
 - Proposed (claude, 2026-09-30): BLAKE3 content hashes, and a page hash that includes the hashes of its embedded files.
 
 # 05 Notes & Analysis
 
 ## 01 Crate layout
 
-One Cargo workspace in `apps/agentks-engine`, built into one binary named `agentks`. It holds 14 crates in nine layers. A crate may depend only on crates in lower layers. The full table, with what each crate owns and may not do, is in [030/10](../../subtasks/030_rust-engine/10_workspace-and-crate-boundaries.md).
+One Cargo workspace in `apps/agentks-engine`, built into one binary named `agentks`. It holds 15 crates in nine layers. A crate may depend only on crates in lower layers. The full table, with what each crate owns and may not do, is in [030/10](../../subtasks/030_rust-engine/10_workspace-and-crate-boundaries.md).
 
 | Layer | Crates |
 |---|---|
@@ -43,14 +44,15 @@ One Cargo workspace in `apps/agentks-engine`, built into one binary named `agent
 | 1 | `config` · `git` · `cache` · `api` (the wire types of the data interface) |
 | 2 | `content` (the format rules and validation) · `library` · `migrate` |
 | 3 | `index`: the site index, URLs, the link resolver, folder hashes |
-| 4 | `render`: the markdown pipeline, highlighting, theme CSS |
+| 4 | `render`: the markdown pipeline, highlighting, theme CSS · `video`: compiles videos (a `.video.yaml` file or a video folder, read by one loader) into video data (checks, library components, templates, the SVG allowlist, the timeline, the audio stream join). It reaches the code highlighter through a trait that `site` implements with `render`'s |
 | 5 | `site`: the engine as one object, which answers "the page for this URL" |
 | 6 | `sync`: live documents, presence, access keys |
 | 7 | `server`: axum, the `/api` WebSocket, file routes, the watcher |
 | 8 | `cli`: commands, output, the binary's `main` |
 
-- **Folders and names.** Each crate lives in `crates/<short name>/`, such as `crates/core` or `crates/render`. Its package name is `agentks-<name>`.
+- **Folders and names.** Each crate lives in `crates/<short name>/`, such as `crates/core` or `crates/render`. Its package name is `agentks-<name>`, except `crates/video`, whose package is `agentks-video-compiler`, so it is never confused with the player package `agentks-video`.
 - **Dependencies point one way**, down the layers, and `scripts/gate/crate-layers.ts` fails the gate on any other edge. No crate below `server` knows HTTP, and no crate below `cli` prints. When a lower crate needs something from a higher one, the lower crate defines a trait and the higher one implements it.
+- **The server reaches `site` through a trait.** `agentks_server::Backend` is the one set of calls the server makes, and `Site` implements it. For the server's remaining work, `site` must still add a way to read the loaded config, the folders to watch (`watch_roots`), a flush on shutdown, and a `Conflict` error that carries the text on disk.
 - **The CLI and the server call the same functions.** `agentks check issues` and the issues page read one loader. That is the "one core instead of two copies" the migration exists for.
 - **The embedded bundles** are included at compile time: the built client by `server`, the static renderer by `cli`.
 - **Migration scripts** sit in `apps/agentks-engine/migrations/` (`docs/` and `library/`). They are fetched at run time and never compiled in.
@@ -85,7 +87,7 @@ The index is the engine's single view of the project. Every derived value is com
 
 **Hashes.** Each file has a BLAKE3 hash of its bytes. Each folder's hash is rolled up from its children's names and hashes, Merkle style, so a change re-hashes only its chain of parent folders. A page's **render hash** is its own hash plus the hashes of every file it embeds, and of the config that shapes it.
 
-**The data structure** is still open ([open question 07](../01_overview/05_open-questions-and-risks.md)). Claude's proposal: an ordered map keyed by path, which the audit found fast enough at about 1,300 pages with three entries per folder, plus the rolled-up folder hashes. No radix tree.
+**The data structure** is two ordered maps keyed by path, one for files and one for folders, plus the rolled-up folder hashes. There is no radix or Patricia tree. On this repository's corpus (1,659 files, 1,375 routes) the index builds cold in 49 ms, and a one-file update takes 0.2 ms. At 20 times that size it builds in about 1 s, and an update takes 7 ms, which is the copy of the path maps. A persistent map can replace the two maps behind the same API if that ever matters. The numbers are in [030/40](../../subtasks/030_rust-engine/40_site-index.md).
 
 ## 04 The render pipeline
 
@@ -148,7 +150,7 @@ A markdown page's data:
 }
 ```
 
-- **`kind`** is `markdown`, `video`, `diagram` or `artifact`, and it decides the body fields. A markdown or video page carries `body_html`, `outline` and `diagrams`. A diagram page carries `lang`, `source_text` and the sidecar `options` instead. The text is `source_text` because `source` is already the file path. An artifact page carries `artifact_url` (its `/artifacts/` URL), `theme` (`site` or `self`) and the sidecar `options`.
+- **`kind`** is `markdown`, `video`, `diagram` or `artifact`, and it decides the body fields. A markdown page carries `body_html`, `outline` and `diagrams`. A video page comes from a `.video.yaml` file or a video folder and carries `video` (the compiled `VideoData`), `transcript_html` and `audio` (its voice state) instead of `body_html`. A diagram page carries `lang`, `source_text` and the sidecar `options` instead. The text is `source_text` because `source` is already the file path. An artifact page carries `artifact_url` (its `/artifacts/` URL), `theme` (`site` or `self`) and the sidecar `options`.
 - **A blog post** adds a `post` block: `date`, `author`, `tags`, `image` and `draft`.
 - **Every value is final.** The frontend never strips a prefix, sorts a list, maps a status to a category or resolves a link.
 - **Every response carries its hash**, so the browser can cache it and ask again only when the hash changes.
@@ -202,6 +204,4 @@ Rules:
 
 ## 10 Open
 
-- The index's data structure ([open question 07](../01_overview/05_open-questions-and-risks.md)).
 - Whether the structure / layout / theme / shell model from the Go issue is adopted as the design backbone ([open question 08](../01_overview/05_open-questions-and-risks.md)).
-- The highlighter: syntect's class output is the default candidate. Its grammar coverage must be checked against the languages today's docs use.

@@ -1,36 +1,35 @@
 ---
-title: "Elements: the video cue kit (scene templates and script widgets)"
+title: "Elements: the video component set"
 status: open
 ---
 
-Narrated video pages name library elements inside their cues, as `alias:element`. This leaf fills the default library with the elements videos need beyond the player's built-in widgets: **scene templates** (a ready layout such as a request flow or a before-and-after) and **script widgets** (small animations that follow the widget contract). It waits for the video issue to settle its cue syntax and widget contract, because both decide what these elements look like. When it is done, a video page can use `<!-- scene: video:request-flow -->` or `<!-- panel: video:counter -->` and play it locally and on a published site.
+Video artifacts name library components in typed fields of their `.video.yaml` file, as `alias:name`. The player holds the mechanics; the library holds the looks. This leaf is the migration's side of filling the default library with the components videos need on day one, in `components/<category>/`: styles, layouts, slide templates, animation presets, transitions, backgrounds, frames, annotations, chart templates and illustrations. The video issue builds it as [T4b video component set](../../../2026-09-29-narrated-video-pages/subtasks/050_video-component-set.md), against the contracts its player spike fixes. When it is done, a video can say `template: ks:process-3`, `in: ks:dissolve` or `do: show title rise-blur` and look designed from the first one.
 
 # 01 To Do
-- [ ] **Wait for the inputs.** Start only when [the video issue](../../../2026-09-29-narrated-video-pages/issue.md) has decided the cue syntax and the widget contract ([its open questions](../../../2026-09-29-narrated-video-pages/notes/01_initial_discussion/09_open-questions.md)). Until then this leaf stays `open`; record the dependency in its result line if someone picks it up early.
-- [ ] **Scene templates.** Five to start, each a self-contained element the player loads into a scene's layout:
-    - [ ] `request-flow` — client → server → database, with numbered hops.
-    - [ ] `before-after` — two panels side by side.
-    - [ ] `layers` — a stacked architecture diagram.
-    - [ ] `timeline` — events on a horizontal line.
-    - [ ] `split-code` — code on one side, explanation on the other.
-- [ ] **Script widgets.** Three that follow the widget contract: they receive their cue and their panel, and animate only inside the panel.
-    - [ ] `counter` (a number animating to a value), `progress` (a bar), `typewriter` (text appearing).
-- [ ] **Icons for scenes** come from [120/70](./70_elements-icons.md); scene templates reference them as `alias:element` through the player, not by path.
-- [ ] **Manifest entries** with descriptions that say which cue uses them and what parameters they take; tag `video` plus a role tag (`scene`, `widget`).
-- [ ] **A sample video page** in the library's test project that uses every element; it must pass `agentks check libraries` and play in the browser.
-- [ ] **Bump the library version** (minor) and tag.
+- [ ] **The day-one set** in `components/<category>/`, with counts as targets ([the day-one set](../../../2026-09-29-narrated-video-pages/brainstorm/01_video-artifact-engine/08_library-components.md#08-the-day-one-set)):
+    - [ ] `styles` (3), `layouts` (8), `slides` (12 templates with slots).
+    - [ ] `animations` (32): entrances, emphasis, exits and annotation presets.
+    - [ ] `transitions` (10), `backgrounds` (10).
+    - [ ] `frames` (12): devices, windows and containers, each an SVG with one slot ([120/75](./75_elements-frames-and-widgets.md)).
+    - [ ] `annotations` (8), `charts` (8 templates), `illustrations` (12).
+- [ ] **Icons** come from [120/70](./70_elements-icons.md); a video names them in its `icon:` field.
+- [ ] **Manifest entries** with `category`, a description an agent can choose by, and tags.
+- [ ] **A preview page** in the library's `preview/` that plays every preset, transition and template with the player's build.
+- [ ] **Bump the library version** (minor) and tag, or fold into the first tag ([120/60](./60_default-library-scaffold.md)).
 
 ## Guardrails
-- Built-in widgets (file tree, flow, browser frame, phone frame, chart, code, terminal, diagram) live in the player in the shared UI package, not here. Do not duplicate them as elements.
-- Script widgets run sandboxed and cannot reach the player around them.
-- Elements are named only inside cues; narration prose stays plain markdown.
+- The player's built-ins (the stage, the grid, nine layouts, the twelve item kinds, a minimal preset pack, a plain style) live in the player, not here. A library adds to them and never replaces one.
+- Every SVG passes the video compiler's allowlist: no `<style>`, no animation elements, no links, no outside references.
+- Components are named only in video files and artifacts; markdown never names one.
+- There are no script widgets in version 1: a counter is the `count` preset, a progress bar is the `progress` chart, typing is the `type` preset.
 
 ## Done when
-- The sample video page plays every scene template and widget in the local client and in a static build.
-- `agentks check libraries` reports an unknown `video:…` name in a deliberately broken copy of the sample page.
+- Every day-one component exists with a manifest entry and passes the library check and `agentks check libraries`.
+- The preview page plays every preset, transition and template.
+- `agentks check video` reports an unknown `ks:…` name in a deliberately broken copy of the video issue's example.
 
 # 02 Status and Result
-Open. Not started. Blocked in practice on the video issue's cue syntax.
+Open. Not started. Waits for the video issue's player spike, which fixes the component contracts, and its library restructure.
 
 ## Result
 None yet.
@@ -39,23 +38,22 @@ None yet.
 none
 
 # 03 References
-**Where:** the library repository, `/home/sid/projects/06_02_NeuraLabs/agent-knowledge-system-library`, folder `video/`.
+**Where:** the library repository, `/home/sid/projects/06_02_NeuraLabs/agent-knowledge-system-library`, folders under `components/`.
 
 **Read first**
-- [Video pages: what the engine provides](../../notes/04_ecosystem/05_video-pages.md), sections 01–03.
-- The video issue: [issue.md](../../../2026-09-29-narrated-video-pages/issue.md), [the video engine](../../../2026-09-29-narrated-video-pages/notes/01_initial_discussion/04_video-engine.md), [libraries and reusable elements](../../../2026-09-29-narrated-video-pages/notes/01_initial_discussion/07_libraries-and-reusable-elements.md).
-- [Library system](../../notes/04_ecosystem/01_library-system.md), section 13.
+- [Video artifacts: what the engine provides](../../notes/04_ecosystem/05_video-pages.md).
+- The video issue's [library components](../../../2026-09-29-narrated-video-pages/brainstorm/01_video-artifact-engine/08_library-components.md) and [scenes, motion and the timeline](../../../2026-09-29-narrated-video-pages/brainstorm/01_video-artifact-engine/04_scenes-and-timeline.md).
+- [Library system](../../notes/04_ecosystem/01_library-system.md), sections 06 and 13.
 
-**Depends on:** [120/60](./60_default-library-scaffold.md), [120/70](./70_elements-icons.md), [120/75](./75_elements-frames-and-widgets.md), [100/40 video pages](../100_layouts/40_video-pages.md), the video issue's cue syntax.
-**Unblocks:** the video issue's widget work.
+**Depends on:** [120/60](./60_default-library-scaffold.md), [120/70](./70_elements-icons.md), [120/75](./75_elements-frames-and-widgets.md), the video issue's [T1 player spike](../../../2026-09-29-narrated-video-pages/subtasks/010_player-spike.md) and [T4a library restructure](../../../2026-09-29-narrated-video-pages/subtasks/030_library-restructure.md).
+**Unblocks:** the video issue's [T8 authoring skill](../../../2026-09-29-narrated-video-pages/subtasks/100_authoring-skill.md), whose recipes name these components.
 
 # 04 Decisions
-- Decided (sidhantha, 2026-09-30): library elements are used only in video pages and artifact pages; a video names them inside cues ([video pages](../../notes/04_ecosystem/05_video-pages.md)).
+- Decided (sidhantha, 2026-09-30): library elements are used only in video artifacts and artifact pages; a video names them in typed fields of its file ([video artifacts](../../notes/04_ecosystem/05_video-pages.md)).
 - Decided (sidhantha, 2026-09-30), on claude's proposal: pages name an element as `alias:element`.
+- Decided (claude, 2026-10-01): the `counter`, `progress` and `typewriter` script widgets are dropped, because they are the `count` preset, the `progress` chart and the `type` preset, which are data and seek exactly.
+- Decided (claude, 2026-10-01): the video issue's T4b builds this leaf, because one track should own the component set; this leaf stays in the libraries group so the group lists all the default library's content.
 
 # 05 Notes & Analysis
 ## Watch out
-- Library script widgets are plain HTML and JS in a sandboxed frame, so they do not depend on the UI framework (Preact 11, [080/10](../080_ui-and-client/10_ui-framework-decision.md)); keep them that way.
-
-## Open until the work starts
-- The cue syntax and the widget contract — owned by the video issue. See [open questions and risks](../../notes/01_overview/05_open-questions-and-risks.md) (video pages row).
+- Most video components are data (JSON) or SVG, inlined into the compiled video by Rust. They are never served over `/_lib/`, so nothing is fetched at play time except images.

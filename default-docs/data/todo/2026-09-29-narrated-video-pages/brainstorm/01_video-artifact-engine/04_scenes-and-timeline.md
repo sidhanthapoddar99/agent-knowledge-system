@@ -8,7 +8,7 @@ title: "Scenes, motion and the timeline"
 
 | Term | Meaning |
 |---|---|
-| **Slide** | One screen. It has a layout (or a template), items, beats and a transition into it |
+| **Slide** | One screen. It has a layout (or a template), items, beats and a transition into it. In a folder video each slide is its own scene file, `NN_<slug>.yaml` ([the format](./03_artifact-format.md)) |
 | **Item** | One thing on a slide: text, a list, code, an icon, an image, a shape, an arrow, a file tree, a frame, a chart, a stat or a table |
 | **Part** | A piece of an item an action can address: a list entry, a code line, a tree path, a chart bar, a table row, an arrow segment |
 | **Beat** | One or two sentences of narration, and the actions that go with them. One generated audio clip per beat |
@@ -22,7 +22,7 @@ The kinds are built into the player, because each needs drawing code and must be
 
 | Kind | Draws | Default entrance | Notes |
 |---|---|---|---|
-| `text` | A paragraph or a title | `rise` | Fits its area; shrinks down to the style's smallest size, then overflows visibly and reports `layout.text-fit` |
+| `text` | A paragraph or a title | `rise` | Fits its area; shrinks down to the style's smallest size, then overflows visibly and reports `layout-text-fit` |
 | `bullets` | A list, up to 7 entries | `rise`, entries staggered | `list.3` addresses one entry |
 | `code` | Highlighted code | `type` up to 8 lines, else `fade` | Rust highlights it into CSS classes, the same highlighter as pages. `src.3-5` addresses lines; `mark` highlights them |
 | `icon` | A library icon with an optional label | `pop` | Takes `tone` as its colour |
@@ -119,7 +119,9 @@ A transition runs on two layers at once: the old slide goes out and the new one 
 
 **Morph** is the one that makes explainers look designed (PowerPoint calls it Morph, Keynote calls it Magic Move). With `in: morph`, every item whose id also exists on the previous slide glides from its old place, size and colour to its new ones. Items only on the old slide fade out; items only on the new slide follow their `show` actions or fade in. The player measures both layouts and builds the keyframes once (the FLIP technique: measure first and last, invert, play), so a morph is seekable like everything else. Morph is opt-in per slide, so an id reused by accident never moves anything.
 
-**Style default.** The style names the default transition, usually `fade`. The skill teaches one default plus at most one other in a video.
+**A morph with nothing to move is an error**, `video-morph-unmatched`: a slide with `in: morph` must share at least one item id with the slide before it, and the first slide cannot morph. In a folder video the slide before is the previous scene file in prefix order. Renaming an item in that file, or reordering the scenes, could otherwise leave the morph empty with no sign. The error names both files and lists the previous slide's item ids.
+
+**Which transition runs.** A slide's own `in:` wins. Without one, the header's `in:` applies: the top of a single file, or the folder's `controller.yaml`. Without that, the style's default applies, usually `fade`. So a video-wide transition is written once. The skill teaches one default plus at most one other in a video.
 
 ## 06 The timeline
 
@@ -139,10 +141,12 @@ word offset  = the word's start in the clip          with generated audio
 
 An action whose animation would run past the slide's end is cut by the transition, and the check warns when more than half of it is lost.
 
-`agentks video info` prints the result, so an agent can check its pacing without playing the video. Slide 5 of the example, with the browser voice's estimate (times relative to the slide):
+In a folder video the slides are the scene files in prefix order, on this same timeline. A file boundary adds nothing: the gap between two scene files is the transition into the second, exactly as between two slides of one file, and the voice runs in one stream across both.
+
+`agentks video info` prints the result, so an agent can check its pacing without playing the video. Given a scene file, it prints only that scene. Slide 5 of the example, with the browser voice's estimate (times relative to the slide):
 
 ```text
-slide s5 "The render pipeline"                24.5 s   estimated voice
+slide 5 pipeline  050_pipeline.yaml  "The render pipeline"   24.5 s   estimated voice
   in fade                                      0.00 –  0.60
   beat 1  "A page is rendered only…"           0.60 –  4.47   10 words
      0.60  show fm+embeds+md+links+html rise stagger=0.1

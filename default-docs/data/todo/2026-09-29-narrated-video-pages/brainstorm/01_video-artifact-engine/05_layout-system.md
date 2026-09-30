@@ -83,7 +83,7 @@ That is why the example's pipeline slide needs no placement at all: five pills i
 
 Values are logical pixels in the `ks:clean` style; another style may use another scale. Images, frames and charts fill their area.
 
-**Text fits, or the player says so.** Text shrinks, step by step, until it fits its area, but never below the style's smallest step. Past that, it is drawn at the smallest step and overflows visibly, and the player reports `layout.text-fit`. Text is never clipped and never shrunk past the floor.
+**Text fits, or the player says so.** Text shrinks, step by step, until it fits its area, but never below the style's smallest step. Past that, it is drawn at the smallest step and overflows visibly, and the player reports `layout-text-fit`. Text is never clipped and never shrunk past the floor.
 
 **Who measures.** The player does all of this in the browser, because only the browser knows the real font: styles use the site's font stacks, and the reader's machine picks the font. The player waits for `document.fonts.ready` before it lays out a slide, so the first layout uses the real font and seeking stays exact. It then checks each slide's final state for three problems: text that does not fit, items that leave their area, and items that overlap. These are the layout diagnostics in [the format](./03_artifact-format.md#layer-3-the-players-layout-diagnostics). They show in the review sheet, which the authoring skill makes an agent look at ([the player](./06_player.md#07-layout-diagnostics-and-the-review-sheet)).
 

@@ -14,6 +14,12 @@ items:
   - label: "Dev Docs"
     href: "/dev-docs"
 
+  - label: "User Guide 2"
+    href: "/user-guide-2"
+
+  - label: "Dev Docs 2"
+    href: "/dev-docs-2"
+
   - label: "Todo"
     href: "/todo"
 

@@ -1,0 +1,5 @@
+template: ks:closing
+title: Files in, pages out
+subtitle: agentks.neuralabs.org/docs
+beats:
+  - say: Files in, pages out. That is the whole idea. The docs go deeper into each part. Thanks for watching.

@@ -1,6 +1,6 @@
 ---
 title: "Content contract — the on-disk format, implemented once in Rust"
-status: open
+status: in-progress
 ---
 
 The content contract is what a project's files mean: the config folder, the section types, ordering prefixes, `settings.json`, frontmatter, links and embeds, and the version gate. Today these rules live in three places (the Astro engine, the Rust CLI, the browser), and they have drifted. This group writes each rule once, in the Rust core, with tests taken from today's real output. The engine ([030](../030_rust-engine/00_overview.md)) calls these rules; this group owns what they say.
@@ -15,11 +15,11 @@ The content contract is what a project's files mean: the config folder, the sect
 | Leaf | Delivers | Absorbs | Status |
 |---|---|---|---|
 | [10](./10_golden-fixtures.md) | The spec fixtures and the captured 0.x corpus output every test compares against | — | open |
-| [20](./20_config-folder.md) | Loading and validating `config/`: discovery, `site.yaml`, navbar, footer, `.env`, aliases | [2025-06-25-configuration-enhancements](../../../2025-06-25-configuration-enhancements/issue.md) (validation, migration tool, per-page overrides) | open |
-| [30](./30_links-and-urls.md) | The one resolver: relative on disk → root-absolute href; the hosting path prefix | [2026-08-04-absolute-link-resolution](../../../2026-08-04-absolute-link-resolution/issue.md), all three groups | open |
-| [40](./40_embeds-and-dependencies.md) | `[[path]]` embeds, and embedded files as cache dependencies | [2026-08-07-content-embed-cache-dependencies](../../../2026-08-07-content-embed-cache-dependencies/issue.md) | open |
-| [50](./50_ordering-settings-frontmatter.md) | The `NN_` grammar, `settings.json`, frontmatter schemas, page kinds, slug collisions | — | open |
-| [60](./60_engine-version-gate.md) | `engine_version`, the supported range, the refusal message | — | open |
+| [20](./20_config-folder.md) | Loading and validating `config/`: discovery, `site.yaml`, navbar, footer, `.env`, aliases | [2025-06-25-configuration-enhancements](../../../2025-06-25-configuration-enhancements/issue.md) (validation, migration tool, per-page overrides) | in-progress |
+| [30](./30_links-and-urls.md) | The one resolver: relative on disk → root-absolute href; the hosting path prefix | [2026-08-04-absolute-link-resolution](../../../2026-08-04-absolute-link-resolution/issue.md), all three groups | in-progress |
+| [40](./40_embeds-and-dependencies.md) | `[[path]]` embeds, and embedded files as cache dependencies | [2026-08-07-content-embed-cache-dependencies](../../../2026-08-07-content-embed-cache-dependencies/issue.md) | review |
+| [50](./50_ordering-settings-frontmatter.md) | The `NN_` grammar, `settings.json`, frontmatter schemas, page kinds, slug collisions | — | review |
+| [60](./60_engine-version-gate.md) | `engine_version`, the supported range, the refusal message | — | in-progress |
 
 ## Guardrails
 These hold for every leaf in the group.
@@ -33,7 +33,7 @@ These hold for every leaf in the group.
 - `cargo test -p agentks-content -p agentks-config -p agentks-index` passes, including the corpus comparison from [10](./10_golden-fixtures.md).
 
 # 02 Status and Result
-Open. Not started.
+In progress. 40 and 50 are in review; 20, 30 and 60 are in progress; 10 is open.
 
 ## Result
 None yet.

@@ -1,0 +1,5 @@
+template: ks:title
+title: How agentks turns files into pages
+subtitle: A three-minute tour
+beats:
+  - say: This is a three-minute tour of agentks. We will follow one markdown file from your disk all the way to a page in your browser.

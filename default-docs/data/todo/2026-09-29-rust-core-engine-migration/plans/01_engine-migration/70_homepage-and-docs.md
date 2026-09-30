@@ -30,7 +30,10 @@ The homepage app and the complete rewrite of the docs.
 - [ ] **Docs rewrite** (group 180).
 
 # 02 Status and Result
-Not started.
+In progress.
+
+- **Homepage:** the message, the scaffold and the sections are in review (190/10 to 190/30). Wave 2's homepage track, merged on 2026-10-01 (`3e22f2d`), added the SEO files and the root files the homepage owns (190/50 in review), and one brand theme, `agentks`, shared with the docs (190/40 in progress: its docs half waits for `docs/`). A redesign runs in its own session (worktree `homepage-3`). The homepage checks are not started (190/60).
+- **Docs:** eight writers drafted the new user guide and developer docs in this repository's `default-docs/data/user-guide-2/` and `dev-docs-2/`. Most docs leaves are in review; the developer docs and the CLI reference are in progress (180/70, 180/80). Bringing the skills in line with the docs is not started (180/95).
 
 # 03 References
 - [The plan overview](./overview.md)

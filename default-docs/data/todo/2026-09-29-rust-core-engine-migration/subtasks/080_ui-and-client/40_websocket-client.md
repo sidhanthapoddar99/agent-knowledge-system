@@ -33,13 +33,14 @@ The client talks to the Rust engine over exactly one WebSocket per tab, at `/api
 - Upgrading the binary while a tab is open reloads that tab once on reconnect.
 
 # 02 Status and Result
-Open. Not started.
+In progress. The socket and the `DataSource` over it are built and tested against an in-memory mock engine. Left: the two checks against the real engine (restart while a page is open; an upgraded binary reloading an open tab once), and the IndexedDB store ([090/20](../090_frontend-performance/20_data-cache-indexeddb.md)).
 
 ## Result
-None yet.
-
-## Agent log
-none
+- `apps/agentks-client/src/data/socket.ts` (`ApiSocket`): hello first, requests queued until the server's hello, per-connection ids with out-of-order replies, `unchanged`, typed failures (`ApiError` with `ReplyErrorKind` plus `timeout` and `disconnected`), a 10 s timeout, pushes to listeners (unknown push types logged in dev), reconnect with backoff (250 ms doubling to 5 s, 50 to 100 percent jitter) and a new hello, requests already sent failed as `disconnected`, close code 4401 stops and reports `unauthorised`, `ok: false` reloads once with a session-storage guard (`reload-guard.ts`).
+- `src/data/source.ts`: `DataSource` over the socket. A copy whose hash the manifest or a `changed` push announced is served with no round trip; otherwise the cached hash goes as `have`. Identical in-flight requests share one message. `changed` drops stale and removed entries; `forget()` rechecks everything after a `resync` or reconnect.
+- `src/data/cache.ts`: the async `DataCache` interface, a memory store, and `cacheName(projectKey, engine)` for the IndexedDB store to use. `src/data/transport.ts`: the socket URL relative to the page's host.
+- `dev/mock-engine.ts`: the protocol as a pure function over the schema fixtures, driven by `dev/serve-mock.ts` (Bun) for `ctl dev client` and by the tests over an in-memory socket.
+- Tests: 12 socket and source tests in the client's Vitest run (hello order, out-of-order ids, `unchanged`, timeout, reconnect and hello again, version mismatch reloading once and never looping, 4401, pushes, `have`, coalescing, no round trip on an announced hash, `changed`).
 
 # 03 References
 - **Where:** main repository `/home/sid/projects/06_02_NeuraLabs/agent-knowledge-system`, folder `apps/agentks-client/src/data`.
@@ -52,6 +53,10 @@ none
 - Decided (sidhantha, 2026-09-29): the WebSocket carries pulls and pushes; there is no separate HTTP data API.
 - Decided (claude, 2026-09-30): derived data is cached once on the server; the browser keeps a hash-checked copy ([the sync engine and server](../../notes/02_engine/04_sync-engine-and-server.md)).
 - Proposed (claude, 2026-09-30): request ids, `have` hashes and the reconnect and version rules above ([the client](../../notes/03_frontend/02_client-application.md) section 04).
+- Decided (claude, 2026-10-01): the tests use an in-memory fake socket running the mock engine's protocol, not a Bun WebSocket server, because Vitest runs on Node and the protocol logic needs no network; the same mock runs over a real WebSocket in `ctl dev client`.
+- Decided (claude, 2026-10-01): the source keeps the hash each key was last announced with (from the manifest's routes and `changed` pushes) and serves a matching cached copy without asking, because that is what makes the browser cache save round trips; `resync` and reconnect clear those hashes so every copy is checked again.
+- Decided (claude, 2026-10-01): the cache interface is async although the first store is in memory, so the IndexedDB store can replace it without changing callers.
+- Decided (claude, 2026-10-01): requests already sent when the connection drops fail as `disconnected` and the app refetches after the new hello; requests not yet sent wait for the new connection, because a sent request can never be answered on a new connection.
 
 # 05 Notes & Analysis
 ## Watch out

@@ -1,6 +1,6 @@
 ---
 title: "Editing — group index"
-status: open
+status: in-progress
 ---
 
 This group builds Phase 2 editing in the local client: the dev toolbar with its Edit option, in-place editing of the page being read in two modes only (raw and live preview), the save path through the Rust engine, diagram editors, and the few authoring helpers that survive. The main editor of agentks content is an AI; a human edits **existing files only** — small fixes and quick ideas — with no new-file command, no file tree, no tabs and no second navigation. Several people editing at once is [060_collaboration](../060_collaboration/00_overview.md), the stage right after this one; this group builds on the same server-held `yrs` document per open file so that stage adds only presence and access keys.
@@ -9,9 +9,9 @@ This group builds Phase 2 editing in the local client: the dev toolbar with its 
 
 | Leaf | Status | Delivers | Absorbs |
 |---|---|---|---|
-| [110/10 Dev toolbar](./10_dev-toolbar.md) | open | The bar, Edit, and the tools: Problems, Cache, System, Theme preview | [2025-06-25-dev-toolbar-enhancements](../../../2025-06-25-dev-toolbar-enhancements/issue.md) |
-| [110/20 Edit in place](./20_edit-in-place.md) | open | Turning a page into an editor where it stands; the raw / live preview switch; editability from Rust | — |
-| [110/30 Live preview](./30_live-preview.md) | open | Today's CodeMirror 6 live preview carried over and improved; block widgets rendered by Rust | [2026-04-10-view-modes](../../../2026-04-10-view-modes/issue.md) 01, editor-advanced 07 |
+| [110/10 Dev toolbar](./10_dev-toolbar.md) | in-progress | The bar, Edit, and the tools: Problems, Cache, System, Theme preview | [2025-06-25-dev-toolbar-enhancements](../../../2025-06-25-dev-toolbar-enhancements/issue.md) |
+| [110/20 Edit in place](./20_edit-in-place.md) | in-progress | Turning a page into an editor where it stands; the raw / live preview switch; editability from Rust | — |
+| [110/30 Live preview](./30_live-preview.md) | in-progress | Today's CodeMirror 6 live preview carried over and improved; block widgets rendered by Rust | [2026-04-10-view-modes](../../../2026-04-10-view-modes/issue.md) 01, editor-advanced 07 |
 | [110/40 Save path](./40_save-path-and-sync.md) | open | `open`, sync into the server document, autosave, checks, atomic write, echo suppression, merging outside edits | [2026-04-10-editor-core](../../../2026-04-10-editor-core/issue.md) 02, 04, 12 |
 | [110/50 Diagram editing](./50_diagram-editing.md) | open | Single-user in-place editors for Mermaid, Graphviz, Excalidraw, tldraw, draw.io | [2026-04-10-editor-diagrams](../../../2026-04-10-editor-diagrams/issue.md) `30_editor/*` |
 | [110/60 Authoring helpers](./60_authoring-helpers.md) | open | Slash commands and image paste or drop, if kept; the rest of editor-advanced sorted | [2026-04-10-editor-advanced](../../../2026-04-10-editor-advanced/issue.md) |
@@ -32,7 +32,7 @@ This group builds Phase 2 editing in the local client: the dev toolbar with its 
 - A person can open any markdown page of this repository's docs or tracker, choose Edit, change text in live preview, and see it saved to disk and re-rendered, while an AI edit to the same file on disk appears in the open editor without loss.
 
 # 02 Status and Result
-Open. Not started.
+In progress. 10, 20 and 30 are in progress; 40, 50 and 60 are open.
 
 ## Result
 None yet.

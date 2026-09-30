@@ -39,9 +39,9 @@ agentks turns a folder of plain files into a browsable, editable knowledge site.
 | Part | What it is for the user |
 |---|---|
 | **The CLI** | Search, check, scaffold and move content; manage libraries; start the local server; build a published site |
-| **The local app** | A single-page app in the browser that shows docs, the issue tracker, blogs, custom pages, diagrams, artifacts and video pages. In Phase 2 it also edits pages in place |
+| **The local app** | A single-page app in the browser that shows docs, the issue tracker, blogs, custom pages, diagrams, artifacts and video artifacts. In Phase 2 it also edits pages in place |
 | **The published site** | Static HTML from `agentks build`, served by nginx, any static host or a CDN |
-| **Libraries** | Git repositories or local folders of reusable elements (icons, artifacts, video elements, scripts), listed in `config/dep.yaml` |
+| **Libraries** | Git repositories or local folders of reusable elements (icons, frames, charts, video components, widgets, scripts), listed in `config/dep.yaml` |
 | **AI plugins** | Claude Code and Codex plugins with skills, which teach an agent to use agentks well |
 
 The main author of agentks content is an AI agent. A human reads, reviews and makes small edits. So the CLI and the skills are first-class, not add-ons to the site.
@@ -64,7 +64,7 @@ The main author of agentks content is an AI agent. A human reads, reviews and ma
 | Custom layouts written by users | CSS covers branding; a bespoke page is an artifact |
 | Server-side templates, WASM, HTMX | The single-page app renders every layout; Rust renders page bodies and previews |
 | A user plugin API with build or render hooks | It would move rules out of Rust. Later extensions add commands and browser scripts only ([04/03 Extensions](../04_ecosystem/03_extensions.md)) |
-| Motion-graphics video, MP4 output | Video pages render in the browser from source |
+| Film-level motion graphics, MP4 or any rendered video file | Video artifacts play live, with a voiceover, from a small YAML file or a folder of YAML files; no video file is ever produced |
 | A Docker image | A basic Dockerfile ships for users to adapt; only the installer is released |
 | Versioned docs | Only the latest docs are published |
 
@@ -73,7 +73,7 @@ The main author of agentks content is an AI agent. A human reads, reviews and ma
 The folder of files is the primary artefact. The rendered site is one consumer of it. Every design choice in these notes follows from that:
 
 - **Links are relative on disk.** A page writes `[text](./path.md)` and embeds with `[[./path]]`, both relative to the file. The Rust engine resolves every link and outputs root-absolute hrefs for the browser. Content never compensates for the renderer ([02/01 Content format](../02_engine/01_content-format.md)).
-- **Markdown stays plain.** There are no wiki links by name and no library names in markdown. Library elements appear only in video and artifact pages.
+- **Markdown stays plain.** There are no wiki links by name and no library names in markdown. Library elements appear only in video artifacts and HTML artifacts.
 - **Metadata carries only what the filesystem cannot.** Frontmatter `title`, `settings.json` and `NN_` prefixes hold title, status and order. They are not renderer instructions.
 - **Agents read files, not the site.** The local app is a single-page app, so it shows nothing without JavaScript. That is fine: agents use the files and the CLI.
 
@@ -132,7 +132,7 @@ These come after 1.0.0 and Phase 3. Each is recorded so its constraints shape to
 | GitHub issues layout | A built-in layout that shows a linked GitHub repository's issues, with a machine-level sign-in | [03/04 Theming and layouts](../03_frontend/04_theming-and-layouts.md), [brainstorm](../../brainstorm/02_future-stages/06_github-issues-layout.md) |
 | Extensions | `agentksx <extension> <command>` and site scripts from libraries; rules stay in Rust | [04/03 Extensions](../04_ecosystem/03_extensions.md) |
 
-Narrated video pages are tracked in their own issue, [2026-09-29-narrated-video-pages](../../../2026-09-29-narrated-video-pages/issue.md). This migration gives them the home for audio and the voice model, and libraries ([04/05 Video pages](../04_ecosystem/05_video-pages.md)).
+Video artifacts are tracked in their own issue, [2026-09-29-narrated-video-pages](../../../2026-09-29-narrated-video-pages/issue.md). This migration gives them the machine home for audio, the voice helper and its model, libraries, and the page kind and routes they plug into ([04/05 Video artifacts](../04_ecosystem/05_video-pages.md)).
 
 ## 09 Open
 

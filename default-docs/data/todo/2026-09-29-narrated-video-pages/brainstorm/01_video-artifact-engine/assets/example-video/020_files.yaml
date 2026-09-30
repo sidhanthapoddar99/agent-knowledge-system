@@ -1,0 +1,12 @@
+head: The files are the document
+layout: split
+items:
+  folder: {icon: ks:folder, at: left, size: xl, label: Your project}
+  list: {bullets: [Obsidian, cat and grep, Your editor, An AI agent, The rendered site], at: right}
+beats:
+  - say: Everything starts with plain files on disk. The folder of markdown is the source of truth, not the website.
+    do: show folder pop @plain
+  - say: So every file must read well everywhere. In Obsidian, in cat and grep, in your editor, and to an AI agent walking the tree.
+    do: [show list.1 @Obsidian, show list.2 @cat, show list.3 @editor, show list.4 @agent]
+  - say: The rendered site is just one more reader.
+    do: [show list.5, emph list.5 mark @reader]

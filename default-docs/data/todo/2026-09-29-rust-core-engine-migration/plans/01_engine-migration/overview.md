@@ -18,7 +18,9 @@ The order in which the migration runs, from empty repositories to the archived o
 - [ ] [Stage 90: switch-over and archival](./90_archival.md) (launch step 6)
 
 # 02 Status and Result
-Stage 10 is in progress: wave 1 landed on 2026-09-30 (see [stage 10](./10_foundation.md)). Wave 2 builds the engine crates, the client and the remaining foundation items in parallel.
+Wave 1 landed on 2026-09-30. Wave 2 (config, homepage, git and migrate, cache, library, CLI, server, render, UI and client, content, index) was merged into `main` on 2026-10-01 (integration commit `3e22f2d`), and the two AI plugins followed the same day (`7d0246e`). Wave 3 (contracts, site, sync, three layout tracks, the editor, embed-dev and client performance) is being built now in its own worktrees, beside a library `category` fix and a plugin trim.
+
+Stages 10, 20, 30, 35, 40 and 70 are in progress, because the waves run work from several stages at once. Each stage's `02` says what is built and what is left. Stages 38, 50, 60, 80 and 90 are not started.
 
 # 03 References
 - [Issue](../../issue.md), [the launch order](../../comments/002_2026-09-30_launch-order.md)

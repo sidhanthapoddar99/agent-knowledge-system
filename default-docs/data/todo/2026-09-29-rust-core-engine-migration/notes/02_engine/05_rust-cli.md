@@ -34,10 +34,10 @@ The command-line tool is the same binary as the engine, renamed from `agent-ks` 
 | Rule | Detail |
 |---|---|
 | Project selection | `--config-dir PATH` > `AGENTKS_CONFIG_FOLDER` > `./config`. `help` and `--version` work without a project |
-| Output | `--json` writes exactly one JSON document to stdout. Human output otherwise. Diagnostics always go to stderr |
+| Output | `--json` writes exactly one JSON document to stdout. Human output otherwise. Diagnostics always go to stderr. A command that fails under `--json` still writes one document to stdout: `{"error": {"kind", "message", "records"}}` |
 | Exit codes | `0` success; `1` no result, a runtime error or validation errors; `2` invalid usage |
 | Unknown flags | An error, never ignored, so a query is never silently broadened |
-| Discovery | `agentks help`, `agentks help <group> <command>`, `agentks help --json` for the whole catalog from one manifest |
+| Discovery | `agentks help`, `agentks help <group> <command>`, `agentks help --json` for the whole catalog from one manifest. Each `help --json` entry carries `command`, `group`, `verb`, `aliases`, `summary`, `usage`, `arguments`, `flags`, `example`, `project`, `network` and `runtime` |
 | Deleting outside the project | Shows a report first and needs `--yes` or a typed confirmation. Skills tell agents to show the report and wait |
 | Network | Only `install`, `library`, `init`, `migrate`, `update`, `docs` and `build` touch the network. Content commands never do |
 | Speed | Content commands start in milliseconds, with no JavaScript runtime and no update check |
@@ -52,7 +52,7 @@ The command-line tool is the same binary as the engine, renamed from `agent-ks` 
 | `agentks ps [--json]` | Every agentks server on the machine: project, port, process id, uptime |
 | `agentks logs [--follow]` | This project's server log |
 | `agentks doctor` | Check config, the version gate, the lock against the cache, and the runtimes that `build` and `migrate` need. Reports only |
-| `agentks resolve-context` | The selected project root, config and content folders |
+| `agentks resolve-context` | The selected project: `PROJECT_ROOT`, `CONFIG_DIR`, `DATA_DIR` (only when the `@data` alias is set), one `SECTION.<name>=<folder>` line per section, `PROJECT_KEY` and `FOUND_BY`. With `--json`: `projectRoot`, `configDir`, `dataDir` (null without `@data`), `sections` (`name`, `type`, `dir`), `projectKey` and `foundBy`. There is no `CONTENT_ROOT`: it would be the project root |
 
 `start` no longer clones a framework checkout. The engine and the client are inside the binary.
 
@@ -63,8 +63,8 @@ The command-line tool is the same binary as the engine, renamed from `agent-ks` 
 | `agentks init [--template ID\|URL] [PATH]` | Create a project from a template. Defaults: `agentks-default` and `docs`. Refuses a folder that already has `config/` |
 | `agentks build [--out DIR] [--base /docs]` | Write the static site. Installs exactly the commits in `dep.lock`; a missing lock is an error naming `agentks install`. Needs Bun or Node |
 | `agentks migrate [--dry-run] [--yes]` | Bring the content to this binary's version. Refuses a dirty git tree, shows a dry run first, downloads the scripts for the version range from the official repository at the binary's release tag, runs them in order, re-checks, and reports what is left. Also checks every locked library's engine range. Needs Python (through `uv`) or Bun, depending on the scripts' language |
-| `agentks update [--check \| --status]` | Update the binary from the latest release; show cached state; check without installing |
-| `agentks shell-init` | Print the shell set-up for the PATH and silent automatic updates (today's `init`) |
+| `agentks update [--check \| --status \| --enable \| --disable \| --version X.Y.Z \| --unpin \| --background [--check-only]]` | Update the binary from the latest release. `--check` checks without installing; `--status` shows the cached state; `--enable` and `--disable` turn silent automatic updates on and off; `--version` installs that version and pins it; `--unpin` removes the pin; `--background` is what the shell hook runs, and `--check-only` makes it check without installing |
+| `agentks shell-init <bash\|zsh\|fish\|powershell>` | Print the shell set-up for the PATH and silent automatic updates (today's `init`) |
 | `agentks docs [PAGE]` | Open agentks.neuralabs.org/docs, or one page of it. Offline, print the URL and say it could not be reached |
 
 ## 04 Library and cache commands
@@ -76,15 +76,28 @@ The command-line tool is the same binary as the engine, renamed from `agent-ks` 
 | `agentks library add NAME\|OWNER/REPO\|URL [--path P] [--tag T \| --commit C \| --branch B] [--as ALIAS]` | Add an entry to `dep.yaml`, resolve it, install it, and print its source and manifest summary |
 | `agentks library remove ALIAS` | Remove the entry and its lock record. Cached files stay until a cleanup |
 | `agentks library list` | The project's libraries: alias, source, pinned commit, version, element count |
-| `agentks library show ALIAS` | One library's manifest: every element with its description and tags |
-| `agentks library find WORDS` | Elements across the project's libraries whose name, description or tags match |
+| `agentks library show ALIAS [--category C]` | One library's manifest: every element with its description and tags. `--category` limits it to one component category; for `slides` it prints each template's slots |
+| `agentks library find WORDS [--category C]` | Elements across the project's libraries whose name, description or tags match, optionally in one component category |
 | `agentks library search WORDS` | Entries in the catalog (`library.json`) that match |
-| `agentks check libraries` | Validate the manifests of the project's libraries and every `alias:element` a video or artifact page uses |
+| `agentks check libraries` | Validate the manifests of the project's libraries, every component against its category's contract, and every `alias:element` a video or artifact page uses |
 | `agentks cache status` | Sizes of the build cache and the library cache. Changes nothing |
 | `agentks cache clean ROOT... [--yes]` | Scan the roots for projects, keep what their locks need, report, then remove the rest |
 | `agentks cache reset` | Remove this project's build cache only. It is rebuilt on the next start (claude, proposed name) |
 
 All of them take `--json` except the TUI.
+
+**Video and voice commands** come with video artifacts ([04/05 Video artifacts](../04_ecosystem/05_video-pages.md)):
+
+| Command | Does |
+|---|---|
+| `agentks check video [PATH]` | Check one video (a `.video.yaml` file, a video folder, or any file inside one) or every video under a folder, with the error record. On a scene file it prints that scene's and the controller's errors in full and a count of the rest. Exit 1 when the video has an error |
+| `agentks video info VIDEO [--slide N]` | The timeline: every slide, beat and action with its time, and pacing warnings; a scene file shows that scene |
+| `agentks video preview VIDEO [--sheet]` | Write the standalone video page to the build cache and open it. Needs no server; a scene file opens the page at that scene |
+| `agentks video schema [--component CATEGORY]` | Print the video schema document (its root checks a single file; `#/$defs/controller` and `#/$defs/scene` check a folder's files), or one component category's schema |
+| `agentks video voice VIDEO \| --all` | Generate the missing narration clips and print progress |
+| `agentks voice install \| status \| remove` | Manage the voice helper, the model and the voices. Install shows the size and asks |
+
+All of them take `--json`.
 
 ## 05 Content commands, carried over
 
@@ -94,7 +107,7 @@ These keep their current behaviour, renamed only:
 |---|---|
 | Queries | `overview`, `find`, `doc list \| show \| search`, `blog list \| show \| search` |
 | Tracker | `issue list \| show \| tree \| context \| subtasks \| agent-logs \| review-queue`, and the writers `issue set-state \| add-comment \| new-subtask \| new-plan \| new-stage \| new-agent-log \| new-round` (`new-iteration` stays an alias) |
-| Validation | `check config \| section \| blog \| issues \| link-form`, plus the new `check libraries` |
+| Validation | `check config \| section \| blog \| issues \| link-form`, plus the new `check libraries` and `check video` |
 | Files | `move` (link-aware move or rename; `--dry-run` first), `img` (image optimisation) |
 | Git | `git updated \| changed \| log`, and the guarded `git commit`, which stages and commits one content path and never pushes |
 | Theme | `theme tokens`, and the new `theme css` (the compiled CSS and the layout hooks of this version) and `theme eject [NAME]` (copy it into `config/themes/<name>/` to edit) |
@@ -117,11 +130,12 @@ The rule behind this is the three-states rule: a command that needs the agentks 
 | Needs | Commands |
 |---|---|
 | Nothing | Every content, tracker, validation, theme, library-query and server command |
-| Network | `install`, `library add` and the TUI's install, `init` with a remote template, `migrate`, `update`, `build` when libraries are missing, `docs` |
-| Git (the `git` program) | The `git` commands only. Libraries are fetched through a Rust git library, so they need no `git` program |
+| Network | `install`, `library add` and the TUI's install, `init` with a remote template, `migrate`, `update`, `build` when libraries are missing, `docs`, `voice install` |
+| Git (the `git` program) | The `git` commands, and every command that fetches or reads git: library installs and `library add`, `init` with a remote template, and `migrate`. `agentks-git` runs the `git` program rather than a Rust git library |
 | Bun or Node | `build` |
 | `uv` (Python) or Bun | `migrate`, by the language the scripts use |
 | ImageMagick | `img` |
+| The voice helper (`agentks voice install`) | `video voice`; `check video` uses it for the unknown-word check when it is installed |
 
 A missing runtime is an error that names what to install. The binary never bundles one.
 

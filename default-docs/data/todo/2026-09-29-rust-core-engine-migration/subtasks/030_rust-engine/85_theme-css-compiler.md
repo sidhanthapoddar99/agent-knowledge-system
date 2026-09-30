@@ -1,6 +1,6 @@
 ---
 title: "Theme CSS compiler — one contract-checked stylesheet per project"
-status: in-progress
+status: review
 ---
 
 Rust compiles and caches each project's theme CSS: the built-in theme, the chosen theme and its `extends` chain, and the project's overrides, merged into one stylesheet served at a hashed URL. Today's [theme.ts](../../../../../../agent-ks-engine/src/loaders/theme.ts) does this in TypeScript. This leaf ports it and makes the variable contract a hard check: a theme missing a required variable is an error, not a silent fallback.
@@ -27,10 +27,14 @@ Rust compiles and caches each project's theme CSS: the built-in theme, the chose
 - `agentks theme css` output equals the served `/theme.<hash>.css` byte for byte.
 
 # 02 Status and Result
-Open. Not started.
+Review. The compiler is built in crate `agentks-render`. Serving at `/theme.<hash>.css`, the `agentks theme css` command and the live recompile belong to the server and CLI tracks. They call `compile_theme` and so get the same bytes.
 
 ## Result
-- Theme files (done by the default-theme track, 2026-09-30): the built-in theme is in `apps/agentks-engine/themes/default/`, today's two user themes are in `apps/agentks-engine/themes/examples/` as test inputs, and `apps/agentks-engine/themes/README.md` lists what the compiler must do with them (resolve, extends, merge modes, contract check, `@layer` wrapping from the new `layers` map, cache and serve). `bun apps/agentks-engine/themes/check-contract.ts` checks the files. The compiler itself is not started.
+- Theme files (done by the default-theme track, 2026-09-30): the built-in theme is in `apps/agentks-engine/themes/default/`, today's two user themes are in `apps/agentks-engine/themes/examples/` as test inputs, and `apps/agentks-engine/themes/README.md` lists what the compiler must do with them.
+- The compiler is `compile_theme(config, files)` and `compile_theme_named(name, theme_paths, files)` in `crates/render/src/theme/`. It embeds `themes/default/` with `include_dir`. It resolves `default` or a folder under `theme_paths`, and a user folder named `default` is an error. It follows `@theme/<name>` in `extends`: a cycle gives `theme-extends-cycle`, an unknown theme or parent gives `theme-not-found`, and a bad `theme.yaml` or a missing listed file gives `theme-invalid`. It reads only the listed files and never follows `@import`. It merges by `merge`, `override` or `replace` (an `override` skip list applies all the way up the chain, as in the old loader). It checks every `required_variables` name after stripping comments, and each missing one gives a `theme-variable-missing` record naming the variable and the theme.
+- The output starts with `@layer reset, theme, elements, components, user;`. Each built-in file is wrapped in its layer from the `layers` map, every user file goes in `user`, and the engine's code-highlighting colours go last in `elements`. `CompiledTheme.hash` is BLAKE3 of the CSS. `inputs` lists the hash of each `theme.yaml` (root first), then each CSS file in merge order. `supports_dark_mode` is the nearest value up the chain.
+- A one-off check compared the custom-property declarations (name and value) of the compiled CSS with today's concatenated CSS. For `default` (132), `minimal` (132) and `full-width` (134) the sets are identical.
+- Tests: 5 compiler tests, covering layers, merge with the examples, override and replace, broken themes, and determinism. They are part of the crate's 28 tests.
 
 ## Agent log
 none
@@ -45,6 +49,10 @@ none
 - Decided (claude, 2026-09-30): the theme files live in `apps/agentks-engine/themes/`, outside any crate, because they are data several parts read; the compiler embeds them from there. The built-in `theme.yaml` carries a `layers` map that the compiler uses to wrap each file in its cascade layer.
 - Decided (sidhantha, 2026-09-29): Rust compiles and caches each project's theme CSS; branding is CSS only.
 - Proposed (claude, 2026-09-30, [03/04](../../notes/03_frontend/04_theming-and-layouts.md)): user themes default to `config/themes/<name>/`.
+- Decided (claude, 2026-10-01): `theme.yaml` is parsed with `serde-saphyr`, the YAML crate the library track added, so the workspace keeps one serde YAML crate.
+- Decided (claude, 2026-10-01): the compiled stylesheet ends with a generated code-highlighting block in the `elements` layer. This is the one part that no `theme.yaml` lists. It is not in `inputs`, because it changes only with the engine version, which the cache key already holds.
+- Decided (claude, 2026-10-01): `theme:` in `site.yaml` may be `name` or `@theme/name`, while `extends` must use `@theme/name`. `theme_paths` is used as the config gives it; its default belongs to the config loader.
+- Decided (claude, 2026-10-01): a user theme with no `extends` stands alone (its own files only), as in the old loader. It must still define the whole contract.
 
 # 05 Notes & Analysis
 ## Watch out

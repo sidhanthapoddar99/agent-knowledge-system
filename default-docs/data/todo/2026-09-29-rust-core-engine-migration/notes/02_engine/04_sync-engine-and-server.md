@@ -48,13 +48,17 @@ title: "Sync engine and server: HTTP, the /api WebSocket and the watcher"
 | Route | Serves | Notes |
 |---|---|---|
 | `/api` | The WebSocket | Upgrade only; the `Origin` must be the server's own |
-| `/theme.<hash>.css` | The project's compiled theme CSS | Immutable; the hash changes when the CSS does |
+| `/theme.<hash>.css` | The project's compiled theme CSS | Immutable; the hash changes when the CSS does. The URL carries the hash as plain hex, without the `b3:` prefix |
 | `/client/*` | The client's JavaScript, CSS and fonts | From the embedded bundle; hashed names, immutable |
-| `/assets/*` | Framework chrome named from config: logo, favicon | From the paths `site.yaml` names |
-| `/content-assets/*` | Files a page refers to: images, data, diagram sources | From the content sections only |
+| `/assets/*` | Framework chrome named from config: logo, favicon | From the paths `site.yaml` names. Sent with a sandbox CSP |
+| `/content-assets/*` | Files a page refers to: images, data, diagram sources | From the content sections only. Sent with a sandbox CSP, so an SVG opened directly runs no script |
 | `/artifacts/*` | `.html` artifact pages | The one place project HTML is served as `text/html` |
-| `/_lib/<alias>/<element>` (Phase 2) | A library element | From the machine's library cache, for the locked commit |
+| `/artifacts/<path>.video` | The standalone video page, a shell the engine writes; `?sheet` shows the review sheet, `?theme=light` or `dark` sets the mode | The same shell for a single-file video and a video folder ([video artifacts](../04_ecosystem/05_video-pages.md)) |
+| `/_audio/<key>.opus` | A video's audio stream from `~/.agentks/audio/` | Range requests; only names of 64 hex characters |
+| `/_lib/<alias>/<element>` (Phase 2) | A library element | From the machine's library cache, for the locked commit. Until [120/50](../../subtasks/120_libraries/50_lib-route-and-sandbox.md) lands it answers `501`, already with the library sandbox CSP |
 | everything else | The client's `index.html` | The client routes by the real path |
+
+**Redirects come from the site index.** The server answers a redirect from `RouteTable::find`: the old file-path forms of a URL, a docs root to its first page, and plan stages. A plan stage's alias is an anchored redirect, to the plan page's URL with the stage's heading as the `#fragment`.
 
 **The `.html` boundary is explicit.** A file is served as `text/html` only from `/artifacts/` and `/_lib/`. Everywhere else, `.html` is served as plain text or refused. The MIME map is an allowlist; an unknown extension is served as `application/octet-stream` with `Content-Disposition: attachment`.
 
@@ -62,7 +66,7 @@ title: "Sync engine and server: HTTP, the /api WebSocket and the watcher"
 
 Text frames carry JSON. Binary frames are reserved for `yrs` updates in the multi-user stage. The message types are Rust types in `apps/agentks-engine/crates/api/src/messages/`, and `apps/agentks-engine/schema/api.schema.json` is generated from them ([030/80](../../subtasks/030_rust-engine/80_page-data-interface.md)).
 
-**Hello first.** The client's first frame is its hello. The server answers with its own hello before anything else. A connection whose first frame is not a hello is closed with code `4400`.
+**Hello first.** The client's first frame is its hello. The server answers with its own hello before anything else. A connection whose first frame is not a hello is closed with code `4400`. A hello whose version does not match gets the `reload` answer below, and then the server closes the connection with code `4409`. A frame larger than the limit closes the connection; it gets no `invalid-request` reply.
 
 ```json
 { "op": "hello", "api_version": 1, "client_build": "a1b2c3" }
@@ -114,17 +118,17 @@ Each `what` with its params is a data key, written as a string such as `page:/de
 ```
 
 - **On connect**, after the hello, the client asks for the manifest and compares its hashes with its cache. It refetches only what differs.
-- **On a change**, the engine pushes the new hashes of every affected key: the page, the pages that embed it, the section's sidebar, the tracker index, the manifest when config changed. `removed` lists keys that no longer exist, and `moved` gives the new URL of a page whose file moved. The client refetches only keys it is showing or caching.
+- **On a change**, the engine pushes the new hashes of every affected key: the page, the pages that embed it, the section's sidebar, the tracker index, the manifest when config changed. `removed` lists keys that no longer exist, and `moved` gives the new URL of a page whose file moved. The client refetches only keys it is showing or caching. The server filters only `changed` pushes, per connection, to the keys that connection asked for. `errors`, `fatal` and `resync` go to every connection.
 - **`errors`** carries the current content problems of one file. An empty list means the file is clean now.
 - **`fatal`** covers a config edit that breaks loading, and carries every problem as an error record. The server stays up and keeps serving the last good config, and the client shows the errors until the config is fixed.
 - **`resync`** tells a client that the server dropped pushes for it, because its outgoing queue was full. The client refetches the manifest and compares hashes.
 
 ## 04 The watcher
 
-- One `notify` watcher per project, over the content sections, `config/`, the theme folders and local libraries.
+- One `notify` watcher per project, over the content sections, `config/`, the theme folders and local libraries. Until the site names its roots (`watch_roots`), it watches the whole project root, plus the config folder when that lies outside it.
 - **Debounce and coalesce** events for about 50 ms, so an editor's save-then-rename, or a `git checkout` touching hundreds of files, becomes one update.
-- **Handle the known hazards** from the prior audit: WSL reports unreliable mtimes, so change detection compares content hashes, not times; editors write a temp file and rename it over the target, so the watcher watches folders, not file inodes.
-- **Git refs.** The watcher also watches `.git/` and the folder holding the active branch ref, because git writes a ref by renaming a lock file over it. A moved `HEAD` or branch ref triggers the incremental git-date walk and pushes the changed `updated` dates.
+- **Handle the known hazards** from the prior audit: WSL reports unreliable mtimes, so change detection compares content hashes, not times; editors write a temp file and rename it over the target, so the watcher watches folders, not file inodes. The watcher keeps its own table of file hashes to decide what changed, and it ignores `Access` events, which change nothing.
+- **Git refs.** The watcher also watches `.git/` and the folder holding the active branch ref, because git writes a ref by renaming a lock file over it. A moved `HEAD` or branch ref triggers the incremental git-date walk and pushes the changed `updated` dates. The separate debounce for git refs is not built yet.
 - **On each batch:** re-read the changed files, update the index and the rolled-up folder hashes, invalidate cached renders whose render hash changed, then push.
 - **Config changes** reload config and, if the result is valid, rebuild the index. If it is invalid, push `fatal`.
 
@@ -173,6 +177,8 @@ Rules:
 - Each `agentks start` serves one project on its own stable port: `server.port` when set, otherwise a port derived from the project key and recorded in the machine home. When that port is taken by something else, start fails with a clear error and the fix, rather than moving to another port. A moved port would change the browser origin, lose the project's browser cache, and could show one project's stored UI state to another.
 - Each running server records itself in the machine home (project path, port, process id), so `agentks ps` lists every server on the machine and `agentks stop` can find one by project ([machine home](./06_machine-home-and-build-cache.md)).
 - Starting a project that already has a server attaches to it and prints its address, instead of starting a second one.
+- **Is a recorded server alive?** The server answers `426` on a plain HTTP `GET /api`. A record counts as live only when its port gives that answer with the project's key. The process id is not checked: the probe already proves the server is there, and a process check needs code for each platform.
+- **`--detach`** runs the same command again in the background, with `AGENTKS_DETACHED_CHILD=1` set, and returns once the child serves.
 
 ## 09 Open
 

@@ -1,0 +1,22 @@
+head: From markdown to a page
+layout: split
+items:
+  editor: {frame: ks:code-frame, at: left, label: 01_intro.md}
+  src:
+    at: editor
+    lang: markdown
+    code: |
+      ---
+      title: Intro
+      ---
+
+      # Getting started
+
+      Read the [setup guide](./02_setup.md).
+  browser: {frame: ks:browser-frame, at: right, label: /docs/intro}
+  shot: {image: ./assets/tour-intro-page.webp, at: browser}
+beats:
+  - say: Here is the file on disk. A title in the frontmatter, a heading, and a relative link.
+    do: [show editor fade, show src type @file, emph src.2 mark @title, emph src.7 mark @link]
+  - say: And here is the same page in the browser, inside the docs layout, with the link already pointing at the right place.
+    do: [show browser+shot rise @browser, emph browser pulse @link]

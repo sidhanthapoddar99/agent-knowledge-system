@@ -9,7 +9,7 @@ The default library lives in its own repository, `NeuraLabsHQ/agent-knowledge-sy
 - [ ] **Layout.** Create the repository layout:
     - [x] `manifest.json` — the default library's manifest at the root (`name: agentks-default`, `version`, `description`, `engine: ">=1.0.0 <2.0.0"`, `elements: {}` until content lands).
     - [ ] `library.json` — the catalog, with the `agentks-default` library entry and the `agentks-default` template entry. The library entry is in; the template entry waits for [120/85](./85_templates.md), because the check rejects a template path that does not exist.
-    - [x] Element folders chosen by the library, for example `icons/`, `frames/`, `widgets/`, `video/`.
+    - [ ] `components/<category>/` with the fifteen categories ([library components](../../../2026-09-29-narrated-video-pages/brainstorm/01_video-artifact-engine/08_library-components.md#02-the-fixed-structure)), beside `templates/`, `scripts/`, `preview/` and `LICENSES/`. The move, the manifest's required `category` field and the folder-matches-category rule in `scripts/check.py` happen now, before the first tag, in the video issue's [T4a library restructure](../../../2026-09-29-narrated-video-pages/subtasks/030_library-restructure.md), coordinated with the agent filling the library.
     - [ ] `templates/agentks-default/` — filled by [120/85](./85_templates.md).
     - [x] `AGENTS.md` (the only instruction file; no `CLAUDE.md`), `README.md`, `LICENSE` (same licence as the main repository), `.gitignore`.
 - [x] **AGENTS.md.** Say what the repository is, the manifest rules from [120/30](./30_manifest-and-catalog.md), that one version covers the whole library, that `library.json` must never move, how to test locally (a project whose `dep.yaml` uses `path:` pointing at a checkout), and that library migrations are run by the owner with `agentks migrate --library .`.
@@ -62,6 +62,7 @@ none
 - Decided (claude, 2026-09-30): the check script is standard-library Python at `scripts/check.py`, because the repository has no toolchain and Python runs on every CI image with no install. `AGENTS.md`'s "no `scripts/`" exception now names this one tool.
 - Decided (claude, 2026-09-30): the check also requires every file in an element folder to be named by an element, and `library.json`'s `latest` to equal the manifest version, because an unlisted file ships unseen and a stale `latest` misleads the catalog.
 - Decided (claude, 2026-09-30): `library.json` uses the real casing `NeuraLabsHQ` in its git URL, as the watch-out below says.
+- Decided (claude, 2026-10-01): elements live in `components/<category>/` with fifteen fixed categories and a required `category` in the manifest, because sidhantha asked for a fixed components layout ([comment 003](../../comments/003_2026-09-30_library-components-layout.md)) and the video design settles the list. The move happens before the first tag, while it costs nothing.
 - Decided (claude, 2026-09-30): the template entry is left out of `library.json` until [120/85](./85_templates.md) creates the folder, because an entry pointing at a missing folder looks right and fails at `agentks init`.
 
 # 05 Notes & Analysis

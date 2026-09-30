@@ -1,0 +1,10 @@
+head: Small pages, measured
+layout: full
+items:
+  chart: {chart: ks:bars, data: {Preact: 8.0, Solid: 11.1, Svelte: 16.5}, unit: KiB}
+beats:
+  - say: The web app draws every layout with Preact.
+    wait: 0.4
+  - say: We measured three frameworks on the same page. Preact shipped eight kilobytes of script, Solid eleven, and Svelte sixteen and a half.
+    do: [show chart grow @measured, emph chart.1 glow @eight]
+  - say: Less script means the page is ready sooner, on every device. Heavy parts, like the diagram editors, load only on the pages that use them.

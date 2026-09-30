@@ -10,7 +10,7 @@ Unit and parity tests prove the parts. This leaf proves the product: a person in
     - [ ] Browsers: Chromium on every run; Firefox and WebKit nightly.
     - [ ] Viewports: desktop (1440×900) and mobile (390×844).
 - [ ] **Flow 1 — a new project.** `agentks init --template agentks-default <tmp>`; `agentks start`; the home page loads; the sidebar lists the template's pages; every sidebar link opens a page with no console errors.
-- [ ] **Flow 2 — the default library.** Add the default library to `config/dep.yaml` at the pinned tag; `agentks install` writes `config/dep.lock`; restart; a video page and an artifact page that use library elements render every element the library's `manifest.json` lists, served from `/_lib/<alias>/<element>` ([120/50](../120_libraries/50_lib-route-and-sandbox.md)). Library HTML runs sandboxed: a test element that tries to read `parent.document` fails.
+- [ ] **Flow 2 — the default library.** Add the default library to `config/dep.yaml` at the pinned tag; `agentks install` writes `config/dep.lock`; restart; a video artifact and an artifact page that use library elements render every element the library's `manifest.json` lists, served from `/_lib/<alias>/<element>` ([120/50](../120_libraries/50_lib-route-and-sandbox.md)). Library HTML runs sandboxed: a test element that tries to read `parent.document` fails.
     - [ ] A test artifact embeds `/_lib/default/phone-frame` with an image `src`, and the image shows inside the frame. Run it locally and in the `--base /docs` build of flow 9. The second run also tests how `/_lib/` URLs get the hosting path prefix ([120/50](../120_libraries/50_lib-route-and-sandbox.md)).
 - [ ] **Flow 3 — every layout.** Open one page per layout and style (docs, blog index and post, issues index and detail, custom pages, artifact and diagram pages); check the main landmarks exist and the theme toggle switches light and dark.
 - [ ] **Flow 4 — live updates.** With a page open, change its markdown on disk; the page updates without a reload and keeps its scroll position. Change a file the page embeds; the page updates too. Delete the page; the client shows the "moved or deleted" notice.
@@ -20,6 +20,7 @@ Unit and parity tests prove the parts. This leaf proves the product: a person in
 - [ ] **Flow 8 — upgrade across versions.** Start a tab on build A, replace the binary with build B, restart; the open tab reloads itself instead of talking to the new server with old code ([140/50](../140_versioning-and-migrations/50_protocol-version-handshake.md)).
 - [ ] **Flow 9 — publishing (Phase 3).** `agentks build --base /docs` on the project, serve the output with a static server under `/docs`, open every page, and check no link or asset resolves outside `/docs` ([150/10](../150_publishing/10_agentks-build.md)).
 - [ ] **Flow 10 — offline.** Load a page, stop the server; the page stays on screen with a "disconnected" notice; restart; the client reconnects and refreshes what changed.
+- [ ] **Flow 11 — video artifacts.** The video issue's example video (a folder: `settings.json`, `controller.yaml` and ten scene files) plays in the client as a page, in its standalone page at `/artifacts/<path>.video`, and in the static build of flow 9. Seeking to ten times shows the same frame as playing to them, compared by screenshot. The review sheet (`?sheet`) of the example lists no layout diagnostic ([video artifacts](../../notes/04_ecosystem/05_video-pages.md), the video issue's [T10 tests](../../../2026-09-29-narrated-video-pages/subtasks/120_tests.md)).
 - [ ] **Accessibility scan** with `@axe-core/playwright` on one page per layout; serious and critical findings fail.
 
 ## Guardrails
@@ -30,6 +31,7 @@ Unit and parity tests prove the parts. This leaf proves the product: a person in
 ## Done when
 - `ctl e2e` runs flows 1 to 8 and 10 green on Chromium, desktop and mobile, in CI.
 - Flow 9 is green once Phase 3 lands.
+- Flow 11 is green in the client and the standalone page once the video issue's video pages land, and in the static build once its publishing lands.
 - Firefox and WebKit run nightly and their failures are triaged, not ignored.
 
 # 02 Status and Result

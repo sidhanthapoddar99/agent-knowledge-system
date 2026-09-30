@@ -35,15 +35,16 @@ The new repositories exist and build; the engine and client work has a fixed con
 - [ ] **Lay out the crate workspace and the error model** (030/10, 030/20).
 
 # 02 Status and Result
-In progress. Wave 1 landed on 2026-09-30; the remaining foundation items are built in wave 2 beside Phase 1.
+In progress. Wave 1 landed on 2026-09-30, and wave 2 was merged into `main` on 2026-10-01 (integration commit `3e22f2d`). What is left in this stage is small, apart from the golden fixtures.
 
 - **Repositories:** all three live on NeuraLabsHQ, private, with descriptions, `AGENTS.md` and green CI in the main one (010/10 and 010/60 in review).
-- **Engine skeleton:** 14 crates by layer with a layer check in the gate, the error model and core types, the `/api` contract with its JSON Schema and fixtures, and every crate's public API as documented signatures (030/10 and 030/20 in review; 030/80 in progress).
+- **Engine skeleton:** 14 crates by layer with a layer check in the gate, the error model and core types, the `/api` contract with its JSON Schema and fixtures, and every crate's public API as documented signatures (030/10 and 030/20 in review). The video compiler will be the 15th crate.
 - **UI framework:** Preact 11 with Vite 8.3.1, a manifest-driven router and per-element island hydration, chosen by a measured spike against Solid and Svelte (080/10 in review).
+- **The content contract, from wave 2:** the config crate (discovery, the three YAML files, `.env`, aliases, sections, the version gate), the content rules (the `NN_` grammar, folder settings, frontmatter, page kinds, slug collisions, the tracker rules), the embed pass and the link resolver. 020/40 and 020/50 are in review. 020/20, 020/30 and 020/60 stay in progress for their CLI and parity checks.
 - **Also landed in wave 1:** the homepage app (190/10–30), the default theme files (100/10), the 0.x migration scripts (140/30), and the default library's first 83 elements in the library repository (120/70, 120/75).
-- **Left in this stage:** the content contract's implementation (020/20–60), the client skeleton (010/20), `ctl dev` (010/40), the contributor guide (010/90).
+- **Left in this stage:** the golden fixtures of today's output (020/10; only the content spec fixtures exist), the rest of the main repository's tree (010/20: `apps/agentks-ssg`, `docs/`, `plugins/`, `RELEASING.md`), the remaining `ctl` rungs (010/40), the contributor guide (010/90) and the shared Rust test harness (170/10).
 
-Main repository merges: `2055167` (engine contracts), `9ce046a` (theme), `0885dc0` (migrations), `885d1f2` (homepage). Library: `73c080a`.
+Main repository merges: `2055167` (engine contracts), `9ce046a` (theme), `0885dc0` (migrations), `885d1f2` (homepage), `3e22f2d` (wave 2). Library: `73c080a`.
 
 # 03 References
 - [The plan overview](./overview.md)

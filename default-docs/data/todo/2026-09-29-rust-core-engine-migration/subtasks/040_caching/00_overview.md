@@ -1,6 +1,6 @@
 ---
 title: "Caching — every cache layer, who owns it, what invalidates it"
-status: open
+status: in-progress
 ---
 
 The index leaf of the caching group. agentks caches in three places: the engine's memory, the per-project build cache on disk under `~/.agentks/build-cache/`, and the browser. Plus one global store, the library cache. This group builds the server-side layers and the rules that keep every layer correct. The browser layer is built by the client groups ([080/00](../080_ui-and-client/00_overview.md), [090/00](../090_frontend-performance/00_overview.md)); this group defines the hashes they rely on.
@@ -9,16 +9,16 @@ The index leaf of the caching group. agentks caches in three places: the engine'
 
 | Leaf | Delivers | Status |
 |---|---|---|
-| [040/10 Cache keys and dependencies](./10_cache-keys-and-dependencies.md) | The one key function: engine version + content hash + embed hashes + settings fingerprint | open |
-| [040/20 Settings invalidation](./20_settings-invalidation.md) | A map from each config key to the cache layers it invalidates | open |
-| [040/30 In-memory cache](./30_in-memory-cache.md) | A least-recently-used cache with a byte budget | open |
-| [040/40 Build cache on disk](./40_build-cache-on-disk.md) | `~/.agentks/build-cache/<project key>/<engine version>/…`, atomic, self-healing | open |
-| [040/50 Document cache by location](./50_document-cache-by-location.md) | The project key, relative-path addressing, moved projects and moved files | open |
-| [040/60 Library cache](./60_library-cache.md) | The global store `libraries/<host>/<repo>/<commit>/`: atomic, locked, read-only | open |
-| [040/70 Git dates cache](./70_git-dates-cache.md) | Branch-keyed, eager incremental issue `updated` dates | open |
-| [040/80 Cache format versions](./80_cache-format-versions.md) | A format version in every store; a mismatch rebuilds, never reads | open |
-| [040/90 Clean and reset](./90_clean-and-reset.md) | `agentks cache status · clean <root>… · reset`, and `build-cache.json` | open |
-| [040/95 Cache metrics](./95_cache-metrics.md) | Hit rate, size and eviction counts, for the dev toolbar and `cache status` | open |
+| [040/10 Cache keys and dependencies](./10_cache-keys-and-dependencies.md) | The one key function: engine version + content hash + embed hashes + settings fingerprint | in-progress |
+| [040/20 Settings invalidation](./20_settings-invalidation.md) | A map from each config key to the cache layers it invalidates | review |
+| [040/30 In-memory cache](./30_in-memory-cache.md) | A least-recently-used cache with a byte budget | review |
+| [040/40 Build cache on disk](./40_build-cache-on-disk.md) | `~/.agentks/build-cache/<project key>/<engine version>/…`, atomic, self-healing | review |
+| [040/50 Document cache by location](./50_document-cache-by-location.md) | The project key, relative-path addressing, moved projects and moved files | review |
+| [040/60 Library cache](./60_library-cache.md) | The global store `libraries/<host>/<repo>/<commit>/`: atomic, locked, read-only | review |
+| [040/70 Git dates cache](./70_git-dates-cache.md) | Branch-keyed, eager incremental issue `updated` dates | in-progress |
+| [040/80 Cache format versions](./80_cache-format-versions.md) | A format version in every store; a mismatch rebuilds, never reads | review |
+| [040/90 Clean and reset](./90_clean-and-reset.md) | `agentks cache status · clean <root>… · reset`, and `build-cache.json` | in-progress |
+| [040/95 Cache metrics](./95_cache-metrics.md) | Hit rate, size and eviction counts, for the dev toolbar and `cache status` | review |
 
 **Order of work inside the group.** 10 → 50 → 80 first: they fix the key, the address and the format rules every other layer uses. Then 30 and 40 (the two page-data layers), 20 (needs the settings schema from [030/30](../030_rust-engine/30_config-loader-and-settings-schema.md)), 70 (needs the tracker loader), 60 (needed by the library group), 90 and 95 last.
 
@@ -36,7 +36,7 @@ The index leaf of the caching group. agentks caches in three places: the engine'
 - The end-to-end test in [170/30](../170_testing/30_end-to-end.md) shows: editing a page, an embedded file, a theme setting and a navbar item each refreshes exactly the affected views, with no restart.
 
 # 02 Status and Result
-Open. Not started.
+In progress. 20, 30, 40, 50, 60, 80 and 95 are in review; 10, 70 and 90 are in progress.
 
 ## Result
 None yet.

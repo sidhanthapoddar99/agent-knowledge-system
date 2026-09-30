@@ -81,7 +81,7 @@ none
 ## 02 What is already known
 - Preact, Solid and Svelte do build-time rendering with islands well. React can, with more work.
 - Excalidraw and tldraw are React components. Any other framework mounts them inside a React island. That costs React's runtime only on the pages that show them.
-- The video player's widgets will be written in the chosen framework ([video pages](../../notes/04_ecosystem/05_video-pages.md) section 08).
+- The video player does not use the chosen framework. It is framework-free TypeScript in `apps/packages/agentks-video`, and a small island in the chosen framework wraps it ([video artifacts](../../notes/04_ecosystem/05_video-pages.md) section 02).
 
 ## Watch out
 - Measure with production builds, not dev servers; Vite's dev mode hides bundle size.

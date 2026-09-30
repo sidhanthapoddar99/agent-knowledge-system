@@ -14,7 +14,7 @@ Libraries are fetched from git and shared by every project on the machine. This 
     - [ ] Let `fetch_fn` write into `<commit>.tmp-<pid>/`, write the marker, make the tree read-only, then rename it to `<commit>/`.
     - [ ] On any failure, remove the temporary folder and return the error. A half-written commit never looks installed.
 - [ ] **Read-only.** Remove write permission from every file and folder after install. Nothing in agentks writes inside a completed commit.
-- [ ] **Lookups for serving.** `resolve_element(commit_dir, subpath, file)` canonicalises and refuses anything outside `commit_dir`. The `/_lib/` route ([120/50](../120_libraries/50_lib-route-and-sandbox.md)) and the path checks in [050/50](../050_server/50_security.md) use it.
+- [ ] **Lookups for serving.** `LibraryStore::resolve(source, commit, path)` canonicalises and refuses anything outside that commit's folder. The `/_lib/` route ([120/50](../120_libraries/50_lib-route-and-sandbox.md)) and the path checks in [050/50](../050_server/50_security.md) use it.
 - [ ] **Listing for cleanup.** `list() -> [(host, repo, commit, bytes)]` for [040/90](./90_clean-and-reset.md).
 - [ ] **Templates share the store.** `agentks init` fetches templates into the same folders, keyed by commit ([070/40](../070_cli/40_init-template.md)).
 
@@ -67,5 +67,5 @@ none
 # 05 Notes & Analysis
 
 ## Watch out
-- A shallow fetch of one commit with gitoxide must still produce a working tree, not only objects. The store holds files, not a `.git` folder: drop `.git` after checkout, since the commit id is already the folder name.
+- A shallow fetch of one commit must still produce a working tree, not only objects (`agentks-git`'s `fetch_commit` writes symlinks as plain files). The store holds files, not a `.git` folder: drop `.git` after checkout, since the commit id is already the folder name.
 - Read-only folders break naive `rm -rf` in cleanup. [040/90](./90_clean-and-reset.md) must restore write permission before removing.

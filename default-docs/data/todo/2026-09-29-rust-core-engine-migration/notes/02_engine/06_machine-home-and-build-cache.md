@@ -2,16 +2,17 @@
 title: "The machine home: ~/.agentks and the build cache"
 ---
 
-Everything agentks keeps outside a project lives in **one folder per machine, `~/.agentks/`**. It holds global settings, a **build cache per project** (git-derived dates, rendered pages, compiled CSS, generated audio), the **library cache** shared by every project (`libraries/<host>/<repository path>/<commit>/`), downloaded models such as the narration voice, and the records of running servers. Everything in it can be rebuilt or fetched again, so losing it costs only time and network. **Nothing is cleaned automatically.** Cleanup is a command the user starts, `agentks cache clean <root>`: it scans the given folders for every agentks project (every project has `config/dep.yaml`), keeps what their locks need, shows a report and removes the rest only after a yes.
+Everything agentks keeps outside a project lives in **one folder per machine, `~/.agentks/`**. It holds global settings, a **build cache per project** (git-derived dates, rendered pages, compiled CSS), the **library cache** shared by every project (`libraries/<host>/<repository path>/<commit>/`), the **audio store** shared by every project (`audio/`), downloaded helpers and models such as the voice helper and its model, and the records of running servers. Everything in it can be rebuilt or fetched again, so losing it costs only time and network. **Nothing is cleaned automatically.** Cleanup is a command the user starts, `agentks cache clean <root>`: it scans the given folders for every agentks project (every project has `config/dep.yaml`), keeps what their locks need, shows a report and removes the rest only after a yes.
 
 # 03 References
 
 - [The ~/.agentks home and the build cache](../../brainstorm/01_initial-discussion/07_agentks-home-and-build-cache.md) — the decisions and the cleanup design.
 - [Libraries](../../brainstorm/02_future-stages/09_libraries-and-dependencies.md) — what fills `libraries/`.
-- [Video and narration audio](../../brainstorm/01_initial-discussion/14_video-and-narration-audio.md) — generated audio in the build cache, the voice model in `models/`.
+- [Video and narration audio](../../brainstorm/01_initial-discussion/14_video-and-narration-audio.md) — the first discussion of generated audio and the voice model.
+- [The voiceover's store](../../../2026-09-29-narrated-video-pages/brainstorm/01_video-artifact-engine/07_voiceover.md#08-the-store) — the audio store's keys and layout.
 - [GitHub issues layout](../../brainstorm/02_future-stages/06_github-issues-layout.md) — the later machine-level sign-in.
 - [The Rust engine](./03_rust-engine.md) — what the engine caches and why. [Rust CLI](./05_rust-cli.md) — the `cache` commands. [Sync engine and server](./04_sync-engine-and-server.md) — the running-server records.
-- [Library system](../04_ecosystem/01_library-system.md) and [video pages](../04_ecosystem/05_video-pages.md).
+- [Library system](../04_ecosystem/01_library-system.md) and [video artifacts](../04_ecosystem/05_video-pages.md).
 - The prior audit's [B-tree cache study](../../../2026-05-08-runtime-stack-migration/agent-log/010_au_migration-feasibility-rescope/02_working/022_question_btree-cache.md) and [backend-side cache isolation](../../../2026-05-08-runtime-stack-migration/brainstorm/05_idea_backend-side-cache-isolation.md).
 - [2026-05-08-update-date-time-optimization](../../../2026-05-08-update-date-time-optimization/issue.md) and [2026-08-07-content-embed-cache-dependencies](../../../2026-08-07-content-embed-cache-dependencies/issue.md).
 - Today's update state, which moves here: [the updater](../../../../../../agent-ks-cli/src/update.rs).
@@ -25,6 +26,7 @@ Everything agentks keeps outside a project lives in **one folder per machine, `~
 - Decided (sidhantha, 2026-09-30): no automatic cleanup of the build cache or the libraries. Cleanup is started by the user, from the CLI or by asking an AI, never on a schedule.
 - Decided (sidhantha, 2026-09-30): cleanup is given a root folder, scans for every agentks project under it, and removes what none of them needs. Thoroughness matters more than speed.
 - Decided (sidhantha, 2026-09-30): the voice model is a separate download into `models/`, not a library.
+- Decided (claude, 2026-10-01): generated audio lives in a machine-wide store, `~/.agentks/audio/`, beside `libraries/` and `models/`, not in the build cache. A clip is keyed by everything that decides its sound, so it is right for every project and does not change with the engine version. The 2026-09-29 decision that audio "may live in the build cache" allows this.
 - Proposed (claude, 2026-09-29): the engine version is part of the build cache key.
 - Proposed (claude, 2026-09-30): the `run/`, `update.json` and `credentials.json` entries, and the `AGENTKS_HOME` override.
 
@@ -36,23 +38,34 @@ Everything agentks keeps outside a project lives in **one folder per machine, `~
 ~/.agentks/
   settings.json                    global settings
   other-config.json                other machine-wide config
-  update.json                      the updater's state: last check, available version, last error
+  update.json                      the updater's state: format, automaticUpdates, pin, checkedAt, available, error
+  update.lock                      held while the updater checks or installs, so two never run at once
   build-cache.json                 one record per build cache entry (section 03)
+  build-cache.json.lock            held while a writer updates build-cache.json
   build-cache/
     <project key>/
+      project.json                 {format, project}: the config folder this cache belongs to, so
+                                   build-cache.json can be rebuilt by a walk (its own format number)
       <engine version>/
         git-dates/<branch>.json    the issue `updated` dates for one branch
         pages/<render hash>.json   rendered page data
         css/<hash>.css             the compiled theme CSS
         highlight/<hash>.json      highlighted code blocks
-        audio/<hash>.<ext>         narration audio (video pages)
   libraries/
     <host>/<repository path>/<commit>/     one repository at one commit,
                                            e.g. github.com/acme/design-kit/51aa0c3f.../
+    <host>/<repository path>/<commit>.lock held while that commit is fetched
   migrations/
-    <version>/                     migration scripts downloaded from the main repository at that tag
+    <version>/                     the release's whole migrations/ folder (docs/, library/, README,
+                                   tests/), fetched from the main repository at tag v<version>
+  audio/
+    <beat key>.opus                one narration clip per beat, shared by every project
+    <beat key>.json                its duration and word timings
+    <stream key>.opus              a video's joined audio stream, rebuilt from clips when missing
   models/
-    <model>-<version>/             downloaded models, such as the narration voice
+    <model>-<version>/             downloaded models, such as kokoro-82m-v1.0-timestamped-q8/ with voices/
+  tools/
+    agentks-voice/<version>/       the voice helper, installed by `agentks voice install`
   run/
     <project key>.json             a running server: project path, port, process id, start time
     <project key>.log              that server's log, for `agentks logs`
@@ -66,8 +79,9 @@ Everything agentks keeps outside a project lives in **one folder per machine, `~
 
 - **The project key** is a hash of the project's canonical config folder path. A moved project gets a new key and a cold cache; the next cleanup removes the old one because its folder no longer exists.
 - **The engine version is a level of its own** under the project key (claude, proposed). Two engine versions render different output, and with mise pinning both can run on one machine. They never read each other's entries.
+- **Lock files** sit beside what they guard and are never deleted, because deleting a lock another process holds would let two writers in.
 - **On Windows** the home is `%USERPROFILE%\.agentks\`.
-- **`AGENTKS_HOME`** overrides the location, for CI, containers and tests (claude, proposed).
+- **`AGENTKS_HOME`** overrides the location, for CI, containers and tests (`agentks-core`'s `MachineHome`).
 
 ## 02 What the build cache holds, and what it doesn't
 
@@ -79,7 +93,6 @@ Everything agentks keeps outside a project lives in **one folder per machine, `~
 | Rendered page data, by render hash | Rendering is cheap but not free across thousands of pages |
 | Compiled theme CSS | Merged once per theme input |
 | Highlighted code | The costliest step of rendering |
-| Narration audio | Seconds to minutes per page to generate |
 
 | Not cached | Why |
 |---|---|
@@ -92,6 +105,7 @@ Everything agentks keeps outside a project lives in **one folder per machine, `~
 
 ```json
 {
+  "format": 1,
   "entries": [
     {
       "key": "8c1f...",
@@ -104,12 +118,12 @@ Everything agentks keeps outside a project lives in **one folder per machine, `~
 }
 ```
 
-`agentks start` updates `last_used` and `bytes` for its own entry. The file lets `cache status` and `cache clean` answer without walking every cache folder.
+`agentks start` updates `last_used` and `bytes` for its own entry, under `build-cache.json.lock`. The file lets `cache status` and `cache clean` answer without walking every cache folder. When the file is missing, unreadable or of an older format, agentks rebuilds it by walking `build-cache/` and reading each `project.json`. A file with a newer format is left alone, because a newer agentks on the same machine wrote it. After such a rebuild an entry's `project` may be `null`, when its `project.json` cannot be read. Its `last_used` may be `null` too: after a walk, or when the system clock reads a time before 1970.
 
 ## 04 The library cache
 
 - **One folder per repository and commit.** Projects pinned to the same commit share it; different pins sit side by side. A repository holding several libraries in subfolders is cached once per commit, and each `dep.yaml` entry reads its own `path`.
-- **Fetched through git.** A shallow fetch of one commit, through a Rust git library. Git checks every object against the commit, so no separate content hash is stored.
+- **Fetched through git.** A shallow fetch of one commit, done by running the `git` program (`agentks-git`), so the machine needs git installed. Git checks every object against the commit, so no separate content hash is stored.
 - **Written atomically.** The fetch lands in a temporary folder beside the target and is renamed into place, so an interrupted install never leaves a half-written commit that looks complete. A lock file per commit stops two processes fetching the same commit at once.
 - **Read-only.** The cached files are made read-only. A library's user never edits or migrates it; the owner publishes a new version ([library system](../04_ecosystem/01_library-system.md)).
 - **Local libraries are not cached.** They are read in place from the project.
@@ -122,7 +136,7 @@ For example, `agentks cache clean ~/projects`.
 1. **Find the projects.** Walk each root for `config/dep.yaml`. Skip `.git`, `node_modules` and similar folders. This may take two or three minutes on a large disk; that is accepted.
 2. **Collect what is needed.** Every commit in each found project's `dep.lock`. Proposed (claude): also read `dep.lock` from each project's other local git branches, so switching branch never triggers a download.
 3. **Report.** The projects found, what would be removed, and the space it frees.
-4. **Remove, after `--yes` or a confirmation.** Library commits no found project needs, and build cache entries whose recorded project folder no longer exists.
+4. **Remove, after `--yes` or a confirmation.** Library commits no found project needs, build cache entries whose recorded project folder no longer exists, and audio clips and streams that no video in the found projects still uses.
 
 **It is safe by construction.** A library removed by mistake, for example one used by a project outside the scanned roots, is fetched again from its lock on that project's next start. A removed build cache is rebuilt. The cost is time and network, never content.
 

@@ -51,6 +51,7 @@ apps/agentks-client/
   vite.config.ts          dev proxy (section 10), build output for embedding
   src/
     main.ts               start-up: connect, load the manifest, route the first URL
+    app/                  the controller (start-up, not-found, live redraws) and the App component
     router/               real-path router, link interception, scroll and focus
     data/
       socket.ts           the one WebSocket: requests, pushes, reconnect
@@ -61,6 +62,8 @@ apps/agentks-client/
     pwa/                  web app manifest, service worker for the app shell
     devtoolbar/           Phase 2: the dev toolbar and its tools
     editor/               Phase 2: in-place editing
+  dev/                    the mock engine for working on the client alone; never shipped
+  tools/                  Vite plugins and build helpers; never shipped
 ```
 
 The two Phase 2 folders exist only here. The static renderer never imports them, so a published page cannot contain them ([the dev toolbar](./05_dev-toolbar.md)).
@@ -76,7 +79,9 @@ The two Phase 2 folders exist only here. The static renderer never imports them,
 | `/artifacts/…` | Rust serves the file. The client shows it in an iframe, or opens it in full |
 | `/content-assets/…` | Rust serves a document's own colocated assets |
 | `/assets/…` | Rust serves the framework's assets: favicon, logos |
+| `/artifacts/<path>.video` | Rust serves the standalone video page, a shell the engine writes; `?sheet` shows the review sheet, `?theme=light` or `dark` sets the mode ([video artifacts](../04_ecosystem/05_video-pages.md)) |
 | `/_lib/<alias>/<element>` | Rust serves a library element, for video and artifact pages ([libraries](../04_ecosystem/01_library-system.md)) |
+| `/_audio/<key>.opus` | Rust serves a video's audio stream from `~/.agentks/audio/`, with range requests. Only names of 64 hex characters |
 | The theme CSS route | Rust serves the project's compiled theme CSS ([theming](./04_theming-and-layouts.md)) |
 | Any other path | The server returns the app, and the router shows the not-found page |
 
@@ -111,6 +116,7 @@ One connection per tab, to `/api` on the same host. The message format belongs t
 Rules for the client:
 
 - **Requests carry an id**, and the answer echoes it, so several requests can be in flight on one connection.
+- **Two failures exist only on the client.** Besides the server's reply error kinds, a request can fail with `timeout` (the engine did not answer in time) or `disconnected` (the connection closed). A request already sent fails with `disconnected` when the connection drops, and the client fetches it again after the new `hello`.
 - **Reconnect with backoff** (claude, proposed). When the server stops, the client shows a small "disconnected" notice and keeps the current page on screen. On reconnect it fetches the manifest again and refreshes whatever changed while it was away.
 - **Version handshake.** The client's first frame is `hello` with its `api_version` and `client_build`. The server compares both with its own and answers `ok: false, reload: true` on a mismatch; a `dev` build is accepted in development. The client then reloads itself, so an old client never talks to a new engine.
 
@@ -123,7 +129,7 @@ Rules for the client:
 - **Engine upgrades** (claude, proposed): the store's name includes the engine version, so an upgrade starts a fresh cache instead of reading data shaped by the old engine.
 - **Clearing:** the browser-cache tool of the dev toolbar ([the dev toolbar](./05_dev-toolbar.md)), or the browser's own site-data controls.
 
-**UI state** is separate from data. Sidebar collapse, issue filters, editing mode and scroll positions stay in local storage, under prefixed keys as today. This is today's sidebar state cache, carried over.
+**UI state** is separate from data. Sidebar collapse, issue filters, editing mode and scroll positions stay in local storage, under keys prefixed `aks:<project key>:`. This is today's sidebar state cache, carried over. The one exception is the colour mode: it is stored under the plain key `theme`, as `light` or `dark`, so the choice carries between the homepage at `/` and the docs at `/docs`. With no entry, the page follows the system setting.
 
 ## 06 Live updates
 
@@ -170,6 +176,7 @@ export default defineConfig({
       '/content-assets':  ENGINE_URL,
       '/assets':          ENGINE_URL,
       '/_lib':            ENGINE_URL,
+      '/_audio':          ENGINE_URL,
       // the theme CSS route as well
     },
   },

@@ -79,6 +79,7 @@ agentks-default/
     navbar.yaml
     footer.yaml
     dep.yaml           libraries: {}
+    video.yaml         the default narration voice and a pronounce: entry for "agentks"
     .env.example       every overridable key, documented (mostly ports)
   <sections>/          starter pages for each section the template offers
   assets/              logos and favicon the config names
@@ -90,6 +91,7 @@ agentks-default/
 |---|---|
 | `config/` | Required. Valid for the template's `engine_version`, checked with `agentks check config` |
 | `config/dep.yaml` | Required. The default template's is empty. A template may list libraries, and `init` installs them |
+| `config/video.yaml` | Shipped by the default template: the default `voice:` and a `pronounce:` entry for "agentks". How the voice says it waits on sidhantha ([the video issue's open questions](../../../2026-09-29-narrated-video-pages/notes/01_initial_discussion/09_open-questions.md)) |
 | `config/dep.lock` | Not shipped. `init` writes it at step 6 |
 | `config/.env` | Never shipped. It holds local overrides and, later, secrets |
 | `Dockerfile` | Shipped by the default template. The user owns it after `init` |

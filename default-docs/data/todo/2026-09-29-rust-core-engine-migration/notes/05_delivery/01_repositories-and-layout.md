@@ -55,8 +55,9 @@ agent-knowledge-system/            NeuraLabsHQ/agent-knowledge-system
   apps/
     packages/
       agentks-ui/                  shared layouts and components: data in, markup out
+      agentks-video/               the video player: framework-free TypeScript, no dependencies
     agentks-engine/                the Rust engine and CLI, one binary
-      crates/                      the Cargo workspace's 14 crates, one folder each, by layer
+      crates/                      the Cargo workspace's 15 crates, one folder each, by layer
       schema/                      api.schema.json and the hand-written page fixtures
       themes/                      the built-in theme (embedded by the render crate) and example themes
       migrations/
@@ -66,6 +67,7 @@ agent-knowledge-system/            NeuraLabsHQ/agent-knowledge-system
     agentks-client/                the Vite single-page app for the local tool (state 2)
     agentks-ssg/                   the static renderer run by agentks build (state 3)
     agentks-homepage/              the Next.js homepage, exported as static files
+    agentks-voice/                 the voice helper: Kokoro through ONNX Runtime; its own crate, outside the engine's workspace
   docs/                            agentks's own docs: an ordinary agentks project
     config/                        site.yaml, navbar.yaml, footer.yaml, dep.yaml, dep.lock
     data/                          the docs sections; later the tracker
@@ -77,13 +79,13 @@ agent-knowledge-system/            NeuraLabsHQ/agent-knowledge-system
   AGENTS.md, README.md, RELEASING.md
 ```
 
-There is no JavaScript workspace. Each TypeScript app owns its `package.json` and `bun.lock`, because the project-setup guide rules out a JS workspace and `ctl check` fails one. Shared code goes in `apps/packages/` and is linked from the apps that use it.
+There is no JavaScript workspace. Each TypeScript app owns its `package.json` and `bun.lock`, because the project-setup guide rules out a JS workspace and `ctl check` fails one. Shared code goes in `apps/packages/`. An app that uses it names the package as a path alias in its Vite and TypeScript config, because Bun cannot install a package with `link:` ([shared UI package](../03_frontend/01_shared-ui-package.md) section 07).
 
 ```
 agent-knowledge-system-library/    NeuraLabsHQ/agent-knowledge-system-library
   library.json                     the catalog: libraries and templates agentks offers
   manifest.json                    the default library's manifest
-  icons/, artifacts/, video/, …    the default library's elements (its own choice of folders)
+  components/<category>/           the default library's elements, one folder per category: icons, frames, charts, animations, slides, …
   templates/
     agentks-default/               the template agentks init uses by default
 ```
@@ -94,6 +96,8 @@ agent-knowledge-system-library/    NeuraLabsHQ/agent-knowledge-system-library
 |---|---|---|
 | `apps/agentks-engine` | Config loading, the site index, the markdown pipeline, the tracker, every derived value, the WebSocket server, the CLI, `agentks build`'s data step, the migration scripts, the built-in theme, the `/api` schema | Layout markup. Any UI code |
 | `apps/packages/agentks-ui` | Every layout and component, pure: data in, markup out | WebSocket code, `window` or other browser-only objects while rendering, any rule |
+| `apps/packages/agentks-video` | The video player: plays compiled video data with the Web Animations API | Loading or checking a video's YAML, any rule, any dependency |
+| `apps/agentks-voice` | The voice helper, released as its own archive | Anything the engine's workspace needs to compile |
 | `apps/agentks-client` | Wiring `agentks-ui` to live data over the WebSocket; routing; the browser cache; PWA shell | Layouts of its own. A copy of any component |
 | `apps/agentks-ssg` | Rendering `agentks-ui` to HTML once per page; islands; diagram-to-SVG | Layouts of its own. Any rule |
 | `apps/agentks-homepage` | The marketing homepage | agentks docs content |

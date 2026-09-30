@@ -1,6 +1,6 @@
 ---
 title: "Frontend performance — group index"
-status: open
+status: in-progress
 ---
 
 This group makes the local client fast and keeps it fast: the budgets it must meet, how UI state and data are kept in the browser, what the service worker does, how code is split, what is prefetched, how very long lists stay smooth, and the checks that fail the build when a budget is broken. Derived data is cached once on the server and shared by every user and tab ([040_caching](../040_caching/00_overview.md)); the browser holds only a hash-checked copy of it plus each user's own UI state.
@@ -9,11 +9,11 @@ This group makes the local client fast and keeps it fast: the budgets it must me
 
 | Leaf | Status | Delivers | Waits on |
 |---|---|---|---|
-| [090/10 UI state persistence](./10_ui-state-persistence.md) | open | Sidebar folders, filters, scroll, theme mode and editing mode kept per project and per browser; today's sidebar cache carried over | [080/20](../080_ui-and-client/20_shared-ui-package.md) |
-| [090/20 Data cache in IndexedDB](./20_data-cache-indexeddb.md) | open | The hash-keyed page, sidebar and index store: keys, versioning, quota, eviction | [080/40](../080_ui-and-client/40_websocket-client.md) |
+| [090/10 UI state persistence](./10_ui-state-persistence.md) | in-progress | Sidebar folders, filters, scroll, theme mode and editing mode kept per project and per browser; today's sidebar cache carried over | [080/20](../080_ui-and-client/20_shared-ui-package.md) |
+| [090/20 Data cache in IndexedDB](./20_data-cache-indexeddb.md) | review | The hash-keyed page, sidebar and index store: keys, versioning, quota, eviction | [080/40](../080_ui-and-client/40_websocket-client.md) |
 | [090/30 Service worker and offline](./30_service-worker-and-offline.md) | open | Offline reading of cached pages when the server is off; cache lifetimes | 20, [080/60](../080_ui-and-client/60_pwa-and-mobile.md) |
-| [090/40 Code splitting and lazy islands](./40_code-splitting-and-lazy-islands.md) | open | A small start-up bundle; each layout and heavy island its own chunk | [080/50](../080_ui-and-client/50_islands.md) |
-| [090/50 Prefetch](./50_prefetch.md) | open | Page data fetched on hover and for next and previous, within limits | 20, [080/30](../080_ui-and-client/30_client-shell-and-routing.md) |
+| [090/40 Code splitting and lazy islands](./40_code-splitting-and-lazy-islands.md) | in-progress | A small start-up bundle; each layout and heavy island its own chunk | [080/50](../080_ui-and-client/50_islands.md) |
+| [090/50 Prefetch](./50_prefetch.md) | review | Page data fetched on hover and for next and previous, within limits | 20, [080/30](../080_ui-and-client/30_client-shell-and-routing.md) |
 | [090/60 Large-list virtualisation](./60_large-list-virtualisation.md) | open | Sidebars and tracker tables with thousands of rows stay smooth | [100/15](../100_layouts/15_docs-layouts.md), [100/25](../100_layouts/25_issues-layouts.md) |
 | [090/70 Render performance](./70_render-performance.md) | open | In-place redraws on pushes, no layout thrash, fast navigation | [080/30](../080_ui-and-client/30_client-shell-and-routing.md) |
 | [090/80 Performance budget checks](./80_perf-budget-checks.md) | open | The budgets below measured in CI; a broken budget fails the gate | all above, [170/40](../170_testing/40_performance-budget.md) |
@@ -47,7 +47,7 @@ Measured on this repository's docs and tracker (about 1,300 pages) on localhost,
 - [80](./80_perf-budget-checks.md) runs in CI and every budget above passes on the corpus.
 
 # 02 Status and Result
-Open. Not started.
+In progress. 20 and 50 are in review; 10 and 40 are in progress; 30, 60, 70 and 80 are open.
 
 ## Result
 None yet.

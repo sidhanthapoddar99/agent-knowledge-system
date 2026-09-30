@@ -34,7 +34,7 @@ A project that removes every library still plays its videos with the built-in se
 
 ## 02 How a video names a component
 
-A video names a component in a **typed field** of the `.video.yaml` file, as `alias:name`: `frame: ks:phone-frame`, `icon: ks:server`, `in: ks:dissolve`. The field gives the category, so no path is needed, and the alias from `dep.yaml` says which library. A bare name is a player built-in. Markdown never names a library component.
+A video names a component in a **typed field** of its YAML files, as `alias:name`: `frame: ks:phone-frame`, `icon: ks:server`, `in: ks:dissolve`. The field gives the category, so no path is needed, and the alias from `dep.yaml` says which library. A bare name is a player built-in. Markdown never names a library component. A folder video names its own components, kept in its `components/<category>/`, as `self:name`.
 
 ## 03 How the engine uses them
 

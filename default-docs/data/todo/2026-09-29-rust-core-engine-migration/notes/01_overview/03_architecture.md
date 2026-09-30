@@ -81,13 +81,15 @@ flowchart LR
 
 | Component | Lives in (new repository) | Language | Owns |
 |---|---|---|---|
-| **Rust core** | `apps/agentks-engine` | Rust | Config loading, path resolution, the site index, file watching, markdown parsing and body HTML, the issue tracker, every derived value, theme CSS compilation, library resolution, the version gate |
+| **Rust core** | `apps/agentks-engine` | Rust | Config loading, path resolution, the site index, file watching, markdown parsing and body HTML, the issue tracker, every derived value, theme CSS compilation, library resolution, compiling video artifacts (`crates/video`), the version gate |
 | **CLI** | `apps/agentks-engine` (same crate set, same binary) | Rust | Every command: queries, checks, scaffolding, `move`, `start`/`stop`/`ps`, `install`, `library`, `migrate`, `build`, `docs`, `cache` |
 | **Server** | `apps/agentks-engine` | Rust (axum) | The `/api` WebSocket, the embedded client, project assets, artifacts, library element files; localhost by default |
 | **Shared UI package** | `apps/packages/agentks-ui` | TypeScript, Preact | Every layout and component: data in, markup out |
+| **Video player** | `apps/packages/agentks-video` | TypeScript, no framework | Plays compiled video data live with the Web Animations API; wrapped by an island in `agentks-ui`, and used alone by the standalone video page |
 | **Client app** | `apps/agentks-client` | TypeScript, Vite | Routing with real paths, the data interface over the WebSocket, the browser cache, diagram and video rendering, the Phase 2 editor and dev toolbar |
 | **Static renderer** | `apps/agentks-ssg` | TypeScript | Renders every page to HTML once for `agentks build`, with islands |
 | **Migration scripts** | `apps/agentks-engine/migrations/{docs,library}` | Python, run with `uv run` | Format changes between versions; downloaded, never compiled in |
+| **Voice helper** | `apps/agentks-voice` | Rust (`ort`), outside the engine's workspace | Turns narration into Opus clips with word timings, with Kokoro-82M; downloaded on request |
 | **Default library and catalog** | `NeuraLabsHQ/agent-knowledge-system-library` | files + `manifest.json` + `library.json` | Reusable elements, templates, the list `agentks library` offers |
 | **AI plugins** | `plugins/` | Markdown skills | The `agentks` usage plugin and the library-development plugin |
 | **Homepage** | `apps/agentks-homepage` | Next.js static export | agentks.neuralabs.org `/` |
@@ -173,7 +175,9 @@ flowchart TB
 | `~/.agentks/settings.json`, other config | Machine-wide settings | The user or the CLI |
 | `~/.agentks/build-cache/<project hash>/` | One project's cached output; metadata in `build-cache.json` | The engine |
 | `~/.agentks/libraries/<host>/<repo path>/<commit>/` | One library repository at one commit, shared by every project | `agentks install` or `start` |
-| `~/.agentks/models/<model>-<version>/` | Optional downloads, such as the narration voice | The CLI on request |
+| `~/.agentks/models/<model>-<version>/` | Optional downloads, such as the Kokoro voice model | The CLI on request |
+| `~/.agentks/tools/<tool>/<version>/` | Optional helper programs, such as `agentks-voice` | `agentks voice install` |
+| `~/.agentks/audio/` | Generated narration clips and each video's joined stream, keyed by content and shared by every project | The engine, through the voice helper |
 | The project's `config/` | Config, `dep.yaml`, `dep.lock`, `.env` | The user; `dep.lock` by agentks |
 | The project's content folders | The documents | The user and agents |
 
@@ -185,11 +189,11 @@ The binary stays lean because four things are fetched, not bundled. Every fetch 
 
 | Thing | From | When |
 |---|---|---|
-| Libraries | Their git source in `dep.yaml`, pinned by commit in `dep.lock`; fetched shallow through a Rust git library | `agentks start`, `install`, `build` |
+| Libraries | Their git source in `dep.yaml`, pinned by commit in `dep.lock`; fetched shallow by the `git` program | `agentks start`, `install`, `build` |
 | The library catalog `library.json` | The official library repository | `agentks library`, `agentks init --template <id>` |
 | Templates | The official library repository, or any git URL | `agentks init` |
 | Migration scripts | The official main repository, at the binary's own release tag | `agentks migrate` |
-| The voice model | Its own download | On request, for video narration |
+| The voice helper and its model | The helper from the main repository's release; the Kokoro model from Hugging Face at a pinned revision; each file checked against a SHA-256 built into the binary | `agentks voice install`, on request |
 | The docs | Not fetched; hosted at agentks.neuralabs.org/docs | `agentks docs` opens the browser |
 
 ## 08 Security boundaries

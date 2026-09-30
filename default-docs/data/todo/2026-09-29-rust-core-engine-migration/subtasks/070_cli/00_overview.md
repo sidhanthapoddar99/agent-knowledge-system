@@ -9,13 +9,13 @@ The index leaf of the CLI group. `agentks` is one binary: the engine, the server
 
 | Leaf | Delivers | Status |
 |---|---|---|
-| [070/10 Rename to agentks](./10_rename-to-agentks.md) | Binary, installer, env vars, home folder, help text, the dev alias | open |
-| [070/20 Content commands port](./20_content-commands-port.md) | Queries, tracker writers, validators, `move`, `find`, `img`, git helpers, `help` — on the shared core | open |
+| [070/10 Rename to agentks](./10_rename-to-agentks.md) | Binary, installer, env vars, home folder, help text, the dev alias | in-progress |
+| [070/20 Content commands port](./20_content-commands-port.md) | Queries, tracker writers, validators, `move`, `find`, `img`, git helpers, `help` — on the shared core | in-progress |
 | [070/30 Start and dev mode](./30_start-and-dev-mode.md) | `start`, `stop`, `ps`, `logs`, `doctor`, `resolve-context`; state-1 dev mode | open |
 | [070/40 Init from a template](./40_init-template.md) | `agentks init [--template] [path]` | open |
 | [070/50 Docs command](./50_docs-command.md) | `agentks docs [page]` | open |
 | [070/60 Cache commands](./60_cache-commands.md) | `cache status · clean · reset` | open |
-| [070/70 Update and shell-init](./70_update-and-shell-init.md) | `update`, `shell-init`, update state in `~/.agentks/` | open |
+| [070/70 Update and shell-init](./70_update-and-shell-init.md) | `update`, `shell-init`, update state in `~/.agentks/` | review |
 | [070/80 Theme commands](./80_theme-commands.md) | `theme tokens · css · eject` | open |
 | [070/90 Share commands](./90_share-commands.md) | `share create · list · revoke · log`, `start --share` | open |
 
@@ -65,7 +65,7 @@ none
 - Decided (sidhantha, 2026-09-29): the installer and binary are named `agentks`; the rename covers binary, installer, home folder, plugins and skills.
 - Decided (sidhantha, 2026-09-29): server commands such as `agentks ps` stay part of the CLI.
 - Decided (sidhantha, 2026-09-29): the CLI and the server share one core.
-- Decided (claude, 2026-10-01): the in-memory cache budget the CLI passes to `Site::open` is 256 MB (the proposed default of 040/30) until a crate reads `cache.memory_mb` from `~/.agentks/settings.json`.
+- Decided (claude, 2026-10-01): the in-memory cache budget the CLI passes to `Site::open` is 256 MB (the proposed default of 040/30) until a crate reads `cache.memory_mb` from `~/.agentks/settings.json`. The constant is a stand-in copy: when the caching track (040/30, 040/50) merges, `src/run/ctx.rs` must use its default and its `cache.memory_mb` reader, and delete the copy.
 
 # 05 Notes & Analysis
 

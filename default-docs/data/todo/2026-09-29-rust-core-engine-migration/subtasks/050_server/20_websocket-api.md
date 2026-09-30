@@ -1,6 +1,6 @@
 ---
 title: "WebSocket API — the /api protocol: hello, requests, replies and pushes"
-status: in-progress
+status: review
 ---
 
 Every piece of data the client shows travels over one WebSocket at `/api`: the client asks by name, the server answers with JSON and a hash, and the server pushes new hashes when files change. This leaf builds the server side of that protocol: the connection handshake, request routing to the core, the reply and error shapes, push fan-out, and back-pressure. Binary frames are reserved for collaboration sync ([060/20](../060_collaboration/20_sync-protocol.md)). The client side is [080/40](../080_ui-and-client/40_websocket-client.md).

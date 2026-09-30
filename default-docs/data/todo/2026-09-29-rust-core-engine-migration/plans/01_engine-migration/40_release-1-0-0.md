@@ -1,6 +1,6 @@
 ---
 title: "Release 1.0.0"
-status: open
+status: in-progress
 outcome: "agentks 1.0.0 installs from GitHub Releases and migrates 0.x content"
 notes: "Needs [testing](./38_testing.md). This closes launch step 1"
 who: "claude"
@@ -25,7 +25,13 @@ The installer, the update channel, versioning and the migrations from 0.x.
 - [ ] **Tag 1.0.0** once the end-to-end run with the default library passes (launch step 1).
 
 # 02 Status and Result
-Not started.
+In progress. Three parts were built early:
+
+- **The updater and `shell-init`** are ported to `agentks update` (070/70 in review).
+- **The migration runner** is built in `agentks-migrate` (merged in wave 2, `3e22f2d`): the version guard, the clean-tree guard, the fetch, detect, dry run, migrate, verify and the bump. The CLI command, the library-range check and the end-to-end run are left (140/20 in progress).
+- **The 0.x migration scripts** are ported and tested; the 1.0.0 scripts wait for the new format to settle (140/30 in progress).
+
+Not started: the release stream (140/10), library migrations (140/40), the version handshake (140/50), settings schema versions (140/60), mise pinning (140/70), the installer and release workflow (160/10), and the update channel (160/20).
 
 # 03 References
 - [The plan overview](./overview.md)

@@ -9,7 +9,7 @@ A few settings change a lot (the theme, the sections), and most change very litt
 - [ ] **Tags per setting.** In the settings schema ([030/30](../030_rust-engine/30_config-loader-and-settings-schema.md)), every key carries one or more of the eight `Affects` tags that `agentks-config` defines in `crates/config/src/affects.rs`: `identity`, `chrome`, `routing`, `layout`, `theme`, `libraries`, `server`, `version`. This leaf uses that one list and adds no second one. A key without a tag fails a test.
 - [ ] **Config diff on reload.** When the watcher reports a change under `config/`, load the new config, validate it, and diff it against the old one with `agentks_config::diff`, which returns the set of touched tags. A failed validation pushes `fatal` and keeps the old config serving ([050/30](../050_server/30_watcher-and-push.md)).
 - [ ] **Map the diff to actions.** The union of the touched tags decides the work (section 01 below): recompile CSS, resend the manifest, rebuild the index, re-render pages whose fingerprint includes the key, re-check libraries.
-- [ ] **Feed the fingerprint.** Expose `settings_fingerprint(value_kind)` for [040/10](./10_cache-keys-and-dependencies.md): the hash of the values of every key whose tags touch that kind.
+- [ ] **Feed the fingerprint.** Expose `settings_fingerprint(value_kind)` for [040/10](./10_cache-keys-and-dependencies.md): the hash of the values of every key whose tags touch that kind. A section's pages key on `ProjectConfig::section_fingerprint(section)` from `agentks-config`: every `routing` setting plus that section's own `layout`, so a layout change in one section leaves the others alone. The theme is not part of it; the theme compiler keys the CSS on its own hash.
 - [ ] **Theme files count as settings.** Files under the theme folders and `config/themes/<name>/` carry the `theme` tag; `theme.yaml` of the active theme too.
 - [ ] **`.env` overrides.** A change in `config/.env` (today only the port) is `server`: report that the change takes effect on the next start.
 - [ ] **Tests** for each tag, below.
@@ -36,7 +36,7 @@ none
 
 # 03 References
 
-**Where:** main repository, `apps/agentks-engine/` — the tags and the diff in `agentks-config` (`crates/config/src/affects.rs`), the action mapping in the cache crate (`crates/cache/`).
+**Where:** main repository, `apps/agentks-engine/` — the tags, the diff and `section_fingerprint` in `agentks-config` (`crates/config/src/affects.rs`), the settings fingerprint in the cache crate (`crates/cache/src/keys.rs`), and the map from tags to actions in `agentks-site`, because `agentks-config` and `agentks-cache` are both layer 1.
 
 **Read first:**
 - [Project config](../../notes/02_engine/02_project-config.md) — every `site.yaml` key, `.env`, what changed from 0.x.

@@ -20,7 +20,7 @@ The video work is built in the new repositories, beside the migration, and does 
 
 | Part | Side |
 |---|---|
-| Compiling the `.video.yaml` file: checks, library resolution, templates, the timeline | Rust, the video compiler crate. It sends the video as `VideoData`, like every other page kind |
+| Compiling a video (one `.video.yaml` file or a video folder, read by one loader): checks, library resolution, templates, the timeline | Rust, the video compiler crate. It sends the video as `VideoData`, like every other page kind |
 | The player, stage, layout, item kinds, motion | Frontend, the `apps/packages/agentks-video` package, wrapped by an island in the shared UI package, so the local app, the standalone page and a published site use the same code |
 | Browser voice | Frontend |
 | Generated audio, the voice model, word timings | The `agentks-voice` helper, driven by Rust; clips in `~/.agentks/audio/` |

@@ -1,6 +1,6 @@
 ---
 title: "Embeds and dependencies — [[path]] inlining, and an embedded file is part of the page"
-status: in-progress
+status: review
 ---
 
 `[[./path]]` inserts another file's text into a page before markdown rendering. Today's engine did not record that dependency, so editing an embedded diagram left the page stale until a restart ([2026-08-07-content-embed-cache-dependencies](../../../2026-08-07-content-embed-cache-dependencies/issue.md), fixed for 0.x and in review). The lesson carries into the Rust engine as a rule: **a page's render hash includes the hash of every file it embeds.** This leaf implements the embed pass with today's exact syntax and makes the embedded-file list a first-class output of rendering.
@@ -30,10 +30,13 @@ status: in-progress
 - On the corpus, pages with embeds match the golden snapshot's text.
 
 # 02 Status and Result
-Open. Not started.
+Review. The embed pass, the dependency record and the source spans are built in crate `agentks-render`. The reverse edge ("which pages embed this file") belongs to `agentks-index` and is not part of this track. The spec fixtures of [10](./10_golden-fixtures.md) do not exist yet, so the rules are checked by unit tests.
 
 ## Result
-None yet.
+- The embed pass (`crates/render/src/markdown/embed.rs`, with the scanners in `scan.rs`) follows today's rules. Fences are matched like today's pattern: a run of three or more backticks or tildes, up to the next same run, even mid-line. Inline code is protected. Inside fences only `./` and `../` paths with no space or comma embed. `\[[path]]` prints as `[[path]]`. Embedding is one level. Embedded text has its trailing white space trimmed. The scanners are written by hand with no regex crate, and each is tested against the old pattern's behaviour.
+- A missing file gives `embed-missing`, and a path that climbs out of the project gives `path-escapes-project`. Each error carries the page and the token's real line. Outside code the token stays visible as `<span class="embed-missing" title="…">[[path]]</span>`. Inside a fence it stays as written.
+- The dependency record: `BodyRender.embedded` / `Rendered.embedded` lists each embedded file once, first use first, with `Hash::of` its bytes (the same hash the index computes). `agentks_cache::render_key` turns it into the render key. A test edits a `.mmd` file and a `.json` file and checks that both hashes and the output change.
+- Source spans: `source_map.rs` maps every output position back to (file, line). Links inside embedded markdown resolve from the embedded file, and their errors name that file and its line (tested).
 
 ## Agent log
 none
@@ -47,6 +50,9 @@ none
 # 04 Decisions
 - Decided (sidhantha, 2026-09-30): `[[...]]` stays the embed syntax, relative to the file; no wiki links ([open question 13](../../brainstorm/01_initial-discussion/16_open-questions.md)).
 - Decided (claude, 2026-09-30, from the 2026-08-07 lesson): a page's render hash includes its embedded files' hashes ([02/03](../../notes/02_engine/03_rust-engine.md)).
+- Decided (claude, 2026-10-01): error lines are the token's real line, not the line of the first occurrence of the same text as today's code found it, because errors are not part of the output that must match.
+- Decided (claude, 2026-10-01): the blog-only resolver that turned a bare `[[x.jpg]]` into `assets/<post>/x.jpg` is not carried over. Every embed is relative to its file, as the content-format note says.
+- Decided (claude, 2026-10-01): an embedded file is read with `read_bytes` and must be UTF-8. Its hash is BLAKE3 of the bytes, so it equals the index's content hash for that file.
 
 # 05 Notes & Analysis
 ## Watch out

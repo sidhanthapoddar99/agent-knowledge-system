@@ -1,12 +1,12 @@
 ---
 title: "Scaffold the shared UI package agentks-ui"
-status: in-progress
+status: review
 ---
 
 `apps/packages/agentks-ui` is where every layout, component and island lives once, so the local client and the static renderer can never drift. This leaf builds the package's skeleton and its contracts: the `DataSource` interface, the page-data types, the layout registry, the island contract, the shared display helpers, component CSS rules, and the checks that keep the package pure. The layouts themselves are built in [100_layouts](../100_layouts/00_overview.md) on top of it.
 
 # 01 To Do
-- [ ] **Create the package** `apps/packages/agentks-ui/` in the main repository, with its own `package.json` (name `@agentks/ui`, `private: true`), `tsconfig.json` in strict mode, and `src/` laid out as below. There is no JS workspace (the project-setup rule): the client and, later, `apps/agentks-ssg` each own their `package.json` and `bun.lock` and depend on the package with `link:../packages/agentks-ui`.
+- [ ] **Create the package** `apps/packages/agentks-ui/` in the main repository, with its own `package.json` (name `@agentks/ui`, `private: true`), `tsconfig.json` in strict mode, and `src/` laid out as below. There is no JS workspace (the project-setup rule): the client and, later, `apps/agentks-ssg` each own their `package.json` and `bun.lock` and reach the package through a path alias plus Vite's `dedupe`, so there is one copy of Preact. Bun cannot install the package with `link:`.
 - [ ] **Add the framework and the type generator** to the package: `preact` 11.0.0, `preact-render-to-string` 6.7.0, `@preact/preset-vite` 2.10.6 (it needs `@babel/core` as a peer) and `json-schema-to-typescript` 16.0.0. Record them in the Stack section of the main repository's AGENTS.md ([the shared UI package](../../notes/03_frontend/01_shared-ui-package.md) section 07).
 - [ ] **Page-data types** in `src/data/types.ts`.
     - [ ] Generate `src/data/generated/api.ts` from the engine's `apps/agentks-engine/schema/api.schema.json` with `json-schema-to-typescript`, as part of the package's build ([030/80](../030_rust-engine/80_page-data-interface.md) writes the schema). The types carry the shape only: no ordering, URL or status logic crosses over.
@@ -19,7 +19,7 @@ status: in-progress
     - [ ] Props are serialisable. The static renderer writes each island as `<div data-island="name">markup</div>` followed by `<script type="application/json" data-props>`. The islands entry calls Preact's `hydrate` on that element alone, and unmounts with `render(null, el)` ([50](./50_islands.md) builds the entry).
     - [ ] The body HTML from Rust marks islands with `data-island="<name>"` and their input in `data-` attributes; they use the same registry.
 - [ ] **Shared display helpers** in `src/shared/`: class-name joins, the file-type glyph list (from today's [file-type icons](../../../../../../agent-ks-engine/src/layouts/file-type-icons.ts)), the tooltip rule (`data-tip`, `data-tip-always`), status badge mapping from the status **Rust sent** to its theme variable.
-- [ ] **Component CSS rules**: each component's CSS beside it; every layout's classes carry its prefix (for example `aks-docs-`); `@layer` order reset, theme, elements, components, user ([theming](../../notes/03_frontend/04_theming-and-layouts.md) section 05). The public hooks (`data-part`) are listed in `src/hooks.json`, which `agentks theme css` prints ([070/80](../070_cli/80_theme-commands.md)).
+- [ ] **Component CSS rules**: each component's CSS beside it; the layouts use the built-in theme's class names (`sidebar__…`, `navbar__…`, `docs-…`) as the public hooks, and only CSS the package adds carries the `aks-` prefix; `@layer` order reset, theme, elements, components, user ([theming](../../notes/03_frontend/04_theming-and-layouts.md) section 05). The public hooks (`data-part`) are listed in `src/hooks.json`, which `agentks theme css` prints ([070/80](../070_cli/80_theme-commands.md)).
 - [ ] **Purity check** (`bun test` in the package, run by `ctl gate`):
     - [ ] A static scan fails on any import of the client, the WebSocket, or `window`, `document`, `localStorage`, `indexedDB`, `setTimeout` at module top level or in render paths.
     - [ ] Every layout renders every fixture page to an HTML string under Bun with no DOM.
@@ -37,10 +37,18 @@ status: in-progress
 - Changing a Rust page-data struct without regenerating the types fails `ctl gate`.
 
 # 02 Status and Result
-Open. Not started.
+Built; in review. Everything in To Do exists except the engine side of `hooks.json` (`agentks theme css` prints it, [070/80](../070_cli/80_theme-commands.md)).
 
 ## Result
-None yet.
+- `apps/packages/agentks-ui/` (`@agentks/ui`, `private: true`, own `package.json`, `bun.lock`, strict `tsconfig.json`, `.oxlintrc.json`, `README.md`). Preact 11.0.0 is a peer dependency, so the client's copy is the only one in a build.
+- `scripts/gen-types.ts` generates `src/data/generated/api.ts` (1,330 lines, 0.1 s) from `apps/agentks-engine/schema/api.schema.json` with `json-schema-to-typescript` 16.0.0. `tests/contract.test.ts` fails when the committed file differs from a fresh generation; `ctl build client` regenerates it.
+- `src/data/`: `source.ts` (`DataSource`: `manifest`, `page`, `sidebar`, `issuesIndex`, `issue`, `blogIndex`, `custom`), `types.ts` (names for the generated unions: `Push`, `PushOf`, `Reply`, `Query`, `PageOf`), `keys.ts` (the data-key grammar: `parseDataKey`, `dataKey`, `fetchQuery`), `memory-source.ts` (a `DataSource` over answers in memory, for the static renderer, tests and dev tools).
+- `src/layouts/registry.ts`: `@docs/default`, `@docs/compact`, `@navbar/default`, `@footer/default`, each a lazy import; each page layout declares what else it needs (`sidebar`). An unknown name throws `UnknownLayoutError`.
+- `src/islands/registry.ts`: name → lazy import, `ISLAND_ATTR`, `ISLAND_PROPS_ATTR`, `islandFor` (unknown name throws). One island so far: `theme-toggle`.
+- `src/shared/`: `cx`, the file-type glyphs, the tooltip attributes (`tip`, `iconTip`), `STATUS_VARS` (status → `var(--status-…)`).
+- `src/page-head.ts`: the layer order and the pre-paint theme script, used by the client's `index.html` through a Vite plugin. `src/hooks.json`: the public classes and `data-part` hooks per layout.
+- Tests, `bun test` in the package, 16 tests in 0.2 s: purity scan (browser objects, timers, storage only in `*.client.ts` and `src/islands/`; no import of the client, the static renderer or the engine), every layout renders every fixture to a string with no DOM, render parity (string against live happy-dom DOM, normalised), the theme contract gates A and B over the package's CSS, the data-key grammar, the type drift.
+- `ctl gate lint ui`, `ctl gate typecheck ui`, `ctl test ui` run it; `ctl gate` is green.
 
 ## Agent log
 none
@@ -57,6 +65,12 @@ none
 - Decided (sidhantha, 2026-09-29): all data access goes through one small interface.
 - Decided (sidhantha, 2026-09-30): the package is `apps/packages/agentks-ui`, used by the client and the static renderer.
 - Decided (claude, 2026-09-30): the TypeScript **data-shape** types are generated from the engine's `api.schema.json` with `json-schema-to-typescript` ([080/10](./10_ui-framework-decision.md), [the shared UI package](../../notes/03_frontend/01_shared-ui-package.md) section 07).
+- Decided (claude, 2026-10-01): the layouts emit the class names the built-in theme's `docs.css`, `navbar.css` and `footer.css` already style (`sidebar__link`, `navbar__…`) instead of a new `aks-docs-` prefix, because those names are the public hooks today's themes and user CSS target; only CSS the package adds uses the `aks-` prefix, inside `@layer components`, and every part carries a `data-part` hook.
+- Decided (claude, 2026-10-01): `json-schema-to-typescript` drops the referenced fields when a `$ref` has sibling keywords (legal in draft 2020-12; schemars writes every tagged enum variant that way), so `gen-types.ts` rewrites such a node as `allOf: [{ $ref }, { siblings }]` before compiling, because without it `ClientHello` and `RenderedBody` lost every field.
+- Decided (claude, 2026-10-01): browser-only code lives only in `*.client.ts` files and under `src/islands/`, and the purity test scans for browser objects everywhere else, because a static scan cannot tell a render path from an effect inside one file.
+- Decided (claude, 2026-10-01): the page-head strings (layer order, pre-paint theme script) live once in `src/page-head.ts` and both builds insert them, because a copy in each `index.html` would drift.
+- Decided (claude, 2026-10-01): the theme contract check covers the package's CSS in two gates (every variable read is declared; every theme variable read is on the contract); the reverse direction (every contract variable is read by a layout) waits until the theme's own layout CSS moves into the package, because today most layout CSS still lives in the theme.
+- Decided (claude, 2026-10-01): `preact` is a peer dependency of the package and a dev dependency for its own tests, because a build must have exactly one copy (two copies break hooks).
 
 # 05 Notes & Analysis
 ## 01 Folder layout

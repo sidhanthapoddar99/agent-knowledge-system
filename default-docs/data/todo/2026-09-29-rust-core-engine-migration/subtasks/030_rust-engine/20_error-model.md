@@ -41,11 +41,12 @@ Review. The model is in `agentks-core` and every crate has its error type. Two p
 
 ## Result
 - **Record:** `agentks_core::ErrorRecord { file: RelPath, line: Option<u32>, kind: ErrorKind, severity: Severity, message, key: Option<String>, suggestion: Option<String> }` in `crates/core/src/error/mod.rs`. On the wire the kind is the field `type`; empty optional fields are left out. `Display` gives the form people read: `file:line: kind: message (key K)` then `  fix: suggestion` on its own line; the CLI prints exactly that.
-- **Kinds:** one `ErrorKind` enum of 41 kebab-case names (config, themes, libraries, content, tracker, `internal`, `not-implemented`) in `crates/core/src/error/kind.rs`. The test `wire_names_are_pinned` holds the literal list; serde, `name()` and the JSON Schema read one table (the `name_enum!` macro), so they cannot disagree.
+- **Kinds:** one `ErrorKind` enum of 43 kebab-case names (config, themes, libraries, content, tracker, `internal`, `not-implemented`) in `crates/core/src/error/kind.rs`. The test `wire_names_are_pinned` holds the literal list; serde, `name()` and the JSON Schema read one table (the `name_enum!` macro), so they cannot disagree.
 - **Classes:** a content problem goes to `ErrorSink` (collect, group by file, `has_errors`) and the work goes on; a fatal problem is an `Err` from loading. A load that finds several fatal problems returns them all as an `ErrorList`, which is never empty, so the user fixes them in one pass.
 - **Per crate:** each crate has one `thiserror` enum (`ConfigError`, `GitError`, `CacheError`, `ContentError`, `LibraryError`, `MigrateError`, `IndexError`, `RenderError`, `SiteError`, `SyncError`, `ServerError`), each with `NotImplemented` for unbuilt parts. `anyhow` is not a dependency yet; it joins only at the binary's edge.
 - **Request failures** are a separate closed list, `agentks_api::ReplyErrorKind` (`not-found`, `invalid-request`, `forbidden`, `conflict`, `busy`, `fatal`, `internal`, `not-implemented`), and `SiteError::to_reply` is the one mapping from a site error to a reply; a fatal reply carries the `ErrorRecord`s.
 - **No panics:** `cargo clippy --workspace --all-targets -- -D warnings` passes with `unwrap_used`, `expect_used`, `panic`, `todo` and `unimplemented` denied.
+- **Wave 3 kinds (contracts track, 2026-10-01):** `prefix-duplicate` (two names in one docs folder with the same `NN_` value) and `asset-misplaced` (a non-page file among the pages instead of in `assets/`), 43 names in all, pinned in `wire_names_are_pinned`. `agentks-content` now reports them where it used `section-invalid` for those cases (`crates/content/src/sections.rs`: the prefix clash in a docs folder, a non-page file in a docs section, a non-markdown file in a blog), and the ordering spec fixture expects `prefix-duplicate`. The generated TypeScript types list both.
 - **Tests:** 7 in `agentks-core` for the model (pinned names, serde names, refusal of unknown names, the wire shape, the human form, the sink, the non-empty list).
 
 ## Agent log
@@ -65,6 +66,7 @@ none
 - Decided (claude, 2026-09-30): the record gains an optional `key` (the config key path, such as `pages.todo.layout`), because [020/20](../020_content-contract/20_config-folder.md) requires the key path in every config error; optional, so it breaks nothing.
 - Decided (claude, 2026-09-30): request failures are not project problems, so they are a separate closed list in `agentks-api` (`ReplyErrorKind`), and content problems never fail a request: they travel in the data's `errors`. This drops the `content` reply type [050/20](../050_server/20_websocket-api.md) listed.
 - Decided (claude, 2026-09-30): a fatal `Err` carries every problem one load found (`ErrorList`, never empty), not only the first.
+- Decided (claude, 2026-10-01): a prefix clash and a misplaced asset get their own kinds instead of `section-invalid`, because skills and CI match on the kind, and "fix the order" and "move the file to assets/" are different fixes from "the section's type or folder is wrong". A blog that is not flat stays `section-invalid`: that one is about the section's shape.
 - Decided (claude, 2026-09-30): the first kind list has 41 names; later leaves add kinds as they need them (adding is safe), and the pinned test list changes with each.
 
 # 05 Notes & Analysis

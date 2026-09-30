@@ -71,7 +71,12 @@ subtasks:
 - [ ] **Basic tests only** while building: unit tests and a little integration testing, under 10 seconds for the whole run.
 
 # 02 Status and Result
-Not started.
+In progress. Wave 2 was merged into `main` on 2026-10-01 (integration commit `3e22f2d`). Wave 3 is being built now in its own worktrees: contracts, site, sync, three layout tracks (tracker, pages, artifacts), the editor, embed-dev and client performance. Nothing renders a real project end to end yet, because the `site` crate that ties the parts together is wave 3's.
+
+- **Built in wave 2 (in review):** the site index with its benchmark (030/40), the markdown pipeline and the theme compiler (030/50, 030/85), the tracker loader (030/60), most of the cache crate (040/20 to 040/95), the server's `/api` protocol, watcher, lifecycle, stable ports and security (050/20 to 050/50), the updater (070/70), the shared UI package (080/20), the browser data cache and prefetch (090/20, 090/50), and the navbar and footer (100/50).
+- **Built in part in wave 2 (in progress):** the config loader's live reload (030/30), the page-data producers (030/80), the cache key record and git dates (040/10, 040/70), cache cleanup (040/90), the route table's embedded client (050/10), the rename and the content commands (070/10, 070/20), the client shell and WebSocket client (080/30, 080/40).
+- **In progress in wave 3:** memory and concurrency (030/90), islands and embedding the client (080/50, 080/70), UI state and code splitting (090/10, 090/40), and the layouts (100/10 to 100/45).
+- **Not started:** diagram, artifact and video sources (030/70), `start` and dev mode, cache and theme commands (070/30, 070/60, 070/80), PWA (080/60), offline, virtualisation and render performance (090/30, 090/60, 090/70), video pages (100/40, built by the video issue), responsive checks and layout variations (100/55, 100/65).
 
 # 03 References
 - [The plan overview](./overview.md)

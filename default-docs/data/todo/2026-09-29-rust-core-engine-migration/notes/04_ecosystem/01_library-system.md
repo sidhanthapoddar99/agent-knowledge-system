@@ -2,7 +2,7 @@
 title: "Library system: dep.yaml, dep.lock, manifests and the catalog"
 ---
 
-A **library** is a folder of reusable files, such as icons, frames, HTML artifacts, scene templates and scripts, that a project uses without copying them in. Every project declares its libraries in `config/dep.yaml`. The file is required even when it is empty. An entry points at a git repository (GitHub or any git URL), optionally a subfolder inside it and a version, or at a local folder relative to `dep.yaml`. agentks pins every git entry to an exact commit in `config/dep.lock` and fetches that commit once per machine into `~/.agentks/libraries/`. Each library describes itself in a `manifest.json`: a name, one x.y.z version for the whole library, the engine versions it supports, and its **elements** (the individual files it offers, each with a description and tags). agentks does not define kinds of library or element, and libraries never depend on each other. Elements are used only by video pages (inside cues) and artifact pages (through `/_lib/<alias>/<element>`). Markdown never names them. The default library and `library.json`, the catalog of libraries and templates agentks offers, live in `NeuraLabsHQ/agent-knowledge-system-library`. The feature ships in Phase 2.
+A **library** is a folder of reusable files, such as icons, frames, charts, animation presets, slide templates, HTML widgets and scripts, that a project uses without copying them in. Every project declares its libraries in `config/dep.yaml`. The file is required even when it is empty. An entry points at a git repository (GitHub or any git URL), optionally a subfolder inside it and a version, or at a local folder relative to `dep.yaml`. agentks pins every git entry to an exact commit in `config/dep.lock` and fetches that commit once per machine into `~/.agentks/libraries/`. Each library describes itself in a `manifest.json`: a name, one x.y.z version for the whole library, the engine versions it supports, and its **elements** (the individual files it offers, each with a description and tags). agentks does not define kinds of library, but every library keeps its elements in the same fixed structure, `components/<category>/`, with fifteen categories, and libraries never depend on each other. Elements are used only by video artifacts (in typed fields) and artifact pages (through `/_lib/<alias>/<element>`). Markdown never names them. The default library and `library.json`, the catalog of libraries and templates agentks offers, live in `NeuraLabsHQ/agent-knowledge-system-library`. The feature ships in Phase 2.
 
 # 03 References
 
@@ -11,10 +11,11 @@ A **library** is a folder of reusable files, such as icons, frames, HTML artifac
 - [Open question 13](../../brainstorm/01_initial-discussion/16_open-questions.md): why markdown carries no library syntax.
 - [The repositories and three states](../../brainstorm/02_future-stages/12_repositories-and-three-states.md): the library repository and `library.json`.
 - [Versioning and forced migrations](../../brainstorm/01_initial-discussion/12_versioning-and-forced-migrations.md): library migrations beside docs migrations.
-- Sibling notes: [project config](../02_engine/02_project-config.md) (where `dep.yaml` sits among the config files), [machine home and build cache](../02_engine/06_machine-home-and-build-cache.md) (the `libraries/` folder), [Rust CLI](../02_engine/05_rust-cli.md) (the command surface), [publishing](../05_delivery/02_publishing-ssg.md) (how a build installs from the lock), [versioning and migrations](../05_delivery/03_versioning-and-migrations.md), [templates and init](./04_templates-and-init.md), [video pages](./05_video-pages.md), [extensions](./03_extensions.md).
+- Sibling notes: [project config](../02_engine/02_project-config.md) (where `dep.yaml` sits among the config files), [machine home and build cache](../02_engine/06_machine-home-and-build-cache.md) (the `libraries/` folder), [Rust CLI](../02_engine/05_rust-cli.md) (the command surface), [publishing](../05_delivery/02_publishing-ssg.md) (how a build installs from the lock), [versioning and migrations](../05_delivery/03_versioning-and-migrations.md), [templates and init](./04_templates-and-init.md), [video artifacts](./05_video-pages.md), [extensions](./03_extensions.md).
 - Today's artifact route, [the artifacts route folder](../../../../../../agent-ks-engine/src/pages/artifacts): the HTML trust boundary that `/_lib/` must respect.
 - [2026-07-07-artifact-component](../../../2026-07-07-artifact-component/issue.md): today's artifact pages.
 - [Libraries in the video issue](../../../2026-09-29-narrated-video-pages/notes/01_initial_discussion/07_libraries-and-reusable-elements.md): what videos draw from libraries.
+- [Library components](../../../2026-09-29-narrated-video-pages/brainstorm/01_video-artifact-engine/08_library-components.md): the fifteen categories, the `category` field, each category's contract, the SVG allowlist and the day-one set. It settles [comment 003](../../comments/003_2026-09-30_library-components-layout.md).
 
 # 04 Decisions
 
@@ -25,7 +26,9 @@ A **library** is a folder of reusable files, such as icons, frames, HTML artifac
 - Decided (sidhantha, 2026-09-30): version ranges are allowed. Every version uses the x.y.z format.
 - Decided (sidhantha, 2026-09-30): the lock pins every git library to an exact commit. The commit is the hash; no separate content hash is stored.
 - Decided (sidhantha, 2026-09-30): local paths are relative to `dep.yaml`. A project's own artifacts can be a local library.
-- Decided (sidhantha, 2026-09-30): agentks does not define kinds of library or element. Each library has a `manifest.json` at its root that describes it and its elements, with a required version.
+- Decided (sidhantha, 2026-09-30): agentks does not define kinds of library. Each library has a `manifest.json` at its root that describes it and its elements, with a required version.
+- Decided (sidhantha, 2026-09-30): every library has a fixed structure, a `components/` folder with one folder per category ([comment 003](../../comments/003_2026-09-30_library-components-layout.md)).
+- Decided (claude, 2026-10-01): the fifteen categories are icons, illustrations, images, backgrounds, frames, annotations, widgets, charts, layouts, slides, animations, transitions, styles, scripts and fonts, and the manifest gains a required `category` that matches the folder, because the video design needs a contract per category and a folder an agent can list ([library components](../../../2026-09-29-narrated-video-pages/brainstorm/01_video-artifact-engine/08_library-components.md)).
 - Decided (sidhantha, 2026-09-30): one library has one version series. Elements are not versioned on their own.
 - Decided (sidhantha, 2026-09-30): every library states the engine versions it is built for. The engine does not depend on libraries, apart from knowing the default library's catalog.
 - Decided (sidhantha, 2026-09-30): libraries cannot depend on other libraries. The list in `dep.yaml` is flat.
@@ -34,7 +37,7 @@ A **library** is a folder of reusable files, such as icons, frames, HTML artifac
 - Decided (sidhantha, 2026-09-30): starting agentks installs missing libraries automatically. `agentks install` pre-installs them.
 - Decided (sidhantha, 2026-09-30): no separate artifact releases. A library is a repository, and its tags are its releases.
 - Decided (sidhantha, 2026-09-30): the CLI and the skills read the installed libraries' manifests to help agents reuse elements.
-- Decided (sidhantha, 2026-09-30): library elements are used only in video pages and artifact pages. Markdown gets no library syntax.
+- Decided (sidhantha, 2026-09-30): library elements are used only in video artifacts and artifact pages. Markdown gets no library syntax.
 - Decided (sidhantha, 2026-09-30): the default library has its own repository, `NeuraLabsHQ/agent-knowledge-system-library`, with the templates and `library.json`. The official repositories are built into the binary.
 - Decided (sidhantha, 2026-09-30): `library.json` lists the libraries and templates agentks offers for quick install. It never moves.
 - Decided (sidhantha, 2026-09-30): `agentks library` works as a TUI and as plain commands. The TUI and the catalog are a convenience; any library can still be added through `dep.yaml`.
@@ -55,7 +58,7 @@ A **library** is a folder of reusable files, such as icons, frames, HTML artifac
 | Term | Meaning |
 |---|---|
 | **Library** | A folder with a `manifest.json` at its root (a local library may skip it). It lives in a git repository, optionally in a subfolder, or in a local folder |
-| **Element** | One file a library offers, named in its manifest: an SVG, an image, an `.html` artifact, a script, a scene template |
+| **Element** | One file a library offers, named in its manifest and kept in one category folder: an SVG, an image, an `.html` widget, a JSON component such as a preset or a slide template, a script. The video design calls them components |
 | **Alias** | The key of an entry in `dep.yaml`. Pages name an element as `alias:element`, so two libraries can never clash |
 | **Selector** | What version a git entry asks for: `tag` (exact or a range), `commit`, `branch`, or none, which means the latest release |
 | **Pin** | The exact commit the lock records for a git entry |
@@ -99,7 +102,7 @@ libraries:
 
 | Field | Required | Meaning |
 |---|---|---|
-| the key | yes | The **alias**. Lower-case letters, digits and hyphens, starting with a letter |
+| the key | yes | The **alias**. Lower-case letters, digits and hyphens, starting with a letter. `self` is reserved |
 | `github` | one of `github` or `git`, for a git entry | `owner/repo` on GitHub. Shorthand for `https://github.com/owner/repo.git` |
 | `git` | | Any git URL (HTTPS or SSH): GitLab, a self-hosted server, anything |
 | `path` | for a local entry; optional for a git entry | For a git entry, the library's folder inside the repository (default: the root). For a local entry, the folder relative to `dep.yaml` |
@@ -107,15 +110,15 @@ libraries:
 | `commit` | | A full commit hash |
 | `branch` | | A branch name. Followed only when the user updates |
 
-**Validation.** `agentks` refuses a `dep.yaml` that is missing, is not valid YAML, has no `libraries:` key, has an alias outside the allowed characters, has both `github` and `git`, has a local entry with a selector, or has more than one selector. Each error names the file, the alias and the fix. A local `path` must resolve to a folder inside the project's repository. One that escapes it (for example `../../other-project`) is an error, because the library would then be missing on every other machine.
+**Validation.** `agentks` refuses a `dep.yaml` that is missing, is not valid YAML, has no `libraries:` key, has an alias outside the allowed characters, uses the reserved alias `self`, has both `github` and `git`, has a local entry with a selector, has more than one selector, or has a key it does not know (at the top or inside an entry). Each error names the file, the alias and the fix. A local `path` may leave the project folder, but it must resolve to a folder inside the git repository that holds the project. One that escapes the repository (for example `../../other-project`) is an error, because the library would then be missing on every other machine. The engine keeps the path as written in `dep.yaml`.
 
 **Why the file is required.** It gives agents one fixed place to look. It also marks a folder as an agentks project, which is what `agentks cache clean` scans for. The forced migration to 1.0.0 creates an empty one in existing projects.
 
 ## 04 Versions and selectors
 
-- **A version tag** is a git tag named `x.y.z` or `vx.y.z`. Other tags are ignored when agentks looks for versions. Two tags that name the same version (`1.4.0` and `v1.4.0`) on different commits are an error.
+- **A version tag** is a git tag named `x.y.z` or `vx.y.z`. Other tags are ignored when agentks looks for versions, and so is a tag with build metadata (`1.4.0+build.7`). Two tags that name the same version (`1.4.0` and `v1.4.0`) on different commits are an error.
 - **An exact `tag`** (`1.4.0` or `v1.4.0`) resolves to that tag's commit.
-- **A range** follows semantic-versioning rules (the Rust `semver` crate's syntax): `^1.4` means `>=1.4.0 <2.0.0`, `~1.4.2` means `>=1.4.2 <1.5.0`, and comparators combine. It resolves to the newest matching version tag.
+- **A range** follows semantic-versioning rules (the Rust `semver` crate's syntax): `^1.4` means `>=1.4.0 <2.0.0`, `~1.4.2` means `>=1.4.2 <1.5.0`, and comparators combine, separated by a comma or a space (`>=1.2.0 <2.0.0`). It resolves to the newest matching version tag.
 - **Pre-release versions** (`2.0.0-beta.1`) match only an exact `tag`. A range and "latest" skip them.
 - **No selector** means the newest version tag that is not a pre-release. A repository with no version tags is an error asking for a `branch` or a `commit`; agentks does not guess.
 - **A `commit`** is used as given. **A `branch`** resolves to the branch's current head.
@@ -158,12 +161,14 @@ libraries:
   "engine": ">=1.0.0 <2.0.0",
   "elements": {
     "phone-frame": {
-      "file": "frames/phone.html",
-      "description": "A phone frame that holds one artifact",
+      "category": "frames",
+      "file": "components/frames/phone-frame.svg",
+      "description": "A phone with a screen slot. In a video, place an image or code on its screen",
       "tags": ["frame", "mobile"]
     },
     "server": {
-      "file": "icons/server.svg",
+      "category": "icons",
+      "file": "components/icons/server.svg",
       "description": "A rack server",
       "tags": ["icon", "infrastructure"]
     }
@@ -178,25 +183,45 @@ libraries:
 | `description` | yes | One sentence on what the library is for |
 | `engine` | yes | The agentks versions the library works with, as a range. Outside it, agentks refuses the library |
 | `elements` | yes | A map from element name to its entry. It may be empty |
-| `elements.<name>.file` | yes | The file, relative to the manifest. It must stay inside the library folder |
+| `elements.<name>.category` | yes | One of the fifteen categories. It must match the folder the file sits in |
+| `elements.<name>.file` | yes | The file, relative to the manifest, under `components/<category>/`. It must stay inside the library folder |
 | `elements.<name>.description` | yes | What the element is and when to use it. This is what makes it findable |
 | `elements.<name>.tags` | no | Free words the library chooses. agentks never interprets them; the CLI only searches them |
 
 **Element names** use lower-case letters, digits and hyphens. They are flat: no slashes. A name is unique within its library.
 
-**The one thing the engine owns is how to show a file**, and that follows from the file's type: an SVG or image is shown as an image, an `.html` file runs as an artifact in a sandboxed frame, and a script follows the contract of the page that uses it (the video widget contract, for example). What an element is *for* is the manifest's business.
+**The engine owns two things: how to show a file, and each category's contract.** How to show a file follows from its type: an SVG or image is shown as an image, an `.html` widget runs in a sandboxed frame, and a JSON component is read by the video compiler. Each category's contract (view box, size cap, allowed content, the JSON Schema of a data category) is checked in one place, in Rust. What an element is *for* is the manifest's business.
 
 **Elements are self-contained**, like artifacts today: an `.html` element inlines its CSS, scripts and images. It cannot rely on sibling files, because it is served by name, not by path.
 
-`agentks check libraries` checks every library the project uses: a missing or malformed manifest, a missing required field, a `file` that does not exist or escapes the library, a repeated element name, and an `engine` range that excludes the running version.
+`agentks check libraries` checks every library the project uses: a missing or malformed manifest, a missing required field, a `file` that does not exist or escapes the library, a repeated element name, an `engine` range that excludes the running version, a `category` that does not match the file's folder, and a component that breaks its category's contract.
+
+### Components and their categories
+
+Every library, git or local, keeps its elements in `components/<category>/`, one folder per category. The default library's repository keeps its other folders (`templates/`, `scripts/` for its own tooling, `preview/`, `LICENSES/`) beside `components/`; those are not elements.
+
+| Category | Holds | Type |
+|---|---|---|
+| `icons` · `illustrations` · `backgrounds` · `frames` · `annotations` | Glyphs, artwork, slide backgrounds, anything with a screen slot (device chrome and containers), marks drawn around an item | SVG |
+| `images` | Photos, screenshots, textures | WebP, AVIF, PNG, JPEG |
+| `widgets` | Interactive HTML for artifacts | HTML |
+| `charts` · `layouts` · `slides` · `animations` · `transitions` · `styles` | Chart templates, named grid areas, slide templates, motion presets, slide transitions, type and colour roles | JSON |
+| `scripts` | Code components, later | JavaScript module |
+| `fonts` | Typefaces for styles | WOFF2 |
+
+- **Names stay unique within a library**, so `/_lib/<alias>/<element>` does not change. Where two categories want the same word, one takes a suffix: the frame is `phone-frame`, the icon is `phone`.
+- **JSON components are read by the video compiler and never served** over `/_lib/`. Only images and widgets are served.
+- **The contracts live once, in Rust.** `agentks check libraries` applies them, and `agentks video schema --component <category>` prints a data category's schema. A library's own CI calls `agentks check libraries` instead of copying the rules.
+- The full contract of each category is in [library components](../../../2026-09-29-narrated-video-pages/brainstorm/01_video-artifact-engine/08_library-components.md#06-the-contract-of-each-category).
 
 ## 07 Local libraries
 
 A local entry (`path:` only) points at a folder in the project, for example the team's own artifacts.
 
 - **With a manifest**, it works exactly like a git library, except that nothing is pinned or cached: agentks reads the folder in place and watches it like content.
-- **Without a manifest**, each direct child of the folder is one element, named after it without its extension: `artifacts/checkout-flow.html` becomes `team:checkout-flow`. A child folder is an element too; its entry is its `index.html`, and its other files are served beside it. Two children with the same name after dropping the extension (`logo.svg` and `logo.png`) are an error.
+- **Without a manifest**, the folder follows the same `components/<category>/` structure. Each file is one element: its category is its folder and its name is its file name without the extension, so `components/widgets/checkout-flow.html` becomes `team:checkout-flow`. A child folder inside a category folder is an element too; its entry is its `index.html`, and its other files are served beside it. A child whose name breaks the element-name rule, and a folder with no `index.html`, are skipped with a warning. Two elements with the same name after dropping the extension (`logo.svg` and `logo.png`) are an error.
 - A manifest-less library has no descriptions, so `library find` can match only names. Adding a manifest is how a team makes its elements findable.
+- A folder video's own `components/` follows the same structure. It is read as a manifest-less library under the reserved alias `self`, used only by that video, and its SVG passes the same allowlist ([the format](../../../2026-09-29-narrated-video-pages/brainstorm/01_video-artifact-engine/03_artifact-format.md#the-videos-own-components)).
 
 ## 08 The catalog: library.json
 
@@ -224,6 +249,7 @@ The catalog sits at the root of `NeuraLabsHQ/agent-knowledge-system-library`. It
 ```
 
 - An entry gives a name (the map key), a description, the git source and path, and for libraries the latest version and tags. The `latest` field is for display only; installation always resolves tags from git.
+- **agentks reads the catalog from the repository's `main` branch.** It ignores keys it does not know, so a newer catalog stays readable by older binaries.
 - **The catalog is read, never trusted for content.** Adding a catalog library writes an ordinary `dep.yaml` entry. From then on the entry resolves like any other, and the catalog plays no part.
 - A library outside the catalog works the same way, through `dep.yaml`. The catalog only makes approved libraries easy to find.
 
@@ -239,7 +265,7 @@ The catalog sits at the root of `NeuraLabsHQ/agent-knowledge-system-library`. It
 - **Keyed by host, repository path and commit**, never by alias or name. Projects pinned to the same commit share one copy; different pins sit side by side.
 - **One copy per repository and commit.** A repository holding several libraries in subfolders is fetched once; each entry reads its own `path` inside it.
 - **Read-only.** agentks writes a commit's folder once, into a temporary folder that is renamed into place when complete, so a half-finished fetch never looks installed. Nothing edits a cached library afterwards.
-- **Fetching** takes that one commit, shallow, through a Rust git library (gitoxide is the candidate). No `git` binary is needed. GitHub's download archives are not used, because they are not checked against the commit.
+- **Fetching** takes that one commit, shallow, by running the `git` program (`agentks-git`), so the machine needs git installed. GitHub's download archives are not used, because they are not checked against the commit.
 - **Cleanup** is manual: `agentks cache clean <root>...` ([machine home and build cache](../02_engine/06_machine-home-and-build-cache.md)).
 
 ## 10 Commands
@@ -256,10 +282,10 @@ Every command takes `--json`. The TUI is the one exception, because an agent can
 | `agentks library add --local <folder>` | Adds a local entry, with the path written relative to `dep.yaml` |
 | `agentks library remove <alias>` | Removes the entry and its lock record. The cached files stay until a cleanup |
 | `agentks library list` | The project's libraries: alias, source, pin, version, element count |
-| `agentks library show <alias>` | One library's manifest: every element with its description and tags |
-| `agentks library find <words>` | Elements whose name, description or tags match, across the project's libraries |
+| `agentks library show <alias> [--category <c>]` | One library's manifest: every element with its description and tags, optionally in one category. For `slides` it prints each template's slots |
+| `agentks library find <words> [--category <c>]` | Elements whose name, description or tags match, across the project's libraries, optionally in one category |
 | `agentks library search <words>` | Libraries in the catalog whose name, description or tags match |
-| `agentks check libraries` | The manifest checks in section 06, plus every `alias:element` a page names |
+| `agentks check libraries` | The manifest and category checks in section 06, plus every `alias:element` a page names |
 | `agentks cache status` · `agentks cache clean <root>...` | Cache sizes; manual cleanup after a report ([machine home and build cache](../02_engine/06_machine-home-and-build-cache.md)) |
 
 ## 11 How a sync resolves
@@ -272,7 +298,7 @@ Every command takes `--json`. The TUI is the one exception, because an agent can
 4. **Resolve the marked entries**, and with `--update` also the branch, range and latest entries: list the repository's tags and branches, apply the selector (section 04), and get a commit.
 5. **Fetch every pinned commit** that is not in the cache yet.
 6. **Read each library's manifest** at its pin. Check that it is valid and that its `engine` range includes the running version.
-7. **Write the lock** if anything changed, and report each change (added, removed, moved from → to).
+7. **Write the lock** if anything changed, and report each change (added, removed, moved from → to). A project with no git libraries and no lock gets no `dep.lock`, so `git status` stays clean.
 
 A sync that fails in steps 4 to 6 leaves the old lock untouched. Pages never render against a half-updated set of libraries.
 
@@ -293,9 +319,9 @@ Every error names the page or the `dep.yaml` entry, what is wrong, and the comma
 
 ## 13 Where elements are used
 
-**Only in video pages and artifact pages.** A markdown page never names a library element. Its body stays plain, portable markdown: `[text](./path.md)` links and `[[./path]]` embeds, both relative to the file ([content format](../02_engine/01_content-format.md)). Content written in agentks then opens cleanly in Obsidian or any other note app.
+**Only in video artifacts and artifact pages.** A markdown page never names a library element. Its body stays plain, portable markdown: `[text](./path.md)` links and `[[./path]]` embeds, both relative to the file ([content format](../02_engine/01_content-format.md)). Content written in agentks then opens cleanly in Obsidian or any other note app.
 
-- **A video page** names elements inside its cues, for example `<!-- panel: icons:server -->`. Cues are HTML comments or a fenced block, so other apps hide them or show them as code ([video pages](./05_video-pages.md)).
+- **A video artifact** names elements in typed fields of its YAML files (one `.video.yaml` file, or a video folder's files), for example `frame: ks:phone-frame` or `icon: ks:server`. The field gives the category, so no path is needed ([video artifacts](./05_video-pages.md)).
 - **An artifact** is HTML, not markdown. The engine serves each element at a reserved route, `/_lib/<alias>/<element>`, and the artifact loads it like any file, for example `<img src="/_lib/icons/server">`. An SVG icon loaded through `<img>` cannot see the page's text colour, so it draws black. For a theme-coloured icon, the artifact uses a CSS mask or inserts the SVG inline. The default library's README shows both.
 
 **Serving `/_lib/`.** The local server resolves the alias through the lock (or the local folder), finds the element's file through the manifest, and sets the content type from the file's extension. `_lib` is reserved in the router, like `artifacts`, so no section may use it. `agentks build` copies every element a page or artifact uses into the static output at the same path, so a published site needs no library at run time ([publishing](../05_delivery/02_publishing-ssg.md)).
@@ -323,6 +349,7 @@ A library can hold HTML and scripts that run in the local viewer and on a publis
 
 - **No library arrives unseen.** agentks installs only what `dep.yaml` lists. `agentks library add` prints the repository and the manifest summary before installing. `agentks start` never adds an entry on its own.
 - **Content is verified by git** against the pinned commit on every fetch.
+- **Library SVG inlined by the video compiler is the one exception to the sandbox.** The compiler inlines the SVG a video uses only after an allowlist: it parses each SVG and writes back only allowed elements and attributes, refuses `<style>`, animation elements, links and any outside reference, and prefixes every id per use. After that the SVG is drawing data: it cannot run or load anything ([SVG safety](../../../2026-09-29-narrated-video-pages/brainstorm/01_video-artifact-engine/08_library-components.md#svg-safety-an-allowlist)). `/_lib/` still serves SVG with the sandbox header.
 - **Library HTML is sandboxed.** Today's artifacts are the project's own, first-party code, so they run unsandboxed on the site's origin ([the artifacts route folder](../../../../../../agent-ks-engine/src/pages/artifacts)). A library is third-party code, so `/_lib/` serves `.html` and `.svg` elements with a `Content-Security-Policy: sandbox allow-scripts` header. The browser then gives them their own opaque origin, even when opened directly, and they cannot read the page around them or the site's storage.
 - **An HTML element loads nothing on its own.** It inlines its CSS and scripts, makes no network request and uses no storage. The one exception is a screen frame's `src`: the frame loads the URL the parent passes, as an image, or with `kind=page` as a page in a nested iframe sandboxed with `allow-scripts`. It loads only that URL, and only because the parent asked for it. The default library's check rejects an element that loads anything else.
 - **A library script loaded by the project's own artifact** runs with that artifact's rights. The artifact's author chose to load it, and the review happens when the library is added to `dep.yaml`. The artifacts skill says so.
@@ -338,15 +365,15 @@ Only breaking engine releases change formats, so a library's `engine` range norm
 
 ## 16 The default library
 
-`NeuraLabsHQ/agent-knowledge-system-library` holds the default library (its `manifest.json` at the root), the templates, and `library.json`. It has its own version series, tagged `vX.Y.Z` in its repository, and is built and tested end to end with the engine and the client in step 1 of the launch. What it holds is decided by its manifest, not by the engine. Its elements are 74 icons for technical docs, most adapted from Lucide 1.49.0 (ISC licence); six device and window frames; and three small data widgets. There is no `github` icon, because GitHub's logo terms forbid changing the mark ([120/70 icons](../../subtasks/120_libraries/70_elements-icons.md)). Scene templates and script widgets for video pages belong to [120/80 the video cue kit](../../subtasks/120_libraries/80_elements-video-cue-kit.md). The shared CSS and JavaScript of its HTML elements are written once in `scripts/shared/`. Each element carries a marked copy, `scripts/check.py --sync-shared` rewrites the copies, and the check fails when a copy drifts. The engine knows only the catalog's address. It does not depend on any element being present, so a project that removes the default library still works.
+`NeuraLabsHQ/agent-knowledge-system-library` holds the default library (its `manifest.json` at the root), the templates, and `library.json`. It has its own version series, tagged `vX.Y.Z` in its repository, and is built and tested end to end with the engine and the client in step 1 of the launch. What it holds is decided by its manifest, not by the engine. Its elements follow [the day-one set](../../../2026-09-29-narrated-video-pages/brainstorm/01_video-artifact-engine/08_library-components.md#08-the-day-one-set): the full Lucide icon set (ISC licence) beside 74 curated icons for technical docs, which win any name clash; frames as SVG with a screen slot, with the six device frames also offered as `-view` widgets; three small data widgets; and about 115 video components (styles, layouts, slide templates, presets, transitions, backgrounds, annotations, charts, illustrations). There is no `github` icon, because GitHub's logo terms forbid changing the mark ([120/70 icons](../../subtasks/120_libraries/70_elements-icons.md)). The video components belong to [120/80 the video component set](../../subtasks/120_libraries/80_elements-video-cue-kit.md). The shared CSS and JavaScript of its HTML elements are written once in `scripts/shared/`. Each element carries a marked copy, `scripts/check.py --sync-shared` rewrites the copies, and the check fails when a copy drifts. The engine knows only the catalog's address. It does not depend on any element being present, so a project that removes the default library still works.
 
 ## 17 What is not a library
 
 | Thing | Where it comes from |
 |---|---|
-| The narration voice model | A separate download into `~/.agentks/models/` ([video pages](./05_video-pages.md)) |
+| The voice helper and its model | Separate downloads into `~/.agentks/tools/` and `~/.agentks/models/`, by `agentks voice install` ([video artifacts](./05_video-pages.md)) |
 | The agentks docs | Hosted at agentks.neuralabs.org/docs; `agentks docs` opens them |
-| The build cache and generated audio | Produced by agentks, never downloaded |
+| The build cache and the audio store | Produced by agentks, never downloaded |
 | AI plugins and their skills | Installed through the agent's own marketplace ([AI plugins and skills](./02_ai-plugins-and-skills.md)) |
 | Templates | Copied once by `agentks init`, never listed in `dep.yaml` ([templates and init](./04_templates-and-init.md)) |
 | Migration scripts | Fetched by `agentks migrate` from the main repository ([versioning and migrations](../05_delivery/03_versioning-and-migrations.md)) |

@@ -1,6 +1,6 @@
 ---
 title: "Lifecycle — start, attach, detach, shutdown, and machine-wide ps, stop and logs"
-status: in-progress
+status: review
 ---
 
 With one global install, one machine may run servers for several projects at once. The user needs to see them all (`agentks ps`), stop any of them (`agentks stop`), read their logs, and never start a second server for a project that already has one. This leaf builds the server lifecycle and the run records in `~/.agentks/run/` that make that possible. It replaces today's viewer lifecycle, which drives Astro through Bun.
@@ -13,13 +13,13 @@ With one global install, one machine may run servers for several projects at onc
         "share": false, "log": "/home/sid/.agentks/run/8c1f….log" }
       ```
 - [ ] **Start** (`agentks start`):
-    - [ ] Read the record. If its process is alive and `GET /api` on its port answers `426` with this project's key ([050/10](./10_http-and-routes.md)) → attach: print the address, exit `0`. Ctrl-C then only detaches (it does not own the server).
-    - [ ] A record whose process is dead is stale → remove it.
+    - [ ] Read the record. If `GET /api` on its port answers `426` with this project's key ([050/10](./10_http-and-routes.md)) → attach: print the address, exit `0`. Ctrl-C then only detaches (it does not own the server).
+    - [ ] A record whose port does not answer the probe is stale → remove it.
     - [ ] Otherwise bind the stable port ([050/45](./45_stable-ports.md)), pre-warm (index, git dates), write the record, then print the address.
-    - [ ] `--detach`: run the server as a background process whose stdout and stderr go to the log file; the launching command waits until the record exists and the probe answers, then exits. On Windows, use a detached process without a console window.
+    - [ ] `--detach`: run the same command again as a background process, with `AGENTKS_DETACHED_CHILD=1`, whose stdout and stderr go to the log file; the launching command waits until the record exists and the probe answers, then exits. On Windows, use a detached process without a console window.
     - [ ] `--open`: open the browser at the address.
 - [ ] **Graceful shutdown** on Ctrl-C, SIGTERM or `agentks stop`: stop accepting, close sockets with `1001`, flush the git-dates file and `build-cache.json`, remove the run record, exit. A second Ctrl-C forces exit.
-- [ ] **`agentks ps [--json]`**: every record on the machine, checked live (process alive and probe answers); stale ones removed. Columns: project, port, pid, uptime, share mode.
+- [ ] **`agentks ps [--json]`**: every record on the machine, checked live (the probe answers with the record's key); stale ones removed. Columns: project, port, pid, uptime, share mode.
 - [ ] **`agentks stop [--project PATH | --all]`**: signal the process (SIGTERM; `TerminateProcess` on Windows after a polite local stop request), wait up to 10 s, report.
 - [ ] **`agentks logs [--follow]`**: print or tail this project's log file. Logs rotate at 10 MB, keeping one old file.
 - [ ] **Log format:** one line per event, timestamp, level, target. Never log access keys, cookies or file contents ([060/40](../060_collaboration/40_access-keys.md)).
@@ -66,7 +66,7 @@ none
 # 04 Decisions
 - Decided (sidhantha, 2026-09-29): server commands such as `agentks ps` stay part of the CLI.
 - Proposed (claude, 2026-09-30), adopted here: `run/` records and machine-wide `ps` and `stop`.
-- Decided (claude, 2026-09-30): the live check is the process plus the `426` probe; logs rotate at 10 MB.
+- Decided (claude, 2026-09-30): logs rotate at 10 MB.
 - Decided (claude, 2026-10-01): a server is live when its port answers the `426` probe with its key; the pid is not checked, because the probe already proves it and a pid check needs platform code.
 - Decided (claude, 2026-10-01): `--detach` re-runs the same command line with `AGENTKS_DETACHED_CHILD=1` instead of forking, because forking a Rust process is unsafe and the server crate must not know the CLI's flags.
 - Decided (claude, 2026-10-01): `ServeOptions` gains `configured_port`, filled by the CLI from `ProjectConfig::configured_port()`, because `Site` does not expose its config; requested a site accessor so this field can go.

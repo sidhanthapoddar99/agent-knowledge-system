@@ -15,6 +15,7 @@ title: "Layouts: built-in only"
 - Decided (sidhantha, 2026-09-29): branding is done with CSS.
 - Decided (sidhantha, 2026-09-29): add more built-in layouts, possibly ten or more over time, but only on demand.
 - Decided (sidhantha, 2026-09-29): layouts are standard components of the Vite frontend, chosen by name in config and fed by JSON from Rust ([the architecture note](./17_local-spa-over-websocket.md)).
+- Decided (sidhantha, 2026-09-30): the layouts live in a shared package, `apps/packages/agentks-ui`, used by the local client and by the static build ([Phase 3](../02_future-stages/07_phase-3-publishing.md)).
 
 # 05 Notes & Analysis
 

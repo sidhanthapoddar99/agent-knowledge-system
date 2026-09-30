@@ -23,7 +23,7 @@ Everything a video needs beyond its markdown is **derived or downloaded, so it i
 ```
 ~/.agentks/
   models/<model>-<version>/                  downloaded once per machine
-  libraries/github.com/<owner>/<repo>/<commit>/   libraries, shared by projects
+  libraries/<host>/<repository path>/<commit>/    libraries, shared by projects
   build-cache/<project hash>/
     audio/<hash of text + voice + model>.opus   one clip per paragraph
 ```

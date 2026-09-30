@@ -6,7 +6,7 @@ title: "Engine migration — Astro → Rust core + TS/Vite frontend"
 
 Replace the Astro engine with a **Rust engine** and a **prebuilt Vite single-page app**, and ship both inside the `agentks` binary. One install serves every project on the machine.
 
-agentks is a local tool for one or two developers at a time. The Rust engine watches files, indexes the site, renders content and computes every rule; the CLI uses the same code, so the rules stop living in two languages. The frontend shows everything Rust sends over one WebSocket: every layout, diagrams, the issue tracker UI, the video player and, in Phase 2, editing. Publishing a site for search engines is a separate static export in Phase 3. See [the architecture note](./notes/01_initial_discussion/17_local-spa-over-websocket.md).
+agentks is a local tool for one or two developers at a time. The Rust engine watches files, indexes the site, renders content and computes every rule; the CLI uses the same code, so the rules stop living in two languages. The frontend shows everything Rust sends over one WebSocket: every layout, diagrams, the issue tracker UI, the video player and, in Phase 2, editing. Publishing a site for search engines is Phase 3: `agentks build` generates static HTML once (SSG) from the same layout components the local app uses. See [the architecture note](./notes/01_initial_discussion/17_local-spa-over-websocket.md).
 
 ## Context
 
@@ -25,10 +25,11 @@ This issue is in its discussion stage. The discussion stage is done when:
 
 ## Scope decisions
 
-- **Phase 1, rendering:** the Rust engine, the Rust server with one WebSocket, the Vite single-page app with every built-in layout, the config and `.env` change, the `~/.agentks/` home and build cache, the `agentks` rename, forced migrations in Rust, dropping custom layouts. Done when the new engine shows every page with the same correct results as today.
-- **Phase 2:** the new editing mode in the reading view (the current editor is discarded), the dev toolkit, `agentks docs`, which serves the agentks docs from a downloaded cache instead of a framework checkout, and libraries: GitHub repositories or local folders listed in `config/dep.yaml`, pinned in `config/dep.lock` and cached once per machine. 1.0.0 ships after Phases 1 and 2. See [future stages](./notes/02_future-stages/01_index.md).
-- **Phase 3, publishing:** a fully static export for nginx or any static host, search-engine friendly, with no Rust server. Until it ships, publishers stay on the last 0.x release, pinned with mise.
-- **Later stages:** multi-user editing and the auth it needs; agent hooks and retrieval; a GitHub issues layout with machine-level GitHub sign-in.
+- **Phase 1, rendering:** the Rust engine, the Rust server with one WebSocket, the Vite single-page app (mobile and PWA friendly) with every built-in layout, its layouts and components in a shared package that the Phase 3 static build reuses, the config and `.env` change, the `~/.agentks/` home and build cache, the `agentks` rename, forced migrations (scripts fetched from git, not built into the binary), dropping custom layouts. Done when the new engine shows every page with the same correct results as today.
+- **Phase 2:** the new editing mode in the reading view (the current editor is discarded), the dev toolkit, and libraries: GitHub repositories or local folders listed in `config/dep.yaml`, pinned in `config/dep.lock` and cached once per machine. 1.0.0 ships after Phases 1 and 2. See [future stages](./notes/02_future-stages/01_index.md).
+- **Phase 3, publishing:** `agentks build`, static site generation from the shared components (JavaScript only for interactive parts), a fully static site for nginx, any static host or a CDN (with a basic Dockerfile for users), search-engine friendly, with no Rust server. Until it ships, publishers stay on the last 0.x release, pinned with mise.
+- **Launch:** the move to the neuralabshq organisation, a new main repository and a separate default-library repository ([repositories and three states](./notes/02_future-stages/12_repositories-and-three-states.md)), the homepage and the docs at agentks.neuralabs.org, and the archival of this repository, in the order in [the launch note](./notes/02_future-stages/10_launch-order-and-hosting.md).
+- **Later stages:** multi-user editing and the auth it needs; agent hooks and retrieval; a GitHub issues layout with machine-level GitHub sign-in; extensions that add `agentksx` commands or site scripts.
 - **Tracked separately:** narrated video pages and their audio, in [2026-09-29-narrated-video-pages](../2026-09-29-narrated-video-pages/issue.md).
 - **Out:** motion-graphics video (Remotion or HyperFrames level), custom user layouts, server-side page templates, a WASM build of the core, HTMX.
 

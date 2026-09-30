@@ -1,6 +1,6 @@
 {
   "title": "Engine migration — Astro → Rust core + TS/Vite frontend, one global agentks install",
-  "description": "Move the engine off Astro onto a Rust engine shared with the CLI, serving a Vite single-page app over one WebSocket. agentks becomes tool + engine + published frontend, installed once per machine. Phase 1 renders, Phase 2 adds editing and the dev toolkit, Phase 3 is a static export for publishing. Includes the config simplification, the ~/.agentks home and build cache, the agentks rename, forced migrations, dropping custom layouts, the agentks docs command and libraries via config/dep.yaml. Discussion stage: decisions and open questions live in notes/01_initial_discussion/.",
+  "description": "Move the engine off Astro onto a Rust engine shared with the CLI, serving a Vite single-page app over one WebSocket. agentks becomes tool + engine + published frontend, installed once per machine. Phase 1 renders, Phase 2 adds editing and the dev toolkit, Phase 3 publishes with agentks build (SSG from shared layout components). Also the Neuralabs launch: repositories, homepage and hosted docs. Includes the config simplification, the ~/.agentks home and build cache, the agentks rename, forced migrations, dropping custom layouts, the agentks docs command and libraries via config/dep.yaml. Discussion stage: decisions and open questions live in notes/01_initial_discussion/.",
   "status": "open",
   "priority": "medium",
   "component": ["architecture"],

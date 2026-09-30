@@ -35,4 +35,4 @@ The footprint numbers above predate the Astro 7 upgrade, which added about 106 M
 
 ## 03 Frontend weight
 
-The browser bundle stays large no matter what the back end is. The audit measured the built output at 6.1 MB gzipped, before the Astro 7 changes. Mermaid, Excalidraw and the draw.io viewer dominate it, and they already load only on pages that use them.
+The browser bundle stays large no matter what the back end is. The audit measured the built output at 6.1 MB gzipped, before the Astro 7 changes. Mermaid, Excalidraw and the draw.io viewer dominate it, and they already load only on pages that use them. A published site is lighter: `agentks build` ships finished HTML and JavaScript only for interactive parts, and can render diagrams to SVG ahead of time ([Phase 3](../02_future-stages/07_phase-3-publishing.md)).

@@ -30,14 +30,14 @@ The engine splits in two. The **Rust engine** loads config, watches files, index
 | Issue tracker loading, validation, status categories | Rust | The CLI already does most of it in Rust |
 | Every derived value: order, URLs, sidebar trees, outlines, filter options | Rust | The frontend must never recompute a rule |
 | Theme CSS compilation | Rust | Cached per project |
-| Page layouts: docs, blog, issues, custom pages, navbar, footer | Frontend | Standard layout components chosen by config |
-| Mermaid, Excalidraw, draw.io, Graphviz rendering | Frontend | JavaScript libraries that already run in the browser |
+| Page layouts: docs, blog, issues, custom pages, navbar, footer | Frontend, in the shared package `apps/packages/agentks-ui` | Standard layout components chosen by config; the Phase 3 static build renders the same components ([Phase 3](../02_future-stages/07_phase-3-publishing.md)) |
+| Mermaid, Excalidraw, draw.io, Graphviz rendering | Frontend | JavaScript libraries that already run in the browser; for a published site they can render to SVG at build time |
 | Issue tracker UI, filters, video player, artifact iframes | Frontend | Display and interaction |
 | Editing UI (Phase 2) | Frontend | Display; saving and preview rendering go through Rust |
 
 ## 02 No static site in Phases 1 and 2
 
-agentks is a local tool. The local site is the SPA, served by the Rust server. A static, search-engine-friendly site is produced only by the [Phase 3 export](../02_future-stages/07_phase-3-publishing.md). Until then, anyone publishing a site stays on the last 0.x release ([versioning](./12_versioning-and-forced-migrations.md)).
+agentks is a local tool. The local site is the SPA, served by the Rust server. A static, search-engine-friendly site is produced only by [Phase 3's `agentks build`](../02_future-stages/07_phase-3-publishing.md), which renders the same layout components to HTML once. Until then, anyone publishing a site stays on the last 0.x release ([versioning](./12_versioning-and-forced-migrations.md)).
 
 ## 03 Rendering fidelity
 

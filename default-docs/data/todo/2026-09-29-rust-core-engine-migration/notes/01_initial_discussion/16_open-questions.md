@@ -2,7 +2,7 @@
 title: "Open questions"
 ---
 
-The questions to settle before a plan is written. Each one gets a decision line here when it is answered, and the answer moves into the note it belongs to. Still open: **04** (which dev tools, Phase 2), **07** (the index's data structure), **08** (the structure model), **11** (narration audio), **12** (the UI framework) and **13** (the meaning of `[[...]]`).
+The questions to settle before a plan is written. Each one gets a decision line here when it is answered, and the answer moves into the note it belongs to. Still open: **04** (which dev tools, Phase 2), **07** (the index's data structure), **08** (the structure model) and **12** (the UI framework).
 
 # 03 References
 
@@ -19,12 +19,14 @@ The questions to settle before a plan is written. Each one gets a decision line 
 - Decided (sidhantha, 2026-09-29): question 07 — the hybrid: build an index of the whole site at start-up, render pages on request, cache them where it pays.
 - Decided (sidhantha, 2026-09-29): question 09 — the Go issue is set to `superseded`, pointing at this issue, with a comment in each. Its folder stays where it is.
 - Decided (sidhantha, 2026-09-29): question 10 — rules stay in Rust. Rust sends derived data; no TypeScript is generated and no WASM is built.
+- Decided (sidhantha, 2026-09-30): question 11 — narration audio belongs to the video issue, [2026-09-29-narrated-video-pages](../../../2026-09-29-narrated-video-pages/issue.md). The voice model is a separate download, not a library.
+- Decided (sidhantha, 2026-09-30): question 13 — `[[path]]` keeps today's meaning: embed the file, with the path relative to the page. Links stay ordinary markdown links, `[text](path)`, relative to the page. There are no wiki links by name and no `[[[...]]]` syntax. Library elements are never named in markdown, only in video and artifact pages. The Rust engine translates every relative path. No migration is needed.
 
 # 05 Notes & Analysis
 
 ## 01 How are layouts written?
 
-**Decided:** as components of the Vite single-page app, fed by JSON over the WebSocket. Server-side templates (minijinja, askama) were considered first, because a static HTML site was then treated as a Phase 1 requirement. Once agentks was framed as a local tool, with publishing as the Phase 3 export, templates had no job left. See [the architecture note](./17_local-spa-over-websocket.md).
+**Decided:** as components of the Vite single-page app, fed by JSON over the WebSocket. Since 2026-09-30 they live in a shared package that the Phase 3 static build also renders ([Phase 3](../02_future-stages/07_phase-3-publishing.md)). Server-side templates (minijinja, askama) were considered first, because a static HTML site was then treated as a Phase 1 requirement. Once agentks was framed as a local tool, with publishing as the Phase 3 export, templates had no job left. See [the architecture note](./17_local-spa-over-websocket.md).
 
 ## 02 How does the frontend ship?
 
@@ -68,7 +70,7 @@ The dev toolkit is Phase 2 (decided). Still open: which of today's apps are rebu
 
 ## 09 What happens to the prior Go issue?
 
-**Decided:** set to `superseded` on 2026-09-29, folder kept in place (24 files elsewhere link into it). Still open: moving its subtask `01_define-and-discuss-structure` here (see question 08), and repointing [2026-05-08-update-date-time-optimization](../../../2026-05-08-update-date-time-optimization/issue.md), whose deferred work names the Go migration.
+**Decided:** set to `superseded` on 2026-09-29, folder kept in place (24 files elsewhere link into it). [2026-05-08-update-date-time-optimization](../../../2026-05-08-update-date-time-optimization/issue.md) was repointed to this issue on 2026-09-29. Still open: moving the Go issue's subtask `01_define-and-discuss-structure` here (see question 08).
 
 ## 10 How do shared rules reach the TypeScript frontend?
 
@@ -76,12 +78,21 @@ The dev toolkit is Phase 2 (decided). Still open: which of today's apps are rebu
 
 ## 11 Where does narration audio go?
 
-The optional voice model and audio cache for video pages ([video](./14_video-and-narration-audio.md)) are not placed in a phase yet.
+**Decided:** the video issue owns narration audio ([video](./14_video-and-narration-audio.md)). The voice model is a separate download into `~/.agentks/models/`, not a library.
 
 ## 12 Which UI framework does the frontend use?
 
-New with the single-page app. Candidates include React, Preact, Solid, Svelte and Vue. The engine already bundles React for Excalidraw, which counts slightly in React's favour. Criteria: first-load size, lazy loading of layouts, a router that handles real paths and `#heading` anchors, and how well AI agents write it.
+New with the single-page app. Candidates include React, Preact, Solid, Svelte and Vue. The engine already bundles React for Excalidraw, which counts slightly in React's favour. Criteria: first-load size, lazy loading of layouts, a router that handles real paths and `#heading` anchors, and how well AI agents write it. **Hard requirement since 2026-09-30:** it must render the shared components to HTML at build time and support islands, so a published page ships JavaScript only for its interactive parts and is never hydrated as a whole ([Phase 3](../02_future-stages/07_phase-3-publishing.md)). Preact, Solid and Svelte do this well; React can, with more work.
 
 ## 13 What does `[[...]]` mean?
 
 Today's engine uses `[[path]]` to embed a file's contents. [2026-04-19-knowledge-graph-and-wiki-links](../../../2026-04-19-knowledge-graph-and-wiki-links/issue.md) defines `[[target]]` as a wiki link and `[[[target]]]` as an embed. The Rust parser can support only one meaning. Changing today's meaning needs a migration.
+
+**Decided: keep today's meaning, and keep markdown plain.** A page uses two reference forms, both relative to the file:
+
+| Form | Meaning |
+|---|---|
+| `[text](./path.md)` | A link. Standard markdown, readable by every app |
+| `[[./path]]` | An embed: show the file's content here. The one non-standard form, kept because diagrams and code files need it |
+
+Nothing else. No wiki links by name, no `[[[...]]]`, and no library names such as `icons:server` in markdown. The reason is portability: a folder of agentks markdown must open cleanly in Obsidian or any other note app, and move in and out of agentks without a converter. Library elements belong to video pages and artifact pages ([libraries](../02_future-stages/09_libraries-and-dependencies.md)). The knowledge graph can still draw backlinks from ordinary links.

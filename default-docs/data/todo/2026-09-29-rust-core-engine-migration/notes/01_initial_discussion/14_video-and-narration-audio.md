@@ -39,7 +39,7 @@ Narration needs **text-to-speech** (text in, voice out), for example Kokoro run 
 
 ## 05 The player survives the migration
 
-The video player is browser TypeScript. It moves into the Vite frontend unchanged. Video work does not need to wait for this migration.
+The video player is browser TypeScript. It moves into the Vite frontend unchanged. Video work does not need to wait for this migration. On a published site the player is an island: the page's HTML and transcript are generated at build time, and only the player ships JavaScript.
 
 ## 06 Richer visuals discussed
 

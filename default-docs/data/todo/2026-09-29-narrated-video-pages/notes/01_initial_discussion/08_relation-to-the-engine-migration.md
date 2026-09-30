@@ -20,11 +20,12 @@ None yet.
 | Part | Side |
 |---|---|
 | Reading the markdown into scenes, beats and cues | Rust. It sends the video as data, like every other page |
-| The player, stage, widgets, motion | Frontend |
+| The player, stage, widgets, motion | Frontend, in the shared UI package, so the local app and a published site use the same code |
 | Browser voice | Frontend |
 | Generated audio, voice model, word timings | Rust |
-| Library downloads and checksums, project element lookup | Rust |
+| Library downloads (git, pinned by commit), element lookup | Rust |
 | Unknown-name and cue checks | Rust, shared with the CLI |
+| A published video page | `agentks build` writes the page and transcript as HTML; the player is an island, the only part that ships JavaScript |
 
 In the spike the browser reads the scenes from the rendered page. After the migration, Rust reads them and the frontend only plays, which matches the migration's rule that the frontend holds no rules.
 

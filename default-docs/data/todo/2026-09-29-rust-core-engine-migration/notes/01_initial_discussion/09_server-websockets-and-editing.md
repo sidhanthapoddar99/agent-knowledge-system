@@ -25,11 +25,13 @@ A Rust web server (axum, or something better if found) runs the local site. In p
 
 ## 01 Serving, by mode
 
+These are the three states of agentks ([the repositories and three states](../02_future-stages/12_repositories-and-three-states.md)). "Production" in this note's decisions means state 2: the installed binary on a user's machine.
+
 | Mode | Frontend served by | Data |
 |---|---|---|
 | Dev (working on agentks itself) | Vite dev server, with hot reload | Vite proxies `/api` to Rust |
 | Local use (`agentks start`) | Rust serves the embedded Vite build | WebSocket to Rust |
-| Published (Phase 3) | nginx or any static host | Prebuilt files; no Rust, no WebSocket |
+| Published (Phase 3) | nginx, any static host or a CDN | Static HTML generated once by `agentks build`; JavaScript only for interactive parts; no Rust, no WebSocket |
 
 ## 02 What travels over the WebSocket (claude, proposed shape)
 

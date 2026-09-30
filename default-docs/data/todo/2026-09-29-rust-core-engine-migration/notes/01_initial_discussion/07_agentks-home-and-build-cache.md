@@ -30,7 +30,8 @@ Machine-wide state moves to **`~/.agentks/`**: global settings, other config, a 
     <hash of the config path>/
       ...                one project's cached output
   libraries/
-    github.com/<owner>/<repo>/<commit>/   one repository at one commit, shared by every project
+    <host>/<repository path>/<commit>/   one repository at one commit, shared by every project,
+                                         for example github.com/acme/design-kit/51aa0c3f.../
   models/
     <model>-<version>/   downloaded models, such as the narration voice
 ```
@@ -42,7 +43,7 @@ Machine-wide state moves to **`~/.agentks/`**: global settings, other config, a 
 `agentks cache clean <root>...`, for example `agentks cache clean ~/projects`.
 
 1. **Find the projects.** Walk each root for `config/dep.yaml`. Every project must have that file, so it is a reliable marker. Skip `.git`, `node_modules` and similar folders.
-2. **Collect what is needed.** Every commit named in a found project's `dep.lock`, and the docs for the installed agentks version. Proposed: also read `dep.lock` from each project's other local git branches, so switching branch does not trigger a download.
+2. **Collect what is needed.** Every commit named in a found project's `dep.lock`. Proposed: also read `dep.lock` from each project's other local git branches, so switching branch does not trigger a download.
 3. **Report before deleting.** List the projects found, what would be removed and how much space it frees. Deleting needs `--yes` or a confirmation.
 4. **Remove.** Library commits no found project needs, and build caches whose recorded project folder no longer exists.
 

@@ -16,6 +16,10 @@ The [HTML artifact issue](../2026-07-07-artifact-component/issue.md) and [Video 
 
 The [brainstorm index](./brainstorm/01_authoring-and-runtime-options.md) retains the ideas and examples. The [initial comment](./comments/001_2026-10-02_initial-direction-and-todos.md) captures the original basic to-dos; [scope and boundaries](./notes/01_scope-and-boundaries.md) records the current owner direction.
 
+## Current result
+
+The library-first work is merged into library main at `f20ee086`: six collections, 73 typed definitions, preserved native assets, a Vite developer preview, reusable ordinary HTML/narrated components and portable author/use tooling. All 43 library-first work orders are ready for review; seven Rust CLI/engine integration items remain blocked. Production gates, independent author/consumer smoke, both-theme/mobile UI checks and reproducible cold/limited-load observations pass. All created worktrees are removed, with unique captures preserved in primary. [Detailed result and engine handoff](./notes/02_library-first-result.md) records scope, validation and limits.
+
 ## Work areas
 
 | Area | Detailed work orders |
@@ -26,10 +30,10 @@ The [brainstorm index](./brainstorm/01_authoring-and-runtime-options.md) retains
 | [Innovative components](./subtasks/040_innovative-components/00_index.md) | 4 |
 | [Developer preview](./subtasks/050_developer-preview/00_index.md) | 3 |
 | [AI authoring and usage plugin](./subtasks/060_ai-authoring-and-usage-plugin/00_index.md) | 3 |
-| [Rust CLI library tooling](./subtasks/070_cli-library-tooling/00_index.md) — blocked on engine build | 4 |
+| [Rust CLI library tooling](./subtasks/070_cli-library-tooling/00_index.md) — blocked on typed engine integration | 4 |
 | [Narrated and interactive experiences](./subtasks/080_narrated-and-interactive-experiences/00_index.md) | 9 |
 | [Production rendering and optimization](./subtasks/110_production-and-optimization/00_index.md) | 4 |
-| [Engine integration](./subtasks/120_engine-integration/00_index.md) — blocked on engine build | 3 |
+| [Engine integration](./subtasks/120_engine-integration/00_index.md) — blocked on typed engine integration | 3 |
 
 ## Done when
 
@@ -44,7 +48,7 @@ These are draft acceptance criteria for the implementation:
 ## Scope decisions
 
 - The owner has authorized autonomous implementation in independent worktrees, with parallel migration and additional-collection lanes after the validated shared contract. No outward release is authorized.
-- Build and prove the library/preview first. Keep all CLI and engine-integration work blocked on the other agent's usable engine build and the library/reference contract.
+- Build and prove the library/preview first. Keep CLI and engine-integration work blocked on the external typed-artifact adapter checkpoint; the usable native engine and reviewed library/reference inputs are available.
 - Combine narration, divergent paths and component interaction into one experience group.
 - Use GitHub tags and release notes/links for library versions; no separate package-registry publication is required. A browser build step still needs a contract.
 - Keep ordinary HTML artifacts supported, including shared elements inside embedded artifacts.

@@ -1,3 +1,14 @@
+> [!CAUTION]
+> ## This repository is deprecated and archived
+>
+> **Development has moved to [NeuraLabs agentks](https://github.com/NeuraLabsHQ/agent-knowledge-system).**
+>
+> agentks has been rebuilt around a native **Rust engine and CLI**, with an embedded browser client. The new architecture is designed for better performance, a smoother experience, and a broader set of features for documentation, issue tracking, interactive artifacts, and live collaboration.
+>
+> **Ongoing development, maintenance, and updates belong to the NeuraLabs repository.** This public repository is retained as a read-only archive of the earlier implementation and its history. It will receive no further updates.
+>
+> The documentation below describes the archived implementation. Follow the maintained repository for the current project and migration guidance.
+
 # agent-knowledge-system
 
 [![Engine 0.3.10](https://img.shields.io/badge/Engine-0.3.10-0b7285?labelColor=1f2328&logo=github&logoColor=white)](./agent-ks-engine/release-notes/0.3.10.md)

@@ -36,13 +36,14 @@
 
     // Which part of the system the issue lives in. Pick exactly ONE — tag by
     // center of gravity even for cross-cutting work (the validator warns on >1).
-    // The seven buckets are a layer-of-the-stack axis; `issue-dump` is the
+    // These buckets are a layer-of-the-stack axis; `issue-dump` is the
     // deliberate exception. Every value MUST carry a description (rendered in
     // the Guide; the loader hard-errors on a missing one).
     "component": {
       "values": [
         "architecture",
         "components",
+        "artifact",
         "loaders-and-renderers",
         "layout-general",
         "layout-issues",
@@ -53,6 +54,7 @@
       "descriptions": {
         "architecture": "The engine/infra under everything: refactors, the plugin system, runtime & build tooling, the dev-toolbar. Core system work that isn't tied to one content layer.",
         "components": "First-class / markdown-rendered content elements (markdown itself, code blocks, mermaid & excalidraw diagrams, knowledge graph, wikilinks) plus supplemental tools layered on the core (e.g. site-wide search).",
+        "artifact": "HTML artifacts and interactive or narrated experiences: shared visual component libraries, charts, tables, SVG objects, motion, previews, authoring, playback and engine integration. Markdown-rendered diagrams remain in components.",
         "loaders-and-renderers": "The content pipeline — how content gets from disk to the screen: loading, link resolution, caching, and rendering to the frontend.",
         "layout-general": "Building the presentation: layouts (docs, blog, new layout types), themes, responsive/sizing. Layout-development work in general.",
         "layout-issues": "The issue-tracker presentation specifically (this layout & its parts).",

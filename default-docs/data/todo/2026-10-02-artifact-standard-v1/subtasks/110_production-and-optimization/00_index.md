@@ -1,6 +1,6 @@
 ---
 title: "Production rendering and optimization — group scope"
-status: open
+status: in-progress
 ---
 
 Produce readable initial HTML/SVG, attach interaction lazily, optimize assets and loading, and verify mobile accessibility and performance budgets.
@@ -23,12 +23,17 @@ Deliver the following scoped work orders. Their live state is also shown by the 
 - Each child work order meets its checks and records its result/evidence.
 
 # 02 Status and Result
-Scoped and initialized; implementation has not started.
+
+Implemented deterministic readable build-time HTML/SVG, identity-preserving attachment, focused ESM/classic browser closures, separately indexed fonts/licenses and verified immutable source/dependency digests. The production preview and all 73 outputs pass size/closure checks. Browser proof covers both themes, mobile-contained scrolling, keyboard/touch alternatives, branch rejoin, backward seeking and synchronous playback cleanup; [Library-first result](../../notes/02_library-first-result.md) points to reproducible evidence and limits.
+
+## Result
+Implementation submitted for review; the owner marks closure. No engine adapter or publication is claimed.
 
 ## Agent log
 none
 
 # 03 References
+- [Library-first result](../../notes/02_library-first-result.md)
 - [Owner scope and boundaries](../../notes/01_scope-and-boundaries.md)
 - [Library-first plan](../../plans/01_library-first/overview.md)
 - [Brainstorm index](../../brainstorm/01_authoring-and-runtime-options.md)

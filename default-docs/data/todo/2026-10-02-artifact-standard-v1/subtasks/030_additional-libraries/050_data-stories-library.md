@@ -1,14 +1,14 @@
 ---
 title: "Build a Data Stories library in its own worktree"
-status: open
+status: review
 ---
 
 A separate video-focused collection can specialize in narrated chart/table explanations and progressive comparisons.
 
 # 01 To Do
-- [ ] **Define the family.** Use Data Stories as a working name with clear data-story layouts and styling.
-- [ ] **Compose scenes.** Build highlight/reveal/comparison patterns over shared chart/table interfaces, with linked interactions and optional narration.
-- [ ] **Ship examples.** Provide original fixture data, style variants and local metadata for independent preview.
+- [x] **Define the family.** Use Data Stories as a working name with clear data-story layouts and styling.
+- [x] **Compose scenes.** Build highlight/reveal/comparison patterns over shared chart/table interfaces, with linked interactions and optional narration.
+- [x] **Ship examples.** Provide original fixture data, style variants and local metadata for independent preview.
 
 ## Guardrails
 - Apply the [owner scope and execution boundaries](../../notes/01_scope-and-boundaries.md).
@@ -20,15 +20,24 @@ A separate video-focused collection can specialize in narrated chart/table expla
 - The collection adds useful narrative composition rather than copying plot mathematics or table state.
 
 # 02 Status and Result
-Scoped; implementation has not started.
+Implementation is ready for owner review; external integration/release limits are recorded below.
 
 ## Result
-No implementation result yet. Record the outcome and evidence here before moving to review.
+Data Stories composes tradeoff, progressive-reveal and linked-comparison scenes over shared chart/table data. Briefing/cinema styles, complete synthetic inputs and reader cue selection add narrative structure without copied plot math.
+
+Source paths below are relative to `/home/sid/projects/06_02_NeuraLabs/agent-knowledge-system-library` at the reviewed source revision: `libraries/agentks-data-stories/components/stories/Story.tsx`; [libraries/agentks-data-stories/examples/README.md](../../../../../../../../agent-knowledge-system-library/libraries/agentks-data-stories/examples/README.md).
+
+Verified on 2026-10-03 at library source `7b2c057513cde265ae3c9008bc6b32909bbbab82`: the focused unit/DOM batch passed 170 tests / 2,155 assertions. Relevant coverage: Data Stories absolute cue/reverse-time, same-dataset and remapped event cases. The native compatibility suite also passed 63 tests.
+
+The collection consumes optional host narration; it is not an independent audio service or alternate runtime. Final aggregate/output evidence belongs in the [library-first result](../../notes/02_library-first-result.md); this focused batch is not a claim that the final gate or all compiled outputs already pass.
 
 ## Agent log
 none
 
 # 03 References
+- [Library-first implementation result](../../notes/02_library-first-result.md)
+- [Components contract](../../../../../../../../agent-knowledge-system-library/contracts/components.md)
+- [Experiences contract](../../../../../../../../agent-knowledge-system-library/contracts/experiences.md)
 - [Owner scope and boundaries](../../notes/01_scope-and-boundaries.md)
 - [Library-first plan](../../plans/01_library-first/overview.md)
 - [Related idea: 05_libraries styles themes dependencies.md](../../brainstorm/05_libraries-styles-themes-dependencies.md)
@@ -41,7 +50,7 @@ none
 The owner direction and reasons are recorded in the linked scope note. These acceptance checks are a draft decomposition of that direction.
 
 ## 02 Local design
-Follow the accepted standard; record material local design choices and their reasons here when implementation starts.
+Narration/highlight/reveal are composition around shared definitions. Reader inspection stays separate from the timeline.
 
 # 05 Notes & Analysis
 ## Execution dependencies

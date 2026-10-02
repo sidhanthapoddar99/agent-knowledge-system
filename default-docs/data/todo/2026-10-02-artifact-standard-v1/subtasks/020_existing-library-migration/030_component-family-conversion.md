@@ -1,14 +1,14 @@
 ---
 title: "Migrate existing component families with parallel ownership"
-status: open
+status: review
 ---
 
 Migration can be divided among agents after the reference API is agreed, while keeping behavior and public interfaces consistent.
 
 # 01 To Do
-- [ ] **Assign bounded lanes.** Define independent chart/table/widget, SVG/object, motion/style and asset-wrapper batches with clear file ownership.
-- [ ] **Convert behavior.** Implement existing families against the shared TSX API, reusing primitives and keeping vector/font assets in suitable native forms.
-- [ ] **Supply proof.** Add a webpage and narrated usage example for each migrated behavior; reconcile shared changes through the contract owner.
+- [x] **Assign bounded lanes.** Define independent chart/table/widget, SVG/object, motion/style and asset-wrapper batches with clear file ownership.
+- [x] **Convert behavior.** Implement existing families against the shared TSX API, reusing primitives and keeping vector/font assets in suitable native forms.
+- [x] **Supply proof.** Add a webpage and narrated usage example for each migrated behavior; reconcile shared changes through the contract owner.
 
 ## Guardrails
 - Apply the [owner scope and execution boundaries](../../notes/01_scope-and-boundaries.md).
@@ -20,15 +20,25 @@ Migration can be divided among agents after the reference API is agreed, while k
 - Representative migrated behaviors work in both hosts, and shared files have explicit integration ownership.
 
 # 02 Status and Result
-Scoped; implementation has not started.
+Implementation is ready for owner review; external integration/release limits are recorded below.
 
 ## Result
-No implementation result yet. Record the outcome and evidence here before moving to review.
+Independent collection lanes delivered shared-API chart/table/vector/motion behavior, local registrations and complete examples. Default primitives serve Editorial, Storybook and the additional collections without forked chart/ledger/pose mathematics.
+
+Source paths below are relative to `/home/sid/projects/06_02_NeuraLabs/agent-knowledge-system-library` at the reviewed source revision: `libraries/agentks-default/components/tsx`; `libraries/agentks-editorial/components/tsx`; `libraries/agentks-storybook/components/tsx`.
+
+Verified on 2026-10-03 at library source `7b2c057513cde265ae3c9008bc6b32909bbbab82`: the focused unit/DOM batch passed 170 tests / 2,155 assertions. Relevant coverage: All collection defaults/metadata/host cases and shared Default semantics. The native compatibility suite also passed 63 tests.
+
+Mapped native widget/presentation assets retain their old compatibility path. Their retention does not imply a universal TSX conversion. Final aggregate/output evidence belongs in the [library-first result](../../notes/02_library-first-result.md); this focused batch is not a claim that the final gate or all compiled outputs already pass.
 
 ## Agent log
 none
 
 # 03 References
+- [Library-first implementation result](../../notes/02_library-first-result.md)
+- [Default Migration contract](../../../../../../../../agent-knowledge-system-library/contracts/default-migration.md)
+- [Editorial Migration contract](../../../../../../../../agent-knowledge-system-library/contracts/editorial-migration.md)
+- [Storybook Migration contract](../../../../../../../../agent-knowledge-system-library/contracts/storybook-migration.md)
 - [Owner scope and boundaries](../../notes/01_scope-and-boundaries.md)
 - [Library-first plan](../../plans/01_library-first/overview.md)
 - [Related idea: 02_shared tsx artifact elements.md](../../brainstorm/02_shared-tsx-artifact-elements.md)
@@ -41,7 +51,7 @@ none
 The owner direction and reasons are recorded in the linked scope note. These acceptance checks are a draft decomposition of that direction.
 
 ## 02 Local design
-Follow the accepted standard; record material local design choices and their reasons here when implementation starts.
+Keep shared types, catalogs, locks and integration checks coordinator-owned; collection workers compose frozen primitives and preserve source assets.
 
 # 05 Notes & Analysis
 ## Execution dependencies

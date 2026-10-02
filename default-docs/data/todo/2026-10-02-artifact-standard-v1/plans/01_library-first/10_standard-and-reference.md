@@ -1,6 +1,6 @@
 ---
 title: "Agree the standard and reference component"
-status: in-progress
+status: review
 outcome: "A tested component, source catalog and time/state contract give parallel teams one reference."
 notes: "Three contract prototypes and inventory/blueprints proceed independently; coordinator reconciles the public API before bulk migration."
 subtasks:
@@ -16,9 +16,9 @@ Contract drafts can proceed in parallel; a single validated public interface pre
 
 # 01 To Do
 
-- [ ] Draft component/render, pure runtime and source/dependency contracts in independent worktrees.
-- [ ] Validate one shared TSX reference in readable webpage markup and a narrated host.
-- [ ] Reconcile the reference, metadata and lifecycle tests at one integration checkpoint.
+- [x] Draft component/render, pure runtime and source/dependency contracts in independent worktrees.
+- [x] Validate one shared TSX reference in readable webpage markup and a narrated host.
+- [x] Reconcile the reference, metadata and lifecycle tests at one integration checkpoint.
 
 ## Done when
 
@@ -26,7 +26,7 @@ A tested component, source catalog and time/state contract give parallel teams o
 
 # 02 Status and Result
 
-Three isolated implementation worktrees now carry contract prototypes. Public API validation is underway.
+The standard and checked implementation are integrated: six collections, 73 public TSX definitions, focused browser closures, independent developer preview, ordinary HTML reuse, narrated branching/selection/audio and portable author/use tooling. Full gates, independent plugin smoke, both-theme/mobile browser proof and reproducible cold/limited local loading measurements pass. [Library-first result](../../notes/02_library-first-result.md) records exact scope, pins and limits. All changes are merged into library main; all created worktrees are removed after preserving unique review captures.
 
 # 03 References
 

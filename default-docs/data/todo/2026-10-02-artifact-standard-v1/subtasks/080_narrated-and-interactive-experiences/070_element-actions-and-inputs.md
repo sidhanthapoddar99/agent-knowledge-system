@@ -1,14 +1,14 @@
 ---
 title: "Implement element actions for pointer, keyboard and touch"
-status: open
+status: review
 ---
 
 Readers should inspect and act on live artifact elements, including during a narrated experience.
 
 # 01 To Do
-- [ ] **Define semantic actions.** Map hover/focus, click/tap, selection and controls to the agreed typed events/actions.
-- [ ] **Provide input equivalents.** Make information exposed by hover accessible by focus/tap; manage focus and interaction feedback.
-- [ ] **Demonstrate both hosts.** Trigger details, state changes and useful component actions inside webpage and narrated examples.
+- [x] **Define semantic actions.** Map hover/focus, click/tap, selection and controls to the agreed typed events/actions.
+- [x] **Provide input equivalents.** Make information exposed by hover accessible by focus/tap; manage focus and interaction feedback.
+- [x] **Demonstrate both hosts.** Trigger details, state changes and useful component actions inside webpage and narrated examples.
 
 ## Guardrails
 - Apply the [owner scope and execution boundaries](../../notes/01_scope-and-boundaries.md).
@@ -20,15 +20,24 @@ Readers should inspect and act on live artifact elements, including during a nar
 - Interaction remains usable inside an embedded artifact, during pause and with narration/audio disabled.
 
 # 02 Status and Result
-Scoped; implementation has not started.
+Implementation is ready for owner review; external integration/release limits are recorded below.
 
 ## Result
-No implementation result yet. Record the outcome and evidence here before moving to review.
+Chart hover/focus details remain transient. Click/tap, Enter/Space and native row/object/choice controls emit stable semantic events in ordinary HTML and narrated hosts; Escape clears chart selection.
+
+Source paths below are relative to `/home/sid/projects/06_02_NeuraLabs/agent-knowledge-system-library` at the reviewed source revision: `libraries/agentks-default/components/tsx/reference/quadrant-chart.tsx`; `libraries/agentks-motion-explainers/components/scenes/stage.tsx`; `libraries/agentks-default/components/tsx/tables/common/grid.tsx`.
+
+Verified on 2026-10-03 at library source `7b2c057513cde265ae3c9008bc6b32909bbbab82`: the focused unit/DOM batch passed 170 tests / 2,155 assertions. Relevant coverage: Reference attachment, numeric keyboard, native grid focus/activation and host selection cases. The native compatibility suite also passed 63 tests.
+
+DOM/native-control equivalents are tested; no universal touchscreen/assistive-device certification is claimed. Final aggregate/output evidence belongs in the [library-first result](../../notes/02_library-first-result.md); this focused batch is not a claim that the final gate or all compiled outputs already pass.
 
 ## Agent log
 none
 
 # 03 References
+- [Library-first implementation result](../../notes/02_library-first-result.md)
+- [Components contract](../../../../../../../../agent-knowledge-system-library/contracts/components.md)
+- [Experiences contract](../../../../../../../../agent-knowledge-system-library/contracts/experiences.md)
 - [Owner scope and boundaries](../../notes/01_scope-and-boundaries.md)
 - [Library-first plan](../../plans/01_library-first/overview.md)
 - [Related idea: 03_interactive artifact kinds.md](../../brainstorm/03_interactive-artifact-kinds.md)
@@ -42,7 +51,7 @@ none
 The owner direction and reasons are recorded in the linked scope note. These acceptance checks are a draft decomposition of that direction.
 
 ## 02 Local design
-Follow the accepted standard; record material local design choices and their reasons here when implementation starts.
+Offer ordinary labeled controls as touch/keyboard equivalents; inspection is not implicitly a branch answer or clock transition.
 
 # 05 Notes & Analysis
 ## Execution dependencies

@@ -1,14 +1,14 @@
 ---
 title: "Inventory existing components and map their migration"
-status: open
+status: review
 ---
 
 The existing catalog is large and mixes assets with executable behavior; a complete map prevents dropped elements and misleading parity claims.
 
 # 01 To Do
-- [ ] **Capture the baseline.** Inventory all collections, categories, names, source paths, data contracts, assets, licenses and current validation failures.
-- [ ] **Classify conversion.** Identify what stays SVG/font/data, what needs a typed TSX wrapper and what requires behavioral migration.
-- [ ] **Define ownership lanes.** Map component families to independent migration batches and a shared reference/validation contract.
+- [x] **Capture the baseline.** Inventory all collections, categories, names, source paths, data contracts, assets, licenses and current validation failures.
+- [x] **Classify conversion.** Identify what stays SVG/font/data, what needs a typed TSX wrapper and what requires behavioral migration.
+- [x] **Define ownership lanes.** Map component families to independent migration batches and a shared reference/validation contract.
 
 ## Guardrails
 - Apply the [owner scope and execution boundaries](../../notes/01_scope-and-boundaries.md).
@@ -20,15 +20,26 @@ The existing catalog is large and mixes assets with executable behavior; a compl
 - Baseline failures and supported behaviors are recorded separately from migration regressions.
 
 # 02 Status and Result
-Scoped; implementation has not started.
+Implementation is ready for owner review; external integration/release limits are recorded below.
 
 ## Result
-No implementation result yet. Record the outcome and evidence here before moving to review.
+The generated inventory accounts for every original manifested identity, source/category, owner lane, expected disposition and retained license metadata. The three migration maps distinguish typed replacements from native compatibility assets.
+
+Source paths below are relative to `/home/sid/projects/06_02_NeuraLabs/agent-knowledge-system-library` at the reviewed source revision: `scripts/artifacts/inventory.py`; `scripts/artifacts/generate.py`; `data/artifacts/inventory.json`.
+
+Verified on 2026-10-03 at library source `7b2c057513cde265ae3c9008bc6b32909bbbab82`: the focused unit/DOM batch passed 170 tests / 2,155 assertions. Relevant coverage: Filesystem inventory/generation cases and the 63-test native suite. The native compatibility suite also passed 63 tests.
+
+Inventory disposition is coverage evidence, not proof that every native preset was rewritten or that all browser parity checks have finished. Final aggregate/output evidence belongs in the [library-first result](../../notes/02_library-first-result.md); this focused batch is not a claim that the final gate or all compiled outputs already pass.
 
 ## Agent log
 none
 
 # 03 References
+- [Library-first implementation result](../../notes/02_library-first-result.md)
+- [Library contract](../../../../../../../../agent-knowledge-system-library/contracts/library.md)
+- [Default Migration contract](../../../../../../../../agent-knowledge-system-library/contracts/default-migration.md)
+- [Editorial Migration contract](../../../../../../../../agent-knowledge-system-library/contracts/editorial-migration.md)
+- [Storybook Migration contract](../../../../../../../../agent-knowledge-system-library/contracts/storybook-migration.md)
 - [Owner scope and boundaries](../../notes/01_scope-and-boundaries.md)
 - [Library-first plan](../../plans/01_library-first/overview.md)
 - [Related idea: 02_shared tsx artifact elements.md](../../brainstorm/02_shared-tsx-artifact-elements.md)
@@ -41,7 +52,7 @@ none
 The owner direction and reasons are recorded in the linked scope note. These acceptance checks are a draft decomposition of that direction.
 
 ## 02 Local design
-Follow the accepted standard; record material local design choices and their reasons here when implementation starts.
+Preserve the 2,753 original native identities. The current inventory adds four brand SVG marks (2,757 native entries); 49 original identities have explicit typed replacements. Passive assets need no bespoke TSX copy.
 
 # 05 Notes & Analysis
 ## Execution dependencies

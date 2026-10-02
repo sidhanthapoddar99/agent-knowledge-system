@@ -1,14 +1,14 @@
 ---
 title: "Build a reference TSX component and choose the authoring approach"
-status: in-progress
+status: review
 ---
 
 A concrete reference prevents teams from migrating components against incompatible framework or composition assumptions.
 
 # 01 To Do
-- [ ] **Evaluate the stack.** Compare the proposed authoring approach with current Preact and the framework-free player, including SSR, bundle cost and plain HTML consumption.
-- [ ] **Build one reference.** Demonstrate a typed chart/table or SVG component in a webpage embed and narrated host using the same implementation.
-- [ ] **Define extension rules.** Document shared primitives, composition/variants, any useful inheritance and lifecycle behavior; record the selected approach before parallel migration.
+- [x] **Evaluate the stack.** Compare the proposed authoring approach with current Preact and the framework-free player, including SSR, bundle cost and plain HTML consumption.
+- [x] **Build one reference.** Demonstrate a typed chart/table or SVG component in a webpage embed and narrated host using the same implementation.
+- [x] **Define extension rules.** Document shared primitives, composition/variants, any useful inheritance and lifecycle behavior; record the selected approach before parallel migration.
 
 ## Guardrails
 - Apply the [owner scope and execution boundaries](../../notes/01_scope-and-boundaries.md).
@@ -20,15 +20,24 @@ A concrete reference prevents teams from migrating components against incompatib
 - The framework/composition recommendation has recorded tradeoffs and an agreed extension example.
 
 # 02 Status and Result
-Scoped; implementation has not started.
+Implementation is ready for owner review; external integration/release limits are recorded below.
 
 ## Result
-No implementation result yet. Record the outcome and evidence here before moving to review.
+The synthetic logarithmic quadrant chart, linked comparison table and concept vector render initial markup without browser globals and attach in ordinary HTML or narrated contexts. Editorial and Storybook demonstrate extension by composition.
+
+Source paths below are relative to `/home/sid/projects/06_02_NeuraLabs/agent-knowledge-system-library` at the reviewed source revision: `libraries/agentks-default/components/tsx/reference/quadrant-chart.tsx`; `libraries/agentks-default/components/tsx/reference/examples/linked-reference.tsx`; `apps/packages/agentks-artifacts/src/render/mount.client.ts`.
+
+Verified on 2026-10-03 at library source `7b2c057513cde265ae3c9008bc6b32909bbbab82`: the focused unit/DOM batch passed 170 tests / 2,155 assertions. Relevant coverage: Reference rendering, real hydration/update/disposal and shared selection cases. The native compatibility suite also passed 63 tests.
+
+Browser payload costs and final geometry are recorded by the production pass; no comparative benchmark of alternative UI frameworks is asserted. Final aggregate/output evidence belongs in the [library-first result](../../notes/02_library-first-result.md); this focused batch is not a claim that the final gate or all compiled outputs already pass.
 
 ## Agent log
 none
 
 # 03 References
+- [Library-first implementation result](../../notes/02_library-first-result.md)
+- [Components contract](../../../../../../../../agent-knowledge-system-library/contracts/components.md)
+- [Browser Build contract](../../../../../../../../agent-knowledge-system-library/contracts/browser-build.md)
 - [Owner scope and boundaries](../../notes/01_scope-and-boundaries.md)
 - [Library-first plan](../../plans/01_library-first/overview.md)
 - [Related idea: 02_shared tsx artifact elements.md](../../brainstorm/02_shared-tsx-artifact-elements.md)
@@ -42,7 +51,7 @@ none
 The owner direction and reasons are recorded in the linked scope note. These acceptance checks are a draft decomposition of that direction.
 
 ## 02 Local design
-Follow the accepted standard; record material local design choices and their reasons here when implementation starts.
+Retain Preact 11 for TSX/SSR and the framework-free time core; compose typed variants instead of subclassing views. This does not replace the existing engine player.
 
 # 05 Notes & Analysis
 ## Execution dependencies

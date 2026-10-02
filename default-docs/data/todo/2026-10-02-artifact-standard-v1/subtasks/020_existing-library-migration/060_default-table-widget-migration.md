@@ -1,14 +1,14 @@
 ---
 title: "Migrate Default tables and widgets in an independent worktree"
-status: open
+status: review
 ---
 
 Table/widget behavior can be converted and expanded while the chart lane implements its own modules.
 
 # 01 To Do
-- [ ] **Own the table/widget lane.** Migrate Default table, account and device/widget behavior with clear element/source mapping.
-- [ ] **Reuse events.** Implement richer table formats against the frozen selection/filter interfaces and chart fixtures.
-- [ ] **Submit outputs.** Supply source/examples, local metadata and compatibility evidence; coordinate complete linked-view proof at convergence.
+- [x] **Own the table/widget lane.** Migrate Default table, account and device/widget behavior with clear element/source mapping.
+- [x] **Reuse events.** Implement richer table formats against the frozen selection/filter interfaces and chart fixtures.
+- [x] **Submit outputs.** Supply source/examples, local metadata and compatibility evidence; coordinate complete linked-view proof at convergence.
 
 ## Guardrails
 - Apply the [owner scope and execution boundaries](../../notes/01_scope-and-boundaries.md).
@@ -20,15 +20,24 @@ Table/widget behavior can be converted and expanded while the chart lane impleme
 - Table examples work against typed chart/event fixtures before the real chart branch lands.
 
 # 02 Status and Result
-Scoped; implementation has not started.
+Implementation is ready for owner review; external integration/release limits are recorded below.
 
 ## Result
-No implementation result yet. Record the outcome and evidence here before moving to review.
+Typed data/compare/key-value grids and an exact-cent cash ledger support stable sorting/filtering/selection. Header groups now retain only genuine grouping, with singleton row spans; visible Inspect controls retain contextual accessible Select labels.
+
+Source paths below are relative to `/home/sid/projects/06_02_NeuraLabs/agent-knowledge-system-library` at the reviewed source revision: `libraries/agentks-default/components/tsx/tables/common/grid.tsx`; `libraries/agentks-default/components/tsx/tables/common/headers.tsx`; `libraries/agentks-default/components/tsx/tables/ledger/account-ledger.tsx`.
+
+Verified on 2026-10-03 at library source `7b2c057513cde265ae3c9008bc6b32909bbbab82`: the focused unit/DOM batch passed 170 tests / 2,155 assertions. Relevant coverage: Default table/grid-header/interactive cases and nested Editorial/Storybook ledger events. The native compatibility suite also passed 63 tests.
+
+The ledger is not double-entry accounting. Retained HTML widgets are supported native assets, not newly rewritten TSX implementations. Final aggregate/output evidence belongs in the [library-first result](../../notes/02_library-first-result.md); this focused batch is not a claim that the final gate or all compiled outputs already pass.
 
 ## Agent log
 none
 
 # 03 References
+- [Library-first implementation result](../../notes/02_library-first-result.md)
+- [Default Migration contract](../../../../../../../../agent-knowledge-system-library/contracts/default-migration.md)
+- [Components contract](../../../../../../../../agent-knowledge-system-library/contracts/components.md)
 - [Owner scope and boundaries](../../notes/01_scope-and-boundaries.md)
 - [Library-first plan](../../plans/01_library-first/overview.md)
 - [Related idea: 02_shared tsx artifact elements.md](../../brainstorm/02_shared-tsx-artifact-elements.md)
@@ -41,7 +50,7 @@ none
 The owner direction and reasons are recorded in the linked scope note. These acceptance checks are a draft decomposition of that direction.
 
 ## 02 Local design
-Follow the accepted standard; record material local design choices and their reasons here when implementation starts.
+Use one shared row identity/event contract. Retain native HTML device/widget parameter/message compatibility; use integer cents for the cash-movement ledger.
 
 # 05 Notes & Analysis
 ## Execution dependencies

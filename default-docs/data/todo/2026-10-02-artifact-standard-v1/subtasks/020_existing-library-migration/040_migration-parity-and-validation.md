@@ -1,14 +1,14 @@
 ---
 title: "Verify migration parity and update the library guidance"
-status: open
+status: review
 ---
 
 A migration is complete only when consumers, generated assets and documentation agree with the new contract.
 
 # 01 To Do
-- [ ] **Check coverage.** Verify the migrated index against the baseline map, including identity, assets, licenses and diagnostics.
-- [ ] **Compare behavior.** Exercise light/dark, reduced motion, shared selection and timed/replayed states in independent examples.
-- [ ] **Update guidance.** Revise library README/contracts/AGENTS and authoring checks with the implemented choices, recording compatibility and known limits.
+- [x] **Check coverage.** Verify the migrated index against the baseline map, including identity, assets, licenses and diagnostics.
+- [x] **Compare behavior.** Exercise light/dark, reduced motion, shared selection and timed/replayed states in independent examples.
+- [x] **Update guidance.** Revise library README/contracts/AGENTS and authoring checks with the implemented choices, recording compatibility and known limits.
 
 ## Guardrails
 - Apply the [owner scope and execution boundaries](../../notes/01_scope-and-boundaries.md).
@@ -20,15 +20,20 @@ A migration is complete only when consumers, generated assets and documentation 
 - Relevant library checks and representative browser parity evidence are recorded; guidance describes implemented behavior.
 
 # 02 Status and Result
-Scoped; implementation has not started.
+
+Final inventory, typed replacement maps, all 73 focused browser closures and built gallery/HTML/mobile parity pass. All original native identities are preserved; explicit retained assets remain native. See [Library-first result](../../notes/02_library-first-result.md).
 
 ## Result
-No implementation result yet. Record the outcome and evidence here before moving to review.
+Submitted for owner review.
 
 ## Agent log
 none
 
 # 03 References
+- [Library-first implementation result](../../notes/02_library-first-result.md)
+- [Default Migration contract](../../../../../../../../agent-knowledge-system-library/contracts/default-migration.md)
+- [Editorial Migration contract](../../../../../../../../agent-knowledge-system-library/contracts/editorial-migration.md)
+- [Storybook Migration contract](../../../../../../../../agent-knowledge-system-library/contracts/storybook-migration.md)
 - [Owner scope and boundaries](../../notes/01_scope-and-boundaries.md)
 - [Library-first plan](../../plans/01_library-first/overview.md)
 - [Related idea: 02_shared tsx artifact elements.md](../../brainstorm/02_shared-tsx-artifact-elements.md)
@@ -41,7 +46,7 @@ none
 The owner direction and reasons are recorded in the linked scope note. These acceptance checks are a draft decomposition of that direction.
 
 ## 02 Local design
-Follow the accepted standard; record material local design choices and their reasons here when implementation starts.
+Use separate evidence for inventory coverage, source behavior and final browser output; a source preview alone does not close migration parity.
 
 # 05 Notes & Analysis
 ## Execution dependencies

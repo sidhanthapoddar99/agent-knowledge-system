@@ -23,7 +23,11 @@ Deliver the following scoped work orders. Their live state is also shown by the 
 - Each child work order meets its checks and records its result/evidence.
 
 # 02 Status and Result
-Blocked on the other agent's engine build and library/reference readiness.
+
+Blocked on the external engine's typed-library integration checkpoint and coordinated consumption of the accepted artifact contract. A usable native engine build already exists; library-first work does not implement the Rust CLI/client/SSG adapter. Native starter validation and repository-local catalog tooling are separate evidence, not proof that these typed integration work orders are complete. See [Library-first result](../../notes/02_library-first-result.md).
+
+## Result
+No typed-engine implementation claimed. Keep this work blocked for the engine owner; the contract/browser closures are ready as handoff inputs.
 
 ## Agent log
 none

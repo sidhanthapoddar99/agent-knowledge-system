@@ -1,14 +1,14 @@
 ---
 title: "Ship the Vite developer package and workflow"
-status: open
+status: review
 ---
 
 Library developers need a repeatable local methodology for inspecting and extending components.
 
 # 01 To Do
-- [ ] **Scaffold the package.** Add the agreed Vite layout, dependencies, commands and public configuration in the library repository.
-- [ ] **Document development.** Explain checkout/install/start/build, adding a component, using fixtures and producing a browser example.
-- [ ] **Keep it independent.** Run against local library code without requiring a running engine or checkout-specific asset routes.
+- [x] **Scaffold the package.** Add the agreed Vite layout, dependencies, commands and public configuration in the library repository.
+- [x] **Document development.** Explain checkout/install/start/build, adding a component, using fixtures and producing a browser example.
+- [x] **Keep it independent.** Run against local library code without requiring a running engine or checkout-specific asset routes.
 
 ## Guardrails
 - Apply the [owner scope and execution boundaries](../../notes/01_scope-and-boundaries.md).
@@ -20,15 +20,17 @@ Library developers need a repeatable local methodology for inspecting and extend
 - A developer can add a small component/example through the documented methodology and inspect its result.
 
 # 02 Status and Result
-Scoped; implementation has not started.
+
+Shipped the independent Vite developer package, persistent collection/category navigation, inspector input controls, shared light/dark and reduced-motion modes, packaged fixtures/audio and original brand marks. The final built browser proof and production byte measurements are recorded in [Library-first result](../../notes/02_library-first-result.md). Metadata-only CLI discovery and explicit native preview limitations preserve indexed assets without executing TSX during discovery.
 
 ## Result
-No implementation result yet. Record the outcome and evidence here before moving to review.
+Implementation submitted for review; the owner marks closure. No engine adapter or publication is claimed.
 
 ## Agent log
 none
 
 # 03 References
+- [Library-first result](../../notes/02_library-first-result.md)
 - [Owner scope and boundaries](../../notes/01_scope-and-boundaries.md)
 - [Library-first plan](../../plans/01_library-first/overview.md)
 - [Related idea: 08_vite developer package.md](../../brainstorm/08_vite-developer-package.md)

@@ -1,14 +1,14 @@
 ---
 title: "Load only required code and optimize artifact assets"
-status: open
+status: review
 ---
 
 A shared library should not cause each artifact to download every collection, chart renderer and audio example.
 
 # 01 To Do
-- [ ] **Build focused outputs.** Include only referenced components/dependencies and define lazy boundaries for optional renderers/branches.
-- [ ] **Resolve assets.** Optimize/cache fonts, SVGs, data and audio with the standard's self-contained or static-output policy.
-- [ ] **Measure costs.** Report initial/deferred JS/CSS/assets and loading behavior for representative outputs.
+- [x] **Build focused outputs.** Include only referenced components/dependencies and define lazy boundaries for optional renderers/branches.
+- [x] **Resolve assets.** Optimize/cache fonts, SVGs, data and audio with the standard's self-contained or static-output policy.
+- [x] **Measure costs.** Report initial/deferred JS/CSS/assets and loading behavior for representative outputs.
 
 ## Guardrails
 - Apply the [owner scope and execution boundaries](../../notes/01_scope-and-boundaries.md).
@@ -20,15 +20,17 @@ A shared library should not cause each artifact to download every collection, ch
 - Asset closure and initial/deferred loading are demonstrated in built examples, with measured sizes and diagnostics.
 
 # 02 Status and Result
-Scoped; implementation has not started.
+
+Implemented deterministic readable build-time HTML/SVG, identity-preserving attachment, focused ESM/classic browser closures, separately indexed fonts/licenses and verified immutable source/dependency digests. The production preview and all 73 outputs pass size/closure checks. Browser proof covers both themes, mobile-contained scrolling, keyboard/touch alternatives, branch rejoin, backward seeking and synchronous playback cleanup; [Library-first result](../../notes/02_library-first-result.md) points to reproducible evidence and limits.
 
 ## Result
-No implementation result yet. Record the outcome and evidence here before moving to review.
+Implementation submitted for review; the owner marks closure. No engine adapter or publication is claimed.
 
 ## Agent log
 none
 
 # 03 References
+- [Library-first result](../../notes/02_library-first-result.md)
 - [Owner scope and boundaries](../../notes/01_scope-and-boundaries.md)
 - [Library-first plan](../../plans/01_library-first/overview.md)
 - [Related idea: 02_shared tsx artifact elements.md](../../brainstorm/02_shared-tsx-artifact-elements.md)

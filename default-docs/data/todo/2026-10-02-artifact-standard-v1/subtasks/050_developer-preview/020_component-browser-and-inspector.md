@@ -1,14 +1,14 @@
 ---
 title: "Build the gallery and component inspector"
-status: open
+status: review
 ---
 
 Authors should be able to find a component and understand its inputs, behavior and visual variants.
 
 # 01 To Do
-- [ ] **Browse the catalog.** Filter by collection, category, tags and style; show SVGs/icons and runtime examples.
-- [ ] **Inspect contracts.** Display typed inputs, events, dependencies, source and usage examples; provide input/state controls.
-- [ ] **Compare contexts.** Offer webpage/narrated, light/dark, responsive and reduced-motion views.
+- [x] **Browse the catalog.** Filter by collection, category, tags and style; show SVGs/icons and runtime examples.
+- [x] **Inspect contracts.** Display typed inputs, events, dependencies, source and usage examples; provide input/state controls.
+- [x] **Compare contexts.** Offer webpage/narrated, light/dark, responsive and reduced-motion views.
 
 ## Guardrails
 - Apply the [owner scope and execution boundaries](../../notes/01_scope-and-boundaries.md).
@@ -20,15 +20,17 @@ Authors should be able to find a component and understand its inputs, behavior a
 - Representative components expose their contract and react to inspector controls across the documented host modes.
 
 # 02 Status and Result
-Scoped; implementation has not started.
+
+Shipped the independent Vite developer package, persistent collection/category navigation, inspector input controls, shared light/dark and reduced-motion modes, packaged fixtures/audio and original brand marks. The final built browser proof and production byte measurements are recorded in [Library-first result](../../notes/02_library-first-result.md). Metadata-only CLI discovery and explicit native preview limitations preserve indexed assets without executing TSX during discovery.
 
 ## Result
-No implementation result yet. Record the outcome and evidence here before moving to review.
+Implementation submitted for review; the owner marks closure. No engine adapter or publication is claimed.
 
 ## Agent log
 none
 
 # 03 References
+- [Library-first result](../../notes/02_library-first-result.md)
 - [Owner scope and boundaries](../../notes/01_scope-and-boundaries.md)
 - [Library-first plan](../../plans/01_library-first/overview.md)
 - [Related idea: 08_vite developer package.md](../../brainstorm/08_vite-developer-package.md)

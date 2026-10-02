@@ -12,7 +12,7 @@ Authors and agents need reproducible library installation from the same GitHub d
 
 ## Guardrails
 - Apply the [owner scope and execution boundaries](../../notes/01_scope-and-boundaries.md).
-- Blocked on the other agent's usable engine build and the accepted library standard.
+- Blocked on the external typed-artifact integration checkpoint; the native engine build and library standard are available.
 - Use GitHub tag/revision-based selection; run engine checks through ctl when implementation is authorized.
 
 ## Done when
@@ -20,10 +20,11 @@ Authors and agents need reproducible library installation from the same GitHub d
 - Update/offline/error cases and cache retention are covered by relevant ctl checks and command examples.
 
 # 02 Status and Result
-Scoped; implementation has not started.
+
+Blocked on the external engine's typed-library integration checkpoint and coordinated consumption of the accepted artifact contract. A usable native engine build already exists; library-first work does not implement the Rust CLI/client/SSG adapter. Native starter validation and repository-local catalog tooling are separate evidence, not proof that these typed integration work orders are complete. See [Library-first result](../../notes/02_library-first-result.md).
 
 ## Result
-No implementation result yet. Record the outcome and evidence here before moving to review.
+No typed-engine implementation claimed. Keep this work blocked for the engine owner; the contract/browser closures are ready as handoff inputs.
 
 ## Agent log
 none

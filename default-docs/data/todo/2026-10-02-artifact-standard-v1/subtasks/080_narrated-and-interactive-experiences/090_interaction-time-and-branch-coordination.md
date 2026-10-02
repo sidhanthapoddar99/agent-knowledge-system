@@ -1,14 +1,14 @@
 ---
 title: "Coordinate reader actions, timeline and branch transitions"
-status: open
+status: review
 ---
 
 A live narrated flow must let readers explore or choose without racing timed actions and narration.
 
 # 01 To Do
-- [ ] **Coordinate exploration.** Apply the contract's pause/continue behavior for element interaction and explicit choices.
-- [ ] **Resolve transitions.** Cancel outgoing effects, prevent duplicate submissions and establish state for the target scene.
-- [ ] **Exercise sequences.** Cover repeated clicks/taps, hover while playing, pause/seek during exploration and returning from a branch.
+- [x] **Coordinate exploration.** Apply the contract's pause/continue behavior for element interaction and explicit choices.
+- [x] **Resolve transitions.** Cancel outgoing effects, prevent duplicate submissions and establish state for the target scene.
+- [x] **Exercise sequences.** Cover repeated clicks/taps, hover while playing, pause/seek during exploration and returning from a branch.
 
 ## Guardrails
 - Apply the [owner scope and execution boundaries](../../notes/01_scope-and-boundaries.md).
@@ -20,15 +20,24 @@ A live narrated flow must let readers explore or choose without racing timed act
 - The same interaction contracts work in a standalone/embedded webpage and a narrated host.
 
 # 02 Status and Result
-Scoped; implementation has not started.
+Implementation is ready for owner review; external integration/release limits are recorded below.
 
 ## Result
-No implementation result yet. Record the outcome and evidence here before moving to review.
+Explicit reader effects pause exploration by default, with opt-in continuing playback. Epoch checks suppress repeated/stale choice events; seek/navigation/unmount cancels outgoing clock/audio leases and restores documented reader state.
+
+Source paths below are relative to `/home/sid/projects/06_02_NeuraLabs/agent-knowledge-system-library` at the reviewed source revision: `apps/agentks-library-preview/src/modules/experiences/useExperience.client.ts`; `apps/packages/agentks-artifacts/src/core/state/reducer.ts`; `apps/packages/agentks-artifacts/src/audio/binding.ts`.
+
+Verified on 2026-10-03 at library source `7b2c057513cde265ae3c9008bc6b32909bbbab82`: the focused unit/DOM batch passed 170 tests / 2,155 assertions. Relevant coverage: Rapid duplicate host choices, transient hover, pause/seek/history and pending-audio cancellation cases. The native compatibility suite also passed 63 tests.
+
+The same definitions attach in ordinary HTML and narrated hosts. Rust reader transport and production voice services remain separately blocked work. Final aggregate/output evidence belongs in the [library-first result](../../notes/02_library-first-result.md); this focused batch is not a claim that the final gate or all compiled outputs already pass.
 
 ## Agent log
 none
 
 # 03 References
+- [Library-first implementation result](../../notes/02_library-first-result.md)
+- [Runtime contract](../../../../../../../../agent-knowledge-system-library/contracts/runtime.md)
+- [Experiences contract](../../../../../../../../agent-knowledge-system-library/contracts/experiences.md)
 - [Owner scope and boundaries](../../notes/01_scope-and-boundaries.md)
 - [Library-first plan](../../plans/01_library-first/overview.md)
 - [Related idea: 03_interactive artifact kinds.md](../../brainstorm/03_interactive-artifact-kinds.md)
@@ -42,7 +51,7 @@ none
 The owner direction and reasons are recorded in the linked scope note. These acceptance checks are a draft decomposition of that direction.
 
 ## 02 Local design
-Follow the accepted standard; record material local design choices and their reasons here when implementation starts.
+Keep conflict/retention policy in the shared host/runtime contract; timed actions never overwrite reader answers.
 
 # 05 Notes & Analysis
 ## Execution dependencies

@@ -1,14 +1,14 @@
 ---
 title: "Provide the library-building workflow and skills"
-status: open
+status: review
 ---
 
 Agents need coherent instructions for creating TSX components, assets, themes and examples against the new standard.
 
 # 01 To Do
-- [ ] **Extend the existing plugin.** Map capabilities to authoring, validation and release preparation rather than simply renaming its single skill.
-- [ ] **Teach the workflow.** Cover collection scaffolding, component APIs, dependency reuse, SVG/motion, examples and the Vite developer methodology.
-- [ ] **Validate instructions.** Link implemented commands/contracts, provide runnable examples and check plugin-local references.
+- [x] **Extend the existing plugin.** Map capabilities to authoring, validation and release preparation rather than simply renaming its single skill.
+- [x] **Teach the workflow.** Cover collection scaffolding, component APIs, dependency reuse, SVG/motion, examples and the Vite developer methodology.
+- [x] **Validate instructions.** Link implemented commands/contracts, provide runnable examples and check plugin-local references.
 
 ## Guardrails
 - Apply the [owner scope and execution boundaries](../../notes/01_scope-and-boundaries.md).
@@ -20,28 +20,36 @@ Agents need coherent instructions for creating TSX components, assets, themes an
 - Instruction/command references match the implemented standard and plugin-link checks pass.
 
 # 02 Status and Result
-Scoped; implementation has not started.
+Implementation is ready for owner review; external integration/release limits are recorded below.
 
 ## Result
-No implementation result yet. Record the outcome and evidence here before moving to review.
+A standalone plugin now separates library authoring from artifact consumption and bundles a runnable miniature collection. A fresh independent forward run built message-progress, validated inputs/events, compiled page/narrated outputs and proved backward seeking/reduced motion.
+
+Source paths below are relative to `/home/sid/projects/06_02_NeuraLabs/agent-knowledge-system-library` at the reviewed source revision: [plugins/agentks-artifact-library/skills/artifact-library-author/SKILL.md](../../../../../../../../agent-knowledge-system-library/plugins/agentks-artifact-library/skills/artifact-library-author/SKILL.md); `plugins/agentks-artifact-library/assets/mini-collection`.
+
+Verified on 2026-10-03: Plugin structural/link suite: 7 tests; author forward fixture: 11 tests; retained compiled author capture rerun: 3 tests. Retained forward captures were rerun through ctl (7 tests, 67 assertions); they execute the emitted browser code.
+
+The author fixture is review-only on commit ceebf58, not a new production collection. No personal plugin installation or outward publication occurred. Final aggregate/output evidence belongs in the [library-first result](../../notes/02_library-first-result.md); this focused batch is not a claim that the final gate or all compiled outputs already pass.
 
 ## Agent log
 none
 
 # 03 References
+- [Library-first implementation result](../../notes/02_library-first-result.md)
+- [Implemented standalone library plugin](../../../../../../../../agent-knowledge-system-library/plugins/agentks-artifact-library/README.md)
 - [Owner scope and boundaries](../../notes/01_scope-and-boundaries.md)
 - [Library-first plan](../../plans/01_library-first/overview.md)
 - [Related idea: 09_library authoring plugin.md](../../brainstorm/09_library-authoring-plugin.md)
 - [Related idea: 10_cli ai library discovery.md](../../brainstorm/10_cli-ai-library-discovery.md)
-- [Existing library-authoring plugin](../../../../../../../../agent-knowledge-system/plugins/agentks-library/README.md)
-- [Current library skill](../../../../../../../../agent-knowledge-system/plugins/agentks-library/skills/agentks-library/SKILL.md)
+- [Engine plugin context](../../../../../../../../agent-knowledge-system/plugins/agentks-library/README.md)
+- [Existing engine library skill](../../../../../../../../agent-knowledge-system/plugins/agentks-library/skills/agentks-library/SKILL.md)
 
 # 04 Decisions
 ## 01 Scope basis
 The owner direction and reasons are recorded in the linked scope note. These acceptance checks are a draft decomposition of that direction.
 
 ## 02 Local design
-Follow the accepted standard; record material local design choices and their reasons here when implementation starts.
+Installed guidance is not a writable checkout or runtime installer. Use real ctl commands and contract readers; keep discovery metadata separate from execution.
 
 # 05 Notes & Analysis
 ## Execution dependencies

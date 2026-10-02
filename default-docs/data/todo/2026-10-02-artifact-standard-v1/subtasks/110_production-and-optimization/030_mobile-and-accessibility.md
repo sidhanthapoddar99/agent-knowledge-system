@@ -1,14 +1,14 @@
 ---
 title: "Verify responsive layouts and accessible mobile interaction"
-status: open
+status: review
 ---
 
 Charts, tables and narrated controls must remain useful on touch devices and narrow viewports.
 
 # 01 To Do
-- [ ] **Adapt layouts.** Provide meaningful responsive behavior for scenes, labels, tables, controls and embedded artifacts.
-- [ ] **Provide access.** Support touch/focus equivalents, keyboard navigation, readable contrast, reduced motion and transcript/silent use.
-- [ ] **Exercise real scenarios.** Test chart details, row selection, branching choices and timeline controls at mobile widths and both theme modes.
+- [x] **Adapt layouts.** Provide meaningful responsive behavior for scenes, labels, tables, controls and embedded artifacts.
+- [x] **Provide access.** Support touch/focus equivalents, keyboard navigation, readable contrast, reduced motion and transcript/silent use.
+- [x] **Exercise real scenarios.** Test chart details, row selection, branching choices and timeline controls at mobile widths and both theme modes.
 
 ## Guardrails
 - Apply the [owner scope and execution boundaries](../../notes/01_scope-and-boundaries.md).
@@ -20,15 +20,17 @@ Charts, tables and narrated controls must remain useful on touch devices and nar
 - Pointer-only details have a usable alternative; controls and choice focus remain coherent with reduced motion and silent playback.
 
 # 02 Status and Result
-Scoped; implementation has not started.
+
+Implemented deterministic readable build-time HTML/SVG, identity-preserving attachment, focused ESM/classic browser closures, separately indexed fonts/licenses and verified immutable source/dependency digests. The production preview and all 73 outputs pass size/closure checks. Browser proof covers both themes, mobile-contained scrolling, keyboard/touch alternatives, branch rejoin, backward seeking and synchronous playback cleanup; [Library-first result](../../notes/02_library-first-result.md) points to reproducible evidence and limits.
 
 ## Result
-No implementation result yet. Record the outcome and evidence here before moving to review.
+Implementation submitted for review; the owner marks closure. No engine adapter or publication is claimed.
 
 ## Agent log
 none
 
 # 03 References
+- [Library-first result](../../notes/02_library-first-result.md)
 - [Owner scope and boundaries](../../notes/01_scope-and-boundaries.md)
 - [Library-first plan](../../plans/01_library-first/overview.md)
 - [Related idea: 02_shared tsx artifact elements.md](../../brainstorm/02_shared-tsx-artifact-elements.md)

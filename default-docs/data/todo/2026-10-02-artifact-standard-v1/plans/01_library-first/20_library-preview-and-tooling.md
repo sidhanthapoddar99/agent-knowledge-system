@@ -1,6 +1,6 @@
 ---
 title: "Establish the shared library and preview foundation"
-status: blocked
+status: review
 outcome: "Source index, lazy rendering, scene fixtures and a shipped Vite skeleton provide stable lane inputs."
 notes: "Depends on the tested standard/reference checkpoint; developer preview has no Rust engine dependency."
 subtasks:
@@ -15,9 +15,9 @@ The gallery can use typed reference fixtures before migrated collections are rea
 
 # 01 To Do
 
-- [ ] Wire catalog generation, shared renderer and timeline/choice fixtures against the accepted contract.
-- [ ] Prepare the Vite gallery skeleton and readable initial-render example.
-- [ ] Freeze shared type/export/config/lockfile ownership and lane integration checks.
+- [x] Wire catalog generation, shared renderer and timeline/choice fixtures against the accepted contract.
+- [x] Prepare the Vite gallery skeleton and readable initial-render example.
+- [x] Freeze shared type/export/config/lockfile ownership and lane integration checks.
 
 ## Done when
 
@@ -25,7 +25,7 @@ Source index, lazy rendering, scene fixtures and a shipped Vite skeleton provide
 
 # 02 Status and Result
 
-Scheduled behind the dependency named above. No complete stage outcome is claimed.
+The standard and checked implementation are integrated: six collections, 73 public TSX definitions, focused browser closures, independent developer preview, ordinary HTML reuse, narrated branching/selection/audio and portable author/use tooling. Full gates, independent plugin smoke, both-theme/mobile browser proof and reproducible cold/limited local loading measurements pass. [Library-first result](../../notes/02_library-first-result.md) records exact scope, pins and limits. All changes are merged into library main; all created worktrees are removed after preserving unique review captures.
 
 # 03 References
 

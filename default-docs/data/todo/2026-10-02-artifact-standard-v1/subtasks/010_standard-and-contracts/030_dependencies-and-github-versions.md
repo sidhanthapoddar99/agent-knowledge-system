@@ -1,14 +1,14 @@
 ---
 title: "Specify library dependencies and GitHub version resolution"
-status: in-progress
+status: review
 ---
 
 Reusable TSX imports need complete reproducible dependencies even when distribution uses GitHub tags rather than a package registry.
 
 # 01 To Do
-- [ ] **Specify source selection.** Define repository/collection paths, tag ranges, locked revisions, compatibility and catalog version behavior.
-- [ ] **Define dependency closure.** Specify reusable code/assets across libraries, cycle/missing-version failures and where compilation occurs.
-- [ ] **Document distribution.** Use GitHub tags/release notes, source links and a consumer build/cache model; define metadata that installation and discovery can inspect.
+- [ ] **Specify source selection.** Define repository/collection paths, tag ranges, locked revisions, compatibility and catalog version behavior. The resolved repository/path/revision portion is defined; concrete remote tag/range and installed-cache policy remains with the deferred CLI work.
+- [x] **Define dependency closure.** Specify reusable code/assets across libraries, cycle/missing-version failures and where compilation occurs.
+- [x] **Document distribution.** Use GitHub tags/release notes, source links and a consumer build/cache model; define metadata that installation and discovery can inspect.
 
 ## Guardrails
 - Apply the [owner scope and execution boundaries](../../notes/01_scope-and-boundaries.md).
@@ -20,15 +20,24 @@ Reusable TSX imports need complete reproducible dependencies even when distribut
 - GitHub-based installation/build behavior is specified without requiring a package-registry publication.
 
 # 02 Status and Result
-Scoped; implementation has not started.
+Implementation is ready for owner review; external integration/release limits are recorded below.
 
 ## Result
-No implementation result yet. Record the outcome and evidence here before moving to review.
+Collection descriptors declare exact resolved dependency versions. Dependency ordering rejects cycles, missing collections and incompatible versions; focused builds bind the selected collection closure to immutable Git source revisions.
+
+Source paths below are relative to `/home/sid/projects/06_02_NeuraLabs/agent-knowledge-system-library` at the reviewed source revision: `apps/packages/agentks-artifacts/src/catalog/dependencies.ts`; `scripts/artifacts/browser/source.ts`; `libraries/agentks-editorial/artifact-library.json`.
+
+Verified on 2026-10-03 at library source `7b2c057513cde265ae3c9008bc6b32909bbbab82`: the focused unit/DOM batch passed 170 tests / 2,155 assertions. Relevant coverage: Dependency topology/error and immutable build-index contract cases. The native compatibility suite also passed 63 tests.
+
+A two-collection Default/Editorial dependency is declared and checked. This is not a working remote installer or a claim that range resolution has been implemented. Final aggregate/output evidence belongs in the [library-first result](../../notes/02_library-first-result.md); this focused batch is not a claim that the final gate or all compiled outputs already pass.
 
 ## Agent log
 none
 
 # 03 References
+- [Library-first implementation result](../../notes/02_library-first-result.md)
+- [Library contract](../../../../../../../../agent-knowledge-system-library/contracts/library.md)
+- [Browser Build contract](../../../../../../../../agent-knowledge-system-library/contracts/browser-build.md)
 - [Owner scope and boundaries](../../notes/01_scope-and-boundaries.md)
 - [Library-first plan](../../plans/01_library-first/overview.md)
 - [Related idea: 02_shared tsx artifact elements.md](../../brainstorm/02_shared-tsx-artifact-elements.md)
@@ -42,7 +51,7 @@ none
 The owner direction and reasons are recorded in the linked scope note. These acceptance checks are a draft decomposition of that direction.
 
 ## 02 Local design
-Follow the accepted standard; record material local design choices and their reasons here when implementation starts.
+GitHub revisions/tags and release links distribute source/prebuilt outputs without an npm release. Remote tag/range selection and lock/cache writes belong to the deferred installer; discovery never fetches.
 
 # 05 Notes & Analysis
 ## Execution dependencies

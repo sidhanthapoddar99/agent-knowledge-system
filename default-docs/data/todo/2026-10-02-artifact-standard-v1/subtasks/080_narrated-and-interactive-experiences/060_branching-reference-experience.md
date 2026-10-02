@@ -1,14 +1,14 @@
 ---
 title: "Ship a branching narrated reference experience"
-status: open
+status: review
 ---
 
 The Bandersnatch analogy should become an inspectable educational example of reader-directed flow.
 
 # 01 To Do
-- [ ] **Build the example.** Offer a computer/server explanation and a bird-message analogy that rejoin a shared chart/table.
-- [ ] **Expose interaction.** Allow the reader to inspect the shared data and choose a deeper explanation or continue.
-- [ ] **Document authoring.** Include source, scene/choice contracts, narration fixtures and clear reset/replay behavior.
+- [x] **Build the example.** Offer a computer/server explanation and a bird-message analogy that rejoin a shared chart/table.
+- [x] **Expose interaction.** Allow the reader to inspect the shared data and choose a deeper explanation or continue.
+- [x] **Document authoring.** Include source, scene/choice contracts, narration fixtures and clear reset/replay behavior.
 
 ## Guardrails
 - Apply the [owner scope and execution boundaries](../../notes/01_scope-and-boundaries.md).
@@ -20,15 +20,18 @@ The Bandersnatch analogy should become an inspectable educational example of rea
 - Keyboard/touch choices, silent playback and replay have documented working behavior.
 
 # 02 Status and Result
-Scoped; implementation has not started.
+
+The final built mobile analogy branch rejoins the shared chart/table. Native Swift row selection links the views; reduced motion, silent transcripts and navigation work. Branch/lifecycle/seek tests and live monotonic Play/resume checks pass. See [Library-first result](../../notes/02_library-first-result.md).
 
 ## Result
-No implementation result yet. Record the outcome and evidence here before moving to review.
+Submitted for owner review.
 
 ## Agent log
 none
 
 # 03 References
+- [Library-first implementation result](../../notes/02_library-first-result.md)
+- [Experiences contract](../../../../../../../../agent-knowledge-system-library/contracts/experiences.md)
 - [Owner scope and boundaries](../../notes/01_scope-and-boundaries.md)
 - [Library-first plan](../../plans/01_library-first/overview.md)
 - [Related idea: 04_multipath narrated experiences.md](../../brainstorm/04_multipath-narrated-experiences.md)
@@ -41,7 +44,7 @@ none
 The owner direction and reasons are recorded in the linked scope note. These acceptance checks are a draft decomposition of that direction.
 
 ## 02 Local design
-Follow the accepted standard; record material local design choices and their reasons here when implementation starts.
+Bandersnatch is an interaction analogy only. The explanation/artwork/audio fixtures are original live component content.
 
 # 05 Notes & Analysis
 ## Execution dependencies

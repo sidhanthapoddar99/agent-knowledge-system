@@ -27,7 +27,7 @@ Installed/discovered library components work in the engine reader and static pub
 
 # 02 Status and Result
 
-Scheduled behind the dependency named above. No complete stage outcome is claimed.
+Blocked on the external typed-artifact integration checkpoint. A usable native engine and the validated library contract/closures are available. Its owner must integrate typed installation/discovery, client islands and static publishing. All seven CLI/engine work orders and both indices remain blocked; this library run claims no Rust adapter work. See [Library-first result](../../notes/02_library-first-result.md).
 
 # 03 References
 

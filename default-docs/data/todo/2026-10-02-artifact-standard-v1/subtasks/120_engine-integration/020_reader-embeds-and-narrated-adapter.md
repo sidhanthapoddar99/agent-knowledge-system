@@ -20,10 +20,11 @@ Readers need the shared components in ordinary/embedded HTML and live narrated f
 - A live narrated flow supports actions, interaction and branching with the declared seek/replay/audio behavior.
 
 # 02 Status and Result
-Scoped; implementation has not started.
+
+Blocked on the external engine's typed-library integration checkpoint and coordinated consumption of the accepted artifact contract. A usable native engine build already exists; library-first work does not implement the Rust CLI/client/SSG adapter. Native starter validation and repository-local catalog tooling are separate evidence, not proof that these typed integration work orders are complete. See [Library-first result](../../notes/02_library-first-result.md).
 
 ## Result
-No implementation result yet. Record the outcome and evidence here before moving to review.
+No typed-engine implementation claimed. Keep this work blocked for the engine owner; the contract/browser closures are ready as handoff inputs.
 
 ## Agent log
 none

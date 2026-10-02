@@ -1,14 +1,14 @@
 ---
 title: "Define artifact kinds and the shared component contract"
-status: in-progress
+status: review
 ---
 
 Authors need one usable element contract across normal webpages, embedded artifacts and live narrated scenes.
 
 # 01 To Do
-- [ ] **Define artifact kinds.** Specify webpage and narrated hosts, component identity, typed inputs/events, assets, themes, initial state and supported host lifecycle.
-- [ ] **Define imports and metadata.** Specify how a named library element maps to TSX source, compiled browser entrypoints, documentation and serializable input descriptions.
-- [ ] **Document compatibility.** Cover existing HTML/SVG/widgets/JSON, unknown fields and invalid inputs; prepare the public contract for review.
+- [x] **Define artifact kinds.** Specify webpage and narrated hosts, component identity, typed inputs/events, assets, themes, initial state and supported host lifecycle.
+- [x] **Define imports and metadata.** Specify how a named library element maps to TSX source, compiled browser entrypoints, documentation and serializable input descriptions.
+- [x] **Document compatibility.** Cover existing HTML/SVG/widgets/JSON, unknown fields and invalid inputs; prepare the public contract for review.
 
 ## Guardrails
 - Apply the [owner scope and execution boundaries](../../notes/01_scope-and-boundaries.md).
@@ -20,15 +20,25 @@ Authors need one usable element contract across normal webpages, embedded artifa
 - Example inputs and failures have precise meanings; existing HTML adoption and migration paths are documented.
 
 # 02 Status and Result
-Scoped; implementation has not started.
+Implementation is ready for owner review; external integration/release limits are recorded below.
 
 ## Result
-No implementation result yet. Record the outcome and evidence here before moving to review.
+The contract separates webpage/embedded hosts from narrated hosts and source TSX from compiled browser files. Identity, validated inputs/events, assets, theme context, initial HTML and attachment are explicit.
+
+Source paths below are relative to `/home/sid/projects/06_02_NeuraLabs/agent-knowledge-system-library` at the reviewed source revision: `apps/packages/agentks-artifacts/src/types.ts`; `apps/packages/agentks-artifacts/src/render/definition.ts`.
+
+Verified on 2026-10-03 at library source `7b2c057513cde265ae3c9008bc6b32909bbbab82`: the focused unit/DOM batch passed 170 tests / 2,155 assertions. Relevant coverage: Catalog contract and reference rendering/attachment cases. The native compatibility suite also passed 63 tests.
+
+Rust transport, installer and reader routes remain externally owned; executable metadata is not a sandbox or an engine compatibility claim. Final aggregate/output evidence belongs in the [library-first result](../../notes/02_library-first-result.md); this focused batch is not a claim that the final gate or all compiled outputs already pass.
 
 ## Agent log
 none
 
 # 03 References
+- [Library-first implementation result](../../notes/02_library-first-result.md)
+- [Library contract](../../../../../../../../agent-knowledge-system-library/contracts/library.md)
+- [Components contract](../../../../../../../../agent-knowledge-system-library/contracts/components.md)
+- [Browser Build contract](../../../../../../../../agent-knowledge-system-library/contracts/browser-build.md)
 - [Owner scope and boundaries](../../notes/01_scope-and-boundaries.md)
 - [Library-first plan](../../plans/01_library-first/overview.md)
 - [Related idea: 02_shared tsx artifact elements.md](../../brainstorm/02_shared-tsx-artifact-elements.md)
@@ -42,7 +52,7 @@ none
 The owner direction and reasons are recorded in the linked scope note. These acceptance checks are a draft decomposition of that direction.
 
 ## 02 Local design
-Follow the accepted standard; record material local design choices and their reasons here when implementation starts.
+Use one Preact TSX definition in both artifact modes; keep JSON for finite discovery metadata and authored data.
 
 # 05 Notes & Analysis
 ## Execution dependencies

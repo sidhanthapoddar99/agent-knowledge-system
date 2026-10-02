@@ -1,6 +1,6 @@
 ---
 title: "Build collections, experiences and tooling in parallel"
-status: blocked
+status: review
 outcome: "Independent collection and runtime lanes deliver compatible components, examples and authoring guidance."
 notes: "Starts from the shared foundation; each lane owns bounded files and can merge as soon as its focused checks pass."
 subtasks:
@@ -36,10 +36,10 @@ Collection ownership and module ownership create independent commits. Runtime/br
 
 # 01 To Do
 
-- [ ] Run six existing-library lanes: Default charts, tables/widgets, vectors/assets, motion/styles, Editorial and Storybook.
-- [ ] Run up to three video-focused collection lanes: Motion Explainers, Data Stories and Story Scenes.
-- [ ] Build gallery/inspector, examples/audio, playback/narration, branches, element events/shared selection, production assets and plugin guidance concurrently where dependencies allow.
-- [ ] Queue lanes when the agent capacity is full; do not force artificial parallelism or duplicate shared behavior.
+- [x] Run six existing-library lanes: Default charts, tables/widgets, vectors/assets, motion/styles, Editorial and Storybook.
+- [x] Run up to three video-focused collection lanes: Motion Explainers, Data Stories and Story Scenes.
+- [x] Build gallery/inspector, examples/audio, playback/narration, branches, element events/shared selection, production assets and plugin guidance concurrently where dependencies allow.
+- [x] Queue lanes when the agent capacity is full; do not force artificial parallelism or duplicate shared behavior.
 
 ## Done when
 
@@ -47,7 +47,7 @@ Independent collection and runtime lanes deliver compatible components, examples
 
 # 02 Status and Result
 
-Scheduled behind the dependency named above. No complete stage outcome is claimed.
+The standard and checked implementation are integrated: six collections, 73 public TSX definitions, focused browser closures, independent developer preview, ordinary HTML reuse, narrated branching/selection/audio and portable author/use tooling. Full gates, independent plugin smoke, both-theme/mobile browser proof and reproducible cold/limited local loading measurements pass. [Library-first result](../../notes/02_library-first-result.md) records exact scope, pins and limits. All changes are merged into library main; all created worktrees are removed after preserving unique review captures.
 
 # 03 References
 

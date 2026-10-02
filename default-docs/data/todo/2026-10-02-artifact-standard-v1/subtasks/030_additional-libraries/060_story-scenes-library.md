@@ -1,14 +1,14 @@
 ---
 title: "Build a Story Scenes library in its own worktree"
-status: open
+status: review
 ---
 
 A third video-focused collection can explore analogy scenes and interactive narrative patterns if it adds distinct useful coverage.
 
 # 01 To Do
-- [ ] **Confirm the blueprint.** Use Story Scenes as a working name; identify a meaningful difference from the existing Storybook artwork collection.
-- [ ] **Compose original scenes.** Provide analogy/dialogue/choice scene patterns using shared actor and branch interfaces.
-- [ ] **Ship local examples.** Include optional narration, style conventions and metadata; propose consolidation if the blueprint proves redundant.
+- [x] **Confirm the blueprint.** Use Story Scenes as a working name; identify a meaningful difference from the existing Storybook artwork collection.
+- [x] **Compose original scenes.** Provide analogy/dialogue/choice scene patterns using shared actor and branch interfaces.
+- [x] **Ship local examples.** Include optional narration, style conventions and metadata; propose consolidation if the blueprint proves redundant.
 
 ## Guardrails
 - Apply the [owner scope and execution boundaries](../../notes/01_scope-and-boundaries.md).
@@ -20,15 +20,23 @@ A third video-focused collection can explore analogy scenes and interactive narr
 - It consumes shared runtime/artwork interfaces and keeps its files isolated from the other new collections.
 
 # 02 Status and Result
-Scoped; implementation has not started.
+Implementation is ready for owner review; external integration/release limits are recorded below.
 
 ## Result
-No implementation result yet. Record the outcome and evidence here before moving to review.
+Story Scenes composes chapters, analogy switchboard, decision cards and a timed exact-cent ledger. A technical/book two-path example rejoins a recap using shared runtime, Default ledger and Motion actors.
+
+Source paths below are relative to `/home/sid/projects/06_02_NeuraLabs/agent-knowledge-system-library` at the reviewed source revision: `libraries/agentks-story-scenes/components/examples/request-story.tsx`; `libraries/agentks-story-scenes/components/examples/webpage.tsx`; `libraries/agentks-story-scenes/components/ledger/ledger-story.tsx`.
+
+Verified on 2026-10-03 at library source `7b2c057513cde265ae3c9008bc6b32909bbbab82`: the focused unit/DOM batch passed 170 tests / 2,155 assertions. Relevant coverage: All Story Scenes families/hosts, both example branches, chronological ledger and outer events. The native compatibility suite also passed 63 tests.
+
+Original examples and shared interfaces are proved in source tests. Production preview/build convergence is tracked separately. Final aggregate/output evidence belongs in the [library-first result](../../notes/02_library-first-result.md); this focused batch is not a claim that the final gate or all compiled outputs already pass.
 
 ## Agent log
 none
 
 # 03 References
+- [Library-first implementation result](../../notes/02_library-first-result.md)
+- [Story Scenes contract](../../../../../../../../agent-knowledge-system-library/contracts/story-scenes.md)
 - [Owner scope and boundaries](../../notes/01_scope-and-boundaries.md)
 - [Library-first plan](../../plans/01_library-first/overview.md)
 - [Related idea: 05_libraries styles themes dependencies.md](../../brainstorm/05_libraries-styles-themes-dependencies.md)
@@ -41,7 +49,7 @@ none
 The owner direction and reasons are recorded in the linked scope note. These acceptance checks are a draft decomposition of that direction.
 
 ## 02 Local design
-Follow the accepted standard; record material local design choices and their reasons here when implementation starts.
+Keep chapters/choice narrative patterns distinct from passive Storybook artwork; branch eligibility/navigation belongs to the host.
 
 # 05 Notes & Analysis
 ## Execution dependencies

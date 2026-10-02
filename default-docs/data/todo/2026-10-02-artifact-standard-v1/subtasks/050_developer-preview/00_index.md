@@ -1,6 +1,6 @@
 ---
 title: "Developer preview — group scope"
-status: open
+status: in-progress
 ---
 
 Ship the library's small Vite developer package, catalog inspector, examples, fixtures and sample audio with a repeatable authoring methodology.
@@ -22,12 +22,17 @@ Deliver the following scoped work orders. Their live state is also shown by the 
 - Each child work order meets its checks and records its result/evidence.
 
 # 02 Status and Result
-Scoped and initialized; implementation has not started.
+
+Shipped the independent Vite developer package, persistent collection/category navigation, inspector input controls, shared light/dark and reduced-motion modes, packaged fixtures/audio and original brand marks. The final built browser proof and production byte measurements are recorded in [Library-first result](../../notes/02_library-first-result.md). Metadata-only CLI discovery and explicit native preview limitations preserve indexed assets without executing TSX during discovery.
+
+## Result
+Implementation submitted for review; the owner marks closure. No engine adapter or publication is claimed.
 
 ## Agent log
 none
 
 # 03 References
+- [Library-first result](../../notes/02_library-first-result.md)
 - [Owner scope and boundaries](../../notes/01_scope-and-boundaries.md)
 - [Library-first plan](../../plans/01_library-first/overview.md)
 - [Brainstorm index](../../brainstorm/01_authoring-and-runtime-options.md)

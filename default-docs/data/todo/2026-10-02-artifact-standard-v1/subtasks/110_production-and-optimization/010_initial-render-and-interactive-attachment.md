@@ -1,14 +1,14 @@
 ---
 title: "Pre-render readable HTML/SVG and attach interaction"
-status: open
+status: review
 ---
 
 Artifact readers should see useful content quickly before optional interaction code loads.
 
 # 01 To Do
-- [ ] **Provide initial output.** Render deterministic component HTML/SVG from declared data/state at build time.
-- [ ] **Attach behavior.** Hydrate/mount only the necessary interactive components using the selected framework/runtime contract.
-- [ ] **Check parity.** Compare initial and attached views, empty/error states and motion-reduced presentation.
+- [x] **Provide initial output.** Render deterministic component HTML/SVG from declared data/state at build time.
+- [x] **Attach behavior.** Hydrate/mount only the necessary interactive components using the selected framework/runtime contract.
+- [x] **Check parity.** Compare initial and attached views, empty/error states and motion-reduced presentation.
 
 ## Guardrails
 - Apply the [owner scope and execution boundaries](../../notes/01_scope-and-boundaries.md).
@@ -20,15 +20,17 @@ Artifact readers should see useful content quickly before optional interaction c
 - Attachment preserves the initial meaning/state and does not require browser globals during build rendering.
 
 # 02 Status and Result
-Scoped; implementation has not started.
+
+Implemented deterministic readable build-time HTML/SVG, identity-preserving attachment, focused ESM/classic browser closures, separately indexed fonts/licenses and verified immutable source/dependency digests. The production preview and all 73 outputs pass size/closure checks. Browser proof covers both themes, mobile-contained scrolling, keyboard/touch alternatives, branch rejoin, backward seeking and synchronous playback cleanup; [Library-first result](../../notes/02_library-first-result.md) points to reproducible evidence and limits.
 
 ## Result
-No implementation result yet. Record the outcome and evidence here before moving to review.
+Implementation submitted for review; the owner marks closure. No engine adapter or publication is claimed.
 
 ## Agent log
 none
 
 # 03 References
+- [Library-first result](../../notes/02_library-first-result.md)
 - [Owner scope and boundaries](../../notes/01_scope-and-boundaries.md)
 - [Library-first plan](../../plans/01_library-first/overview.md)
 - [Related idea: 02_shared tsx artifact elements.md](../../brainstorm/02_shared-tsx-artifact-elements.md)

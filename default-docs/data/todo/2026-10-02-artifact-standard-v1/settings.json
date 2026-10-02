@@ -1,6 +1,6 @@
 {
   "title": "Artifact standard v1 and shared library",
-  "description": "Capture the new artifact standard and shared library direction: TSX components, interactive and branching narrated experiences, richer charts/tables, multiple styles, a shipped Vite developer preview, and library-authoring plugin/CLI discovery. Basic to-dos are in the comment; formal subtasks and implementation will be defined later, with engine work after the library.",
+  "description": "Define the shared TSX artifact standard, migrate/expand libraries, ship Vite developer examples/audio and a library authoring/usage plugin. Forty-one detailed work orders cover ten groups, including live narrated/branching interaction and production/mobile optimization; Rust CLI and engine work are blocked on the other agent's engine build.",
   "status": "open",
   "priority": "medium",
   "component": [

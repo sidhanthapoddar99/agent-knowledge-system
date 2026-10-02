@@ -1,23 +1,34 @@
 ---
-title: "Video and narration — live experiences — group scope"
+title: "Narrated and interactive experiences — group scope"
 status: open
 ---
 
-Implement live slides and TSX components coordinated by timestamped actions and narration, including deterministic playback controls and optional audio.
+Live scenes/components, timestamped actions, optional narration, branching paths and element interaction are one experience area, with separate capability work orders.
 
 # 01 To Do
-- [ ] Deliver the detailed work orders in this group using the accepted artifact contract.
-- [ ] Record each child item's result and evidence in that item's own Status and Result section.
+Deliver the following scoped work orders. Their live state is also shown by the tracker.
+
+| Work order | Initial state |
+|---|---|
+| [Implement live scenes and timestamped component actions](./010_scenes-and-timestamped-actions.md) | open |
+| [Provide deterministic playback, seeking and review controls](./020_playback-seeking-and-review.md) | open |
+| [Synchronize optional sample narration with live components](./030_optional-audio-and-synchronization.md) | open |
+| [Define and validate the choice/scene graph](./040_choice-graph-and-validation.md) | open |
+| [Implement branch choices, history and replay behavior](./050_branch-navigation-and-history.md) | open |
+| [Ship a branching narrated reference experience](./060_branching-reference-experience.md) | open |
+| [Implement element actions for pointer, keyboard and touch](./070_element-actions-and-inputs.md) | open |
+| [Synchronize charts, tables and inspectors through shared state](./080_shared-selection-and-linked-views.md) | open |
+| [Coordinate reader actions, timeline and branch transitions](./090_interaction-time-and-branch-coordination.md) | open |
 
 ## Guardrails
 - Follow the [owner scope and boundaries](../../notes/01_scope-and-boundaries.md).
 - Library and independent examples precede engine integration; the plan owns execution order.
 
 ## Done when
-- The group's child work orders meet their acceptance checks and carry their results/evidence.
+- Each child work order meets its checks and records its result/evidence.
 
 # 02 Status and Result
-Initialized as the group index. Implementation has not started.
+Scoped and initialized; implementation has not started.
 
 ## Agent log
 none
@@ -29,8 +40,8 @@ none
 
 # 04 Decisions
 ## 01 Area of work
-This folder groups a capability, not a phase. The group purpose and limits follow the owner's discussion; individual implementation decisions belong in the child work orders.
+This group is an area, not a phase. The owner requested an index explaining the area and combined narration, branching and interaction into one experience group.
 
 # 05 Notes & Analysis
-## Dependency
-Use the plan for dependencies and stage order; child numbers are identifiers rather than scheduling instructions.
+## Dependency and index maintenance
+Follow the plan and each child's actual state. Update this scope table and the index state when child results change.

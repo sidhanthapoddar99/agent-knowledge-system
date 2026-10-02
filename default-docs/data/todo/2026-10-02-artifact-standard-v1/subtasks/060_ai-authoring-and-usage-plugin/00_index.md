@@ -6,18 +6,23 @@ status: open
 Provide a whole plugin that teaches both library authoring and artifact consumption, with coherent skills, tools and distribution metadata.
 
 # 01 To Do
-- [ ] Deliver the detailed work orders in this group using the accepted artifact contract.
-- [ ] Record each child item's result and evidence in that item's own Status and Result section.
+Deliver the following scoped work orders. Their live state is also shown by the tracker.
+
+| Work order | Initial state |
+|---|---|
+| [Provide the library-building workflow and skills](./010_library-authoring-workflow.md) | open |
+| [Teach agents to use libraries in webpage and narrated artifacts](./020_artifact-consumption-skills.md) | open |
+| [Wire plugin capabilities and distribution metadata](./030_plugin-manifests-tools-and-distribution.md) | open |
 
 ## Guardrails
 - Follow the [owner scope and boundaries](../../notes/01_scope-and-boundaries.md).
 - Library and independent examples precede engine integration; the plan owns execution order.
 
 ## Done when
-- The group's child work orders meet their acceptance checks and carry their results/evidence.
+- Each child work order meets its checks and records its result/evidence.
 
 # 02 Status and Result
-Initialized as the group index. Implementation has not started.
+Scoped and initialized; implementation has not started.
 
 ## Agent log
 none
@@ -29,8 +34,8 @@ none
 
 # 04 Decisions
 ## 01 Area of work
-This folder groups a capability, not a phase. The group purpose and limits follow the owner's discussion; individual implementation decisions belong in the child work orders.
+This group is an area, not a phase. The owner requested an index explaining the area and combined narration, branching and interaction into one experience group.
 
 # 05 Notes & Analysis
-## Dependency
-Use the plan for dependencies and stage order; child numbers are identifiers rather than scheduling instructions.
+## Dependency and index maintenance
+Follow the plan and each child's actual state. Update this scope table and the index state when child results change.

@@ -1,30 +1,36 @@
 ---
-title: Agree the standard and reference component
+title: "Agree the standard and reference component"
 status: open
-outcome: A reviewed component/runtime/rendering contract and reference example unblock component teams.
-notes: Framework, public API and compatibility decisions precede migration.
+outcome: "A reviewed component/runtime/rendering contract and reference example unblock component teams."
+notes: "Framework, public API and compatibility decisions precede migration."
 subtasks:
-- '[Define artifact kinds and the shared component contract](../../subtasks/010_standard-and-contracts/010_artifact-element-contract.md)'
-- '[Build a reference TSX component and choose the authoring approach](../../subtasks/010_standard-and-contracts/020_tsx-reference-and-composition.md)'
-- '[Specify library dependencies and GitHub version resolution](../../subtasks/010_standard-and-contracts/030_dependencies-and-github-versions.md)'
-- '[Define state, timestamped actions and rendering lifecycles](../../subtasks/010_standard-and-contracts/040_state-time-and-rendering-contract.md)'
+  - "[Define artifact kinds and the shared component contract](../../subtasks/010_standard-and-contracts/010_artifact-element-contract.md)"
+  - "[Build a reference TSX component and choose the authoring approach](../../subtasks/010_standard-and-contracts/020_tsx-reference-and-composition.md)"
+  - "[Specify library dependencies and GitHub version resolution](../../subtasks/010_standard-and-contracts/030_dependencies-and-github-versions.md)"
+  - "[Define state, timestamped actions and rendering lifecycles](../../subtasks/010_standard-and-contracts/040_state-time-and-rendering-contract.md)"
 ---
 
-Why this exists: a feature, a bug, an upgrade. What it broke and the impact.
+Framework, public API and compatibility decisions precede migration.
 
 # 01 To Do
-- [ ] item
-    - [ ] sub-item
+- [ ] Review the artifact/component, source/dependency and state/rendering contracts.
+- [ ] Demonstrate one reference component in webpage and narrated hosts before parallel migration.
+- [ ] Record the framework/API, compatibility and pre-rendering choices that unblock the next stage.
+
+## Done when
+- A reviewed component/runtime/rendering contract and reference example unblock component teams.
 
 # 02 Status and Result
-Partial results are fine. Say what is done and what is not.
+Scheduled; implementation has not started. No stage output is claimed.
 
 # 03 References
-Links: agent logs, notes, subtasks, docs, external sources, industry practice.
+- [Plan overview](./overview.md)
+- [Owner scope](../../notes/01_scope-and-boundaries.md)
 
 # 04 Decisions
-- Decided (author, YYYY-MM-DD): ...
+## 01 Stage boundary
+Contract and reference design come first to avoid incompatible migrations.
 
 # 05 Notes & Analysis
-## 01 First point
-## 02 Second point
+## Handoff
+Record accepted interfaces and the reference example so teams can work in bounded ownership lanes.

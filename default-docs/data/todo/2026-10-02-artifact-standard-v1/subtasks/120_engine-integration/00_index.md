@@ -6,18 +6,23 @@ status: blocked
 After the other agent's engine build and the library contract are ready, integrate resolution/compilation, reader embeds and static publishing with end-to-end proof.
 
 # 01 To Do
-- [ ] Deliver the detailed work orders in this group using the accepted artifact contract.
-- [ ] Record each child item's result and evidence in that item's own Status and Result section.
+Deliver the following scoped work orders. Their live state is also shown by the tracker.
+
+| Work order | Initial state |
+|---|---|
+| [Integrate library resolution, compilation and browser outputs](./010_resolver-compiler-and-browser-build-adapter.md) | blocked |
+| [Integrate webpage embeds and narrated interactions in the reader](./020_reader-embeds-and-narrated-adapter.md) | blocked |
+| [Publish optimized static artifacts and verify the full flow](./030_static-publishing-and-end-to-end-proof.md) | blocked |
 
 ## Guardrails
 - Follow the [owner scope and boundaries](../../notes/01_scope-and-boundaries.md).
-- This group is held on the other agent's engine build and the accepted library contract; do not start engine-repository code work before those dependencies are ready.
+- All work in this group is blocked on the other agent's usable engine build and the accepted library contract.
 
 ## Done when
-- The group's child work orders meet their acceptance checks and carry their results/evidence.
+- Each child work order meets its checks and records its result/evidence.
 
 # 02 Status and Result
-Initialized as the group index. Implementation has not started.
+Blocked on the other agent's engine build and library/reference readiness.
 
 ## Agent log
 none
@@ -30,8 +35,11 @@ none
 
 # 04 Decisions
 ## 01 Area of work
-This folder groups a capability, not a phase. The group purpose and limits follow the owner's discussion; individual implementation decisions belong in the child work orders.
+This group is an area, not a phase. The owner requested an index explaining the area and combined narration, branching and interaction into one experience group.
 
 # 05 Notes & Analysis
-## Dependency
-Blocked on the other agent's engine build plus the library/reference contract. The later engine stage owns when this group can start.
+## Dependency and index maintenance
+Follow the plan and each child's actual state. Update this scope table and the index state when child results change.
+
+## Validator note
+The installed toolkit derives any sibling set that is neither all open nor all closed as in-progress, including a wholly blocked group. This index intentionally remains blocked with its children, following the owner's explicit scheduling request. See the [scope note](../../notes/01_scope-and-boundaries.md).

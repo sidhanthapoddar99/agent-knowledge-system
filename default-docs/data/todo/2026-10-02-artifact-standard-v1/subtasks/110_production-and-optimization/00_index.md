@@ -6,18 +6,24 @@ status: open
 Produce readable initial HTML/SVG, attach interaction lazily, optimize assets and loading, and verify mobile accessibility and performance budgets.
 
 # 01 To Do
-- [ ] Deliver the detailed work orders in this group using the accepted artifact contract.
-- [ ] Record each child item's result and evidence in that item's own Status and Result section.
+Deliver the following scoped work orders. Their live state is also shown by the tracker.
+
+| Work order | Initial state |
+|---|---|
+| [Pre-render readable HTML/SVG and attach interaction](./010_initial-render-and-interactive-attachment.md) | open |
+| [Load only required code and optimize artifact assets](./020_chunks-assets-and-load-strategy.md) | open |
+| [Verify responsive layouts and accessible mobile interaction](./030_mobile-and-accessibility.md) | open |
+| [Set load budgets and verify built library examples](./040_performance-budgets-and-production-proof.md) | open |
 
 ## Guardrails
 - Follow the [owner scope and boundaries](../../notes/01_scope-and-boundaries.md).
 - Library and independent examples precede engine integration; the plan owns execution order.
 
 ## Done when
-- The group's child work orders meet their acceptance checks and carry their results/evidence.
+- Each child work order meets its checks and records its result/evidence.
 
 # 02 Status and Result
-Initialized as the group index. Implementation has not started.
+Scoped and initialized; implementation has not started.
 
 ## Agent log
 none
@@ -29,8 +35,8 @@ none
 
 # 04 Decisions
 ## 01 Area of work
-This folder groups a capability, not a phase. The group purpose and limits follow the owner's discussion; individual implementation decisions belong in the child work orders.
+This group is an area, not a phase. The owner requested an index explaining the area and combined narration, branching and interaction into one experience group.
 
 # 05 Notes & Analysis
-## Dependency
-Use the plan for dependencies and stage order; child numbers are identifiers rather than scheduling instructions.
+## Dependency and index maintenance
+Follow the plan and each child's actual state. Update this scope table and the index state when child results change.

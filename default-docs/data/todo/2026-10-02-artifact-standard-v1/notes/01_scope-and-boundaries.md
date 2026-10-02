@@ -23,7 +23,7 @@ These work orders turn the owner's discussion into a proposed decomposition. The
 
 ## 03 Library work precedes engine changes
 
-- Decided (sidhantha, 2026-10-02): build the library, its shipped Vite developer methodology and examples first, then integrate into the engine, because the library must be independently useful. Actual Rust CLI changes share the later engine-repository stage; CLI-facing catalog metadata can be designed and shipped with the library earlier.
+- Decided (sidhantha, 2026-10-02): build the library, its shipped Vite developer methodology and examples first, then integrate into the engine, because the library must be independently useful. The plan places actual Rust CLI changes in the later engine stage; CLI-facing metadata can be prepared with the library.
 
 ## 04 GitHub provides versioned distribution
 
@@ -37,11 +37,15 @@ These work orders turn the owner's discussion into a proposed decomposition. The
 
 - Requested (sidhantha, 2026-10-02): separate narrated sequencing, divergent paths and element interaction; include hover/click actions and mobile friendliness. Work orders translate these into concrete touch, keyboard and responsive checks.
 
+## 07 Grouping and the engine blocker
+
+- Requested (sidhantha, 2026-10-02): combine narrated sequencing, divergent paths and component interaction into one group; initialize every group with a 00 index and keep all engine-dependent work blocked on the other agent building the engine.
+
 # 05 Notes & Analysis
 
 ## Draft decomposition and acceptance criteria
 
-The twelve folders are areas of work, not execution phases. Their numbers are stable sort identifiers. Stage order lives in the linked plan. A folder carries a display title, while each leaf carries its own work, checks and state.
+The ten folders are areas of work, not execution phases. Their numbers are stable sort identifiers. Stage order lives in the linked plan. A folder carries a display title, while each leaf carries its own work, checks and state.
 
 The framework, component API, dependency format and build policy are outputs of the standard work. Routine naming and reversible implementation details can be chosen within an accepted contract. A change to that public contract belongs back in the standard work with its reason and compatibility impact.
 
@@ -58,3 +62,7 @@ The engine repository owns the Rust library/CLI/compiler, shared UI islands, pla
 Work orders include focused acceptance checks per area, plus cross-component production and integration proof. The standard work selects measurable budgets; no unapproved numerical latency or bundle target is invented here.
 
 A compiled browser module/embed is an artifact build output. GitHub-based distribution does not force a separately uploaded library bundle, and a tag does not eliminate storage used by assets, history or installed-version caches.
+
+## Toolkit index-status discrepancy
+
+The [installed toolkit's index aggregation](../../../../../agent-ks-cli/src/checks.rs) derives in-progress for any nonempty sibling set that is neither all open nor all closed. Therefore two intentionally wholly blocked groups produce index-status warnings. Their work orders and indices remain blocked, following the owner's request; no implementation is in progress.

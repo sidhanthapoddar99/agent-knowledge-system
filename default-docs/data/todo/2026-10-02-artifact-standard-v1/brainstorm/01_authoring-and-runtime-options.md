@@ -2,7 +2,7 @@
 title: "Artifact standard and shared library — brainstorm index"
 ---
 
-The discussion is split into individual idea entries below. Each is a brainstorming element with its own page; formal subtasks and the implementation plan remain deferred.
+The discussion is split into individual idea entries below. Each is a brainstorming element with its own page; detailed work orders and the library-first plan are now linked from the issue.
 
 ## Ideas
 
@@ -32,13 +32,13 @@ The owner explicitly separated implementation into two parts:
 1. Define and build the library, with the components it needs, examples/audio, a shipped preview and the authoring/discovery methodology.
 2. Update the engine later to consume that completed library and standard.
 
-The immediate work is only to create this issue, put basic to-dos in a comment and retain the detailed ideas here. Formal subtasks and an implementation plan will be defined later.
+The ideas have now been decomposed into detailed work orders and a library-first plan. This documentation action does not start implementation.
 
 The library's preview must be independently useful before engine integration. A Vite developer gallery is different from the engine's existing standalone-video page writer; neither should be described as replacing the other without a later design decision.
 
 ## What remains to scope
 
-Formal subtasks and the plan are intentionally deferred. Later scoping will resolve:
+The formal work orders and plan now exist. The standard work resolves these design topics before implementation relies on them:
 
 - The TSX framework and public API.
 - Composition/inheritance and cross-library dependency rules.
@@ -53,7 +53,9 @@ These are design topics retained for the next discussion, not blockers being ask
 
 ## References
 
-- [The issue](../issue.md)
+- [The issue and grouped work orders](../issue.md)
+- [Library-first plan](../plans/01_library-first/overview.md)
+- [Owner scope and boundaries](../notes/01_scope-and-boundaries.md)
 - [HTML artifacts as first-class content](../../2026-07-07-artifact-component/issue.md)
 - [Video artifacts](../../2026-09-29-narrated-video-pages/issue.md)
 - [Existing standalone-video work](../../2026-09-29-narrated-video-pages/subtasks/080_standalone-artifact.md)

@@ -1,6 +1,6 @@
 ---
 title: "Specify library dependencies and GitHub version resolution"
-status: open
+status: in-progress
 ---
 
 Reusable TSX imports need complete reproducible dependencies even when distribution uses GitHub tags rather than a package registry.

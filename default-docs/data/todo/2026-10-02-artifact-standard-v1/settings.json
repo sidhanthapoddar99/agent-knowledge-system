@@ -1,7 +1,7 @@
 {
   "title": "Artifact standard v1 and shared library",
-  "description": "Define the shared TSX artifact standard, migrate/expand libraries, ship Vite developer examples/audio and a library authoring/usage plugin. Forty-one detailed work orders cover ten groups, including live narrated/branching interaction and production/mobile optimization; Rust CLI and engine work are blocked on the other agent's engine build.",
-  "status": "open",
+  "description": "Define the shared TSX artifact standard, migrate/expand libraries, ship Vite developer examples/audio and a library authoring/usage plugin. Fifty detailed work orders cover ten groups, including live narrated/branching interaction and production/mobile optimization; Rust CLI and engine work are blocked on the other agent's engine build.",
+  "status": "in-progress",
   "priority": "medium",
   "component": [
     "artifact"

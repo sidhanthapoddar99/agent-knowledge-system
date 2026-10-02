@@ -1,6 +1,6 @@
 ---
 title: "Define artifact kinds and the shared component contract"
-status: open
+status: in-progress
 ---
 
 Authors need one usable element contract across normal webpages, embedded artifacts and live narrated scenes.

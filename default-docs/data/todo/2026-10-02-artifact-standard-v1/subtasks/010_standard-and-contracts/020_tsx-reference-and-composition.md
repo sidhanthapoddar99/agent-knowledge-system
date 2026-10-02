@@ -1,6 +1,6 @@
 ---
 title: "Build a reference TSX component and choose the authoring approach"
-status: open
+status: in-progress
 ---
 
 A concrete reference prevents teams from migrating components against incompatible framework or composition assumptions.

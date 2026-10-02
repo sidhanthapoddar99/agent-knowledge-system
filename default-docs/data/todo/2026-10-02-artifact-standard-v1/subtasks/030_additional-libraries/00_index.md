@@ -8,11 +8,14 @@ Define and build additional collections, visual families and themes that share b
 # 01 To Do
 Deliver the following scoped work orders. Their live state is also shown by the tracker.
 
-| Work order | Initial state |
-|---|---|
-| [Define additional collection and style blueprints](./010_collection-blueprints.md) | open |
-| [Implement themes and reusable component variants](./020_family-themes-and-variants.md) | open |
-| [Register new libraries and ship representative examples](./030_catalog-and-family-examples.md) | open |
+| Work order |
+|---|
+| [Define additional collection and style blueprints](./010_collection-blueprints.md) |
+| [Implement themes and reusable component variants](./020_family-themes-and-variants.md) |
+| [Register new libraries and ship representative examples](./030_catalog-and-family-examples.md) |
+| [Build a Motion Explainers library in its own worktree](./040_motion-explainers-library.md) |
+| [Build a Data Stories library in its own worktree](./050_data-stories-library.md) |
+| [Build a Story Scenes library in its own worktree](./060_story-scenes-library.md) |
 
 ## Guardrails
 - Follow the [owner scope and boundaries](../../notes/01_scope-and-boundaries.md).
@@ -22,7 +25,7 @@ Deliver the following scoped work orders. Their live state is also shown by the 
 - Each child work order meets its checks and records its result/evidence.
 
 # 02 Status and Result
-Scoped and initialized; implementation has not started.
+Ownership lanes are initialized; live work state belongs to each child.
 
 ## Agent log
 none

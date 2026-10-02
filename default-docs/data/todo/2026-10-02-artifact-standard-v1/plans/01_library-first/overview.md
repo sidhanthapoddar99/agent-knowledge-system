@@ -1,50 +1,38 @@
 ---
-title: "Contract, library, then engine"
+title: "Contract, parallel libraries, then engine"
 ---
 
-Agree the shared contract and reference implementation, prove the library independently, then integrate after the other engine agent's build is ready. Groups describe areas; this plan describes execution order.
+Validate one shared contract and reference, run bounded library/runtime/preview lanes in parallel, then prove their integrated browser outputs before external engine integration.
 
 # 01 To Do
 
 | Stage | Outcome | Dependency |
 |---|---|---|
-| [Agree the standard and reference component](./10_standard-and-reference.md) | A reviewed component/runtime/rendering contract and reference example unblock component teams. | Framework, public API and compatibility decisions precede migration. |
-| [Build the library, preview and authoring tooling](./20_library-preview-and-tooling.md) | Migrated/new libraries, live examples, Vite/plugin workflows and optimized browser output are independently proven. | Held until the standard/reference contract is accepted; no core engine or Rust CLI changes in this stage. |
-| [Integrate the Rust CLI and engine after its build is ready](./30_cli-and-engine-integration.md) | Installed/discovered library components work in the engine reader and static publishing with compatibility proof. | Blocked on the other engine agent's usable build and the independently verified library/runtime outputs. |
+| [Agree the standard and reference component](./10_standard-and-reference.md) | A tested component, source catalog and time/state contract give parallel teams one reference. | Three contract prototypes and inventory/blueprints proceed independently; coordinator reconciles the public API before bulk migration. |
+| [Establish the shared library and preview foundation](./20_library-preview-and-tooling.md) | Source index, lazy rendering, scene fixtures and a shipped Vite skeleton provide stable lane inputs. | Depends on the tested standard/reference checkpoint; developer preview has no Rust engine dependency. |
+| [Build collections, experiences and tooling in parallel](./23_parallel-library-builds.md) | Independent collection and runtime lanes deliver compatible components, examples and authoring guidance. | Starts from the shared foundation; each lane owns bounded files and can merge as soon as its focused checks pass. |
+| [Integrate and verify independent library outputs](./26_integration-and-production-proof.md) | Merged libraries and standalone examples pass parity, mobile/accessibility and built-output validation. | Consumes checked lane commits; full interaction/audio/branch coordination follows subsystem integration. |
+| [Integrate the Rust CLI and engine after its build is ready](./30_cli-and-engine-integration.md) | Installed/discovered library components work in the engine reader and static publishing with compatibility proof. | Blocked on the external engine build and separately validated library contract; library developer preview remains independent. |
 
-## Guardrails
+## Ownership and capacity
 
-- The current change creates work orders; it does not start implementation.
-- Build library/runtime examples, Vite and plugin preparation before core engine or Rust CLI changes.
-- Keep engine-dependent work blocked on the other agent's usable build and the proven library contract.
+The coordinator owns shared types/exports, root configuration and locks, canonical catalogs/manifests and integration checks. Workers own collection subtrees or isolated modules plus local registration fragments. Default charts, tables, vectors and motion are separate migration lanes; Editorial and Storybook have one lane each. New collections, preview pages, runtime modules, asset builds and plugin methodology can run alongside them when their inputs are ready. Current execution has three worker slots and one coordinator; further independent lanes queue rather than overlap global files.
 
 # 02 Status and Result
 
-The schedule and detailed work orders are initialized. No implementation result is claimed.
+The library SDK/Vite tooling checkpoint and legacy chart-label correction are committed in isolated library worktrees. Three workers are implementing contract/catalog, rendering/reference and pure runtime foundations. No complete library milestone or engine support is claimed.
 
 # 03 References
 
 - [The issue](../../issue.md)
 - [Owner scope](../../notes/01_scope-and-boundaries.md)
 - [Brainstorm index](../../brainstorm/01_authoring-and-runtime-options.md)
-- [Other engine build and migration](../../../2026-09-29-rust-core-engine-migration/issue.md)
+- [Other engine build](../../../2026-09-29-rust-core-engine-migration/issue.md)
 
 # 04 Decisions
 
-## 01 Order
-
-The owner placed library/preview work before engine integration. The standard/reference slice comes first within the library work so migration teams share one API. Actual Rust CLI work is grouped with the later engine stage.
-
-## 02 Grouping
-
-Narration, divergent paths and component interaction share one group; their individual work orders remain distinct.
+The owner authorized maximum useful parallelism and clarified that developer rendering means preview pages. Actual Rust CLI and core engine integration remain a later externally dependent stage. Narration, divergent paths and element interaction keep separate work orders inside one experience area.
 
 # 05 Notes & Analysis
 
-## External dependency
-
-The other agent's engine build is a named dependency, not permission to assume its interfaces are ready. Record its usable checkpoint before unblocking the engine stage.
-
-## Verification
-
-Each work order owns its checks and results. Built library examples establish independent capability; later engine/static output needs separate end-to-end evidence.
+Use tested foundation commits as worktree inputs. Merge focused passing lanes as they finish, then perform whole-library production proof. Preserve all legacy identities/assets and ordinary HTML compatibility. GitHub tags and release notes remain the distribution choice; no publish/tag/push is authorized by this execution.

@@ -2,7 +2,7 @@
 title: "Integrate the Rust CLI and engine after its build is ready"
 status: blocked
 outcome: "Installed/discovered library components work in the engine reader and static publishing with compatibility proof."
-notes: "Blocked on the other engine agent's usable build and the independently verified library/runtime outputs."
+notes: "Blocked on the external engine build and separately validated library contract; library developer preview remains independent."
 subtasks:
   - "[Install libraries with pinned GitHub versions](../../subtasks/070_cli-library-tooling/010_installation-and-version-locking.md)"
   - "[Search libraries and components through a typed catalog](../../subtasks/070_cli-library-tooling/020_catalog-index-and-search.md)"
@@ -13,28 +13,31 @@ subtasks:
   - "[Publish optimized static artifacts and verify the full flow](../../subtasks/120_engine-integration/030_static-publishing-and-end-to-end-proof.md)"
 ---
 
-Blocked on the other engine agent's usable build and the independently verified library/runtime outputs.
+Developer rendering means Vite preview pages. It does not authorize assuming or replacing Rust engine interfaces.
 
 # 01 To Do
-- [ ] Accept a usable build checkpoint from the other engine agent and the selected library contract/revision.
-- [ ] Implement the referenced CLI/resolver, reader/narrated and publishing adapters.
-- [ ] Record compatibility, command and static-production end-to-end proof through relevant ctl checks.
+
+- [ ] Accept the other engine agent's usable checkpoint and exact agreed library/build contract.
+- [ ] Implement actual CLI/resolver, reader and static publishing adapters with that owner.
+- [ ] Validate real commands and published outputs before changing blocked work states.
 
 ## Done when
-- Installed/discovered library components work in the engine reader and static publishing with compatibility proof.
+
+Installed/discovered library components work in the engine reader and static publishing with compatibility proof.
 
 # 02 Status and Result
-Held on the dependencies named above. No stage output is claimed.
+
+Scheduled behind the dependency named above. No complete stage outcome is claimed.
 
 # 03 References
+
 - [Plan overview](./overview.md)
 - [Owner scope](../../notes/01_scope-and-boundaries.md)
-- [Other engine build](../../../2026-09-29-rust-core-engine-migration/issue.md)
 
 # 04 Decisions
-## 01 Stage boundary
-The owner explicitly requested all engine-dependent work remain blocked on the other agent's engine build.
+
+The owner authorized autonomous isolated-worktree execution with as much real parallelism as dependencies permit. Shared entrypoints and configuration have one integrator.
 
 # 05 Notes & Analysis
-## Handoff
-Do not infer readiness from prior library previews; verify actual engine interfaces and published artifact behavior.
+
+Blocked on the external engine build and separately validated library contract; library developer preview remains independent.

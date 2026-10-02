@@ -1,36 +1,42 @@
 ---
 title: "Agree the standard and reference component"
-status: open
-outcome: "A reviewed component/runtime/rendering contract and reference example unblock component teams."
-notes: "Framework, public API and compatibility decisions precede migration."
+status: in-progress
+outcome: "A tested component, source catalog and time/state contract give parallel teams one reference."
+notes: "Three contract prototypes and inventory/blueprints proceed independently; coordinator reconciles the public API before bulk migration."
 subtasks:
   - "[Define artifact kinds and the shared component contract](../../subtasks/010_standard-and-contracts/010_artifact-element-contract.md)"
   - "[Build a reference TSX component and choose the authoring approach](../../subtasks/010_standard-and-contracts/020_tsx-reference-and-composition.md)"
   - "[Specify library dependencies and GitHub version resolution](../../subtasks/010_standard-and-contracts/030_dependencies-and-github-versions.md)"
   - "[Define state, timestamped actions and rendering lifecycles](../../subtasks/010_standard-and-contracts/040_state-time-and-rendering-contract.md)"
+  - "[Inventory existing components and map their migration](../../subtasks/020_existing-library-migration/010_inventory-and-migration-map.md)"
+  - "[Define additional collection and style blueprints](../../subtasks/030_additional-libraries/010_collection-blueprints.md)"
 ---
 
-Framework, public API and compatibility decisions precede migration.
+Contract drafts can proceed in parallel; a single validated public interface prevents incompatible migrations.
 
 # 01 To Do
-- [ ] Review the artifact/component, source/dependency and state/rendering contracts.
-- [ ] Demonstrate one reference component in webpage and narrated hosts before parallel migration.
-- [ ] Record the framework/API, compatibility and pre-rendering choices that unblock the next stage.
+
+- [ ] Draft component/render, pure runtime and source/dependency contracts in independent worktrees.
+- [ ] Validate one shared TSX reference in readable webpage markup and a narrated host.
+- [ ] Reconcile the reference, metadata and lifecycle tests at one integration checkpoint.
 
 ## Done when
-- A reviewed component/runtime/rendering contract and reference example unblock component teams.
+
+A tested component, source catalog and time/state contract give parallel teams one reference.
 
 # 02 Status and Result
-Scheduled; implementation has not started. No stage output is claimed.
+
+Three isolated implementation worktrees now carry contract prototypes. Public API validation is underway.
 
 # 03 References
+
 - [Plan overview](./overview.md)
 - [Owner scope](../../notes/01_scope-and-boundaries.md)
 
 # 04 Decisions
-## 01 Stage boundary
-Contract and reference design come first to avoid incompatible migrations.
+
+The owner authorized autonomous isolated-worktree execution with as much real parallelism as dependencies permit. Shared entrypoints and configuration have one integrator.
 
 # 05 Notes & Analysis
-## Handoff
-Record accepted interfaces and the reference example so teams can work in bounded ownership lanes.
+
+Three contract prototypes and inventory/blueprints proceed independently; coordinator reconciles the public API before bulk migration.

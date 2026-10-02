@@ -8,12 +8,18 @@ Inventory and migrate the current library to the accepted TSX structure, with ex
 # 01 To Do
 Deliver the following scoped work orders. Their live state is also shown by the tracker.
 
-| Work order | Initial state |
-|---|---|
-| [Inventory existing components and map their migration](./010_inventory-and-migration-map.md) | open |
-| [Establish the TSX source layout and component index](./020_source-layout-and-catalog.md) | open |
-| [Migrate existing component families with parallel ownership](./030_component-family-conversion.md) | open |
-| [Verify migration parity and update the library guidance](./040_migration-parity-and-validation.md) | open |
+| Work order |
+|---|
+| [Inventory existing components and map their migration](./010_inventory-and-migration-map.md) |
+| [Establish the TSX source layout and component index](./020_source-layout-and-catalog.md) |
+| [Migrate existing component families with parallel ownership](./030_component-family-conversion.md) |
+| [Verify migration parity and update the library guidance](./040_migration-parity-and-validation.md) |
+| [Migrate Default charts in an independent worktree](./050_default-chart-migration.md) |
+| [Migrate Default tables and widgets in an independent worktree](./060_default-table-widget-migration.md) |
+| [Migrate Default vector objects and assets in an independent worktree](./070_default-vector-asset-migration.md) |
+| [Migrate Default motion and presentation families in an independent worktree](./080_default-motion-style-migration.md) |
+| [Migrate Editorial with its own collection worktree](./090_editorial-collection-migration.md) |
+| [Migrate Storybook with its own collection worktree](./100_storybook-collection-migration.md) |
 
 ## Guardrails
 - Follow the [owner scope and boundaries](../../notes/01_scope-and-boundaries.md).
@@ -23,7 +29,7 @@ Deliver the following scoped work orders. Their live state is also shown by the 
 - Each child work order meets its checks and records its result/evidence.
 
 # 02 Status and Result
-Scoped and initialized; implementation has not started.
+Ownership lanes are initialized; live work state belongs to each child.
 
 ## Agent log
 none

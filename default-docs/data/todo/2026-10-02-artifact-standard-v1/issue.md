@@ -10,7 +10,7 @@ The narrated experience is a flow of live slides/components, timestamped actions
 
 ## Context
 
-The detailed work is now scoped in ten area folders and forty-one work orders, with a group index in each. The [plan](./plans/01_library-first/overview.md) runs standard/reference work first, library/preview/plugin work next and Rust CLI/engine integration later.
+The detailed work is now scoped in ten area folders and fifty work orders, with a group index in each. The [plan](./plans/01_library-first/overview.md) runs standard/reference work first, library/preview/plugin work next and Rust CLI/engine integration later.
 
 The [HTML artifact issue](../2026-07-07-artifact-component/issue.md) and [Video artifacts issue](../2026-09-29-narrated-video-pages/issue.md) retain their existing work. All three use the Artifact tracker component; diagram work remains in Components. “v1” is the working name of the standard, not an announced release version.
 
@@ -21,8 +21,8 @@ The [brainstorm index](./brainstorm/01_authoring-and-runtime-options.md) retains
 | Area | Detailed work orders |
 |---|---|
 | [Standard and contracts](./subtasks/010_standard-and-contracts/00_index.md) | 4 |
-| [Existing library migration](./subtasks/020_existing-library-migration/00_index.md) | 4 |
-| [Additional libraries](./subtasks/030_additional-libraries/00_index.md) | 3 |
+| [Existing library migration](./subtasks/020_existing-library-migration/00_index.md) | 10 |
+| [Additional libraries](./subtasks/030_additional-libraries/00_index.md) | 6 |
 | [Innovative components](./subtasks/040_innovative-components/00_index.md) | 4 |
 | [Developer preview](./subtasks/050_developer-preview/00_index.md) | 3 |
 | [AI authoring and usage plugin](./subtasks/060_ai-authoring-and-usage-plugin/00_index.md) | 3 |
@@ -43,7 +43,7 @@ These are draft acceptance criteria for the implementation:
 
 ## Scope decisions
 
-- This change creates detailed work orders and the plan. It does not start implementation, launch migration agents or publish a release.
+- The owner has authorized autonomous implementation in independent worktrees, with parallel migration and additional-collection lanes after the validated shared contract. No outward release is authorized.
 - Build and prove the library/preview first. Keep all CLI and engine-integration work blocked on the other agent's usable engine build and the library/reference contract.
 - Combine narration, divergent paths and component interaction into one experience group.
 - Use GitHub tags and release notes/links for library versions; no separate package-registry publication is required. A browser build step still needs a contract.

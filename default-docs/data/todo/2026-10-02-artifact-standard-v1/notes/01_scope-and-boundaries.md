@@ -2,7 +2,7 @@
 title: "Scope and execution boundaries"
 ---
 
-These work orders turn the owner's discussion into a proposed decomposition. Their acceptance checks are draft scoping criteria, not evidence of delivered features. The current action creates tracker documents; implementation is not started.
+These work orders turn the owner's discussion into a proposed decomposition. Their acceptance checks are draft scoping criteria, not evidence of delivered features. The owner subsequently authorized autonomous implementation in independent worktrees; the plan now schedules validated foundations and parallel lanes.
 
 # 03 References
 
@@ -49,7 +49,7 @@ The ten folders are areas of work, not execution phases. Their numbers are stabl
 
 The framework, component API, dependency format and build policy are outputs of the standard work. Routine naming and reversible implementation details can be chosen within an accepted contract. A change to that public contract belongs back in the standard work with its reason and compatibility impact.
 
-The owner suggested multiple agents for migration. The migration work defines ownership lanes after an agreed reference component and contract; this documentation action does not launch those agents.
+The owner suggested multiple agents for migration. The migration work defines ownership lanes after an agreed reference component and contract; implementation is now authorized and agents run in bounded independent worktrees after shared interfaces are established.
 
 ## Source and implementation boundaries
 
@@ -66,3 +66,9 @@ A compiled browser module/embed is an artifact build output. GitHub-based distri
 ## Toolkit index-status discrepancy
 
 The [installed toolkit's index aggregation](../../../../../agent-ks-cli/src/checks.rs) derives in-progress for any nonempty sibling set that is neither all open nor all closed. Therefore two intentionally wholly blocked groups produce index-status warnings. Their work orders and indices remain blocked, following the owner's request; no implementation is in progress.
+
+## Parallel implementation and preview scope
+
+- Decided (sidhantha, 2026-10-02): maximize independent builds, split Default migration by family, give Editorial and Storybook separate ownership, and add two or three useful video-focused libraries.
+- Clarified (sidhantha, 2026-10-02): rendering engine here means the shipped Vite developer preview pages. Core Rust engine and CLI work remain externally owned and blocked.
+- Authorized (sidhantha, 2026-10-02): resume autonomous implementation with multiple subagents and independent worktrees. Routine implementation choices require no further confirmation.

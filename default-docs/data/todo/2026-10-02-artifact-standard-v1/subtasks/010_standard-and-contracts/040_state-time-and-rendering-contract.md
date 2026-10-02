@@ -1,6 +1,6 @@
 ---
 title: "Define state, timestamped actions and rendering lifecycles"
-status: open
+status: in-progress
 ---
 
 A live narrated artifact must coordinate timed actions, reader interaction and initial rendering without hiding ambiguous state transitions.
